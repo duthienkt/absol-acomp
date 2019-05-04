@@ -1,0 +1,75 @@
+.absol-scroller {
+    position: relative;
+    overflow-x: hidden;
+}
+
+
+.absol-scroller.disabled>.absol-vscroller-viewport {
+    overflow-y: visible;
+    margin-right: 0px;
+}
+
+.absol-scroller.disabled {
+    overflow: visible;
+    overflow-x: visible;
+
+}
+
+
+.absol-vscroller-viewport {
+    overflow-y: scroll;
+    box-sizing: content-box;
+}
+
+.absol-scroller>.absol-vscroller-viewport {
+    max-height: 100%;
+}
+
+.absol-scroller.limited-height>.absol-vscroller-viewport {
+    max-height: inherit;
+}
+
+
+.absol-scroller>.absol-scrollbar-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
+}
+
+.absol-scroller>.absol-scrollbar-container.vertical {
+    right: 0;
+}
+
+.absol-scrollbar-container.vertical {
+    width: 7px;
+    bottom: 0;
+
+}
+
+.absol-scrollbar-container>.absol-scrollbar {
+    width: 100%;
+    height: 100%;
+}
+
+.absol-scrollbar-container.vertical>.absol-scrollbar>.absol-scrollbar-button {
+    left: 1px;
+    right: 1px;
+    top: 0;
+}
+
+.absol-scrollbar {
+    position: relative;
+    background: transparent;
+}
+
+.absol-scrollbar-button {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.45);
+    border-radius: 2px;
+}
+
+
+.absol-scrollbar.absol-hidden {
+    visibility: hidden;
+}

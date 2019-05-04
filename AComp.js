@@ -3,13 +3,23 @@ import Acore from "./ACore";
 import './js/IconButton';
 import IconButtonStyleText from './css/iconbutton.css';
 
-var styleText = [IconButtonStyleText].join('\n');
+import './js/Scroller';
+import ScrollerStyleText from './css/scroller.css';
+
+import './js/Searcher';
+import SearcherStyleText from './css/searcher.css';
+
+import './js/SelectTable';
+import SelectTableStyleText from './css/selecttable.css';
+
+var styleText = [IconButtonStyleText, SelectTableStyleText, ScrollerStyleText, SearcherStyleText].join('\n');
 var AComp = {
     core: Acore,
     $style: Acore._('style').addTo(document.head),
     $: Acore.$,
     _: Acore._,
-    buildDom: Acore.buildDom,
+    creator: Acore.creator,
+    buildDom: Acore.buildDom
 };
 
 AComp.$style.innerHTML = styleText;
