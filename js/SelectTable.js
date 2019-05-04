@@ -3,9 +3,10 @@ import Dom from "../../HTML5/Dom";
 import EventEmitter from "../../HTML5/EventEmitter";
 import { phraseMatch } from "../../String/stringMatching";
 import { nonAccentVietnamese } from "../../String/stringFormat";
+import Svg from "../../HTML5/Svg";
+import OOP from "../../HTML5/OOP";
 
-var _ = Acore._;
-var $ = Acore.$;
+
 
 function SelectTable() {
     var $ = SelectTable.$;
@@ -71,7 +72,7 @@ function SelectTable() {
     });
 
     res.sync = res.afterAttached();
-    res.eventHandler = absol.OOP.bindFunctions(res, SelectTable.eventHandler);
+    res.eventHandler = OOP.bindFunctions(res, SelectTable.eventHandler);
     res.$buttonsContainer = $('.absol-select-table-buttons-container', res);
     res.$searchContainer = $('.absol-select-table-searchtextinput-container', res);
     res.$nonselectedItemsContainer = $('.absol-select-table-nonselected-items-container', res);
@@ -94,13 +95,6 @@ function SelectTable() {
 
 
 
-// SelectTable.getRenderSpace = function () {
-//     if (!absol.ShareCreator.selectmenu.$renderSpace) {
-//         absol.ShareCreator.selectmenu.$renderSpace = absol._('.absol-select-table-render-space')
-//             .addTo(document.body);
-//     };
-//     return absol.ShareCreator.selectmenu.$renderSpace;
-// }
 
 
 
@@ -633,7 +627,7 @@ SelectTable.privateCreator.item = function () {
         ]
     });
     res.$text = $('span', res);
-    res.eventHandler = absol.OOP.bindFunctions(res, SelectTable.privateCreator.item.eventHandler);
+    res.eventHandler = OOP.bindFunctions(res, SelectTable.privateCreator.item.eventHandler);
     res.$rightBtn = $('.absol-select-table-item-right-container', res);
     res.on('dblclick', res.eventHandler.dblclick);
     res.$rightBtn.on('click', res.eventHandler.rightBtClick);
@@ -689,7 +683,7 @@ SelectTable.privateCreator.item.property.text = {
  */
 
 SelectTable.privateCreator.addicon = function () {
-    return absol.buildSvg(
+    return Svg.ShareInstance.buildSvg(
         '<svg class="add-icon" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
         '<g transform="translate(0,-197)">' +
         '<path d="m39.873 198.21v38.668h-38.668v20.252h38.668v38.668h20.253v-38.668h38.668v-20.252h-38.668v-38.668z" style="fill-rule:evenodd;stroke-linejoin:round;stroke-width:2.4109;" />' +
@@ -699,7 +693,7 @@ SelectTable.privateCreator.addicon = function () {
 };
 
 SelectTable.privateCreator.subicon = function () {
-    return absol.buildSvg(
+    return  Svg.ShareInstance.buildSvg(
         '<svg class="sub-icon" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
         ' <g transform="translate(0,-197)">' +
         '  <path d="m98.795 236.87v20.253h-97.589v-20.253z" style="fill-rule:evenodd;stroke-linejoin:round;stroke-width:2.411;"/>' +
