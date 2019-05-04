@@ -1,0 +1,168 @@
+button.absol-button {
+    text-align: left;
+    background-color: #ebebeb;
+    border: solid 1px #c0c0c0;
+    border-radius: 0.2em;
+    font-size: 1em;
+    overflow: hidden;
+    height: 2em;
+}
+
+.absol-icon-button {
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    background-color: #ebebeb;
+    border: solid 1px #c0c0c0;
+    border-radius: 0.2em;
+    font-size: 1em;
+    overflow: hidden;
+    line-height: 2em;
+    box-sizing: content-box;
+    height: 2em;
+    white-space: nowrap;  
+    
+}
+
+.absol-icon-button,
+.absol-icon-button *{
+    -webkit-user-select: none;  /* Chrome 49+ */
+    -moz-user-select: none;     /* Firefox 43+ */
+    -ms-user-select: none;      /* No support yet */
+    user-select: none;
+}
+
+
+.absol-icon-button:hover {
+    background-color: rgb(213, 213, 213);
+}
+
+.absol-icon-button:active {
+    -webkit-box-shadow: inset 0 0.2em 0.25em rgba(0, 0, 0, 0.125);
+    box-shadow: inset 0 0.2em 0.25em rgba(0, 0, 0, 0.125);
+}
+
+.absol-icon-button:focus {
+    outline: none;
+}
+
+.absol-icon-button-icon-container {
+    display: inline-block;
+    vertical-align: middle;
+    width: 2em;
+    height: 2em;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.0893617021);
+    line-height: inherit;
+    box-sizing: border-box;
+}
+
+.absol-icon-button-icon-container>i {
+    font-size: 1em;
+    color: rgb(146, 146, 146);
+    line-height: inherit;
+}
+
+.absol-icon-button-icon-container>svg {
+    width: 1em;
+    height: 1em;
+}
+
+.absol-icon-button-text-container:empty,
+.absol-icon-button-icon-container:empty {
+    display: none;
+}
+
+.absol-icon-button-text-container {
+    border-left: solid 1px #c0c0c0;
+    display: inline-block;
+    vertical-align: middle;
+    height: 2em;
+    box-sizing: border-box;
+    line-height: 2em;
+    text-align: center;
+}
+
+.absol-icon-button-text-container>span,
+.absol-icon-button-text-container>div {
+    font-size: 1em;
+    text-align: center;
+    margin-left: 0.7em;
+    margin-right: 0.7em;
+    line-height: inherit;
+}
+
+.absol-icon-button.primary,
+.absol-button.primary {
+    border-color: #357ebd;
+    background-color: #428bca;
+    color: white;
+}
+
+.absol-icon-button.primary .absol-icon-button-icon-container>i {
+    color: white;
+}
+
+.absol-icon-button.primary .absol-icon-button-text-container {
+    border-left-color: #357ebd;
+}
+
+.absol-icon-button.success,
+.absol-button.success {
+    border-color: #398439;
+    background-color: #47a447;
+    color: white;
+}
+
+.absol-icon-button.success .absol-icon-button-icon-container>i {
+    color: white;
+}
+
+.absol-icon-button.success .absol-icon-button-text-container {
+    border-left-color: #398439;
+}
+
+.absol-icon-button.warning,
+.absol-button.warning {
+    background-color: #ed9c28;
+    border-color: #d58512;
+    color: white;
+}
+
+.absol-icon-button.warning .absol-icon-button-icon-container>i {
+    color: white;
+}
+
+.absol-icon-button.warning .absol-icon-button-text-container {
+    border-left-color: #d58512;
+}
+
+.absol-icon-button.danger,
+.absol-button.danger {
+    background-color: #d2322d;
+    border-color: #ac2925;
+    color: white;
+}
+
+.absol-icon-button.danger .absol-icon-button-icon-container>i {
+    color: white;
+}
+
+.absol-icon-button.danger .absol-icon-button-text-container {
+    border-left-color: #ac2925;
+}
+
+.absol-icon-button.info,
+.absol-button.info {
+    background-color: #5bc0de;
+    border-color: #46b8da;
+    color: white;
+}
+
+.absol-icon-button.info .absol-icon-button-icon-container>i {
+    color: white;
+}
+
+.absol-icon-button.info .absol-icon-button-text-container {
+    border-left-color: #46b8da;
+}
