@@ -12,7 +12,12 @@ import SearcherStyleText from './css/searcher.css';
 import './js/SelectTable';
 import SelectTableStyleText from './css/selecttable.css';
 
-var styleText = [IconButtonStyleText, SelectTableStyleText, ScrollerStyleText, SearcherStyleText].join('\n');
+import './js/Menu';
+import MenuStyleText from './css/menu.css';
+
+
+
+var styleText = [IconButtonStyleText, SelectTableStyleText, ScrollerStyleText, SearcherStyleText, MenuStyleText].join('\n');
 var AComp = {
     core: Acore,
     $style: Acore._('style').addTo(document.head),

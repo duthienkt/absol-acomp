@@ -1,0 +1,175 @@
+.absol-ico {
+    width: 1em;
+    height: 1em;
+}
+
+.absol-button {
+    white-space: normal;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.absol-dropdown {
+    position: relative;
+}
+
+.absol-dropdown-content {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    top: 100%;
+}
+
+.absol-dropdown.top>.absol-dropdown-content {
+    top: auto;
+    bottom: 100%;
+}
+
+.absol-dropdown.overlap-left>.absol-dropdown-content {
+    left: auto;
+    right: 0;
+}
+
+.absol-dropright {
+    position: relative;
+}
+
+.absol-dropright-content {
+    z-index: 1;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.absol-drop-hidden>.absol-dropdown-content,
+.absol-drop-hidden>.absol-dropright-content {
+    visibility: hidden;
+}
+
+
+
+.absol-hmenu {
+    display: inline-block;
+    background-color: rgb(33, 33, 33);
+
+}
+
+.absol-hmenu>.absol-dropdown {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.absol-hmenu-button:hover,
+.absol-hmenu .absol-hmenu-button-hover {
+    background-color: rgb(80, 80, 80);
+}
+
+.absol-hmenu-button {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.absol-hmenu-button:focus {
+    outline: none;
+}
+
+.absol-hmenu-button,
+.absol-vmenu-button {
+    color: rgb(200, 200, 200);
+    height: 100%;
+    background-color: transparent;
+    font-size: 1em;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+.absol-hmenu-button {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.absol-vmenu {}
+
+.absol-hmenu .absol-dropdown-content,
+.absol-hmenu .absol-dropright-content {
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    background-color: rgb(37, 37, 38);
+    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+}
+
+.absol-vmenu-button {
+    min-width: 10em;
+    text-align: left;
+    padding-left: 2em;
+    padding-right: 2em;
+    height: 1.8em;
+    line-height: 1.8em;
+    white-space: nowrap;
+}
+
+.absol-vmenu-button-text,
+.absol-vmenu-button-key {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.absol-vmenu-button-key {
+    font-style: italic;
+    min-width: 7em;
+    text-align: right;
+    margin-left: 1em;
+}
+
+.absol-vmenu-arrow {
+    display: inline-block;
+    vertical-align: middle;
+    width: 0;
+    /* margin-right: -0.3em;
+    margin-left: 3em; */
+}
+
+.absol-menu-item-disable .absol-vmenu-arrow {
+    display: none;
+}
+
+.absol-vmenu-button:hover,
+.absol-vmenu .absol-vmenu-button-hover {
+    background-color: rgb(9, 71, 113);
+}
+
+.absol-menu-item-disable .absol-vmenu-button:hover,
+.absol-menu-item-disable .absol-vmenu .absol-vmenu-button-hover,
+.absol-menu-item-disable .absol-hmenu-button:hover,
+.absol-menu-item-disable .absol-hmenu .absol-hmenu-button-hover {
+    background-color: transparent;
+}
+
+.absol-vmenu-line {
+    text-align: center;
+    padding: 0.2em 1em;
+}
+
+.absol-vmenu-line>div {
+    height: 1px;
+    background-color: rgb(97, 97, 97);
+}
+
+.absol-menu-item-disable {}
+
+.absol-menu-item-disable button {
+    color: rgb(100, 100, 100);
+}
