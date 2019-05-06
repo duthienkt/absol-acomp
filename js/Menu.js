@@ -412,7 +412,7 @@ HMenu.eventHandler.pressItem = function (event) {
     if (event.menuItem.items && event.menuItem.items.length > 0 && !(this.activeTab >= 0)) {
         this.activeTab = event.menuItem._tabIndex;
         setTimeout(function () {
-            absol.$('body').once('click', this.eventHandler.clickSomewhere, false);
+           $('body').once('click', this.eventHandler.clickSomewhere, false);
         }.bind(this), 100);
     }
     else {
@@ -431,7 +431,7 @@ HMenu.eventHandler.clickSomewhere = function (event) {
     if (event.menuItem) {
         //  wait for next time
         setTimeout(function () {
-            absol.$('body').once('click', this.eventHandler.clickSomewhere, false);
+           $('body').once('click', this.eventHandler.clickSomewhere, false);
         }.bind(this), 100);
     }
     else {

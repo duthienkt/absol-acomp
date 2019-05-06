@@ -122,7 +122,7 @@ VScroller.eventHandler.scrollScrollbar = function (event) {
 
 
 function Scrollbar() {
-  
+
     var res = _({
         class: ['absol-scrollbar', 'absol-hidden'],
         extendEvent: 'scroll',
@@ -153,7 +153,7 @@ Scrollbar.property.hidden = {
 
 
 function VScrollbar() {
- 
+
     var res = _({
         tag: 'scrollbar',
     });
