@@ -178,14 +178,14 @@ VMenuItem.eventHandler = {};
 VMenuItem.eventHandler.enterButton = function (event) {
     event.menuItem = this;
     var newEvent = EventEmitter.copyEvent(event);
-    this.emit('enter', newEvent);
+    this.emit('enter', newEvent, this);
 };
 
 
 VMenuItem.eventHandler.pressItem = function (event) {
     var newEvent = EventEmitter.copyEvent(event, { target: this });
 
-    this.emit('press', newEvent);
+    this.emit('press', newEvent, this);
 };
 
 VMenuItem.eventHandler.clickButton = function (event) {
@@ -193,7 +193,7 @@ VMenuItem.eventHandler.clickButton = function (event) {
     event.menuItem = this;
     event.vmenuItem = this;
     var newEvent = EventEmitter.copyEvent(event, { target: this });
-    this.emit('press', newEvent);
+    this.emit('press', newEvent, this);
 };
 
 
@@ -278,7 +278,7 @@ VMenu.eventHandler.enterItem = function (event) {
 
 
 VMenu.eventHandler.pressItem = function (event) {
-    this.emit('press', EventEmitter.copyEvent(event, { target: this }));
+    this.emit('press', EventEmitter.copyEvent(event, { target: this }), this);
 };
 
 
@@ -360,16 +360,16 @@ HMenuItem.eventHandler = {};
 HMenuItem.eventHandler.clickButton = function (event) {
     event.menuItem = this;
     event.hmenuItem = this;
-    this.emit('press', EventEmitter.copyEvent(event, { target: this }));
+    this.emit('press', EventEmitter.copyEvent(event, { target: this }), this);
 };
 
 HMenuItem.eventHandler.enterButton = function (event) {
     event.menuItem = this;
-    this.emit('enter', EventEmitter.copyEvent(event, { target: this }));
+    this.emit('enter', EventEmitter.copyEvent(event, { target: this }), this);
 };
 
 HMenuItem.eventHandler.pressItem = function (event) {
-    this.emit('press', EventEmitter.copyEvent(event, { target: this }));
+    this.emit('press', EventEmitter.copyEvent(event, { target: this }),this);
 };
 
 HMenuItem.prototype = {};
@@ -416,7 +416,7 @@ HMenu.eventHandler.pressItem = function (event) {
         }.bind(this), 100);
     }
     else {
-        this.emit('press', event);
+        this.emit('press', event, this);
     }
 };
 
