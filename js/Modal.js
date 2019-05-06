@@ -1,7 +1,7 @@
 import Acore from "../ACore";
 
 function Modal() {
-    var $ = Acore;
+    var $ = Acore.$;
     var _ = Acore._;
 
     var res = _({
