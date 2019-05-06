@@ -15,9 +15,12 @@ import SelectTableStyleText from './css/selecttable.css';
 import './js/Menu';
 import MenuStyleText from './css/menu.css';
 
+import './js/ContextMenu';
+import ContextMenuStyleText from './css/contextmenu.css';
 
 
-var styleText = [IconButtonStyleText, SelectTableStyleText, ScrollerStyleText, SearcherStyleText, MenuStyleText].join('\n');
+
+var styleText = [IconButtonStyleText, SelectTableStyleText, ScrollerStyleText, SearcherStyleText, MenuStyleText, ContextMenuStyleText].join('\n');
 var AComp = {
     core: Acore,
     $style: Acore._('style').addTo(document.head),

@@ -167,7 +167,7 @@ SelectTable.eventHandler.addAllBtnClick = function (event) {
     if (this.searching) {
         this.eventHandler.searchTextInputModify(event);
     }
-    this.emit('addall', EventEmiiter.copyEvent(event, {}), this);
+    this.emit('addall', EventEmitter.copyEvent(event, {}), this);
     this.updateScroller();
 };
 
@@ -176,7 +176,7 @@ SelectTable.eventHandler.removeAllBtnClick = function (event) {
     if (this.searching) {
         this.eventHandler.searchTextInputModify(event);
     }
-    this.emit('removeall', EventEmiiter.copyEvent(event, {}), this);
+    this.emit('removeall', EventEmitter.copyEvent(event, {}), this);
     this.updateScroller();
 };
 
@@ -412,11 +412,11 @@ SelectTable.property.selectedItems = {
                         requestmove: function (event) {
                             if (this.parentElement == $selectedItemsContainer) {
                                 this.addTo($nonselectedItemsContainer);
-                                self.emit('remove', EventEmiiter.copyEvent(event, { item: item }), self);
+                                self.emit('remove', EventEmitter.copyEvent(event, { item: item }), self);
                             }
                             else {
                                 this.addTo($selectedItemsContainer);
-                                self.emit('add', EventEmiiter.copyEvent(event, { item: item }), self);
+                                self.emit('add', EventEmitter.copyEvent(event, { item: item }), self);
                             }
                             self.updateScroller();
                             self.requestSort();
@@ -457,11 +457,11 @@ SelectTable.property.nonselectedItems = {
                         requestmove: function (event) {
                             if (this.parentElement == $selectedItemsContainer) {
                                 this.addTo($nonselectedItemsContainer);
-                                self.emit('remove', EventEmiiter.copyEvent(event, { item: item }), self);
+                                self.emit('remove', EventEmitter.copyEvent(event, { item: item }), self);
                             }
                             else {
                                 this.addTo($selectedItemsContainer);
-                                self.emit('add', EventEmiiter.copyEvent(event, { item: item }), self);
+                                self.emit('add', EventEmitter.copyEvent(event, { item: item }), self);
                             }
                             self.updateScroller();
                             self.requestSort();
@@ -508,7 +508,7 @@ SelectTable.property.selectedSearchItems = {
                                     }
                                     return false;
                                 }.bind(this));
-                                table.emit('remove', EventEmiiter.copyEvent(event, { item: item }), table);
+                                table.emit('remove', EventEmitter.copyEvent(event, { item: item }), table);
 
                             }
                             else {
@@ -520,7 +520,7 @@ SelectTable.property.selectedSearchItems = {
                                     }
                                     return false;
                                 }.bind(this));
-                                table.emit('add', EventEmiiter.copyEvent(event, { item: item }), table);
+                                table.emit('add', EventEmitter.copyEvent(event, { item: item }), table);
 
                             }
                             table.updateScroller();
@@ -567,7 +567,7 @@ SelectTable.property.nonselectedSearchItems = {
                                     }
                                     return false;
                                 }.bind(this));
-                                table.emit('remove', EventEmiiter.copyEvent(event, { item: item }), table);
+                                table.emit('remove', EventEmitter.copyEvent(event, { item: item }), table);
                             }
                             else {
                                 this.addTo($selectedSearchItemsContainer);
@@ -578,7 +578,7 @@ SelectTable.property.nonselectedSearchItems = {
                                     }
                                     return false;
                                 }.bind(this));
-                                table.emit('add', EventEmiiter.copyEvent(event, { item: item }), table);
+                                table.emit('add', EventEmitter.copyEvent(event, { item: item }), table);
 
                             }
                             table.updateScroller();
