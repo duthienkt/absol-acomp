@@ -42,4 +42,6 @@ Modal.property.show = {
 };
 
 
+Acore.creator.modal = Modal;
+
 export default Modal;
