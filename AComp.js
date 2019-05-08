@@ -22,11 +22,14 @@ import './js/Modal';
 import ModalStyleText from './css/modal.css';
 
 
+import './js/ImageViewer';
+import ImageViewerStyleText from './css/imageviewer.css';
+
 
 var styleText = [IconButtonStyleText, SelectTableStyleText,
     ScrollerStyleText, SearcherStyleText,
     MenuStyleText, ContextMenuStyleText,
-    ModalStyleText].join('\n');
+    ModalStyleText, ImageViewerStyleText].join('\n');
 var AComp = {
     core: Acore,
     $style: Acore._('style').addTo(document.head),
