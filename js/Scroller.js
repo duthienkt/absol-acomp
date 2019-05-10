@@ -5,20 +5,21 @@ import OOP from "../../HTML5/OOP";
 var _ = Acore._;
 var $ = Acore.$;
 
-(function () {
+Acore.$scrollStyle = (function () {
     var element = _('style#vscroller-style');
     element.innerHTML = [
-        '.absol-vscroller-viewport{ margin-right: ' + (-17) + 'px;  min-width: calc(100% + '+(17)+'px);}',
-        '.absol-hscroller-viewport{ margin-bottom: ' + (-17) + 'px;  min-height: calc(100% + '+(17)+'px);}'
+        '.absol-vscroller-viewport{ margin-right: ' + (-17) + 'px;  min-width: calc(100% + ' + (17) + 'px);}',
+        '.absol-hscroller-viewport{ margin-bottom: ' + (-17) + 'px;  min-height: calc(100% + ' + (17) + 'px);}'
     ].join('\n');
     document.head.appendChild(element);
 
     Dom.getScrollSize().then(function (size) {
         element.innerHTML = [
-            '.absol-vscroller-viewport{ margin-right: ' + (-size.width) + 'px; min-width: calc(100% + '+(size.width)+'px);}',
-            '.absol-hscroller-viewport{ margin-bottom: ' + (-size.height) + 'px; min-height: calc(100% + '+(size.height)+'px);}'
+            '.absol-vscroller-viewport{ margin-right: ' + (-size.width) + 'px; min-width: calc(100% + ' + (size.width) + 'px);}',
+            '.absol-hscroller-viewport{ margin-bottom: ' + (-size.height) + 'px; min-height: calc(100% + ' + (size.height) + 'px);}'
         ].join('\n');
     });
+    return element;
 }
 )();
 
@@ -155,11 +156,11 @@ function HScroller() {
 
 HScroller.eventHandler = {};
 
-HScroller.eventHandler.scrollViewport = function(event){
+HScroller.eventHandler.scrollViewport = function (event) {
     this.$hscrollbar.outerWidth = this.$viewport.clientWidth;
     this.$hscrollbar.innerWidth = this.$viewport.scrollWidth;
     this.$hscrollbar.innerOffset = this.$viewport.scrollLeft;
-} ;
+};
 
 HScroller.eventHandler.scrollScrollbar = function (event) {
     this.$viewport.scrollLeft = this.$hscrollbar.innerOffset;
