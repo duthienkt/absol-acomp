@@ -4,7 +4,7 @@ function Draggable(element) {
     if (!element) element = Acore._('div');
     else Acore.$(element);
     element.defineEvent(['predrag', 'drag', 'begindrag', 'enddrag']);
-    var body = absol.$('body');
+    var body = Acore.$('body');
     var isMoving = false;
     var firstMove = false;
     var offsetX;
