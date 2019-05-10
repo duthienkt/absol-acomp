@@ -1,0 +1,167 @@
+.vmedia-no-show {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1;
+    height: 1;
+    z-index: -100000;
+    opacity: 0;
+}
+
+.vmedia-no-select,
+.vmedia-no-select * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+coccocgrammar {
+    display: none;
+}
+
+.vmedia-media-input {
+    box-sizing: border-box;
+    border: solid 1px rgba(0, 0, 0, 0.1)
+}
+
+.vmedia-media-input-text-container {
+    position: relative;
+    min-height: 2.5em;
+}
+
+.vmedia-media-input-text-container-editor:focus {
+    outline: none;
+}
+
+.vmedia-media-input-text-container-editor img {
+    display: none;
+}
+
+.vmedia-media-input-text-container-editor * {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-decoration: inherit;
+    color: inherit;
+    background: none;
+    padding: 0;
+    margin: 0;
+    white-space: pre;
+}
+
+.vmedia-media-input-text-container-editor {
+    min-height: 2em;
+    padding-left: 0.5em;
+    padding-top: 0.25em;
+    padding-bottom: 0.25em;
+    margin-right:  7.75em;
+    box-sizing: border-box;
+    max-height: 6.66666666em;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.vmedia-media-input-text-container-buttons {
+    position: absolute;
+    right: 0;
+    bottom: 0.25em;
+}
+
+.vmedia-media-input-text-container-buttons button {
+    width: 2em;
+    height: 2em;
+    font-size: 1em;
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+    border: none;
+    background-color: transparent;
+    border-radius: 0.4em;
+}
+
+.vmedia-media-input-text-container-buttons button svg {
+    height: 1.25em;
+    width: 1.25em;
+}
+
+.vmedia-media-input-text-container-buttons button:hover {
+    background-color: rgba(91, 192, 222, 0.1);
+}
+
+.vmedia-media-input-text-container-buttons button:active {
+    background-color: rgba(91, 192, 222, 0.4);
+}
+
+.vmedia-media-input-text-container-buttons button svg.send {
+    fill: rgba(66, 133, 244, 0.7);
+}
+
+.vmedia-media-input-text-container-buttons button svg.add-file,
+.vmedia-media-input-text-container-buttons button svg.add-image {
+    fill: rgba(66, 66, 66, 0.5);
+}
+
+.vmedia-media-input-text-container-buttons button:focus {
+    outline: none;
+}
+
+.vmedia-media-input-imagepreview-container {
+    white-space: normal;
+}
+
+.vmedia-media-input:not(.dragover) .vmedia-media-input-dropover {
+    display: none;
+}
+
+.vmedia-media-input-dropover {
+    display: inline-block;
+    width: 7em;
+    height: 7em;
+}
+
+.vmedia-media-input-dropover>svg {
+    width: 7em;
+    height: 7em;
+}
+
+.vmedia-media-input-imagepreview-container .vmedia-media-input-filepreview,
+.vmedia-media-input-imagepreview-container .vmedia-media-input-imagepreview {
+    margin: 0.3em;
+    vertical-align: middle;
+}
+
+.vmedia-media-input-filepreview,
+.vmedia-media-input-imagepreview {
+    position: relative;
+    display: inline-block;
+}
+
+.vmedia-media-input-imagepreview img {
+    height: 2.5em;
+    width: auto;
+}
+
+.vmedia-media-input-filepreview svg.attachment {
+    height: 2em;
+    width: 2em;
+}
+
+.vmedia-media-input-filepreview svg.times,
+.vmedia-media-input-imagepreview svg.times {
+    position: absolute;
+    top: 0.1em;
+    right: 0.1em;
+    width: 1em;
+    height: 1em;
+    fill: rgba(69, 69, 69, 0.6);
+}
+
+.vmedia-media-input-filepreview svg.times:hover,
+.vmedia-media-input-imagepreview svg.times:hover {
+    fill: rgba(144, 144, 144, 0.6);
+}
+
+.vmedia-media-input-filepreview svg.times:active,
+.vmedia-media-input-imagepreview svg.times:active {
+    fill: rgba(220, 220, 240, 0.6);
+}
