@@ -7,18 +7,24 @@ var $ = Acore.$;
 
 (function () {
     var element = _('style#vscroller-style');
-    element.innerHTML = '.absol-vscroller-viewport{ margin-right: ' + (-17) + 'px; }\n';
+    element.innerHTML = [
+        '.absol-vscroller-viewport{ margin-right: ' + (-17) + 'px;  min-width: calc(100% + '+(17)+'px);}',
+        '.absol-hscroller-viewport{ margin-bottom: ' + (-17) + 'px;  min-height: calc(100% + '+(17)+'px);}'
+    ].join('\n');
     document.head.appendChild(element);
 
     Dom.getScrollSize().then(function (size) {
-        element.innerHTML = '.absol-vscroller-viewport{ margin-right: ' + (-size.width) + 'px; }\n';
+        element.innerHTML = [
+            '.absol-vscroller-viewport{ margin-right: ' + (-size.width) + 'px; min-width: calc(100% + '+(size.width)+'px);}',
+            '.absol-hscroller-viewport{ margin-bottom: ' + (-size.height) + 'px; min-height: calc(100% + '+(size.height)+'px);}'
+        ].join('\n');
     });
 }
 )();
 
 function VScroller() {
     var res = _({
-        class: 'absol-scroller',
+        class: 'absol-vscroller',
         child: ['.absol-vscroller-viewport',
             {
                 class: ['absol-scrollbar-container', 'vertical'],
@@ -46,8 +52,6 @@ VScroller.prototype.requestUpdateSize = function () {
     if (this._isRequestingUpdateSize) return this.sync;
     this._isRequestingUpdateSize = true;
     this.sync = this.sync.then(function () {
-        // var maxHeight = this.getComputedStyleValue('max-height');
-        // if (maxHeight && maxHeight.length > 0 && maxHeight != 'none') this.$viewport.addStyle('max-height', 'inherit');
         this.$vscrollbar.outerHeight = this.$viewport.clientHeight;
         this.$vscrollbar.innerHeight = this.$viewport.scrollHeight - 2;
         this.$vscrollbar.innerOffset = this.$viewport.scrollTop;
@@ -121,6 +125,73 @@ VScroller.eventHandler.scrollScrollbar = function (event) {
 };
 
 
+
+
+
+function HScroller() {
+    var res = _({
+        class: 'absol-hscroller',
+        child: ['.absol-hscroller-viewport',
+            {
+                class: ['absol-scrollbar-container', 'horizontal'],
+                child: 'hscrollbar'
+            }
+        ]
+    });
+    res.eventHandler = OOP.bindFunctions(res, HScroller.eventHandler);
+    res.sync = res.afterAttached();
+    res.$hscrollbar = $('hscrollbar', res).on('scroll', res.eventHandler.scrollScrollbar);
+    res.$viewport = $('.absol-hscroller-viewport', res)
+        .on('scroll', res.eventHandler.scrollViewport);
+    OOP.extends(res.$viewport, {
+        removeChild: function () {
+            this.super.apply(this, arguments);
+            res.requestUpdateSize();
+            return res;
+        }
+    })
+    return res;
+};
+
+HScroller.eventHandler = {};
+
+HScroller.eventHandler.scrollViewport = function(event){
+    this.$hscrollbar.outerWidth = this.$viewport.clientWidth;
+    this.$hscrollbar.innerWidth = this.$viewport.scrollWidth;
+    this.$hscrollbar.innerOffset = this.$viewport.scrollLeft;
+} ;
+
+HScroller.eventHandler.scrollScrollbar = function (event) {
+    this.$viewport.scrollLeft = this.$hscrollbar.innerOffset;
+};
+
+
+Object.assign(HScroller.prototype, VScroller.prototype);
+
+HScroller.prototype.requestUpdateSize = function () {
+    // return;
+    if (this._isRequestingUpdateSize) return this.sync;
+    this._isRequestingUpdateSize = true;
+    this.sync = this.sync.then(function () {
+        this.$hscrollbar.outerWidth = this.$viewport.clientWidth;
+        this.$hscrollbar.innerWidth = this.$viewport.scrollWidth - 2;
+        this.$hscrollbar.innerOffset = this.$viewport.scrollLeft;
+        if (this.$hscrollbar.innerWidth <= this.$hscrollbar.outerWidth) {
+            this.$hscrollbar.hidden = true;
+            this.addClass('disabled');
+        }
+        else {
+            this.removeClass('disabled');
+            this.$hscrollbar.hidden = false;
+        }
+        this._isRequestingUpdateSize = false;
+    }.bind(this));
+    return this.sync;
+};
+
+
+
+
 function Scrollbar() {
 
     var res = _({
@@ -162,6 +233,7 @@ function VScrollbar() {
     var body = $('body');
     var top0, innerOffset0;
     var pointerMoveEventHandler = function (event) {
+        event.preventDefault();
         var dy = event.clientY - top0;
         var newInnerOffset = innerOffset0 + dy * (res.innerHeight / res.outerHeight) * (res.outerHeight / res.getBoundingClientRect().height);
         if (newInnerOffset + res.outerHeight > res.innerHeight)
@@ -260,6 +332,122 @@ VScrollbar.property = {
     }
 };
 
+
+
+
+
+function HScrollbar() {
+
+    var res = _({
+        tag: 'scrollbar',
+    });
+
+    var body = $('body');
+    var left0, innerOffset0;
+    var pointerMoveEventHandler = function (event) {
+        event.preventDefault();
+        var dy = event.clientX - left0;
+        var newInnerOffset = innerOffset0 + dy * (res.innerWidth / res.outerWidth) * (res.outerWidth / res.getBoundingClientRect().width);
+        if (newInnerOffset + res.outerWidth > res.innerWidth)
+            newInnerOffset = res.innerWidth - res.outerWidth;
+        if (newInnerOffset < 0) newInnerOffset = 0;
+        res.innerOffset = newInnerOffset;
+        //todo
+        event.innerOffset = newInnerOffset;
+        res.emit('scroll', event);
+    };
+
+    var finishEventHandler = function (event) {
+        body.off('pointerleave', finishEventHandler);
+        body.off('pointerup', finishEventHandler);
+        body.off('pointermove', pointerMoveEventHandler);
+    };
+
+    var pointerDownEventHandler = function (event) {
+        var boundRes = res.getBoundingClientRect();
+        var boundButton = res.$button.getBoundingClientRect();
+        left0 = event.clientX;
+        if (event.target == res.$button) {
+            innerOffset0 = res.innerOffset;
+        }
+        else {
+            var newInnerOffset = Math.map(left0 - boundButton.width / 2 - boundRes.left, 0, boundRes.width, 0, res.innerWidth);
+            if (newInnerOffset + res.outerWidth > res.innerWidth)
+                newInnerOffset = res.innerWidth - res.outerWidth;
+            if (newInnerOffset < 0) newInnerOffset = 0;
+            res.innerOffset = newInnerOffset;
+            //todo
+            event.innerOffset = newInnerOffset;
+            innerOffset0 = newInnerOffset;
+            res.emit('scroll', event);
+        }
+
+        body.on('pointerleave', finishEventHandler);
+        body.on('pointerup', finishEventHandler);
+        body.on('pointermove', pointerMoveEventHandler);
+
+    };
+
+    res.on('pointerdown', pointerDownEventHandler, true);
+
+
+    return res;
+}
+
+
+
+HScrollbar.prototype.updateValue = function () {
+    this.$button.addStyle('width', Math.min(this.outerWidth / this.innerWidth, 1) * 100 + '%');
+    this.$button.addStyle('left', this.innerOffset / this.innerWidth * 100 + '%');
+};
+
+
+HScrollbar.property = {
+    innerOffset: {
+        set: function (value) {
+            value = value || 0;
+            if (this._innerOffset != value) {
+                this._innerOffset = value;
+                this.updateValue();
+            }
+        },
+        get: function () {
+            return this._innerOffset || 0;
+        }
+    },
+
+    innerWidth: {
+        set: function (value) {
+            value = value || 1;
+            value = Math.max(value, 1);
+            if (this._innerWidth != value) {
+                this._innerWidth = value;
+                this.updateValue();
+            }
+        },
+        get: function () {
+            return this._innerWidth || 1;
+        }
+    },
+    outerWidth: {
+        set: function (value) {
+            value = value || 0;
+            value = Math.max(value, 0);
+            if (this._outerWidth != value) {
+                this._outerWidth = value;
+                this.updateValue();
+            }
+        },
+        get: function () {
+            return this._outerWidth || 0;
+        }
+    }
+};
+
+
+
 Acore.creator.vscrollbar = VScrollbar;
+Acore.creator.hscrollbar = HScrollbar;
 Acore.creator.scrollbar = Scrollbar;
 Acore.creator.vscroller = VScroller;
+Acore.creator.hscroller = HScroller;

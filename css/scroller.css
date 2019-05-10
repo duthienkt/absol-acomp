@@ -1,15 +1,16 @@
-.absol-scroller {
+.absol-vscroller {
     position: relative;
     overflow-x: hidden;
 }
 
 
-.absol-scroller.disabled>.absol-vscroller-viewport {
+.absol-vscroller.disabled>.absol-vscroller-viewport {
     overflow-y: visible;
     margin-right: 0px;
+    min-width: 100%;
 }
 
-.absol-scroller.disabled {
+.absol-vscroller.disabled {
     overflow: visible;
     overflow-x: visible;
 
@@ -19,33 +20,65 @@
 .absol-vscroller-viewport {
     overflow-y: scroll;
     box-sizing: content-box;
+
 }
 
-.absol-scroller>.absol-vscroller-viewport {
+.absol-vscroller>.absol-vscroller-viewport {
     max-height: 100%;
 }
 
-.absol-scroller.limited-height>.absol-vscroller-viewport {
+.absol-vscroller.limited-height>.absol-vscroller-viewport {
     max-height: inherit;
 }
 
 
-.absol-scroller>.absol-scrollbar-container {
+/************  hscroller  ***********/
+.absol-hscroller {
+    position: relative;
+    overflow-y: hidden;
+}
+
+.absol-hscroller.disabled {
+    overflow: visible;
+    overflow-y: visible;
+}
+
+.absol-hscroller-viewport {
+    overflow-x: scroll;
+    box-sizing: content-box;
+    min-height: calc(100% + 17px);
+}
+
+.absol-hscroller.disabled>.absol-hscroller-viewport {
+    overflow-y: visible;
+    margin-right: 0px;
+}
+
+
+.absol-hscroller>.absol-hscroller-viewport {
+    max-width: 100%;
+}
+
+
+/********** scroll bar *********************/
+.absol-scrollbar-container {
     position: absolute;
     right: 0;
-    top: 0;
+    bottom: 0;
     z-index: 10;
 }
 
-.absol-scroller>.absol-scrollbar-container.vertical {
-    right: 0;
-}
-
 .absol-scrollbar-container.vertical {
+    top: 0;
     width: 7px;
-    bottom: 0;
-
 }
+
+.absol-scrollbar-container.horizontal {
+    height: 7px;
+    left: 0;
+}
+
+
 
 .absol-scrollbar-container>.absol-scrollbar {
     width: 100%;
@@ -56,6 +89,12 @@
     left: 1px;
     right: 1px;
     top: 0;
+}
+
+.absol-scrollbar-container.horizontal>.absol-scrollbar>.absol-scrollbar-button {
+    top: 1px;
+    bottom: 1px;
+    left: 0;
 }
 
 .absol-scrollbar {
