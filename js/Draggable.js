@@ -63,10 +63,10 @@ function Draggable(element) {
         fontSize = this.getFontSize();
         offsetX = event.clientX;
         offsetY = event.clientY;
-        left0 = element.getComputedStyleValue('left').replace('px', '');
-        top0 = element.getComputedStyleValue('top').replace('px', '');
-        left0em = parseFloat(left0) / fontSize;
-        top0em = parseInt(top0) / fontSize;
+        left0 = parseFloat(element.getComputedStyleValue('left').replace('px', ''));
+        top0 = parseFloat(element.getComputedStyleValue('top').replace('px', ''));
+        left0em = left0 / fontSize;
+        top0em = top0 / fontSize;
         event.x0 = left0;
         event.y0 = top0;
         event.y0em = left0em;
