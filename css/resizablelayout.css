@@ -1,0 +1,17 @@
+.absol-resizablelayout{
+    position: relative;
+}
+
+.absol-resizablelayout.debug *,
+.absol-resizablelayout.debug
+{
+    background-color: rgba(100, 100, 100, 0.1); 
+}
+
+.absol-resizablelayout-cell{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
