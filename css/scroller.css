@@ -50,8 +50,8 @@
 }
 
 .absol-hscroller.disabled>.absol-hscroller-viewport {
-    overflow-y: visible;
-    margin-right: 0px;
+    overflow-x: visible;
+    margin-bottom: 0px;
 }
 
 
