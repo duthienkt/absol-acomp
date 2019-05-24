@@ -1,6 +1,7 @@
 import Acore from "../ACore";
 import Dom from "../../HTML5/Dom";
 import OOP from "../../HTML5/OOP";
+import Element from "../../HTML5/Element";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -113,6 +114,28 @@ VScroller.prototype.removeChild = function () {
     return res;
 };
 
+VScroller.prototype.scrollInto = function (element) {
+    if (Element.prototype.isDescendantOf.call(element, this.$viewport)) {
+        var elementBound = element.getBoundingClientRect();
+        var viewportBound = this.$viewport.getBoundingClientRect();
+        var currentScrollTop = this.$viewport.scrollTop;
+        var newScrollTop = currentScrollTop;
+        if (elementBound.bottom > viewportBound.bottom) {
+            newScrollTop = currentScrollTop + (elementBound.bottom - viewportBound.bottom);
+        }
+        if (elementBound.top < viewportBound.top) {
+            newScrollTop = currentScrollTop - (viewportBound.top - elementBound.top);
+        }
+
+        if (newScrollTop != currentScrollTop) {
+            this.$viewport.scrollTop = newScrollTop;
+        }
+    }
+}
+
+
+
+
 VScroller.eventHandler = {};
 
 VScroller.eventHandler.scrollViewport = function (event) {
@@ -124,6 +147,8 @@ VScroller.eventHandler.scrollViewport = function (event) {
 VScroller.eventHandler.scrollScrollbar = function (event) {
     this.$viewport.scrollTop = this.$vscrollbar.innerOffset;
 };
+
+
 
 
 

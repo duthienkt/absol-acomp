@@ -31,13 +31,16 @@ import MediaInputStyleText from './css/mediainput.css';
 import './js/ResizableLayout';
 import ResizableLayoutStyleText from './css/resizablelayout.css';
 
+import './js/AutoCompleteInput';
+import AutoCompleteInputLayoutStyleText from './css/autocompleteinput.css';
+
 import './js/TextClipboard';
 
 var styleText = [IconButtonStyleText, SelectTableStyleText,
     ScrollerStyleText, SearcherStyleText,
     MenuStyleText, ContextMenuStyleText,
     ModalStyleText, ImageViewerStyleText, MediaInputStyleText,
-    ResizableLayoutStyleText].join('\n');
+    ResizableLayoutStyleText, AutoCompleteInputLayoutStyleText].join('\n');
 var AComp = {
     core: Acore,
     $style: Acore._('style').addTo(document.head),
