@@ -8,6 +8,7 @@ var $ = Acore.$;
 
 function AutoComplateInput() {
     var res = _({
+        extendEvent:'change',
         class: 'absol-autocomplete-input',
         child: [
             'input[type="text"]',
@@ -41,6 +42,7 @@ function AutoComplateInput() {
     res._sessionIndex = 0;
     res._updatedSession = -1;
     res._cache = {};
+    OOP.drillProperty(res, res.$input, 'value');
 
     return res;
 }
@@ -86,6 +88,7 @@ AutoComplateInput.eventHandler.vscrollerClick = function (event) {
         this.$input.value = text;
         this._lastQuery = text;
         this.$dropdown.addStyle('display', 'none');
+        this.emit('change', { target: this, value: text }, this);
     }
 };
 
@@ -130,6 +133,7 @@ AutoComplateInput.eventHandler.keydown = function (event) {
         }
         this._lastQuery = text;
         this.$dropdown.addStyle('display', 'none');
+        this.emit('change', { target: this, value: text }, this);
     }
 };
 
