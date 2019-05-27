@@ -20,11 +20,9 @@ SearchObjectArrayAdapter.prototype.queryItems = function (query, mInput) {
         var start = text.toLocaleLowerCase().indexOf(query);
         if (start >= 0) {
             var hightlightedText = text.substr(0, start) + '<strong style="color:red">' + text.substr(start, query.length) + '</strong>' + text.substr(start + query.length);
-            return {
-                text: text,
-                object:object,
-                hightlightedText: hightlightedText
-            }
+            return Object.assign(object, {
+                __hightlightedText__: hightlightedText
+            });
         }
         else return null;
     }.bind(this)).filter(function (it) { return it !== null; })
@@ -35,7 +33,7 @@ SearchObjectArrayAdapter.prototype.onAttached = function (parent) {
     this.parent = parent;
     parent.getSelectedObject = function () {
         if (this._selectedIndex >= 0) {
-            return this.$poolItems[this._selectedIndex]._holderItem.object;
+            return this.$poolItems[this._selectedIndex]._holderItem;
         }
         else {
             return null;
@@ -55,7 +53,7 @@ SearchObjectArrayAdapter.prototype.getItemText = function (item, mInput) {
 
 SearchObjectArrayAdapter.prototype.getItemView = function (item, index, _, $, query, reuseItem, refParent, mInput) {
     if (reuseItem) {
-        reuseItem.childNodes[0].innerHTML = item.hightlightedText;
+        reuseItem.childNodes[0].innerHTML = item.__hightlightedText__;
         return reuseItem;
     }
     else
@@ -64,7 +62,7 @@ SearchObjectArrayAdapter.prototype.getItemView = function (item, index, _, $, qu
             child: {
                 tag: 'span',
                 props: {
-                    innerHTML: item.hightlightedText
+                    innerHTML: item.__hightlightedText__
                 }
             }
         })

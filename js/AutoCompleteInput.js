@@ -89,6 +89,7 @@ AutoComplateInput.eventHandler.vscrollerClick = function (event) {
         var text = this.getItemText(current._holderItem);
         this.$input.value = text;
         this._lastQuery = text;
+        this._selectedIndex = current._holderIndex;
         this.$dropdown.addStyle('display', 'none');
         this.emit('change', { target: this, value: text }, this);
     }
@@ -229,6 +230,7 @@ AutoComplateInput.prototype.pushData = function (data, sessionIndex, query) {
                     var newView = this.getItemView(item, i, _, $, query, reuseItem, this);
                     newView.addClass('absol-autocomplete-input-item');
                     newView._holderItem = item;
+                    newView._holderIndex = i;
                     if (i == this._selectedIndex)
                         newView.addClass('active');
                     if (this.$poolItems.length <= i) {
@@ -338,6 +340,7 @@ AutoComplateInput.property.adapter = {
         return this._adapter;
     }
 };
+
 
 
 Acore.creator.autocompleteinput = AutoComplateInput;
