@@ -11,30 +11,32 @@
 }
 
 
-.absol-autocomplete-input-dropdown{
+.absol-autocomplete-input-dropdown {
     position: absolute;
     left: 0;
-    top:100%;
+    top: 100%;
     min-width: 100%;
     z-index: 1005;
-    border:  solid 1px rgb(169, 169, 169);
+    border: solid 1px rgb(169, 169, 169);
     box-sizing: border-box;
     background-color: white;
 }
 
-.absol-autocomplete-input-dropdown.top{
+.absol-autocomplete-input-dropdown.top {
     top: auto;
     bottom: 100%;
 }
 
+.absol-autocomplete-input-item {
+    height: 30px;
+}
 
-.absol-autocomplete-input-item:hover{
+.absol-autocomplete-input-item:hover {
     background-color: rgb(169, 169, 169, 0.18605);
     cursor: pointer;
 }
 
 .absol-autocomplete-input-item.active,
-.absol-autocomplete-input-item.active:hover
-{
+.absol-autocomplete-input-item.active:hover {
     background-color: rgb(169, 169, 169, 0.37209);
 }

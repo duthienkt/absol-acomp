@@ -1,6 +1,8 @@
 import Acore from "../ACore";
 import OOP from "../../HTML5/OOP";
 import Dom from "../../HTML5/Dom";
+import SearchStringArrayAdapter from "./adapter/SearchStringArrayAdapter";
+import SearchObjectArrayAdapter from "./adapter/SearchObjectArrayAdapter";
 
 
 var _ = Acore._;
@@ -8,7 +10,7 @@ var $ = Acore.$;
 
 function AutoComplateInput() {
     var res = _({
-        extendEvent:'change',
+        extendEvent: 'change',
         class: 'absol-autocomplete-input',
         child: [
             'input[type="text"]',
@@ -309,6 +311,33 @@ AutoComplateInput.prototype.clearCache = function (old) {
         }
     }
 }
+
+AutoComplateInput.property = {};
+AutoComplateInput.property.adapter = {
+    set: function (value) {
+        if (value instanceof Array) {
+            if (value[0] == 'SearchStringArray') {
+                this._adapter = new SearchStringArrayAdapter(value[1], value[2]);
+            }
+            else if (value[0] == 'SearchObjectArray') {
+                this._adapter = new SearchObjectArrayAdapter(value[1], value[2]);
+            }
+            else {
+                throw new Error("Unknown adapter type name");
+            }
+        }
+        else {
+            this._adapter = value;
+        }
+        console.log(this.adapter);
+        if (this.adapter && this.adapter.onAttached) {
+            this.adapter.onAttached(this);
+        }
+    },
+    get: function () {
+        return this._adapter;
+    }
+};
 
 
 Acore.creator.autocompleteinput = AutoComplateInput;
