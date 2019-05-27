@@ -331,7 +331,6 @@ AutoComplateInput.property.adapter = {
         else {
             this._adapter = value;
         }
-        console.log(this.adapter);
         if (this.adapter && this.adapter.onAttached) {
             this.adapter.onAttached(this);
         }
