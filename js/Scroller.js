@@ -1,7 +1,7 @@
 import Acore from "../ACore";
-import Dom from "../../HTML5/Dom";
-import OOP from "../../HTML5/OOP";
-import Element from "../../HTML5/Element";
+import Dom from "absol/src/HTML5/Dom";
+import OOP from "absol/src/HTML5/OOP";
+import Element from "absol/src/HTML5/Element";
 
 var _ = Acore._;
 var $ = Acore.$;

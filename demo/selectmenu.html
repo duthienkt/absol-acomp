@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auto Complete Input</title>
+    <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
+    <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../dist/absol.js"></script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <script>
+        absol._({
+            tag: 'treelist', props: {
+                items: [{ text: 'l0i0', items: [{ text: 'l1i1' }, { text: 'l1i2' }, { text: 'l1i3' }, { text: 'l1i4' }] }, { text: 'l0i1' }, { text: 'l0i2' }, { text: 'l0i3' }, { text: 'l0i4' }]
+            }
+        }).addTo(document.body).on('press', function(event, sender){
+            console.log(event);
+        });
+
+    </script>
+    <pre><code class="js">    
+    </code>
+
+    </pre>
+</body>
+
+</html>

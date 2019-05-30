@@ -1,6 +1,6 @@
 import Acore from "../ACore";
-import OOP from "../../HTML5/OOP";
-import Dom from "../../HTML5/Dom";
+import OOP from "absol/src/HTML5/OOP";
+import Dom from "absol/src/HTML5/Dom";
 import SearchStringArrayAdapter from "./adapter/SearchStringArrayAdapter";
 import SearchObjectArrayAdapter from "./adapter/SearchObjectArrayAdapter";
 

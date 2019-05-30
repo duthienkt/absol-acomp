@@ -1,8 +1,8 @@
-import Dom from "../../HTML5/Dom";
+import Dom from "absol/src/HTML5/Dom";
 import Acore from "../ACore";
-import OOP from "../../HTML5/OOP";
-import { blobToFile, blobToArrayBuffer, dataURItoBlob } from "../../Converter/file";
-import Element from "../../HTML5/Element";
+import OOP from "absol/src/HTML5/OOP";
+import { blobToFile, blobToArrayBuffer, dataURItoBlob } from "absol/src/Converter/file";
+import Element from "absol/src/HTML5/Element";
 
 
 var MediaCore = new Dom({creator:Object.assign({}, Acore.creator)});
@@ -582,7 +582,7 @@ MediaCore.creator['add-file-ico'] = function () {
 MediaCore.creator['add-image-ico'] = function () {
     return absol.buildSvg(
         [
-            '<svg class="add-image" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">',
+            '<svg class="add-image" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="absol/src/HTML5/Elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">',
             '    <g transform="translate(0 -270.54)">',
             '        <path d="m24.73 288.69a5.9808 5.9808 0 0 1-5.9808 5.9808 5.9808 5.9808 0 0 1-5.9808-5.9808 5.9808 5.9808 0 0 1 5.9808-5.9808 5.9808 5.9808 0 0 1 5.9808 5.9808zm1.503-0.037a7.5843 7.5843 0 0 1-7.5843 7.5843 7.5843 7.5843 0 0 1-7.5843-7.5843 7.5843 7.5843 0 0 1 7.5843-7.5843 7.5843 7.5843 0 0 1 7.5843 7.5843z" style="fill-rule:evenodd;fill:#414141"/>',
             '        <path d="m17.869 284.42v3.4127h-3.4081v1.6066h3.4081v3.438h1.6061v-3.438h3.4432v-1.6066h-3.4432v-3.4127z" style="fill-rule:evenodd;fill:#414141"/>',

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auto Complete Input</title>
+    <script src="../dist/absol.js"></script>
+    <script src="https://volcanion.cf/ckeditor/ckeditor.js"></script>
+    <style>
+
+
+    </style>
+</head>
+
+<body>
+    <h1>CKEDITOR demo</h1>
+
+    <pre id="demo-a" style='color:#000000;background:#ffffff;'>        <span style='color:#7f0055; font-weight:bold; '>
+    var</span> englishDictionary = <span style='color:#7f0055; font-weight:bold; '>new</span> IFrameBridge(<span style='color:#7f0055; font-weight:bold; '>new</span> Worker(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>../dist/wordfinder.js</span><span style='color:#2a00ff; '>'</span>));
+    absol._({
+        tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>autocompleteinput</span><span style='color:#2a00ff; '>'</span>,
+        style: {
+            display: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>block</span><span style='color:#2a00ff; '>'</span>,
+            height: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>40px</span><span style='color:#2a00ff; '>'</span>,
+            <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>max-width</span><span style='color:#2a00ff; '>'</span>: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>500px</span><span style='color:#2a00ff; '>'</span>,
+            margin: <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>10px</span><span style='color:#2a00ff; '>"</span>
+        },
+        on: {
+            change: <span style='color:#7f0055; font-weight:bold; '>function</span> (event, sender) {
+                absol.$(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>span#selected-word</span><span style='color:#2a00ff; '>'</span>, selectedWord).innerHTML = event.value || sender.value;
+            }
+        },
+        props: {
+            adapter: {
+
+                queryItems: <span style='color:#7f0055; font-weight:bold; '>function</span> (query, mInput) {
+                    <span style='color:#7f0055; font-weight:bold; '>return</span> englishDictionary.invoke(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>find</span><span style='color:#2a00ff; '>'</span>, query).then(<span style='color:#7f0055; font-weight:bold; '>function</span> (texts) {
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> texts.<span style='color:#7f0055; font-weight:bold; '>map</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (text) {
+                            <span style='color:#7f0055; font-weight:bold; '>var</span> start = text.toLocaleLowerCase().<span style='color:#7f0055; font-weight:bold; '>indexOf</span>(query);
+                            <span style='color:#7f0055; font-weight:bold; '>if</span> (start >= 0) {
+                                <span style='color:#7f0055; font-weight:bold; '>var</span> hightlightedText = text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(0, start) + <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;strong style="color:red"></span><span style='color:#2a00ff; '>'</span> + text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(start, query.<span style='color:#7f0055; font-weight:bold; '>length</span>) + <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;/strong></span><span style='color:#2a00ff; '>'</span> + text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(start + query.<span style='color:#7f0055; font-weight:bold; '>length</span>);
+                                <span style='color:#7f0055; font-weight:bold; '>return</span> {
+                                    text: text,
+                                    hightlightedText: hightlightedText
+                                }
+                            }
+                            <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#7f0055; font-weight:bold; '>null</span>;
+                        }).<span style='color:#7f0055; font-weight:bold; '>filter</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (it) { <span style='color:#7f0055; font-weight:bold; '>return</span> it !== <span style='color:#7f0055; font-weight:bold; '>null</span>; })
+                    })
+                },
+
+                getItemText: <span style='color:#7f0055; font-weight:bold; '>function</span> (<span style='color:#7f0055; font-weight:bold; '>item</span>, mInput) {
+                    <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#7f0055; font-weight:bold; '>item</span>.text;
+                },
+
+                getItemView: <span style='color:#7f0055; font-weight:bold; '>function</span> (<span style='color:#7f0055; font-weight:bold; '>item</span>, index, _, $, query, reuseItem, refParent, mInput) {
+                    <span style='color:#7f0055; font-weight:bold; '>return</span> _({
+                        tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>div</span><span style='color:#2a00ff; '>'</span>,
+                        style: {
+                            height: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>30px</span><span style='color:#2a00ff; '>'</span>
+                        },
+                        child: {
+                            tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>span</span><span style='color:#2a00ff; '>'</span>,
+                            style: {
+                                lineHeight: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>1.2em</span><span style='color:#2a00ff; '>'</span>
+                            },
+                            props: {
+                                innerHTML: <span style='color:#7f0055; font-weight:bold; '>item</span>.hightlightedText
+                            }
+                        }
+                    })
+                }
+            }
+        }
+
+    }).addTo(document.body);
+
+    <span style='color:#7f0055; font-weight:bold; '>var</span> selectedWord = absol._(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;div style="height:30px">Selected: &lt;span id="selected-word">&lt;/span>&lt;/div></span><span style='color:#2a00ff; '>'</span>).addTo(document.body);
+    </pre>
+
+    <script>
+        CKEDITOR.replace('demo-a');
+
+        absol.Dom.addToResizeSystem(document.body);
+
+    </script>
+
+    <!--Created using ToHtml.com on 2019-05-24 08:05:17 UTC -->
+</body>
+
+</html>

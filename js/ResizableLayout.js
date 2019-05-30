@@ -1,6 +1,5 @@
 import Acore from "../ACore";
-import Color from "../../Color/Color";
-
+import Color from "absol/src/Color/Color";
 
 
 var _ = Acore._;

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auto Complete Input</title>
+    <script src="../dist/absol-acomp.js"></script>
+    <style>
+       
+
+    </style>
+</head>
+
+<body>
+    <h1>Auto Complete Input</h1>
+    <h2>Array string</h2>
+    <script>
+        absol._({
+            tag: 'autocompleteinput',
+            props: {
+                adapter: {
+                    texts: [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ],
+                    //getItemText, getItemView aren't required because the queryItems() return Array<string>
+                    //alway required
+                    queryItems: function (query, mInput) {
+                        var query = query.toLocaleLowerCase();
+                        return this.texts.filter(function (text) {
+                            return text.toLocaleLowerCase().indexOf(query) >= 0;
+                        })
+                    }
+                }
+            }
+
+        }).addTo(document.body);
+    </script>
+    <pre style='color:#000000;background: #eeeeee;'>
+        absol._({
+            tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>autocompleteinput</span><span style='color:#2a00ff; '>'</span>,
+            props: {
+                adapter: {
+                    texts: [
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>January</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>February</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>March</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>April</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>May</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>June</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>July</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>August</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>September</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>October</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>November</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>December</span><span style='color:#2a00ff; '>'</span>
+                    ],
+                    <span style='color:#3f7f59; '>//getItemText, getItemView aren't required because the queryItems() return Array&lt;string></span>
+                    <span style='color:#3f7f59; '>//alway required</span>
+                    queryItems: <span style='color:#7f0055; font-weight:bold; '>function</span> (query, mInput) {
+                        <span style='color:#7f0055; font-weight:bold; '>var</span> query = query.toLocaleLowerCase();
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#7f0055; font-weight:bold; '>this</span>.texts.<span style='color:#7f0055; font-weight:bold; '>filter</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (text) {
+                            <span style='color:#7f0055; font-weight:bold; '>return</span> text.toLocaleLowerCase().<span style='color:#7f0055; font-weight:bold; '>indexOf</span>(query) >= 0;
+                        })
+                    }
+                }
+            }
+
+        }).addTo(document.body);
+    </pre>
+    <h2>Array object, custom view</h2>
+    <script>
+        absol._({
+            tag: 'autocompleteinput',
+            props: {
+                adapter: {
+                    texts: [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ],
+
+                    queryItems: function (query, mInput) {
+                        var query = query.toLocaleLowerCase();
+                        return this.texts.map(function (text) {
+                            var start = text.toLocaleLowerCase().indexOf(query);
+                            if (start >= 0) {
+                                var hightlightedText = text.substr(0, start) + '<strong style="color:red">' + text.substr(start, query.length) + '</strong>' + text.substr(start + query.length);
+                                return {
+                                    text: text,
+                                    hightlightedText: hightlightedText
+                                }
+                            }
+                            else return null;
+                        }).filter(function (it) { return it !== null; })
+                    },
+
+                    getItemText: function (item, mInput) {
+                        return item.text;
+                    },
+
+                    getItemView: function (item, index, _, $, query, reuseItem, refParent, mInput) {
+                        return _({
+                            tag: 'div',
+                            style: {
+                                height: '30px'
+                            },
+                            child: {
+                                tag: 'span',
+                                props: {
+                                    innerHTML: item.hightlightedText
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+
+        }).addTo(document.body);
+    </script>
+    <pre style='color:#000000;background:#eee;'>
+        absol._({
+            tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>autocompleteinput</span><span style='color:#2a00ff; '>'</span>,
+            props: {
+                adapter: {
+                    texts: [
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>January</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>February</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>March</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>April</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>May</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>June</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>July</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>August</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>September</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>October</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>November</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>December</span><span style='color:#2a00ff; '>'</span>
+                    ],
+
+                    queryItems: <span style='color:#7f0055; font-weight:bold; '>function</span> (query, mInput) {
+                        <span style='color:#7f0055; font-weight:bold; '>var</span> query = query.toLocaleLowerCase();
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#7f0055; font-weight:bold; '>this</span>.texts.<span style='color:#7f0055; font-weight:bold; '>map</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (text) {
+                            <span style='color:#7f0055; font-weight:bold; '>var</span> start = text.toLocaleLowerCase().<span style='color:#7f0055; font-weight:bold; '>indexOf</span>(query);
+                            <span style='color:#7f0055; font-weight:bold; '>if</span> (start >= 0) {
+                                <span style='color:#7f0055; font-weight:bold; '>var</span> hightlightedText = text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(0, start) + <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;strong style="color:red"></span><span style='color:#2a00ff; '>'</span> + text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(start, query.<span style='color:#7f0055; font-weight:bold; '>length</span>) + <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;/strong></span><span style='color:#2a00ff; '>'</span> + text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(start + query.<span style='color:#7f0055; font-weight:bold; '>length</span>);
+                                <span style='color:#7f0055; font-weight:bold; '>return</span> {
+                                    text: text,
+                                    hightlightedText: hightlightedText
+                                }
+                            }
+                            <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#7f0055; font-weight:bold; '>null</span>;
+                        }).<span style='color:#7f0055; font-weight:bold; '>filter</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (it) { <span style='color:#7f0055; font-weight:bold; '>return</span> it !== <span style='color:#7f0055; font-weight:bold; '>null</span>; })
+                    },
+
+                    getItemText: <span style='color:#7f0055; font-weight:bold; '>function</span> (<span style='color:#7f0055; font-weight:bold; '>item</span>, mInput) {
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#7f0055; font-weight:bold; '>item</span>.text;
+                    },
+
+                    getItemView: <span style='color:#7f0055; font-weight:bold; '>function</span> (<span style='color:#7f0055; font-weight:bold; '>item</span>, index, _, $, query, reuseItem, refParent, mInput) {
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> _({
+                            tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>div</span><span style='color:#2a00ff; '>'</span>,
+                            style: {
+                                height: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>30px</span><span style='color:#2a00ff; '>'</span>
+                            },
+                            child: {
+                                tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>span</span><span style='color:#2a00ff; '>'</span>,
+                                props: {
+                                    innerHTML: <span style='color:#7f0055; font-weight:bold; '>item</span>.hightlightedText
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+
+        }).addTo(document.body);
+    </pre>
+    <!--Created using ToHtml.com on 2019-05-24 07:46:19 UTC -->
+    <h2>Array object, custom, async</h2>
+    <script>
+        var englishDictionary = new IFrameBridge(new Worker('../dist/wordfinder.js'));
+        absol._({
+            tag: 'autocompleteinput',
+            style: {
+                display: 'block',
+                height: '40px',
+                'max-width': '500px',
+                margin: "10px"
+            },
+            on: {
+                change: function (event, sender) {
+                    absol.$('span#selected-word', selectedWord).innerHTML = event.value || sender.value;
+                }
+            },
+            props: {
+                adapter: {
+
+                    queryItems: function (query, mInput) {
+                        return englishDictionary.invoke('find', query).then(function (texts) {
+                            return texts.map(function (text) {
+                                var start = text.toLocaleLowerCase().indexOf(query);
+                                if (start >= 0) {
+                                    var hightlightedText = text.substr(0, start) + '<strong style="color:red">' + text.substr(start, query.length) + '</strong>' + text.substr(start + query.length);
+                                    return {
+                                        text: text,
+                                        hightlightedText: hightlightedText
+                                    }
+                                }
+                                else return null;
+                            }).filter(function (it) { return it !== null; })
+                        })
+                    },
+
+                    getItemText: function (item, mInput) {
+                        return item.text;
+                    },
+
+                    getItemView: function (item, index, _, $, query, reuseItem, refParent, mInput) {
+                        if (reuseItem) {
+                            reuseItem.childNodes[0].innerHTML = item.hightlightedText;
+                            return reuseItem;
+                        }
+                        else
+                            return _({
+                                tag: 'div',
+                                child: {
+                                    tag: 'span',
+                                    props: {
+                                        innerHTML: item.hightlightedText
+                                    }
+                                }
+                            })
+                    }
+                }
+            }
+
+        }).addTo(document.body);
+
+        var selectedWord = absol._('<div style="height:30px">Selected: <span id="selected-word"></span></div>').addTo(document.body);
+
+    </script>
+    <pre style='color:#000000;background:#ffffff;'>        <span style='color:#7f0055; font-weight:bold; '>
+    var</span> englishDictionary = <span style='color:#7f0055; font-weight:bold; '>new</span> IFrameBridge(<span style='color:#7f0055; font-weight:bold; '>new</span> Worker(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>../dist/wordfinder.js</span><span style='color:#2a00ff; '>'</span>));
+    absol._({
+        tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>autocompleteinput</span><span style='color:#2a00ff; '>'</span>,
+        style: {
+            display: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>block</span><span style='color:#2a00ff; '>'</span>,
+            height: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>40px</span><span style='color:#2a00ff; '>'</span>,
+            <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>max-width</span><span style='color:#2a00ff; '>'</span>: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>500px</span><span style='color:#2a00ff; '>'</span>,
+            margin: <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>10px</span><span style='color:#2a00ff; '>"</span>
+        },
+        on: {
+            change: <span style='color:#7f0055; font-weight:bold; '>function</span> (event, sender) {
+                absol.$(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>span#selected-word</span><span style='color:#2a00ff; '>'</span>, selectedWord).innerHTML = event.value || sender.value;
+            }
+        },
+        props: {
+            adapter: {
+
+                queryItems: <span style='color:#7f0055; font-weight:bold; '>function</span> (query, mInput) {
+                    <span style='color:#7f0055; font-weight:bold; '>return</span> englishDictionary.invoke(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>find</span><span style='color:#2a00ff; '>'</span>, query).then(<span style='color:#7f0055; font-weight:bold; '>function</span> (texts) {
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> texts.<span style='color:#7f0055; font-weight:bold; '>map</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (text) {
+                            <span style='color:#7f0055; font-weight:bold; '>var</span> start = text.toLocaleLowerCase().<span style='color:#7f0055; font-weight:bold; '>indexOf</span>(query);
+                            <span style='color:#7f0055; font-weight:bold; '>if</span> (start >= 0) {
+                                <span style='color:#7f0055; font-weight:bold; '>var</span> hightlightedText = text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(0, start) + <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;strong style="color:red"></span><span style='color:#2a00ff; '>'</span> + text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(start, query.<span style='color:#7f0055; font-weight:bold; '>length</span>) + <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;/strong></span><span style='color:#2a00ff; '>'</span> + text.<span style='color:#7f0055; font-weight:bold; '>substr</span>(start + query.<span style='color:#7f0055; font-weight:bold; '>length</span>);
+                                <span style='color:#7f0055; font-weight:bold; '>return</span> {
+                                    text: text,
+                                    hightlightedText: hightlightedText
+                                }
+                            }
+                            <span style='color:#7f0055; font-weight:bold; '>else</span> <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#7f0055; font-weight:bold; '>null</span>;
+                        }).<span style='color:#7f0055; font-weight:bold; '>filter</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (it) { <span style='color:#7f0055; font-weight:bold; '>return</span> it !== <span style='color:#7f0055; font-weight:bold; '>null</span>; })
+                    })
+                },
+
+                getItemText: <span style='color:#7f0055; font-weight:bold; '>function</span> (<span style='color:#7f0055; font-weight:bold; '>item</span>, mInput) {
+                    <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#7f0055; font-weight:bold; '>item</span>.text;
+                },
+
+                getItemView: <span style='color:#7f0055; font-weight:bold; '>function</span> (<span style='color:#7f0055; font-weight:bold; '>item</span>, index, _, $, query, reuseItem, refParent, mInput) {
+                    if</span> (reuseItem) {
+                        reuseItem.childNodes[0].innerHTML = <span style='color:#7f0055; font-weight:bold; '>item</span>.hightlightedText;
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> reuseItem;
+                    }
+                    <span style='color:#7f0055; font-weight:bold; '>else</span>
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> _({
+                            tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>div</span><span style='color:#2a00ff; '>'</span>,
+                            child: {
+                                tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>span</span><span style='color:#2a00ff; '>'</span>,
+                                props: {
+                                    innerHTML: <span style='color:#7f0055; font-weight:bold; '>item</span>.hightlightedText
+                                }
+                            }
+                        })
+                }
+            }
+        }
+
+    }).addTo(document.body);
+
+    <span style='color:#7f0055; font-weight:bold; '>var</span> selectedWord = absol._(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;div style="height:30px">Selected: &lt;span id="selected-word">&lt;/span>&lt;/div></span><span style='color:#2a00ff; '>'</span>).addTo(document.body);
+    </pre>
+
+    <h4>wordfinder.js</h4>
+    <pre style='color:#000000;background:#ffffff;'><span style='color:#7f0055; font-weight:bold; '>
+        import</span> IFrameBridge from <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>./Network/IFrameBridge</span><span style='color:#2a00ff; '>"</span>;
+        <span style='color:#7f0055; font-weight:bold; '>import</span> EnglishWord from <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>./String/EnglishWords</span><span style='color:#2a00ff; '>"</span>;
+        
+        <span style='color:#7f0055; font-weight:bold; '>var</span> bridge = IFrameBridge.getInstance();
+        
+        bridge.find = <span style='color:#7f0055; font-weight:bold; '>function</span> (query) {
+            <span style='color:#7f0055; font-weight:bold; '>return</span> EnglishWord.<span style='color:#7f0055; font-weight:bold; '>filter</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (s) {
+                <span style='color:#7f0055; font-weight:bold; '>return</span> s.<span style='color:#7f0055; font-weight:bold; '>indexOf</span>(query) >= 0;
+            })
+        };
+    </pre>
+    <!--Created using ToHtml.com on 2019-05-24 08:05:17 UTC -->
+
+    <h2>Build-in adapter</h2>
+    <script>
+        absol._({
+            tag: 'autocompleteinput',
+            props: {
+                adapter: [
+                    //adapter type
+                    'SearchStringArray',
+                    //first param
+                    [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ]
+                ]
+            }
+        }).addTo(document.body);
+    </script>
+    <pre style='color:#000000;background:#eee;'>
+    absol._({
+        tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>autocompleteinput</span><span style='color:#2a00ff; '>'</span>,
+        props: {
+            adapter: [
+                <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>SearchStringArray</span><span style='color:#2a00ff; '>'</span>,
+                <span style='color:#3f7f59; '>//first param</span>
+                [
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>January</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>February</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>March</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>April</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>May</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>June</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>July</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>August</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>September</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>October</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>November</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>December</span><span style='color:#2a00ff; '>'</span>
+                ]
+            ]
+        }
+    }).addTo(document.body);
+    </pre>
+
+    <script>
+        absol._('<span> Input 1 <span>').addTo(document.body);
+        var input1 = absol._({
+            tag: 'autocompleteinput',
+            props: {
+                adapter: [
+                    //adapter type
+                    'SearchObjectArray',
+                    //first param
+                    [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ].map(function (text, index) {
+                        return { text: text, index: index }
+                    })
+                ]
+            },
+            on: {
+                change: function (event, sender) {
+                    console.log(sender.getSelectedObject()); //only work with SearchObjectArray adapter
+                }
+            }
+        }).addTo(document.body);
+        absol._('<span> Input 2 <span>').addTo(document.body);
+
+        var input2 = absol._({
+            tag: 'autocompleteinput',
+            props: {
+                adapter: [
+                    //adapter type
+                    'SearchObjectArray',
+                    //first param
+                    [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ].map(function (text, index) {
+                        return { text: text, index: index }
+                    }),
+                    {
+                        getItemText: function (item) {
+                            return '[' + item.index + ']' + item.text;
+                        }
+                    }
+                ]
+            },
+            on: {
+                change: function (event, sender) {
+                    console.log(sender.getSelectedObject()); //only work with SearchObjectArray adapter
+                }
+            }
+
+        }).addTo(document.body);
+    </script>
+    <pre style='color:#000000;background:#ffffff;'>
+        absol._(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;span> Input 1 &lt;span></span><span style='color:#2a00ff; '>'</span>).addTo(document.body);
+        <span style='color:#7f0055; font-weight:bold; '>var</span> input1 = absol._({
+            tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>autocompleteinput</span><span style='color:#2a00ff; '>'</span>,
+            props: {
+                adapter: [
+                    <span style='color:#3f7f59; '>//adapter type</span>
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>SearchObjectArray</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#3f7f59; '>//first param</span>
+                    [
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>January</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>February</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>March</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>April</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>May</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>June</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>July</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>August</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>September</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>October</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>November</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>December</span><span style='color:#2a00ff; '>'</span>
+                    ].<span style='color:#7f0055; font-weight:bold; '>map</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (text, index) {
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> { text: text, index: index }
+                    })
+                ]
+            },
+            on: {
+                change: <span style='color:#7f0055; font-weight:bold; '>function</span> (event, sender) {
+                    console.<span style='color:#7f0055; font-weight:bold; '>log</span>(sender.getSelectedObject()); <span style='color:#3f7f59; '>//only work with SearchObjectArray adapter</span>
+                }
+            }
+        }).addTo(document.body);
+        absol._(<span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>&lt;span> Input 2 &lt;span></span><span style='color:#2a00ff; '>'</span>).addTo(document.body);
+
+        <span style='color:#7f0055; font-weight:bold; '>var</span> input2 = absol._({
+            tag: <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>autocompleteinput</span><span style='color:#2a00ff; '>'</span>,
+            props: {
+                adapter: [
+                    <span style='color:#3f7f59; '>//adapter type</span>
+                    <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>SearchObjectArray</span><span style='color:#2a00ff; '>'</span>,
+                    <span style='color:#3f7f59; '>//first param</span>
+                    [
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>January</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>February</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>March</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>April</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>May</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>June</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>July</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>August</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>September</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>October</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>November</span><span style='color:#2a00ff; '>'</span>,
+                        <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>December</span><span style='color:#2a00ff; '>'</span>
+                    ].<span style='color:#7f0055; font-weight:bold; '>map</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (text, index) {
+                        <span style='color:#7f0055; font-weight:bold; '>return</span> { text: text, index: index }
+                    }),
+                    {
+                        getItemText: <span style='color:#7f0055; font-weight:bold; '>function</span> (<span style='color:#7f0055; font-weight:bold; '>item</span>) {
+                            <span style='color:#7f0055; font-weight:bold; '>return</span> <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>[</span><span style='color:#2a00ff; '>'</span> + <span style='color:#7f0055; font-weight:bold; '>item</span>.index + <span style='color:#2a00ff; '>'</span><span style='color:#2a00ff; '>]</span><span style='color:#2a00ff; '>'</span> + <span style='color:#7f0055; font-weight:bold; '>item</span>.text;
+                        }
+                    }
+                ]
+            },
+            on: {
+                change: <span style='color:#7f0055; font-weight:bold; '>function</span> (event, sender) {
+                    console.<span style='color:#7f0055; font-weight:bold; '>log</span>(sender.getSelectedObject()); <span style='color:#3f7f59; '>//only work with SearchObjectArray adapter</span>
+                }
+            }
+
+        }).addTo(document.body);
+</pre>
+<!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
+
+</body>
+
+</html>

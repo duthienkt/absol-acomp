@@ -1,10 +1,10 @@
 import Acore from "../ACore";
-import Dom from "../../HTML5/Dom";
-import EventEmitter from "../../HTML5/EventEmitter";
-import { phraseMatch } from "../../String/stringMatching";
-import { nonAccentVietnamese } from "../../String/stringFormat";
-import Svg from "../../HTML5/Svg";
-import OOP from "../../HTML5/OOP";
+import Dom from "absol/src/HTML5/Dom";
+import EventEmitter from "absol/src/HTML5/EventEmitter";
+import { phraseMatch } from "absol/src/String/stringMatching";
+import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import Svg from "absol/src/HTML5/Svg";
+import OOP from "absol/src/HTML5/OOP";
 
 
 

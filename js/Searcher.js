@@ -1,5 +1,5 @@
 import Acore from "../ACore";
-import OOP from "../../HTML5/OOP";
+import OOP from "absol/src/HTML5/OOP";
 
 var _ = Acore._;
 var $ = Acore.$;

@@ -1,7 +1,7 @@
 import Acore from "../ACore";
-import Dom from "../../HTML5/Dom";
-import OOP from "../../HTML5/OOP";
-import EventEmitter from "../../HTML5/EventEmitter";
+import Dom from "absol/src/HTML5/Dom";
+import OOP from "absol/src/HTML5/OOP";
+import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 var _ = Acore._;
 var $ = Acore.$;
