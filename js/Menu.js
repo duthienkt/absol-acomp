@@ -500,6 +500,7 @@ Acore.creator.hmenu = HMenu;
 Acore.creator.vmenuitem = VMenuItem;
 Acore.creator.vmenu = VMenu;
 Acore.creator.dropright = Dropright;
+Acore.creator.vmenuline = VMenuLine;
 
 Acore.creator.dropdown = Dropdown;
 Acore.creator.hmenuitem = HMenuItem;
