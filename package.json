@@ -8,8 +8,7 @@
     },
     "scripts": {
         "dev": "webpack-dev-server --config webpack.config.js",
-        "dist-absol": "webpack --config webpack.config.js --progress --profile --colors --mode production",
-        "dev-bsc": "webpack --config webpack.config.bsc.js --progress --profile --colors --mode production"
+        "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production"
     },
     "repository": {
         "type": "git",

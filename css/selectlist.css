@@ -1,0 +1,27 @@
+.absol-selectlist {}
+
+.absol-selectlist .absol-selectlist-item:hover {
+    background-color: #efefef;
+}
+
+.absol-selectlist .absol-selectlist-item {
+    height: 20px;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.absol-selectlist-item.selected {
+    background-color: #dfdfdf;
+}
+
+.absol-selectlist-item>span {
+    line-height: 20px;
+    white-space: pre;
+    padding-left: 7px;
+    padding-right: 7px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; 
+}

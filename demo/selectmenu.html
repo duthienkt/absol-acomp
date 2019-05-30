@@ -6,26 +6,160 @@
     <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
     <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="../dist/absol.js"></script>
+    <script src="../dist/absol-acomp.js"></script>
     <style>
 
     </style>
 </head>
 
 <body>
-    <script>
+
+    <h1>Select List</h1>
+    <script class="viewable">
         absol._({
-            tag: 'treelist', props: {
-                items: [{ text: 'l0i0', items: [{ text: 'l1i1' }, { text: 'l1i2' }, { text: 'l1i3' }, { text: 'l1i4' }] }, { text: 'l0i1' }, { text: 'l0i2' }, { text: 'l0i3' }, { text: 'l0i4' }]
+            tag: 'selectlist',
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray',
+                minWidth: '20%'
+            },
+            props: {
+                items: Array(30).fill(0).map(function (u, i) {
+                    return { text: "item " + i, value: i };
+                })
             }
-        }).addTo(document.body).on('press', function(event, sender){
-            console.log(event);
-        });
+        }).addTo(document.body);
+    </script>
+    <h1>Select Menu</h1>
+    <script class="viewable">
+        absol._({
+            tag: 'selectmenu',
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray',
+                minWidth: '20%'
+            },
+            props: {
+                items: Array(30).fill(0).map(function (u, i) {
+                    return { text: "item " + i, value: i };
+                })
+            }
+        }).addTo(document.body);
+
+        absol._({
+            tag: 'selectmenu',
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray',
+                minWidth: '20%',
+                marginLeft: '40px'
+            },
+            props: {
+                enableSearch: true,
+                items: Array(30).fill(0).map(function (u, i) {
+                    return { text: "item " + i, value: i };
+                })
+            }
+        }).addTo(document.body);
 
     </script>
-    <pre><code class="js">    
-    </code>
 
+    <h1>Tree list</h1>
+    <script class="viewable">
+        var treelistProps = {
+            items: [
+                {
+                    text: 'Tầng 1',
+                    items: [
+                        { text: 'Phòng khách' },
+                        { text: 'Nhà ăn', alertMessage: "Nhà ăn" },
+                        { text: 'Phòng 1' },
+                        { text: 'Phòng 2', alertMessage: "Phòng 2" }
+                    ]
+                },
+                {
+                    text: 'Tầng 2',
+                    items: [
+                        {
+                            text: 'Phòng 3',
+                            items: ['Bàn học', 'Tủ kính', 'Kệ sách']
+                        },
+                        {
+                            text: 'Phòng 4',
+                            items: ['Tivi', 'Tủ lạnh', 'Quạt trần']
+                        },
+                        { text: 'Ban công' }
+                    ]
+                },
+                { text: 'Tầng 3' },
+            ]
+        }
+        absol._({
+            tag: 'treelist',
+            props: treelistProps,
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray'
+            }
+        }).addTo(document.body).on('press', function (event, sender) {
+            var data = event.data;
+            if (data.alertMessage) alert(data.alertMessage);
+        });
+
+        absol._({
+            tag: 'treelist',
+            props: treelistProps,
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray',
+                marginLeft: '40px'
+            }
+        }).addTo(document.body).on('press', function (event, sender) {
+            console.log(event.target);
+        });
+    </script>
+    <h1>Select Tree Menu</h1>
+    <script class="viewable">
+        absol._({
+            tag: 'selecttreemenu',
+            props:  Object.assign(treelistProps, { enableSearch: false , value:'Tivi'}),
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray'
+            }
+        }).addTo(document.body).on('press', function (event, sender) {
+            console.log(event.target);
+        });
+        absol._({
+            tag: 'selecttreemenu',
+            props: Object.assign(treelistProps, { enableSearch: true , value:'Tầng 2'}),
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray',
+                marginLeft: '40px'
+            }
+        }).addTo(document.body).on('press', function (event, sender) {
+            console.log(event.target);
+        });
+    </script>
+
+
+
+
+
+    <script>
+        var viewableScript = document.querySelectorAll('script.viewable');
+        viewableScript.forEach(function (elt) {
+            absol.$(elt).selfReplace(absol._({
+                tag: 'pre',
+                child: {
+                    tag: 'code',
+                    class: 'js',
+                    child: { text: elt.innerHTML }
+                }
+            }));
+        });
+    </script>
     </pre>
 </body>
 

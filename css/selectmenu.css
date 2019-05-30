@@ -1,0 +1,132 @@
+.absol-selectmenu.absol-hidden {
+    display: none !important;
+}
+
+.absol-selectmenu-render-space {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1000;
+    visibility: hidden;
+    font-size: 14px;
+}
+
+.absol-selectmenu-render-space>.absol-selectlist {
+    display: inline-block;
+}
+
+
+
+.absol-selectmenu.disabled {
+    pointer-events: none;
+}
+
+.absol-selectmenu.disabled .absol-selectmenu-dropdown-box {
+    display: none;
+}
+
+.absol-selectmenu.disabled {
+    background-color: #ebebe4;
+}
+
+
+.absol-selectmenu {
+    display: inline-block;
+    position: relative;
+    height: 30px;
+    min-width: 30px;
+    border: solid 1px #d6d6d6;
+    border-radius: 2px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* .absol-selectmenu:hover {
+    border: solid 1px black;
+} */
+
+.absol-selectmenu-btn {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    border: none;
+    background: transparent;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.absol-selectmenu-btn:focus {
+    outline: none;
+}
+
+.absol-selectmenu-btn svg.dropdown {
+    width: 10px;
+    height: 10px;
+    fill: #929292;
+}
+
+.absol-selectmenu:hover svg.dropdown {
+    width: 10px;
+    height: 10px;
+    fill: black;
+}
+
+.absol-selectmenu-holder-item {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 4px;
+    bottom: 4px;
+    /*1px for border*/
+}
+
+.absol-selectmenu-dropdown-box {
+    position: absolute;
+    left: -1px;
+    top: 100%;
+    border: solid 1px rgb(169, 169, 169);
+    box-sizing: border-box;
+    background-color: white;
+    z-index: 3;
+    min-width: calc(100% + 2px);
+    z-index: 1000;
+}
+
+.absol-selectmenu:not(.focus) .absol-selectmenu-dropdown-box {
+    display: none;
+}
+
+
+
+.absol-selectmenu-dropdown-box.up {
+    top: auto;
+    bottom: 100%;
+}
+
+.absol-selectmenu .absol-selectlist-item span {
+    padding-right: 37px;
+}
+
+.absol-selectmenu .absol-scroll-button {
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+}
+
+.absol-selectmenu .absol-scroll-button:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.absol-selectmenu .absol-scroll-bar-v-container {
+    width: 10px;
+}
+
+.absol-selectmenu .absol-search-text-input {
+    margin: 4px;
+}
+
+.absol-selectmenu-holder-item .absol-selectlist-item span {
+    padding-right: 0;
+}

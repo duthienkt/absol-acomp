@@ -1,0 +1,27 @@
+.absol-tree-list {}
+
+.absol-tree-list-item {}
+
+.absol-tree-list-item-parent:hover{
+    background: #efefef;
+    cursor: pointer;
+}
+
+.absol-tree-list-item-parent{
+    padding-left: 0.3em;
+    padding-right: 0.3em;  
+}
+
+.absol-tree-list-item.active > .absol-tree-list-item-parent{
+    background: #dfdfdf;
+}
+
+.absol-tree-list-item-parent>span{
+    line-height: 20px;
+}
+
+.absol-tree-list-item-child {}
+
+.absol-tree-list-item>.absol-tree-list-item-child:empty {
+    display: none;
+}

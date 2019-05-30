@@ -34,13 +34,29 @@ import ResizableLayoutStyleText from './css/resizablelayout.css';
 import './js/AutoCompleteInput';
 import AutoCompleteInputLayoutStyleText from './css/autocompleteinput.css';
 
+import SelectListLayoutStyleText from './css/selectlist.css';
+import './js/SelectList';
+
+import SelectMenuLayoutStyleText from './css/selectmenu.css';
+import './js/SelectMenu';
+
+import TreeListLayoutStyleText from './css/treelist.css';
+import './js/TreeList';
+import './js/TreeListItem';
+
+import SelectTreeMenuLayoutStyleText from './css/selecttreemenu.css';
+import './js/SelectTreeMenu';
+
 import './js/TextClipboard';
 
 var styleText = [IconButtonStyleText, SelectTableStyleText,
     ScrollerStyleText, SearcherStyleText,
     MenuStyleText, ContextMenuStyleText,
     ModalStyleText, ImageViewerStyleText, MediaInputStyleText,
-    ResizableLayoutStyleText, AutoCompleteInputLayoutStyleText].join('\n');
+    ResizableLayoutStyleText, AutoCompleteInputLayoutStyleText,
+    TreeListLayoutStyleText, SelectTreeMenuLayoutStyleText, SelectListLayoutStyleText,
+    SelectMenuLayoutStyleText].join('\n');
+
 var AComp = {
     core: Acore,
     $style: Acore._('style').addTo(document.head),
