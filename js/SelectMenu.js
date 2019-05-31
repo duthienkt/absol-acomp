@@ -61,7 +61,7 @@ function SelectMenu() {
     res.$holderItem = $('.absol-selectmenu-holder-item', res);
     res.$dropdownBox = $('.absol-selectmenu-dropdown-box', res);
     res.$searchTextInput = $('searchtextinput', res);
-    res.$searchTextInput.on('modify', res.eventHandler.searchModify);
+    res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
     res.selectListBound = { height: 0, width: 0 };
     res.$attachhook = $('attachhook', res)
         .on('error', res.eventHandler.attached);
