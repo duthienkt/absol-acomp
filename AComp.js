@@ -47,6 +47,9 @@ import './js/TreeListItem';
 import SelectTreeMenuLayoutStyleText from './css/selecttreemenu.css';
 import './js/SelectTreeMenu';
 
+import SelectBoxLayoutStyleText from './css/selectbox.css';
+import './js/SelectBox';
+
 import './js/TextClipboard';
 
 var styleText = [IconButtonStyleText, SelectTableStyleText,
@@ -55,7 +58,7 @@ var styleText = [IconButtonStyleText, SelectTableStyleText,
     ModalStyleText, ImageViewerStyleText, MediaInputStyleText,
     ResizableLayoutStyleText, AutoCompleteInputLayoutStyleText,
     TreeListLayoutStyleText, SelectTreeMenuLayoutStyleText, SelectListLayoutStyleText,
-    SelectMenuLayoutStyleText].join('\n');
+    SelectMenuLayoutStyleText, SelectBoxLayoutStyleText].join('\n');
 
 var AComp = {
     core: Acore,

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auto Complete Input</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://volcanion.cf/materialdesignicons/materialdesignicons.min.css"> -->
+
+    <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../dist/absol-acomp.js?"></script>
+    <style>
+       
+    </style>
+</head>
+
+<body>
+    <!-- <select>
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="opel">Opel</option>
+        <option value="audi">Audi</option>
+    </select> -->
+
+    <script class="viewable">
+        absol._({
+            tag: 'selectbox',
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray',
+                width: '20%'
+            },
+            props: {
+                items: Array(30).fill(0).map(function (u, i) {
+                    return { text: "item " + i, value: i };
+                })
+            }
+        }).addTo(document.body);
+
+        absol._({
+            tag: 'selectbox',
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray',
+                minWidth: '20%',
+                marginLeft: '40px'
+            },
+            props: {
+                enableSearch: true,
+                items: Array(30).fill(0).map(function (u, i) {
+                    return { text: "item " + i, value: i };
+                })
+            }
+        }).addTo(document.body);
+    </script>
+
+    <script>
+        var viewableScript = document.querySelectorAll('script.viewable');
+        viewableScript.forEach(function (elt) {
+            absol.$(elt).selfReplace(absol._({
+                tag: 'pre',
+                child: {
+                    tag: 'code',
+                    class: 'js',
+                    child: { text: elt.innerHTML }
+                }
+            }));
+        });
+        setTimeout(function () {
+            var href = location.href;
+            var mathedscroll = href.match(/\#([a-z0-9\_A-Z\-]+)/);
+            if (mathedscroll) {
+                var e = absol.$(mathedscroll[0]);
+                if (e) e.scrollIntoView();
+            }
+        }, 1000)
+    </script>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+</body>
+
+</html>

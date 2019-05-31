@@ -1,0 +1,88 @@
+.absol-selectbox-item {
+    display: inline-block;
+    position: relative;
+    height: 20px;
+    border-radius: 2px;
+    overflow: hidden;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+    font-size: 14px;
+    vertical-align: top;
+    white-space: normal;
+}
+
+.absol-selectbox {
+    position: relative;
+    min-height: 30px;
+    min-width: 40px;
+    border: solid 1px #d6d6d6;
+    border-radius: 3px;
+    box-sizing: border-box;
+    cursor: pointer;
+    padding-right: 20px;
+}
+
+.absol-selectbox {
+    white-space: normal;
+}
+
+.absol-selectbox .absol-selectbox-item {
+    margin: 2px;
+}
+
+.absol-selectbox-item-text {
+    height: 20px;
+    padding-right: 25px;
+    color: white;
+    padding-left: 5px;
+}
+
+.absol-selectbox-item-text:hover {
+    background-color: rgba(0, 0, 0, 0.0893617021);
+}
+
+.absol-selectbox-item-text span {
+    line-height: 20px;
+    white-space: nowrap;
+}
+
+.absol-selectbox-item-close {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 20px;
+    font-size: 10px;
+    text-align: center;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.0893617021);
+}
+
+.absol-selectbox-item-close span {
+    font-size: 10px;
+    color: white;
+    line-height: 20px;
+}
+
+.absol-selectbox {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.absol-selectbox .absol-search-text-input {
+    margin: 4px;
+}
+
+.absol-selectbox:not(.focus) .absol-selectmenu-dropdown-box {
+    display: none;
+}
+
+
+
+.absol-selectbox .absol-selectlist-item.selected {
+    display: none;
+}

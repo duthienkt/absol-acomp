@@ -323,6 +323,7 @@ SelectMenu.eventHandler.click = function (event) {
 
 
 SelectMenu.eventHandler.bodyClick = function (event) {
+    event.preventDefault();
     if (!EventEmitter.hitElement(this, event)) {
         this.isFocus = false;
     }
@@ -411,4 +412,4 @@ SelectMenu.eventHandler.searchModify = function (event) {
 
 Acore.creator.selectmenu = SelectMenu;
 
-export default SelectMenu
+export default SelectMenu;
