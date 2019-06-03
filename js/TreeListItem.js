@@ -77,7 +77,7 @@ TreeListItem.property = {
             value = value || 0;
             if (value == this.level) return;
             this._level = value;
-            this.$parent.addStyle('padding-left', this._level * 0.618 * 3 + 'em');
+            this.$parent.addStyle('padding-left', this._level * 0.4 * 3 + 'em');
             this.$list.level = value + 1;
 
         },

@@ -11,7 +11,7 @@
     font-size: 14px;
 }
 
-.absol-selectmenu-render-space>.absol-selectlist {
+.absol-selectmenu-render-space>div {
     display: inline-block;
 }
 

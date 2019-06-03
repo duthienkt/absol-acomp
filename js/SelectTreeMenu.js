@@ -99,18 +99,29 @@ SelectTreeMenu.prototype.updateDropdownPostion = function (searching) {
         }
     }
     this.$vscroller.requestUpdateSize();
-    // this.scrollToSelectedItem();
 };
 
 SelectTreeMenu.prototype.scrollToSelectedItem = function () {
-    var selectedView = $('treelistitem.active', this.$vscroller);
-    if (selectedView) this.$vscroller.scrollInto(selectedView);
+    this._scrolling = true;
+    setTimeout(function () {
+        var selectedView = $('treelistitem.active > .absol-tree-list-item-parent', this.$vscroller);
+        if (selectedView) this.$vscroller.scrollInto(selectedView);
+        this._scrolling = false;
+    }.bind(this), 5);
 
 };
 
 SelectTreeMenu.getRenderSpace = SelectMenu.getRenderSpace;
 
 SelectTreeMenu.eventHandler = {};
+
+
+SelectTreeMenu.eventHandler.bodyClick = function (event) {
+    event.preventDefault();
+    if (!EventEmitter.hitElement(this, event)) {
+        this.isFocus = false;
+    }
+};
 
 SelectTreeMenu.eventHandler.attached = function () {
     if (this._updateInterval) return;
@@ -183,6 +194,7 @@ SelectTreeMenu.prototype.updateSelectedItem = function (scrollInto) {
                 elt.active = false;
             }
         });
+        self._isUpdateSelectedItem = false;
     }, 1)
 }
 
@@ -193,7 +205,7 @@ SelectTreeMenu.property.items = {
         this.$treelist.items = this._items;
 
         this.treeListBound = this.$treelist.getBoundingClientRect();
-        this.addStyle('min-width', this.treeListBound.width + 'px');
+        this.addStyle('min-width', this.treeListBound.width + 30 + 2 + 'px');
         if (typeof this.value == 'undefined' && this._items.length > 0) {
             var first = this._items[0];
             if (typeof first == 'string') {
@@ -259,12 +271,14 @@ SelectTreeMenu.property.isFocus = {
             this.$treelist.addTo(this.$renderSpace);
             $('body').off('click', this.eventHandler.bodyClick);
             this.removeClass('focus');
-            this.$searchTextInput.value = '';
-            setTimeout(function () {
-                this.$treelist.items = this.items;
-                setTimeout(this.updateSelectedItem.bind(this), 1);
-                this.treeListBound = this.$treelist.getBoundingRecursiveRect();
-            }.bind(this), 1)
+            if (this.$searchTextInput.value.length > 0) {
+                this.$searchTextInput.value = '';
+                setTimeout(function () {
+                    this.$treelist.items = this.items;
+                    setTimeout(this.updateSelectedItem.bind(this), 1);
+                    this.treeListBound = this.$treelist.getBoundingRecursiveRect();
+                }.bind(this), 1)
+            }
         }
     },
     get: function () {
