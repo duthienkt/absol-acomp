@@ -56,6 +56,9 @@ import './js/RadioInput';
 
 import './js/TextClipboard';
 
+import EditableTextLayoutStyleText from './css/editabletext.css';
+import './js/EditableText';
+
 var styleText = [IconButtonStyleText, SelectTableStyleText,
     ScrollerStyleText, SearcherStyleText,
     MenuStyleText, ContextMenuStyleText,
@@ -63,7 +66,7 @@ var styleText = [IconButtonStyleText, SelectTableStyleText,
     ResizableLayoutStyleText, AutoCompleteInputLayoutStyleText,
     TreeListLayoutStyleText, SelectTreeMenuLayoutStyleText, SelectListLayoutStyleText,
     SelectMenuLayoutStyleText, SelectBoxLayoutStyleText, 
-    RadioLayoutStyleText].join('\n');
+    RadioLayoutStyleText, EditableTextLayoutStyleText].join('\n');
 
 var AComp = {
     core: Acore,

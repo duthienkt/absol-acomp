@@ -1,0 +1,45 @@
+
+.absol-editabe-text {
+    display: inline;
+}
+
+.absol-editabe-text span {
+    font-style: normal !important;
+    white-space: pre;
+}
+
+.absol-editabe-text-higne {
+    display: inline-block;
+    position: relative;
+    width: 0px;
+    height: 0ox;
+}
+
+.absol-editabe-text-higne input {
+    position: absolute;
+    display: none;
+    border: none;
+    top: -2;
+    left: -2;
+    padding-top: 0px;
+    padding-left: 2px;
+    padding-bottom: 4px;
+    margin: 0;
+    background: transparent;
+    outline: none;
+}
+
+.absol-editabe-text.editing .absol-editabe-text-higne input {
+    display: block;
+}
+
+.absol-editabe-text.editing span {
+    visibility: hidden;
+}
+
+.absol-editabe-text.editing {
+    -webkit-box-shadow: 0px 0px 2px 0px rgba(33, 77, 255, 1);
+    -moz-box-shadow: 0px 0px 2px 0px rgba(33, 77, 255, 1);
+    box-shadow: 0px 0px 2px 0px rgba(33, 77, 255, 1);
+    border-radius: 0.17em;
+}
