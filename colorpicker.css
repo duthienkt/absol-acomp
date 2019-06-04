@@ -1,0 +1,206 @@
+.absol-color-picker {
+    user-select: none;
+    height: 19em;
+    width: 20em;
+    position: relative;
+    background-color: rgb(45, 45, 49);
+    color: hsl(240, 5%, 88%);
+    border-radius: 0.4em;
+    padding: 0.7em;
+    display: inline-block;
+    border: solid 1px rgb(139, 139, 169);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.absol-color-picker.with-alpha {
+    width: 23em;
+}
+
+.absol-color-picker.with-alpha .absol-color-picker-color,
+.absol-color-picker.with-alpha .absol-color-picker-input {
+    right: 8em;
+}
+
+/* .absol-color-picker.with-alpha  */
+
+
+
+
+.absol-color-picker,
+.absol-color-picker * {
+    box-sizing: border-box;
+}
+
+.absol-color-picker-color {
+    z-index: 1;
+    position: absolute;
+    left: 1em;
+    right: 5em;
+    top: 1em;
+    bottom: 4em;
+    padding: 0;
+    border: solid 1px rgb(220, 220, 220);
+    border-bottom-width: 2px;
+    box-sizing: content-box;
+}
+
+.absol-color-picker-sat {
+    box-sizing: content-box;
+    width: 100%;
+    height: 100%;
+    background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#FFF), to(rgba(204, 154, 129, 0)));
+    background-image: -webkit-linear-gradient(left, #FFF, rgba(204, 154, 129, 0));
+    background-image: -moz-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: -o-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: -ms-linear-gradient(left, #fff, rgba(204, 154, 129, 0));
+    background-image: linear-gradient(to right, #fff, rgba(204, 154, 129, 0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(GradientType = 1, startColorstr=#FFFFFFFF, endColorstr=#00CC9A81)";
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=1, startColorstr='#FFFFFFFF', endColorstr='#00CC9A81');
+}
+
+.absol-color-picker-val {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    box-sizing: content-box;
+    background-image: -webkit-gradient(linear, 0 100%, 0 0, from(#000000), to(rgba(204, 154, 129, 0)));
+    background-image: -webkit-linear-gradient(bottom, #000000, rgba(204, 154, 129, 0));
+    background-image: -moz-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: -o-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: -ms-linear-gradient(bottom, #000, rgba(204, 154, 129, 0));
+    background-image: linear-gradient(to top, #000, rgba(204, 154, 129, 0));
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00CC9A81, endColorstr=#FF000000)";
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00CC9A81', endColorstr='#FF000000');
+}
+
+.absol-color-dragger {
+    border: solid 1px rgb(160, 160, 160);
+    box-shadow: inset 0px 0px 0.4em 0.1em rgba(255, 255, 255, 0.7);
+}
+
+.absol-color-picker-val .absol-color-dragger {
+    position: absolute;
+    z-index: 10;
+    width: 1em;
+    height: 1em;
+    border: solid 1px rgb(160, 160, 160);
+    bottom: 0;
+    left: 0;
+    margin-top: -0.5em;
+    margin-bottom: -0.5em;
+    margin-left: -0.5em;
+    margin-right: -0.5em;
+    border-radius: 50%;
+    box-shadow: inset 0px 0px 0.4em 0.1em rgba(255, 255, 255, 0.7);
+}
+
+.absol-color-picker-hue-range {
+    position: absolute;
+    top: 1em;
+    right: 1.5em;
+    bottom: 4em;
+    width: 1.7em;
+}
+
+.absol-color-picker-hue {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border: inset 1px rgba(220, 220, 225);
+    background: linear-gradient(to bottom, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+}
+
+.absol-color-picker-hue .absol-color-dragger,
+.absol-color-picker-alpha .absol-color-dragger {
+    position: absolute;
+    height: 0.6em;
+    left: -0.3em;
+    right: -0.3em;
+    top: 0%;
+    margin-top: -0.3em;
+    margin-bottom: -0.3em;
+    border-width: 0.1em;
+}
+
+.absol-color-picker-alpha {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+}
+
+.absol-color-picker-alpha-range,
+.absol-color-picker-input {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAaSURBVBhXYzh8+PD///8hJAOcBSRxyRw+DABJUCox2kjvSgAAAABJRU5ErkJggg==');
+    background-size: 1.5em;
+    image-rendering: optimizeSpeed;
+    /* STOP SMOOTHING, GIVE ME SPEED  */
+    image-rendering: -moz-crisp-edges;
+    /* Firefox                        */
+    image-rendering: -o-crisp-edges;
+    /* Opera                          */
+    image-rendering: -webkit-optimize-contrast;
+    /* Chrome (and eventually Safari) */
+    image-rendering: pixelated;
+    /* Chrome */
+    image-rendering: optimize-contrast;
+    /* CSS3 Proposed                  */
+    -ms-interpolation-mode: nearest-neighbor;
+    /* IE8+                           */
+}
+
+.absol-color-picker-alpha-range {
+    position: absolute;
+    right: 4.5em;
+    top: 1em;
+    bottom: 4em;
+    width: 1.7em;
+}
+
+.absol-color-picker:not(.with-alpha) .absol-color-picker-alpha-range {
+    display: none;
+}
+
+.absol-color-picker-input {
+    position: absolute;
+    left: 1em;
+    bottom: 1em;
+    right: 5em;
+    height: 2em;
+}
+
+.absol-color-picker-text-container {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    color: rgb(230, 230, 235);
+    text-align: center;
+    font-size: 1em;
+    background-color: #000;
+}
+
+.absol-color-picker-text-container> span,
+.absol-color-picker-text-container> div{
+    line-height: 2;
+}
+
+.absol-color-picker-mode {
+    position: absolute;
+    right: 1em;
+    bottom: 1em;
+    height: 2em;
+    width: 3em;
+    box-sizing: border-box;
+    font-size: 1em;
+    border: none;
+    outline: none;
+    background-color: rgb(75, 75, 82);
+    color: rgb(225, 225, 235);
+}
+
+.absol-color-picker.with-alpha .absol-color-picker-mode {
+    right: 2.5em;
+    width: 3.7em;
+}
