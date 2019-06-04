@@ -1,0 +1,92 @@
+.absol-radio {
+    display: inline;
+    cursor: pointer;
+}
+
+.absol-radio input {
+    display: none;
+}
+
+.absol-radio label {
+    white-space: pre;
+    cursor: inherit;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.absol-radio>svg {
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+}
+
+.absol-radio>svg .bound {
+    stroke: #929292;
+    fill: white;
+}
+
+.absol-radio:hover>svg .bound {
+    fill: #d6d6d6;
+    stroke: black;
+}
+
+/* 
+.absol-radio>svg .bound {
+    fill: none;
+} */
+
+.absol-radio-icon .border {}
+
+.absol-radio .dot {
+    transition: opacity 0.07s;
+    opacity: 0;
+    fill: #606060;
+}
+
+.absol-radio:hover .dot {
+    transition: opacity 0.07s;
+    opacity: 0;
+    fill: black;
+}
+
+.absol-radio.checked .dot {
+    opacity: 1;
+    transition: opacity 0.1s;
+}
+
+.absol-radio:not(.right) .absol-radio-icon-right {
+    display: none;
+}
+
+.absol-radio:not(.right) label {
+    padding-left: 5px;
+}
+
+.absol-radio.right label {
+    padding-right: 5px;
+}
+
+.absol-radio.right .absol-radio-icon-left {
+    display: none;
+}
+
+.absol-radio.disabled {
+    cursor: default;
+}
+
+.absol-radio.disabled:hover .dot,
+.absol-radio.disabled .dot {
+    fill: #929292;
+}
+
+.absol-radio.disabled .bound,
+.absol-radio.disabled:hover .bound {
+    stroke: #929292;
+    fill: #ebebe4;
+}
+
+
+.absol-radio .standar-alone {
+    display: inline-block;
+}

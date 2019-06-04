@@ -50,6 +50,10 @@ import './js/SelectTreeMenu';
 import SelectBoxLayoutStyleText from './css/selectbox.css';
 import './js/SelectBox';
 
+import RadioLayoutStyleText from './css/radio.css';
+import './js/Radio';
+import './js/RadioInput';
+
 import './js/TextClipboard';
 
 var styleText = [IconButtonStyleText, SelectTableStyleText,
@@ -58,7 +62,8 @@ var styleText = [IconButtonStyleText, SelectTableStyleText,
     ModalStyleText, ImageViewerStyleText, MediaInputStyleText,
     ResizableLayoutStyleText, AutoCompleteInputLayoutStyleText,
     TreeListLayoutStyleText, SelectTreeMenuLayoutStyleText, SelectListLayoutStyleText,
-    SelectMenuLayoutStyleText, SelectBoxLayoutStyleText].join('\n');
+    SelectMenuLayoutStyleText, SelectBoxLayoutStyleText, 
+    RadioLayoutStyleText].join('\n');
 
 var AComp = {
     core: Acore,

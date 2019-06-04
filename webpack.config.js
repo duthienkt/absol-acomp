@@ -4,7 +4,7 @@ const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 var packages ={
     default: {
-        entry: ['babel-polyfill', "./dev.js"],
+        entry: ["./dev.js"],
         filename: "./dist/absol-acomp.js"
     }
 }
