@@ -26,10 +26,10 @@ function ColorPicker() {
         '    </div>',
         '    <div class="absol-color-picker-input">',
         ` <div class="absol-color-picker-text-container">
-            <span>hsb(</span>
+            <span>hsba(</span>
             <span class="absol-editabe-text num0">0</span><span class="separator0">deg, </span>
-            <span class="absol-editabe-text num1">0</span><span class="separator1">, </span>
-            <span class="absol-editabe-text num2">0</span><span class="separator02">, </span>
+            <span class="absol-editabe-text num1">0</span><span class="separator1">%, </span>
+            <span class="absol-editabe-text num2">0</span><span class="separator02">%, </span>
             <span class="absol-editabe-text num3">0</span><span class="separator3">)</span>
         </div>`,
         '    </div>',
@@ -37,18 +37,22 @@ function ColorPicker() {
         '</div>'].join('')
     );
 
-    function onNumClick(event){
-        this.edit(true, true);
-    };
 
-    res.$num0 = _('editabletext.num0').on('click', onNumClick).on('keydown', function(event){
-        if (!event.key.match(/^[0-9]|Backspace|Enter$/)){
-            event.preventDefault();
-        }
-    });
-    res.$num1 = _('editabletext.num1').on('click', onNumClick);
-    res.$num2 = _('editabletext.num2').on('click', onNumClick);
-    res.$num3 = _('editabletext.num3').on('click', onNumClick);
+
+    res.$num0 = _('editabletext.num0');
+    res.$num1 = _('editabletext.num1');
+    res.$num2 = _('editabletext.num2');
+    res.$num3 = _('editabletext.num3');
+    ColorPicker.defaultNumberInputHandle(res.$num0);
+    ColorPicker.defaultNumberInputHandle(res.$num1);
+    ColorPicker.defaultNumberInputHandle(res.$num2);
+    ColorPicker.defaultNumberInputHandle(res.$num3);
+
+    res._num0LimitOption = ColorPicker.numberInputHandleLimit(res.$num0, 0, 360);
+    res._num1LimitOption = ColorPicker.numberInputHandleLimit(res.$num1, 0, 100, true);
+    res._num2LimitOption = ColorPicker.numberInputHandleLimit(res.$num2, 0, 100, true);
+    res._num3LimitOption = ColorPicker.numberInputHandleLimit(res.$num3, 0, 1, false);
+
     $(".absol-editabe-text.num0", res).selfReplace(res.$num0);
     $(".absol-editabe-text.num1", res).selfReplace(res.$num1);
     $(".absol-editabe-text.num2", res).selfReplace(res.$num2);
@@ -102,6 +106,71 @@ function ColorPicker() {
     //todo
     return res;
 }
+
+
+ColorPicker.defaultNumberInputHandle = function (element) {
+    element
+        .on('keydown', function (event) {
+            if (!event.key.match(/^[0-9\.]|Backspace|Enter$/)) {
+                event.preventDefault();
+            }
+            if (event.key == 'Enter') {
+                this.edit(false);
+            }
+            if (event.key == '.' && this.text.indexOf('.') >= 0) {
+                event.preventDefault();
+            }
+        })
+        .on('click', function (event) {
+            element.edit(true, true);
+        })
+        .on('keydown', function (event) {
+            if (event.key == 'Tab') {
+                var parent = element.parentNode;
+                var firstFriend;
+                var found = false;
+                var nextFriend = $('editabletext', parent, function (elt) {
+                    if (!firstFriend) {
+                        firstFriend = elt;
+                    }
+                    if (elt == element) {
+                        found = true;
+                    }
+                    else if (found) {
+                        return true;
+                    }
+                });
+
+                nextFriend = nextFriend || firstFriend;
+                if (nextFriend) {
+                    nextFriend.edit(true, true);
+                }
+
+            }
+        });
+};
+
+ColorPicker.numberInputHandleLimit = function (element, min, max, isInterger) {
+    var option = {
+        min: min, max: max, isInterger: isInterger,
+        enable: true
+    }
+    element.on('blur', function (event) {
+        if (!option.enable) return;
+        var number = parseFloat(element.text);
+        if (isNaN(number)) {
+            number = min;
+        }
+        if (option.isInterger) {
+            number = Math.round(number);
+        }
+        number = Math.max(min, Math.min(option.max, option.number));
+        element.text = number + '';
+    });
+    return option;
+};
+
+
 
 ColorPicker.property = {};
 ColorPicker.property.withAlpha = {
