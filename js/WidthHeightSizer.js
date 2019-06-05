@@ -39,12 +39,12 @@ WidthHeightResizer.eventHandler.drag = function (event) {
     var newEvent = {target: this, data:{width: this._whrWidth, height:this._whrHeight}};
     if (event.moveDX != 0) {
         this.addStyle('width', this._whrWidth + event.moveDX + 'px');
-        newEvent.data.width = this._whrWidth + event.moveDX;
+        newEvent.data.width = this.getComputedStyleValue('width');
         newEvent.data.changeWidth = true;
     }
     if (event.moveDY != 0) {
         this.addStyle('height', this._whrHeight + event.moveDY + 'px');
-        newEvent.data.height = this._whrHeight + event.moveDY;
+        newEvent.data.height = this.getComputedStyleValue('height');
         newEvent.data.changeHeight = true;
     }
     this.emit('sizechange', newEvent);
