@@ -26,6 +26,11 @@
             },
             child:{
                 text:absol.string.randomParagraph(5000)
+            },
+            on:{
+                sizechange:function(event){
+                    console.log(event);
+                }
             }
         }).addTo(document.body);
     </script>

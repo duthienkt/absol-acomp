@@ -8,6 +8,7 @@ var $ = Acore.$;
 
 function WidthHeightResizer() {
     var res = _({
+        extendEvent:'sizechange',
         class: 'absol-width-height-resizer',
         child: ['.absol-width-height-resizer-content', '.absol-width-height-resizer-anchor']
     });
@@ -35,12 +36,18 @@ WidthHeightResizer.eventHandler.preDrag = function (event) {
 };
 
 WidthHeightResizer.eventHandler.drag = function (event) {
+    var newEvent = {target: this, data:{width: this._whrWidth, height:this._whrHeight}};
     if (event.moveDX != 0) {
         this.addStyle('width', this._whrWidth + event.moveDX + 'px');
+        newEvent.data.width = this._whrWidth + event.moveDX;
+        newEvent.data.changeWidth = true;
     }
     if (event.moveDY != 0) {
         this.addStyle('height', this._whrHeight + event.moveDY + 'px');
+        newEvent.data.height = this._whrHeight + event.moveDY;
+        newEvent.data.changeHeight = true;
     }
+    this.emit('sizechange', newEvent);
 };
 
 Acore.creator.widthheightresizer = WidthHeightResizer;
