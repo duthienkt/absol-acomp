@@ -62,6 +62,10 @@ import './js/EditableText';
 import WidthHeightResizerLayoutStyleText from './css/widthheightresizer.css';
 import './js/WidthHeightSizer';
 
+import CheckBoxLayoutStyleText from './css/checkbox.css';
+import './js/CheckBox';
+import './js/CheckboxInput';
+
 var styleText = [IconButtonStyleText, SelectTableStyleText,
     ScrollerStyleText, SearcherStyleText,
     MenuStyleText, ContextMenuStyleText,
@@ -69,7 +73,7 @@ var styleText = [IconButtonStyleText, SelectTableStyleText,
     ResizableLayoutStyleText, AutoCompleteInputLayoutStyleText,
     TreeListLayoutStyleText, SelectTreeMenuLayoutStyleText, SelectListLayoutStyleText,
     SelectMenuLayoutStyleText, SelectBoxLayoutStyleText, 
-    RadioLayoutStyleText, EditableTextLayoutStyleText, WidthHeightResizerLayoutStyleText].join('\n');
+    RadioLayoutStyleText, EditableTextLayoutStyleText, WidthHeightResizerLayoutStyleText, CheckBoxLayoutStyleText].join('\n');
 
 var AComp = {
     core: Acore,

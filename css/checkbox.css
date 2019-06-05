@@ -1,0 +1,88 @@
+
+.absol-checkbox {
+    display: inline;
+    cursor: pointer;
+}
+
+.absol-checkbox input {
+    display: none;
+}
+
+.absol-checkbox label {
+    white-space: pre;
+    cursor: inherit;
+    vertical-align: middle;
+    margin: 0;
+}
+
+.absol-checkbox>svg {
+    display: inline-block;
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+}
+
+.absol-checkbox>svg .bound {
+    stroke: #929292;
+    fill: white;
+}
+
+.absol-checkbox:hover>svg .bound {
+    fill: #d6d6d6;
+    stroke: black;
+}
+
+/* 
+.absol-checkbox>svg .bound {
+    fill: none;
+} */
+
+.absol-checkbox-icon .border {}
+
+.absol-checkbox .tick {
+    transition: opacity 0.07s;
+    opacity: 0;
+    fill: #606060;
+}
+
+.absol-checkbox:hover .tick {
+    transition: opacity 0.07s;
+    opacity: 0;
+    fill: black;
+}
+
+.absol-checkbox.checked .tick {
+    opacity: 1;
+    transition: opacity 0.1s;
+}
+
+.absol-checkbox:not(.right) .absol-checkbox-icon-right {
+    display: none;
+}
+
+.absol-checkbox:not(.right) label {
+    padding-left: 5px;
+}
+
+.absol-checkbox.right label {
+    padding-right: 5px;
+}
+
+.absol-checkbox.right .absol-checkbox-icon-left {
+    display: none;
+}
+
+.absol-checkbox.disabled {
+    cursor: default;
+}
+
+.absol-checkbox.disabled:hover .tick,
+.absol-checkbox.disabled .tick {
+    fill: #929292;
+}
+
+.absol-checkbox.disabled .bound,
+.absol-checkbox.disabled:hover .bound {
+    stroke: #929292;
+    fill: #ebebe4;
+}
