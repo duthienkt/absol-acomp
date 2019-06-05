@@ -31,6 +31,7 @@ function Draggable(element) {
     };
 
     var mouseMoveEventHandler = function (event) {
+        event.preventDefault();
         event.moveDX = event.clientX - offsetX;
         event.moveDY = event.clientY - offsetY;
         event.moveDXem = event.moveDX / fontSize;

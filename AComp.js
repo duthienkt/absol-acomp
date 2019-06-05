@@ -59,6 +59,9 @@ import './js/TextClipboard';
 import EditableTextLayoutStyleText from './css/editabletext.css';
 import './js/EditableText';
 
+import WidthHeightResizerLayoutStyleText from './css/widthheightresizer.css';
+import './js/WidthHeightSizer';
+
 var styleText = [IconButtonStyleText, SelectTableStyleText,
     ScrollerStyleText, SearcherStyleText,
     MenuStyleText, ContextMenuStyleText,
@@ -66,7 +69,7 @@ var styleText = [IconButtonStyleText, SelectTableStyleText,
     ResizableLayoutStyleText, AutoCompleteInputLayoutStyleText,
     TreeListLayoutStyleText, SelectTreeMenuLayoutStyleText, SelectListLayoutStyleText,
     SelectMenuLayoutStyleText, SelectBoxLayoutStyleText, 
-    RadioLayoutStyleText, EditableTextLayoutStyleText].join('\n');
+    RadioLayoutStyleText, EditableTextLayoutStyleText, WidthHeightResizerLayoutStyleText].join('\n');
 
 var AComp = {
     core: Acore,
