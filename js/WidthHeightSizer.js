@@ -26,8 +26,6 @@ function WidthHeightResizer() {
     }
 })
 
-console.log(
-Element.prototype)
 
 WidthHeightResizer.eventHandler = {};
 WidthHeightResizer.eventHandler.preDrag = function (event) {

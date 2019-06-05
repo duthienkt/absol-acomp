@@ -1,10 +1,16 @@
 import AComp from "./AComp";
 import IFrameBridge from 'absol/src/Network/IFrameBridge';
-
+import * as stringGen from 'absol/src/String/stringGenerate';
+import * as stringForm from 'absol/src/String/stringFormat';
+import * as stringMatch from 'absol/src/String/stringMatching';
 
 //for export to window
 window.absol = window.absol || {};
 absol.AComp = AComp;
+
+absol.string = absol.string || {};
+Object.assign(absol.string, stringGen, stringForm, stringMatch);
+
 
 absol.ShareDom = absol.AComp;
 absol.ShareDom.fromCode = absol.AComp.core.fromCode.bind(absol.AComp.core);
