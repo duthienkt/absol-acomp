@@ -4,7 +4,8 @@
 }
 
 .absol-editabe-text span {
-    font-style: normal !important;
+    font-style: inherit;
+    font-size: inherit;
     white-space: pre;
 }
 
@@ -27,6 +28,8 @@
     margin: 0;
     background: transparent;
     outline: none;
+    font-style: inherit;
+    font-size: inherit;
 }
 
 .absol-editabe-text.editing .absol-editabe-text-higne input {
