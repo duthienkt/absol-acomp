@@ -119,7 +119,7 @@ Radio.property = {
 };
 
 Radio.getAllByName = function (name) {
-    return (document.getElementsByTagName('input') || []).filter(function (elt) {
+    return (Array.apply(null, document.getElementsByTagName('input')) || []).filter(function (elt) {
         return elt.getAttribute('type') == 'radio' && elt.getAttribute('name') == name;
     });
 };
