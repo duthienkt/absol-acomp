@@ -26,18 +26,21 @@ function ColorPicker() {
         '    </div>',
         '    <div class="absol-color-picker-input">',
         ` <div class="absol-color-picker-text-container">
-            <span>hsba(</span>
+            <span class="f-mode">hsba(</span>
             <span class="absol-editabe-text num0">0</span><span class="separator0">deg, </span>
             <span class="absol-editabe-text num1">0</span><span class="separator1">%, </span>
-            <span class="absol-editabe-text num2">0</span><span class="separator02">%, </span>
-            <span class="absol-editabe-text num3">0</span><span class="separator3">)</span>
+            <span class="absol-editabe-text num2">0</span><span class="separator2">%, </span>
+            <span class="absol-editabe-text num3">0</span><span>)</span>
         </div>`,
         '    </div>',
         '    <button class="absol-color-picker-mode">HSB</button>',
         '</div>'].join('')
     );
 
-
+    res.$fMode = $('.f-mode', res);
+    res.$sep0 = $('.separator0', res);
+    res.$sep1 = $('.separator1', res);
+    res.$sep2 = $('.separator2', res);
 
     res.$num0 = _('editabletext.num0');
     res.$num1 = _('editabletext.num1');
@@ -48,15 +51,18 @@ function ColorPicker() {
     ColorPicker.defaultNumberInputHandle(res.$num2);
     ColorPicker.defaultNumberInputHandle(res.$num3);
 
+
+
     res._num0LimitOption = ColorPicker.numberInputHandleLimit(res.$num0, 0, 360);
-    res._num1LimitOption = ColorPicker.numberInputHandleLimit(res.$num1, 0, 100, true);
-    res._num2LimitOption = ColorPicker.numberInputHandleLimit(res.$num2, 0, 100, true);
-    res._num3LimitOption = ColorPicker.numberInputHandleLimit(res.$num3, 0, 1, false);
+    res._num1LimitOption = ColorPicker.numberInputHandleLimit(res.$num1, 0, 100, 0);
+    res._num2LimitOption = ColorPicker.numberInputHandleLimit(res.$num2, 0, 100, 0);
+    res._num3LimitOption = ColorPicker.numberInputHandleLimit(res.$num3, 0, 1, 3);
 
     $(".absol-editabe-text.num0", res).selfReplace(res.$num0);
     $(".absol-editabe-text.num1", res).selfReplace(res.$num1);
     $(".absol-editabe-text.num2", res).selfReplace(res.$num2);
     $(".absol-editabe-text.num3", res).selfReplace(res.$num3);
+
     res.$num0.text = '0';
     res.$num1.text = '0';
     res.$num2.text = '0';
@@ -104,6 +110,13 @@ function ColorPicker() {
     res.$mode = $('.absol-color-picker-mode', res);
     res.$mode.on('click', res.eventHandler.modeClick);
     //todo
+
+    res.$num0.on('blur', res.eventHandler.inputBlur);
+    res.$num1.on('blur', res.eventHandler.inputBlur);
+    res.$num2.on('blur', res.eventHandler.inputBlur);
+    res.$num3.on('blur', res.eventHandler.inputBlur);
+
+
     return res;
 }
 
@@ -111,7 +124,10 @@ function ColorPicker() {
 ColorPicker.defaultNumberInputHandle = function (element) {
     element
         .on('keydown', function (event) {
-            if (!event.key.match(/^[0-9\.]|Backspace|Enter$/)) {
+            if (!event.key.match(/^[0-9\.]$/) && event.key.length == 1) {
+                event.preventDefault();
+            }
+            if (event.key == 'Tab') {
                 event.preventDefault();
             }
             if (event.key == 'Enter') {
@@ -120,6 +136,7 @@ ColorPicker.defaultNumberInputHandle = function (element) {
             if (event.key == '.' && this.text.indexOf('.') >= 0) {
                 event.preventDefault();
             }
+            if (this.text.length >= 6 && event.key.length == 1) event.preventDefault();
         })
         .on('click', function (event) {
             element.edit(true, true);
@@ -130,6 +147,7 @@ ColorPicker.defaultNumberInputHandle = function (element) {
                 var firstFriend;
                 var found = false;
                 var nextFriend = $('editabletext', parent, function (elt) {
+                    if (elt.getComputedStyleValue('display') == "none") return;
                     if (!firstFriend) {
                         firstFriend = elt;
                     }
@@ -150,9 +168,12 @@ ColorPicker.defaultNumberInputHandle = function (element) {
         });
 };
 
-ColorPicker.numberInputHandleLimit = function (element, min, max, isInterger) {
+
+
+
+ColorPicker.numberInputHandleLimit = function (element, min, max, fixed) {
     var option = {
-        min: min, max: max, isInterger: isInterger,
+        min: min, max: max, fixed: fixed || 0,
         enable: true
     }
     element.on('blur', function (event) {
@@ -161,14 +182,15 @@ ColorPicker.numberInputHandleLimit = function (element, min, max, isInterger) {
         if (isNaN(number)) {
             number = min;
         }
-        if (option.isInterger) {
+        if (option.fixed == 0) {
             number = Math.round(number);
         }
-        number = Math.max(min, Math.min(option.max, option.number));
-        element.text = number + '';
+        number = Math.max(min, Math.min(option.max, number));
+        element.text = number.toFixed(option.fixed) + '';
     });
     return option;
 };
+
 
 
 
@@ -220,12 +242,24 @@ ColorPicker.property.mode = {
         value = (value + '').toUpperCase();
         if (value.indexOf('A') >= 0) {
             this.addClass('with-alpha');
-
         }
         else {
             this.removeClass('with-alpha');
+            this.alpha = 1;
         }
-        if (/^(HSB|HSL|RGB|RGBA|HSBA|HSLA)$/) {
+
+        if (value.match(/^H/)) {
+            this._num0LimitOption.max = 360;
+            this._num0LimitOption.max = 100;
+            this._num0LimitOption.max = 100;
+        }
+        else if (value.match(/^RGB/)) {
+            this._num0LimitOption.max = 255;
+            this._num0LimitOption.max = 255;
+            this._num0LimitOption.max = 255;
+        }
+
+        if (value.match(/^(HSB|HSL|RGB|RGBA|HSBA|HSLA)$/)) {
             this.$mode.innerHTML = value;
             this._updateColorText();
         }
@@ -354,13 +388,58 @@ ColorPicker.prototype._update = function () {
 ColorPicker.prototype._updateColorText = function () {
     var hsba = [this.hue, this.saturation, this.brightness, this.alpha];
     var mode = this.mode;
-    if (mode.match(/HSB/)) {
-        this.$textContainer.value = Color[mode.toLocaleLowerCase() + 'ToText'](hsba);
+    this.$fMode.innerHTML = mode.toLocaleLowerCase() + '(';
+    if (mode.match(/^H/)) {
+        this.$sep0.innerHTML = 'deg, ';
+        this.$sep1.innerHTML = '%, ';
+        if (mode.match(/A$/)) {
+            this.$sep2.innerHTML = "%, ";
+            this.$num3.removeStyle('display');
+
+        }
+        else {
+            this.$sep2.innerHTML = "%";
+            this.$num3.addStyle('display', 'none');
+
+        }
     }
     else {
-        var tempMode = mode.indexOf('A') < 0 ? mode + 'A' : mode;
-        var tempColor = Color['hsbaTo' + tempMode](hsba);
-        this.$textContainer.value = Color[mode.toLocaleLowerCase() + 'ToText'](tempColor);
+        this.$sep0.innerHTML = ', ';
+        this.$sep1.innerHTML = ', ';
+        if (mode.match(/A$/)) {
+            this.$sep2.innerHTML = ", ";
+            this.$num3.removeStyle('display');
+
+        }
+        else {
+            this.$num3.addStyle('display', 'none');
+            this.$sep2.innerHTML = "";
+        }
+
+    }
+    if (mode.match(/HSB/)) {
+        this.$num0.text = '' + Math.round(hsba[0] * 360);
+        this.$num1.text = '' + Math.round(hsba[1] * 100);
+        this.$num2.text = '' + Math.round(hsba[2] * 100);
+        this.$num3.text = hsba[3].toFixed(3);
+    }
+    else {
+        var cBytes = Color['hsbaTo' + (mode.match(/A$/) ? mode : mode + 'A')](hsba);
+        if (mode.match(/^H/)) {
+            this.$num0.text = '' + Math.round(cBytes[0] * 360);
+            this.$num1.text = '' + Math.round(cBytes[1] * 100);
+            this.$num2.text = '' + Math.round(cBytes[2] * 100);
+            this.$num3.text = hsba[3].toFixed(3);
+        }
+        else {
+            this.$num0.text = '' + Math.round(cBytes[0] * 255);
+            this.$num1.text = '' + Math.round(cBytes[1] * 255);
+            this.$num2.text = '' + Math.round(cBytes[2] * 255);
+            this.$num3.text = hsba[3].toFixed(3);
+        }
+        // var tempMode = mode.indexOf('A') < 0 ? mode + 'A' : mode;
+        // var tempColor = Color['hsbaTo' + tempMode](hsba);
+        // this.$textContainer.value = Color[mode.toLocaleLowerCase() + 'ToText'](tempColor);
     }
 };
 
@@ -429,7 +508,6 @@ ColorPicker.eventHandler.alphaPointerDown = function (event) {
     var newA = this._getAOfEvent(event);
     this.alpha = newA;
 
-
     absol.$(document.body)
         .on('pointermove', this.eventHandler.alphaPointerMove)
         .on('pointerup', this.eventHandler.alphaPointerFinish)
@@ -452,7 +530,6 @@ ColorPicker.eventHandler.alphaPointerMove = function (event) {
     this.alpha = newA;
     event.preventDefault();
     this.emit('change');
-
 };
 
 ColorPicker.eventHandler.modeClick = function (event) {
@@ -461,6 +538,26 @@ ColorPicker.eventHandler.modeClick = function (event) {
 };
 
 
+ColorPicker.eventHandler.inputBlur = function () {
+    var mode = this.mode;
+    var alpha = 1;
+    if (mode.match(/A$/)) {
+        alpha = parseFloat(this.$num3.text);
+    }
+    var bytes;
+    if (mode.match(/^H/)) {
+        bytes = [parseFloat(this.$num0.text) / 360, parseFloat(this.$num1.text) / 100, parseFloat(this.$num2.text) / 100, alpha];
+    }
+    else if (mode.match(/^RGB/)) {
+        bytes = [parseFloat(this.$num0.text) / 255, parseFloat(this.$num1.text) / 255, parseFloat(this.$num2.text) / 255, alpha];
+    }
+
+    var hsba = mode.match(/^HSB/) ? bytes : Color[(mode.match(/A$/) ? mode.toLocaleLowerCase() : mode.toLocaleLowerCase() + 'a') + 'ToHSBA'](bytes);
+    this.hue = hsba[0];
+    this.saturation = hsba[1];
+    this.brightness = hsba[2];
+    this.alpha = hsba[3];
+};
 
 CPCore.creator.colorpicker = ColorPicker;
 
