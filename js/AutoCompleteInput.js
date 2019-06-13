@@ -8,7 +8,7 @@ import SearchObjectArrayAdapter from "./adapter/SearchObjectArrayAdapter";
 var _ = Acore._;
 var $ = Acore.$;
 
-function AutoComplateInput() {
+function AutoCompleteInput() {
     var res = _({
         extendEvent: 'change',
         class: 'absol-autocomplete-input',
@@ -30,7 +30,7 @@ function AutoComplateInput() {
         ]
     });
 
-    res.eventHandler = OOP.bindFunctions(res, AutoComplateInput.eventHandler);
+    res.eventHandler = OOP.bindFunctions(res, AutoCompleteInput.eventHandler);
 
     res.$input = $('input', res)
         .on('keyup', res.eventHandler.keyup)
@@ -50,8 +50,8 @@ function AutoComplateInput() {
 }
 
 
-AutoComplateInput.eventHandler = {};
-AutoComplateInput.eventHandler.keyup = function (event) {
+AutoCompleteInput.eventHandler = {};
+AutoCompleteInput.eventHandler.keyup = function (event) {
     if (this._keyTimeout) {
         clearTimeout(this._keyTimeout);
         this._keyTimeout = 0;
@@ -79,7 +79,7 @@ AutoComplateInput.eventHandler.keyup = function (event) {
 
 // absol-autocomplete-input-item
 
-AutoComplateInput.eventHandler.vscrollerClick = function (event) {
+AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
     var current = event.target;
     while (current && !current.containsClass('absol-autocomplete-input-item') && current != this.$vscroller) {
         current = current.parentElement;
@@ -95,7 +95,7 @@ AutoComplateInput.eventHandler.vscrollerClick = function (event) {
     }
 };
 
-AutoComplateInput.eventHandler.keydown = function (event) {
+AutoCompleteInput.eventHandler.keydown = function (event) {
     var key = event.key;
     if (key == 'ArrowDown') {
         if (this._selectedIndex + 1 < this._currentData.length) {
@@ -140,7 +140,7 @@ AutoComplateInput.eventHandler.keydown = function (event) {
     }
 };
 
-AutoComplateInput.prototype.find = function () {
+AutoCompleteInput.prototype.find = function () {
     var query = this.$input.value;
     if (query == this._lastQuery) return;
     this._lastQuery = query;
@@ -184,7 +184,7 @@ AutoComplateInput.prototype.find = function () {
     }
 };
 
-AutoComplateInput.prototype.pushData = function (data, sessionIndex, query) {
+AutoCompleteInput.prototype.pushData = function (data, sessionIndex, query) {
     if (sessionIndex > this._updatedSession) {
         this._updatedSession = sessionIndex;
         this.$vscroller.clearChild();
@@ -256,7 +256,7 @@ AutoComplateInput.prototype.pushData = function (data, sessionIndex, query) {
 };
 
 
-AutoComplateInput.prototype.getItemText = function (item) {
+AutoCompleteInput.prototype.getItemText = function (item) {
     if (this.adapter && this.adapter.getItemText) {
         return this.adapter.getItemText(item, this);
     }
@@ -268,7 +268,7 @@ AutoComplateInput.prototype.getItemText = function (item) {
 
 }
 
-AutoComplateInput.prototype.getItemView = function (item, index, _, $, query, reuseItem, refParent) {
+AutoCompleteInput.prototype.getItemView = function (item, index, _, $, query, reuseItem, refParent) {
     if (this.adapter && this.adapter.getItemView) {
         return this.adapter.getItemView(item, index, _, $, query, reuseItem, refParent, this);
     }
@@ -294,7 +294,7 @@ AutoComplateInput.prototype.getItemView = function (item, index, _, $, query, re
  * @param {String} query
  * @returns {Array}
  */
-AutoComplateInput.prototype.queryItems = function (query) {
+AutoCompleteInput.prototype.queryItems = function (query) {
     if (this.adapter && this.adapter.queryItems) {
         return this.adapter.queryItems(query, this);
     }
@@ -304,7 +304,7 @@ AutoComplateInput.prototype.queryItems = function (query) {
 };
 
 
-AutoComplateInput.prototype.clearCache = function (old) {
+AutoCompleteInput.prototype.clearCache = function (old) {
     if (typeof old != "number") old = 30;
     for (var key in this._cache) {
         var cacheHolder = this._cache[key];
@@ -314,8 +314,8 @@ AutoComplateInput.prototype.clearCache = function (old) {
     }
 }
 
-AutoComplateInput.property = {};
-AutoComplateInput.property.adapter = {
+AutoCompleteInput.property = {};
+AutoCompleteInput.property.adapter = {
     set: function (value) {
         if (value instanceof Array) {
             if (value[0] == 'SearchStringArray') {
@@ -342,4 +342,4 @@ AutoComplateInput.property.adapter = {
 
 
 
-Acore.creator.autocompleteinput = AutoComplateInput;
+Acore.install(AutoCompleteInput);
