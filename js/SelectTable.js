@@ -7,10 +7,12 @@ import Svg from "absol/src/HTML5/Svg";
 import OOP from "absol/src/HTML5/OOP";
 
 
+var privateDom = new Dom().install(Acore);
+var $ = privateDom.$;
+var _ = privateDom._;
+
 
 function SelectTable() {
-    var $ = SelectTable.$;
-    var _ = SelectTable._;
     var res = _({
         class: 'absol-select-table',
         extendEvent: ['change', 'addall', 'removeall', 'add', 'remove'],
@@ -51,7 +53,7 @@ function SelectTable() {
                     {
                         tag: 'vscroller',
                         attr: { id: 'nonselected' },
-                        class: 'absol-select-table-items-scroller',
+                        class: ['absol-select-table-items-scroller', 'limited-height'],
                         child: {
                             child: ['.absol-select-table-nonselected-items-container', '.absol-select-table-nonselected-search-items-container']
                         }
@@ -59,7 +61,7 @@ function SelectTable() {
                     {
                         tag: 'vscroller',
                         attr: { id: 'selected' },
-                        class: 'absol-select-table-items-scroller',
+                        class: ['absol-select-table-items-scroller', 'limited-height'],
                         child: {
                             child: ['.absol-select-table-selected-items-container', '.absol-select-table-selected-search-items-container']
 
@@ -86,16 +88,10 @@ function SelectTable() {
     res.$vscrollerSelected = $('vscroller#selected', res)
     res.$vscrollerNonselected = $('vscroller#nonselected', res);
     res.$body = $('.absol-select-table-body', res);
+    res.$header = $('.absol-select-table-header', res);
     res.$searchTextInput = $('searchtextinput', res).on('stoptyping', res.eventHandler.searchTextInputModify);
     return res;
 };
-
-
-
-
-
-
-
 
 
 
@@ -124,25 +120,14 @@ SelectTable.prototype.removeAll = function () {
 SelectTable.prototype.updateScroller = function () {
     var update = function () {
         if (this.style.height) {
-            var bodyMargin = parseFloat(this.$body.getComputedStyleValue('margin-top').replace('px', '') || (0.14285714285 * 14 + ''));
-            var bound = this.getBoundingClientRect();
-            var bodyBound = this.$body.getBoundingClientRect();
-            var bodyRBound = this.$body.getBoundingRecursiveRect();
-            var availableHeight = bound.bottom - bodyMargin - bodyBound.top;
-            var isOverflowHeight = availableHeight < bodyRBound.height;
-            if (isOverflowHeight) {
-                this.$vscrollerNonselected.addStyle('max-height', availableHeight + 'px');
-                this.$vscrollerSelected.addStyle('max-height', availableHeight + 'px');
-                this.$vscrollerSelected.addClass('limited-height');
-                this.$vscrollerNonselected.addClass('limited-height');
-            }
-            else {
-                this.$vscrollerNonselected.removeStyle('max-height');
-                this.$vscrollerSelected.removeStyle('max-height');
-                this.$vscrollerSelected.removeClass('limited-height');
-                this.$vscrollerSelected.removeClass('limited-height');
-                this.$vscrollerNonselected.removeClass('limited-height');
-            }
+            var height = parseFloat(this.getComputedStyleValue('height').replace('px', ''));
+            var headerHeight = parseFloat(this.$header.getComputedStyleValue('height').replace('px', ''));
+            var bodyMargin = parseFloat(this.$body.getComputedStyleValue('margin-top').replace('px', ''));
+            var borderWidth = 1;
+            var availableHeight = height - headerHeight - bodyMargin * 2 - borderWidth * 2;
+            this.$vscrollerNonselected.addStyle('max-height', availableHeight + 'px');
+            this.$vscrollerSelected.addStyle('max-height', availableHeight + 'px');
+
         }
         requestAnimationFrame(this.$vscrollerNonselected.requestUpdateSize.bind(this.$vscrollerNonselected));
         requestAnimationFrame(this.$vscrollerSelected.requestUpdateSize.bind(this.$vscrollerSelected));
@@ -403,7 +388,7 @@ SelectTable.property.selectedItems = {
         var self = this;
         if (items instanceof Array) {
             items.map(function (item) {
-                return SelectTable._({
+                return _({
                     tag: 'item',
                     props: {
                         data: item
@@ -448,7 +433,7 @@ SelectTable.property.nonselectedItems = {
         var self = this;
         if (items instanceof Array) {
             items.map(function (item) {
-                return SelectTable._({
+                return _({
                     tag: 'item',
                     props: {
                         data: item
@@ -492,7 +477,7 @@ SelectTable.property.selectedSearchItems = {
         var table = this;
         if (items instanceof Array) {
             items.map(function (item) {
-                return SelectTable._({
+                return _({
                     tag: 'item',
                     props: {
                         data: item
@@ -551,7 +536,7 @@ SelectTable.property.nonselectedSearchItems = {
         var table = this;
         if (items instanceof Array) {
             items.map(function (item) {
-                return SelectTable._({
+                return _({
                     tag: 'item',
                     props: {
                         data: item
@@ -605,10 +590,7 @@ SelectTable.property.nonselectedSearchItems = {
 /*
 namespace of selecttable
 */
-SelectTable.privateCreator = Object.assign({}, Acore.creator);
-SelectTable.privateCreator.item = function () {
-    var $ = SelectTable.$;
-    var _ = SelectTable._;
+function Item() {
     var res = _({
         extendEvent: ['requestmove'],
         class: 'absol-select-table-item',
@@ -627,7 +609,7 @@ SelectTable.privateCreator.item = function () {
         ]
     });
     res.$text = $('span', res);
-    res.eventHandler = OOP.bindFunctions(res, SelectTable.privateCreator.item.eventHandler);
+    res.eventHandler = OOP.bindFunctions(res, Item.eventHandler);
     res.$rightBtn = $('.absol-select-table-item-right-container', res);
     res.on('dblclick', res.eventHandler.dblclick);
     res.$rightBtn.on('click', res.eventHandler.rightBtClick);
@@ -635,20 +617,20 @@ SelectTable.privateCreator.item = function () {
 };
 
 
-SelectTable.privateCreator.item.eventHandler = {};
-SelectTable.privateCreator.item.eventHandler.dblclick = function (event) {
+Item.eventHandler = {};
+Item.eventHandler.dblclick = function (event) {
     event.preventDefault();
     if (!EventEmitter.hitElement(this.$rightBtn, event))
         this.emit('requestmove', event, this);
 };
 
-SelectTable.privateCreator.item.eventHandler.rightBtClick = function (event) {
+Item.eventHandler.rightBtClick = function (event) {
     this.emit('requestmove', event, this);
 };
 
 
-SelectTable.privateCreator.item.property = {};
-SelectTable.privateCreator.item.property.data = {
+Item.property = {};
+Item.property.data = {
     set: function (value) {
         this._data = value;
         if (value) {
@@ -667,7 +649,7 @@ SelectTable.privateCreator.item.property.data = {
     }
 };
 
-SelectTable.privateCreator.item.property.text = {
+Item.property.text = {
     get: function () {
         return this._data ? (typeof this._data == 'string' ? this._data : this._data.text) : '';
     }
@@ -682,7 +664,7 @@ SelectTable.privateCreator.item.property.text = {
 </svg>
  */
 
-SelectTable.privateCreator.addicon = function () {
+function AddIcon() {
     return Svg.ShareInstance.buildSvg(
         '<svg class="add-icon" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
         '<g transform="translate(0,-197)">' +
@@ -692,8 +674,8 @@ SelectTable.privateCreator.addicon = function () {
     );
 };
 
-SelectTable.privateCreator.subicon = function () {
-    return  Svg.ShareInstance.buildSvg(
+function SubIcon() {
+    return Svg.ShareInstance.buildSvg(
         '<svg class="sub-icon" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
         ' <g transform="translate(0,-197)">' +
         '  <path d="m98.795 236.87v20.253h-97.589v-20.253z" style="fill-rule:evenodd;stroke-linejoin:round;stroke-width:2.411;"/>' +
@@ -702,11 +684,12 @@ SelectTable.privateCreator.subicon = function () {
     );
 };
 
+privateDom.install({
+    subicon: SubIcon,
+    addicon: AddIcon,
+    item: Item
+});
 
 
-
-SelectTable.privateDom = new Dom({ creator: SelectTable.privateCreator });
-SelectTable._ = SelectTable.privateDom._;
-SelectTable.$ = SelectTable.privateDom.$;
 
 Acore.creator.selecttable = SelectTable;
