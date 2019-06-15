@@ -3,7 +3,7 @@
     box-sizing: border-box;
 }
 
-.absol-width-height-resizer-anchor{
+.absol-width-height-resizer-anchor-bot-right {
     cursor: nwse-resize;
     position: absolute;
     z-index: 1;
@@ -14,7 +14,18 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQUlEQVQoz2NgIBGkpaX9Z2IgA9BWU1pa2n+S/UGSZnRFBDVhU4BXEy4bcGrC5ySsmgj5AUMTMZ4mOehhmhjJ0QkA9TYwPsqIBKMAAAAASUVORK5CYII=');
 }
 
-.absol-width-height-resizer-anchor-top{
+.absol-width-height-resizer-anchor-bot-left {
+    cursor: nesw-resize;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    bottom: 0;
+    height: 13px;
+    width: 13px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAABCSURBVChTY0hLS/vPQCJggtIkAco0keRMZMVEa0RXSJRGbIoIaoQpIMlGZEmiNRJSiFUjNkGCGrGaRAAwkq6JgQEAnaEwPtyU/MEAAAAASUVORK5CYII=');
+}
+
+.absol-width-height-resizer-anchor-top-right {
     cursor: nesw-resize;
     position: absolute;
     z-index: 1;
@@ -25,8 +36,21 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAABMSURBVChTY0xLS/vPQGsAsoQJygYDdFuJdgUhjTgNwqcQpyYQwKURryYQwKaAoCYQwGUjQYCskGhNIABTTJImGABpQolcYgEZmhgYAEPpMD56IPESAAAAAElFTkSuQmCC')
 }
 
-.absol-width-height-resizer-content{
+.absol-width-height-resizer-anchor-top-left {
+    cursor: nwse-resize;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    height: 13px;
+    width: 13px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAABNSURBVChTnZFbCgAgCAStw3r/GxQLClaSj/kJckcFBzMvqtKRprwHd6OncRRwN7GfKQFoIS0Ar/gVQGmCYkMpAWgwLYBSWHCPG9GQiDbsRTA+Srvt5gAAAABJRU5ErkJggg==');
+}
+
+.absol-width-height-resizer-content {
     width: 100%;
     height: 100%;
     overflow: auto;
 }
+
+/* .absol-width-height-resizer */
