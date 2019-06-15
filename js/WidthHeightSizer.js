@@ -10,14 +10,17 @@ function WidthHeightResizer() {
     var res = _({
         extendEvent:'sizechange',
         class: 'absol-width-height-resizer',
-        child: ['.absol-width-height-resizer-content', '.absol-width-height-resizer-anchor']
+        child: ['.absol-width-height-resizer-content', '.absol-width-height-resizer-anchor', '.absol-width-height-resizer-anchor-top']
     });
 
     res.eventHandler = OOP.bindFunctions(res, WidthHeightResizer.eventHandler);
     res.$anchor = $('.absol-width-height-resizer-anchor', res);
+    res.$anchorTop = $('.absol-width-height-resizer-anchor-top', res);
     res.$content = $('.absol-width-height-resizer-content', res);
 
     Draggable(res.$anchor).on('drag', res.eventHandler.drag).on('predrag', res.eventHandler.preDrag);
+
+    Draggable(res.$anchorTop).on('drag', res.eventHandler.dragTop).on('predrag', res.eventHandler.preDrag);
     return res;
 }
 
@@ -43,6 +46,21 @@ WidthHeightResizer.eventHandler.drag = function (event) {
     }
     if (event.moveDY != 0) {
         this.addStyle('height', this._whrHeight + event.moveDY + 'px');
+        newEvent.data.changeHeight = true;
+    }
+    newEvent.data.height = this.getComputedStyleValue('height');
+    newEvent.data.width = this.getComputedStyleValue('width');
+    this.emit('sizechange', newEvent);
+};
+
+WidthHeightResizer.eventHandler.dragTop = function (event) {
+    var newEvent = {target: this, data:{}};
+    if (event.moveDX != 0) {
+        this.addStyle('width', this._whrWidth + event.moveDX + 'px');
+        newEvent.data.changeWidth = true;
+    }
+    if (event.moveDY != 0) {
+        this.addStyle('height', this._whrHeight - event.moveDY + 'px');
         newEvent.data.changeHeight = true;
     }
     newEvent.data.height = this.getComputedStyleValue('height');

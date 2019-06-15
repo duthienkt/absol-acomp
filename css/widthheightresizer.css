@@ -14,6 +14,17 @@
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAQUlEQVQoz2NgIBGkpaX9Z2IgA9BWU1pa2n+S/UGSZnRFBDVhU4BXEy4bcGrC5ySsmgj5AUMTMZ4mOehhmhjJ0QkA9TYwPsqIBKMAAAAASUVORK5CYII=');
 }
 
+.absol-width-height-resizer-anchor-top{
+    cursor: nesw-resize;
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    top: 0;
+    height: 13px;
+    width: 13px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAYAAABy6+R8AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAABMSURBVChTY0xLS/vPQGsAsoQJygYDdFuJdgUhjTgNwqcQpyYQwKURryYQwKaAoCYQwGUjQYCskGhNIABTTJImGABpQolcYgEZmhgYAEPpMD56IPESAAAAAElFTkSuQmCC')
+}
+
 .absol-width-height-resizer-content{
     width: 100%;
     height: 100%;
