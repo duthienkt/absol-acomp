@@ -30,13 +30,7 @@ setTimeout(function () {
             tag: 'link',
             attr: {
                 rel: 'stylesheet',
-                href: '/css/materialdesignicons/materialdesignicons.min.css',
-            },
-            once: {
-                error: function () {
-                    console.warn('/css/materialdesignicons/materialdesignicons.min.css not found');
-                    this.href = 'https://volcanion.cf/materialdesignicons/materialdesignicons.min.css';
-                }
+                href: '//cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css'
             }
         }).addTo(document.head);
     }
