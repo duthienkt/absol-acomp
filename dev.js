@@ -6,6 +6,7 @@ import * as stringMatch from 'absol/src/String/stringMatching';
 
 //for export to window
 window.absol = window.absol || {};
+absol.Tooltip = AComp.creator.tooltip;
 absol.AComp = AComp;
 
 absol.string = absol.string || {};
