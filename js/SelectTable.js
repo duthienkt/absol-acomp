@@ -53,7 +53,7 @@ function SelectTable() {
                     {
                         tag: 'vscroller',
                         attr: { id: 'nonselected' },
-                        class: ['absol-select-table-items-scroller', 'limited-height'],
+                        class: ['absol-select-table-items-scroller'],
                         child: {
                             child: ['.absol-select-table-nonselected-items-container', '.absol-select-table-nonselected-search-items-container']
                         }
@@ -61,7 +61,7 @@ function SelectTable() {
                     {
                         tag: 'vscroller',
                         attr: { id: 'selected' },
-                        class: ['absol-select-table-items-scroller', 'limited-height'],
+                        class: ['absol-select-table-items-scroller'],
                         child: {
                             child: ['.absol-select-table-selected-items-container', '.absol-select-table-selected-search-items-container']
 
@@ -125,8 +125,8 @@ SelectTable.prototype.updateScroller = function () {
             var bodyMargin = parseFloat(this.$body.getComputedStyleValue('margin-top').replace('px', ''));
             var borderWidth = 1;
             var availableHeight = height - headerHeight - bodyMargin * 2 - borderWidth * 2;
-            this.$vscrollerNonselected.addStyle('max-height', availableHeight + 'px');
-            this.$vscrollerSelected.addStyle('max-height', availableHeight + 'px');
+            this.$vscrollerNonselected.addStyle('height', availableHeight + 'px');
+            this.$vscrollerSelected.addStyle('height', availableHeight + 'px');
 
         }
         requestAnimationFrame(this.$vscrollerNonselected.requestUpdateSize.bind(this.$vscrollerNonselected));

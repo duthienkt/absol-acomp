@@ -10,6 +10,7 @@
 .absol-select-table {
     border: solid 1px #a9a9a9;
     min-width: 26em;
+    overflow: hidden;
 }
 
 .absol-select-table-header {
