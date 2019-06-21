@@ -20,7 +20,6 @@ TextArea2.getRenderPre = function () {
     if (!TextArea2.$preSpace) {
         TextArea2.$preSpace = _('textarea').addStyle({'overflow': 'hidden', 'height':'12px', 'resize':'none'}).addTo(SelectMenu.getRenderSpace());
     }
-    SelectMenu.getRenderSpace().addStyle('visibility','visible').addStyle('z-index', '100');
     return TextArea2.$preSpace;
 };
 
