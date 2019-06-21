@@ -69,6 +69,9 @@ import './js/CheckboxInput';
 import './css/tooltip.css';
 import './js/Tooltip';
 
+import './js/TextArea2';
+import './css/textarea2.css';
+
 
 
 var AComp = {
