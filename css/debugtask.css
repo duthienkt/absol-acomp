@@ -3,13 +3,14 @@
     right: 10px;
     bottom: 10px;
     z-index: 999999;
-    border-radius: 5px;
-    background: rgba(169, 169, 171, 0.1);
-    border: solid 1px rgba(169, 169, 171, 0.5);
+    border-radius: 4px;
+    background: rgba(169, 169, 171, 0.3);
+    border: solid 1px rgba(21, 21, 214, 0.5);
     min-width: 45px;
     min-height: 30px;
     font-size: 12px;
     padding: 5px;
+    pointer-events: none;
 }
 
 .absol-debug-task-name{
