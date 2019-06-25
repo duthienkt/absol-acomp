@@ -12,6 +12,9 @@ import './css/searcher.css';
 import './js/SelectTable';
 import './css/selecttable.css';
 
+import './js/SelectTable2';
+import './css/selecttable2.css';
+
 import './js/Menu';
 import './css/menu.css';
 
@@ -72,6 +75,9 @@ import './js/Tooltip';
 import './js/TextArea2';
 import './css/textarea2.css';
 
+import DebugTask from "./js/DebugTask";
+import  "./css/debugtask.css";
+
 
 
 var AComp = {
@@ -79,8 +85,10 @@ var AComp = {
     $: Acore.$,
     _: Acore._,
     creator: Acore.creator,
-    buildDom: Acore.buildDom
+    buildDom: Acore.buildDom,
+    runDebugTask: DebugTask.start.bind(DebugTask)
 };
 
+window.runDebugTask = DebugTask.start.bind(DebugTask);
 
 export default AComp;
