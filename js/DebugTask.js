@@ -35,7 +35,7 @@ function DebugTask() {
                 child: [{
                     tag: 'span',
                     class: 'absol-debug-task-name',
-                    child: { text: 'setintevel ' }
+                    child: { text: 'setintervel ' }
                 },
                 {
                     tag: 'span',
@@ -84,8 +84,19 @@ DebugTask.start = function () {
     global.setTimeout = function () {
         var args = Array.prototype.map.call(arguments, function (x) { return x; });
         var originCallback = arguments[0];
+        if (typeof originCallback == 'undefined') return;
+        if (typeof originCallback == 'string'){
+            originCallback = new Function(originCallback);
+        }
         args[0] = function () {
-            var ret = originCallback.apply(null, arguments);
+            var ret;
+            try{
+                ret = originCallback.apply(null, arguments);
+
+            }
+            catch(e){
+                console.error(e);
+            }
             if (timeoutDict[timeoutId]) {
                 pendingTimeout--;
                 delete timeoutDict[timeoutId];
@@ -117,8 +128,19 @@ DebugTask.start = function () {
     global.setInterval = function () {
         var args = Array.prototype.map.call(arguments, function (x) { return x; });
         var originCallback = arguments[0];
+        if (typeof originCallback == 'undefined') return;
+        if (typeof originCallback == 'string'){
+            originCallback = new Function(originCallback);
+        }
         args[0] = function () {
-            var ret = originCallback.apply(null, arguments);
+            var ret;
+            try{
+                ret = originCallback.apply(null, arguments);
+
+            }
+            catch(e){
+                console.error(e);
+            }
             return ret;
         }
         var intervalId = originSetInterval.apply(global, args)
