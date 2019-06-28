@@ -3,9 +3,10 @@ import Acore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import { blobToFile, blobToArrayBuffer, dataURItoBlob } from "absol/src/Converter/file";
 import Element from "absol/src/HTML5/Element";
+import Svg from "absol/src/HTML5/Svg";
 
 
-var MediaCore = new Dom({creator:Object.assign({}, Acore.creator)});
+var MediaCore = new Dom({ creator: Object.assign({}, Acore.creator) });
 
 var _ = MediaCore._;
 var $ = MediaCore.$;
@@ -45,17 +46,17 @@ function openFileDialog(props) {
     MediaCore.$fileInput.click();
 
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         var finish = false;
         var body = $('body');
-        MediaCore.$fileInput.once('change', function() {
+        MediaCore.$fileInput.once('change', function () {
             finish = true;
-            resolve(Array.prototype.map.call(this.files, function(file) {
+            resolve(Array.prototype.map.call(this.files, function (file) {
                 return file;
             }));
         });
 
-        body.once('mousedown', function() {
+        body.once('mousedown', function () {
             if (finish) return;
             resolve();
         });
@@ -63,82 +64,102 @@ function openFileDialog(props) {
     });
 }
 
-function MediaInput(){
+function MediaInput() {
     var res = _({
         class: 'vmedia-media-input',
         extendEvent: ['send', 'update'],
         child: {
             class: 'vmedia-media-input-text-container',
             child: [{
-                    class: 'vmedia-media-input-imagepreview-container',
-                    child: {
-                        class: 'vmedia-media-input-dropover',
-                        child: 'download-ico'
-                    }
-                },
-                {
-                    class: 'vmedia-media-input-text-container-editor',
-                    attr: {
-                        contenteditable: 'true'
-                    },
-                    on: {
-
-                    }
-                },
-                {
-                    class: 'vmedia-media-input-text-container-buttons',
-                    attr: {
-                        title: 'Send'
-                    },
-                    child: [
-
-                        {
-                            tag: 'button',
-                            attr: {
-                                id: 'add-image-btn'
-                            },
-                            child: 'add-image-ico'
-
-                        },
-                        {
-                            tag: 'button',
-                            attr: {
-                                id: 'add-file-btn'
-                            },
-                            child: 'add-file-ico'
-                        },
-                        {
-                            tag: 'button',
-                            id: 'send-btn',
-                            child: 'send-ico'
-                        }
-                    ]
+                class: 'vmedia-media-input-imagepreview-container',
+                child: {
+                    class: 'vmedia-media-input-dropover',
+                    child: 'download-ico'
                 }
+            },
+            {
+                class: 'vmedia-media-input-text-container-editor',
+                attr: {
+                    contenteditable: 'true'
+                },
+                on: {
+
+                }
+            },
+            {
+                class: 'vmedia-media-input-text-container-buttons',
+                attr: {
+                    title: 'Send'
+                },
+                child: [
+
+                    {
+                        tag: 'button',
+                        attr: {
+                            id: 'add-image-btn'
+                        },
+                        child: 'add-image-ico'
+
+                    },
+                    {
+                        tag: 'button',
+                        attr: {
+                            id: 'add-file-btn'
+                        },
+                        child: 'add-file-ico'
+                    },
+                    {
+                        tag: 'button',
+                        id: 'send-btn',
+                        child: 'send-ico'
+                    }
+                ]
+            },
+            {
+                class: 'vmedia-media-input-plug-button-container',
+                child: {
+                    tag: 'button',
+                    class: 'vmedia-media-input-plug-button',
+                    child: 'plus-ico'
+                }
+            },
+                '.vmedia-media-input-plugin-container'
             ]
         }
     });
-    res.eventHandler = OOP.bindFunctions(res, MediaInput.eventHandler);
-    res.$editor = $('.vmedia-media-input-text-container-editor', res);
-    res.$editor.on('paste', res.eventHandler.paste);
-    res.$editor.on('keydown', res.eventHandler.keydown, true);
-    res.$addImagebtn = $('#add-image-btn', res);
-    res.$addImagebtn.on('click', res.eventHandler.clickAddImage);
-    res.$addFilebtn = $('#add-file-btn', res);
-    res.$addFilebtn.on('click', res.eventHandler.clickAddFile);
-    res.$imagePreviewContainer = $('.vmedia-media-input-imagepreview-container', res);
-    res.on('dragover', res.eventHandler.dragOver);
-    res.on('drop', res.eventHandler.drop);
-    res.$sendbtn = $('#send-btn', res);
 
-    res.$sendbtn.on('click', res.eventHandler.send);
 
     return res;
+}
+
+MediaInput.prototype.preInit = function () {
+    this.eventHandler = OOP.bindFunctions(this, MediaInput.eventHandler);
+    this.$editor = $('.vmedia-media-input-text-container-editor', this);
+    this.$editor.on('paste', this.eventHandler.paste);
+    this.$editor.on('keydown', this.eventHandler.keydown, true);
+    this.$addImagebtn = $('#add-image-btn', this);
+    this.$addImagebtn.on('click', this.eventHandler.clickAddImage);
+    this.$addFilebtn = $('#add-file-btn', this);
+    this.$addFilebtn.on('click', this.eventHandler.clickAddFile);
+    this.$imagePreviewContainer = $('.vmedia-media-input-imagepreview-container', this);
+    this.on('dragover', this.eventHandler.dragOver);
+    this.on('drop', this.eventHandler.drop);
+    this.$sendbtn = $('#send-btn', this);
+    this.$sendbtn.on('click', this.eventHandler.send);
+    this.$plugbtn = $('.vmedia-media-input-plug-button', this).on('click', this.eventHandler.clickPlugin);
+    this.$plugctn = $('.vmedia-media-input-plugin-container', this);
+};
+
+
+MediaInput.prototype.init = function (props) {
+    this.preInit();
+    this.super(props);
 }
 
 
 
 
-MediaInput.prototype.addImage = function(url, title, data) {
+MediaInput.prototype.addImage = function (url, title, data) {
     _({
         tag: 'imagepreview',
         attr: {
@@ -149,13 +170,13 @@ MediaInput.prototype.addImage = function(url, title, data) {
             imgSrc: url
         },
         on: {
-            pressremove: function() {
+            pressremove: function () {
                 this.selfRemove();
             }
         }
     }).addTo(this.$imagePreviewContainer);
 };
-MediaInput.prototype.addFile = function(url, ext, title, data) {
+MediaInput.prototype.addFile = function (url, ext, title, data) {
     _({
         tag: 'filepreview',
         attr: {
@@ -167,7 +188,7 @@ MediaInput.prototype.addFile = function(url, ext, title, data) {
             data: data
         },
         on: {
-            pressremove: function() {
+            pressremove: function () {
                 this.selfRemove();
             }
         }
@@ -178,75 +199,122 @@ MediaInput.prototype.addFile = function(url, ext, title, data) {
 MediaInput.property = {};
 
 MediaInput.property.text = {
-    set: function(value) {
+    set: function (value) {
         this.$editor.clearChild();
         value = value || '';
         var lines = value.split(/\r*\n/);
         if (lines.length < 1) return;
         this.$editor.addChild(document.createTextNode(lines[0]));
         lines.shift();
-        lines.forEach(function(line) {
+        lines.forEach(function (line) {
             this.$editor.addChild(_({ child: document.createTextNode(line) }));
         }.bind(this));
     },
-    get: function() {
+    get: function () {
         return this.getTextFromElements(this.$editor);
     }
 };
 
 MediaInput.property.files = {
-    get: function() {
-        return Array.prototype.filter.call(this.$imagePreviewContainer.childNodes, function(e) {
+    get: function () {
+        return Array.prototype.filter.call(this.$imagePreviewContainer.childNodes, function (e) {
             return e._azar_extendTags && e._azar_extendTags.filepreview;
-        }).map(function(e) {
+        }).map(function (e) {
             return e.data;
         });
     }
 };
 MediaInput.property.images = {
-    get: function() {
-        return Array.prototype.filter.call(this.$imagePreviewContainer.childNodes, function(e) {
+    get: function () {
+        return Array.prototype.filter.call(this.$imagePreviewContainer.childNodes, function (e) {
             return e._azar_extendTags && e._azar_extendTags.imagepreview;
-        }).map(function(e) {
+        }).map(function (e) {
             return e.data;
         });
     }
 };
 
+MediaInput.property.plugin = {
+    set: function (value) {
+        if (value) {
+            this._plugin = value;
+            this.addClass('has-plugin');
+            this.$plugctn.clearChild();
+            this.$plugctn.addChild(value.getView(this, _));
+            if (value.onload)
+                value.onload({ target: this }, this);
+        }
+        else {
+            //remove plugin
+            this._plugin = null;
+            this.removeClass('has-plugin');
+        }
+    },
+    get: function () {
+        return this._plugin || null;
+    }
+}
 
-MediaInput.prototype.focus = function() {
+
+MediaInput.property.isShowPlugin = {
+    set: function (value) {
+        if (value == this.isShowPlugin) return;
+        if (value) {
+            this.addClass('show-plugin');
+            if (this.plugin && this.plugin.onshow){
+                this.plugin.onshow({ target: this }, this);
+            }
+        }
+        else {
+            this.removeClass('show-plugin');
+            if (this.plugin && this.plugin.onhide){
+                this.plugin.onhide({ target: this }, this);
+            }
+        }
+    },
+    get: function () {
+        return this.containsClass('show-plugin');
+    }
+};
+
+
+MediaInput.prototype.attachPlugin = function (plugin) {
+    return true;
+};
+
+MediaInput.prototype.focus = function () {
     this.$editor.focus();
 };
 
-MediaInput.prototype.clear = function() {
-    Array.prototype.filter.call(this.$imagePreviewContainer.childNodes, function(e) {
+MediaInput.prototype.clear = function () {
+    Array.prototype.filter.call(this.$imagePreviewContainer.childNodes, function (e) {
         return e._azar_extendTags && e._azar_extendTags.imagepreview;
-    }).forEach(function(e) {
+    }).forEach(function (e) {
         e.selfRemove();
     });
 
-    Array.prototype.filter.call(this.$imagePreviewContainer.childNodes, function(e) {
+    Array.prototype.filter.call(this.$imagePreviewContainer.childNodes, function (e) {
         return e._azar_extendTags && e._azar_extendTags.filepreview;
-    }).forEach(function(e) {
+    }).forEach(function (e) {
         return e.selfRemove();
     });
 
     this.$editor.innerHTML = "";
-    this.emit('update', {target:this}, this);
+    this.emit('update', { target: this }, this);
 };
 
 
-MediaInput.prototype.escapeSpace = function(s) {
+MediaInput.prototype.escapeSpace = function (s) {
     return s.replace(/\s/g, '&nbsp');
 };
 
 
-MediaInput.prototype.unescapeSpace = function(s) {
+MediaInput.prototype.unescapeSpace = function (s) {
     return s.replace(/&nbsp/g, ' ');
 };
 
 
-MediaInput.prototype.getTextFromElements = function(element) {
+MediaInput.prototype.getTextFromElements = function (element) {
     var self = this;
 
     function visit(e, prevE) {
@@ -279,12 +347,12 @@ MediaInput.prototype.getTextFromElements = function(element) {
     return visit(element);
 };
 
-MediaInput.prototype.getElementsFromText = function(text) {
+MediaInput.prototype.getElementsFromText = function (text) {
     var newElements = text.split('\n')
-        .map(function(text) {
+        .map(function (text) {
             return document.createTextNode(text);
         })
-        .reduce(function(ac, cr, i, arr) {
+        .reduce(function (ac, cr, i, arr) {
             if (i > 0)
                 ac.push(_('br'));
             ac.push(cr);
@@ -296,17 +364,17 @@ MediaInput.prototype.getElementsFromText = function(text) {
 
 
 
-MediaInput.prototype.textOnly = function(e) {
-    if (e.nodeType == Node.TEXT_NODE) return e.textContent;
-    if (!e.tagName) return '';
-    if (e.tagName.toLowerCase() == 'br') return '\n';
-    return ($(e).getComputedStyleValue('display') == 'block' ? '\n' : '') + Array.prototype.map.call(e.childNodes, this.textOnly.bind(this)).join('')
-};
+// MediaInput.prototype.textOnly = function(e) {
+//     if (e.nodeType == Node.TEXT_NODE) return e.textContent;
+//     if (!e.tagName) return '';
+//     if (e.tagName.toLowerCase() == 'br') return '\n';
+//     return ($(e).getComputedStyleValue('display') == 'block' ? '\n' : '') + Array.prototype.map.call(e.childNodes, this.textOnly.bind(this)).join('')
+// };
 
-MediaInput.prototype.makeTextOnly = function() {
+MediaInput.prototype.makeTextOnly = function () {
     var self = this;
     var editor = this.$editor;
-    Array.apply(null, this.$editor.childNodes).forEach(function(e) {
+    Array.apply(null, this.$editor.childNodes).forEach(function (e) {
         e = $(e);
         if (e.nodeType == Node.TEXT_NODE) return;
         if (e.tagName) {
@@ -330,7 +398,7 @@ MediaInput.prototype.makeTextOnly = function() {
                 lastElement = newElements.pop();
             }
             e.selfReplace(lastElement);
-            newElements.forEach(function(nE) {
+            newElements.forEach(function (nE) {
                 editor.addChildBefore(nE, lastElement);
             });
         }
@@ -338,12 +406,16 @@ MediaInput.prototype.makeTextOnly = function() {
 
 
     this.emit('update', { target: editor }, this);
-
 };
 
 MediaInput.eventHandler = {};
 
-MediaInput.eventHandler.keydown = function(event) {
+
+MediaInput.eventHandler.clickPlugin = function (event) {
+    this.isShowPlugin = !this.isShowPlugin;
+};
+
+MediaInput.eventHandler.keydown = function (event) {
     if (event.key == "Enter") {
         if (!event.ctrlKey && !event.altKey && !event.shiftKey) {
             event.preventDefault();
@@ -354,17 +426,17 @@ MediaInput.eventHandler.keydown = function(event) {
     this.emit('update', event, this);
 };
 
-MediaInput.eventHandler.send = function(event) {
+MediaInput.eventHandler.send = function (event) {
     if (this.images.length == 0 && this.text.trim().length == 0 && this.files.length == 0) {
         return;
     }
     this.emit('send', event, this);
 };
 
-MediaInput.eventHandler.clickAddImage = function(event) {
-    openFileDialog({ accept: 'image/*', multiple: true }).then(function(files) {
+MediaInput.eventHandler.clickAddImage = function (event) {
+    openFileDialog({ accept: 'image/*', multiple: true }).then(function (files) {
         if (!files) return;
-        files.map(function(file) {
+        files.map(function (file) {
             var url = (window.URL || window.webkitURL).createObjectURL(file);
             this.addImage(url, file.name, { file: file, name: file.name, url: url });
             this.emit('update', event, this);
@@ -372,10 +444,10 @@ MediaInput.eventHandler.clickAddImage = function(event) {
     }.bind(this));
 };
 
-MediaInput.eventHandler.clickAddFile = function(event) {
-    openFileDialog({ multiple: true }).then(function(files) {
+MediaInput.eventHandler.clickAddFile = function (event) {
+    openFileDialog({ multiple: true }).then(function (files) {
         if (!files) return;
-        files.map(function(file) {
+        files.map(function (file) {
             var url = (window.URL || window.webkitURL).createObjectURL(file);
             if (file.type.match(/^image/)) {
                 this.addImage(url, file.name, { file: file, name: file.name, url: url });
@@ -393,7 +465,7 @@ MediaInput.eventHandler.clickAddFile = function(event) {
 
 
 
-MediaInput.eventHandler.dragOver = function(event) {
+MediaInput.eventHandler.dragOver = function (event) {
     event.preventDefault();
     this._lastDragOver = new Date().getTime();
     var currentDragOver = this._lastDragOver;
@@ -402,7 +474,7 @@ MediaInput.eventHandler.dragOver = function(event) {
         this.addClass('dragover');
         this.emit('update', event, this);
     }
-    setTimeout(function() {
+    setTimeout(function () {
         this._waitDragFileOut
         if (this._lastDragOver == currentDragOver) {
             this.removeClass('dragover');
@@ -413,7 +485,7 @@ MediaInput.eventHandler.dragOver = function(event) {
 };
 
 
-MediaInput.eventHandler.drop = function(event) {
+MediaInput.eventHandler.drop = function (event) {
     event.preventDefault();
     if (event.dataTransfer.items) {
         for (var i = 0; i < event.dataTransfer.items.length; i++) {
@@ -445,7 +517,7 @@ MediaInput.eventHandler.drop = function(event) {
 };
 
 
-MediaInput.prototype.addSystemFile = function(file) {
+MediaInput.prototype.addSystemFile = function (file) {
     var url = (window.URL || window.webkitURL).createObjectURL(file);
     if (file.type.match(/^image/)) {
         this.addImage(url, file.name, { file: file, name: file.name, url: url });
@@ -457,7 +529,7 @@ MediaInput.prototype.addSystemFile = function(file) {
     }
 }
 
-MediaInput.eventHandler.paste = function(event) {
+MediaInput.eventHandler.paste = function (event) {
     var pasteData = (event.clipboardData || window.clipboardData);
 
     /**Safari bug */
@@ -470,7 +542,7 @@ MediaInput.eventHandler.paste = function(event) {
                 var URLObj = (window.URL || window.webkitURL);
                 var source = URLObj.createObjectURL(blob);
                 var file = blobToFile(blob);
-                var buffer = blobToArrayBuffer(blob).then(function(arrayBuffer) {
+                var buffer = blobToArrayBuffer(blob).then(function (arrayBuffer) {
                     this.addImage(source, 'Clipboard', { file: blob, name: null, url: source, blob: blob, arrayBuffer: arrayBuffer });
                     this.emit('update', event, this);
                 }.bind(this));
@@ -484,22 +556,22 @@ MediaInput.eventHandler.paste = function(event) {
         requestAnimationFrame(this.makeTextOnly.bind(this));
     }
     else {
-        requestAnimationFrame(function() {
-            var img = $('img', this.$editor, function(img) {
+        requestAnimationFrame(function () {
+            var img = $('img', this.$editor, function (img) {
                 if (img) {
                     img = $(img);
                     var source = img.getAttribute('src');
                     img.selfRemove();
-                    Dom.imageToCanvas(img).then(function(canvas) {
+                    Dom.imageToCanvas(img).then(function (canvas) {
                         var dataURI = canvas.toDataURL();
                         var blob = dataURItoBlob(dataURI);
                         var file = blobToFile(blob);
-                        var buffer = blobToArrayBuffer(blob).then(function(arrayBuffer) {
+                        var buffer = blobToArrayBuffer(blob).then(function (arrayBuffer) {
                             this.addImage(source, 'Clipboard', { dataURI: dataURI, file: blob, name: null, url: source, blob: blob, arrayBuffer: arrayBuffer });
                             this.emit('update', event, this);
                         }.bind(this));
 
-                    }.bind(this), function(e) {}).catch(function(e) {});
+                    }.bind(this), function (e) { }).catch(function (e) { });
 
                 }
             }.bind(this));
@@ -511,7 +583,7 @@ MediaInput.eventHandler.paste = function(event) {
 
 
 function ImagePreview() {
-   
+
     var res = _({
         extendEvent: 'pressremove',
         class: ['vmedia-media-input-imagepreview', 'vmedia-no-select'],
@@ -520,7 +592,7 @@ function ImagePreview() {
 
     res.$img = $('img', res);
     res.$timesIco = $('times-ico', res);
-    res.$timesIco.on('click', function(event) {
+    res.$timesIco.on('click', function (event) {
         res.emit('pressremove', event, res);
     });
     OOP.drillProperty(res, res.$img, 'imgSrc', 'src');
@@ -540,7 +612,7 @@ function FilePreview() {
     res.$img = $('attachment-ico', res);
     OOP.drillProperty(res, res.$img, 'ext');
     res.$timesIco = $('times-ico', res);
-    res.$timesIco.on('click', function(event) {
+    res.$timesIco.on('click', function (event) {
         res.emit('pressremove', event, res);
     });
     return res;
@@ -555,7 +627,7 @@ MediaCore.creator.imagepreview = ImagePreview;
 MediaCore.creator.filepreview = FilePreview;
 
 MediaCore.creator['send-ico'] = function () {
-    return absol.buildSvg(
+    return _(
         [
             '<svg class="send" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458">',
             '    <g transform="translate(0 -270.54)">',
@@ -567,7 +639,7 @@ MediaCore.creator['send-ico'] = function () {
 };
 
 MediaCore.creator['add-file-ico'] = function () {
-    return absol.buildSvg(
+    return _(
         [
             '<svg class="add-file" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg">',
             '    <g transform="translate(0 -270.54)">',
@@ -580,7 +652,7 @@ MediaCore.creator['add-file-ico'] = function () {
     );
 };
 MediaCore.creator['add-image-ico'] = function () {
-    return absol.buildSvg(
+    return _(
         [
             '<svg class="add-image" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="absol/src/HTML5/Elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">',
             '    <g transform="translate(0 -270.54)">',
@@ -595,7 +667,7 @@ MediaCore.creator['add-image-ico'] = function () {
 };
 
 MediaCore.creator['attachment-ico'] = function () {
-    return absol.buildSvg(
+    return _(
         [
             '<svg class="attachment" width="1024" height="1024"  version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" >',
             '    <path d="M145.6 0C100.8 0 64 35.2 64 80v862.4C64 987.2 100.8 1024 145.6 1024h732.8c44.8 0 81.6-36.8 81.6-81.6V324.8L657.6 0h-512z" fill="#8199AF"/>',
@@ -603,7 +675,6 @@ MediaCore.creator['attachment-ico'] = function () {
             '    <path d="M657.6 0v233.6c0 25.6 17.6 92.8 97.6 92.8H960L657.6 0z" fill="#fff"/>',
             '    <path d="m491.77 770.31c17.6-19.2 17.6-48 0-67.2s-48-17.6-65.6 0l-147.2 147.2c-17.6 17.6-17.6 48 0 65.6s48 19.2 65.6 0l91.2-89.6c4.8-4.8 4.8-12.8 0-17.6s-14.4-6.4-19.2 0l-57.6 56c-8 8-19.2 8-27.2 0s-8-20.8 0-28.8l56-56c20.8-20.8 54.4-20.8 75.2 0s20.8 54.4 0 75.2l-89.6 89.6c-33.6 33.6-88 33.6-123.2 0-33.6-33.6-33.6-88 0-121.6l147.2-147.2c33.6-33.6 89.6-33.6 123.2 0s33.6 88 0 121.6l-14.4 14.4c-1.6-14.4-6.4-28.8-16-41.6z" style="fill:#fff"/>',
             '    <path d="m130.09 23.864h504.75v182.93h-545.65v-140.08c0.34155-16.845 13.608-42.414 40.9-42.847z" style="fill-opacity:.29648;fill-rule:evenodd;fill:#fff"/>',
-            // '    <rect x="321.39" y="46.802" width="13.04" height="135.76" style="fill:none;"/>',//text position holder
             '</svg>'
         ]
             .join('')
@@ -617,19 +688,18 @@ MediaCore.creator['attachment-ico'].property = {
             if (this.$ext) {
                 this.$ext.selfRemove();
             }
-            this.$ext = absol._svg('<text text-anchor="middle" x="321.39" y="170" font-size="145.76" style="fill:white;" >' + value + '</text>').addTo(this); 0
+            this.$ext = Svg.ShareInstance._('<text text-anchor="middle" x="321.39" y="170" font-size="145.76" style="fill:white;" >' + value + '</text>').addTo(this);
         },
         get: function () {
             return this._ext || '';
         }
     }
-
 };
 
 
 
 MediaCore.creator['times-ico'] = function () {
-    return absol.buildSvg(
+    return _(
         [
             '<svg class="times" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg">',
             '    <g transform="translate(0 -270.54)">',
@@ -641,7 +711,7 @@ MediaCore.creator['times-ico'] = function () {
 
 
 MediaCore.creator['download-ico'] = function () {
-    return absol.buildSvg(
+    return _(
         [
             '<svg class="download" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">',
             '    <g transform="translate(0,-197)">',
@@ -650,6 +720,13 @@ MediaCore.creator['download-ico'] = function () {
             '    </g>',
             '</svg>'
         ].join('')
+    );
+};
+
+MediaCore.creator['plus-ico'] = function () {
+    return _(
+
+        '<svg class="_7oal" height="24" width="24" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><polygon points="-6,30 30,30 30,-6 -6,-6 "></polygon><path d="m18,11l-5,0l0,-5c0,-0.552 -0.448,-1 -1,-1c-0.5525,0 -1,0.448 -1,1l0,5l-5,0c-0.5525,0 -1,0.448 -1,1c0,0.552 0.4475,1 1,1l5,0l0,5c0,0.552 0.4475,1 1,1c0.552,0 1,-0.448 1,-1l0,-5l5,0c0.552,0 1,-0.448 1,-1c0,-0.552 -0.448,-1 -1,-1m-6,13c-6.6275,0 -12,-5.3725 -12,-12c0,-6.6275 5.3725,-12 12,-12c6.627,0 12,5.3725 12,12c0,6.6275 -5.373,12 -12,12" ></path></g></svg>'
     );
 };
 
