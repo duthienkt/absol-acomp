@@ -4,6 +4,7 @@ import OOP from "absol/src/HTML5/OOP";
 import { blobToFile, blobToArrayBuffer, dataURItoBlob } from "absol/src/Converter/file";
 import Element from "absol/src/HTML5/Element";
 import Svg from "absol/src/HTML5/Svg";
+import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 
 var MediaCore = new Dom({ creator: Object.assign({}, Acore.creator) });
@@ -67,7 +68,7 @@ function openFileDialog(props) {
 function MediaInput() {
     var res = _({
         class: 'vmedia-media-input',
-        extendEvent: ['send', 'update'],
+        extendEvent: ['send', 'update', 'releaseplugin'],
         child: {
             class: 'vmedia-media-input-text-container',
             child: [{
@@ -90,40 +91,48 @@ function MediaInput() {
                 class: 'vmedia-media-input-text-container-buttons',
                 attr: {
                     title: 'Send'
-                },
-                child: [
+                }
 
-                    {
-                        tag: 'button',
-                        attr: {
-                            id: 'add-image-btn'
-                        },
-                        child: 'add-image-ico'
-
-                    },
-                    {
-                        tag: 'button',
-                        attr: {
-                            id: 'add-file-btn'
-                        },
-                        child: 'add-file-ico'
-                    },
-                    {
-                        tag: 'button',
-                        id: 'send-btn',
-                        child: 'send-ico'
-                    }
-                ]
             },
             {
-                class: 'vmedia-media-input-plug-button-container',
-                child: {
-                    tag: 'button',
-                    class: 'vmedia-media-input-plug-button',
-                    child: 'plus-ico'
-                }
+                class: 'vmedia-media-input-tool-container',
+                child: [
+                    {
+                        class: 'vmedia-media-input-tool-container-left',
+                        child: [
+
+                            {
+                                tag: 'button',
+                                attr: {
+                                    id: 'add-image-btn'
+                                },
+                                child: 'add-image-ico'
+
+                            },
+                            {
+                                tag: 'button',
+                                attr: {
+                                    id: 'add-file-btn'
+                                },
+                                child: 'add-file-ico'
+                            },
+
+                        ]
+                    },
+                    {
+                        class: 'vmedia-media-input-tool-container-right',
+                        child: [{
+                            tag: 'button',
+                            id: 'send-btn',
+                            child: 'send-ico'
+                        }]
+
+                    }
+                ],
+
+
             },
-                '.vmedia-media-input-plugin-container'
+                '.vmedia-media-input-plugin-content-container.blur',
             ]
         }
     });
@@ -146,8 +155,9 @@ MediaInput.prototype.preInit = function () {
     this.on('drop', this.eventHandler.drop);
     this.$sendbtn = $('#send-btn', this);
     this.$sendbtn.on('click', this.eventHandler.send);
-    this.$plugbtn = $('.vmedia-media-input-plug-button', this).on('click', this.eventHandler.clickPlugin);
-    this.$plugctn = $('.vmedia-media-input-plugin-container', this);
+    this.$toolLeftCtn = $('.vmedia-media-input-tool-container-left', this);
+    this.$pluginContentCtn = $('.vmedia-media-input-plugin-content-container', this);
+    this.sync = this.afterAttached();
 };
 
 
@@ -234,51 +244,141 @@ MediaInput.property.images = {
     }
 };
 
-MediaInput.property.plugin = {
+// MediaInput.property
+
+MediaInput.property.plugins = {
     set: function (value) {
+        this.sync = this.sync.then(this._dettachPlugins.bind(this, this._plugins));
         if (value) {
-            this._plugin = value;
+            if (!(value instanceof Array)) value = [value];
+            this._plugins = value;
             this.addClass('has-plugin');
-            this.$plugctn.clearChild();
-            this.$plugctn.addChild(value.getView(this, _));
-            if (value.onload)
-                value.onload({ target: this }, this);
+
         }
         else {
             //remove plugin
-            this._plugin = null;
+            this.sync.then(this._dettachPlugins.bind(this));
+            this._plugins = null;
             this.removeClass('has-plugin');
         }
+        this.sync = this.sync.then(this._attachPlugins.bind(this, this._plugins));
     },
     get: function () {
-        return this._plugin || null;
+        return this._plugins || null;
     }
 }
 
 
-MediaInput.property.isShowPlugin = {
-    set: function (value) {
-        if (value == this.isShowPlugin) return;
-        if (value) {
-            this.addClass('show-plugin');
-            if (this.plugin && this.plugin.onshow){
-                this.plugin.onshow({ target: this }, this);
-            }
+
+MediaInput.prototype.appendText = function (text) {
+    var lastBr = null;
+    if (this.$editor.childNodes && this.$editor.childNodes.length > 0
+        && this.$editor.childNodes[this.$editor.childNodes.length - 1].tagName
+        && this.$editor.childNodes[this.$editor.childNodes.length - 1].tagName.toLowerCase() == 'br') {
+        lastBr = this.$editor.childNodes[this.$editor.childNodes.length - 1];
+    }
+
+    var lines = text.split(/\r?\n/);
+    if (lastBr) {
+        for (var i = 0; i < lines.length; ++i) {
+            if (i > 0) this.$editor.addChild(_('br'));
+            var e = _({ text: lines[i] });
+            this.$editor.addChild(e);
         }
-        else {
-            this.removeClass('show-plugin');
-            if (this.plugin && this.plugin.onhide){
-                this.plugin.onhide({ target: this }, this);
-            }
+    }
+    else {
+        for (var i = 0; i < lines.length; ++i) {
+            if (i > 0) this.$editor.addChildBefore(_('br'), lastBr);
+            var e = _({ text: lines[i] });
         }
-    },
-    get: function () {
-        return this.containsClass('show-plugin');
+        this.$editor.addChildBefore(e, lastBr);
     }
 };
 
 
-MediaInput.prototype.attachPlugin = function (plugin) {
+
+MediaInput.prototype._attachPlugins = function (plugins) {
+    if (!plugins) return;
+    var self = this;
+    plugins.forEach(function (plugin) {
+        var oldContent = null;
+        var $button = _('button').addTo(self.$toolLeftCtn).on('click', function () {
+            if (self._lastActivePlugin == plugin) return;
+            self.releasePlugin();
+            self._lastActivePlugin = plugin;
+            self.$pluginContentCtn.removeClass('blur');
+            self.$pluginContentCtn.clearChild();
+            if (plugin.getContent){
+                var newContent = plugin.getContent(self, _, self.$pluginContentCtn, oldContent);
+                oldContent = newContent;
+                self.$pluginContentCtn.addChild(newContent);
+            }
+            if (plugin.onActive) plugin.onActive(self);
+            setTimeout(function () {
+                var outListener = function (event) {
+                    if (EventEmitter.hitElement(self.$pluginContentCtn, event)) {
+
+                    }
+                    else if (self._lastActivePlugin == plugin) {
+                        var prevented = true;
+                        if (plugin.onBlur) plugin.onBlur({
+                            preventDefault: function () {
+                                prevented = false;
+                            }
+                        });
+                        if (prevented) {
+                            self.releasePlugin();
+                            $(document.body).off('click', outListener);
+                        }
+                    }
+                    else {
+                        $(document.body).off('click', outListener);
+                    }
+                };
+                $(document.body).on('click', outListener);
+                self.once('releaseplugin', function(ev){
+                    if (ev.plugin == plugin){
+                        $(document.body).off('click', outListener);
+                    }
+                });
+            }, 100);
+        });
+
+        var btnInners = plugin.getTriggerInner(self, _, $button);
+        if (!(btnInners instanceof Array)) btnInners = [btnInners];
+        btnInners.forEach(function (e) {
+            if (typeof e == 'string') {
+                e = _({ text: e });
+            }
+            $button.addChild(e);
+        });
+        if (plugin.onAttached)
+            plugin.onAttached(self);
+    });
+    //todo
+    return true;
+};
+
+MediaInput.prototype.releasePlugin = function () {
+    if (this._lastActivePlugin) {
+        var plugin = this._lastActivePlugin;
+        plugin.onDeactived && plugin.onDeactived(self);
+        this.$pluginContentCtn.addClass('blur');
+        this.emit('releaseplugin', { target: this, plugin: plugin }, this);
+        this._lastActivePlugin = null;
+    }
+
+}
+
+MediaInput.prototype._dettachPlugins = function (plugins) {
+    if (!plugins) return;
+    var self = this;
+    plugins.forEach(function (plugin) {
+        if (plugin.onAttached)
+            plugin.onAttached(self);
+    });
+    //todo
+    this._lastActivePlugin = null;
     return true;
 };
 
@@ -322,7 +422,7 @@ MediaInput.prototype.getTextFromElements = function (element) {
         var isNewLine = false;
         if (prevE && prevE.nodeType != Node.TEXT_NODE) {
 
-            if (prevE.tagName && prevE.tagName.toLocaleLowerCase() == 'br') {
+            if (prevE.tagName && prevE.tagName.toLowerCase() == 'br') {
                 isNewLine = true;
             }
             else if (Element.prototype.getComputedStyleValue.call(prevE, 'display') == 'block') {
@@ -378,7 +478,7 @@ MediaInput.prototype.makeTextOnly = function () {
         e = $(e);
         if (e.nodeType == Node.TEXT_NODE) return;
         if (e.tagName) {
-            var tagName = e.tagName.toLocaleLowerCase();
+            var tagName = e.tagName.toLowerCase();
             if (tagName == 'br') return;
             if (tagName.match(/img|script|svg|button|iframe|hr|video|canvas/)) {
                 e.selfRemove(e);
@@ -410,10 +510,6 @@ MediaInput.prototype.makeTextOnly = function () {
 
 MediaInput.eventHandler = {};
 
-
-MediaInput.eventHandler.clickPlugin = function (event) {
-    this.isShowPlugin = !this.isShowPlugin;
-};
 
 MediaInput.eventHandler.keydown = function (event) {
     if (event.key == "Enter") {

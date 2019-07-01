@@ -25,6 +25,7 @@ coccocgrammar {
     border: solid 1px rgba(0, 0, 0, 0.1)
 }
 
+
 .vmedia-media-input-text-container {
     position: relative;
     min-height: 2.5em;
@@ -55,54 +56,11 @@ coccocgrammar {
     padding-left: 0.5em;
     padding-top: 0.25em;
     padding-bottom: 0.25em;
-    margin-right:  7.75em;
+    margin-right: 7.75em;
     box-sizing: border-box;
     max-height: 6.66666666em;
     overflow-x: hidden;
     overflow-y: auto;
-}
-
-.vmedia-media-input-text-container-buttons {
-    position: absolute;
-    right: 0;
-    bottom: 0.25em;
-}
-
-.vmedia-media-input-text-container-buttons button {
-    width: 2em;
-    height: 2em;
-    font-size: 1em;
-    margin-left: 0.1em;
-    margin-right: 0.1em;
-    border: none;
-    background-color: transparent;
-    border-radius: 0.4em;
-}
-
-.vmedia-media-input-text-container-buttons button svg {
-    height: 1.25em;
-    width: 1.25em;
-}
-
-.vmedia-media-input-text-container-buttons button:hover {
-    background-color: rgba(91, 192, 222, 0.1);
-}
-
-.vmedia-media-input-text-container-buttons button:active {
-    background-color: rgba(91, 192, 222, 0.4);
-}
-
-.vmedia-media-input-text-container-buttons button svg.send {
-    fill: rgba(66, 133, 244, 0.7);
-}
-
-.vmedia-media-input-text-container-buttons button svg.add-file,
-.vmedia-media-input-text-container-buttons button svg.add-image {
-    fill: rgba(66, 66, 66, 0.5);
-}
-
-.vmedia-media-input-text-container-buttons button:focus {
-    outline: none;
 }
 
 .vmedia-media-input-imagepreview-container {
@@ -164,4 +122,151 @@ coccocgrammar {
 .vmedia-media-input-filepreview svg.times:active,
 .vmedia-media-input-imagepreview svg.times:active {
     fill: rgba(220, 220, 240, 0.6);
+}
+
+.vmedia-media-input-plug-button-container {
+    position: absolute;
+    left: 0.25em;
+    bottom: 0.25em;
+    top: 0.25em;
+}
+
+.vmedia-media-input-plug-button-container svg {
+    height: 1.5em;
+    width: 1.5em;
+    vertical-align: middle;
+    transition: transform .22s cubic-bezier(.5, 0, .4, 1);
+}
+
+
+.vmedia-media-input-plug-button-container svg path {
+    fill: rgba(66, 133, 244, 0.7);
+    transition: fill .22s cubic-bezier(.5, 0, .4, 1);
+}
+
+.vmedia-media-input.show-plugin .vmedia-media-input-plug-button svg path {
+    fill: rgba(134, 142, 153, 0.75);
+}
+
+
+
+.vmedia-media-input-plug-button {
+    padding: 0;
+    height: 100%;
+    width: 2em;
+    border: none;
+    background: transparent;
+    outline: none;
+
+}
+
+
+.vmedia-media-input-plugin-content-container {
+    position: absolute;
+    bottom: calc(1px + 100%);
+    left: 0;
+    right: 0;
+    opacity: 1;
+    transition: opacity .22s cubic-bezier(.5, 0, .4, 1);
+    background-color: white;
+    box-sizing: border-box;
+    border: solid 1px rgba(0, 0, 0, 0.1);
+    z-index: 20;
+    background: white;
+}
+
+.vmedia-media-input-plugin-content-container:empty{
+    display: none;
+}
+
+
+
+.vmedia-media-input-tool-container {
+    position: relative;
+    display: block;
+    height: 1.5em;
+    /* background: red;     */
+}
+
+
+
+.vmedia-media-input-tool-container-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.vmedia-media-input-tool-container-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.vmedia-media-input-tool-container button {
+    width: 2.5em;
+    height: 100%;
+    font-size: 1em;
+    margin-left: 0.1em;
+    margin-right: 0.1em;
+    border: none;
+    background-color: transparent;
+    border-radius: 0.4em;
+}
+
+.vmedia-media-input-text-container-editor {
+    scrollbar-width: thin;
+}
+
+.vmedia-media-input-text-container-editor::-webkit-scrollbar {
+    width: 7px;
+}
+
+
+
+.vmedia-media-input-text-container-editor::-webkit-scrollbar-track {
+    background: rgb(240, 240, 240);
+}
+
+.vmedia-media-input-text-container-editor::-webkit-scrollbar-thumb {
+    background: rgb(205, 205, 205);
+}
+
+.vmedia-media-input-tool-container button svg {
+    height: 1.25em;
+    width: 1.25em;
+}
+
+.vmedia-media-input-tool-container button:hover {
+    background-color: rgba(91, 192, 222, 0.1);
+}
+
+.vmedia-media-input-tool-container button:active {
+    background-color: rgba(91, 192, 222, 0.4);
+}
+
+.vmedia-media-input-tool-container button svg.send {
+    fill: rgba(66, 133, 244, 0.7);
+}
+
+.vmedia-media-input-tool-container button svg.add-file,
+.vmedia-media-input-tool-container button svg.add-image {
+    fill: rgba(66, 66, 66, 0.5);
+}
+
+.vmedia-media-input-tool-container button .mdi{
+    font-size:1.2em; 
+}
+
+.vmedia-media-input-tool-container button:focus {
+    outline: none;
+}
+
+.vmedia-media-input-tool-container button{
+    vertical-align: middle;
+}
+
+.vmedia-media-input-plugin-content-container.blur{
+    visibility: hidden;
 }
