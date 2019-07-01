@@ -107,7 +107,7 @@
 }
 
 .absol-selectmenu .absol-selectlist-item span {
-    padding-right: 37px;
+    padding-right: 28px;
 }
 
 .absol-selectmenu .absol-scroll-button {
@@ -127,6 +127,6 @@
     margin: 4px;
 }
 
-.absol-selectmenu-holder-item .absol-selectlist-item span {
+.absol-selectmenu-render-space .absol-selectlist-item span {
     padding-right: 0;
 }
