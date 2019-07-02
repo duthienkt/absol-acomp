@@ -315,7 +315,6 @@ MediaInput.prototype._attachPlugins = function (plugins) {
             }
             var buttonBound = $button.getBoundingClientRect();
             var rootBound = self.$pluginContentCtn.parentNode.getBoundingClientRect();
-            console.log(buttonBound, rootBound);
             self.$pluginContentCtn.addStyle({
                 left: buttonBound.left + buttonBound.width / 2 - rootBound.left + 'px',
                 bottom: rootBound.bottom - buttonBound.top + 'px'
