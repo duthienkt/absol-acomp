@@ -27,34 +27,34 @@
         var x = absol._('mediainput').addTo(document.body);
         x.plugins = [
             {
-                getTriggerInner: function (mediainputElt, _, triggerButton) {
+                getTriggerInner: function (mediainputElt, _, $, triggerButton) {
                     return _('<svg width="24" height="24" viewBox="0 0 24 24">\
                                 <path fill="#3177e8" d="M20,2H4A2,2 0 0,0 2,4V22L6,18H20A2,2 0 0,0 22,16V4A2,2 0 0,0 20,2M11,24H13V22H11V24M7,24H9V22H7V24M15,24H17V22H15V24Z" />\
                             </svg>');
                 },
-                getContent: function (mediainputElt, _, container, oldContent) {
+                getContent: function (mediainputElt, _, $, container, oldContent) {
                     if (oldContent) return oldContent;// reuse
                     this._view = _({
                         style: {
                             padding: '5px'
                         },
                         child: [
-                        {
-                            tag:'label',
-                            child:{text:'Thêm: '}
-                        },    
-                        {
-                            tag: 'input',
-                            on: {
-                                keydown: function (ev) {
-                                    if (ev.key == "Enter" && this.value.length > 0) {
-                                        mediainputElt.appendText(this.value);
-                                        this.value = "";
-                                        mediainputElt.releasePlugin();//hide content and release itselt
+                            {
+                                tag: 'label',
+                                child: { text: 'Thêm: ' }
+                            },
+                            {
+                                tag: 'input',
+                                on: {
+                                    keydown: function (ev) {
+                                        if (ev.key == "Enter" && this.value.length > 0) {
+                                            mediainputElt.appendText(this.value);
+                                            this.value = "";
+                                            mediainputElt.releasePlugin();//hide content and release itselt
+                                        }
                                     }
                                 }
-                            }
-                        }]
+                            }]
                     });
 
                     return this._view;

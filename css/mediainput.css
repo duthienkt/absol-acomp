@@ -164,8 +164,6 @@ coccocgrammar {
 .vmedia-media-input-plugin-content-container {
     position: absolute;
     bottom: calc(1px + 100%);
-    left: 0;
-    right: 0;
     opacity: 1;
     transition: opacity .22s cubic-bezier(.5, 0, .4, 1);
     background-color: white;

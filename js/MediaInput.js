@@ -308,11 +308,18 @@ MediaInput.prototype._attachPlugins = function (plugins) {
             self._lastActivePlugin = plugin;
             self.$pluginContentCtn.removeClass('blur');
             self.$pluginContentCtn.clearChild();
-            if (plugin.getContent){
-                var newContent = plugin.getContent(self, _, self.$pluginContentCtn, oldContent);
+            if (plugin.getContent) {
+                var newContent = plugin.getContent(self, _, $, self.$pluginContentCtn, oldContent);
                 oldContent = newContent;
                 self.$pluginContentCtn.addChild(newContent);
             }
+            var buttonBound = $button.getBoundingClientRect();
+            var rootBound = self.$pluginContentCtn.parentNode.getBoundingClientRect();
+            console.log(buttonBound, rootBound);
+            self.$pluginContentCtn.addStyle({
+                left: buttonBound.left + buttonBound.width / 2 - rootBound.left + 'px',
+                bottom: rootBound.bottom - buttonBound.top + 'px'
+            });
             if (plugin.onActive) plugin.onActive(self);
             setTimeout(function () {
                 var outListener = function (event) {
@@ -336,15 +343,15 @@ MediaInput.prototype._attachPlugins = function (plugins) {
                     }
                 };
                 $(document.body).on('click', outListener);
-                self.once('releaseplugin', function(ev){
-                    if (ev.plugin == plugin){
+                self.once('releaseplugin', function (ev) {
+                    if (ev.plugin == plugin) {
                         $(document.body).off('click', outListener);
                     }
                 });
             }, 100);
         });
 
-        var btnInners = plugin.getTriggerInner(self, _, $button);
+        var btnInners = plugin.getTriggerInner(self, _, $, $button);
         if (!(btnInners instanceof Array)) btnInners = [btnInners];
         btnInners.forEach(function (e) {
             if (typeof e == 'string') {
