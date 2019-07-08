@@ -6,6 +6,7 @@ import Element from "absol/src/HTML5/Element";
 import Svg from "absol/src/HTML5/Svg";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
+import { getTextIn, setSelectionRange } from 'absol/src/HTML5/Text';
 
 var MediaCore = new Dom({ creator: Object.assign({}, Acore.creator) });
 
@@ -157,7 +158,10 @@ MediaInput.prototype.preInit = function () {
     this.$sendbtn.on('click', this.eventHandler.send);
     this.$toolLeftCtn = $('.vmedia-media-input-tool-container-left', this);
     this.$pluginContentCtn = $('.vmedia-media-input-plugin-content-container', this);
+    this.snapData = [];
+    this.snapDataHead = 0;
     this.sync = this.afterAttached();
+    this.snapText();
 };
 
 
@@ -219,6 +223,7 @@ MediaInput.property.text = {
         lines.forEach(function (line) {
             this.$editor.addChild(_({ child: document.createTextNode(line) }));
         }.bind(this));
+        this.snapText();
     },
     get: function () {
         return this.getTextFromElements(this.$editor);
@@ -293,6 +298,8 @@ MediaInput.prototype.appendText = function (text) {
         }
         this.$editor.addChildBefore(e, lastBr);
     }
+
+    setSelectionRange(this.$editor, Infinity);
 };
 
 
@@ -390,6 +397,7 @@ MediaInput.prototype._dettachPlugins = function (plugins) {
 
 MediaInput.prototype.focus = function () {
     this.$editor.focus();
+    setSelectionRange(this.$editor, Infinity);
 };
 
 MediaInput.prototype.clear = function () {
@@ -421,36 +429,37 @@ MediaInput.prototype.unescapeSpace = function (s) {
 
 
 MediaInput.prototype.getTextFromElements = function (element) {
-    var self = this;
+    return getTextIn(element);
+    // var self = this;
 
-    function visit(e, prevE) {
-        var ac = '';
-        var isNewLine = false;
-        if (prevE && prevE.nodeType != Node.TEXT_NODE) {
+    // function visit(e, prevE) {
+    //     var ac = '';
+    //     var isNewLine = false;
+    //     if (prevE && prevE.nodeType != Node.TEXT_NODE) {
 
-            if (prevE.tagName && prevE.tagName.toLowerCase() == 'br') {
-                isNewLine = true;
-            }
-            else if (Element.prototype.getComputedStyleValue.call(prevE, 'display') == 'block') {
-                isNewLine = true;
-            }
-        }
+    //         if (prevE.tagName && prevE.tagName.toLowerCase() == 'br') {
+    //             isNewLine = true;
+    //         }
+    //         else if (Element.prototype.getComputedStyleValue.call(prevE, 'display') == 'block') {
+    //             isNewLine = true;
+    //         }
+    //     }
 
-        if (e.nodeType == Node.TEXT_NODE) {
-            if (isNewLine) ac += '\n';
-            ac += e.data;
-        }
-        else {
-            var lastE = undefined;
-            for (var i = 0; i < e.childNodes.length; ++i) {
-                ac += visit(e.childNodes[i], i > 0 ? e.childNodes[i - 1] : null);
+    //     if (e.nodeType == Node.TEXT_NODE) {
+    //         if (isNewLine) ac += '\n';
+    //         ac += e.data;
+    //     }
+    //     else {
+    //         var lastE = undefined;
+    //         for (var i = 0; i < e.childNodes.length; ++i) {
+    //             ac += visit(e.childNodes[i], i > 0 ? e.childNodes[i - 1] : null);
 
-            }
-        }
-        return ac;
-    }
+    //         }
+    //     }
+    //     return ac;
+    // }
 
-    return visit(element);
+    // return visit(element);
 };
 
 MediaInput.prototype.getElementsFromText = function (text) {
@@ -522,17 +531,27 @@ MediaInput.eventHandler.keydown = function (event) {
         if (!event.ctrlKey && !event.altKey && !event.shiftKey) {
             event.preventDefault();
             this.eventHandler.send(event);
+            this.snapText();
         }
 
     }
+    if (event.ctrlKey && event.key == 'z') {
+        event.preventDefault();
+        this.undoText();
+    }
+    if (event.ctrlKey && event.key == 'x') {
+        setTimeout(this.snapText.bind(this), 100)
+    }
     this.emit('update', event, this);
 };
+
 
 MediaInput.eventHandler.send = function (event) {
     if (this.images.length == 0 && this.text.trim().length == 0 && this.files.length == 0) {
         return;
     }
     this.emit('send', event, this);
+    this.snapText();
 };
 
 MediaInput.eventHandler.clickAddImage = function (event) {
@@ -563,7 +582,6 @@ MediaInput.eventHandler.clickAddFile = function (event) {
         this.emit('update', event, this);
     }.bind(this));
 };
-
 
 
 
@@ -631,8 +649,43 @@ MediaInput.prototype.addSystemFile = function (file) {
     }
 }
 
+
 MediaInput.eventHandler.paste = function (event) {
     var pasteData = (event.clipboardData || window.clipboardData);
+    var beforePasteElement = [];
+    var self = this;
+    function visit(e, ac) {
+        ac.push(e);
+        if (e.childNodes) {
+            for (var i = 0; i < e.childNodes.length; ++i) {
+                visit(e.childNodes[i], ac)
+            }
+        }
+    }
+    visit(this.$editor, beforePasteElement);
+
+
+    function relocalCursor() {
+        var afterPasteElement = [];
+        visit(self.$editor, afterPasteElement);
+        var diffElts = afterPasteElement.filter(function (e) {
+            return beforePasteElement.indexOf(e) < 0;
+        });
+        if (diffElts.length > 0){
+            var last = diffElts.pop();
+            if (last.nodeType == Node.TEXT_NODE){
+                var range = document.createRange();
+                range.selectNodeContents(last);
+                range.setStart(last, last.data.length);
+                var sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+            else{
+                setSelectionRange(last, Infinity);
+            }   
+        }
+    }
 
     /**Safari bug */
     if (pasteData && pasteData.items) {
@@ -655,7 +708,10 @@ MediaInput.eventHandler.paste = function (event) {
         }
         if (isAddImage)
             event.preventDefault();
-        requestAnimationFrame(this.makeTextOnly.bind(this));
+        requestAnimationFrame(function () {
+            self.makeTextOnly();
+            relocalCursor();
+        });
     }
     else {
         requestAnimationFrame(function () {
@@ -678,10 +734,39 @@ MediaInput.eventHandler.paste = function (event) {
                 }
             }.bind(this));
             this.makeTextOnly();
+            relocalCursor();
         }.bind(this));
     }
-
 };
+
+
+
+MediaInput.prototype.undoText = function () {
+    if (this.snapDataHead <= 1) return;
+    this.snapDataHead--;
+    if (this.snapDataHead <= 0) return;
+    var newText = this.snapData[this.snapDataHead - 1];
+    this.text = newText;
+    setSelectionRange(this.$editor, Infinity);
+};
+
+MediaInput.prototype.redoText = function () {
+    if (this.snapData.length <= this.snapDataHead) return;
+    this.snapDataHead++;
+    var newText = this.snapData[this.snapDataHead - 1];
+    var currentText = this.text;
+    this.text = newText;
+    setSelectionRange(this.$editor, Infinity);
+};
+
+MediaInput.prototype.snapText = function () {
+    while (this.snapData.length > this.snapDataHead && this.snapData.length > 0) this.snapData.pop();
+    var oldText = this.snapData[this.snapDataHead - 1];
+    var newText = this.text;
+    if (newText == oldText) return;
+    this.snapData.push(this.text);
+    this.snapDataHead++;
+}
 
 
 function ImagePreview() {
