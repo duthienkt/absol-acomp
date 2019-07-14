@@ -12,8 +12,8 @@ import './css/searcher.css';
 import './js/SelectTable';
 import './css/selecttable.css';
 
-import './js/SelectTable2';
-import './css/selecttable2.css';
+// import './js/SelectTable2';
+// import './css/selecttable2.css';
 
 import './js/Menu';
 import './css/menu.css';
@@ -72,8 +72,12 @@ import './js/CheckboxInput';
 import './css/tooltip.css';
 import './js/Tooltip';
 
-import './js/TextArea2';
-import './css/textarea2.css';
+// import './js/TextArea2';
+// import './css/textarea2.css';
+
+import './css/tabview.css';
+import './js/TabBar';
+import './js/TabButton';
 
 import DebugTask from "./js/DebugTask";
 import  "./css/debugtask.css";
