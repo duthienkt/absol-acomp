@@ -2,6 +2,7 @@ import Acore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import Element from "absol/src/HTML5/Element";
+import { map } from 'absol/src/Math/int';
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -285,7 +286,7 @@ function VScrollbar() {
             innerOffset0 = res.innerOffset;
         }
         else {
-            var newInnerOffset = Math.map(top0 - boundButton.height / 2 - boundRes.top, 0, boundRes.height, 0, res.innerHeight);
+            var newInnerOffset = map(top0 - boundButton.height / 2 - boundRes.top, 0, boundRes.height, 0, res.innerHeight);
             if (newInnerOffset + res.outerHeight > res.innerHeight)
                 newInnerOffset = res.innerHeight - res.outerHeight;
             if (newInnerOffset < 0) newInnerOffset = 0;
@@ -397,7 +398,7 @@ function HScrollbar() {
             innerOffset0 = res.innerOffset;
         }
         else {
-            var newInnerOffset = Math.map(left0 - boundButton.width / 2 - boundRes.left, 0, boundRes.width, 0, res.innerWidth);
+            var newInnerOffset = map(left0 - boundButton.width / 2 - boundRes.left, 0, boundRes.width, 0, res.innerWidth);
             if (newInnerOffset + res.outerWidth > res.innerWidth)
                 newInnerOffset = res.innerWidth - res.outerWidth;
             if (newInnerOffset < 0) newInnerOffset = 0;
