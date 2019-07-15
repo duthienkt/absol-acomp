@@ -19,26 +19,50 @@
 </head>
 
 <body>
-    
+    <div id="demo"></div>
     <script class="viewable">
-        var demoTabItems = Array(10).fill(0).map(function(u, i){
-            return {name: 'Tab '+i, desc:'This is tab '+ i, ident:i};
+        var demoTabItems = Array(5).fill(0).map(function (u, i) {
+            return { name: 'Tab ' + i, desc: 'This is tab ' + i, ident: i };
         })
 
+        var frame1 = absol._('tabframe').attr({
+                    'name': 'Material-design-icon',
+                    id: 'matd',
+                    desc:'Material Design Icon',
+                }).addChild(absol._({
+                    tag:'iframe',
+                    style:{
+                        width:'100%',
+                        height:'100%'
+                    },
+                    attr:{
+                        src:"https://volcanion.cf/materialdesignicons/preview.html"
+                    }
+                }));
+        var frame2 = absol._('tabframe').attr({
+                    'name': 'Material-design-icon',
+                    id: 'matd2',
+                    desc:'flksflk'
+                }).addChild(absol._({
+                    tag:'iframe',
+                    style:{
+                        width:'100%',
+                        height:'100%'
+                    },
+                    attr:{
+                        src:"https://volcanion.cf/vchart/demo/dualchart.html"
+                    }
+                }));
         var tabbar1 = absol._({
-            tag:'tabbar',
-            style:{
-                height:'40px', 
-                width:'50%', 
-                display:'inline-block'
+            tag: 'tabview',
+            style: {
+                height: '800px'
             },
-            props:{
-                tabs: demoTabItems
-            }
-        }).addTo(document.body);
+            child: [frame1, frame2]
+        }).addTo(absol.$('#demo'));
     </script>
 
-    
+
 
     <script>
         var viewableScript = document.querySelectorAll('script.viewable');
