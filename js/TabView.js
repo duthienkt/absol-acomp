@@ -160,10 +160,10 @@ TabView.prototype.addChild = function () {
 };
 
 TabView.prototype.activeLastTab = function () {
-    var dict = this._frameHolders.reduce(function (ac, holder) {
-        ac[holder.id] = true;
-        return ac;
-    }, {});
+    // var dict = this._frameHolders.reduce(function (ac, holder) {
+    //     ac[holder.id] = true;
+    //     return ac;
+    // }, {});
     //todo
 };
 
