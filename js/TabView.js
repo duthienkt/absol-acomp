@@ -28,7 +28,7 @@ TabView.eventHandler = {};
 TabView.eventHandler.closeTab = function (event) {
     event.preventDefault();
     var id = event.value.id;
-    this.closeTab(id, true);
+    this.removeTab(id, true);
 };
 
 TabView.eventHandler.activeTab = function (event) {
@@ -73,6 +73,8 @@ TabView.prototype.removeTab = function (id, userActive) {
     var self = this;
     this._frameHolders.forEach(function (holder) {
         if (holder.id == id) {
+            console.log(holder);
+
             var eventData = {
                 id: id,
                 userActive: !!userActive,
@@ -85,10 +87,13 @@ TabView.prototype.removeTab = function (id, userActive) {
                     this.__promise__ = promise;
                 }
             };
-            self.emit('closetab', eventData, self);
+            self.emit('removetab', eventData, self);
             eventData.__promise__.then(function () {
                 //if ok
+                this._frameHolders = this._frameHolders.filter(function (x) { return x.id != holder.id; })
+                holder.tabFrame.notifyDetach();
                 self.$tabbar.removeTab(holder.id);
+                holder.containterElt.remove();
             }, function () {
                 //if reject
             });
@@ -154,6 +159,13 @@ TabView.prototype.addChild = function () {
     });
 };
 
+TabView.prototype.activeLastTab = function () {
+    var dict = this._frameHolders.reduce(function (ac, holder) {
+        ac[holder.id] = true;
+        return ac;
+    }, {});
+    //todo
+};
 
 TabView.prototype.getChildAt = function () {
     //todo
