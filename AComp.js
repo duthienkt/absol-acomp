@@ -78,6 +78,8 @@ import './js/Tooltip';
 import './css/tabview.css';
 import './js/TabBar';
 import './js/TabButton';
+import './js/TabFrame';
+import './js/TabView';
 
 import DebugTask from "./js/DebugTask";
 import  "./css/debugtask.css";

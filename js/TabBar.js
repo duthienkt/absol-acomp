@@ -1,8 +1,6 @@
 import Acore from "../ACore";
 
 
-
-
 var _ = Acore._;
 var $ = Acore.$;
 
@@ -10,6 +8,7 @@ var $ = Acore.$;
 function TabBar() {
     var res = _('hscroller.absol-tabbar');
     res.defineEvent(['active', 'close']);
+    res._tabs = [];
     return res;
 };
 
@@ -51,10 +50,8 @@ TabBar.property.tabs = {
 TabBar.prototype.addTab = function (value) {
     var self = this;
     var props = {};
-    var ident;
     if (typeof value == "string") {
         props.name = value;
-        ident = value;
     }
     else {
         if (value.name) {
@@ -65,19 +62,11 @@ TabBar.prototype.addTab = function (value) {
         }
         if (value.desc)
             props.desc = value.desc;
-
-        if (typeof (value.ident) != 'undefined') {
-            ident = value.ident;
-        }
-        else {
-            throw new Error('Tab must has ident attribute');
-        }
     }
 
 
     var tabButton = _({
         tag: 'tabbutton',
-        id: 'tab-' + ident,
         props: props,
         on: {
             active: function (event, sender) {
@@ -111,24 +100,31 @@ TabBar.prototype.addTab = function (value) {
             }
         }
     }).addTo(this);
+    if (value.id) tabButton.attr('id', 'tabbuton-' + value.id);
     this._tabs.push(tabButton);
     return tabButton;
 };
 
 
-TabBar.prototype.removeTab = function (ident) {
+TabBar.prototype.removeTab = function (id) {
     this._tabs = this._tabs.filter(function (value) {
-        var itemIdent;
-        if (typeof value == "string") {
-            itemIdent = value;
-        }
-        else {
-            itemIdent = value.ident;
-        }
-        return itemIdent == ident;
+        return value == id;
     });
-    $('#tab-'+ ident, this).remove();
+    $('#tabbuton-' + id, this).remove();
 };
+
+
+TabBar.prototype.activeTab = function (id) {
+    var activedbtn = $('.absol-tabbar-button-active', this);
+    if (activedbtn && activedbtn.attr('id') != id) {
+        activedbtn.active = false;
+    }
+    var mButton = $('#tabbuton-' + id, this);
+    if (mButton) {
+        mButton.active = true;
+    }
+};
+
 
 Acore.creator.tabbar = TabBar;
 

@@ -1,4 +1,5 @@
 import Acore from "../ACore";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -9,13 +10,14 @@ function TabButton() {
         tag: 'button',
         class: 'absol-tabbar-button',
         extendEvent: ['close', 'active'],
+        id: randomIdent(20),
         child: [{
             class: 'absol-tabbar-button-text',
         },
         {
             tag:'span', 
             class: ['absol-tabbar-button-close', 'mdi', 'mdi-close'],
-            attr: { title: 'Close (Ctrl+F4)' },
+            attr: { title: 'Close' },
             on: {
                 click: function (event) {
                     event.tabButtonEventName = 'delete';
