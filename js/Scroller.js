@@ -216,7 +216,24 @@ HScroller.prototype.requestUpdateSize = function () {
     return this.sync;
 };
 
+HScroller.prototype.scrollInto = function (element) {
+    if (Element.prototype.isDescendantOf.call(element, this.$viewport)) {
+        var elementBound = element.getBoundingClientRect();
+        var viewportBound = this.$viewport.getBoundingClientRect();
+        var currentScrollLeft = this.$viewport.scrollLeft;
+        var newScrollLeft = currentScrollLeft;
+        if (elementBound.right > viewportBound.right) {
+            newScrollLeft = currentScrollLeft + (elementBound.right - viewportBound.right);
+        }
+        if (elementBound.left < viewportBound.left) {
+            newScrollLeft = currentScrollLeft - (viewportBound.left - elementBound.left);
+        }
 
+        if (newScrollLeft != currentScrollLeft) {
+            this.$viewport.scrollLeft = newScrollLeft;
+        }
+    }
+}
 
 
 function Scrollbar() {
