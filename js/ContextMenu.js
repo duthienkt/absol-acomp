@@ -44,7 +44,7 @@ ContextHook.prototype.handle = function (event) {
         if (needHandle) {
             this.$target = event.target;
 
-            this.addStyle('z-index', '10000');
+            this.addStyle('z-index', '1000000');
             this.removeStyle('display');
 
             this.moveTo(event);
