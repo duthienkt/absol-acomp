@@ -1,4 +1,5 @@
-import Acore from "absol-acomp/ACore";
+import Acore from "../ACore";
+
 
 var _ = Acore._;
 var $ = Acore.$;
