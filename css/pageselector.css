@@ -4,6 +4,7 @@
 
 .absol-page-selector > ul{
     margin-bottom: 0px;
+    margin-top: 0;
 }
 
 .page-number-buttons{
@@ -12,7 +13,7 @@
 }
 
 .page-number-input > label{
-    font-weight: 0;
+    font-weight: 100;
 }
 
 .page-number-buttons > li.page-previous, 
@@ -45,6 +46,11 @@
     box-shadow:  0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
     background-color: #4285f4;
     border-radius:2px; 
+    
+}
+
+.page-number-buttons > li.page-number.active > a{
+	color: white;
     
 }
 
