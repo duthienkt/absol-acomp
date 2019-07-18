@@ -1,10 +1,18 @@
-.absol-paging-table{
+.absol-page-selector{
     white-space: normal;
+}
+
+.absol-page-selector > ul{
+    margin-bottom: 0px;
 }
 
 .page-number-buttons{
     display: inline-block;
     vertical-align: middle;
+}
+
+.page-number-input > label{
+    font-weight: 0;
 }
 
 .page-number-buttons > li.page-previous, 
