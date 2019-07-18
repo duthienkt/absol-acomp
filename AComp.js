@@ -81,6 +81,10 @@ import './js/TabButton';
 import './js/TabFrame';
 import './js/TabView';
 
+import './css/pageselector.css';
+import './js/PageSelector';
+
+
 import DebugTask from "./js/DebugTask";
 import  "./css/debugtask.css";
 
