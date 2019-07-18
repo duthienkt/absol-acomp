@@ -1,0 +1,68 @@
+.absol-paging-table{
+    white-space: normal;
+}
+
+.page-number-buttons{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.page-number-buttons > li.page-previous, 
+.page-number-buttons > li.page-next,
+.page-number-buttons > li.page-first,
+.page-number-buttons > li.page-last
+{
+    display: inline-block;
+    height: 30px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: center;
+    transition: all .3s linear;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+.page-number-buttons > li.page-number{
+    display: inline-block;
+    height: 30px;
+    width: 40px;
+    text-align: center;
+    transition: all .3s linear;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+
+.page-number-buttons > li.page-number.active{
+    box-shadow:  0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+    background-color: #4285f4;
+    border-radius:2px; 
+    
+}
+
+.page-number-buttons > li> a{
+    line-height: 30px;
+    text-decoration:none;
+}
+
+.page-number-buttons > li:not(.active):hover{
+    background-color: #eee;
+
+}
+
+.absol-page-selector .page-number-input{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.absol-page-selector .page-number-input  input[type="text"]{
+    width: 3em;
+    margin-left: 5px; 
+    margin-right: 10px;
+    text-align: center;
+    height: 26px;
+    border: none;
+    border: solid 1px #ccc; 
+    border-radius: 2px;
+
+}
