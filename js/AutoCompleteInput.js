@@ -342,4 +342,4 @@ AutoCompleteInput.property.adapter = {
 
 
 
-Acore.install(AutoCompleteInput);
+Acore.install('AutoCompleteInput'.toLowerCase(), AutoCompleteInput);
