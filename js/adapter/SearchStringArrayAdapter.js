@@ -47,6 +47,7 @@ SearchStringArrayAdapter.prototype.getItemView = function (item, index, _, $, qu
             tag: 'div',
             child: {
                 tag: 'span',
+                class: 'absol-autocomplete-input-item-text',
                 props: {
                     innerHTML: item.hightlightedText
                 }
