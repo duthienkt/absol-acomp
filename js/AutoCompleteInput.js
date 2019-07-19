@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 import SearchStringArrayAdapter from "./adapter/SearchStringArrayAdapter";
 import SearchObjectArrayAdapter from "./adapter/SearchObjectArrayAdapter";
+import EventEmitter from 'absol/src/HTML5/EventEmitter';
 
 
 var _ = Acore._;
@@ -84,18 +85,40 @@ AutoCompleteInput.eventHandler.keyup = function (event) {
 
 AutoCompleteInput.eventHandler.blur = function () {
     this.removeClass('focus');
+};
+
+AutoCompleteInput.eventHandler.focus = function () {
+    this.addClass('focus');
+    $(document.body).on('mousedown',this.eventHandler.clickOut);
+
+    //todo
+}
+
+AutoCompleteInput.eventHandler.clickOut = function (event) {
+    console.log('out');
+    
+    if (EventEmitter.hitElement(this, event)) return;
+    $(document.body).off('mousedown',this.eventHandler.clickOut);
     var  text = this.$input.value;
+    
+    if (this._lastValue != text){
+        this._lastValue = text;
+        this.$dropdown.addStyle('display', 'none');
+        this._lastValue = text;
+        this.emit('change', { target: this, value: text }, this);
+    }
+
+}
+
+/**
+ * 
+ *  var  text = this.$input.value;
     
     if (this._lastValue != text){
         this._lastValue = text;
         this.emit('change', { target: this, value: text }, this);
     }
-};
-
-AutoCompleteInput.eventHandler.focus = function () {
-    this.addClass('focus');
-    //todo
-}
+ */
 // absol-autocomplete-input-item
 
 AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
@@ -168,7 +191,7 @@ AutoCompleteInput.prototype.focus = function () {
 
 AutoCompleteInput.prototype.blur = function () {
     this.$input.blur.apply(this.$input, arguments);
-   
+
 };
 
 AutoCompleteInput.prototype.select = function () {
