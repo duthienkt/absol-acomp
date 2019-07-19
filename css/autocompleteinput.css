@@ -40,3 +40,9 @@
 .absol-autocomplete-input-item.active:hover {
     background-color: rgb(169, 169, 169, 0.37209);
 }
+
+.absol-autocomplete-input-item-text{
+    line-height: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
+}

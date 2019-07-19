@@ -13,7 +13,7 @@ function AutoCompleteInput() {
         extendEvent: 'change',
         class: 'absol-autocomplete-input',
         child: [
-            'input[type="text"]',
+            'input[type="text"].absol-autocomplete-input-text',
             {
                 class: 'absol-autocomplete-input-dropdown',
                 style: {
@@ -34,7 +34,10 @@ function AutoCompleteInput() {
 
     res.$input = $('input', res)
         .on('keyup', res.eventHandler.keyup)
-        .on('keydown', res.eventHandler.keydown);
+        .on('keydown', res.eventHandler.keydown)
+        .on('focus', res.eventHandler.focus)
+        .on('blur', res.eventHandler.blur)
+        ;
 
 
     res.$dropdown = $('.absol-autocomplete-input-dropdown', res);
@@ -77,6 +80,22 @@ AutoCompleteInput.eventHandler.keyup = function (event) {
     this._keyTimeout = cTimeout;
 };
 
+
+
+AutoCompleteInput.eventHandler.blur = function () {
+    this.removeClass('focus');
+    var  text = this.$input.value;
+    
+    if (this._lastValue != text){
+        this._lastValue = text;
+        this.emit('change', { target: this, value: text }, this);
+    }
+};
+
+AutoCompleteInput.eventHandler.focus = function () {
+    this.addClass('focus');
+    //todo
+}
 // absol-autocomplete-input-item
 
 AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
@@ -91,6 +110,7 @@ AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
         this._lastQuery = text;
         this._selectedIndex = current._holderIndex;
         this.$dropdown.addStyle('display', 'none');
+        this._lastValue = text;
         this.emit('change', { target: this, value: text }, this);
     }
 };
@@ -136,9 +156,24 @@ AutoCompleteInput.eventHandler.keydown = function (event) {
         }
         this._lastQuery = text;
         this.$dropdown.addStyle('display', 'none');
+        this._lastValue = text;
         this.emit('change', { target: this, value: text }, this);
     }
 };
+
+AutoCompleteInput.prototype.focus = function () {
+    this.$input.focus.apply(this.$input, arguments);
+
+};
+
+AutoCompleteInput.prototype.blur = function () {
+    this.$input.blur.apply(this.$input, arguments);
+   
+};
+
+AutoCompleteInput.prototype.select = function () {
+    this.$input.select.apply(this.$input, arguments);
+}
 
 AutoCompleteInput.prototype.find = function () {
     var query = this.$input.value;
@@ -282,6 +317,7 @@ AutoCompleteInput.prototype.getItemView = function (item, index, _, $, query, re
         return _({
             child: {
                 tag: 'span',
+                class: 'absol-autocomplete-input-item-text',
                 child: { text: text }
             }
         });
