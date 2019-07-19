@@ -95,8 +95,6 @@ AutoCompleteInput.eventHandler.focus = function () {
 }
 
 AutoCompleteInput.eventHandler.clickOut = function (event) {
-    console.log('out');
-    
     if (EventEmitter.hitElement(this, event)) return;
     $(document.body).off('mousedown',this.eventHandler.clickOut);
     var  text = this.$input.value;
@@ -110,16 +108,6 @@ AutoCompleteInput.eventHandler.clickOut = function (event) {
 
 }
 
-/**
- * 
- *  var  text = this.$input.value;
-    
-    if (this._lastValue != text){
-        this._lastValue = text;
-        this.emit('change', { target: this, value: text }, this);
-    }
- */
-// absol-autocomplete-input-item
 
 AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
     var current = event.target;
