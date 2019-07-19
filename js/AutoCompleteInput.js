@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 import SearchStringArrayAdapter from "./adapter/SearchStringArrayAdapter";
 import SearchObjectArrayAdapter from "./adapter/SearchObjectArrayAdapter";
+import EventEmitter from 'absol/src/HTML5/EventEmitter';
 
 
 var _ = Acore._;
@@ -13,7 +14,7 @@ function AutoCompleteInput() {
         extendEvent: 'change',
         class: 'absol-autocomplete-input',
         child: [
-            'input[type="text"]',
+            'input[type="text"].absol-autocomplete-input-text',
             {
                 class: 'absol-autocomplete-input-dropdown',
                 style: {
@@ -34,7 +35,10 @@ function AutoCompleteInput() {
 
     res.$input = $('input', res)
         .on('keyup', res.eventHandler.keyup)
-        .on('keydown', res.eventHandler.keydown);
+        .on('keydown', res.eventHandler.keydown)
+        .on('focus', res.eventHandler.focus)
+        .on('blur', res.eventHandler.blur)
+        ;
 
 
     res.$dropdown = $('.absol-autocomplete-input-dropdown', res);
@@ -77,7 +81,33 @@ AutoCompleteInput.eventHandler.keyup = function (event) {
     this._keyTimeout = cTimeout;
 };
 
-// absol-autocomplete-input-item
+
+
+AutoCompleteInput.eventHandler.blur = function () {
+    this.removeClass('focus');
+};
+
+AutoCompleteInput.eventHandler.focus = function () {
+    this.addClass('focus');
+    $(document.body).on('mousedown',this.eventHandler.clickOut);
+
+    //todo
+}
+
+AutoCompleteInput.eventHandler.clickOut = function (event) {
+    if (EventEmitter.hitElement(this, event)) return;
+    $(document.body).off('mousedown',this.eventHandler.clickOut);
+    var  text = this.$input.value;
+    
+    if (this._lastValue != text){
+        this._lastValue = text;
+        this.$dropdown.addStyle('display', 'none');
+        this._lastValue = text;
+        this.emit('change', { target: this, value: text }, this);
+    }
+
+}
+
 
 AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
     var current = event.target;
@@ -91,6 +121,7 @@ AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
         this._lastQuery = text;
         this._selectedIndex = current._holderIndex;
         this.$dropdown.addStyle('display', 'none');
+        this._lastValue = text;
         this.emit('change', { target: this, value: text }, this);
     }
 };
@@ -136,9 +167,24 @@ AutoCompleteInput.eventHandler.keydown = function (event) {
         }
         this._lastQuery = text;
         this.$dropdown.addStyle('display', 'none');
+        this._lastValue = text;
         this.emit('change', { target: this, value: text }, this);
     }
 };
+
+AutoCompleteInput.prototype.focus = function () {
+    this.$input.focus.apply(this.$input, arguments);
+
+};
+
+AutoCompleteInput.prototype.blur = function () {
+    this.$input.blur.apply(this.$input, arguments);
+
+};
+
+AutoCompleteInput.prototype.select = function () {
+    this.$input.select.apply(this.$input, arguments);
+}
 
 AutoCompleteInput.prototype.find = function () {
     var query = this.$input.value;
@@ -282,6 +328,7 @@ AutoCompleteInput.prototype.getItemView = function (item, index, _, $, query, re
         return _({
             child: {
                 tag: 'span',
+                class: 'absol-autocomplete-input-item-text',
                 child: { text: text }
             }
         });
@@ -342,4 +389,4 @@ AutoCompleteInput.property.adapter = {
 
 
 
-Acore.install(AutoCompleteInput);
+Acore.install('AutoCompleteInput'.toLowerCase(), AutoCompleteInput);
