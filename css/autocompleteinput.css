@@ -2,12 +2,21 @@
     display: inline-block;
     position: relative;
     box-sizing: border-box;
+    border: solid 1px #d6d6d6;
+}
+
+.absol-autocomplete-input.absol-disabled {
+    pointer-events: none;
+    color: rgb(84, 84, 84);
+    background-color: rgb(235, 235, 228);
 }
 
 .absol-autocomplete-input>input {
     min-width: 100%;
     min-height: 100%;
     box-sizing: border-box;
+    background-color: transparent;
+    border: none;
 }
 
 
@@ -41,7 +50,7 @@
     background-color: rgb(169, 169, 169, 0.37209);
 }
 
-.absol-autocomplete-input-item-text{
+.absol-autocomplete-input-item-text {
     line-height: 30px;
     margin-left: 5px;
     margin-right: 5px;

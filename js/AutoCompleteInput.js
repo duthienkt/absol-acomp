@@ -89,17 +89,17 @@ AutoCompleteInput.eventHandler.blur = function () {
 
 AutoCompleteInput.eventHandler.focus = function () {
     this.addClass('focus');
-    $(document.body).on('mousedown',this.eventHandler.clickOut);
+    $(document.body).on('mousedown', this.eventHandler.clickOut);
 
     //todo
 }
 
 AutoCompleteInput.eventHandler.clickOut = function (event) {
     if (EventEmitter.hitElement(this, event)) return;
-    $(document.body).off('mousedown',this.eventHandler.clickOut);
-    var  text = this.$input.value;
-    
-    if (this._lastValue != text){
+    $(document.body).off('mousedown', this.eventHandler.clickOut);
+    var text = this.$input.value;
+
+    if (this._lastValue != text) {
         this._lastValue = text;
         this.$dropdown.addStyle('display', 'none');
         this._lastValue = text;
@@ -173,6 +173,7 @@ AutoCompleteInput.eventHandler.keydown = function (event) {
 };
 
 AutoCompleteInput.prototype.focus = function () {
+    if (this.disabled) return;
     this.$input.focus.apply(this.$input, arguments);
 
 };
@@ -387,6 +388,37 @@ AutoCompleteInput.property.adapter = {
     }
 };
 
+AutoCompleteInput.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('absol-disabled');
+        }
+        else {
+            this.removeClass('absol-disabled');
+        }
+    },
+    get: function () {
+        return this.containsClass('absol-disabled');
+    }
+};
+
+AutoCompleteInput.attribute = {};
+AutoCompleteInput.attribute.disabled = {
+    set: function (value) {
+        if (value === true || value === 'true' || value === null) {
+            this.disabled = true;
+        }
+        else {
+            this.disabled = false;
+        }
+    },
+    get: function () {
+        return this.disabled ? 'true' : 'false'
+    },
+    remove: function () {
+        this.disabled = false;
+    }
+};
 
 
 Acore.install('AutoCompleteInput'.toLowerCase(), AutoCompleteInput);
