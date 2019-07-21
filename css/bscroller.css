@@ -2,12 +2,13 @@
     overflow: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(151, 151, 151, 0.4) rgba(220, 220, 220, 0.4);
-    
+
 }
 
 
 .absol-bscroller::-webkit-scrollbar {
     width: 6px;
+    height: 6px;
 }
 
 .absol-bscroller::-webkit-scrollbar-track {
@@ -27,12 +28,9 @@
 }
 
 .absol-bscroller.dark {
-    scrollbar-color: rgba(104, 104 ,104, 0.4) rgba(35, 35, 35, 0.4);
+    scrollbar-color: rgba(104, 104, 104, 0.4) rgba(35, 35, 35, 0.4);
 }
 
-.absol-bscroller.dark::-webkit-scrollbar {
-    width: 6px;
-}
 
 .absol-bscroller.dark::-webkit-scrollbar-track {
     background: rgb(35, 35, 35, 0.4);
