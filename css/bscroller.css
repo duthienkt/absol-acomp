@@ -1,0 +1,51 @@
+.absol-bscroller {
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(151, 151, 151, 0.4) rgba(220, 220, 220, 0.4);
+    
+}
+
+
+.absol-bscroller::-webkit-scrollbar {
+    width: 6px;
+}
+
+.absol-bscroller::-webkit-scrollbar-track {
+    background: rgb(220, 220, 220, 0.4);
+}
+
+.absol-bscroller::-webkit-scrollbar-thumb {
+    background: rgb(182, 182, 182, 0.4);
+}
+
+.absol-bscroller::-webkit-scrollbar-thumb:hover {
+    background: rgb(32, 32, 32, 0.4);
+}
+
+.absol-bscroller::-webkit-scrollbar-thumb:active {
+    background: rgb(13, 13, 13, 0.6);
+}
+
+.absol-bscroller.dark {
+    scrollbar-color: rgba(104, 104 ,104, 0.4) rgba(35, 35, 35, 0.4);
+}
+
+.absol-bscroller.dark::-webkit-scrollbar {
+    width: 6px;
+}
+
+.absol-bscroller.dark::-webkit-scrollbar-track {
+    background: rgb(35, 35, 35, 0.4);
+}
+
+.absol-bscroller.dark::-webkit-scrollbar-thumb {
+    background: rgb(73, 73, 73, 0.4);
+}
+
+.absol-bscroller.dark::-webkit-scrollbar-thumb:hover {
+    background: rgb(223, 223, 223, 0.4);
+}
+
+.absol-bscroller.dark::-webkit-scrollbar-thumb:active {
+    background: rgb(242, 242, 242, 0.6);
+}

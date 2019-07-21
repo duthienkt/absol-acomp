@@ -85,6 +85,10 @@ import './css/pageselector.css';
 import './js/PageSelector';
 
 
+import './css/bscroller.css';
+import './js/BScroller';
+
+
 import DebugTask from "./js/DebugTask";
 import  "./css/debugtask.css";
 
