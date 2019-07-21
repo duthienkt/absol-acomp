@@ -5,16 +5,17 @@ import { phraseMatch } from "absol/src/String/stringMatching";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import Svg from "absol/src/HTML5/Svg";
 import OOP from "absol/src/HTML5/OOP";
+import SelectTable from "./SelectTable";
 
 
-var privateDom = new Dom().install(Acore);
+var privateDom = new Dom().install(Acore).install(SelectTable.privateDom);
 var $ = privateDom.$;
 var _ = privateDom._;
 
 
-function SelectTable() {
+function SelectTable2() {
     var res = _({
-        class: 'absol-select-table',
+        class: ['absol-select-table', 'exclude'],
         extendEvent: ['change', 'addall', 'removeall', 'add', 'remove'],
         child: [
             {
@@ -53,7 +54,7 @@ function SelectTable() {
                     {
                         tag: 'vscroller',
                         attr: { id: 'nonselected' },
-                        class: ['absol-select-table-items-scroller'],
+                        class: 'absol-select-table-items-scroller',
                         child: {
                             child: ['.absol-select-table-nonselected-items-container', '.absol-select-table-nonselected-search-items-container']
                         }
@@ -61,7 +62,7 @@ function SelectTable() {
                     {
                         tag: 'vscroller',
                         attr: { id: 'selected' },
-                        class: ['absol-select-table-items-scroller'],
+                        class: 'absol-select-table-items-scroller',
                         child: {
                             child: ['.absol-select-table-selected-items-container', '.absol-select-table-selected-search-items-container']
 
@@ -74,7 +75,7 @@ function SelectTable() {
     });
 
     res.sync = res.afterAttached();
-    res.eventHandler = OOP.bindFunctions(res, SelectTable.eventHandler);
+    res.eventHandler = OOP.bindFunctions(res, SelectTable2.eventHandler);
     res.$buttonsContainer = $('.absol-select-table-buttons-container', res);
     res.$searchContainer = $('.absol-select-table-searchtextinput-container', res);
     res.$nonselectedItemsContainer = $('.absol-select-table-nonselected-items-container', res);
@@ -88,14 +89,13 @@ function SelectTable() {
     res.$vscrollerSelected = $('vscroller#selected', res)
     res.$vscrollerNonselected = $('vscroller#nonselected', res);
     res.$body = $('.absol-select-table-body', res);
-    res.$header = $('.absol-select-table-header', res);
     res.$searchTextInput = $('searchtextinput', res).on('stoptyping', res.eventHandler.searchTextInputModify);
     return res;
 };
 
 
 
-SelectTable.prototype.updateButtonsContainerSize = function () {
+SelectTable2.prototype.updateButtonsContainerSize = function () {
     var rootBound = this.$buttonsContainer.getBoundingClientRect();
     var containBound = this.$buttonsContainer.getBoundingRecursiveRect();
     var fontSize = this.getFontSize();
@@ -103,31 +103,42 @@ SelectTable.prototype.updateButtonsContainerSize = function () {
     this.$searchContainer.addStyle('right', (containBound.width + 5) / fontSize + 'em');
 };
 
-SelectTable.prototype.addAll = function () {
+SelectTable2.prototype.addAll = function () {
     Array.apply(null, this.$nonselectedItemsContainer.childNodes).forEach(function (e) {
         e.addTo(this.$selectedItemsContainer);
     }.bind(this));
     this.requestSort();
 };
 
-SelectTable.prototype.removeAll = function () {
+SelectTable2.prototype.removeAll = function () {
     Array.apply(null, this.$selectedItemsContainer.childNodes).forEach(function (e) {
         e.addTo(this.$nonselectedItemsContainer);
     }.bind(this))
     this.requestSort();
 };
 
-SelectTable.prototype.updateScroller = function () {
+SelectTable2.prototype.updateScroller = function () {
     var update = function () {
         if (this.style.height) {
-            var height = parseFloat(this.getComputedStyleValue('height').replace('px', ''));
-            var headerHeight = parseFloat(this.$header.getComputedStyleValue('height').replace('px', ''));
-            var bodyMargin = parseFloat(this.$body.getComputedStyleValue('margin-top').replace('px', ''));
-            var borderWidth = 1;
-            var availableHeight = height - headerHeight - bodyMargin * 2 - borderWidth * 2;
-            this.$vscrollerNonselected.addStyle('height', availableHeight + 'px');
-            this.$vscrollerSelected.addStyle('height', availableHeight + 'px');
-
+            var bodyMargin = parseFloat(this.$body.getComputedStyleValue('margin-top').replace('px', '') || (0.14285714285 * 14 + ''));
+            var bound = this.getBoundingClientRect();
+            var bodyBound = this.$body.getBoundingClientRect();
+            var bodyRBound = this.$body.getBoundingRecursiveRect();
+            var availableHeight = bound.bottom - bodyMargin - bodyBound.top;
+            var isOverflowHeight = availableHeight < bodyRBound.height;
+            if (isOverflowHeight) {
+                this.$vscrollerNonselected.addStyle('max-height', availableHeight + 'px');
+                this.$vscrollerSelected.addStyle('max-height', availableHeight + 'px');
+                this.$vscrollerSelected.addClass('limited-height');
+                this.$vscrollerNonselected.addClass('limited-height');
+            }
+            else {
+                this.$vscrollerNonselected.removeStyle('max-height');
+                this.$vscrollerSelected.removeStyle('max-height');
+                this.$vscrollerSelected.removeClass('limited-height');
+                this.$vscrollerSelected.removeClass('limited-height');
+                this.$vscrollerNonselected.removeClass('limited-height');
+            }
         }
         requestAnimationFrame(this.$vscrollerNonselected.requestUpdateSize.bind(this.$vscrollerNonselected));
         requestAnimationFrame(this.$vscrollerSelected.requestUpdateSize.bind(this.$vscrollerSelected));
@@ -135,19 +146,19 @@ SelectTable.prototype.updateScroller = function () {
     setTimeout(update, 1);
 };
 
-SelectTable.prototype.getAllItemElement = function () {
+SelectTable2.prototype.getAllItemElement = function () {
     var selectedItemElements = Array.apply(null, this.$selectedItemsContainer.childNodes);
     var nonselectedItemElements = Array.apply(null, this.$nonselectedItemsContainer.childNodes);
     return selectedItemElements.concat(nonselectedItemElements);
 };
 
-SelectTable.prototype.init = function (props) {
+SelectTable2.prototype.init = function (props) {
     this.super(props);
     this.sync = this.sync.then(this.updateButtonsContainerSize.bind(this));
 };
 
-SelectTable.eventHandler = {};
-SelectTable.eventHandler.addAllBtnClick = function (event) {
+SelectTable2.eventHandler = {};
+SelectTable2.eventHandler.addAllBtnClick = function (event) {
     this.addAll();
     if (this.searching) {
         this.eventHandler.searchTextInputModify(event);
@@ -156,7 +167,7 @@ SelectTable.eventHandler.addAllBtnClick = function (event) {
     this.updateScroller();
 };
 
-SelectTable.eventHandler.removeAllBtnClick = function (event) {
+SelectTable2.eventHandler.removeAllBtnClick = function (event) {
     this.removeAll();
     if (this.searching) {
         this.eventHandler.searchTextInputModify(event);
@@ -165,7 +176,7 @@ SelectTable.eventHandler.removeAllBtnClick = function (event) {
     this.updateScroller();
 };
 
-SelectTable.prototype._filter = function (items, filterText) {
+SelectTable2.prototype._filter = function (items, filterText) {
     var result = [];
     if (filterText.length == 1) {
         result = items.map(function (item) {
@@ -228,18 +239,18 @@ SelectTable.prototype._filter = function (items, filterText) {
     return result;
 };
 
-SelectTable.prototype._stringcmp = function (s0, s1) {
+SelectTable2.prototype._stringcmp = function (s0, s1) {
     if (s0 == s1) return 0;
     if (s0 > s1) return 1;
     return -1;
 };
 
-SelectTable.prototype._getString = function (item) {
+SelectTable2.prototype._getString = function (item) {
     if (typeof item == "string") return item;
     return item.text;
 };
 
-SelectTable.prototype._equalArr = function (a, b) {
+SelectTable2.prototype._equalArr = function (a, b) {
     if (a.length != b.length) return false;
     for (var i = 0; i < a.length; ++i) {
         if (a[i] != b[i]) return false;
@@ -248,7 +259,7 @@ SelectTable.prototype._equalArr = function (a, b) {
 };
 
 
-SelectTable.prototype._applySort = function (items, sortFlag) {
+SelectTable2.prototype._applySort = function (items, sortFlag) {
     var res = items.slice();
 
     if (sortFlag == 1 || sortFlag === true) {
@@ -269,7 +280,7 @@ SelectTable.prototype._applySort = function (items, sortFlag) {
     return res;
 };
 
-SelectTable.prototype.requestSort = function () {
+SelectTable2.prototype.requestSort = function () {
     if (!this.sorted || this.sorted == 0) return;
     var selectedItems = this.selectedItems;
     var selectedItemsNew = this._applySort(selectedItems, this.sorted);
@@ -285,7 +296,7 @@ SelectTable.prototype.requestSort = function () {
 
 };
 
-SelectTable.eventHandler.searchTextInputModify = function (event) {
+SelectTable2.eventHandler.searchTextInputModify = function (event) {
     var filterText = this.$searchTextInput.value.trim();
     if (filterText.length > 0) {
         var selectedItems = this.selectedItems;
@@ -304,9 +315,9 @@ SelectTable.eventHandler.searchTextInputModify = function (event) {
 
 
 
-SelectTable.property = {};
+SelectTable2.property = {};
 
-SelectTable.property.disableMoveAll = {
+SelectTable2.property.disableMoveAll = {
     set: function (value) {
         if (value)
             this.addClass('disable-move-all');
@@ -318,7 +329,7 @@ SelectTable.property.disableMoveAll = {
     }
 };
 
-SelectTable.property.removeAllText = {
+SelectTable2.property.removeAllText = {
     set: function (text) {
         this._removeAllText = text;
         //todo: update remove all text
@@ -335,7 +346,7 @@ SelectTable.property.removeAllText = {
     }
 };
 
-SelectTable.property.addAllText = {
+SelectTable2.property.addAllText = {
     set: function (text) {
         this._addAllText = text;
         if (!text)
@@ -351,7 +362,7 @@ SelectTable.property.addAllText = {
     }
 };
 
-SelectTable.property.searching = {
+SelectTable2.property.searching = {
     set: function (value) {
         if (value) {
             this.addClass('searching');
@@ -369,7 +380,7 @@ SelectTable.property.searching = {
 
 
 
-SelectTable.property.sorted = {
+SelectTable2.property.sorted = {
     set: function (value) {
         this._sort = value;
         this.requestSort();
@@ -380,7 +391,7 @@ SelectTable.property.sorted = {
     }
 };
 
-SelectTable.property.selectedItems = {
+SelectTable2.property.selectedItems = {
     set: function (items) {
         this.$selectedItemsContainer.clearChild();
         var $nonselectedItemsContainer = this.$nonselectedItemsContainer;
@@ -425,7 +436,7 @@ SelectTable.property.selectedItems = {
 
 }
 
-SelectTable.property.nonselectedItems = {
+SelectTable2.property.nonselectedItems = {
     set: function (items) {
         this.$nonselectedItemsContainer.clearChild();
         var $nonselectedItemsContainer = this.$nonselectedItemsContainer;
@@ -469,7 +480,7 @@ SelectTable.property.nonselectedItems = {
 };
 
 
-SelectTable.property.selectedSearchItems = {
+SelectTable2.property.selectedSearchItems = {
     set: function (items) {
         this.$selectedSearchItemsContainer.clearChild();
         var $nonselectedSearchItemsContainer = this.$nonselectedSearchItemsContainer;
@@ -528,7 +539,7 @@ SelectTable.property.selectedSearchItems = {
 
 }
 
-SelectTable.property.nonselectedSearchItems = {
+SelectTable2.property.nonselectedSearchItems = {
     set: function (items) {
         this.$nonselectedSearchItemsContainer.clearChild();
         var $nonselectedSearchItemsContainer = this.$nonselectedSearchItemsContainer;
@@ -592,7 +603,7 @@ namespace of selecttable
 */
 function Item() {
     var res = _({
-        extendEvent: ['requestmove'],
+        extendEvent: ['requestmove', 'clickadd', 'clickremove', 'clickexclude'],
         class: 'absol-select-table-item',
         child: ['span.absol-select-table-item-text',
             {
@@ -600,8 +611,31 @@ function Item() {
                 child: {
                     class: 'absol-select-table-item-right-container-table',
                     child: {
-                        class: 'absol-select-table-item-right-container-cell',
-                        child: ['addicon', 'subicon']
+                        class: 'absol-select-table-item-right-container-row',
+                        child: [
+                            {
+                                attr:{
+                                    title:'Add'
+                                },
+                                class: ['absol-select-table-item-right-container-cell', 'add'],
+                                child: 'addicon'
+
+                            },
+                            {
+                                attr:{
+                                    title:'Remove'
+                                },
+                                class: ['absol-select-table-item-right-container-cell', 'remove'],
+                                child: 'subicon'
+
+                            },
+                            { attr:{
+                                title:'Exclude'
+                            },
+                                class: ['absol-select-table-item-right-container-cell', 'exclude'],
+                                child: 'excludeico'
+                            },
+                        ]
                     }
                 }
 
@@ -612,7 +646,9 @@ function Item() {
     res.eventHandler = OOP.bindFunctions(res, Item.eventHandler);
     res.$rightBtn = $('.absol-select-table-item-right-container', res);
     res.on('dblclick', res.eventHandler.dblclick);
-    res.$rightBtn.on('click', res.eventHandler.rightBtClick);
+    res.$addBtn = $('.absol-select-table-item-right-container-cell.add', res).on('click', res.eventHandler.addBtClick);
+    res.$removeBtn = $('.absol-select-table-item-right-container-cell.remove', res).on('click', res.eventHandler.removeBtClick);
+    res.$excludeBtn = $('.absol-select-table-item-right-container-cell.exclude', res).on('click', res.eventHandler.excludeBtClick);
     return res;
 };
 
@@ -626,6 +662,21 @@ Item.eventHandler.dblclick = function (event) {
 
 Item.eventHandler.rightBtClick = function (event) {
     this.emit('requestmove', event, this);
+};
+
+Item.eventHandler.removeBtClick = function (event) {
+    console.log('remove');
+    this.emit('clickremove', event, this);
+};
+
+Item.eventHandler.addBtClick = function (event) {
+    console.log('add');
+    this.emit('clickadd', event, this);
+};
+
+Item.eventHandler.excludeBtClick = function (event) {
+    console.log('exclude');
+    this.emit('clickexclude', event, this);
 };
 
 
@@ -655,44 +706,21 @@ Item.property.text = {
     }
 };
 
-/**
- * 
- * <svg width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
- <g transform="translate(0,-197)">
-  <path d="m39.873 198.21v38.668h-38.668v20.252h38.668v38.668h20.253v-38.668h38.668v-20.252h-38.668v-38.668z" style="fill-rule:evenodd;fill:#5fbbc2;stroke-linejoin:round;stroke-width:2.4109;stroke:#002eea"/>
- </g>
-</svg>
- */
 
-function AddIcon() {
-    return Svg.ShareInstance.buildSvg(
-        '<svg class="add-icon" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
-        '<g transform="translate(0,-197)">' +
-        '<path d="m39.873 198.21v38.668h-38.668v20.252h38.668v38.668h20.253v-38.668h38.668v-20.252h-38.668v-38.668z" style="fill-rule:evenodd;stroke-linejoin:round;stroke-width:2.4109;" />' +
-        '</g>' +
-        '</svg>'
-    );
-};
 
-function SubIcon() {
-    return Svg.ShareInstance.buildSvg(
-        '<svg class="sub-icon" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
-        ' <g transform="translate(0,-197)">' +
-        '  <path d="m98.795 236.87v20.253h-97.589v-20.253z" style="fill-rule:evenodd;stroke-linejoin:round;stroke-width:2.411;"/>' +
-        ' </g>' +
-        '</svg>'
-    );
-};
+function ExcludeIco() {
+    return _(
+        '<svg class="exclude-icon" width="24" height="24" viewBox="0 0 24 24">\
+            <path  d="M8.27,3L3,8.27V15.73L8.27,21H15.73C17.5,19.24 21,15.73 21,15.73V8.27L15.73,3M9.1,5H14.9L19,9.1V14.9L14.9,19H9.1L5,14.9V9.1M11,15H13V17H11V15M11,7H13V13H11V7" />\
+        </svg>');
+}
+
 
 privateDom.install({
-    subicon: SubIcon,
-    addicon: AddIcon,
-    item: Item
+    item: Item,
+    excludeico: ExcludeIco
 });
 
-SelectTable.privateDom = privateDom;
 
 
-Acore.creator.selecttable = SelectTable;
-
-export default SelectTable;
+Acore.install('selecttable2', SelectTable2);
