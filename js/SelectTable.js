@@ -5,7 +5,7 @@ import { phraseMatch } from "absol/src/String/stringMatching";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import Svg from "absol/src/HTML5/Svg";
 import OOP from "absol/src/HTML5/OOP";
-
+import "./BScroller";
 
 var privateDom = new Dom().install(Acore);
 var $ = privateDom.$;
@@ -51,7 +51,7 @@ function SelectTable() {
                 child: [
 
                     {
-                        tag: 'vscroller',
+                        tag: 'bscroller',
                         attr: { id: 'nonselected' },
                         class: ['absol-select-table-items-scroller'],
                         child: {
@@ -59,7 +59,7 @@ function SelectTable() {
                         }
                     },
                     {
-                        tag: 'vscroller',
+                        tag: 'bscroller',
                         attr: { id: 'selected' },
                         class: ['absol-select-table-items-scroller'],
                         child: {
@@ -85,8 +85,8 @@ function SelectTable() {
 
     res.$removeAllBtn = $('button.remove-all', res).on('click', res.eventHandler.removeAllBtnClick);
     res.$addAllBtn = $('button.add-all', res).on('click', res.eventHandler.addAllBtnClick);
-    res.$vscrollerSelected = $('vscroller#selected', res)
-    res.$vscrollerNonselected = $('vscroller#nonselected', res);
+    res.$vscrollerSelected = $('bscroller#selected', res)
+    res.$vscrollerNonselected = $('bscroller#nonselected', res);
     res.$body = $('.absol-select-table-body', res);
     res.$header = $('.absol-select-table-header', res);
     res.$searchTextInput = $('searchtextinput', res).on('stoptyping', res.eventHandler.searchTextInputModify);
@@ -125,12 +125,9 @@ SelectTable.prototype.updateScroller = function () {
             var bodyMargin = parseFloat(this.$body.getComputedStyleValue('margin-top').replace('px', ''));
             var borderWidth = 1;
             var availableHeight = height - headerHeight - bodyMargin * 2 - borderWidth * 2;
-            this.$vscrollerNonselected.addStyle('height', availableHeight + 'px');
-            this.$vscrollerSelected.addStyle('height', availableHeight + 'px');
-
+            this.$vscrollerNonselected.addStyle('max-height', availableHeight + 'px');
+            this.$vscrollerSelected.addStyle('max-height', availableHeight + 'px');
         }
-        requestAnimationFrame(this.$vscrollerNonselected.requestUpdateSize.bind(this.$vscrollerNonselected));
-        requestAnimationFrame(this.$vscrollerSelected.requestUpdateSize.bind(this.$vscrollerSelected));
     }.bind(this);
     setTimeout(update, 1);
 };

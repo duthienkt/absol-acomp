@@ -24,25 +24,8 @@
 
     </script>
     <script class="viewable">
-
-        var comparator = function (a, b) {
-            if (a.value == -1) return -1;
-            if (b.value == -1) return 1;
-
-            a.ntext = a.ntext || String.nonAccentVietnamese(a.text);
-            b.ntext = b.ntext || String.nonAccentVietnamese(b.text);
-            if (a.ntext < b.ntext) return -1;
-            return 1;
-        };
-      
-        var now = performance.now();
-        absol._({
-            tag: 'selecttable',
-            style: {
-                'height': '400px'//fixed height
-            },
-
-            props: {
+        function exampleProps(){
+            return {
                 sorted:comparator,
                 "nonselectedItems": [{ "value": 41, "text": "ADG (20-100kg)" },
                 { "value": 42, "text": "ADG (6-20kg)" },
@@ -571,8 +554,34 @@
                 { "value": 473, "text": "Tỷ lệ xuất nguyên liệu, nhập thành phẩm đúng kỳ phát sinh" },
                 { "value": 345, "text": "Vệ sinh bên trong lò theo tần suất 3 tháng/lần" },
                 { "value": 182, "text": "số lần mài răng không đúng chỉ tiêu và quy trình" }], "selectedItems": [{ "value": -1, "text": "Tất cả KPI" }]
-            }
+            };
+        }
+
+        var comparator = function (a, b) {
+            if (a.value == -1) return -1;
+            if (b.value == -1) return 1;
+
+            a.ntext = a.ntext || String.nonAccentVietnamese(a.text);
+            b.ntext = b.ntext || String.nonAccentVietnamese(b.text);
+            if (a.ntext < b.ntext) return -1;
+            return 1;
+        };
+      
+        var now = performance.now();
+        absol._({
+            tag: 'selecttable',
+            style: {
+                'height': '400px'//fixed height
+            },
+
+            props: exampleProps()
         }).addTo(absol.$('#second'));
+        absol._({
+            tag: 'selecttable',
+            props: exampleProps()
+        }).addTo(absol.$('#second'));
+
+
         absol._('<span>Run time:' + (performance.now() - now) + 'ms</span>').addTo(absol.$('#second'));
 
     </script>
