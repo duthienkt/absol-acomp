@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -37,6 +36,7 @@
         absol._({
             tag: 'selectmenu',
             style: {
+                'text-align': 'right',
                 display: 'inline-block',
                 border: 'solid 1px gray',
                 minWidth: '20%'
@@ -59,7 +59,7 @@
             props: {
                 enableSearch: true,
                 items: Array(30).fill(0).map(function (u, i) {
-                    return { text: "item " + i, value: i };
+                    return { text: "item  perspiciatis unde omnis iste natus error sit voluptatem perspiciatis unde omnis iste natus error sit voluptatem " + i, value: i };
                 })
             }
         }).addTo(document.body);
