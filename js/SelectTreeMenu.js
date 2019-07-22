@@ -126,8 +126,6 @@ SelectTreeMenu.eventHandler.attached = function () {
 
 SelectTreeMenu.eventHandler.click = function (event) {
     if (EventEmitter.hitElement(this.$treelist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event))) {
-        console.log('click out');
-        
         event.preventDefault();
         setTimeout(function(){
             this.isFocus = false;

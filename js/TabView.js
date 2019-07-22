@@ -73,8 +73,6 @@ TabView.prototype.removeTab = function (id, userActive) {
     var self = this;
     this._frameHolders.forEach(function (holder) {
         if (holder.id == id) {
-            console.log(holder);
-
             var eventData = {
                 id: id,
                 userActive: !!userActive,
