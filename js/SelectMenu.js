@@ -43,7 +43,7 @@ function SelectMenu() {
                             display: 'none'
                         }
                     },
-                    'vscroller']
+                    'bscroller']
             },
             'attachhook',
         ]
@@ -54,8 +54,8 @@ function SelectMenu() {
 
     res.$selectlist = _('selectlist', res).addTo(res.$renderSpace);
     res.$selectlist.on('change', res.eventHandler.selectlistChange, true);
-    res.$vscroller = $('vscroller', res);
-    res.on('click', res.eventHandler.click, true);
+    res.$vscroller = $('bscroller', res);
+    res.on('mousedown', res.eventHandler.click, true);
     res.on('blur', res.eventHandler.blur);
 
     res.$holderItem = $('.absol-selectmenu-holder-item', res);
@@ -110,7 +110,7 @@ SelectMenu.property.items = {
         this._items = value;
         this.$selectlist.items = value || [];
         this.selectListBound = this.$selectlist.getBoundingClientRect();
-        this.addStyle('min-width', this.selectListBound.width + 2 + 30 + 'px');
+        this.addStyle('min-width', this.selectListBound.width + 2 + 35 + 'px');
 
         if (this.$selectlist.items.length > 0 && (this.$selectlist.item === undefined || this.value === undefined)) {
             this.value = this.items[0].value !== undefined ? this.items[0].value : this.items[0];
@@ -178,12 +178,8 @@ SelectMenu.prototype.updateDropdownPostion = function (searching) {
             this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
 
         }
-        if (availableBottom < this.selectListBound.height) {
-            this.$vscroller.addStyle('height', availableBottom + 'px');
-        }
-        else {
-            this.$vscroller.addStyle('height', this.selectListBound.height + 'px');
-        }
+
+        this.$vscroller.addStyle('max-height', availableBottom + 'px');
     }
     else {
         if (!searching) {
@@ -191,15 +187,9 @@ SelectMenu.prototype.updateDropdownPostion = function (searching) {
             this.$searchTextInput.selfRemove();
             this.$dropdownBox.addChild(this.$searchTextInput);
         }
-        if (availableTop < this.selectListBound.height) {
-            this.$vscroller.addStyle('height', availableTop + 'px');
 
-        }
-        else {
-            this.$vscroller.addStyle('height', this.selectListBound.height + 'px');
-        }
+        this.$vscroller.addStyle('max-height', availableTop + 'px');
     }
-    this.$vscroller.requestUpdateSize();
     this.scrollToSelectedItem();
 };
 
@@ -207,21 +197,9 @@ SelectMenu.prototype.scrollToSelectedItem = function () {
 
     requestAnimationFrame(function () {
         $('.selected', this.$selectlist, function (e) {
-            var scrollBound = this.$vscroller.getBoundingClientRect();
-            var itemBound = e.getBoundingClientRect();
-            if (itemBound.top < scrollBound.top) {
-                this.$vscroller.$viewport.scrollTop -= scrollBound.top - itemBound.top;
-            }
-            else {
-                var newScrollTop = this.$vscroller.$viewport.scrollTop - (scrollBound.top - itemBound.top);
-                if (newScrollTop > this.$vscroller.$viewport.scrollHeight - scrollBound.height) {
-                    newScrollTop = this.$vscroller.$viewport.scrollHeight - scrollBound.height;
-                }
-                if (newScrollTop < 0) newScrollTop = 0;
-                this.$vscroller.$viewport.scrollTop = newScrollTop;
-            }
-            this.$vscroller.$vscrollbar.innerOffset = this.$vscroller.$viewport.scrollTop;
-            this.$vscroller.requestUpdateSize();
+            console.log(this.$vscroller);
+
+            this.$vscroller.scrollInto(e);
             return true;
         }.bind(this));
     }.bind(this));
@@ -239,7 +217,7 @@ SelectMenu.property.isFocus = {
         if (value) {
             this.addClass('focus');
             this.$selectlist.addTo(this.$vscroller);
-            $('body').on('click', this.eventHandler.bodyClick);
+            $('body').on('mousedown', this.eventHandler.bodyClick);
             if (this.enableSearch) {
                 setTimeout(function () {
                     this.$searchTextInput.focus();
@@ -251,11 +229,11 @@ SelectMenu.property.isFocus = {
         }
         else {
             this.$selectlist.addTo(this.$renderSpace);
-            $('body').off('click', this.eventHandler.bodyClick);
+            $('body').off('mousedown', this.eventHandler.bodyClick);
             this.removeClass('focus');
             this.$searchTextInput.value = '';
             this.$selectlist.items = this.items;
-            this.selectListBound = this.$selectlist.getBoundingRecursiveRect(4);
+            this.selectListBound = this.$selectlist.getBoundingRecursiveRect();
         }
     },
     get: function () {
@@ -333,7 +311,9 @@ SelectMenu.eventHandler.selectlistChange = function (event) {
     this.updateItem();
     this.selectMenuValue = this.value;
     if (this._lastValue != this.value) {
-        this.emit('change', event, this);
+        setTimeout(function(){
+            this.emit('change', event, this);
+        }.bind(this), 1)
         this._lastValue = this.value;
     }
 };
@@ -406,7 +386,7 @@ SelectMenu.eventHandler.searchModify = function (event) {
         this.$selectlist.items = view;
     }
 
-    this.selectListBound = this.$selectlist.getBoundingRecursiveRect(4);
+    this.selectListBound = this.$selectlist.getBoundingRecursiveRect();
     this.updateDropdownPostion(true);
 };
 

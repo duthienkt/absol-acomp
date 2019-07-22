@@ -49,7 +49,7 @@ SelectList.property.items = {
         this.$items = value.map(function (item, index) {
             var $item = this.creatItem(item, index).addTo(this);
             $item._item = item; //hold a data
-            $item.on('click', function (event) {
+            $item.on('mousedown', function (event) {
                 this.value = typeof item == 'string' ? item : item.value;
                 event.selectlistValue = this.value;
                 this.emit('change', event);

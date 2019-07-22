@@ -1,4 +1,5 @@
 import Acore from "../ACore";
+import Element from "absol/src/HTML5/Element";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -12,7 +13,7 @@ function BScroller(data) {
 }
 
 
-BScroller.scrollInto = function (element) {
+BScroller.prototype.scrollInto = function (element) {
     if (Element.prototype.isDescendantOf.call(element, this)) {
         var elementBound = element.getBoundingClientRect();
         var viewportBound = this.getBoundingClientRect();

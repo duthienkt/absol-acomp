@@ -97,7 +97,7 @@ function SelectTable() {
 
 SelectTable.prototype.updateButtonsContainerSize = function () {
     var rootBound = this.$buttonsContainer.getBoundingClientRect();
-    var containBound = this.$buttonsContainer.getBoundingRecursiveRect(4);
+    var containBound = this.$buttonsContainer.getBoundingRecursiveRect();
     var fontSize = this.getFontSize();
     this.$buttonsContainer.addStyle('width', (containBound.width + 1) / fontSize + 'em');
     this.$searchContainer.addStyle('right', (containBound.width + 5) / fontSize + 'em');
