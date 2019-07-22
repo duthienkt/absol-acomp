@@ -255,7 +255,7 @@ SelectMenu.property.isFocus = {
             this.removeClass('focus');
             this.$searchTextInput.value = '';
             this.$selectlist.items = this.items;
-            this.selectListBound = this.$selectlist.getBoundingRecursiveRect();
+            this.selectListBound = this.$selectlist.getBoundingRecursiveRect(4);
         }
     },
     get: function () {
@@ -406,7 +406,7 @@ SelectMenu.eventHandler.searchModify = function (event) {
         this.$selectlist.items = view;
     }
 
-    this.selectListBound = this.$selectlist.getBoundingRecursiveRect();
+    this.selectListBound = this.$selectlist.getBoundingRecursiveRect(4);
     this.updateDropdownPostion(true);
 };
 

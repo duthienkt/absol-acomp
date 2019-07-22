@@ -48,7 +48,7 @@ ToolTip.show = function (element, content, orientation) {
     
     var tBound = ToolTip.$elt.getBoundingClientRect();
     var rBound = ToolTip.$root.getBoundingClientRect();
-    var ebound = element.getBoundingRecursiveRect();
+    var ebound = element.getBoundingRecursiveRect(4);
     ToolTip.$elt.removeClass('top').removeClass('left').removeClass('right').removeClass('bottom');
     if (orientation == 'top') {
         ToolTip.$elt.addClass('top');

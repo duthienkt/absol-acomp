@@ -276,7 +276,7 @@ SelectTreeMenu.property.isFocus = {
                 setTimeout(function () {
                     this.$treelist.items = this.items;
                     setTimeout(this.updateSelectedItem.bind(this), 1);
-                    this.treeListBound = this.$treelist.getBoundingRecursiveRect();
+                    this.treeListBound = this.$treelist.getBoundingRecursiveRect(4);
                 }.bind(this), 1)
             }
         }

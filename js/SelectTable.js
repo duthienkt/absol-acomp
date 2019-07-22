@@ -97,7 +97,7 @@ function SelectTable() {
 
 SelectTable.prototype.updateButtonsContainerSize = function () {
     var rootBound = this.$buttonsContainer.getBoundingClientRect();
-    var containBound = this.$buttonsContainer.getBoundingRecursiveRect();
+    var containBound = this.$buttonsContainer.getBoundingRecursiveRect(4);
     var fontSize = this.getFontSize();
     this.$buttonsContainer.addStyle('width', (containBound.width + 1) / fontSize + 'em');
     this.$searchContainer.addStyle('right', (containBound.width + 5) / fontSize + 'em');
@@ -242,7 +242,7 @@ SelectTable.prototype._getString = function (item) {
 SelectTable.prototype._equalArr = function (a, b) {
     if (a.length != b.length) return false;
     for (var i = 0; i < a.length; ++i) {
-        if (a[i] != b[i]) return false;
+        if (a[i] != b[i] && a[i].text != b[i].text && a[i].value != b[i].value) return false;
     }
     return true;
 };
@@ -270,6 +270,7 @@ SelectTable.prototype._applySort = function (items, sortFlag) {
 };
 
 SelectTable.prototype.requestSort = function () {
+    
     if (!this.sorted || this.sorted == 0) return;
     var selectedItems = this.selectedItems;
     var selectedItemsNew = this._applySort(selectedItems, this.sorted);
@@ -295,7 +296,6 @@ SelectTable.eventHandler.searchTextInputModify = function (event) {
         this.selectedSearchItems = this._filter(selectedItems, filterText);
     }
     else {
-
     }
     this.searching = filterText.length > 0;
 
