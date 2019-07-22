@@ -21,8 +21,7 @@ function AutoCompleteInput() {
                     display: 'none'
                 },
                 child: {
-                    tag: 'vscroller',
-                    class: 'limited-height',
+                    tag: 'bscroller',
                     style: {
                         'max-height': '500px'
                     }
@@ -42,7 +41,7 @@ function AutoCompleteInput() {
 
 
     res.$dropdown = $('.absol-autocomplete-input-dropdown', res);
-    res.$vscroller = $('vscroller', res).on('click', res.eventHandler.vscrollerClick);
+    res.$vscroller = $('bscroller', res).on('click', res.eventHandler.vscrollerClick);
     res.$poolItems = [];
     res._currentData = [];
     res._sessionIndex = 0;
