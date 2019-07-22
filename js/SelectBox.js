@@ -51,7 +51,7 @@ function SelectBox() {
     res.$holderItem = $('.absol-selectbox-content-item', res);
     res.$dropdownBox = $('.absol-selectmenu-dropdown-box', res);
     res.$searchTextInput = $('searchtextinput', res);
-    res.$searchTextInput.on('modify', res.eventHandler.searchModify);
+    res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
     res.selectListBound = { height: 0, width: 0 };//selectlist did not init  
 
     res.sync = new Promise(function (rs) {
