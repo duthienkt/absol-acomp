@@ -90,6 +90,10 @@ function SelectTable() {
     res.$body = $('.absol-select-table-body', res);
     res.$header = $('.absol-select-table-header', res);
     res.$searchTextInput = $('searchtextinput', res).on('stoptyping', res.eventHandler.searchTextInputModify);
+    res.$addAllBtn.updateSize = function () {
+        res.updateScroller && res.updateScroller();
+    };
+    Dom.addToResizeSystem(res.$addAllBtn);
     return res;
 };
 
@@ -267,7 +271,7 @@ SelectTable.prototype._applySort = function (items, sortFlag) {
 };
 
 SelectTable.prototype.requestSort = function () {
-    
+
     if (!this.sorted || this.sorted == 0) return;
     var selectedItems = this.selectedItems;
     var selectedItemsNew = this._applySort(selectedItems, this.sorted);
