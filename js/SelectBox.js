@@ -28,7 +28,7 @@ function SelectBox() {
                         }
                     },
                     {
-                        tag: 'vscroller',
+                        tag: 'bscroller',
                         class: 'limited-height',
                         child: [
                             '.absol-selectlist.search'//handled event by itself, reusing style
@@ -42,7 +42,7 @@ function SelectBox() {
     res.eventHandler = OOP.bindFunctions(res, SelectBox.eventHandler);
     res.$renderSpace = SelectMenu.getRenderSpace();
 
-    res.$vscroller = $('vscroller', res);
+    res.$vscroller = $('bscroller', res);
     res.$attachhook = $('attachhook', res);
     res.$selectlist = _('.absol-selectlist.choose', res).addTo(res.$renderSpace);
     res.$searchlist = $('.absol-selectlist.search', res).addStyle('display', 'none');
@@ -55,7 +55,7 @@ function SelectBox() {
     res.selectListBound = { height: 0, width: 0 };//selectlist did not init  
 
     res.sync = new Promise(function (rs) {
-        res.$attachhook.on('error', function () {
+        res.$attachhook.once('error', function () {
             rs();
         });
     });
@@ -95,7 +95,7 @@ SelectBox.prototype.updateItemList = function () {
     });
 
     this.selectListBound = this.$selectlist.getBoundingClientRect();
-    this.addStyle('min-width', this.selectListBound.width + 2 + 'px');
+    this.addStyle('min-width', this.selectListBound.width + 15 + 'px');
 };
 
 
@@ -122,8 +122,8 @@ SelectBox.prototype.updateDropdownPostion = function (searching) {
     var bound = this.getBoundingClientRect();
     var searchBound = this.$searchTextInput.getBoundingClientRect();
 
-    var availableTop = bound.top - outBound.top - (this.enableSearch ? searchBound.height + 8 : 0) - 2;//for boder
-    var availableBottom = Math.min(outBound.bottom, screenBottom) - bound.bottom - (this.enableSearch ? searchBound.height + 8 : 0) - 2;
+    var availableTop = bound.top - outBound.top - (this.enableSearch ? searchBound.height + 8 : 0) - 7;//for boder
+    var availableBottom = Math.min(outBound.bottom, screenBottom) - bound.bottom - (this.enableSearch ? searchBound.height + 8 : 0) - 7;
     if (this.forceDown || (!this.$dropdownBox.containsClass('up') && searching) || (!searching && (availableBottom >= this.selectListBound.height || availableBottom > availableTop))) {
         if (!searching) {
             this.$dropdownBox.removeClass('up');
@@ -147,7 +147,6 @@ SelectBox.prototype.updateDropdownPostion = function (searching) {
             this.$vscroller.addStyle('max-height', this.selectListBound.height + 'px');
         }
     }
-    this.$vscroller.requestUpdateSize();
 };
 
 SelectBox.prototype.addSelectedItem = function (data) {
@@ -346,7 +345,6 @@ SelectBox.eventHandler.removeItem = function (event, item) {
         }
     });
     this._values = this.queryValues();
-    this.$vscroller.requestUpdateSize();
     // this.emit('change', event, this);
 
 };
