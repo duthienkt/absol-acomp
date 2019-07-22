@@ -110,7 +110,7 @@ SelectMenu.property.items = {
         this._items = value;
         this.$selectlist.items = value || [];
         this.selectListBound = this.$selectlist.getBoundingClientRect();
-        this.addStyle('min-width', this.selectListBound.width + 2 + 35 + 'px');
+        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
 
         if (this.$selectlist.items.length > 0 && (this.$selectlist.item === undefined || this.value === undefined)) {
             this.value = this.items[0].value !== undefined ? this.items[0].value : this.items[0];
@@ -197,8 +197,6 @@ SelectMenu.prototype.scrollToSelectedItem = function () {
 
     requestAnimationFrame(function () {
         $('.selected', this.$selectlist, function (e) {
-            console.log(this.$vscroller);
-
             this.$vscroller.scrollInto(e);
             return true;
         }.bind(this));

@@ -31,7 +31,7 @@ function SelectTreeMenu() {
                             display: 'none'
                         }
                     },
-                    'vscroller.limited-height']
+                    'bscroller.limited-height']
             },
             'attachhook',
         ]
@@ -42,8 +42,8 @@ function SelectTreeMenu() {
 
     res.$treelist = _('treelist', res).addTo(res.$renderSpace);
     res.$treelist.on('press', res.eventHandler.treelistPress, true);
-    res.$vscroller = $('vscroller', res).addStyle('overflow-y', 'hidden');
-    res.on('click', res.eventHandler.click, true);
+    res.$vscroller = $('bscroller', res);
+    res.on('mousedown', res.eventHandler.click, true);
     res.on('blur', res.eventHandler.blur);
 
     res.$holderItem = $('.absol-selectmenu-holder-item', res);
@@ -77,12 +77,7 @@ SelectTreeMenu.prototype.updateDropdownPostion = function (searching) {
             this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
 
         }
-        if (availableBottom < this.treeListBound.height) {
-            this.$vscroller.addStyle('max-height', availableBottom + 'px');
-        }
-        else {
-            this.$vscroller.addStyle('max-height', this.treeListBound.height + 'px');
-        }
+        this.$vscroller.addStyle('max-height', availableBottom + 'px');
     }
     else {
         if (!searching) {
@@ -90,15 +85,9 @@ SelectTreeMenu.prototype.updateDropdownPostion = function (searching) {
             this.$searchTextInput.selfRemove();
             this.$dropdownBox.addChild(this.$searchTextInput);
         }
-        if (availableTop < this.treeListBound.height) {
-            this.$vscroller.addStyle('max-height', availableTop + 'px');
-
-        }
-        else {
-            this.$vscroller.addStyle('max-height', this.treeListBound.height + 'px');
-        }
+        this.$vscroller.addStyle('max-height', availableTop + 'px');
     }
-    this.$vscroller.requestUpdateSize();
+    this.scrollToSelectedItem();
 };
 
 SelectTreeMenu.prototype.scrollToSelectedItem = function () {
@@ -137,8 +126,12 @@ SelectTreeMenu.eventHandler.attached = function () {
 
 SelectTreeMenu.eventHandler.click = function (event) {
     if (EventEmitter.hitElement(this.$treelist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event))) {
+        console.log('click out');
+        
         event.preventDefault();
-        this.isFocus = false;
+        setTimeout(function(){
+            this.isFocus = false;
+        }.bind(this), 1);
     }
     else {
         if (!this.isFocus) {
@@ -156,7 +149,9 @@ SelectTreeMenu.eventHandler.searchModify = function (event) {
 }
 
 SelectTreeMenu.prototype.notifyChange = function (eventData) {
-    this.emit('change', Object.assign({}, eventData), this)
+    setTimeout(function(){
+        this.emit('change', Object.assign({}, eventData), this)
+    }.bind(this), 1)
 }
 
 SelectTreeMenu.eventHandler.treelistPress = function (event) {
@@ -205,7 +200,7 @@ SelectTreeMenu.property.items = {
         this.$treelist.items = this._items;
 
         this.treeListBound = this.$treelist.getBoundingClientRect();
-        this.addStyle('min-width', this.treeListBound.width + 30 + 2 + 'px');
+        this.addStyle('min-width', this.treeListBound.width + 37 + 2 + 'px');
         if (typeof this.value == 'undefined' && this._items.length > 0) {
             var first = this._items[0];
             if (typeof first == 'string') {
@@ -257,7 +252,7 @@ SelectTreeMenu.property.isFocus = {
         if (value) {
             this.addClass('focus');
             this.$treelist.addTo(this.$vscroller);
-            $('body').on('click', this.eventHandler.bodyClick);
+            $('body').on('mousedown', this.eventHandler.bodyClick);
             if (this.enableSearch) {
                 setTimeout(function () {
                     this.$searchTextInput.focus();
@@ -269,7 +264,7 @@ SelectTreeMenu.property.isFocus = {
         }
         else {
             this.$treelist.addTo(this.$renderSpace);
-            $('body').off('click', this.eventHandler.bodyClick);
+            $('body').off('mousedown', this.eventHandler.bodyClick);
             this.removeClass('focus');
             if (this.$searchTextInput.value.length > 0) {
                 this.$searchTextInput.value = '';

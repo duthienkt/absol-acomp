@@ -16,7 +16,7 @@ function TreeListItem() {
         res.emit('press', event, this);
     });
 
-    res.$parent = $('.absol-tree-list-item-parent', res).on('click', res.eventHandler.clickParent);
+    res.$parent = $('.absol-tree-list-item-parent', res).on('mousedown', res.eventHandler.clickParent);
 
     res.$list.level = 1;
     OOP.drillProperty(res, res.$list, 'items');
