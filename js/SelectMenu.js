@@ -286,7 +286,9 @@ SelectMenu.eventHandler.attached = function () {
 SelectMenu.eventHandler.click = function (event) {
     if (EventEmitter.hitElement(this.$selectlist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event))) {
         event.preventDefault();
-        this.isFocus = false;
+        setTimeout(function(){
+            this.isFocus = false;
+        }.bind(this), 5)
     }
     else {
         if (!this.isFocus) {
@@ -301,7 +303,9 @@ SelectMenu.eventHandler.click = function (event) {
 SelectMenu.eventHandler.bodyClick = function (event) {
     event.preventDefault();
     if (!EventEmitter.hitElement(this, event)) {
-        this.isFocus = false;
+        setTimeout(function(){
+            this.isFocus = false;
+        }.bind(this), 5)
     }
 };
 

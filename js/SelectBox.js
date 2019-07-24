@@ -307,7 +307,9 @@ SelectBox.eventHandler.attached = function (event) {
 SelectBox.eventHandler.click = function (event) {
     if (EventEmitter.hitElement(this.$selectlist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event)) || EventEmitter.hitElement(this.$searchlist, event)) {
         event.preventDefault();
-        this.isFocus = false;
+        setTimeout(function(){
+            this.isFocus = false;
+        }.bind(this), 5)
     }
     else {
         if (!this.isFocus && (event.target == this.$holderItem || event.target == this)) {
