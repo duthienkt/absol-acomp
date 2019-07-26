@@ -77,7 +77,6 @@ ContextHook.eventHandler.contextmenu = function (event) {
     var localEvent = {
         clientX: event.clientX,
         clientY: event.clientY,
-        clientY: event.clientY,
         target: this.$target,
         hinge: this.parentElement,
         relativeX: event.clientX - parentBound.left,
