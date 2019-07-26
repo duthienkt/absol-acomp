@@ -88,6 +88,9 @@ import './js/PageSelector';
 import './css/bscroller.css';
 import './js/BScroller';
 
+import './css/searchlist.css';
+import './js/SearchList';
+
 
 import DebugTask from "./js/DebugTask";
 import  "./css/debugtask.css";
