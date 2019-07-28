@@ -80,7 +80,7 @@ ContextHook.eventHandler.contextmenu = function (event) {
         target: this.$target,
         hinge: this.parentElement,
         relativeX: event.clientX - parentBound.left,
-        relativeX: event.clientY - parentBound.top,
+        relativeY: event.clientY - parentBound.top,
         showContextMenu: function (props, onSelectItems) {
             this.hinge.showContextMenu(props, event, onSelectItems);
         },

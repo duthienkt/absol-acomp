@@ -54,11 +54,7 @@ ToolTip.show = function (element, content, orientation) {
         ToolTip.$elt.addClass('top');
         var dy = ebound.top - rBound.top - tBound.height;
         ToolTip.$holder.addStyle('top', dy + 'px');
-
     }
-
-
-
 };
 
 
