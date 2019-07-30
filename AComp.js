@@ -92,8 +92,12 @@ import './css/searchlist.css';
 import './js/SearchList';
 
 
+import './css/statictabbar.css';
+import './js/StaticTabbar';
+
+
 import DebugTask from "./js/DebugTask";
-import  "./css/debugtask.css";
+import "./css/debugtask.css";
 
 
 
