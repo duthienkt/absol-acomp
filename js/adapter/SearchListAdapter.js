@@ -18,7 +18,6 @@ SearchListAdapter.prototype.getItemIcon = function (item, index) {
 
 
 SearchListAdapter.prototype.getItemView = function (item, index, _, $, query, reuseItem, refParent) {
-    console.log(item)
     var list = [];
     var isFirst = false;
     var marginLeft = "";
@@ -26,7 +25,7 @@ SearchListAdapter.prototype.getItemView = function (item, index, _, $, query, re
         marginLeft = ""
         if (isFirst)
             marginLeft = "10px"
-            isFirst = true;
+        isFirst = true;
         if (i === "icon") {
             list.push({
                 tag: 'i',
@@ -59,7 +58,6 @@ SearchListAdapter.prototype.getItemView = function (item, index, _, $, query, re
                 }
     }
     if (reuseItem) {
-        console.log(_({ text: this.getItemText(item), value: this.getItemValue(item), value: this.getItemIcon(item) }))
         return reuseItem.clearChild().addChild(
             _({
                 tag: 'div',
@@ -75,13 +73,10 @@ SearchListAdapter.prototype.getItemView = function (item, index, _, $, query, re
     }
 };
 
-SearchListAdapter.prototype.queryItems = function (self,query, mInput) {
-    console.log(query)
-    var query = query.toLocaleLowerCase();
-    console.log(self.items)
+SearchListAdapter.prototype.queryItems = function (self, query, mInput) {
+    var query = query.toLowerCase();
     return self.items.map(function (item) {
-        var start = item.text.toLocaleLowerCase().indexOf(query);
-        console.log(item.text,query)
+        var start = item.text.toLowerCase().indexOf(query);
         if (start >= 0) {
             var hightlightedText = item.text.substr(0, start) + '<strong style="color:red">' + item.text.substr(start, query.length) + '</strong>' + item.text.substr(start + query.length);
             return {

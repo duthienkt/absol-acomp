@@ -44,7 +44,6 @@ SearchList.eventHandler = {};
 
 SearchList.eventHandler.clickContent = function (event) {
     var item = this._findItem(event.target);
-    console.log(item)
     if (item) {
         console.log(item.__data__)
         this._value = this.adapter.getItemValue(item.__data__.item);
@@ -196,12 +195,13 @@ SearchList.prototype.find = function () {
         this.pushData([], currentSession, query)
         return;
     }
+    var result;
     if (this.disableCache) {
         var onReciveData = function (data) {
             cacheHolder.data = data;
             this.pushData(data, currentSession, query);//sessionIndex may be change
         }.bind(this);
-        var result = this.adapter.queryItems(this,query);
+        result = this.adapter.queryItems(this, query);
         if (typeof result.then == 'function')
             result.then(onReciveData);
         else onReciveData(result)
@@ -221,7 +221,7 @@ SearchList.prototype.find = function () {
                 cacheHolder.pending = false;
                 this.pushData(data, cacheHolder.sessionIndex, query);//sessionIndex may be change
             }.bind(this);
-            var result = this.adapter.queryItems(this,query);
+            result = this.adapter.queryItems(this, query);
             if (typeof result.then == 'function')
                 result.then(onReciveData);
             else onReciveData(result)
@@ -232,8 +232,6 @@ SearchList.prototype.find = function () {
 };
 
 SearchList.prototype.pushData = function (data, sessionIndex, query) {
-    console.log(data)
-    window.sef=this;
     if (sessionIndex > this._updatedSession) {
         this._updatedSession = sessionIndex;
         this.$vscroller.clearChild();
@@ -276,7 +274,6 @@ SearchList.prototype.pushData = function (data, sessionIndex, query) {
                     if (reuseItem) {
                         reuseItem.removeClass('active');
                     }
-                    console.log(item)
                     var newView = this.adapter.getItemView(item.item, i, _, $, query, reuseItem, this);
                     newView.addClass('absol-search-list-item');
                     newView.__data__ = item;
@@ -312,7 +309,6 @@ SearchList.adapter = {
 SearchList.property = {};
 SearchList.property.adapter = {
     set: function (value) {
-        console.log(value,typeof value)
         if (typeof value == 'string' || typeof value == 'number') {
             if (value in SearchList.adapter) {
                 this._adapter = new SearchList.adapter[value]();
@@ -321,56 +317,44 @@ SearchList.property.adapter = {
                 throw new Error("Unknown build-in adapter name")
             }
         }
-        if(typeof value == 'function'){
-            if (value in SearchList.adapter) {
-                this._adapter = new SearchList.adapter[value]();
-            }
-            else
-            {
-                throw new Error("Unknown build-in adapter name")
-            }
-        }
-        if(typeof value == 'object' )
-        {
-            window.log=SearchList.adapter;
-            window.value=value;
-            if (value instanceof Array) {
-                if (value[0] == 'SearchStringArray') {
-                    this._adapter = new SearchStringArrayAdapter(value[1], value[2]);
-                }
-                else if (value[0] == 'SearchObjectArray') {
-                    this._adapter = new SearchObjectArrayAdapter(value[1], value[2]);
-                }
-                else {
-                    throw new Error("Unknown adapter type name");
-                }
-            }
-            else {
-                this._adapter = Object.assign(new SearchListAdapter(), value)
-            }
-            console.dir(this)
-            if (this.adapter && this.adapter.onAttached) {
-                this.adapter.onAttached(this);
-            }
-        }
-        else {
-            if (value) {
-                if ((value.queryItems && value.getItemView && value.getItemText) || (value.extend && (value.extend in SearchList.adapter))) {
-                    if (value.extend && (value.extend in SearchList.adapter)) {
-                        this.adapter = Object.assign(new SearchList.adapter[value.extend](), value)
+        else
+            if (typeof value == 'object') {
+                if (value instanceof Array) {
+                    if (value[0] == 'SearchStringArray') {
+                        this._adapter = new SearchStringArrayAdapter(value[1], value[2]);
+                    }
+                    else if (value[0] == 'SearchObjectArray') {
+                        this._adapter = new SearchObjectArrayAdapter(value[1], value[2]);
                     }
                     else {
-                        this._adapter = value;
+                        throw new Error("Unknown adapter type name");
                     }
                 }
                 else {
-                    throw new Error("Invalid adapter");
+                    this._adapter = Object.assign(new SearchListAdapter(), value)
+                }
+                if (this.adapter && this.adapter.onAttached) {
+                    this.adapter.onAttached(this);
                 }
             }
             else {
-                this._adapter = new SearchList.adapter.DEFAULT();
+                if (value) {
+                    if ((value.queryItems && value.getItemView && value.getItemText) || (value.extend && (value.extend in SearchList.adapter))) {
+                        if (value.extend && (value.extend in SearchList.adapter)) {
+                            this.adapter = Object.assign(new SearchList.adapter[value.extend](), value)
+                        }
+                        else {
+                            this._adapter = value;
+                        }
+                    }
+                    else {
+                        throw new Error("Invalid adapter");
+                    }
+                }
+                else {
+                    this._adapter = new SearchList.adapter.DEFAULT();
+                }
             }
-        }
     },
     get: function () {
         return this._adapter;
@@ -380,7 +364,6 @@ SearchList.property.adapter = {
 SearchList.property.items = {
     set: function (value) {
         this._items = value;
-        console.log(this._verifyParams())
         if (this._verifyParams()) {
             this.updateItems();
         }
@@ -391,7 +374,6 @@ SearchList.property.items = {
 };
 
 SearchList.prototype._findItem = function (elt) {
-    console.log(elt)
     while (elt) {
         if (elt.containsClass && elt.containsClass('absol-search-list-item')) {
             return elt;
@@ -413,7 +395,6 @@ SearchList.prototype.updateItems = function () {
     this.itemEltArr = [];
     this.items.forEach(function (item, index) {
         if (!reusedItem) reusedItem = self.getOneFromPool();
-        console.log(self.adapter)
         var itemView = self.adapter.getItemView(item, index, _, $, query, reusedItem, self.$dropdown);
         var valueKey = JSON.stringify(self.adapter.getItemValue(item))
         self.itemEltsDict[valueKey] = itemView;
@@ -434,7 +415,6 @@ SearchList.prototype.updateSelectedItem = function () {
     }
 
     this.activeItemElt = this.itemEltsDict[key];
-    console.log(key);
 
     if (this.activeItemElt) {
         this.activeItemElt.addClass('active');
@@ -480,7 +460,6 @@ SearchList.prototype.init = function (props) {
     }
     else {
         this.adapter = 'DEFAULT';
-
     }
 
     if ('items' in myProps) {
