@@ -1,6 +1,7 @@
 import Acore from "../ACore";
 import { contenteditableTextOnly } from "./utils";
 import OOP from "absol/src/HTML5/OOP";
+import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -21,24 +22,44 @@ Acore.install('toggler-ico', function () {
     return res;
 });
 
+Acore.install('remove-ico', function () {
+    return _('<svg class="remove-ico" width="24" height="24" viewBox="0 0 24 24">\
+                <path class="close" d="M3,16.74L7.76,12L3,7.26L7.26,3L12,7.76L16.74,3L21,7.26L16.24,12L21,16.74L16.74,21L12,16.24L7.26,21L3,16.74" />\
+                <circle class="modified" cx="12" cy="12" r="10" />\
+            </svg>');
+});
+
 
 
 export function ExpNode() {
     var res = _({
         tag: 'button',
-        extendEvent: 'contextmenu',
-        class: 'absol-exp-tree-node',
+        extendEvent: ['pressremove', 'press'],
+        class: 'absol-exp-node',
         child: [
+            'remove-ico',
             'toggler-ico',
-            'img.absol-exp-tree-node-ext-icon',
-            'span.absol-exp-tree-node-name',
-            'span.absol-exp-tree-node-desc'
+            'img.absol-exp-node-ext-icon',
+            'span.absol-exp-node-name',
+            'span.absol-exp-node-desc'
         ]
     });
 
-    res.$extIcon = $('img.absol-exp-tree-node-ext-icon', res);
-    res.$name = $('span.absol-exp-tree-node-name', res);
-    res.$desc = $('span.absol-exp-tree-node-desc', res);
+
+    res.$removeIcon = $('remove-ico', res)
+        .on('click', function (event) {
+            this.emit('pressremove', { target: res, type: 'pressremove' }, this);
+        });
+
+    res.on('click', function (event) {
+        if (!EventEmitter.hitElement(res.$extIcon, event))
+            res.emit('press', { target: res, type: 'press' }, this);
+    })
+
+
+    res.$extIcon = $('img.absol-exp-node-ext-icon', res);
+    res.$name = $('span.absol-exp-node-name', res);
+    res.$desc = $('span.absol-exp-node-desc', res);
     contenteditableTextOnly(res.$name, function (text) {
         return text.replace(/[\\\/\|\?\:\<\>\*\r\n]/, '').trim();
     });
@@ -95,6 +116,8 @@ ExpNode.property.status = {
     set: function (value) {
         this.removeClass('status-open')
             .removeClass('status-close')
+            .removeClass('status-modified')
+            .removeClass('status-removable');
         if (!value || value == 'none') {
             //todo
 
@@ -104,6 +127,12 @@ ExpNode.property.status = {
         }
         else if (value == 'open') {
             this.addClass('status-open');
+        }
+        else if (value == 'removable') {
+            this.addClass('status-removable');
+        }
+        else if (value == 'modified') {
+            this.addClass('status-modified');
         }
         else {
             throw new Error('Invalid status ' + value)
@@ -207,7 +236,7 @@ export function ExpTree() {
         ]
     });
     res.$node = $('expnode', res)
-        .on('click', function (event) {
+        .on('press', function (event) {
             res.emit('press', { target: res, node: this, type: 'press' }, res)
         });
     // console.log(res.$node);

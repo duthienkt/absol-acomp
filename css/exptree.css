@@ -1,4 +1,4 @@
-.absol-exp-tree-node {
+.absol-exp-node {
     height: 2em;
     text-align: left;
     background-color: transparent;
@@ -11,58 +11,109 @@
     position: relative;
 }
 
-.absol-exp-tree-node .toggler-ico {
+.absol-exp-node .toggler-ico {
     width: 0.7em;
     height: 0.7em;
-    margin: 0.25em;
+    margin-right: 0.35em;
 }
 
-.absol-exp-tree-node .toggler-ico path {
+.absol-exp-node .toggler-ico path {
     fill: rgb(104, 104, 104);
 }
 
-.absol-exp-tree-node:not(.status-open) .toggle-open {
+.absol-exp-node.status-removable .toggler-ico,
+.absol-exp-node.status-modified .toggler-ico {
     display: none;
 }
 
-.absol-exp-tree-node:not(.status-close) .toggle-close {
+.absol-exp-node:not(.status-open) .toggle-open {
     display: none;
 }
 
-.absol-exp-tree-node.has-status {
+.absol-exp-node:not(.status-close) .toggle-close {
+    display: none;
+}
+
+
+
+.absol-exp-node:hover .remove-ico {
+    visibility: visible;
+}
+
+
+
+.absol-exp-node.status-removable .remove-ico,
+.absol-exp-node.status-modified .remove-ico {
+    display: inline-block;
+}
+
+.absol-exp-node.status-removable .remove-ico .modified {
+    visibility: hidden;
+}
+
+.absol-exp-node.status-modified .remove-ico .close {
+    visibility: hidden;
+}
+
+.absol-exp-node.status-modified .remove-ico:hover .close {
+    visibility: visible;
+}
+
+.absol-exp-node.status-modified .remove-ico:hover .modified {
+    visibility: hidden;
+}
+
+
+.absol-exp-node .remove-ico {
+    width: 0.9em;
+    height: 0.9em;
+    display: none;
+    visibility: hidden;
+    margin-left: -0.3em;
+    margin-right: 0.45em;
+}
+
+.absol-exp-node .remove-ico .close,
+.absol-exp-node .remove-ico .modified {
+    fill: rgb(169, 169, 169);
+    stroke: none;
+}
+
+
+.absol-exp-node.has-status {
     padding-right: 2.5em;
 }
 
-.absol-exp-tree-node>div,
-.absol-exp-tree-node>svg {
+.absol-exp-node>div,
+.absol-exp-node>svg {
     display: inline-block;
     vertical-align: middle;
 }
 
 
-.absol-exp-tree-node .editing input {
+.absol-exp-node .editing input {
     color: khaki;
     padding-top: 2px;
     padding-bottom: 2px;
 }
 
-.absol-exp-tree-node:hover {
+.absol-exp-node:hover {
     background-color: rgb(169, 169, 172, 0.1);
 }
 
-.absol-exp-tree-node:focus,
-.absol-exp-tree-node.active:focus {
+.absol-exp-node:focus,
+.absol-exp-node.active:focus {
     background-color: rgba(20, 185, 235, 0.3);
 }
 
-.absol-exp-tree-node.active {
+.absol-exp-node.active {
     background-color: rgb(169, 169, 172, 0.2);
 
 }
 
 
 
-.absol-exp-tree-node-name {
+.absol-exp-node-name {
     /* -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -75,18 +126,18 @@
     /* color: rgb(245, 245, 245); */
 }
 
-.absol-exp-tree-node-desc {
+.absol-exp-node-desc {
     color: rgb(104, 104, 104);
     margin-left: 0.5em;
     font-size: 0.85em;
 }
 
-.absol-exp-tree-node-desc:empty {
+.absol-exp-node-desc:empty {
     display: none;
 }
 
 
-.absol-exp-tree-node-expand-icon {
+.absol-exp-node-expand-icon {
     display: inline-block;
     vertical-align: middle;
     margin-right: 0.2em;
@@ -94,11 +145,11 @@
     width: 0.5em;
 }
 
-.absol-exp-tree-node-ext-icon {
+.absol-exp-node-ext-icon {
     display: none;
 }
 
-.absol-exp-tree-node-ext-icon[src] {
+.absol-exp-node-ext-icon[src] {
     display: inline-block;
     vertical-align: middle;
     width: 1.5em;
@@ -106,7 +157,7 @@
     margin-right: 0.5em;
 }
 
-.absol-exp-tree>.absol-exp-tree-node {
+.absol-exp-tree>.absol-exp-node {
     width: 100%;
     display: block;
 }
@@ -121,10 +172,10 @@
 }
 
 
-.absol-exp-tree.dark .absol-exp-tree-node-name {
+.absol-exp-tree.dark .absol-exp-node-name {
     color: rgb(204, 204, 204);
 }
 
-.absol-exp-tree.dark .absol-exp-tree-node-desc {
+.absol-exp-tree.dark .absol-exp-node-desc {
     color: rgb(169, 169, 170);
 }
