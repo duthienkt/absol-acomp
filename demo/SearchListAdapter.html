@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auto Complete Input</title>
+    <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://volcanion.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../dist/absol-acomp.js?"></script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <h1>Auto Complete Input</h1>
+    <h2>Array string</h2>
+    <script class="viewable">
+        var list = [{
+            icon:"video_call",text:"A",value:1
+        },
+        {
+            icon:"video_call",text:"A",value:2
+        },
+        {
+            icon:"video_call",text:"A",value:3
+        },
+        {
+            icon:"video_call",text:"B",value:4
+        },
+        {
+            text:"C",icon:"video_call",value:5
+        },
+        {
+            text:"D",value:6
+        },
+        {
+            text:"EE",value:7
+        }
+    ]
+                
+                absol._({
+            tag: 'searchlist',
+            props: {
+                items: list,
+                adapter: {
+                    // queryItems: function (query, mInput) {
+                    //     var query = query.toLocaleLowerCase();
+                    //     return this.texts.map(function (text) {
+                    //         var start = text.toLocaleLowerCase().indexOf(query);
+                    //         if (start >= 0) {
+                    //             var hightlightedText = text.substr(0, start) + '<strong style="color:red">' + text.substr(start, query.length) + '</strong>' + text.substr(start + query.length);
+                    //             return {
+                    //                 text: text,
+                    //                 hightlightedText: hightlightedText
+                    //             }
+                    //         }
+                    //         else return null;
+                    //     }).filter(function (it) { return it !== null; })
+                    // },
+
+                    // getItemText: function (item, mInput) {
+                    //     return item.text;
+                    // },
+
+                    // getItemView: function (item, index, _, $, query, reuseItem, refParent, mInput) {
+                    //     return _({
+                    //         tag: 'div',
+                    //         style: {
+                    //             height: '30px'
+                    //         },
+                    //         child: {
+                    //             tag: 'span',
+                    //             props: {
+                    //                 innerHTML: item.text
+                    //             }
+                    //         }
+                    //     })
+                    // }
+                }
+            }
+
+        }).addTo(document.body);
+
+
+    </script>
+    
+    <!-- <h2>Array object, custom view</h2>
+    <script  class="viewable">
+        absol._({
+            tag: 'searchlist',
+            props: {
+                adapter: {
+                    texts: [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ],
+
+                    queryItems: function (query, mInput) {
+                        var query = query.toLocaleLowerCase();
+                        return this.texts.map(function (text) {
+                            var start = text.toLocaleLowerCase().indexOf(query);
+                            if (start >= 0) {
+                                var hightlightedText = text.substr(0, start) + '<strong style="color:red">' + text.substr(start, query.length) + '</strong>' + text.substr(start + query.length);
+                                return {
+                                    text: text,
+                                    hightlightedText: hightlightedText
+                                }
+                            }
+                            else return null;
+                        }).filter(function (it) { return it !== null; })
+                    },
+
+                    getItemText: function (item, mInput) {
+                        return item.text;
+                    },
+
+                    getItemView: function (item, index, _, $, query, reuseItem, refParent, mInput) {
+                        return _({
+                            tag: 'div',
+                            style: {
+                                height: '30px'
+                            },
+                            child: {
+                                tag: 'span',
+                                props: {
+                                    innerHTML: item.hightlightedText
+                                }
+                            }
+                        })
+                    }
+                }
+            }
+
+        }).addTo(document.body);
+    </script>
+    <h2>Array object, custom, async</h2>
+    <script  class="viewable">
+        var englishDictionary = new IFrameBridge(new Worker('../dist/wordfinder.js'));
+        absol._({
+            tag: 'searchlist',
+            style: {
+                display: 'block',
+                height: '40px',
+                'max-width': '500px',
+                margin: "10px"
+            },
+            on: {
+                change: function (event, sender) {
+                    absol.$('span#selected-word', selectedWord).innerHTML = event.value || sender.value;
+                }
+            },
+            props: {
+                adapter: {
+
+                    queryItems: function (query, mInput) {
+                        return englishDictionary.invoke('find', query).then(function (texts) {
+                            return texts.map(function (text) {
+                                var start = text.toLocaleLowerCase().indexOf(query);
+                                if (start >= 0) {
+                                    var hightlightedText = text.substr(0, start) + '<strong style="color:red">' + text.substr(start, query.length) + '</strong>' + text.substr(start + query.length);
+                                    return {
+                                        text: text,
+                                        hightlightedText: hightlightedText
+                                    }
+                                }
+                                else return null;
+                            }).filter(function (it) { return it !== null; })
+                        })
+                    },
+
+                    getItemText: function (item, mInput) {
+                        return item.text;
+                    },
+
+                    getItemView: function (item, index, _, $, query, reuseItem, refParent, mInput) {
+                        if (reuseItem) {
+                            reuseItem.childNodes[0].innerHTML = item.hightlightedText;
+                            return reuseItem;
+                        }
+                        else
+                            return _({
+                                tag: 'div',
+                                child: {
+                                    tag: 'span',
+                                    props: {
+                                        innerHTML: item.hightlightedText
+                                    }
+                                }
+                            })
+                    }
+                }
+            }
+
+        }).addTo(document.body);
+
+        var selectedWord = absol._('<div style="height:30px">Selected: <span id="selected-word"></span></div>').addTo(document.body);
+
+    </script>
+    
+
+    <h4>wordfinder.js</h4>
+    <pre style='color:#000000;background:#ffffff;'><span style='color:#7f0055; font-weight:bold; '>
+        import</span> IFrameBridge from <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>./Network/IFrameBridge</span><span style='color:#2a00ff; '>"</span>;
+        <span style='color:#7f0055; font-weight:bold; '>import</span> EnglishWord from <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>./String/EnglishWords</span><span style='color:#2a00ff; '>"</span>;
+        
+        <span style='color:#7f0055; font-weight:bold; '>var</span> bridge = IFrameBridge.getInstance();
+        
+        bridge.find = <span style='color:#7f0055; font-weight:bold; '>function</span> (query) {
+            <span style='color:#7f0055; font-weight:bold; '>return</span> EnglishWord.<span style='color:#7f0055; font-weight:bold; '>filter</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (s) {
+                <span style='color:#7f0055; font-weight:bold; '>return</span> s.<span style='color:#7f0055; font-weight:bold; '>indexOf</span>(query) >= 0;
+            })
+        };
+    </pre>
+    <h2>Build-in adapter</h2>
+    <script  class="viewable">
+        absol._({
+            tag: 'searchlist',
+            props: {
+                adapter: [
+                    //adapter type
+                    'SearchStringArray',
+                    //first param
+                    [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ]
+                ]
+            }
+        }).addTo(document.body);
+    </script>
+    
+
+    <script  class="viewable">
+        absol._('<span> Input 1 <span>').addTo(document.body);
+        var input1 = absol._({
+            tag: 'autocompleteinput',
+            props: {
+                adapter: [
+                    //adapter type
+                    'SearchObjectArray',
+                    //first param
+                    [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ].map(function (text, index) {
+                        return { text: text, index: index }
+                    })
+                ]
+            },
+            on: {
+                change: function (event, sender) {
+                    console.log(sender.getSelectedObject()); //only work with SearchObjectArray adapter
+                }
+            }
+        }).addTo(document.body);
+        absol._('<span> Input 2 <span>').addTo(document.body);
+
+        var input2 = absol._({
+            tag: 'autocompleteinput',
+            props: {
+                adapter: [
+                    //adapter type
+                    'SearchObjectArray',
+                    //first param
+                    [
+                        'January',
+                        'February',
+                        'March',
+                        'April',
+                        'May',
+                        'June',
+                        'July',
+                        'August',
+                        'September',
+                        'October',
+                        'November',
+                        'December'
+                    ].map(function (text, index) {
+                        return { text: text, index: index }
+                    }),
+                    {
+                        getItemText: function (item) {
+                            return '[' + item.index + ']' + item.text;
+                        }
+                    }
+                ]
+            },
+            on: {
+                change: function (event, sender) {
+                    console.log(sender.getSelectedObject()); //only work with SearchObjectArray adapter
+                }
+            }
+
+        }).addTo(document.body);
+    </script>
+    
+    <script>
+        var viewableScript = document.querySelectorAll('script.viewable');
+        viewableScript.forEach(function (elt) {
+            absol.$(elt).selfReplace(absol._({
+                tag: 'pre',
+                child: {
+                    tag: 'code',
+                    class: 'js',
+                    child: { text: elt.innerHTML }
+                }
+            }));
+        });
+        setTimeout(function () {
+            var href = location.href;
+            var mathedscroll = href.match(/\#([a-z0-9\_A-Z\-]+)/);
+            if (mathedscroll) {
+                var e = absol.$(mathedscroll[0]);
+                if (e) e.scrollIntoView();
+            }
+        }, 1000)
+    </script> -->
+
+
+
+    <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
+
+</body>
+
+</html>
