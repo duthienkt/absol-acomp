@@ -95,6 +95,10 @@ import './js/SearchList';
 import './css/statictabbar.css';
 import './js/StaticTabbar';
 
+import './js/RemoteSvg';
+
+import './css/exptree.css';
+import './js/ExpTree';
 
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";

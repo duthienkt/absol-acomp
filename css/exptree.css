@@ -1,0 +1,130 @@
+.absol-exp-tree-node {
+    height: 2em;
+    text-align: left;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    white-space: nowrap;
+    font-size: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.absol-exp-tree-node .toggler-ico {
+    width: 0.7em;
+    height: 0.7em;
+    margin: 0.25em;
+}
+
+.absol-exp-tree-node .toggler-ico path {
+    fill: rgb(104, 104, 104);
+}
+
+.absol-exp-tree-node:not(.status-open) .toggle-open {
+    display: none;
+}
+
+.absol-exp-tree-node:not(.status-close) .toggle-close {
+    display: none;
+}
+
+.absol-exp-tree-node.has-status {
+    padding-right: 2.5em;
+}
+
+.absol-exp-tree-node>div,
+.absol-exp-tree-node>svg {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+.absol-exp-tree-node .editing input {
+    color: khaki;
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+.absol-exp-tree-node:hover {
+    background-color: rgb(169, 169, 172, 0.1);
+}
+
+.absol-exp-tree-node:focus,
+.absol-exp-tree-node.active:focus {
+    background-color: rgba(20, 185, 235, 0.3);
+}
+
+.absol-exp-tree-node.active {
+    background-color: rgb(169, 169, 172, 0.2);
+
+}
+
+
+
+.absol-exp-tree-node-name {
+    /* -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none; */
+    user-select: none;
+    display: inline-block;
+    vertical-align: middle;
+    color: black;
+    /* color: rgb(245, 245, 245); */
+}
+
+.absol-exp-tree-node-desc {
+    color: rgb(104, 104, 104);
+    margin-left: 0.5em;
+    font-size: 0.85em;
+}
+
+.absol-exp-tree-node-desc:empty {
+    display: none;
+}
+
+
+.absol-exp-tree-node-expand-icon {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.2em;
+    height: 0.5em;
+    width: 0.5em;
+}
+
+.absol-exp-tree-node-ext-icon {
+    display: none;
+}
+
+.absol-exp-tree-node-ext-icon[src] {
+    display: inline-block;
+    vertical-align: middle;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 0.5em;
+}
+
+.absol-exp-tree>.absol-exp-tree-node {
+    width: 100%;
+    display: block;
+}
+
+.absol-exp-tree.hide-children>.absol-exp-items {
+    display: none;
+}
+
+
+.absol-exp-tree.dark .toggler-ico path {
+    fill: rgb(169, 169, 169);
+}
+
+
+.absol-exp-tree.dark .absol-exp-tree-node-name {
+    color: rgb(204, 204, 204);
+}
+
+.absol-exp-tree.dark .absol-exp-tree-node-desc {
+    color: rgb(169, 169, 170);
+}

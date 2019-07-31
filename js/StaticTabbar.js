@@ -107,7 +107,6 @@ StaticTabbar.prototype.activeTab = function (ident) {
             left: '0',
             width: '0'
         });
-
     }
 
 };
