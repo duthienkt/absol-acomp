@@ -1,0 +1,59 @@
+.absol-static-tabbar {
+    position: relative;
+}
+
+.absol-static-tabbar-button {
+    height: 2em;
+    background-color: transparent;
+    border: none;
+    font-size: 1em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    color: rgb(104, 104, 104);
+}
+
+.absol-static-tabbar-button:hover {
+    color: rgb(30, 30, 55);
+}
+
+.absol-static-tabbar-button.active {
+    color: black;
+}
+
+.absol-static-tabbar-button:focus {
+    outline: none;
+}
+
+.absol-static-tabbar-button>span {
+    font-size: 0.7em;
+}
+
+.absol-static-tabbar-hline {
+    border-bottom: solid 1px rgb(127, 127, 128);
+    height: 100%;
+}
+
+.absol-static-tabbar-active-box {
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    width: 0;
+    transition: left 0.15s, width 0.15s;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    box-sizing: border-box;
+    /* z-index: 1; */
+}
+
+.absol-static-tabbar.dark .absol-static-tabbar-hline{
+    border-bottom-color: white;
+}
+
+.absol-static-tabbar.dark .absol-static-tabbar-button.active{
+    color: white;
+}
+
+.absol-static-tabbar.dark .absol-static-tabbar-button {
+    color: rgb(204, 204, 204);
+}

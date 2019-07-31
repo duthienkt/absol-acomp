@@ -105,7 +105,9 @@
             ]
 
         };
-        absol._(exampeTreeParam).addTo(absol.$('#exp-node-demo-light'));
+        var x = absol._(exampeTreeParam).addTo(absol.$('#exp-node-demo-light'));
+        var y = x.accessByPath(['Dom.js']);
+        if (y) y.active = true;
         absol._(exampeTreeParam).addClass('dark').addTo(absol.$('#exp-node-demo-dark'));
     </script>
 
