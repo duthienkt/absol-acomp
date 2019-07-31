@@ -115,6 +115,19 @@ ExpNode.property.status = {
     }
 }
 
+ExpNode.property.active = {
+    set: function (value) {
+        if (value)
+            this.addClass('active');
+        else
+            this.removeClass('active');
+
+    },
+    get: function () {
+        return this.containsClass('active');
+    }
+}
+
 ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
     var self = this;
     var span = this.$name;
@@ -200,7 +213,7 @@ export function ExpTree() {
     // console.log(res.$node);
 
     res.$itemsContainer = $('.absol-exp-items', res);
-    OOP.drillProperty(res, res.$node, ['desc', 'name', 'title', 'extSrc']);
+    OOP.drillProperty(res, res.$node, ['desc', 'name', 'title', 'extSrc', 'active']);
     res.__isExpTree__ = true;
     res._level = 0;
     return res;
@@ -281,7 +294,7 @@ ExpTree.prototype.getNode = function () {
 };
 
 ExpTree.prototype.getChildren = function () {
-    return Array.call(this, this.$itemsContainer.childNodes);
+    return Array.apply(null, this.$itemsContainer.childNodes);
 };
 
 ExpTree.prototype.getPath = function () {
@@ -294,13 +307,14 @@ ExpTree.prototype.getPath = function () {
     return path;
 };
 
-ExpTree.prototype.acessByPath = function (path) {
+ExpTree.prototype.accessByPath = function (path) {
     if (path.length == 0) return this;
     var childs = this.getChildren();
+
     var res;
     for (var i = 0; i < childs.length; ++i) {
         if (childs[i].name == path[0]) {
-            res = childs[i].acessByPath(path.slice(1));
+            res = childs[i].accessByPath(path.slice(1));
             break;
         }
     }
