@@ -37,6 +37,7 @@ export function ExpNode() {
         extendEvent: ['pressremove', 'press'],
         class: 'absol-exp-node',
         child: [
+            '.absol-exp-node-level',
             'remove-ico',
             'toggler-ico',
             'img.absol-exp-node-ext-icon',
@@ -45,7 +46,7 @@ export function ExpNode() {
         ]
     });
 
-
+    res.$level = $('.absol-exp-node-level', res);
     res.$removeIcon = $('remove-ico', res)
         .on('click', function (event) {
             this.emit('pressremove', { target: res, type: 'pressremove' }, this);
@@ -78,7 +79,8 @@ ExpNode.property.level = {
         value = value || 0;
         if (value != this.level) {
             this._level = value || 0;
-            this.addStyle('padding-left', this._level + 'em');
+
+            this.$level.innerHTML = '&nbsp;'.repeat(this._level * 4);
         }
     },
     get: function () {

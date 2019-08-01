@@ -120,10 +120,9 @@
     -moz-user-select: none;
     -ms-user-select: none; */
     user-select: none;
-    display: inline-block;
     vertical-align: middle;
     color: black;
-    /* color: rgb(245, 245, 245); */
+    margin-left: 0.5em;
 }
 
 .absol-exp-node-desc {
@@ -133,7 +132,7 @@
 }
 
 .absol-exp-node-desc:empty {
-    display: none;
+    margin-left: 0;
 }
 
 
@@ -154,7 +153,7 @@
     vertical-align: middle;
     width: 1.5em;
     height: 1.5em;
-    margin-right: 0.5em;
+
 }
 
 .absol-exp-tree>.absol-exp-node {
