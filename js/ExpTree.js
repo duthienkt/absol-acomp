@@ -314,7 +314,7 @@ ExpTree.prototype.getParent = function () {
     while (current) {
         if (current.__isExpTree__)
             break;
-        current = this.parentNode;
+        current = current.parentNode;
     }
     return current;
 };
@@ -335,7 +335,7 @@ ExpTree.prototype.getPath = function () {
         path.push(current.name);
         current = current.getParent();
     }
-    return path;
+    return path.reverse();
 };
 
 ExpTree.prototype.accessByPath = function (path) {
