@@ -105,7 +105,8 @@ function MediaInput() {
                             {
                                 tag: 'button',
                                 attr: {
-                                    id: 'add-image-btn'
+                                    id: 'add-image-btn',
+                                    title: 'Add image'
                                 },
                                 child: 'add-image-ico'
 
@@ -113,7 +114,8 @@ function MediaInput() {
                             {
                                 tag: 'button',
                                 attr: {
-                                    id: 'add-file-btn'
+                                    id: 'add-file-btn',
+                                    title: 'Add file'
                                 },
                                 child: 'add-file-ico'
                             },
@@ -125,6 +127,9 @@ function MediaInput() {
                         child: [{
                             tag: 'button',
                             id: 'send-btn',
+                            attr: {
+                                title: 'Send'
+                            },
                             child: 'send-ico'
                         }]
 
@@ -542,7 +547,7 @@ MediaInput.eventHandler.keydown = function (event) {
     if (event.ctrlKey && event.key == 'x') {
         setTimeout(this.snapText.bind(this), 100)
     }
-    this.emit('update', event, this);
+    setTimeout(this.emit.bind(this, 'update', event, this), 1);
 };
 
 
@@ -671,9 +676,9 @@ MediaInput.eventHandler.paste = function (event) {
         var diffElts = afterPasteElement.filter(function (e) {
             return beforePasteElement.indexOf(e) < 0;
         });
-        if (diffElts.length > 0){
+        if (diffElts.length > 0) {
             var last = diffElts.pop();
-            if (last.nodeType == Node.TEXT_NODE){
+            if (last.nodeType == Node.TEXT_NODE) {
                 var range = document.createRange();
                 range.selectNodeContents(last);
                 range.setStart(last, last.data.length);
@@ -681,9 +686,9 @@ MediaInput.eventHandler.paste = function (event) {
                 sel.removeAllRanges();
                 sel.addRange(range);
             }
-            else{
+            else {
                 setSelectionRange(last, Infinity);
-            }   
+            }
         }
     }
 
