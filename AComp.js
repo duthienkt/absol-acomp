@@ -100,6 +100,9 @@ import './js/RemoteSvg';
 import './css/exptree.css';
 import './js/ExpTree';
 
+import './css/tablevscroller.css';
+import './js/TableVScroller';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 

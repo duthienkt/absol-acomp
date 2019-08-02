@@ -1,0 +1,2669 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auto Complete Input</title>
+    <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://volcanion.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://volcanion.cf/hightlight/highlight.pack.js">
+    </script>
+    <script>
+        hljs.initHighlightingOnLoad();
+    </script>
+    <script src="../dist/absol-acomp.js?">
+    </script>
+    <style>
+    </style>
+</head>
+
+<body>
+    <h1>Auto Complete Input</h1>
+    <h2>Array string</h2>
+    <style>
+        .shadow-box {
+            box-shadow: 5px 5px 10px #888888;
+        }
+
+        .KPItableclass {}
+
+        .KPItableclass table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .KPItableclass td {
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .KPItableclass th {
+            border-right: 1px solid #ddd;
+            color: #393E41;
+            background-color: white;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .KPItableclass tr:hover {
+            background-color: #BFBFBF;
+        }
+
+        .KPIsimpletableclass {}
+
+        .row2colors tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .row2colors tr:nth-child(even) {
+            background-color: #f7f6f6;
+        }
+
+        .KPIsimpletableclass table {
+            border-top: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .KPIsimpletableclass th {
+            color: #393E41;
+            background-color: #ebebeb;
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 40px;
+            text-align: center;
+        }
+
+        .KPIsimpletableclass td {
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 40px;
+        }
+
+        .formulaTableFormat {}
+
+        /*.formulaTableFormat tr:nth-child(odd) {*/
+        /*    background: white*/
+        /*}*/
+
+        /*.formulaTableFormat tr:nth-child(even) {*/
+        /*    background: #f7f6f6*/
+        /*}   */
+
+        .formulaTableFormat table {
+            border-top: 1px solid #c0c0c0;
+            border-left: 1px solid #c0c0c0;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .formulaTableFormat th {
+            color: #393E41;
+            background-color: #ebebeb;
+            border-right: 1px solid #c0c0c0;
+            border-bottom: 1px solid #c0c0c0;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 40px;
+        }
+
+        .formulaTableFormat td {
+            border-right: 1px solid #c0c0c0;
+            border-bottom: 1px solid #c0c0c0;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 40px;
+        }
+
+        .KPIsimpletableclass-nopadding {}
+
+        .KPIsimpletableclass-nopadding table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .KPIsimpletableclass-nopadding th {
+            color: #393E41;
+            background-color: white;
+            border-right: 1px solid #ddd;
+        }
+
+        .KPIsimpletableclass-nopadding td {
+            border-right: 1px solid #ddd;
+        }
+
+        .KPIsimpletableclassE {}
+
+        .KPIsimpletableclassE table {
+            border-top: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .KPIsimpletableclassE th {
+            color: #393E41;
+            background-color: #dfedd6;
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .KPIsimpletableclassE tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        .KPIsimpletableclassE tr:nth-child(odd) {
+            background-color: #efefef;
+        }
+
+        .KPIsimpletableclassE td {
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .KPIsimpleInput {
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 30px;
+            border-radius: 3px;
+            border: 1px solid #d6d6d6;
+        }
+
+        .kpiSimpleTextarea {
+            padding-left: 5px;
+            padding-right: 5px;
+            border-radius: 3px;
+            border: 1px solid #d6d6d6;
+        }
+
+
+        .KPItablehover {}
+
+        .KPItablehover>table>tbody>tr:hover {
+            background-color: #BFBFBF;
+        }
+
+
+        /************************ CHAT BAR   **********************************/
+        .css-chat-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 40px;
+            text-align: right;
+            z-index: 1002;
+        }
+
+        .css-minimize-container {
+            text-align: right;
+            height: 100%;
+            display: inline-block;
+            margin-right: 10px;
+            border-radius: 12px 12px 0 0;
+            border: 1px solid #d6d6d6;
+            height: 40px;
+            width: 50px;
+            background-color: white;
+        }
+
+        .css-maximize-container {
+            text-align: right;
+            height: 100%;
+            display: inline-block;
+            ;
+        }
+
+
+        .css-chat-box-holder {
+            display: inline-block;
+            vertical-align: bottom;
+            width: 400px;
+            height: 40px;
+            margin-right: 10px;
+            position: relative;
+        }
+
+
+        .css-chat-box-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .css-chat-box-container>.css-chat-box {
+            width: 100%;
+        }
+
+        .css-chat-box-container>.css-chat-box-iframe {
+            width: 100%;
+        }
+
+
+        .css-chat-box {
+            position: relative;
+            background-color: white;
+            border-radius: 8px 8px 0 0px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .3)
+        }
+
+        .css-chat-box-iframe {
+            position: relative;
+            background-color: white;
+            border-radius: 8px 8px 0 0px;
+        }
+
+        .css-chat-box-header {
+            height: 40px;
+            border-radius: 8px 8px 0 0px;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-bottom: solid 1px #d6d6d6;
+            text-align: left;
+        }
+
+        .css-chat-box-header:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .css-chat-header-name {
+            margin-left: 10px;
+            line-height: 40px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 320px;
+        }
+
+        .css-chat-header-close {
+            font-size: 8px;
+            border: none;
+            width: 25px;
+            height: 25px;
+            float: right;
+            margin-top: 7px;
+            margin-right: 10px;
+            background-color: transparent;
+        }
+
+        .css-chat-header-close>i {
+            font-size: 16px;
+        }
+
+        .css-chat-header-power {
+            font-size: 8px;
+            border: none;
+            width: 25px;
+            height: 25px;
+            float: right;
+            margin-top: 7px;
+            background-color: transparent;
+        }
+
+        .css-chat-header-power>i {
+            font-size: 16px;
+        }
+
+        .css-chat-header-minimize {
+            font-size: 8px;
+            border: none;
+            width: 25px;
+            height: 25px;
+            float: right;
+            margin-top: 7px;
+            margin-right: 10px;
+            background-color: transparent;
+        }
+
+        .css-chat-header-minimize>i {
+            font-size: 16px;
+        }
+
+        .css-chat-box.minimize {
+            height: 40px;
+        }
+
+        .css-chat-box.minimize .css-chat-box-body {
+            display: none;
+        }
+
+        .css-chat-box-body {
+            left: 0;
+            right: 0;
+            top: 39px;
+            bottom: 0;
+            height: 560px;
+
+        }
+
+        .css-chat-box-content {
+            height: 100%;
+            width: 100%;
+
+        }
+
+        .css-chat-box-messages-container {
+            width: 100%;
+            padding-bottom: 2px;
+        }
+
+        .css-chat-box-messages {
+            overflow-y: auto;
+            overflow-x: hidden;
+            text-align: left;
+            width: 100%;
+            max-height: 100%;
+        }
+
+
+        .css-chat-box-text-input-container {
+            /* min-height: 40px; */
+            width: 100%;
+            text-align: left;
+
+        }
+
+        .css-chat-box-text-input {
+            min-height: 40px;
+            max-height: 80px;
+            overflow-y: auto;
+            overflow-x: visible;
+            text-align: left;
+        }
+
+        .css-chatbox-message-line {
+            display: block;
+        }
+
+        .css-chatbox-message-me {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-right: 5px;
+            margin-top: 2px;
+            max-width: 250px;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            display: inline-block;
+            background-color: rgb(103, 184, 104);
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+
+        .css-chatbox-message-me-img {
+            border: 1px solid #ddd;
+            margin-right: 5px;
+            padding: 1px;
+            margin-top: 2px;
+            max-width: 250px;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            display: inline-block;
+            background-color: rgb(103, 184, 104);
+
+        }
+
+        .css-chatbox-message-line:first-child .css-chatbox-message-me,
+        .css-chatbox-message-line:first-child .css-chatbox-message-me-img {
+            border-top-right-radius: 12px;
+        }
+
+        .css-chatbox-message-line:first-child .css-chatbox-message-me-img>img {
+            border-top-right-radius: 12px;
+        }
+
+        .css-chatbox-message-me-img>img {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+
+        .css-chatbox-message-other {
+            max-width: 250px;
+            padding: 10px;
+            margin-top: 1px;
+            margin-left: 5px;
+            border: 1px solid #ddd;
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            display: inline-block;
+            background-color: rgb(241, 240, 240);
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .css-chatbox-message-line:last-child .css-chatbox-message-other,
+        .css-chatbox-message-line:last-child .css-chatbox-message-other-img {
+            border-bottom-left-radius: 12px;
+        }
+
+        .css-chatbox-message-line:last-child .css-chatbox-message-other-img>img {
+            border-bottom-left-radius: 12px;
+        }
+
+        .css-chatbox-message-other-img>img {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .css-chatbox-message-other-img {
+            max-width: 250px;
+            margin-top: 2px;
+            padding: 1px;
+            margin-left: 5px;
+            border: 1px solid #ddd;
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            display: inline-block;
+            background-color: rgb(241, 240, 240);
+        }
+
+        .css-chatbox-groupmess-me {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .css-chatbox-groupmess-other {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .css-rate-score-container {
+            display: inline-block;
+            vertical-align: middle;
+            padding: 5px;
+        }
+
+        .absol-calendar-input-wrapper {
+            position: relative;
+            height: 30px;
+            min-width: 40px;
+            border: solid 1px #d6d6d6;
+            border-radius: 2px;
+            box-sizing: border-box;
+            cursor: pointer;
+            vertical-align: middle;
+            display: inline-block;
+            background-color: white;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .absol-calendar-input-wrapper input {
+            height: 28px;
+            /*2px for border*/
+        }
+
+        .mini-scoller {
+            scrollbar-width: thin;
+        }
+
+        .mini-scoller::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .mini-scoller::-webkit-scrollbar-track {
+            background: rgb(240, 240, 240);
+        }
+
+        .mini-scoller::-webkit-scrollbar-thumb {
+            background: rgb(205, 205, 205);
+        }
+
+
+        .quick-messages-arrow {
+            bottom: 5px;
+            left: -9px;
+            position: absolute;
+            transform: rotate(45deg);
+            width: 18px;
+            height: 18px;
+            border: 1px solid #d6d6d6;
+
+        }
+
+        .quick-messages-arrow-inner {
+            bottom: 6.8px;
+            left: -9px;
+            position: absolute;
+            transform: rotate(45deg);
+            width: 18px;
+            height: 18px;
+            background: white;
+            z-index: 99;
+        }
+
+        .frame-bar-left button .button-number {
+            line-height: 1.6;
+            min-width: 1.6em;
+            height: 1.6em;
+            font-size: 0.625em;
+            background: rgb(0, 122, 204);
+            padding-left: 0.3em;
+            padding-right: 0.3em;
+            border-radius: 0.8em;
+            position: absolute;
+            right: 0.4em;
+            bottom: -1em;
+            color: red;
+        }
+
+        .css-chat-box-text-input-container .vmedia-media-input {
+            border-bottom: none;
+            background-color: rgba(246, 246, 246, 0.8);
+            min-height: 40px;
+        }
+
+        /**********************************************************************/
+    </style>
+    <style>
+        .shadow-box {
+            box-shadow: 5px 5px 10px #888888;
+        }
+
+        .KPItableclass {}
+
+        .KPItableclass table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .KPItableclass td {
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .KPItableclass th {
+            border-right: 1px solid #ddd;
+            color: #393E41;
+            background-color: white;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .KPItableclass tr:hover {
+            background-color: #BFBFBF;
+        }
+
+        .KPIsimpletableclass {}
+
+        .row2colors tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .row2colors tr:nth-child(even) {
+            background-color: #f7f6f6;
+        }
+
+        .KPIsimpletableclass table {
+            border-top: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .KPIsimpletableclass th {
+            color: #393E41;
+            background-color: #ebebeb;
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 40px;
+            text-align: center;
+        }
+
+        .KPIsimpletableclass td {
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 40px;
+        }
+
+        .formulaTableFormat {}
+
+        /*.formulaTableFormat tr:nth-child(odd) {*/
+        /*    background: white*/
+        /*}*/
+
+        /*.formulaTableFormat tr:nth-child(even) {*/
+        /*    background: #f7f6f6*/
+        /*}   */
+
+        .formulaTableFormat table {
+            border-top: 1px solid #c0c0c0;
+            border-left: 1px solid #c0c0c0;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .formulaTableFormat th {
+            color: #393E41;
+            background-color: #ebebeb;
+            border-right: 1px solid #c0c0c0;
+            border-bottom: 1px solid #c0c0c0;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 40px;
+        }
+
+        .formulaTableFormat td {
+            border-right: 1px solid #c0c0c0;
+            border-bottom: 1px solid #c0c0c0;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 40px;
+        }
+
+        .KPIsimpletableclass-nopadding {}
+
+        .KPIsimpletableclass-nopadding table {
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .KPIsimpletableclass-nopadding th {
+            color: #393E41;
+            background-color: white;
+            border-right: 1px solid #ddd;
+        }
+
+        .KPIsimpletableclass-nopadding td {
+            border-right: 1px solid #ddd;
+        }
+
+        .KPIsimpletableclassE {}
+
+        .KPIsimpletableclassE table {
+            border-top: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .KPIsimpletableclassE th {
+            color: #393E41;
+            background-color: #dfedd6;
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .KPIsimpletableclassE tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        .KPIsimpletableclassE tr:nth-child(odd) {
+            background-color: #efefef;
+        }
+
+        .KPIsimpletableclassE td {
+            border-right: 1px solid #ddd;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .KPIsimpleInput {
+            padding-left: 5px;
+            padding-right: 5px;
+            height: 30px;
+            border-radius: 3px;
+            border: 1px solid #d6d6d6;
+        }
+
+        .kpiSimpleTextarea {
+            padding-left: 5px;
+            padding-right: 5px;
+            border-radius: 3px;
+            border: 1px solid #d6d6d6;
+        }
+
+
+        .KPItablehover {}
+
+        .KPItablehover>table>tbody>tr:hover {
+            background-color: #BFBFBF;
+        }
+
+
+        /************************ CHAT BAR   **********************************/
+        .css-chat-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 40px;
+            text-align: right;
+            z-index: 1002;
+        }
+
+        .css-minimize-container {
+            text-align: right;
+            height: 100%;
+            display: inline-block;
+            margin-right: 10px;
+            border-radius: 12px 12px 0 0;
+            border: 1px solid #d6d6d6;
+            height: 40px;
+            width: 50px;
+            background-color: white;
+        }
+
+        .css-maximize-container {
+            text-align: right;
+            height: 100%;
+            display: inline-block;
+            ;
+        }
+
+
+        .css-chat-box-holder {
+            display: inline-block;
+            vertical-align: bottom;
+            width: 400px;
+            height: 40px;
+            margin-right: 10px;
+            position: relative;
+        }
+
+
+        .css-chat-box-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .css-chat-box-container>.css-chat-box {
+            width: 100%;
+        }
+
+        .css-chat-box-container>.css-chat-box-iframe {
+            width: 100%;
+        }
+
+
+        .css-chat-box {
+            position: relative;
+            background-color: white;
+            border-radius: 8px 8px 0 0px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .3)
+        }
+
+        .css-chat-box-iframe {
+            position: relative;
+            background-color: white;
+            border-radius: 8px 8px 0 0px;
+        }
+
+        .css-chat-box-header {
+            height: 40px;
+            border-radius: 8px 8px 0 0px;
+            background-color: rgba(0, 0, 0, 0.03);
+            border-bottom: solid 1px #d6d6d6;
+            text-align: left;
+        }
+
+        .css-chat-box-header:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .css-chat-header-name {
+            margin-left: 10px;
+            line-height: 40px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 320px;
+        }
+
+        .css-chat-header-close {
+            font-size: 8px;
+            border: none;
+            width: 25px;
+            height: 25px;
+            float: right;
+            margin-top: 7px;
+            margin-right: 10px;
+            background-color: transparent;
+        }
+
+        .css-chat-header-close>i {
+            font-size: 16px;
+        }
+
+        .css-chat-header-power {
+            font-size: 8px;
+            border: none;
+            width: 25px;
+            height: 25px;
+            float: right;
+            margin-top: 7px;
+            background-color: transparent;
+        }
+
+        .css-chat-header-power>i {
+            font-size: 16px;
+        }
+
+        .css-chat-header-minimize {
+            font-size: 8px;
+            border: none;
+            width: 25px;
+            height: 25px;
+            float: right;
+            margin-top: 7px;
+            margin-right: 10px;
+            background-color: transparent;
+        }
+
+        .css-chat-header-minimize>i {
+            font-size: 16px;
+        }
+
+        .css-chat-box.minimize {
+            height: 40px;
+        }
+
+        .css-chat-box.minimize .css-chat-box-body {
+            display: none;
+        }
+
+        .css-chat-box-body {
+            left: 0;
+            right: 0;
+            top: 39px;
+            bottom: 0;
+            height: 560px;
+
+        }
+
+        .css-chat-box-content {
+            height: 100%;
+            width: 100%;
+
+        }
+
+        .css-chat-box-messages-container {
+            width: 100%;
+            padding-bottom: 2px;
+        }
+
+        .css-chat-box-messages {
+            overflow-y: auto;
+            overflow-x: hidden;
+            text-align: left;
+            width: 100%;
+            max-height: 100%;
+        }
+
+
+        .css-chat-box-text-input-container {
+            /* min-height: 40px; */
+            width: 100%;
+            text-align: left;
+
+        }
+
+        .css-chat-box-text-input {
+            min-height: 40px;
+            max-height: 80px;
+            overflow-y: auto;
+            overflow-x: visible;
+            text-align: left;
+        }
+
+        .css-chatbox-message-line {
+            display: block;
+        }
+
+        .css-chatbox-message-me {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-right: 5px;
+            margin-top: 2px;
+            max-width: 250px;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            display: inline-block;
+            background-color: rgb(103, 184, 104);
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+
+        .css-chatbox-message-me-img {
+            border: 1px solid #ddd;
+            margin-right: 5px;
+            padding: 1px;
+            margin-top: 2px;
+            max-width: 250px;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            display: inline-block;
+            background-color: rgb(103, 184, 104);
+
+        }
+
+        .css-chatbox-message-line:first-child .css-chatbox-message-me,
+        .css-chatbox-message-line:first-child .css-chatbox-message-me-img {
+            border-top-right-radius: 12px;
+        }
+
+        .css-chatbox-message-line:first-child .css-chatbox-message-me-img>img {
+            border-top-right-radius: 12px;
+        }
+
+        .css-chatbox-message-me-img>img {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+
+        .css-chatbox-message-other {
+            max-width: 250px;
+            padding: 10px;
+            margin-top: 1px;
+            margin-left: 5px;
+            border: 1px solid #ddd;
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            display: inline-block;
+            background-color: rgb(241, 240, 240);
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        .css-chatbox-message-line:last-child .css-chatbox-message-other,
+        .css-chatbox-message-line:last-child .css-chatbox-message-other-img {
+            border-bottom-left-radius: 12px;
+        }
+
+        .css-chatbox-message-line:last-child .css-chatbox-message-other-img>img {
+            border-bottom-left-radius: 12px;
+        }
+
+        .css-chatbox-message-other-img>img {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .css-chatbox-message-other-img {
+            max-width: 250px;
+            margin-top: 2px;
+            padding: 1px;
+            margin-left: 5px;
+            border: 1px solid #ddd;
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+            display: inline-block;
+            background-color: rgb(241, 240, 240);
+        }
+
+        .css-chatbox-groupmess-me {
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        .css-chatbox-groupmess-other {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .css-rate-score-container {
+            display: inline-block;
+            vertical-align: middle;
+            padding: 5px
+        }
+
+        .absol-calendar-input-wrapper {
+            position: relative;
+            height: 30px;
+            min-width: 40px;
+            border: solid 1px #d6d6d6;
+            border-radius: 2px;
+            box-sizing: border-box;
+            cursor: pointer;
+            vertical-align: middle;
+            display: inline-block;
+            background-color: white;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .absol-calendar-input-wrapper input {
+            height: 28px;
+            /*2px for border*/
+        }
+
+        .mini-scoller {
+            scrollbar-width: thin;
+        }
+
+        .mini-scoller::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        .mini-scoller::-webkit-scrollbar-track {
+            background: rgb(240, 240, 240);
+        }
+
+        .mini-scoller::-webkit-scrollbar-thumb {
+            background: rgb(205, 205, 205);
+        }
+
+
+        .quick-messages-arrow {
+            bottom: 5px;
+            left: -9px;
+            position: absolute;
+            transform: rotate(45deg);
+            width: 18px;
+            height: 18px;
+            border: 1px solid #d6d6d6;
+
+        }
+
+        .quick-messages-arrow-inner {
+            bottom: 6.8px;
+            left: -9px;
+            position: absolute;
+            transform: rotate(45deg);
+            width: 18px;
+            height: 18px;
+            background: white;
+            z-index: 99;
+        }
+
+        .frame-bar-left button .button-number {
+            line-height: 1.6;
+            min-width: 1.6em;
+            height: 1.6em;
+            font-size: 0.625em;
+            background: rgb(0, 122, 204);
+            padding-left: 0.3em;
+            padding-right: 0.3em;
+            border-radius: 0.8em;
+            position: absolute;
+            right: 0.4em;
+            bottom: -1em;
+            color: red;
+        }
+
+        .css-chat-box-text-input-container .vmedia-media-input {
+            border-bottom: none;
+            background-color: rgba(246, 246, 246, 0.8);
+            min-height: 40px;
+        }
+
+
+
+
+
+
+        /**********************************************************************/
+    </style>
+    <table style="width: 100%;" id="example">
+        <thead>
+            <tr>
+                <th align="center">Tên</th>
+                <th align="center">Trạng thái</th>
+                <th align="center">Tài khoản</th>
+                <th align="center">Dịch vụ</th>
+                <th align="center">Công ty</th>
+                <th align="center">Người hỗ trợ</th>
+                <th align="center">Email</th>
+                <th align="center">Điểm đánh giá</th>
+                <th align="center">Thời gian</th>
+                <th align="center">Trung bình thời gian trả lời KH trễ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="cursor: pointer; color: red;">admin</td>
+                <td style="color: red; cursor: pointer;">Đang chat</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td>
+                </td>
+                <td align="center">08/02/2019 11:16</td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td style="cursor: pointer; color: red;">Thanh Yên</td>
+                <td style="color: red; cursor: pointer;">Đang chat</td>
+                <td>yentest</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>yentran.bkit@gmail.com</td>
+                <td>
+                </td>
+                <td align="center">07/30/2019 16:43</td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>
+                </td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">08/02/2019 11:16</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">08/02/2019 11:14</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">08/02/2019 11:10</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">08/02/2019 09:23</td>
+                <td align="center">3035</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>
+                </td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">08/01/2019 18:24</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>
+                </td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">08/01/2019 18:22</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest, thanhyen</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 16:12</td>
+                <td align="center">6234</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest, thanhyen</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:40</td>
+                <td align="center">2546</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:38</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>
+                </td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:38</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:38</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:35</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:35</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:33</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:26</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:25</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:24</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:21</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:20</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 14:00</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:37</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:31</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:29</td>
+                <td align="center">76</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:29</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:24</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:20</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:19</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:17</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:17</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:16</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 13:14</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest, thanhyen</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 10:40</td>
+                <td align="center">155</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 10:22</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 10:21</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 10:20</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 10:18</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 10:00</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/31/2019 09:22</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/30/2019 17:38</td>
+                <td align="center">73</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/30/2019 17:37</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">07/30/2019 16:52</td>
+                <td align="center">0</td>
+            </tr>
+        </tbody>
+    </table>
+    <table style="width: 100%;" id="example_1">
+        <thead>
+            <tr>
+                <th align="center">Tên</th>
+                <th align="center">Trạng thái</th>
+                <th align="center">Tài khoản</th>
+                <th align="center">Dịch vụ</th>
+                <th align="center">Công ty</th>
+                <th align="center">Người hỗ trợ</th>
+                <th align="center">Email</th>
+                <th align="center">Điểm đánh giá</th>
+                <th align="center">Thời gian</th>
+                <th align="center">Trung bình thời gian trả lời KH trễ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="cursor: pointer; color: red;">admin</td>
+                <td style="color: red; cursor: pointer;">Đang chat</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td>
+                </td>
+                <td align="center">08/02/2019 11:16</td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td style="cursor: pointer; color: red;">Thanh Yên</td>
+                <td style="color: red; cursor: pointer;">Đang chat</td>
+                <td>yentest</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>yentran.bkit@gmail.com</td>
+                <td>
+                </td>
+                <td align="center">07/30/2019 16:43</td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>
+                </td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">08/02/2019 11:16</td>
+                <td align="center">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <a style="cursor: pointer;">admin</a>
+                </td>
+                <td>Đóng</td>
+                <td>admin</td>
+                <td>Mục tiêu</td>
+                <td>DanThanh Company</td>
+                <td>yentest</td>
+                <td>ducdat@gmail.com</td>
+                <td align="center">
+                    <div align="center">
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                        <div class="css-rate-score-container">
+                            <i class="material-icons " style="color: rgb(70, 184, 218);">star_border</i>
+                        </div>
+                    </div>
+                </td>
+                <td align="center">08/02/2019 11:14</td>
+                <td align="center">0</td>
+            </tr>
+
+        </tbody>
+    </table>
+
+
+
+    <script class="viewable">
+        absol._({
+            tag: 'tablevscroller',
+            class: 'KPIsimpletableclass KPItablehover row2colors'.split(/\s+/),
+
+            style: {
+                height: '50vh',
+            },
+            child: absol.$('#example').selfRemove()
+        }).addTo(document.body);
+        absol._({
+            tag: 'tablevscroller',
+            class: 'KPIsimpletableclass KPItablehover row2colors'.split(/\s+/),
+
+            style: {
+                height: '50vh',
+                'margin-top': '10px'
+            },
+            child: absol.$('#example_1').selfRemove()
+        }).addTo(document.body);
+    </script>
+
+    <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
+    <script>
+        var viewableScript = document.querySelectorAll('script.viewable');
+        viewableScript.forEach(function (elt) {
+            absol.$(elt).selfReplace(absol._({
+                tag: 'pre',
+                child: {
+                    tag: 'code',
+                    class: 'js',
+                    child: { text: elt.innerHTML }
+                }
+            }));
+        });
+        setTimeout(function () {
+            var href = location.href;
+            var mathedscroll = href.match(/\#([a-z0-9\_A-Z\-]+)/);
+            if (mathedscroll) {
+                var e = absol.$(mathedscroll[0]);
+                if (e) e.scrollIntoView();
+            }
+        }, 1000)
+    </script>
+</body>
+
+</html>
