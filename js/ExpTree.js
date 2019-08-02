@@ -53,7 +53,7 @@ export function ExpNode() {
         });
 
     res.on('click', function (event) {
-        if (!EventEmitter.hitElement(res.$extIcon, event))
+        if (!EventEmitter.hitElement(res.$removeIcon, event))
             res.emit('press', { target: res, type: 'press' }, this);
     })
 
