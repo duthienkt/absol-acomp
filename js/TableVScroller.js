@@ -37,7 +37,7 @@ TableVScroller.prototype.addChild = function (elt) {
     if (this.$viewport.childNodes.length == 0) {
         if (elt.tagName && elt.tagName.toLowerCase() == 'table') {
             this.$viewport.addChild(elt);
-            this.$table = elt;
+            this.$table = $(elt);
             this.$thead = $('thead', elt);
             this.$tr = $('tr', this.$thead);
             this.$topThead = this.$thead.cloneNode(true);
@@ -83,8 +83,9 @@ TableVScroller.prototype.updateStyle = function () {
 
 TableVScroller.prototype.updateSize = function () {
     var theadBound = this.$thead.getBoundingClientRect();
+    var tableBound = this.$table.getBoundingClientRect();
     this.$topTable.addStyle({
-        width: theadBound.width + 'px',
+        width: tableBound.width + 'px',
         height: theadBound.height + 'px'
     });
     var realNodes = this.$tr.childNodes;
@@ -92,8 +93,8 @@ TableVScroller.prototype.updateSize = function () {
 
     for (var i = 0; i < realNodes.length; ++i) {
         if (!realNodes[i].tagName) continue;
-        var wstyle = window.getComputedStyle( $(realNodes[i])).getPropertyValue('width');
-        $(topNodes[i]).attr('style',realNodes[i].attr('style')).addStyle('width', wstyle);
+        var wstyle = window.getComputedStyle($(realNodes[i])).getPropertyValue('width');
+        $(topNodes[i]).attr('style', realNodes[i].attr('style')).addStyle('width', wstyle);
     }
     this.$topTable.removeStyle('display');
 }
