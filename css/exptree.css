@@ -9,6 +9,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     position: relative;
+    color: rgb(33, 33, 34);
 }
 
 .absol-exp-node .toggler-ico {
@@ -176,5 +177,9 @@
 }
 
 .absol-exp-tree.dark .absol-exp-node-desc {
+    color: rgb(169, 169, 170);
+}
+
+.absol-exp-tree.dark .absol-exp-node{
     color: rgb(169, 169, 170);
 }
