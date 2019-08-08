@@ -2,47 +2,57 @@
 <html>
 
 <head>
-    <title>PageSelector</title>
-    <meta charset="UTF-8">
+    <title>Auto Complete Input</title>
     <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://volcanion.cf/materialdesignicons/materialdesignicons.min.css"> -->
-    <script src="../dist/absol-acomp.js?"></script>
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
-    <script>
-        hljs.initHighlightingOnLoad();
-        absol.ShareCreator.radioinput.initAfterLoad();
-    </script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script src="../dist/absol-acomp.js?"></script>
     <style>
 
     </style>
 </head>
 
 <body>
-    <div id="test-div"></div>
+    <h1>Auto Complete Input</h1>
+    <h2>Array string</h2>
     <script class="viewable">
-        var x = [];
-        for (var i = 1; i <= 50; i++){
-            x.push({name: 'name' + i, code: 'code' + i});
+        var list = [{
+            icon: "video_call", text: "Auto Complete Input", value: 1
+        },
+        {
+            icon: "video_call", text: "video_call", value: 2
+        },
+        {
+            icon: "video_call", text: "Voice", value: 3
+        },
+        {
+            icon: "video_call", text: "accept", value: 4
+        },
+        {
+            text: "C", icon: "video_call", value: 5
+        },
+        {
+            text: "D", value: 6
+        },
+        {
+            text: "EE", value: 7
         }
+        ]
+
         absol._({
-            tag: 'pageselector',
+            tag: 'searchlist',
             props: {
-                pageRange: 10,
-                pageOffset: 1,
-                selectedIndex: 1,
-                pageCount: 15
-            },
-            on: {
-                change: function(event, sender){
-                    console.log(event);
-                    console.log(sender);
-                }
+                items: list
             }
-        }).addTo(absol.$('#test-div'));
+
+        }).addTo(document.body);
+
+
     </script>
 
-   
+    <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
     <script>
         var viewableScript = document.querySelectorAll('script.viewable');
         viewableScript.forEach(function (elt) {
