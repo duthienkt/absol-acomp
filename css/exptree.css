@@ -167,19 +167,19 @@
 }
 
 
-.absol-exp-tree.dark .toggler-ico path {
+.dark .toggler-ico path {
     fill: rgb(169, 169, 169);
 }
 
 
-.absol-exp-tree.dark .absol-exp-node-name {
+.dark .absol-exp-node-name {
     color: rgb(204, 204, 204);
 }
 
-.absol-exp-tree.dark .absol-exp-node-desc {
+.dark .absol-exp-node-desc {
     color: rgb(169, 169, 170);
 }
 
-.absol-exp-tree.dark .absol-exp-node{
+.dark .absol-exp-node{
     color: rgb(169, 169, 170);
 }
