@@ -124,14 +124,13 @@ function VMenuLine() {
 
 function VMenuItem() {
 
-
     var res = _({
         tag: 'dropright',
         extendEvent: ['press', 'enter'],
         child: [{
             tag: 'button',
             class: 'absol-vmenu-button',
-            child: ['.absol-vmenu-button-text', '.absol-vmenu-button-key', 'i.absol-vmenu-arrow']
+            child: ['img.absol-vmenu-button-icon','.absol-vmenu-button-text', '.absol-vmenu-button-key', 'span.absol-vmenu-arrow']
         },
         {
             tag: 'vmenu',
@@ -145,8 +144,10 @@ function VMenuItem() {
     res.$text = $('.absol-vmenu-button-text', res);
     res.$key = $('.absol-vmenu-button-key', res);
     res.$arraw = $('.absol-vmenu-arrow', res);
+    res.$icon = $('img.absol-vmenu-button-icon', res);
 
     OOP.drillProperty(res, res.$text, 'text', 'innerHTML');
+    OOP.drillProperty(res, res.$icon, 'iconSrc', 'src');
     OOP.drillProperty(res, res.$key, 'key', 'innerHTML');
     OOP.drillProperty(res, res.$vmenu, ['activeTab']);
 
@@ -203,10 +204,10 @@ VMenuItem.property.items = {
     set: function (items) {
         items = items || [];
         if (items.length > 0) {
-            this.$arraw.addClass(['fas', 'fa-chevron-right']);
+            this.$arraw.addClass(['mdi', 'mdi-chevron-right']);
         }
         else {
-            this.$arraw.removeClass(['fas', 'fa-chevron-right']);
+            this.$arraw.removeClass(['mdi', 'mdi-chevron-right']);
         }
         this.$vmenu.items = items;
     },

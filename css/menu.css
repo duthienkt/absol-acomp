@@ -60,7 +60,8 @@
 
 .absol-hmenu {
     display: inline-block;
-    background-color: rgb(33, 33, 33);
+    background-color: rgb(252, 252, 255);
+    /* background-color: rgb(33, 33, 33); */
 
 }
 
@@ -71,7 +72,8 @@
 
 .absol-hmenu-button:hover,
 .absol-hmenu .absol-hmenu-button-hover {
-    background-color: rgb(80, 80, 80);
+
+    background-color: rgb(175, 175, 175);
 }
 
 .absol-hmenu-button {
@@ -85,7 +87,9 @@
 
 .absol-hmenu-button,
 .absol-vmenu-button {
-    color: rgb(200, 200, 200);
+
+    color: rgb(55, 55, 55);
+
     height: 100%;
     background-color: transparent;
     font-size: 1em;
@@ -105,7 +109,7 @@
 .absol-hmenu .absol-dropright-content {
     padding-top: 0.4em;
     padding-bottom: 0.4em;
-    background-color: rgb(37, 37, 38);
+    background-color: rgb(252, 252, 255);
     -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
     -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
     box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
@@ -114,12 +118,27 @@
 .absol-vmenu-button {
     min-width: 10em;
     text-align: left;
-    padding-left: 2em;
+    padding-left: 0.5em;
     padding-right: 2em;
     height: 1.8em;
     line-height: 1.8em;
     white-space: nowrap;
 }
+
+img.absol-vmenu-button-icon {
+    opacity: 0;
+    width: 1.2em;
+    height: 1.2em;
+    display:inline-block;
+    vertical-align: middle;
+    margin-right: 0.3em;
+}
+
+img.absol-vmenu-button-icon[src] {
+    opacity: 1;
+}
+
+
 
 .absol-vmenu-button-text,
 .absol-vmenu-button-key {
@@ -138,8 +157,6 @@
     display: inline-block;
     vertical-align: middle;
     width: 0;
-    /* margin-right: -0.3em;
-    margin-left: 3em; */
 }
 
 .absol-menu-item-disable .absol-vmenu-arrow {
@@ -148,7 +165,7 @@
 
 .absol-vmenu-button:hover,
 .absol-vmenu .absol-vmenu-button-hover {
-    background-color: rgb(9, 71, 113);
+    background-color: rgb(214, 214, 217);
 }
 
 .absol-menu-item-disable .absol-vmenu-button:hover,
@@ -171,5 +188,38 @@
 .absol-menu-item-disable {}
 
 .absol-menu-item-disable button {
+    color: rgb(155, 155, 159);
+}
+
+.dark .absol-menu-item-disable button {
     color: rgb(100, 100, 100);
+}
+
+.dark .absol-vmenu-button:hover,
+.dark .absol-vmenu .absol-vmenu-button-hover {
+    background-color: rgb(9, 71, 113);
+}
+
+
+.dark .absol-hmenu .absol-dropdown-content,
+.dark .absol-hmenu .absol-dropright-content {
+    background-color: rgb(37, 37, 38);
+}
+
+
+.dark .absol-hmenu-button,
+.dark .absol-vmenu-button {
+    color: rgb(200, 200, 200);
+
+}
+
+
+.dark .absol-hmenu-button:hover,
+.dark .absol-hmenu .absol-hmenu-button-hover {
+    background-color: rgb(80, 80, 80);
+}
+
+
+.dark .absol-hmenu {
+    background-color: rgb(33, 33, 33);
 }
