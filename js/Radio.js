@@ -1,7 +1,6 @@
 import Acore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
-import RadioInput from "./RadioInput";
-import Dom from "absol/src/HTML5/Dom";
+import RadioButton from "./RadioButton";
 
 
 var _ = Acore._;
@@ -55,7 +54,7 @@ Radio.prototype.getAllFriend = function () {
 };
 
 
-Radio.prototype.attribute = RadioInput;
+Radio.prototype.attribute = RadioButton;
 
 Radio.property = {
     checked: {

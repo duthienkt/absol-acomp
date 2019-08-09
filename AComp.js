@@ -55,7 +55,13 @@ import './js/SelectBox';
 
 import './css/radio.css';
 import './js/Radio';
-import './js/RadioInput';
+import './js/RadioButton';
+
+
+import './css/checkbox.css';
+import './js/CheckBox';
+import './js/CheckboxButton';
+
 
 import './js/TextClipboard';
 
@@ -64,10 +70,6 @@ import './js/EditableText';
 
 import './css/widthheightresizer.css';
 import './js/WidthHeightSizer';
-
-import './css/checkbox.css';
-import './js/CheckBox';
-import './js/CheckboxInput';
 
 import './css/tooltip.css';
 import './js/Tooltip';

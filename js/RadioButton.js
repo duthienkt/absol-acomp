@@ -5,7 +5,7 @@ import Dom from "absol/src/HTML5/Dom";
 var _ = Acore._;
 var $ = Acore.$;
 
-function RadioInput() {
+function RadioButton() {
     var res = _(
         `<div class="absol-radio">
             <input type="radio" />
@@ -40,12 +40,12 @@ function RadioInput() {
     return res;
 }
 
-RadioInput.prototype.getAllFriend = function () {
+RadioButton.prototype.getAllFriend = function () {
     return Radio.getAllByName(this.name);
 };
 
 
-RadioInput.attribute = {
+RadioButton.attribute = {
     checked: {
         set: function (value) {
             if (value == 'false' || value == null) {
@@ -93,7 +93,7 @@ RadioInput.attribute = {
     }
 }
 
-RadioInput.property = {
+RadioButton.property = {
     checked: {
         set: function (value) {
             this.$input.checked = !!value;
@@ -146,13 +146,13 @@ RadioInput.property = {
     }
 };
 
-RadioInput.getAllByName = function (name) {
+RadioButton.getAllByName = function (name) {
     return (document.getElementsByTagName('input') || []).filter(function (elt) {
         return elt.getAttribute('type') == 'radio' && elt.getAttribute('name') == name;
     });
 };
 
-RadioInput.getValueByName = function (name) {
+RadioButton.getValueByName = function (name) {
     var inputs = Radio.getAllByName(name);
     var res = null;
     var input;
@@ -167,7 +167,7 @@ RadioInput.getValueByName = function (name) {
 
 
 
-RadioInput.initAfterLoad = function () {
+RadioButton.initAfterLoad = function () {
     return Dom.documentReady.then(function () {
         Array.apply(null,document.getElementsByTagName('input')).filter(function (e) {
             return e.getAttribute('type') == 'radio' && e.classList.contains('absol-radio');
@@ -205,14 +205,14 @@ RadioInput.initAfterLoad = function () {
                 }
             });
             
-            res.defineAttributes(RadioInput.attribute);
-            Object.defineProperties(res,RadioInput.property);
-            Object.assign(res, RadioInput.prototype);
+            res.defineAttributes(RadioButton.attribute);
+            Object.defineProperties(res,RadioButton.property);
+            Object.assign(res, RadioButton.prototype);
             if (radio.checked) res.attr('checked', 'true');
         });
     });
 }
 
-Acore.creator.radioinput = RadioInput;
+Acore.install('RadioButton'.toLowerCase(), RadioButton);
 
-export default RadioInput;
+export default RadioButton;

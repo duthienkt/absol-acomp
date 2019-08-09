@@ -5,7 +5,7 @@ var _ = Acore._;
 var $ = Acore.$;
 
 
-function CheckBox() {
+function CheckBoxButton() {
 
     var svgIcon = function (pos) {
         return _([
@@ -40,7 +40,7 @@ function CheckBox() {
 };
 
 
-CheckBox.attribute = {
+CheckBoxButton.attribute = {
     checked: {
         set: function (value) {
             if (value == 'false' || value == null) {
@@ -77,7 +77,7 @@ CheckBox.attribute = {
     }
 };
 
-CheckBox.property = {
+CheckBoxButton.property = {
     checked: {
         set: function (value) {
             this.$input.checked = !!value;
@@ -111,7 +111,7 @@ CheckBox.property = {
 
 
 
-CheckBox.initAfterLoad = function () {
+CheckBoxButton.initAfterLoad = function () {
     return Dom.documentReady.then(function () {
         Array.apply(null, document.getElementsByTagName('input')).filter(function (e) {
             return e.getAttribute('type') == 'checkbox' && e.classList.contains('absol-checkbox');
@@ -161,13 +161,13 @@ CheckBox.initAfterLoad = function () {
 
             });
 
-            res.defineAttributes(CheckBox.attribute);
-            Object.defineProperties(res, CheckBox.property);
-            Object.assign(res, CheckBox.prototype);
+            res.defineAttributes(CheckBoxButton.attribute);
+            Object.defineProperties(res, CheckBoxButton.property);
+            Object.assign(res, CheckBoxButton.prototype);
             if (checkbox.checked) res.attr('checked', 'true');
         });
     });
 }
 
-Acore.creator.checkbox = CheckBox;
-export default CheckBox;
+Acore.install('CheckBoxButton'.toLowerCase(), CheckBoxButton);
+export default CheckBoxButton;
