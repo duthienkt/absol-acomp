@@ -105,6 +105,9 @@ import './js/ExpTree';
 import './css/tablevscroller.css';
 import './js/TableVScroller';
 
+import './css/quickpath.css';
+import './js/QuickPath';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 

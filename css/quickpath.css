@@ -1,0 +1,22 @@
+.absol-quick-path {
+    height: 1.5em;
+}
+
+.absol-quick-path-btn {
+    font-size: 1em;
+    padding: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+}
+
+.absol-quick-path-btn:focus span {
+    text-decoration: underline;
+}
+
+.absol-quick-path-btn-ext-ico {
+    width: 1em;
+    height: 1em;
+    vertical-align: middle;
+    margin-right: 0.3em;
+}
