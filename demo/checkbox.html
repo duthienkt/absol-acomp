@@ -11,7 +11,7 @@
     <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
     <script>
         hljs.initHighlightingOnLoad();
-        absol.ShareCreator.checkbox.initAfterLoad();
+        absol.ShareCreator.checkboxbutton.initAfterLoad();
     </script>
     <style>
 
@@ -22,9 +22,12 @@
     <div class="checkbox-row"></div>
     <script class="viewable">
         var mRadioRow = absol.$('.checkbox-row');
-        absol._('checkbox[checked="true"]').addTo(mRadioRow);
+        absol._('checkbox[checked="true"]').addTo(mRadioRow).text = "Chon 1";
         absol._('checkbox[checked="false"]').addTo(mRadioRow);
         absol._('checkbox[checked="true"]').addTo(mRadioRow);
+        absol._('checkboxbutton[checked="true"]').addTo(mRadioRow);
+        absol._('checkboxbutton[checked="false"]').addTo(mRadioRow);
+        absol._('checkboxbutton[checked="true"]').addTo(mRadioRow);
     </script>
 
     <div>

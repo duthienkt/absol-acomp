@@ -1,0 +1,46 @@
+.absol-select-table.exclude .absol-select-table-nonselected-items-container svg.exclude-icon,
+.absol-select-table.exclude .absol-select-table-nonselected-items-container svg.add-icon {
+    display: inline-block;
+    vertical-align: middle;
+
+}
+
+.absol-select-table.exclude svg.exclude-icon {
+    stroke: none;
+    fill: rgb(233, 95, 45);
+}
+
+.absol-select-table.exclude .absol-select-table-item-right-container {
+    width: 2.8em;
+}
+
+
+.absol-select-table.exclude .absol-select-table-item {
+    padding-right: 3.2em;
+}
+
+
+.absol-select-table.exclude .absol-select-table-item-right-container-row {
+    display: table-row;
+}
+
+
+.absol-select-table.exclude .absol-select-table-item-right-container {
+    padding: 0;
+}
+
+.absol-select-table.exclude .absol-select-table-item-right-container:hover {
+    background-color: unset;
+}
+
+.absol-select-table.exclude .absol-select-table-item-right-container-cell {
+    text-align: center;
+    line-height: 1;
+    border-radius: 0.2em;
+
+}
+
+
+.absol-select-table.exclude .absol-select-table-item-right-container-cell:hover{
+    background-color: rgba(169, 169, 169, 0.3);
+}

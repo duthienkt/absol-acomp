@@ -665,17 +665,14 @@ Item.eventHandler.rightBtClick = function (event) {
 };
 
 Item.eventHandler.removeBtClick = function (event) {
-    console.log('remove');
     this.emit('clickremove', event, this);
 };
 
 Item.eventHandler.addBtClick = function (event) {
-    console.log('add');
     this.emit('clickadd', event, this);
 };
 
 Item.eventHandler.excludeBtClick = function (event) {
-    console.log('exclude');
     this.emit('clickexclude', event, this);
 };
 

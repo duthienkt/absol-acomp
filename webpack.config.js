@@ -44,7 +44,8 @@ module.exports = {
         ]
     },
     devServer: {
-        compress: true
+        compress: true,
+        disableHostCheck: true
     },
     performance: {
         hints: false
