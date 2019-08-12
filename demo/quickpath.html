@@ -14,56 +14,80 @@
         absol.ShareCreator.checkboxbutton.initAfterLoad();
     </script>
     <style>
+        .dark.bg {
+            background-color: rgba(30, 30, 32, 1);
+            /* background-color: white; */
 
+        }
+
+        .bg {
+            padding-top: 10em;
+            padding-bottom: 10em;
+            border: solid 1px rgb(30, 30, 32);
+        }
     </style>
 </head>
 
 <body>
     <div style="height: 30em"></div>
-    <div class="demo-row"></div>
+    <div class="demo-row dark bg"></div>
+    <div class="demo-row light bg"></div>
+
     <div style="height: 30em"></div>
 
     <script class="viewable">
+        var path = [
+            {
+                text: "My Computer",
+                items: [{ text: "My Computer" }, { text: "Dropbox" }, { text: "OneDrive" }]
+            },
+            {
+                text: "D",
+                items: [{ text: "D" }, { text: "E" }, { text: "F" }]
+            },
+            {
+                text: "Book",
+                iconSrc: 'https://volcanion.cf/exticons/extra/folder.svg',
+                items: [
+                    { text: "Book" }, { text: "Soft" }, { text: "Hardware" }, { text: "Driver" }, { text: "temp" }
+                ]
+            },
+            {
+                text: "Commic",
+                iconSrc: 'https://volcanion.cf/exticons/extra/folder-photo.svg',
+                items: [
+                    { text: "Manga", iconSrc: 'https://volcanion.cf/exticons/extra/folder-image.svg' },
+                    {
+                        text: "Commic",
+                        iconSrc: 'https://volcanion.cf/exticons/extra/folder-photo.svg'
+                    },
+                    {
+                        text: "Romantic",
+                        iconSrc: 'https://volcanion.cf/exticons/extra/folder-video.svg'
+                    }
+                ]
+            }
+        ];
+
         absol._({
             tag: 'quickpath',
             style: {
                 fontSize: '14px'
             },
             props: {
-                path: [
-                    {
-                        text: "My Computer",
-                        items: [{ text: "My Computer" }, { text: "Dropbox" }, { text: "OneDrive" }]
-                    },
-                    {
-                        text: "D",
-                        items: [{ text: "D" }, { text: "E" }, { text: "F" }]
-                    },
-                    {
-                        text: "Book",
-                        iconSrc: 'https://volcanion.cf/exticons/extra/folder.svg',
-                        items: [
-                            { text: "Book" }, { text: "Soft" }, { text: "Hardware" }, { text: "Driver" }, { text: "temp" }
-                        ]
-                    },
-                    {
-                        text: "Commic",
-                        iconSrc: 'https://volcanion.cf/exticons/extra/folder-photo.svg',
-                        items: [
-                            { text: "Manga", iconSrc: 'https://volcanion.cf/exticons/extra/folder-image.svg' },
-                            {
-                                text: "Commic",
-                                iconSrc: 'https://volcanion.cf/exticons/extra/folder-photo.svg'
-                            },
-                            {
-                                text: "Romantic",
-                                iconSrc: 'https://volcanion.cf/exticons/extra/folder-video.svg'
-                            }
-                        ]
-                    }
-                ]
+                path: path
             }
-        }).addTo(absol.$('.demo-row'));
+        }).addTo(absol.$('.demo-row.dark.bg'));
+
+        absol._({
+            tag: 'quickpath',
+            style: {
+                fontSize: '14px'
+            },
+            props: {
+                path: path
+            }
+        }).addTo(absol.$('.demo-row.light.bg'));
     </script>
 
 

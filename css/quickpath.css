@@ -8,20 +8,30 @@
     -moz-user-select: none;
 }
 
-.absol-quick-path>button {
+.absol-quick-path button {
     outline: none;
-    padding-right: 0.3em;
 }
 
-/* .absol-quick-path button:first-child .toggler-ico {
+.absol-quick-path .toggler-ico path {
+    fill: rgb(104, 104, 104);
+}
 
-} */
+.dark .absol-quick-path button {
+    color: rgb(200, 200, 200);
+}
+
+
+.dark .absol-quick-path .toggler-ico path {
+    fill: rgb(169, 169, 169);
+}
+
 
 .absol-quick-path-btn {
     font-size: 1em;
     padding: 0;
     border: none;
     background: transparent;
+    padding-right: 0.3em;
 }
 
 .absol-quick-path-btn:focus span {
@@ -64,7 +74,10 @@
     box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
     background-color: rgb(252, 252, 255);
     box-sizing: border-box;
+}
 
+.dark .absol-quick-path-dropdown {
+    background-color: rgb(37, 37, 38)
 }
 
 
