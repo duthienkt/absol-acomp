@@ -19,18 +19,39 @@
 </head>
 
 <body>
+    <div style="height: 30em"></div>
     <div class="demo-row"></div>
+    <div style="height: 30em"></div>
+
     <script class="viewable">
         absol._({
             tag: 'quickpath',
-            style:{
-                fontSize:'14px'
+            style: {
+                fontSize: '14px'
             },
             props: {
                 path: [
                     {
-                        name: "My Computer",
-                        items: ["C", "D", "E"]
+                        text: "My Computer",
+                        items: [{ text: "My Computer" }, { text: "Dropbox" }, { text: "OneDrive" }]
+                    },
+                    {
+                        text: "D",
+                        items: [{ text: "D" }, { text: "E" }, { text: "F" }]
+                    },
+                    {
+                        text: "Book",
+                        iconSrc:'https://volcanion.cf/exticons/extra/folder.svg',
+                        items: [
+                            { text: "Book" }, { text: "Soft" }, { text: "Hardware" }, { text: "Driver" }, { text: "temp" }
+                        ]
+                    },
+                    {
+                        text: "Commic",
+                        iconSrc:'https://volcanion.cf/exticons/extra/folder.svg',
+                        items: [
+                            { text: "Manga" }, { text: "Commic" }, { text: "Romantic" }
+                        ]
                     }
                 ]
             }

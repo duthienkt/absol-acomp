@@ -1,13 +1,23 @@
 .absol-quick-path {
     height: 1.5em;
+    position: relative;
+    box-sizing: border-box;
 }
+
+.absol-quick-path button {
+    outline: none;
+    padding-right: 0.3em;
+}
+
+/* .absol-quick-path button:first-child .toggler-ico {
+
+} */
 
 .absol-quick-path-btn {
     font-size: 1em;
     padding: 0;
     border: none;
     background: transparent;
-    outline: none;
 }
 
 .absol-quick-path-btn:focus span {
@@ -19,4 +29,45 @@
     height: 1em;
     vertical-align: middle;
     margin-right: 0.3em;
+    display: none;
+}
+
+.absol-quick-path-btn-ext-ico[src] {
+    display: inline;
+}
+
+.absol-quick-path-btn .toggler-ico {
+    height: 0.7em;
+    width: 0.7em;
+}
+
+.absol-quick-path-btn.toggle svg .toggle-close {
+    display: none;
+}
+
+.absol-quick-path-btn:not(.toggle) svg .toggle-open {
+    display: none;
+}
+
+.absol-quick-path-btn .toggler-ico path {
+    fill: rgb(104, 104, 104);
+}
+
+.absol-quick-path-dropdown {
+    position: absolute;
+    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    background-color: rgb(252, 252, 255);
+    box-sizing: border-box;
+
+}
+
+
+.absol-quick-path-dropdown .absol-vmenu-button-key {
+    display: none;
+}
+
+.absol-quick-path-dropdown .absol-vmenu-button {
+    min-width: unset;
 }
