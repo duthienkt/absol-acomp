@@ -10,6 +10,11 @@
 
 .absol-quick-path button {
     outline: none;
+    color: rgb(69, 69, 69);
+}
+
+.absol-quick-path button:hover {
+    color: black;
 }
 
 .absol-quick-path .toggler-ico path {
@@ -20,6 +25,10 @@
     color: rgb(200, 200, 200);
 }
 
+
+.dark .absol-quick-path button:hover {
+    color: white;
+}
 
 .dark .absol-quick-path .toggler-ico path {
     fill: rgb(169, 169, 169);
