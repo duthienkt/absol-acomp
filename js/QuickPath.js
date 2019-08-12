@@ -7,9 +7,9 @@ var $ = Acore.$;
 
 function QuickPath() {
     var res = _({
-        class: 'absol-quick-path'
+        class: 'absol-quick-path',
+        extendEvent: 'change'
     });
-
 
     res.eventHandler = OOP.bindFunctions(res, QuickPath.eventHandler);
     res._itemSeq = [];
@@ -30,7 +30,7 @@ QuickPath.eventHandler.click = function (event) {
 QuickPath.prototype.pressButton = function (button) {
     if (button.containsClass('toggle')) return;
     var self = this;
-
+    button.addClass('toggle');
     var buttonBound = button.getBoundingClientRect();
     var rootBound = this.getBoundingClientRect();
     var outBound = Dom.traceOutBoundingClientRect(this);
@@ -48,7 +48,20 @@ QuickPath.prototype.pressButton = function (button) {
         tag: 'bscroller',
         child: 'vmenu'
     }).addTo(this);
-    var menu = $('vmenu', dropdown);
+    var menu = $('vmenu', dropdown).on('press', function (event) {
+        var text = event.menuItem.text;
+        var iconSrc = event.menuItem.iconSrc;
+        self.path[index].text = text;
+        button.$text.clearChild().addChild(_({ text: text }));
+        if (iconSrc) {
+            button.$iconImg.attr('src', iconSrc);
+        }
+        else {
+            button.$iconImg.attr('src', undefined);
+        }
+
+        self.emit('change', { type: 'change', target: self, text: text, index: index, iconSrc: iconSrc });
+    });
 
     var items = this.path[index].items;
     if (atop > abot) {
@@ -83,6 +96,7 @@ QuickPath.prototype.pressButton = function (button) {
     setTimeout(function () {
         $(document.body).once('click', function () {
             dropdown.remove();
+            button.removeClass('toggle');
         });
     }, 100)
 };
@@ -102,51 +116,59 @@ QuickPath.prototype.updatePath = function () {
     this.clearChild();
     var self = this;
     this.path.forEach(function (data, index) {
-        var buttom = _({
-            tag: 'button',
-            class: 'absol-quick-path-btn',
-            attr: {
-                'data-index': '' + index
-            },
-            child: [
-                'toggler-ico',
-                {
-                    tag: 'img',
-                    class: "absol-quick-path-btn-ext-ico",
-
-                },
-                {
-                    tag: 'span',
-                    child: { text: data.text }
-                }
-            ]
-        });
-
-        var iconImg = $('.absol-quick-path-btn-ext-ico', buttom);
-        if (data.iconSrc) {
-            iconImg.src = data.iconSrc;
-        }
+        var buttom = self._createButton(data, index);
         self.addChild(buttom);
     });
 
-    //reattach dropdown
-
 };
 
+QuickPath.prototype._createButton = function (data, index) {
+    var buttom = _({
+        tag: 'button',
+        class: 'absol-quick-path-btn',
+        attr: {
+            'data-index': '' + index
+        },
+        child: [
+            'toggler-ico',
+            {
+                tag: 'img',
+                class: "absol-quick-path-btn-ext-ico",
 
+            },
+            {
+                tag: 'span',
+                child: { text: data.text }
+            }
+        ]
+    });
+
+    buttom.$iconImg = $('.absol-quick-path-btn-ext-ico', buttom);
+    if (data.iconSrc) {
+        buttom.$iconImg.src = data.iconSrc;
+    }
+    buttom.$text = $('span', buttom);
+    return buttom;
+}
 
 QuickPath.prototype.push = function (item) {
-
+    this.path.push(item);
+    var buttom = this._createButton(item, this.path.length - 1);
+    this.addChild(buttom);
 };
 
 QuickPath.prototype.clear = function () {
-
+    this.path = [];
 }
 
 
 
 QuickPath.prototype.pop = function () {
     //todo
+    var res = this.path.pop();
+    var button = $('button[data-index="' + this.path.length + '"]');
+    if (button) button.remove();
+    return res;
 };
 
 

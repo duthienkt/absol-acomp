@@ -2,9 +2,13 @@
     height: 1.5em;
     position: relative;
     box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
 }
 
-.absol-quick-path button {
+.absol-quick-path>button {
     outline: none;
     padding-right: 0.3em;
 }
