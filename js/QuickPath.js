@@ -29,6 +29,8 @@ QuickPath.eventHandler.click = function (event) {
 
 QuickPath.prototype.pressButton = function (button) {
     if (button.containsClass('toggle')) return;
+    var index = parseInt(button.attr('data-index'));
+    if (!this.path[index].items || this.path[index].items.length == 0) return;// don't display dropdown
     var self = this;
     button.addClass('toggle');
     var buttonBound = button.getBoundingClientRect();
@@ -36,8 +38,8 @@ QuickPath.prototype.pressButton = function (button) {
     var outBound = Dom.traceOutBoundingClientRect(this);
     var atop = rootBound.top - outBound.top - 5;
     var abot = outBound.bottom - buttonBound.bottom - 10;
-    var index = parseInt(button.attr('data-index'));
     var dx = buttonBound.left - rootBound.left;
+
 
     var dropdown = _({
         class: 'absol-quick-path-dropdown',
