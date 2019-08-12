@@ -137,7 +137,12 @@ function VMenuItem() {
         }]
     });
 
-    res.sync = res.afterAttached();
+    res.sync = new Promise(function(rs){
+        _('attachhook').addTo(res).on('error', function(){
+            this.remove();
+            rs();
+        })
+    });
     res.$dropper = $('dropright', res);
     res.$vmenu = $('vmenu', res);
     res.$button = $('button', res);
@@ -242,7 +247,12 @@ function VMenu() {
         extendEvent: 'press'
     });
 
-    res.sync = res.afterAttached();
+    res.sync = new Promise(function(rs){
+        _('attachhook').addTo(res).on('error', function(){
+            this.remove();
+            rs();
+        })
+    });
     res.eventHandler = OOP.bindFunctions(res, VMenu.eventHandler);
     return res;
 };
@@ -413,7 +423,7 @@ HMenu.eventHandler.pressItem = function (event) {
     if (event.menuItem.items && event.menuItem.items.length > 0 && !(this.activeTab >= 0)) {
         this.activeTab = event.menuItem._tabIndex;
         setTimeout(function () {
-           $('body').once('click', this.eventHandler.clickSomewhere, false);
+           $(document.body).once('click', this.eventHandler.clickSomewhere, false);
         }.bind(this), 100);
     }
     else {
@@ -432,7 +442,7 @@ HMenu.eventHandler.clickSomewhere = function (event) {
     if (event.menuItem) {
         //  wait for next time
         setTimeout(function () {
-           $('body').once('click', this.eventHandler.clickSomewhere, false);
+           $(document.body).once('click', this.eventHandler.clickSomewhere, false);
         }.bind(this), 100);
     }
     else {
