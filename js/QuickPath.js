@@ -8,7 +8,7 @@ var $ = Acore.$;
 function QuickPath() {
     var res = _({
         class: 'absol-quick-path',
-        extendEvent: 'change'
+        extendEvent: ['change', 'press']
     });
 
     res.eventHandler = OOP.bindFunctions(res, QuickPath.eventHandler);
@@ -28,8 +28,9 @@ QuickPath.eventHandler.click = function (event) {
 
 
 QuickPath.prototype.pressButton = function (button) {
-    if (button.containsClass('toggle')) return;
     var index = parseInt(button.attr('data-index'));
+    this.emit('press', { target: this, button: button, isActive: button.containsClass('toggle'), index: index, pathElement: this.path[index] }, this);
+    if (button.containsClass('toggle')) return;
     if (!this.path[index].items || this.path[index].items.length == 0) return;// don't display dropdown
     var self = this;
     button.addClass('toggle');
