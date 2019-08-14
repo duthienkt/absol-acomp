@@ -2,21 +2,22 @@
 
 .absol-tree-list-item {}
 
-.absol-tree-list-item-parent:hover{
+.absol-tree-list-item-parent:hover {
     background: #efefef;
     cursor: pointer;
 }
 
-.absol-tree-list-item-parent{
+.absol-tree-list-item-parent {
     padding-left: 0.3em;
-    padding-right: 0.6em;  
+    padding-right: 0.6em;
+    position: relative;
 }
 
-.absol-tree-list-item.active > .absol-tree-list-item-parent{
+.absol-tree-list-item.active>.absol-tree-list-item-parent {
     background: #dfdfdf;
 }
 
-.absol-tree-list-item-parent>span{
+.absol-tree-list-item-parent>span {
     line-height: 20px;
     white-space: nowrap;
 }
@@ -24,5 +25,24 @@
 .absol-tree-list-item-child {}
 
 .absol-tree-list-item>.absol-tree-list-item-child:empty {
+    display: none;
+}
+
+.absol-tree-list-item-desc-container {
+    right: 0.3em;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+.absol-tree-list-item-desc {
+    font-style: italic;
+    line-height: 20px;
+    white-space: nowrap;
+    margin-left: 1em;
+    color: rgb(37, 37, 37);
+}
+
+.absol-tree-list-item-desc:empty {
     display: none;
 }

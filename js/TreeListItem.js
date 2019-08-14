@@ -1,5 +1,6 @@
 import Acore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import { randomSentence } from "absol/src/String/stringGenerate";
 var _ = Acore._;
 var $ = Acore.$;
 
@@ -7,7 +8,18 @@ function TreeListItem() {
     var res = _({
         extendEvent: ['press', 'clickparent'],
         class: 'absol-tree-list-item',
-        child: [{ class: 'absol-tree-list-item-parent', child: 'span' }, 'treelist']
+        child: [
+            {
+                class: 'absol-tree-list-item-parent',
+                child: ['span.absol-tree-list-item-text',
+                    {
+                        class: 'absol-tree-list-item-desc-container',
+                        child: 'span.absol-tree-list-item-desc'
+                    }
+                ]
+            },
+            'treelist'
+        ]
     });
 
     res.eventHandler = OOP.bindFunctions(res, TreeListItem.eventHandler);
@@ -17,7 +29,9 @@ function TreeListItem() {
     });
 
     res.$parent = $('.absol-tree-list-item-parent', res).on('mousedown', res.eventHandler.clickParent);
-
+    res.$text = $('span.absol-tree-list-item-text', res);
+    res.$desc = $('span.absol-tree-list-item-desc', res);
+    res.$descCtn = $('.absol-tree-list-item-desc-container', res);
     res.$list.level = 1;
     OOP.drillProperty(res, res.$list, 'items');
 
@@ -58,18 +72,28 @@ TreeListItem.prototype.getTopLevelElt = function () {
         current = current.parentNode;
     }
     return current;
-}
+};
+
+
 
 
 TreeListItem.property = {
     text: {
         set: function (value) {
             value = value + '';
-            this._text = value;
-            this.$parent.childNodes[0].innerHTML = value;
+            this.$text.innerHTML = value;
         },
         get: function () {
-            return this._text;
+            return this.$text.innerHTML;
+        }
+    },
+    desc: {
+        set: function (value) {
+            value = value + '';
+            this.$desc.innerHTML = value;
+        },
+        get: function () {
+            return this.$desc.innerHTML
         }
     },
     level: {
@@ -79,7 +103,6 @@ TreeListItem.property = {
             this._level = value;
             this.$parent.addStyle('padding-left', this._level * 0.4 * 3 + 'em');
             this.$list.level = value + 1;
-
         },
         get: function () {
             return this._level || 0;

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Auto Complete Input</title>
+    <title>SelectMenu</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
     <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
@@ -74,9 +74,9 @@
                     text: 'Tầng 1',
                     items: [
                         { text: 'Phòng khách' },
-                        { text: 'Nhà ăn', alertMessage: "Nhà ăn" },
-                        { text: 'Phòng 1' },
-                        { text: 'Phòng 2', alertMessage: "Phòng 2" }
+                        { text: 'Nhà ăn', alertMessage: "Nhà ăn", desc: "Phía sau cùng  nhà" },
+                        { text: 'Phòng 1', desc: "Phía sau phòng khách" },
+                        { text: 'Phòng 2', alertMessage: "Cạnh phòng 1" }
                     ]
                 },
                 {
@@ -84,18 +84,26 @@
                     items: [
                         {
                             text: 'Phòng 3',
+                            decs: "Ngay cầu thang",
                             items: ['Bàn học', 'Tủ kính', 'Kệ sách']
                         },
                         {
                             text: 'Phòng 4',
+                            desc: "Có ban công",
                             items: ['Tivi', 'Tủ lạnh', 'Quạt trần']
                         },
                         { text: 'Ban công' }
                     ]
                 },
-                { text: 'Tầng 3' },
+                { text: 'Tầng 5', desc: "Sân thượng" },
             ]
         }
+    </script>
+
+
+    <script class="viewable">
+
+        // You must call realignDescription() to align description, it's not automatic because of performance
         absol._({
             tag: 'treelist',
             props: treelistProps,
@@ -106,7 +114,9 @@
         }).addTo(document.body).on('press', function (event, sender) {
             var data = event.data;
             if (data.alertMessage) alert(data.alertMessage);
-        });
+        }).realignDescription();
+
+
 
         absol._({
             tag: 'treelist',
@@ -118,13 +128,13 @@
             }
         }).addTo(document.body).on('press', function (event, sender) {
             console.log(event.target);
-        });
+        }).realignDescription();
     </script>
     <h1 id="stm-demo">Select Tree Menu</h1>
     <script class="viewable">
         absol._({
             tag: 'selecttreemenu',
-            props: Object.assign(treelistProps, { enableSearch: false, value: 'Tivi' }),
+            props: Object.assign(treelistProps, { enableSearch: false, value: 'Tầng 2' }),
             style: {
                 display: 'inline-block',
                 border: 'solid 1px gray'
