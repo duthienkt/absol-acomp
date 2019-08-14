@@ -108,6 +108,9 @@ import './js/TableVScroller';
 import './css/quickpath.css';
 import './js/QuickPath';
 
+import './css/droppanel.css';
+import './js/DropPanel';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 
