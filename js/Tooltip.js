@@ -8,12 +8,14 @@ function ToolTip() {
     var res = _({
         class: 'absol-tooltip',
         child: [
-            '.absol-tooltip-content',
+            { class: 'absol-tooltip-content', child: '<span>No</span>' },
+
             '.absol-tooltip-arrow'
         ]
     });
 
     res.$content = $('.absol-tooltip-content', res);
+    res.$arrow = $('.absol-tooltip-arrow', res);
     return res;
 }
 
@@ -30,6 +32,9 @@ ToolTip.$root = _('.absol-tooltip-root').addStyle('visibility', 'hidden');
 ToolTip.$holder = _('.absol-tooltip-root-holder').addTo(ToolTip.$root);
 ToolTip.$elt = _('tooltip').addTo(ToolTip.$holder);
 
+Dom.documentReady.then(function () {
+    ToolTip.$root.addTo(document.body);
+});
 
 ToolTip.show = function (element, content, orientation) {
     if (typeof content == 'string') {
@@ -44,17 +49,51 @@ ToolTip.show = function (element, content, orientation) {
         });
     }
     ToolTip.$elt.clearChild().addChild(content);
-    ToolTip.$root.addTo(element.parentNode).removeStyle('visibility');
-    
+    ToolTip.$root.removeStyle('visibility');
+
+    ToolTip.$elt.removeClass('top').removeClass('left').removeClass('right').removeClass('bottom');
+    ToolTip.$elt.addClass(orientation);
+
+    var fontSize = ToolTip.$elt.getFontSize();
     var tBound = ToolTip.$elt.getBoundingClientRect();
+
+
     var rBound = ToolTip.$root.getBoundingClientRect();
     var ebound = element.getBoundingRecursiveRect();
-    ToolTip.$elt.removeClass('top').removeClass('left').removeClass('right').removeClass('bottom');
+
+    var dx, dy;
+
     if (orientation == 'top') {
-        ToolTip.$elt.addClass('top');
-        var dy = ebound.top - rBound.top - tBound.height;
-        ToolTip.$holder.addStyle('top', dy + 'px');
+        dy = ebound.top - rBound.top - tBound.height;
+        dx = ebound.left + ebound.width / 2 - rBound.left - tBound.width / 2;
     }
+    else if (orientation == 'left') {
+        dy = ebound.top + ebound.height/2  - rBound.top - tBound.height;
+        dx = ebound.left  - rBound.left - tBound.width / 2;
+    }
+    else if (orientation == 'right') {
+
+    }
+    else if (orientation == 'bottom') {
+        dy = ebound.bottom - rBound.top;
+        dx = ebound.left + ebound.width / 2 - rBound.left - tBound.width / 2;
+
+    }
+    else {
+        throw new Error("Invalid orientation, orientation:['left', 'right', 'top', 'bottom', 'auto'] ");
+    }
+
+    console.log({
+        top: dx + 'px',
+        left: dy + 'px'
+    });
+
+    
+    ToolTip.$holder.addStyle({
+        top: dy + 'px',
+        left: dx + 'px'
+    });
+
 };
 
 

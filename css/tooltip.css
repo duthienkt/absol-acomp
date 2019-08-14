@@ -2,6 +2,7 @@
     margin: 0;
     position: relative;
     box-sizing: border-box;
+    display: inline-block;
 }
 
 .absol-tooltip-content {
@@ -86,4 +87,6 @@
 
 .absol-tooltip-root-holder{
     position: absolute;
+    left: 0;
+    top: 0;
 }
