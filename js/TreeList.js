@@ -12,6 +12,27 @@ function TreeList() {
 }
 
 
+TreeList.prototype.realignDescription = function (extMarginLeft) {
+    extMarginLeft = extMarginLeft || 0;
+    var maxWidth = 0;
+    var ctns = [];
+    $('.absol-tree-list-item-desc-container', this, function (elt) {
+        ctns.push(elt);
+        var bound = elt.getBoundingClientRect();
+        maxWidth = Math.max(maxWidth, bound.width);
+    });
+    var fontSize = this.getFontSize();
+    var cntWidth = maxWidth / fontSize + 'em';
+    var extMarginRight = maxWidth / fontSize + extMarginLeft + 'em';
+    ctns.forEach(function (e) {
+        e.addStyle('width', cntWidth);
+    });
+    $('span.absol-tree-list-item-text', this, function (elt) {
+        elt.addStyle('margin-right', extMarginRight);
+    });
+    return this;
+};
+
 
 TreeList.prototype.clearItems = function () {
     this._items = [];
@@ -28,7 +49,8 @@ TreeList.prototype.getAllItemElement = function () {
 
 TreeList.prototype.addItem = function (item) {
     var self = this;
-    var props = { level: this.level, data:item };
+    var props = { level: this.level, data: item };
+    
     if (typeof item == 'string') {
         props.text = item;
     }
@@ -36,6 +58,9 @@ TreeList.prototype.addItem = function (item) {
         props.text = item.text;
         if (item.items) {
             props.items = item.items;
+        }
+        if (item.desc){
+            props.desc = item.desc;
         }
     }
 
@@ -60,6 +85,7 @@ TreeList.property = {};
 TreeList.property.items = {
     set: function (value) {
         this.clearItems();
+        
         (value || []).forEach(this.addItem.bind(this));
     },
     get: function () {

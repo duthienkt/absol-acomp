@@ -11,7 +11,7 @@ var $ = Acore.$;
 
 function SelectTreeMenu() {
     var res = _({
-        class: ['absol-selectmenu'],
+        class: ['absol-selectmenu', 'absol-selecttreemenu'],
         extendEvent: 'change',
         attr: {
             tabindex: '1'
@@ -158,10 +158,7 @@ SelectTreeMenu.eventHandler.treelistPress = function (event) {
         this._value = value;
         //not need update tree
         this.$holderItem.clearChild()
-            .addChild(_({
-                class: 'absol-selectlist-item',
-                child: '<span>' + event.target.text + '</span>'
-            }));
+            .addChild(_(event.target.$parent.cloneNode(true)));
         this.notifyChange(Object.assign({ value: value }, event));
     }
 };
@@ -174,10 +171,7 @@ SelectTreeMenu.prototype.updateSelectedItem = function (scrollInto) {
         $('treelistitem', self.$treelist, function (elt) {
             if (elt.value == self.value) {
                 self.$holderItem.clearChild();
-                self.$holderItem.addChild(_({
-                    class: 'absol-selectlist-item',
-                    child: '<span>' + elt.text + '</span>'
-                }));
+                self.$holderItem.addChild(elt.$parent.cloneNode(true));
                 elt.active = true;
                 if (scrollInto) {
                     this.$vscroller.scrollInto(elt);
@@ -196,6 +190,7 @@ SelectTreeMenu.property.items = {
     set: function (value) {
         this._items = value || [];
         this.$treelist.items = this._items;
+        this.$treelist.realignDescription();
 
         this.treeListBound = this.$treelist.getBoundingClientRect();
         this.addStyle('min-width', this.treeListBound.width + 37 + 2 + 'px');
@@ -268,6 +263,7 @@ SelectTreeMenu.property.isFocus = {
                 this.$searchTextInput.value = '';
                 setTimeout(function () {
                     this.$treelist.items = this.items;
+                    this.$treelist.realignDescription();
                     setTimeout(this.updateSelectedItem.bind(this), 1);
                     this.treeListBound = this.$treelist.getBoundingRecursiveRect();
                 }.bind(this), 1)
