@@ -26,7 +26,7 @@
             },
             props: {
                 items: Array(30).fill(0).map(function (u, i) {
-                    return { text: "item " + i, value: i };
+                    return { text: "item " + i, value: i, desc: absol.string.randomPhrase(30) };
                 })
             }
         }).addTo(document.body);
@@ -36,14 +36,13 @@
         absol._({
             tag: 'selectmenu',
             style: {
-                'text-align': 'right',
                 display: 'inline-block',
                 border: 'solid 1px gray',
                 minWidth: '20%'
             },
             props: {
                 items: Array(30).fill(0).map(function (u, i) {
-                    return { text: "item " + i, value: i };
+                    return { text: "item " + i, value: i, desc: absol.string.randomPhrase(30) };
                 })
             }
         }).addTo(document.body);
@@ -59,7 +58,7 @@
             props: {
                 enableSearch: true,
                 items: Array(30).fill(0).map(function (u, i) {
-                    return { text: "item  perspiciatis unde omnis iste natus error sit voluptatem perspiciatis unde omnis iste natus error sit voluptatem " + i, value: i };
+                    return { text: absol.string.randomPhrase(35)+" " + i, value: i , desc: absol.string.randomPhrase(35)};
                 })
             }
         }).addTo(document.body);
