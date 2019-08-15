@@ -5,7 +5,7 @@
     <title>Tooltip</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
-    <!-- <link rel="stylesheet" href="https://volcanion.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <link rel="stylesheet" href="https://volcanion.cf/materialdesignicons/materialdesignicons.min.css">
     <script src="../dist/absol-acomp.js?"></script>
 
     <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
@@ -53,16 +53,27 @@
         <button id="btn4">Right Tooltop</button>
     </div>
     <script class="viewable">
-        absol.$('#btn1').on('click', function (ev) {
-            absol.Tooltip.show(this, 'this is top', 'top')
-        });
-        absol.$('#btn2').on('click', function (ev) {
-            absol.Tooltip.show(this, 'this is bot || this is bot', 'bottom');
-        });
 
-        absol.$('#btn3').on('click', function (ev) {
-            absol.Tooltip.show(this, 'this is left || this is left || this is left', 'left');
-        });
+        absol.Tooltip.showWhenClick(absol.$('#btn1'), 'this is top', 'top')
+        absol.Tooltip.showWhenClick(absol.$('#btn2'), 'this is bot || this is bot', 'bottom');
+
+        absol.Tooltip.showWhenClick(absol.$('#btn3'),
+            absol._({
+                tag: 'img', style: { height: "10em" },
+                attr: {
+                    crossorigin: '', src: "http://volcanion.cf/share/8TEb9p4ec.jpg"
+                }
+            }), 'left');
+
+        absol.Tooltip.showWhenClick(absol.$('#btn4'),
+            absol._({
+                tag: 'img', style: { height: "10em" },
+                attr: {
+                    crossorigin: '',
+                    src: "http://volcanion.cf/share/8TEb9p4ec.jpg"
+                }
+            }), 'right');
+
     </script>
     <script>
         var viewableScript = document.querySelectorAll('script.viewable');
