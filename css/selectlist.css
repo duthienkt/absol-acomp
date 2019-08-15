@@ -9,6 +9,7 @@
     font-size: 14px;
     font-family: inherit;
     cursor: pointer;
+
 }
 
 .absol-selectlist-item.selected {
@@ -23,5 +24,29 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    user-select: none; 
+    user-select: none;
 }
+
+.absol-selectlist-item {
+    position: relative;
+}
+
+.absol-selectlist-item-desc-container {
+    position: absolute;
+    right: 0.3em;
+    top: 0;
+    bottom: 0;
+}
+
+.absol-selectlist-item-desc {
+    font-style: italic;
+    line-height: 20px;
+    white-space: nowrap;
+    margin-left: 1em;
+    color: rgb(37, 37, 37);
+}
+
+.absol-selectlist-item-desc:empty{
+    display: none;
+}
+

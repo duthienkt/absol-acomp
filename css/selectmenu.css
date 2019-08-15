@@ -119,7 +119,7 @@
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-.absol-selectmenu .absol-scroll-bar-v-container {
+.absol-scroll-bar-v-container {
     width: 10px;
 }
 
@@ -129,4 +129,10 @@
 
 .absol-selectmenu-render-space .absol-selectlist-item span {
     padding-right: 0;
+}
+
+
+
+.absol-selectmenu .absol-selectlist-item-desc-container {
+    right: 40px;
 }

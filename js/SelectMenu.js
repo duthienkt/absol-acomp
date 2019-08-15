@@ -90,7 +90,11 @@ SelectMenu.getRenderSpace = function () {
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
     if (this.$selectlist.item)
-        this.$selectlist.creatItem(this.$selectlist.item).addTo(this.$holderItem);
+        var elt = this.$selectlist.creatItem(this.$selectlist.item).addTo(this.$holderItem);
+        this.$selectlist.sync.then(function(){
+            elt.$descCtn.addStyle('width', this.$selectlist._cntWidth);
+            elt.$text.addStyle('margin-right',  this.$selectlist._extMarginRight);
+        }.bind(this))
 };
 
 
@@ -109,8 +113,10 @@ SelectMenu.property.items = {
     set: function (value) {
         this._items = value;
         this.$selectlist.items = value || [];
-        this.selectListBound = this.$selectlist.getBoundingClientRect();
-        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
+        this.$selectlist.sync.then (function(){
+            this.selectListBound = this.$selectlist.getBoundingClientRect();
+            this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
+        }.bind(this));
 
         if (this.$selectlist.items.length > 0 && (this.$selectlist.item === undefined || this.value === undefined)) {
             this.value = this.items[0].value !== undefined ? this.items[0].value : this.items[0];
@@ -232,6 +238,7 @@ SelectMenu.property.isFocus = {
             this.$searchTextInput.value = '';
             this.$selectlist.items = this.items;
             this.selectListBound = this.$selectlist.getBoundingRecursiveRect();
+            this.updateItem();
         }
     },
     get: function () {

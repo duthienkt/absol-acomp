@@ -7,6 +7,10 @@ var $ = Acore.$;
 function SelectList() {
     var res = _('.absol-selectlist');
     res.defineEvent('change');
+    res.$attachhook = _('attachhook').addTo(res);
+    res.sync = new Promise(function (rs) {
+        res.$attachhook.once('error', rs);
+    });
     res.$items = [];
     return res;
 };
@@ -15,15 +19,52 @@ SelectList.prototype.creatItem = function (item, index) {
     var text;
     if (typeof item == 'string') text = item;
     else text = item.text;
-    return _({
+    var res = _({
         class: 'absol-selectlist-item',
-        child: {
-            tag: 'span',
-            props: {
-                innerHTML: text
+        child: [
+            {
+                tag: 'span',
+                class: 'absol-selectlist-item-text',
+                props: {
+                    innerHTML: text
+                },
+            },
+            {
+                class: 'absol-selectlist-item-desc-container',
+                child: {
+                    tag: 'span',
+                    class: 'absol-selectlist-item-desc',
+                    child: item.desc ? { text: item.desc } : []
+                }
             }
-        }
+        ]
     });
+
+    res.$descCtn = $('.absol-selectlist-item-desc-container', res);
+    res.$text = $('.absol-selectlist-item-text', res);
+    return res;
+};
+
+SelectList.prototype.realignDescription = function (extMarginLeft) {
+    if (this.$items.length == 0) return;
+    extMarginLeft = extMarginLeft || 0;
+    var maxWidth = 0;
+    this.$items.forEach(function (elt) {
+        elt.$descCtn.removeStyle('width');
+        var bound = elt.$descCtn.getBoundingClientRect();
+
+        maxWidth = Math.max(maxWidth, bound.width);
+    });
+    var fontSize = this.$items[0].getFontSize();
+    var cntWidth = maxWidth / fontSize + 'em';
+    var extMarginRight = maxWidth / fontSize + extMarginLeft + 'em';
+    this.$items.forEach(function (elt) {
+        elt.$descCtn.addStyle('width', cntWidth);
+        elt.$text.addStyle('margin-right', extMarginRight);
+    });
+
+    this._extMarginRight = extMarginRight;
+    this._cntWidth = cntWidth;
 };
 
 
@@ -58,6 +99,7 @@ SelectList.property.items = {
 
         }.bind(this));
         this.updateSelectItem();
+        this.sync = this.sync.then(this.realignDescription.bind(this, 0));
     },
     get: function () {
         return this._items || [];
