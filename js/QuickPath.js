@@ -101,7 +101,7 @@ QuickPath.prototype.pressButton = function (button) {
             dropdown.remove();
             button.removeClass('toggle');
         });
-    }, 100)
+    }, 100);
 };
 
 QuickPath.prototype._fileButton = function (elt) {
