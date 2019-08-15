@@ -1143,7 +1143,7 @@
 
         /**********************************************************************/
     </style>
-    <table style="width: 100%;" id="example">
+    <table  id="example">
         <thead>
             <tr>
                 <th align="center">Tên</th>
@@ -2505,7 +2505,7 @@
             </tr>
         </tbody>
     </table>
-    <table style="width: 100%;" id="example_1">
+    <table id="example_1">
         <thead>
             <tr>
                 <th align="center">Tên</th>
@@ -2619,7 +2619,6 @@
     </table>
 
 
-
     <script class="viewable">
         absol._({
             tag: 'tablevscroller',
@@ -2628,7 +2627,7 @@
             style: {
                 height: '50vh',
             },
-            child: absol.$('#example').selfRemove()
+            child: absol.$('#example').cloneNode(true)
         }).addTo(document.body);
         absol._({
             tag: 'tablevscroller',
@@ -2638,7 +2637,23 @@
                 height: '50vh',
                 'margin-top': '10px'
             },
-            child: absol.$('#example_1').selfRemove()
+            child: absol.$('#example_1').cloneNode(true)
+        }).addTo(document.body);
+    </script>
+
+    <h2>Table Scroller</h2>
+    <script>
+        absol._({
+            tag: 'tablescroller',
+            class: 'KPIsimpletableclass KPItablehover row2colors'.split(/\s+/),
+            style: {
+                height: '50vh',
+                width: '60vw'
+            },
+            props:{
+                fixedCol:2
+            },
+            child: absol.$(absol.$('#example').cloneNode(true)).addStyle('width', '1800px')
         }).addTo(document.body);
     </script>
 

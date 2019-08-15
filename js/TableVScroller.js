@@ -111,7 +111,7 @@ TableVScroller.prototype.init = function (props) {
     this.super(props);
     this.sync.then(this.update.bind(this));
     this.$attachHook.updateSize = this.update.bind(this);
-}
+};
 
 Acore.install('tablevscroller', TableVScroller);
 

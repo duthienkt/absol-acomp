@@ -1,0 +1,9 @@
+.absol-table-scroller{
+    position: relative;
+}
+
+.absol-table-scroller-viewport
+{
+    max-width: 100%;
+    max-height: 100%;
+}
