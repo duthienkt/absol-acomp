@@ -19,7 +19,8 @@
 
 .absol-table-scroller-fixed-viewport>table>thead,
 .absol-table-scroller-fixed-viewport>table {
-    border-top-color: transparent !important;/*firefox bug*/
+    border-top-color: transparent !important;
+    /*firefox bug*/
 }
 
 .absol-table-scroller-fixed-hidden {
@@ -41,7 +42,6 @@
 .absol-table-scroller-header-hscroller-viewport {
     max-width: 100%;
     overflow-x: scroll;
-    box-sizing: border-box;
 }
 
 .absol-table-scroller-header-hscroller-viewport table {
@@ -50,3 +50,18 @@
 
 /* 
 .absol-table-scroller-header-hscroller-table {} */
+
+.absol-table-scroller-left-vscroller {
+    position: absolute;
+    top:0;
+    left: 0;
+    bottom: 6px;
+    z-index: 7;
+    width: 200px;
+    background: red;
+}
+
+.absol-table-scroller-left-vscroller{
+    max-height: 100%;
+    overflow-y: scroll;
+}
