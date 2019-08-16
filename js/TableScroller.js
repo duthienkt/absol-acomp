@@ -11,17 +11,32 @@ function TableScroller() {
         class: 'absol-table-scroller',
         child: [
             'bscroller.absol-table-scroller-viewport',
-            '.absol-table-scroller-fixed-table'//place holder
+            '.absol-table-scroller-fixed-viewport',//place holder
+            {
+                class: 'absol-table-scroller-header-hscroller',
+                child: '.absol-table-scroller-header-hscroller-viewport'
+            }, 
+            {
+                class: 'absol-table-scroller-left-vscroller',
+                child: '.absol-table-scroller-left-vscroller'
+            }
         ]
     });
 
     res.eventHandler = OOP.bindFunctions(res, TableScroller.eventHandler);
 
     res.$content = undefined;
-    res.$fixedTable = $('.absol-table-scroller-fixed-table', res);
+    res.$fixedViewport = $('.absol-table-scroller-fixed-viewport', res);
+
+    res.$headScroller = $('.absol-table-scroller-header-hscroller', res);
+    res.$headScrollerViewport = $('.absol-table-scroller-header-hscroller-viewport', res)
+        .on('scroll', res.eventHandler.scrollHeadScrollerViewport);
+
     res.$attachHook = _('attachhook').addTo(res);
     res.$attachHook.on('error', function () {
         Dom.addToResizeSystem(res.$attachHook);
+        res.$attachHook.updateSize = res._updateContentSize.bind(res);
+
     });
 
     res.sync = new Promise(function (rs) {
@@ -36,7 +51,31 @@ function TableScroller() {
 
 TableScroller.eventHandler = {};
 TableScroller.eventHandler.scrollViewport = function (event) {
+    if (!this.__scrollingElement__ || this.__scrollingElement__ == this.$viewport) {
+        this.__scrollingElement__ = this.$viewport;
+        this.$headScrollerViewport.scrollLeft = this.$viewport.scrollLeft;
+        if (this.__scrollTimer__ > 0) {
+            clearTimeout(this.__scrollTimer__);
+        }
+        this.__scrollTimer__ = setTimeout(function () {
+            this.__scrollingElement__ = undefined;
+            this.__scrollTimer__ = -1;
+        }.bind(this), 300);
+    }
+};
 
+TableScroller.eventHandler.scrollHeadScrollerViewport = function (event) {
+    if (!this.__scrollingElement__ || this.__scrollingElement__ == this.$headScrollerViewport) {
+        this.__scrollingElement__ = this.$headScrollerViewport;
+        this.$viewport.scrollLeft = this.$headScrollerViewport.scrollLeft;
+        if (this.__scrollTimer__ > 0) {
+            clearTimeout(this.__scrollTimer__);
+        }
+        this.__scrollTimer__ = setTimeout(function () {
+            this.__scrollingElement__ = undefined;
+            this.__scrollTimer__ = -1;
+        }.bind(this), 100);
+    }
 };
 
 TableScroller.prototype.clearChild = function () {
@@ -51,14 +90,9 @@ TableScroller.prototype.addChild = function (elt) {
             this.$viewport.addChild(elt);
             this.$content = elt;
             this._updateContent();
-            this.sync.then(this._updateContentSize.bind(this))
-
-            // this.$table = $(elt);
-            // this.$thead = $('thead', elt);
-            // this.$tr = $('tr', this.$thead);
-            // this.$topThead = this.$thead.cloneNode(true);
-            // this.$topTr = $('tr', this.$topThead);
-            // this.$topTable.addChild(this.$topThead).addStyle('display', 'none');
+            this.sync.then(this._updateContentSize.bind(this)).then(function () {
+                setTimeout(this._updateContentSize.bind(this), 30)
+            }.bind(this));
         }
         else {
             throw new Error('Element must be a table!');
@@ -71,24 +105,28 @@ TableScroller.prototype.addChild = function (elt) {
 
 
 TableScroller.prototype._updateFixedTable = function () {
-    // console.log(this.fixedCol, this.$contentThead);
     var fixedCol = this.fixedCol;
+
+    this.$fixedViewport.clearChild();
+    this.$fixedTable = $(this.$content.cloneNode(false)).addClass('absol-table-scroller-fixed-table').addTo(this.$fixedViewport);
+    this.$fixedTableThead = $(this.$contentThead.cloneNode(false)).addTo(this.$fixedTable);
+
     this.$fixedTableThead.clearChild();
     var self = this;
     this._fixedTableTr = Array.prototype.filter.call(this.$contentThead.childNodes, function (elt) {
         return elt.tagName == "TR";
     }).map(function (tr) {
-        var cloneTr = tr.cloneNode(false);
+        var cloneTr = $(tr.cloneNode(false));
         cloneTr.__originElement__ = tr;
         self.$fixedTableThead.appendChild(cloneTr);
         return cloneTr;
     });
 
-    this._fixedTableTds = this._fixedTableTr.map(function (tr) {
+    this._fixedTableThs = this._fixedTableTr.map(function (tr) {
         return Array.prototype.filter.call(tr.__originElement__.childNodes, function (elt1) {
             return elt1.tagName == "TH";
-        }).reduce(function (ac, td) {
-            var colspan = td.getAttribute('colspan');
+        }).reduce(function (ac, th) {
+            var colspan = th.getAttribute('colspan');
             if (colspan) {
                 colspan = parseInt(colspan);
             }
@@ -96,17 +134,46 @@ TableScroller.prototype._updateFixedTable = function () {
                 colspan = 1;
             }
             ac.colspanSum += colspan;
-            if (ac.colspanSum <= fixedCol) {
-                var cloneTd = $(td.cloneNode(true));
-                cloneTd.__originElement__ = td;
-                ac.result.push(cloneTd);
-                tr.appendChild(cloneTd);
+            var cloneTh = $(th.cloneNode(true));
+            tr.appendChild(cloneTh);
+            cloneTh.__originElement__ = th;
+            ac.result.push(cloneTh);
+            if (ac.colspanSum > fixedCol) {
+                cloneTh.addClass("absol-table-scroller-fixed-hidden");
             }
             return ac;
         }, { result: [], colspanSum: 0 }).result;
     });
+};
 
 
+TableScroller.prototype._updateHeaderScroller = function () {
+    var self = this;
+    this.$headScrollerViewport.clearChild();
+    this.$headScrollerTable = $(this.$content.cloneNode(false))
+        .addTo(this.$headScrollerViewport);
+    this.$headScrollerThead = $(this.$contentThead.cloneNode(false))
+        .addTo(this.$headScrollerTable);
+
+    this._headScrollerTr = Array.prototype.filter.call(this.$contentThead.childNodes, function (elt) {
+        return elt.tagName == "TR";
+    }).map(function (tr) {
+        var cloneTr = $(tr.cloneNode(false));
+        cloneTr.__originElement__ = tr;
+        self.$headScrollerThead.appendChild(cloneTr);
+        return cloneTr;
+    });
+
+    this._headScrollerTds = this._headScrollerTr.map(function (tr) {
+        return Array.prototype.filter.call(tr.__originElement__.childNodes, function (elt1) {
+            return elt1.tagName == "TH";
+        }).map(function (th) {
+            var cloneTh = $(th.cloneNode(true)).addTo(tr);
+            cloneTh.__originElement__ = th;
+            return cloneTh;
+        });
+
+    });
 
 };
 
@@ -114,39 +181,55 @@ TableScroller.prototype._updateFixedTable = function () {
 
 TableScroller.prototype._updateContent = function () {
     this.$contentThead = $('thead', this.$content);
-    var newFixedTable = $(this.$content.cloneNode(false)).addClass('absol-table-scroller-fixed-table');
-    this.$fixedTable.selfReplace(newFixedTable) ;
-    this.$fixedTable = newFixedTable;
-    this.$fixedTableThead = $(this.$contentThead.cloneNode(false)).addTo(this.$fixedTable);
     this._updateFixedTable();
-
+    this._updateHeaderScroller();
 };
 
 TableScroller.prototype._updateFixedTableSize = function () {
 
-    var bleft = 100000;
-    var bright = -100000;
-    var btop = 100000;
-    var bbottom = -100000;
-    this._fixedTableTds.forEach(row => {
+    this._fixedTableTr.forEach(function (elt) {
+        var styleHeight = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'height');
+        elt.addStyle('height', styleHeight);
+    });
+
+    this._fixedTableThs.forEach(function (row) {
         row.forEach(function (elt) {
-            var b = elt.__originElement__.getBoundingClientRect();
-            bleft = Math.min(b.left, bleft);
-            btop = Math.min(b.top, btop);
-            bright = Math.max(b.right, bright);
-            bbottom = Math.max(b.bottom, bbottom);
-            var styleWidth = Element.prototype.getComputedStyleValue.call(elt.__originElement__,'width');
+            var styleWidth = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'width');
+
             elt.addStyle('width', styleWidth);
         });
+
     });
     this.$fixedTable.addStyle({
-        width: bright - bleft + 'px',
-        height: bbottom - btop + 'px'
+        height: this.$contentThead.getComputedStyleValue('height')
     })
 };
 
+
+TableScroller.prototype._updateHeaderScrollerSize = function () {
+
+    var headHeight = Element.prototype.getComputedStyleValue.call(this.$contentThead, 'height');
+    this.$headScrollerTable.addStyle('height', headHeight);
+    this.$headScroller.addStyle('height', headHeight);
+    this._headScrollerTr.forEach(function (elt) {
+
+        var styleHeight = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'height');
+        elt.addStyle('height', styleHeight);
+    });
+
+    this._headScrollerTds.forEach(function (row) {
+        row.forEach(function (elt) {
+
+            var styleWidth = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'width');
+            elt.addStyle('width', styleWidth);
+        });
+    });
+};
+
 TableScroller.prototype._updateContentSize = function () {
+
     this._updateFixedTableSize();
+    this._updateHeaderScrollerSize();
 };
 
 TableScroller.property = {};

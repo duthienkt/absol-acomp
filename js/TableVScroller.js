@@ -76,9 +76,7 @@ TableVScroller.prototype.updateStyle = function () {
     }
     var bgColor = this._trackBackgroundColor(this.$thead);
     this.$topTable.addStyle('background-color', bgColor);
-
-
-}
+};
 
 
 TableVScroller.prototype.updateSize = function () {
