@@ -37,6 +37,7 @@
     right: 6px;
     z-index: 9;
     overflow: hidden;
+    pointer-events: none;
 }
 
 .absol-table-scroller-header-hscroller-viewport {
@@ -53,15 +54,19 @@
 
 .absol-table-scroller-left-vscroller {
     position: absolute;
-    top:0;
+    top: 0;
     left: 0;
     bottom: 6px;
     z-index: 7;
     width: 200px;
     background: red;
+    overflow-x: hidden;
+    pointer-events: none;
 }
 
-.absol-table-scroller-left-vscroller{
+.absol-table-scroller-left-vscroller-viewport {
     max-height: 100%;
     overflow-y: scroll;
+    min-width: calc(100% + 19px);
+    overflow-x: hidden;
 }

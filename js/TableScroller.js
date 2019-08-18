@@ -29,6 +29,8 @@ function TableScroller() {
     res.$fixedViewport = $('.absol-table-scroller-fixed-viewport', res);
 
     res.$leftScroller = $('.absol-table-scroller-left-vscroller', res);
+    res.$leftViewport = $('.absol-table-scroller-left-vscroller-viewport', res)
+        .on('scroll', res.eventHandler.scrollLeftScrollerViewport);;
 
     res.$headScroller = $('.absol-table-scroller-header-hscroller', res);
     res.$headScrollerViewport = $('.absol-table-scroller-header-hscroller-viewport', res)
@@ -56,6 +58,8 @@ TableScroller.eventHandler.scrollViewport = function (event) {
     if (!this.__scrollingElement__ || this.__scrollingElement__ == this.$viewport) {
         this.__scrollingElement__ = this.$viewport;
         this.$headScrollerViewport.scrollLeft = this.$viewport.scrollLeft;
+        this.$leftViewport.scrollTop = this.$viewport.scrollTop;
+
         if (this.__scrollTimer__ > 0) {
             clearTimeout(this.__scrollTimer__);
         }
@@ -79,6 +83,21 @@ TableScroller.eventHandler.scrollHeadScrollerViewport = function (event) {
         }.bind(this), 100);
     }
 };
+
+
+TableScroller.eventHandler.scrollLeftScrollerViewport = function () {
+    if (!this.__scrollingElement__ || this.__scrollingElement__ == this.$leftViewport) {
+        this.__scrollingElement__ = this.$leftViewport;
+        this.$viewport.scrollTop = this.$leftViewport.scrollTop;
+        if (this.__scrollTimer__ > 0) {
+            clearTimeout(this.__scrollTimer__);
+        }
+        this.__scrollTimer__ = setTimeout(function () {
+            this.__scrollingElement__ = undefined;
+            this.__scrollTimer__ = -1;
+        }.bind(this), 100);
+    }
+}
 
 TableScroller.prototype.clearChild = function () {
     this.$viewport.clearChild();
@@ -181,6 +200,8 @@ TableScroller.prototype._updateHeaderScroller = function () {
 
 
 TableScroller.prototype._updateLeftTable = function () {
+    this.$leftTable = $(this.$content.cloneNode(true)).addTo(this.$leftViewport);
+
 
 };
 
@@ -188,6 +209,7 @@ TableScroller.prototype._updateContent = function () {
     this.$contentThead = $('thead', this.$content);
     this._updateFixedTable();
     this._updateHeaderScroller();
+    this._updateLeftTable();
 };
 
 TableScroller.prototype._updateFixedTableSize = function () {
@@ -200,7 +222,7 @@ TableScroller.prototype._updateFixedTableSize = function () {
     });
 
     this._leftWidth = r - l;
-    this.$fixedViewport.addStyle('width', this._leftWidth + 'px');
+    this.$fixedViewport.addStyle('width', this._leftWidth + 2 + 'px');
 
     this._fixedTableTr.forEach(function (elt) {
         var styleHeight = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'height');
@@ -222,7 +244,6 @@ TableScroller.prototype._updateFixedTableSize = function () {
 
 
 TableScroller.prototype._updateHeaderScrollerSize = function () {
-
     var headHeight = Element.prototype.getComputedStyleValue.call(this.$contentThead, 'height');
     this.$headScrollerTable.addStyle('height', headHeight);
     this.$headScroller.addStyle('height', headHeight);
@@ -241,11 +262,19 @@ TableScroller.prototype._updateHeaderScrollerSize = function () {
 };
 
 TableScroller.prototype._updateLeftTableSize = function () {
-    this.$leftScroller.addStyle('width', this._leftWidth+'px');
+    if (!this.$leftTable.style.width) {
+        this.$leftTable.addStyle('width', this.$content.getComputedStyleValue('width'));
+    }
+    if (!this.$leftTable.style.height) {
+        this.$leftTable.addStyle('height', this.$content.getComputedStyleValue('height'));
+    }
+
+    // console.log(this._leftWidth);
+
+    this.$leftScroller.addStyle('width', this._leftWidth + 2 + 'px');
 };
 
 TableScroller.prototype._updateContentSize = function () {
-
     this._updateFixedTableSize();
     this._updateHeaderScrollerSize();
     this._updateLeftTableSize();
@@ -257,6 +286,12 @@ TableScroller.property.fixedCol = {
     set: function (value) {
         value = value || 0;
         this._fixedCol = value;
+        if (this.$content) {
+            this._updateContent();
+            this.sync.then(this._updateContentSize.bind(this)).then(function () {
+                setTimeout(this._updateContentSize.bind(this), 30)
+            }.bind(this));
+        }
     },
     get: function () {
         return this._fixedCol || 0;
