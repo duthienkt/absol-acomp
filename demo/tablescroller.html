@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://volcanion.cf/hightlight/highlight.pack.js">
     </script>
-    
+
     <script src="../dist/absol-acomp.js?">
     </script>
     <style>
@@ -2656,30 +2656,8 @@
         }).addTo(document.body);
     </script>
 
-    <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
-    <script>
-        setTimeout(function () {
-            var viewableScript = document.querySelectorAll('script.viewable');
-            viewableScript.forEach(function (elt) {
-                absol.$(elt).selfReplace(absol._({
-                    tag: 'pre',
-                    child: {
-                        tag: 'code',
-                        class: 'js',
-                        child: { text: elt.innerHTML }
-                    }
-                }));
-            });
-            hljs.initHighlighting()
-            var href = location.href;
-            var mathedscroll = href.match(/\#([a-z0-9\_A-Z\-]+)/);
-            if (mathedscroll) {
-                var e = absol.$(mathedscroll[0]);
-                if (e) e.scrollIntoView();
-            }
-            dispatchEvent(new Event('resize'));
-        }, 1000)
-    </script>
+    <script src="./autohightlighting.js?"></script>
+
 </body>
 
 </html>
