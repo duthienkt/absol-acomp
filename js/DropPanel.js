@@ -16,7 +16,10 @@ function DropPanel() {
                 class: 'absol-drop-panel-head',
                 child: [
                     'toggler-ico',
-                    '<span>ACOMP</span>'
+                    {
+                        tag:'span',
+                        class:"absol-drop-panel-name"
+                    }
                 ]
 
             },
@@ -30,6 +33,9 @@ function DropPanel() {
     res.$body = $('.absol-drop-panel-body', res);
     res.$head = $('.absol-drop-panel-head', res)
         .on('click', res.eventHandler.clickHead);
+
+    res.$name = $('.absol-drop-panel-name', res);
+    OOP.drillProperty(res, res.$name, 'name', 'innerHTML');
     return res;
 }
 
@@ -92,7 +98,8 @@ DropPanel.property.show = {
     get: function () {
         return this.containsClass('show');
     }
-}
+};
+
 
 Acore.install(DropPanel);
 

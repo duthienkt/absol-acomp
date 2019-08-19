@@ -25,7 +25,7 @@
 </head>
 
 <body>
-    <h1>Exp Node</h1>
+    <h1>DropPannel</h1>
     <div id="exp-node-demo-light" class="bg light" style="font-size: 12px;"></div>
     <div id="exp-node-demo-dark" class="dark bg" style="font-size: 12px;"></div>
     <script class="viewable">
@@ -103,20 +103,46 @@
         };
 
         absol._({
-            tag:'droppanel',
+            tag: 'droppanel',
+            props: {
+                name: 'ACOMP'
+            },
             child: exampeTreeParam
         }).addTo(absol.$('#exp-node-demo-light'))
 
         absol._({
-            tag:'droppanel',
+            tag: 'droppanel',
+            props: {
+                name: 'ACOMP-BLACK'
+            },
             child: exampeTreeParam
         }).addTo(absol.$('#exp-node-demo-dark'))
 
-        
+
+
+        absol._({
+            tag: 'droppanel',
+            props: {
+                name: 'VCHART'
+            },
+            child: {
+                tag: 'iframe',
+                style: {
+                    width: '100%',
+                    height: '500px'
+                },
+                attr: {
+                    src: "https://volcanion.cf/vchart/demo/dualchart.html"
+                }
+            }
+        }).addTo(absol.$('#exp-node-demo-light'))
+
+
+
     </script>
 
 
-<script src="./autohightlighting.js?"></script>
+    <script src="./autohightlighting.js?"></script>
 
 </body>
 
