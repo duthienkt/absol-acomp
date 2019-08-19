@@ -111,6 +111,9 @@ import './js/TableScroller';
 import './css/quickpath.css';
 import './js/QuickPath';
 
+// import './css/quickpath.css';
+import './js/QuickMenu';
+
 import './css/droppanel.css';
 import './js/DropPanel';
 

@@ -9,6 +9,12 @@
     cursor: default;
 }
 
+.absol-context-hinge-fixed-container {
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
 .absol-context-hinge {
     position: relative;
     width: 0;
@@ -17,9 +23,9 @@
 
 .absol-context-hinge>.absol-context-menu {
     position: absolute;
-    top: -1000px;
-    left: -1000px;
-    /* visibility: hidden !important; */
+    top: -10000px;
+    left: -10000px;
+    visibility: hidden;
     z-index: 55;
     display: inline-block;
 
@@ -29,8 +35,13 @@
 .absol-context-hinge .absol-hmenu {
     padding-top: 0.4em;
     padding-bottom: 0.4em;
-    background-color: rgb(37, 37, 38);
+    /* background-color: rgb(37, 37, 38);
     -webkit-box-shadow: 2px 2px 9px 0px rgba(7, 7, 7, 1);
     -moz-box-shadow: 2px 2px 9px 0px rgb(7, 7, 7, 1);
-    box-shadow: 2px 2px 9px 0px rgba(7, 7, 7, 1);
+    box-shadow: 2px 2px 9px 0px rgba(7, 7, 7, 1); */
+    color: black;
+    background-color: rgb(252, 252, 255);
+    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
 }
