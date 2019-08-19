@@ -209,6 +209,9 @@ RadioButton.initAfterLoad = function () {
             Object.defineProperties(res,RadioButton.property);
             Object.assign(res, RadioButton.prototype);
             if (radio.checked) res.attr('checked', 'true');
+            res.$input.on('change', function(){
+                res.checked = this.checked;
+            }); 
         });
     });
 }

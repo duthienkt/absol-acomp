@@ -34,7 +34,6 @@ function CheckBoxButton() {
             res.checked = !res.checked;
             res.emit('change', event, res);
         }
-
     });
     return res;
 };
@@ -153,18 +152,29 @@ CheckBoxButton.initAfterLoad = function () {
             
 
             res.on('click', function (event) {
-                event.preventDefault();
-                if (!this.disabled) {
-                    res.checked = !res.checked;
+                if (event.target == checkbox){
+                    if (checkbox.checked) {
+                        this.addClass('checked');
+                    }
+                    else {
+                        this.removeClass('checked');
+                    }
                     res.emit('change', event, res);
                 }
-
+                else{
+                    event.preventDefault();
+                    if (!this.disabled) {
+                        res.checked = !res.checked;
+                        res.emit('change', event, res);
+                    }
+                }
             });
 
             res.defineAttributes(CheckBoxButton.attribute);
             Object.defineProperties(res, CheckBoxButton.property);
             Object.assign(res, CheckBoxButton.prototype);
             if (checkbox.checked) res.attr('checked', 'true');
+            if (checkbox.disabled) res.attr('disabled', 'true');
         });
     });
 }
