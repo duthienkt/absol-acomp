@@ -27,3 +27,12 @@
     height: 0;
     overflow-y: hidden;
 }
+
+
+.absol-drop-panel.show>.absol-drop-panel-head  .toggle-close{
+    display: none;
+}
+
+.absol-drop-panel:not(.show)>.absol-drop-panel-head  .toggle-open{
+    display: none;
+}
