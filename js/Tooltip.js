@@ -93,7 +93,7 @@ ToolTip.show = function (element, content, orientation) {
         });
     }
 
-    //wait for content load
+   
     $('', content, function (elt) {
         if (elt.tagName == "IMG" && elt.src) {
             Dom.waitImageLoaded(elt).then(ToolTip.updatePosition.bind(ToolTip));;

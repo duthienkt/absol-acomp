@@ -3,10 +3,12 @@ import IFrameBridge from 'absol/src/Network/IFrameBridge';
 import * as stringGen from 'absol/src/String/stringGenerate';
 import * as stringForm from 'absol/src/String/stringFormat';
 import * as stringMatch from 'absol/src/String/stringMatching';
+import QuickMenu from "./js/QuickMenu";
 
 //for export to window
 window.absol = window.absol || {};
 absol.Tooltip = AComp.creator.tooltip;
+absol.QuickMenu = QuickMenu;
 absol.AComp = AComp;
 
 absol.string = absol.string || {};

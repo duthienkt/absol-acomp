@@ -152,7 +152,7 @@
         var anchor = 0;
         absol.$('#bt0').on('click', function () {
             this.innerHTML = 'Anchor = ' + anchor;
-            absol.QuickMenu.show(this, menuProps, 'auto');
+            absol.QuickMenu.show(this, menuProps, anchor);
             anchor = (anchor + 1) % 8;
         });
     </script>

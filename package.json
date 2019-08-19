@@ -28,7 +28,7 @@
     },
     "homepage": "https://github.com/duthienkt/absol-acomp",
     "dependencies": {
-        "absol": "^1.7.6"
+        "absol": "^1.7.7"
     },
     "devDependencies": {
         "@babel/core": "^7.4.5",
