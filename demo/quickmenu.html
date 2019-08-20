@@ -12,8 +12,6 @@
         .dark.bg {
             background-color: rgba(30, 30, 32, 1);
             /* background-color: white; */
-
-
         }
 
         .bg {
@@ -21,13 +19,26 @@
             padding-top: 20px;
             padding-bottom: 20px;
             border: solid 1px rgb(30, 30, 32);
+            overflow: auto;
+        }
+
+        .bg>button {
+            margin: 50px;
+        }
+
+        .hover-blue:hover {
+            color: blue;
+        }
+
+        .hover-yellow:hover {
+            color: yellow;
         }
     </style>
 </head>
 
 <body>
     <div>
-        <svg style="width:300px;  height: auto;" width="210mm" height="150mm" version="1.1" viewBox="0 0 210 150"
+        <svg style="width:auto;  height: 500px;" width="210mm" height="150mm" version="1.1" viewBox="0 0 210 150"
             xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#"
             xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
@@ -128,33 +139,69 @@
     </div>
 
     <h1>Light Theme(defalt)</h1>
-    <div class="bg light" style="height: 500px;text-align: center;">
-        <button id="bt0">Anchor = 0</button>
+    <div class="bg light" style="height: 300px">
+
     </div>
-    <div class="bg dark" style="height: 500px"></div>
+    <div class="bg dark" style="height: 300px"></div>
     <script class="viewable">
         var menuProps = {
             items: [
                 { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' },
                 { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' },
                 "================================",
-                { text: 'Cut', key: 'Ctrl+X', cmd: 'cut' },
-                { text: 'Copy', key: 'Ctrl+C', cmd: 'copy' },
-                { text: 'Paste', key: 'Ctrl+V', cmd: 'paste' },
+                {
+                    text: 'Cut', key: 'extendStyle[color=red]', cmd: 'cut',
+                    extendStyle: {
+                        color: 'red'
+                    }
+                },
+                { text: 'Copy', key: 'extendClasses[hover-blue]', cmd: 'copy', extendClasses: 'hover-blue' },
+                { text: 'Paste', key: 'icon[.mdi.mdi-flash]', cmd: 'paste', icon: 'span.mdi.mdi-flash' , extendClasses: 'hover-yellow'},
                 "==============================",
-                { text: 'Find', key: 'Ctrl+F', cmd: 'find' },
+                { text: 'Find', key: 'iconSrc', cmd: 'find' },
                 { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
                 "=============================",
                 { text: 'Find in Nodes', key: 'Ctrl+Shift+F' },
-                { text: 'Replace in Nodes', key: 'Ctrl+Shift+R' }
+                { text: 'Replace in Nodes', iconSrc: 'http://volcanion.cf/exticons/extra/folder-git.svg', key: 'svgIcon' }
             ]
         };
-        var anchor = 0;
-        absol.$('#bt0').on('click', function () {
-            this.innerHTML = 'Anchor = ' + anchor;
-            absol.QuickMenu.show(this, menuProps, anchor);
-            anchor = (anchor + 1) % 8;
+        var lightBg = absol.$('.bg.light');
+        var darkBg = absol.$('.bg.dark');
+        Array(8).fill(0).forEach(function (u, i) {
+            var button = absol._({
+                tag: 'button',
+                child: { text: 'Ancho = ' + i }
+            }).addTo(lightBg);
+            absol.QuickMenu.showWhenClick(button, menuProps, i, function (menuItem) {
+                button.innerHTML = 'Ancho = ' + i + '[' + menuItem.text + ']';
+
+            });
+            var button = absol._({
+                tag: 'button',
+                child: { text: 'Ancho = ' + i }
+            }).addTo(darkBg);
+            absol.QuickMenu.showWhenClick(button, menuProps, i, function (menuItem) {
+                button.innerHTML = 'Ancho = ' + i + '[' + menuItem.text + ']';
+            }, true);// darkTheme = true
         });
+
+        Array(8).fill(0).forEach(function (u, i) {
+            var button = absol._({
+                tag: 'button',
+                child: { text: 'Ancho = auto' }
+            }).addTo(lightBg);
+            absol.QuickMenu.showWhenClick(button, menuProps, 'auto', function (menuItem) {
+                button.innerHTML = 'Ancho = auto[' + menuItem.text + ']';
+            });
+
+            var button = absol._({
+                tag: 'button',
+                child: { text: 'Ancho = auto' }
+            }).addTo(darkBg);
+            absol.QuickMenu.showWhenClick(button, menuProps, 'auto', function (menuItem) {
+                button.innerHTML = 'Ancho = auto[' + menuItem.text + ']';
+            }, true);// darkTheme = true
+        })
     </script>
 
     <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
