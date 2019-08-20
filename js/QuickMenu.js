@@ -34,7 +34,7 @@ QuickMenu.DEFAULT_ANCHOR = 0;
 QuickMenu.$ctn = _('.absol-context-hinge-fixed-container');
 QuickMenu.$elt = _('quickmenu').addTo(QuickMenu.$ctn);
 QuickMenu.$element = undefined;
-QuickMenu._anchor = 0;
+QuickMenu._acceptAnchors = 0;
 QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
 QuickMenu._session = Math.random() * 10000000000 >> 0;
 QuickMenu._menuListener = undefined;
@@ -48,7 +48,6 @@ QuickMenu.$elt.$contextMenu.on('press', function (event) {
 QuickMenu.updatePosition = function () {
 
     if (!QuickMenu.$element) return;
-    var anchor = QuickMenu._anchor;
 
     var qmenu = QuickMenu.$elt;
     var menu = qmenu.$contextMenu;
@@ -58,6 +57,7 @@ QuickMenu.updatePosition = function () {
     var outBound = Dom.traceOutBoundingClientRect(qmenu);
 
     var getPos = function (anchor) {
+        anchor = anchor % 8;
         var x = 0;
         var y = 0;
         if (anchor == 0 || anchor == 3) {
@@ -95,32 +95,28 @@ QuickMenu.updatePosition = function () {
     };
 
     var pos;
-    if (anchor == 'auto') {
-        var bestSquare = -1;
-        var priority = [QuickMenu._previewAnchor].concat(QuickMenu.PRIORITY_ANCHORS);
-        var cAnchor;
-        var outRect = new Rectangle(outBound.left, outBound.top, outBound.width, outBound.height);
 
-        var menuRect;
-        var viewSquare;
-        var cPos;
-        for (var i = 0; i < priority.length; ++i) {
-            cAnchor = priority[i];
-            cPos = getPos(cAnchor);
-            menuRect = new Rectangle(cPos.x, cPos.y, menuBound.width, menuBound.height);
-            viewSquare = outRect.collapsedSquare(menuRect);
+    var bestSquare = -1;
+    var priority = [QuickMenu._previewAnchor].concat(QuickMenu._acceptAnchors);
 
-            if (viewSquare - 0.01 > bestSquare) {
-                bestSquare = viewSquare;
-                pos = cPos;
-                QuickMenu._previewAnchor = cAnchor;
-            }
+    var cAnchor;
+    var outRect = new Rectangle(outBound.left, outBound.top, outBound.width, outBound.height);
+
+    var menuRect;
+    var viewSquare;
+    var cPos;
+    for (var i = 0; i < priority.length; ++i) {
+        cAnchor = priority[i];
+        cPos = getPos(cAnchor);
+        menuRect = new Rectangle(cPos.x, cPos.y, menuBound.width, menuBound.height);
+        viewSquare = outRect.collapsedSquare(menuRect);
+
+        if (viewSquare - 0.01 > bestSquare) {
+            bestSquare = viewSquare;
+            pos = cPos;
+            QuickMenu._previewAnchor = cAnchor;
         }
     }
-    else {
-        pos = getPos(anchor);
-    }
-
 
 
     pos.x -= qBound.left;
@@ -146,8 +142,17 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
 
     });
     QuickMenu.$scrollTrackElements = [];
+    if (typeof anchor == 'number') {
+        QuickMenu._acceptAnchors = [anchor];
+    }
+    else if (anchor instanceof Array) {
+        QuickMenu._acceptAnchors = anchor;
+    }
+    else {
+        QuickMenu._acceptAnchors = QuickMenu.PRIORITY_ANCHORS;
+    }
 
-    QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
+    QuickMenu._previewAnchor = QuickMenu._acceptAnchors[0];
 
     QuickMenu._session = Math.random() * 10000000000 >> 0;
     QuickMenu.$ctn.addTo(document.body);
@@ -159,7 +164,6 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     var qmenu = QuickMenu.$elt;
     var menu = qmenu.$contextMenu;
     Object.assign(menu, menuProps);
-    QuickMenu._anchor = typeof (anchor) == 'number' ? (anchor % 8) : 'auto';
     if (darkTheme) qmenu.addClass('dark');
     else qmenu.removeClass('dark');
     menu.removeStyle('visibility');//for prevent size change blink
