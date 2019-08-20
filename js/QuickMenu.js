@@ -32,7 +32,15 @@ QuickMenu.$ctn = _('.absol-context-hinge-fixed-container');
 QuickMenu.$elt = _('quickmenu').addTo(QuickMenu.$ctn);
 QuickMenu.$element = undefined;
 QuickMenu._anchor = 0;
+QuickMenu._previewAnchor = 1;
 QuickMenu._session = Math.random() * 10000000000 >> 0;
+QuickMenu._menuListener = undefined;
+
+QuickMenu.$elt.$contextMenu.on('press', function (event) {
+    if (QuickMenu._menuListener) QuickMenu._menuListener(event.menuItem);
+});
+
+
 
 QuickMenu.updatePosition = function () {
     if (!QuickMenu.$element) return;
@@ -44,12 +52,6 @@ QuickMenu.updatePosition = function () {
     var menuBound = menu.getBoundingClientRect();
     var qBound = qmenu.getBoundingClientRect();
     var outBound = Dom.traceOutBoundingClientRect(qmenu);
-
-    var aleft = ebound.left - outBound.left;
-    var atop = ebound.top - outBound.top;
-
-    var aright = outBound.right - ebound.right;
-    var abottom = outBound.bottom - ebound.bottom;
 
     var getPos = function (anchor) {
         var x = 0;
@@ -91,7 +93,7 @@ QuickMenu.updatePosition = function () {
     var pos;
     if (anchor == 'auto') {
         var bestSquare = -1;
-        var priority = [1, 2, 0, 3, 4, 7, 6, 5];
+        var priority = [QuickMenu._previewAnchor, 1, 2, 0, 3, 7, 4, 6, 5];
         var cAnchor;
         var outRect = new Rectangle(outBound.left, outBound.top, outBound.width, outBound.height);
 
@@ -102,12 +104,12 @@ QuickMenu.updatePosition = function () {
             cAnchor = priority[i];
             cPos = getPos(cAnchor);
             menuRect = new Rectangle(cPos.x, cPos.y, menuBound.width, menuBound.height);
-
             viewSquare = outRect.collapsedSquare(menuRect);
 
             if (viewSquare - 0.01 > bestSquare) {
                 bestSquare = viewSquare;
                 pos = cPos;
+                QuickMenu._previewAnchor = cAnchor;
             }
         }
     }
@@ -124,20 +126,117 @@ QuickMenu.updatePosition = function () {
 
 };
 
-QuickMenu.show = function (element, menuProps, anchor) {
+QuickMenu._scrollEventHandler = QuickMenu.updatePosition.bind(QuickMenu);
+QuickMenu.$scrollTrackElements = [];
+
+
+QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) {
+    //untrack all element
+    QuickMenu.$scrollTrackElements.forEach(function (e) {
+        if (e.removeEventListener)
+            e.removeEventListener('scroll', QuickMenu._scrollEventHandler, false);
+        else
+            e.dettachEvent('onscroll', QuickMenu._scrollEventHandler, false);
+
+    });
+    QuickMenu.$scrollTrackElements = [];
+
+    QuickMenu._session = Math.random() * 10000000000 >> 0;
     QuickMenu.$ctn.addTo(document.body);
+    Dom.addToResizeSystem(QuickMenu.$ctn);
+
+    QuickMenu.$ctn.updateSize = QuickMenu.updatePosition.bind(QuickMenu);
     QuickMenu.$element = element;
-    var elementBound = element.getBoundingClientRect();
+    QuickMenu._menuListener = menuListener;
     var qmenu = QuickMenu.$elt;
     var menu = qmenu.$contextMenu;
     menu.items = menuProps.items || [];
     QuickMenu._anchor = typeof (anchor) == 'number' ? (anchor % 8) : 'auto';
+    if (darkTheme) qmenu.addClass('dark');
+    else qmenu.removeClass('dark');
     menu.removeStyle('visibility');//for prevent size change blink
     QuickMenu.updatePosition();
     setTimeout(function () {
         menu.addStyle('visibility', 'visible');
     }, 2);
 
+    //track element
+    var trackElt = element.parentElement;
+    while (trackElt) {
+        // trackElt.addEventListener('scroll', QuickMenu._scrollEventHandler, false);
+        if (trackElt.addEventListener)
+            trackElt.addEventListener('scroll', QuickMenu._scrollEventHandler, false);
+        else
+            trackElt.attachEvent('onscroll', QuickMenu._scrollEventHandler, false);
+
+        QuickMenu.$scrollTrackElements.push(trackElt);
+        trackElt = trackElt.parentElement;
+    }
+    if (document.addEventListener) {
+        document.addEventListener('scroll', QuickMenu._scrollEventHandler, false);
+    }
+    else {
+        document.attachEvent('onscroll', QuickMenu._scrollEventHandler, false);
+    }
+    QuickMenu.$scrollTrackElements.push(document);
+
+    return QuickMenu._session;
+};
+
+QuickMenu.close = function (session) {
+    if (session !== true && session != QuickMenu._session) return;
+    QuickMenu.$element = undefined;
+    QuickMenu._menuListener = undefined;
+    QuickMenu._previewAnchor = 1;
+
+    //untrack all element
+    QuickMenu.$scrollTrackElements.forEach(function (e) {
+        e.removeEventListener('scroll', QuickMenu._scrollEventHandler, false);
+    });
+    QuickMenu.$scrollTrackElements = [];
+    var qmenu = QuickMenu.$elt;
+    var menu = qmenu.$contextMenu;
+    menu.removeStyle('visibility');//for prevent size change blink
+    menu.removeStyle({
+        left: true,
+        top: true
+    });
+    QuickMenu.$ctn.remove();
+};
+
+
+QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, darkTheme) {
+    var res = {
+        menuProps: menuProps,
+        anchor: anchor,
+        currentSession: undefined,
+        element: element,
+        menuListener: menuListener,
+        darkTheme: darkTheme
+    };
+
+    var clickHandler = function () {
+        if (QuickMenu._session == res.currentSession) return;
+
+        res.currentSession = QuickMenu.show(res.element, res.menuProps, res.anchor, res.menuListener, res.darkTheme);
+
+        var finish = function () {
+            document.body.removeEventListener('click', finish, false);
+            QuickMenu.close(res.currentSession);
+            res.currentSession = undefined;
+        };
+
+        setTimeout(function () {
+            document.body.addEventListener('click', finish, false);
+        }, 10)
+    };
+
+    res.remove = function () {
+        element.removeEventListener('click', clickHandler, false);
+    };
+
+    element.addEventListener('click', clickHandler, false);
+    return res;
 };
 
 

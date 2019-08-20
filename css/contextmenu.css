@@ -45,3 +45,8 @@
     -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
     box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
 }
+
+.absol-context-hinge.dark .absol-hmenu,
+.absol-context-hinge.dark .absol-vmenu {
+    background-color: rgb(37, 37, 38);
+}
