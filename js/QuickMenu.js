@@ -28,11 +28,14 @@ function QuickMenu() {
 // };
 
 Acore.install('quickmenu', QuickMenu);
+QuickMenu.PRIORITY_ANCHORS = [0, 3, 7, 4, 1, 2, 6, 5];
+QuickMenu.DEFAULT_ANCHOR = 0;
+
 QuickMenu.$ctn = _('.absol-context-hinge-fixed-container');
 QuickMenu.$elt = _('quickmenu').addTo(QuickMenu.$ctn);
 QuickMenu.$element = undefined;
 QuickMenu._anchor = 0;
-QuickMenu._previewAnchor = 1;
+QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
 QuickMenu._session = Math.random() * 10000000000 >> 0;
 QuickMenu._menuListener = undefined;
 
@@ -43,6 +46,7 @@ QuickMenu.$elt.$contextMenu.on('press', function (event) {
 
 
 QuickMenu.updatePosition = function () {
+
     if (!QuickMenu.$element) return;
     var anchor = QuickMenu._anchor;
 
@@ -93,7 +97,7 @@ QuickMenu.updatePosition = function () {
     var pos;
     if (anchor == 'auto') {
         var bestSquare = -1;
-        var priority = [QuickMenu._previewAnchor, 1, 2, 0, 3, 7, 4, 6, 5];
+        var priority = [QuickMenu._previewAnchor].concat(QuickMenu.PRIORITY_ANCHORS);
         var cAnchor;
         var outRect = new Rectangle(outBound.left, outBound.top, outBound.width, outBound.height);
 
@@ -116,6 +120,8 @@ QuickMenu.updatePosition = function () {
     else {
         pos = getPos(anchor);
     }
+
+
 
     pos.x -= qBound.left;
     pos.y -= qBound.top;
@@ -141,6 +147,8 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     });
     QuickMenu.$scrollTrackElements = [];
 
+    QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
+
     QuickMenu._session = Math.random() * 10000000000 >> 0;
     QuickMenu.$ctn.addTo(document.body);
     Dom.addToResizeSystem(QuickMenu.$ctn);
@@ -150,7 +158,7 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     QuickMenu._menuListener = menuListener;
     var qmenu = QuickMenu.$elt;
     var menu = qmenu.$contextMenu;
-    menu.items = menuProps.items || [];
+    Object.assign(menu, menuProps);
     QuickMenu._anchor = typeof (anchor) == 'number' ? (anchor % 8) : 'auto';
     if (darkTheme) qmenu.addClass('dark');
     else qmenu.removeClass('dark');
@@ -187,7 +195,7 @@ QuickMenu.close = function (session) {
     if (session !== true && session != QuickMenu._session) return;
     QuickMenu.$element = undefined;
     QuickMenu._menuListener = undefined;
-    QuickMenu._previewAnchor = 1;
+    QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
 
     //untrack all element
     QuickMenu.$scrollTrackElements.forEach(function (e) {
