@@ -47,6 +47,8 @@
 }
 
 .absol-context-hinge.dark .absol-hmenu,
-.absol-context-hinge.dark .absol-vmenu {
+.absol-context-hinge.dark .absol-vmenu,
+.dark .absol-context-hinge .absol-hmenu,
+.dark .absol-context-hinge .absol-vmenu {
     background-color: rgb(37, 37, 38);
 }

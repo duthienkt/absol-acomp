@@ -177,6 +177,7 @@ ContextCaptor.prototype.showContextMenu = function (props, event, onSelectItems)
         return new Promise(function (resolve) {
             setTimeout(function () {
                 this.$contextMenu.addStyle('z-index', '1000');
+                this.$contextMenu.addStyle('visibility', 'visible');
 
                 var viewBound = Dom.traceOutBoundingClientRect(this.$contextMenu.parentElement);
                 var menuBound = this.$contextMenu.getBoundingClientRect();
@@ -225,6 +226,7 @@ ContextCaptor.prototype.showContextMenu = function (props, event, onSelectItems)
 
 ContextCaptor.prototype.hideContextMenu = function () {
     this.$contextMenu.addStyle({ 'z-index': ' -1000', top: '0', left: '-1000' });
+    this.$contextMenu.removeStyle('visibility');
 
 };
 
