@@ -130,15 +130,18 @@ function VMenuItem() {
         child: [{
             tag: 'button',
             class: 'absol-vmenu-button',
-            child: ['img.absol-vmenu-button-icon','.absol-vmenu-button-text', '.absol-vmenu-button-key', 'span.absol-vmenu-arrow']
+            child: [{
+                class: 'absol-vmenu-button-ext-icon-container',
+                child: 'img.absol-vmenu-button-icon'
+            }, '.absol-vmenu-button-text', '.absol-vmenu-button-key', 'span.absol-vmenu-arrow']
         },
         {
             tag: 'vmenu',
         }]
     });
 
-    res.sync = new Promise(function(rs){
-        _('attachhook').addTo(res).on('error', function(){
+    res.sync = new Promise(function (rs) {
+        _('attachhook').addTo(res).on('error', function () {
             this.remove();
             rs();
         })
@@ -149,10 +152,10 @@ function VMenuItem() {
     res.$text = $('.absol-vmenu-button-text', res);
     res.$key = $('.absol-vmenu-button-key', res);
     res.$arraw = $('.absol-vmenu-arrow', res);
-    res.$icon = $('img.absol-vmenu-button-icon', res);
+    res.$iconCtn = $('.absol-vmenu-button-ext-icon-container', res);
+
 
     OOP.drillProperty(res, res.$text, 'text', 'innerHTML');
-    OOP.drillProperty(res, res.$icon, 'iconSrc', 'src');
     OOP.drillProperty(res, res.$key, 'key', 'innerHTML');
     OOP.drillProperty(res, res.$vmenu, ['activeTab']);
 
@@ -190,7 +193,6 @@ VMenuItem.eventHandler.enterButton = function (event) {
 
 VMenuItem.eventHandler.pressItem = function (event) {
     var newEvent = EventEmitter.copyEvent(event, { target: this });
-
     this.emit('press', newEvent, this);
 };
 
@@ -233,9 +235,69 @@ VMenuItem.property.disable = {
     get: function () {
         return this.containsClass('absol-menu-item-disable');
     }
-}
+};
+
+VMenuItem.property.icon = {
+    set: function (value) {
+        this.$iconCtn.clearChild();
+        this._icon = value;
+        if (value) {
+            _(value).addTo(this.$iconCtn);
+        }
+    },
+    get: function () {
+        return this._icon;
+    }
+};
+
+VMenuItem.property.iconSrc = {
+    set: function (value) {
+        this.icon = { tag: 'img', attr: { src: value } };
+    },
+    get: function () {
+        return this.icon.attr.src;
+    }
+};
 
 
+VMenuItem.property.extendStyle = {
+    set: function (value) {
+        this.$button.removeStyle(this._extendStyle || {});
+        this._extendStyle = value || {};
+        this.$button.addStyle(this.extendStyle);
+    },
+    get: function () {
+        return this._extendStyle || {};
+    }
+};
+
+
+VMenuItem.property.extendClasses = {
+    set: function (value) {
+        var self = this;
+        this.extendClasses.forEach(function (className) {
+            self.$button.removeClass(className);
+        });
+        this._extendClass = [];
+        if (!value) return;
+        if (typeof value == 'string') {
+            value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
+        }
+        
+        if (value instanceof Array) {
+            this._extendClass = value;
+            this._extendClass.forEach(function (className) {
+                self.$button.addClass(className);
+            });
+        }
+        else {
+            throw new Error('Invalid extendClasses');
+        }
+    },
+    get: function () {
+        return this._extendClass || [];
+    }
+};
 
 
 
@@ -247,8 +309,8 @@ function VMenu() {
         extendEvent: 'press'
     });
 
-    res.sync = new Promise(function(rs){
-        _('attachhook').addTo(res).on('error', function(){
+    res.sync = new Promise(function (rs) {
+        _('attachhook').addTo(res).on('error', function () {
             this.remove();
             rs();
         })
@@ -280,6 +342,47 @@ VMenu.property.activeTab = {
         return this._activeTab;
     }
 };
+
+
+VMenu.property.extendStyle = {
+    set: function (value) {
+        this.removeStyle(this._extendStyle || {});
+        this._extendStyle = value || {};
+        this.addStyle(this.extendStyle);
+    },
+    get: function () {
+        return this._extendStyle || {};
+    }
+};
+
+
+VMenu.property.extendClasses = {
+    set: function (value) {
+        var self = this;
+        this.extendClasses.forEach(function (className) {
+            self.removeClass(className);
+        });
+        this._extendClass = [];
+        if (!value) return;
+        if (typeof value == 'string') {
+            value = value.split(/\s+/).filter(function (c) { c.length > 0 });
+        }
+        if (value instanceof Array) {
+            this._extendClass = value;
+            this._extendClass.forEach(function (className) {
+                self.addClass(className);
+            });
+        }
+        else {
+            throw new Error('Invalid extendClasses');
+        }
+    },
+    get: function () {
+        return this._extendClass || [];
+    }
+};
+
+
 
 VMenu.eventHandler = {};
 VMenu.eventHandler.enterItem = function (event) {
@@ -339,7 +442,6 @@ VMenu.prototype._childFromItems = function (items) {
 
 function HMenuItem() {
 
-
     var res = _({
         tag: 'dropdown',
         extendEvent: ['press', 'enter'],
@@ -380,7 +482,7 @@ HMenuItem.eventHandler.enterButton = function (event) {
 };
 
 HMenuItem.eventHandler.pressItem = function (event) {
-    this.emit('press', EventEmitter.copyEvent(event, { target: this }),this);
+    this.emit('press', EventEmitter.copyEvent(event, { target: this }), this);
 };
 
 HMenuItem.prototype = {};
@@ -423,7 +525,7 @@ HMenu.eventHandler.pressItem = function (event) {
     if (event.menuItem.items && event.menuItem.items.length > 0 && !(this.activeTab >= 0)) {
         this.activeTab = event.menuItem._tabIndex;
         setTimeout(function () {
-           $(document.body).once('click', this.eventHandler.clickSomewhere, false);
+            $(document.body).once('click', this.eventHandler.clickSomewhere, false);
         }.bind(this), 100);
     }
     else {
@@ -442,7 +544,7 @@ HMenu.eventHandler.clickSomewhere = function (event) {
     if (event.menuItem) {
         //  wait for next time
         setTimeout(function () {
-           $(document.body).once('click', this.eventHandler.clickSomewhere, false);
+            $(document.body).once('click', this.eventHandler.clickSomewhere, false);
         }.bind(this), 100);
     }
     else {
