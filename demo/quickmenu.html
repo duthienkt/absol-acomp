@@ -222,7 +222,7 @@
             }, true);// darkTheme = true
         })
     </script>
-    <h1>Expert Demo</h1>
+    <h1>Expert</h1>
     <h2>Dropdown menu</h2>
     <div id="expert-dropdown-menu" class="bg light" style="height: 300px; "></div>
     <script class="viewable">
@@ -273,6 +273,19 @@
         absol.QuickMenu.showWhenClick(docTypeBtn, docTypeMemuProps, [1, 2, 6, 5], function (menuItem) {
             docTypeBtn.text = menuItem.text;
             docTypeBtn.icon = menuItem.icon;
+        });
+        var docTypeBtn1 = absol._({
+            tag: 'menubutton',
+            class: 'standard-alone',
+            style:{
+                width:'14.4em'
+            },
+            props: docTypeMemuProps.items[0]
+        }).addTo(absol.$('#expert-dropdown-menu'));
+        docTypeBtn1.$arrow.addClass('mdi').addClass('mdi-menu-down');
+        absol.QuickMenu.showWhenClick(docTypeBtn1, docTypeMemuProps, [1, 2, 6, 5], function (menuItem) {
+            docTypeBtn1.text = menuItem.text;
+            docTypeBtn1.icon = menuItem.icon;
         });
     </script>
 
