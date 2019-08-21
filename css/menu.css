@@ -125,12 +125,11 @@
 
 img.absol-vmenu-button-icon {
     opacity: 0;
-
     display: none;
 }
 
 img.absol-vmenu-button-icon[src] {
-    display: inline-block;
+    display: block;
 }
 
 .absol-vmenu-button-ext-icon-container {
@@ -145,6 +144,7 @@ img.absol-vmenu-button-icon[src] {
 .absol-vmenu-button-ext-icon-container>i {
     font-size: 1.2em;
     line-height: 1;
+    display: block;
 }
 
 
@@ -238,4 +238,12 @@ img.absol-vmenu-button-icon[src] {
 
 .dark .absol-hmenu {
     background-color: rgb(33, 33, 33);
+}
+
+/*standard-alone*/
+.absol-vmenu-button.standard-alone {
+    height: 2em;
+    border-radius: 0.3em;
+    border: solid rgb(169, 169, 170) 1px;
+    outline: none;
 }

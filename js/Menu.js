@@ -6,9 +6,110 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 var _ = Acore._;
 var $ = Acore.$;
 
+
+
+function MenuButton() {
+    var res = _({
+        tag: 'button',
+        class: 'absol-vmenu-button',
+        child: [
+            {
+                class: 'absol-vmenu-button-ext-icon-container',
+                child: 'img.absol-vmenu-button-icon'
+            },
+            '.absol-vmenu-button-text',
+            '.absol-vmenu-button-key',
+            {
+                class: 'absol-vmenu-arrow-container',
+                child: 'span.absol-vmenu-arrow'
+            }
+        ]
+    });
+
+    res.$text = $('.absol-vmenu-button-text', res);
+    res.$key = $('.absol-vmenu-button-key', res);
+
+
+    res.$arrow = $('.absol-vmenu-arrow', res);
+    res.$iconCtn = $('.absol-vmenu-button-ext-icon-container', res);
+
+    OOP.drillProperty(res, res.$text, 'text', 'innerHTML');
+    OOP.drillProperty(res, res.$key, 'key', 'innerHTML');
+
+
+    return res;
+};
+
+MenuButton.property = {};
+
+MenuButton.property.extendClasses = {
+    set: function (value) {
+        var self = this;
+        this.extendClasses.forEach(function (className) {
+            self.removeClass(className);
+        });
+        this._extendClass = [];
+        if (!value) return;
+        if (typeof value == 'string') {
+            value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
+        }
+
+        if (value instanceof Array) {
+            this._extendClass = value;
+            this._extendClass.forEach(function (className) {
+                self.addClass(className);
+            });
+        }
+        else {
+            throw new Error('Invalid extendClasses');
+        }
+    },
+    get: function () {
+        return this._extendClass || [];
+    }
+};
+
+
+
+MenuButton.property.icon = {
+    set: function (value) {
+        this.$iconCtn.clearChild();
+        this._icon = value;
+        if (value) {
+            _(value).addTo(this.$iconCtn);
+        }
+    },
+    get: function () {
+        return this._icon;
+    }
+};
+
+MenuButton.property.iconSrc = {
+    set: function (value) {
+        this.icon = { tag: 'img', attr: { src: value } };
+    },
+    get: function () {
+        return this.icon.attr.src;
+    }
+};
+
+
+MenuButton.property.extendStyle = {
+    set: function (value) {
+        this.removeStyle(this._extendStyle || {});
+        this._extendStyle = value || {};
+        this.addStyle(this.extendStyle);
+    },
+    get: function () {
+        return this._extendStyle || {};
+    }
+};
+
+Acore.install('menubutton', MenuButton);
+
+
 function Dropdown(data) {
     data = data || {};
-
 
     var res = _({
         class: ['absol-drop-hidden', 'absol-dropdown'], child: '.absol-dropdown-content'
@@ -37,7 +138,6 @@ Dropdown.property.show = {
         else {
             this.addClass('absol-drop-hidden');
         }
-
     },
     get: function () {
         return !this.containsClass('absol-drop-hidden');
@@ -127,25 +227,10 @@ function VMenuItem() {
     var res = _({
         tag: 'dropright',
         extendEvent: ['press', 'enter'],
-        child: [{
-            tag: 'button',
-            class: 'absol-vmenu-button',
-            child: [
-                {
-                    class: 'absol-vmenu-button-ext-icon-container',
-                    child: 'img.absol-vmenu-button-icon'
-                },
-                '.absol-vmenu-button-text',
-                '.absol-vmenu-button-key',
-                {
-                    class: 'absol-vmenu-arrow-container',
-                    child: 'span.absol-vmenu-arrow'
-                }
-            ]
-        },
-        {
-            tag: 'vmenu',
-        }]
+        child: ['menubutton',
+            {
+                tag: 'vmenu',
+            }]
     });
 
     res.sync = new Promise(function (rs) {
@@ -156,15 +241,16 @@ function VMenuItem() {
     });
     res.$dropper = $('dropright', res);
     res.$vmenu = $('vmenu', res);
-    res.$button = $('button', res);
-    res.$text = $('.absol-vmenu-button-text', res);
-    res.$key = $('.absol-vmenu-button-key', res);
-    res.$arraw = $('.absol-vmenu-arrow', res);
-    res.$iconCtn = $('.absol-vmenu-button-ext-icon-container', res);
+    res.$button = $('menubutton', res);
+    
+    res.$text = res.$button.$text;
+
+    res.$key = res.$button.$key;
+    res.$arrow = res.$button.$arrow;
+    res.$iconCtn =  res.$button.$iconCtn;
 
 
-    OOP.drillProperty(res, res.$text, 'text', 'innerHTML');
-    OOP.drillProperty(res, res.$key, 'key', 'innerHTML');
+    OOP.drillProperty(res, res.$button, ['text', 'extendClasses', 'extendStyle', 'key', 'icon', 'iconSrc']);
     OOP.drillProperty(res, res.$vmenu, ['activeTab']);
 
     res.eventHandler = OOP.bindFunctions(res, VMenuItem.eventHandler);
@@ -219,10 +305,10 @@ VMenuItem.property.items = {
     set: function (items) {
         items = items || [];
         if (items.length > 0) {
-            this.$arraw.addClass(['mdi', 'mdi-chevron-right']);
+            this.$arrow.addClass(['mdi', 'mdi-chevron-right']);
         }
         else {
-            this.$arraw.removeClass(['mdi', 'mdi-chevron-right']);
+            this.$arrow.removeClass(['mdi', 'mdi-chevron-right']);
         }
         this.$vmenu.items = items;
     },
@@ -242,68 +328,6 @@ VMenuItem.property.disable = {
     },
     get: function () {
         return this.containsClass('absol-menu-item-disable');
-    }
-};
-
-VMenuItem.property.icon = {
-    set: function (value) {
-        this.$iconCtn.clearChild();
-        this._icon = value;
-        if (value) {
-            _(value).addTo(this.$iconCtn);
-        }
-    },
-    get: function () {
-        return this._icon;
-    }
-};
-
-VMenuItem.property.iconSrc = {
-    set: function (value) {
-        this.icon = { tag: 'img', attr: { src: value } };
-    },
-    get: function () {
-        return this.icon.attr.src;
-    }
-};
-
-
-VMenuItem.property.extendStyle = {
-    set: function (value) {
-        this.$button.removeStyle(this._extendStyle || {});
-        this._extendStyle = value || {};
-        this.$button.addStyle(this.extendStyle);
-    },
-    get: function () {
-        return this._extendStyle || {};
-    }
-};
-
-
-VMenuItem.property.extendClasses = {
-    set: function (value) {
-        var self = this;
-        this.extendClasses.forEach(function (className) {
-            self.$button.removeClass(className);
-        });
-        this._extendClass = [];
-        if (!value) return;
-        if (typeof value == 'string') {
-            value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
-        }
-
-        if (value instanceof Array) {
-            this._extendClass = value;
-            this._extendClass.forEach(function (className) {
-                self.$button.addClass(className);
-            });
-        }
-        else {
-            throw new Error('Invalid extendClasses');
-        }
-    },
-    get: function () {
-        return this._extendClass || [];
     }
 };
 

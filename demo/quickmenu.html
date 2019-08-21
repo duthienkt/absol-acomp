@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>Menu</title>
     <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
     <link rel="stylesheet" href="https://volcanion.cf/materialdesignicons/materialdesignicons.min.css">
@@ -143,7 +144,6 @@
 
     </div>
     <h1>Dark Theme(defalt)</h1>
-
     <div class="bg dark" style="height: 300px"></div>
     <script class="viewable">
         var menuProps = {
@@ -222,6 +222,61 @@
             }, true);// darkTheme = true
         })
     </script>
+    <h1>Expert Demo</h1>
+    <h2>Dropdown menu</h2>
+    <div id="expert-dropdown-menu" class="bg light" style="height: 300px; "></div>
+    <script class="viewable">
+        var docTypeMemuProps = {
+            items: [
+                {
+                    text: 'Trả lời ngắn',
+                    icon: 'span.mdi.mdi-text-short'
+                },
+                {
+                    text: 'Đoạn',
+                    icon: 'span.mdi.mdi-text-short'
+                },
+                "=================================",
+                {
+                    text: 'Trắc nghiệm',
+                    icon: 'span.mdi.mdi-radiobox-marked'
+                },
+                {
+                    text: 'Hộp kiểm',
+                    icon: 'span.mdi.mdi-checkbox-marked'
+                },
+                {
+                    text: 'Hộp kiểm',
+                    icon: 'span.mdi.mdi-arrow-down-drop-circle'
+                },
+                "=================================",
+                {
+                    text: 'Tải tệp lên',
+                    icon: 'span.mdi.mdi-cloud-upload'
+                },
+
+                "=================================",
+                {
+                    text: 'Phạm vi tuyến tính',
+                    icon: 'span.mdi.mdi-ray-start-end'
+                }
+
+            ]
+        };
+
+        var docTypeBtn = absol._({
+            tag: 'menubutton',
+            class: 'standard-alone',
+            props: docTypeMemuProps.items[0]
+        }).addTo(absol.$('#expert-dropdown-menu'));
+        docTypeBtn.$arrow.addClass('mdi').addClass('mdi-menu-down');
+        absol.QuickMenu.showWhenClick(docTypeBtn, docTypeMemuProps, [1, 2, 6, 5], function (menuItem) {
+            docTypeBtn.text = menuItem.text;
+            docTypeBtn.icon = menuItem.icon;
+        });
+    </script>
+
+
 
     <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
     <script src="./autohightlighting.js?"></script>
