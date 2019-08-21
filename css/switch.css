@@ -1,0 +1,79 @@
+.absol-switch {
+    position: relative;
+    display: inline-block;
+    width: 2.2em;
+    height: 1.2em;
+    vertical-align: middle;
+}
+
+.absol-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.absol-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 0.6em;
+}
+
+.absol-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 1em;
+    width: 1em;
+    left: 0.1em;
+    bottom: 0.1em;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 0.5em;
+}
+
+input:checked+.absol-switch-slider {
+    background-color: #2196F3;
+}
+
+input:focus+.absol-switch-slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.absol-switch-slider:before {
+    -webkit-transform: translateX(1em);
+    -ms-transform: translateX(1em);
+    transform: translateX(1em);
+}
+
+/* Rounded absol-switch-sliders */
+.absol-switch.square .absol-switch-slider {
+    border-radius: 0;
+}
+
+.absol-switch.square .absol-switch-slider:before {
+    border-radius: 0;
+}
+
+.absol-switch.disabled {
+    pointer-events: none;
+}
+
+.absol-switch.disabled .absol-switch-slider:before{
+    background-color: rgb(234, 234, 234);
+}
+
+.absol-switch.disabled input:checked+.absol-switch-slider {
+    background-color: rgb(141, 188, 226);
+}
+
+.absol-switch.disabled .absol-switch-slider {
+    background-color: rgb(171, 171, 171);
+}
+

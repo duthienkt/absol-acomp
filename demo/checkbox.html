@@ -16,6 +16,7 @@
 </head>
 
 <body>
+    <h1>Checkbox</h1>
     <div class="checkbox-row"></div>
     <script class="viewable">
         var mRadioRow = absol.$('.checkbox-row');
@@ -36,6 +37,20 @@
         <label for="c3">Chọn 3</label><input type="checkbox" name="b" class="absol-checkbox" checked id="c3" />
     </div>
 
+    <h1>Switch</h1>
+    <div class="switch-row"></div>
+    <script class="viewable">
+        //Note: switch can not assign text
+        var mRadioRow = absol.$('.switch-row');
+        absol._('switch[checked="true"]').addTo(mRadioRow);
+        absol._('switch[checked="false"]').addTo(mRadioRow);
+        absol._('switch[checked="true"].square').addTo(mRadioRow);
+        absol._('switch[checked="false"].square').addTo(mRadioRow);
+        absol._('switch[checked="true"][disabled="true"]').addTo(mRadioRow);
+        absol._('switch[checked="false"][disabled="true"]').addTo(mRadioRow);
+        absol._('switch[checked="true"][disabled="true"].square').addTo(mRadioRow);
+        absol._('switch[checked="false"][disabled="true"].square').addTo(mRadioRow);
+    </script>
     <script src="./autohightlighting.js?"></script>
 </body>
 

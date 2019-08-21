@@ -57,6 +57,9 @@ import './css/radio.css';
 import './js/Radio';
 import './js/RadioButton';
 
+import './css/switch.css';
+import './js/Switch';
+
 
 import './css/checkbox.css';
 import './js/CheckBox';
