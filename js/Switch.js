@@ -9,7 +9,7 @@ function Switch() {
     var res = _({
         tag: 'label',
         class: 'absol-switch',
-        extendEvent:'change',
+        extendEvent: 'change',
         child: [
             'input[type="checkbox"]',
             'span.absol-switch-slider'
@@ -17,7 +17,7 @@ function Switch() {
     });
     res.$input = $('input', res);
     res.on('click', function (event) {
-            res.emit('change', event, res);
+        res.emit('change', event, res);
     });
     OOP.drillProperty(res, res.$input, 'checked');
     OOP.drillProperty(res, res.$input, 'isOn', 'checked');
@@ -79,7 +79,8 @@ Switch.property = {
         get: function () {
             return this.$input.disabled;
         }
-    }}
+    }
+};
 
 Acore.install('switch', Switch);
 

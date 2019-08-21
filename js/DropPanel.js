@@ -101,6 +101,6 @@ DropPanel.property.show = {
 };
 
 
-Acore.install(DropPanel);
+Acore.install('DropPanel'.toLowerCase(), DropPanel);
 
 export default DropPanel;
