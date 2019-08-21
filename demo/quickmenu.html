@@ -142,6 +142,8 @@
     <div class="bg light" style="height: 300px">
 
     </div>
+    <h1>Dark Theme(defalt)</h1>
+
     <div class="bg dark" style="height: 300px"></div>
     <script class="viewable">
         var menuProps = {
@@ -156,7 +158,7 @@
                     }
                 },
                 { text: 'Copy', key: 'extendClasses[hover-blue]', cmd: 'copy', extendClasses: 'hover-blue' },
-                { text: 'Paste', key: 'icon[.mdi.mdi-flash]', cmd: 'paste', icon: 'span.mdi.mdi-flash' , extendClasses: 'hover-yellow'},
+                { text: 'Paste', key: 'icon[.mdi.mdi-flash]', cmd: 'paste', icon: 'span.mdi.mdi-flash', extendClasses: 'hover-yellow' },
                 "==============================",
                 { text: 'Find', key: 'iconSrc', cmd: 'find' },
                 { text: 'Replace', key: 'Ctrl+R', cmd: 'replace' },
@@ -185,7 +187,24 @@
             }, true);// darkTheme = true
         });
 
-        Array(8).fill(0).forEach(function (u, i) {
+        [[0, 3, 4, 7], [1, 2, 5, 6], [0, 7], [3, 4]].forEach(function (anchor, i) {
+            var button = absol._({
+                tag: 'button',
+                child: { text: 'Ancho = ' + JSON.stringify(anchor) }
+            }).addTo(lightBg);
+            absol.QuickMenu.showWhenClick(button, menuProps, anchor, function (menuItem) {
+                button.innerHTML = 'Ancho = ' + JSON.stringify(anchor) + '[' + menuItem.text + ']';
+            });
+            var button = absol._({
+                tag: 'button',
+                child: { text: 'Ancho = ' + JSON.stringify(anchor) }
+            }).addTo(darkBg);
+            absol.QuickMenu.showWhenClick(button, menuProps, anchor, function (menuItem) {
+                button.innerHTML = 'Ancho = ' + JSON.stringify(anchor) + '[' + menuItem.text + ']';
+            }, true);// darkTheme = true
+        });
+
+        Array(4).fill(0).forEach(function (u, i) {
             var button = absol._({
                 tag: 'button',
                 child: { text: 'Ancho = auto' }
