@@ -39,18 +39,58 @@
 
     <h1>Switch</h1>
     <div class="switch-row"></div>
+    <br>
+    <div class="switch-row-ext"></div>
     <script class="viewable">
         //Note: switch can not assign text
-        var mRadioRow = absol.$('.switch-row');
-        absol._('switch[checked="true"]').addTo(mRadioRow);
-        absol._('switch[checked="false"]').addTo(mRadioRow);
-        absol._('switch[checked="true"].square').addTo(mRadioRow);
-        absol._('switch[checked="false"].square').addTo(mRadioRow);
-        absol._('switch[checked="true"][disabled="true"]').addTo(mRadioRow);
-        absol._('switch[checked="false"][disabled="true"]').addTo(mRadioRow);
-        absol._('switch[checked="true"][disabled="true"].square').addTo(mRadioRow);
-        absol._('switch[checked="false"][disabled="true"].square').addTo(mRadioRow);
+        var mSwitchRow = absol.$('.switch-row');
+        absol._('switch[checked="true"]').addTo(mSwitchRow);
+        absol._('switch[checked="false"]').addTo(mSwitchRow);
+        absol._('switch[checked="true"].square').addTo(mSwitchRow);
+        absol._('switch[checked="false"].square').addTo(mSwitchRow);
+        absol._('switch[checked="true"][disabled="true"]').addTo(mSwitchRow);
+        absol._('switch[checked="false"][disabled="true"]').addTo(mSwitchRow);
+        absol._('switch[checked="true"][disabled="true"].square').addTo(mSwitchRow);
+        absol._('switch[checked="false"][disabled="true"].square').addTo(mSwitchRow);
+
+        var mmSwitchRowExt = absol.$('.switch-row-ext');
+        mmSwitchRowExt
+            .addChild(absol._({
+                tag: 'label',
+                style: {
+                    'vertical-align': 'middle',
+                    'margin-right': '1em'
+                },
+                child: { text: 'My Switch' }
+            }))
+        var valueText = absol._({
+            tag: 'span',
+            child: { text: 'FALSE' },
+            style: {
+                'vertical-align': 'middle',
+                'margin-left': '1em'
+            }
+        });
+        var mCheckbox = absol._({
+            tag: 'switch',
+            props: {
+                checked: false
+            },
+            on: {
+                change: function () {
+                    if (this.checked) {
+                        valueText.innerHTML = 'TRUE';
+                    }
+                    else {
+                        valueText.innerHTML = 'FALSE';
+                    }
+                }
+            }
+        }).addTo(mmSwitchRowExt);
+        valueText.addTo(mmSwitchRowExt);
+
     </script>
+
     <script src="./autohightlighting.js?"></script>
 </body>
 
