@@ -130,10 +130,18 @@ function VMenuItem() {
         child: [{
             tag: 'button',
             class: 'absol-vmenu-button',
-            child: [{
-                class: 'absol-vmenu-button-ext-icon-container',
-                child: 'img.absol-vmenu-button-icon'
-            }, '.absol-vmenu-button-text', '.absol-vmenu-button-key', 'span.absol-vmenu-arrow']
+            child: [
+                {
+                    class: 'absol-vmenu-button-ext-icon-container',
+                    child: 'img.absol-vmenu-button-icon'
+                },
+                '.absol-vmenu-button-text',
+                '.absol-vmenu-button-key',
+                {
+                    class: 'absol-vmenu-arrow-container',
+                    child: 'span.absol-vmenu-arrow'
+                }
+            ]
         },
         {
             tag: 'vmenu',
@@ -283,7 +291,7 @@ VMenuItem.property.extendClasses = {
         if (typeof value == 'string') {
             value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
         }
-        
+
         if (value instanceof Array) {
             this._extendClass = value;
             this._extendClass.forEach(function (className) {

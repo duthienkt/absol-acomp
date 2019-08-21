@@ -114,13 +114,13 @@
 }
 
 .absol-vmenu-button {
-    min-width: 10em;
     text-align: left;
     padding-left: 0.5em;
     padding-right: 2em;
     height: 1.8em;
     line-height: 1.8em;
     white-space: nowrap;
+    position: relative;
 }
 
 img.absol-vmenu-button-icon {
@@ -159,12 +159,20 @@ img.absol-vmenu-button-icon[src] {
     font-style: italic;
     text-align: right;
     margin-left: 1em;
+    min-width: 1em;
+}
+
+.absol-vmenu-arrow-container {
+    position: absolute;
+    right: 0.2em;
+    top: 0.3em;
+    bottom: 0.3em;
 }
 
 .absol-vmenu-arrow {
-    display: inline-block;
-    vertical-align: middle;
-    width: 0;
+    display: block;
+    font-size: 1em;
+    line-height: 1.2em;
 }
 
 .absol-menu-item-disable .absol-vmenu-arrow {
