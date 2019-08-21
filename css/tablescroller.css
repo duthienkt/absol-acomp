@@ -49,8 +49,6 @@
     table-layout: fixed;
 }
 
-/* 
-.absol-table-scroller-header-hscroller-table {} */
 
 .absol-table-scroller-left-vscroller {
     position: absolute;
@@ -59,7 +57,6 @@
     bottom: 6px;
     z-index: 7;
     width: 200px;
-    background: red;
     overflow-x: hidden;
     pointer-events: none;
 }
