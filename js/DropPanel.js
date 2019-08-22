@@ -11,20 +11,21 @@ var $ = Acore.$;
 function DropPanel() {
     var res = _({
         class: 'absol-drop-panel',
+        extendEvent: ['toggle'],
         child: [
             {
                 class: 'absol-drop-panel-head',
                 child: [
                     'toggler-ico',
                     {
-                        tag:'span',
-                        class:"absol-drop-panel-name"
+                        tag: 'span',
+                        class: "absol-drop-panel-name"
                     }
                 ]
 
             },
             {
-                class: 'absol-drop-panel-body'
+                class: ['absol-drop-panel-body', 'absol-bscroller']
             }
         ]
     });
@@ -43,7 +44,15 @@ function DropPanel() {
 DropPanel.eventHandler = {};
 DropPanel.eventHandler.clickHead = function (event) {
     if (!this._childOfButton(event.target)) {
-        this.toggle();
+        var event = {
+            target: this, isShowed: this.show, preventDefault: function () {
+                this.prevented = true;
+            }
+        };
+        this.emit('toggle', event, this);
+        if (!event.prevented) {
+            this.toggle();
+        }
     }
 };
 
@@ -73,13 +82,15 @@ DropPanel.property = {};
 DropPanel.property.show = {
     set: function (value) {
         if (value) {
-            var maxHeight = this.getComputedStyleValue('max-height');
+            var maxHeight = parseFloat(this.getComputedStyleValue('max-height').replace('px', ''));
+            var headBound = this.$head.getBoundingClientRect();
             if (maxHeight != 'none' && maxHeight != 'auto') {
-                this.$body.addStyle('max')
+                this.$body.addStyle('max-height', maxHeight - headBound.height + 'px');
             }
             this.$body.addStyle('height', this.$body.scrollHeight + 'px');
             setTimeout(function () {
                 this.$body.removeStyle('height');
+                window.dispatchEvent(new Event('resize'));
             }.bind(this), 200);
 
             this.addClass('show');
@@ -91,6 +102,7 @@ DropPanel.property.show = {
             }.bind(this), 0);
             setTimeout(function () {
                 this.$body.removeStyle('height');
+                window.dispatchEvent(new Event('resize'));
             }.bind(this), 200);
             this.removeClass('show');
         }

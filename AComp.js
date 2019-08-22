@@ -119,6 +119,7 @@ import './js/QuickMenu';
 
 import './css/droppanel.css';
 import './js/DropPanel';
+import './js/DropPanelStack';
 
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";

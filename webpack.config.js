@@ -1,5 +1,4 @@
 const path = require('path');
-const MinifyPlugin = require("babel-minify-webpack-plugin");
 
 
 var packages = {
@@ -45,7 +44,8 @@ module.exports = {
     },
     devServer: {
         compress: true,
-        disableHostCheck: true
+        disableHostCheck: true,
+        host:'0.0.0.0'
     },
     performance: {
         hints: false

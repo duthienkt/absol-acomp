@@ -25,7 +25,8 @@
 .absol-drop-panel-body {
     transition: height 0.2s;
     height: 0;
-    overflow-y: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 
@@ -36,3 +37,4 @@
 .absol-drop-panel:not(.show)>.absol-drop-panel-head  .toggle-open{
     display: none;
 }
+
