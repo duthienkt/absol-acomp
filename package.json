@@ -1,6 +1,6 @@
 {
     "name": "absol-acomp",
-    "version": "0.3.7",
+    "version": "0.3.8",
     "description": "HTML5 components base on absol.js",
     "main": "AComp.js",
     "directories": {
@@ -8,7 +8,6 @@
     },
     "scripts": {
         "dev": "webpack-dev-server --config webpack.config.js",
-        "dev-remote": "webpack-dev-server --config webpack.config.js --public volcanion.cf:8182",
         "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production "
     },
     "repository": {
