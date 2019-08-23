@@ -27,23 +27,28 @@
     background: rgb(13, 13, 13, 0.6);
 }
 
-.absol-bscroller.dark {
+.absol-bscroller.dark,
+.dark .absol-bscroller {
     scrollbar-color: rgba(104, 104, 104, 0.4) rgba(35, 35, 35, 0.4);
 }
 
 
-.absol-bscroller.dark::-webkit-scrollbar-track {
+.absol-bscroller.dark::-webkit-scrollbar-track,
+.dark .absol-bscroller::-webkit-scrollbar-track {
     background: rgb(35, 35, 35, 0.4);
 }
 
-.absol-bscroller.dark::-webkit-scrollbar-thumb {
+.absol-bscroller.dark::-webkit-scrollbar-thumb,
+.dark .absol-bscroller::-webkit-scrollbar-thumb {
     background: rgb(73, 73, 73, 0.4);
 }
 
-.absol-bscroller.dark::-webkit-scrollbar-thumb:hover {
+.absol-bscroller.dark::-webkit-scrollbar-thumb:hover,
+.dark .absol-bscroller::-webkit-scrollbar-thumb:hover {
     background: rgb(223, 223, 223, 0.4);
 }
 
-.absol-bscroller.dark::-webkit-scrollbar-thumb:active {
+.absol-bscroller.dark::-webkit-scrollbar-thumb:active,
+.dark .absol-bscroller::-webkit-scrollbar-thumb:active {
     background: rgb(242, 242, 242, 0.6);
 }
