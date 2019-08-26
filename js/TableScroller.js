@@ -280,6 +280,20 @@ TableScroller.prototype._updateLeftTableSize = function () {
 };
 
 TableScroller.prototype._updateLinesSize = function () {
+    if (this.$viewport.clientHeight < this.$viewport.scrollHeight ){
+        this.addClass('scroll-v');
+    }
+    else{
+        this.removeClass('scroll-v');
+    }
+    
+    if (this.$viewport.clientWidth < this.$viewport.scrollWidth ){
+        this.addClass('scroll-h');
+    }
+    else{
+        this.removeClass('scroll-h');
+    }
+
     this.$leftLine.addStyle({
         maxHeight: this.$content.getComputedStyleValue('height'),
         left: this._leftWidth + 'px'
