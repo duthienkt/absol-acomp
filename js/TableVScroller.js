@@ -10,7 +10,8 @@ function TableVScroller() {
             class: 'absol-table-vscroller',
             child: [
                 'bscroller.absol-table-vscroller-viewport',
-                'table.absol-table-vscroller-head'
+                'table.absol-table-vscroller-head',
+                '.absol-table-vscroller-head-line',
             ]
         }
     );
@@ -25,6 +26,7 @@ function TableVScroller() {
         Dom.addToResizeSystem(res.$attachHook);
     });
     res.$topTable = $('.absol-table-vscroller-head', res);
+    res.$headLine = $('.absol-table-vscroller-head-line', res);
     return res;
 }
 
@@ -85,6 +87,10 @@ TableVScroller.prototype.updateSize = function () {
     this.$topTable.addStyle({
         width: tableBound.width + 'px',
         height: theadBound.height + 'px'
+    });
+    this.$headLine.addStyle({
+        top: theadBound.height + 'px',
+        maxWidth: tableBound.width + 'px'
     });
     var realNodes = this.$tr.childNodes;
     var topNodes = this.$topTr.childNodes;

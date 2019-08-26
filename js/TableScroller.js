@@ -19,7 +19,9 @@ function TableScroller() {
             {
                 class: 'absol-table-scroller-left-vscroller',
                 child: '.absol-table-scroller-left-vscroller-viewport'
-            }
+            },
+            '.absol-table-scroller-head-line',
+            '.absol-table-scroller-left-line'
         ]
     });
 
@@ -50,6 +52,8 @@ function TableScroller() {
     res.$viewport = $('bscroller.absol-table-scroller-viewport', res)
         .on('scroll', res.eventHandler.scrollViewport);
 
+    res.$leftLine = $('.absol-table-scroller-left-line', res);
+    res.$headLine = $('.absol-table-scroller-head-line', res);
     return res;
 }
 
@@ -205,6 +209,7 @@ TableScroller.prototype._updateLeftTable = function () {
 
 };
 
+
 TableScroller.prototype._updateContent = function () {
     this.$contentThead = $('thead', this.$content);
     this._updateFixedTable();
@@ -274,10 +279,22 @@ TableScroller.prototype._updateLeftTableSize = function () {
     this.$leftScroller.addStyle('width', this._leftWidth + 2 + 'px');
 };
 
+TableScroller.prototype._updateLinesSize = function () {
+    this.$leftLine.addStyle({
+        maxHeight: this.$content.getComputedStyleValue('height'),
+        left: this._leftWidth + 'px'
+    });
+    this.$headLine.addStyle({
+        top: this.$contentThead.getComputedStyleValue('height'),
+        maxWidth: this.$content.getComputedStyleValue('width')
+    });
+};
+
 TableScroller.prototype._updateContentSize = function () {
     this._updateFixedTableSize();
     this._updateHeaderScrollerSize();
     this._updateLeftTableSize();
+    this._updateLinesSize();
 };
 
 TableScroller.property = {};

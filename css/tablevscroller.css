@@ -11,6 +11,15 @@
     left: 0;
 }
 
+.absol-table-vscroller-head-line{
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    pointer-events: none;
+    border-bottom:solid 2px rgb(169, 169, 170); 
+    width: calc(100% - 7px);
+}
+
 .absol-table-vscroller-viewport {
     max-height: 100%;
     padding-bottom: 1px;
