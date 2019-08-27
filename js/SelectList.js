@@ -19,7 +19,9 @@ SelectList.prototype.creatItem = function (item, index) {
     var text;
     var extendStyle = {};
     var extendClasses = [];
-    if (typeof item == 'string') text = item;
+    if (typeof item == 'string') {
+        text = item;
+    }
     else {
         text = item.text;
         extendStyle = item.extendStyle || {};

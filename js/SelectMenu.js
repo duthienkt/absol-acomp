@@ -89,12 +89,13 @@ SelectMenu.getRenderSpace = function () {
 
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
-    if (this.$selectlist.item)
-        var elt = this.$selectlist.creatItem(this.$selectlist.item).addTo(this.$holderItem);
-        this.$selectlist.sync.then(function(){
+    if (this.$selectlist.item) {
+        var elt = this.$selectlist.creatItem(this.$selectlist.item);
+        this.$selectlist.sync.then(function () {
             elt.$descCtn.addStyle('width', this.$selectlist._cntWidth);
-            elt.$text.addStyle('margin-right',  this.$selectlist._extMarginRight);
+            elt.$text.addStyle('margin-right', this.$selectlist._extMarginRight);
         }.bind(this))
+    }
 };
 
 
@@ -113,7 +114,7 @@ SelectMenu.property.items = {
     set: function (value) {
         this._items = value;
         this.$selectlist.items = value || [];
-        this.$selectlist.sync.then (function(){
+        this.$selectlist.sync.then(function () {
             this.selectListBound = this.$selectlist.getBoundingClientRect();
             this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
         }.bind(this));
@@ -293,7 +294,7 @@ SelectMenu.eventHandler.attached = function () {
 SelectMenu.eventHandler.click = function (event) {
     if (EventEmitter.hitElement(this.$selectlist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event))) {
         event.preventDefault();
-        setTimeout(function(){
+        setTimeout(function () {
             this.isFocus = false;
         }.bind(this), 5)
     }
@@ -310,7 +311,7 @@ SelectMenu.eventHandler.click = function (event) {
 SelectMenu.eventHandler.bodyClick = function (event) {
     event.preventDefault();
     if (!EventEmitter.hitElement(this, event)) {
-        setTimeout(function(){
+        setTimeout(function () {
             this.isFocus = false;
         }.bind(this), 5)
     }
@@ -320,7 +321,7 @@ SelectMenu.eventHandler.selectlistChange = function (event) {
     this.updateItem();
     this.selectMenuValue = this.value;
     if (this._lastValue != this.value) {
-        setTimeout(function(){
+        setTimeout(function () {
             this.emit('change', event, this);
         }.bind(this), 1)
         this._lastValue = this.value;
