@@ -83,14 +83,12 @@ SelectMenu.getRenderSpace = function () {
             .addTo(document.body);
     };
     return SelectMenu.$renderSpace;
-}
-
-
+};
 
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
     if (this.$selectlist.item) {
-        var elt = this.$selectlist.creatItem(this.$selectlist.item);
+        var elt = this.$selectlist.creatItem(this.$selectlist.item).addTo(this.$holderItem);
         this.$selectlist.sync.then(function () {
             elt.$descCtn.addStyle('width', this.$selectlist._cntWidth);
             elt.$text.addStyle('margin-right', this.$selectlist._extMarginRight);
