@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Draggable VStack</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://volcanion.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://volcanion.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://volcanion.cf/hightlight/highlight.pack.js"></script>
+    <style>
+        .dark.bg {
+            background-color: rgba(30, 30, 32, 1);
+            /* background-color: white; */
+            color: white;
+
+        }
+
+        .bg {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border: solid 1px rgb(30, 30, 32);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Draggable VStack</h1>
+
+
+    <script class="viewable">
+        var mStack = absol._({
+            tag: 'draggablevstack',
+            child: Array(10).fill('').map(function (u, i) {
+                return {
+                    class: ['bg', i % 2 ? 'light' : 'dark'],
+                    style: { position: 'relative' },
+                    child: [{
+                        tag: 'span',
+                        child: { text: "Dòng " + i }
+                    }, {
+                        class: 'drag-zone',
+                        style: {
+                            position: 'absolute',
+                            top: '2px',
+                            right: '2px',
+                            bottom: '2px',
+                            border: 'solid 1px blue'
+                        },
+                        child: { text: 'Hold and drag me' }//DragZone must contain class "drag-zone"
+                    }]
+
+                }
+            })
+        });
+
+
+        mStack.addTo(document.body);
+    </script>
+
+
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>

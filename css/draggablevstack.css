@@ -1,0 +1,10 @@
+.absol-draggable-vstack{
+    position: relative;
+}
+
+.absol-draggable-vstack .drag-zone{
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}

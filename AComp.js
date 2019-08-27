@@ -121,6 +121,9 @@ import './css/droppanel.css';
 import './js/DropPanel';
 import './js/DropPanelStack';
 
+import  './css/draggablevstack.css';
+import './js/DraggableVStack';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 
