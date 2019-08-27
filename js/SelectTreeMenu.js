@@ -381,7 +381,6 @@ SelectTreeMenu.queryTree = function (query, items) {
                     res.items = makeItems(node.children, medScore);
                     if (res.items.length == 0) delete res.items;
                 }
-
             }
             return res;
         });
