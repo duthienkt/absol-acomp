@@ -1,29 +1,16 @@
 import AComp from "./AComp";
-import IFrameBridge from 'absol/src/Network/IFrameBridge';
-import * as stringGen from 'absol/src/String/stringGenerate';
-import * as stringForm from 'absol/src/String/stringFormat';
-import * as stringMatch from 'absol/src/String/stringMatching';
+import 'absol/src/absol';
+
 import QuickMenu from "./js/QuickMenu";
 
 //for export to window
-window.absol = window.absol || {};
 absol.Tooltip = AComp.creator.tooltip;
 absol.QuickMenu = QuickMenu;
 absol.AComp = AComp;
 
-absol.string = absol.string || {};
-Object.assign(absol.string, stringGen, stringForm, stringMatch);
-
-
-absol.ShareDom = absol.AComp;
-absol.ShareDom.fromCode = absol.AComp.core.fromCode.bind(absol.AComp.core);
-absol.ShareCreator = absol.AComp.creator;
-absol._ = absol.ShareDom._;
-absol.$ = absol.ShareDom.$;
-absol.buildDom = absol.ShareDom._;
+absol.coreDom.install(AComp.core);
 
 window.AComp = absol.AComp;
-window.IFrameBridge = IFrameBridge;
 setTimeout(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
         if (e.href && e.href.toLowerCase().indexOf('materialdesignicons') >= 0) return true;
