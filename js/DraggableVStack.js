@@ -89,6 +89,7 @@ DraggableVStack.eventHandler.mouseDown = function (event) {
             document.attachEvent('onscroll', this.eventHandler.scroll, false);
         }
         this.$scrollTrackElements.push(document);
+        this._updateDragginPosition();
     }
 };
 
