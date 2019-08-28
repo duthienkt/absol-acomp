@@ -10,7 +10,8 @@ function DraggableVStack() {
     });
 
     res.eventHandler = OOP.bindFunctions(res, DraggableVStack.eventHandler);
-
+    res.$cloneContainer = _('.absol-draggable-vstack-clone-container');
+    res.$destLine = _('.absol-draggable-vstack-dest-line');
     res.on('mousedown', res.eventHandler.mouseDown);
 
     return res;
@@ -18,13 +19,53 @@ function DraggableVStack() {
 
 
 
-
 DraggableVStack.eventHandler = {};
 DraggableVStack.eventHandler.mouseDown = function (event) {
     var dragzone = this._findDragzone(event.target);
+    var self = this;
     if (dragzone) {
-        var container = this._findDirectChild(event.target);
-        this.$moving = container;
+        //save mouse position, use it for other event
+        this._mouseClientX = event.clientX;
+        this._mouseClientY = event.clientY;
+
+        var bound = this.getBoundingClientRect();
+        var element = this._findDirectChild(event.target);
+        element.classList.add('dragging');
+        this.$draggingElt = element;
+
+        this._dragginEltIndex = 0;
+        this._childrentInfo = Array.prototype.map.call(this.childNodes, function (child, index) {
+            var childBound = child.getBoundingClientRect();
+            if (child == element) self._dragginEltIndex = index;
+            return {
+                index: index,
+                elt: child,
+                bound: childBound,
+                top: childBound.top - bound.top
+            }
+        });
+
+
+        this.$cloneContainer.addTo(this);
+        this.$destLine.addTo(this);
+
+
+        var containerBound = element.getBoundingClientRect();
+        this._initBound = bound;
+        this._currentBound = bound;
+
+        this._initTop = containerBound.top - bound.top;
+        this._crTop = this._initTop;
+        this._initHeight = containerBound.height;
+        this._pressX = event.clientX - containerBound.left;
+        this._pressY = event.clientY - containerBound.top;
+        this.$cloneContainer.addStyle({
+            top: this._initTop + 'px',
+            height: this._initHeight + 'px'
+        }).addChild(element.cloneNode(true));
+
+        this.$destLine.addStyle('top', this._initTop + 'px');
+
         $(document.body).on('mousemove', this.eventHandler.mouseMove);
         $(document.body).on('mouseleave', this.eventHandler.mouseFinish);
         $(document.body).on('mouseup', this.eventHandler.mouseFinish);
@@ -52,10 +93,18 @@ DraggableVStack.eventHandler.mouseDown = function (event) {
 
 
 DraggableVStack.eventHandler.mouseMove = function (event) {
-    console.log(event);
-
+    event.preventDefault();
+    //save mouse position 
+    this._mouseClientX = event.clientX;
+    this._mouseClientY = event.clientY;
+    this._updateDragginPosition();
 };
 
+
+
+DraggableVStack.eventHandler.scroll = function (event) {
+    this._updateDragginPosition();
+};
 
 DraggableVStack.eventHandler.mouseFinish = function (event) {
     var self = this;
@@ -68,41 +117,69 @@ DraggableVStack.eventHandler.mouseFinish = function (event) {
         else
             e.dettachEvent('onscroll', self.eventHandler.scroll, false);
     });
-};
 
-DraggableVStack.eventHandler.scroll = function (event) {
-    console.log(event);
 
-};
-
-DraggableVStack.prototype.addChild = function (child) {
-    var childContainer = _('.absol-draggable-vstack-child-container').addChild(child);
-    this.super(childContainer);
-    return this;
-};
-
-DraggableVStack.prototype.removeChild = function (child) {
-    var childContainer = child.parentNode;
-    if (childContainer && childContainer.classList.conatains('absol-draggable-vstack-child-container')) {
-        this.super(childContainer);
+    if ((this._dragginEltIndex == this._childrentInfo.length - 1 && !this._destRecord)
+        || (this._destRecord && (this._destRecord.index == this._dragginEltIndex || this._destRecord.index == this._dragginEltIndex + 1))) {
+        //nothing to change, view animation
+        this.$cloneContainer.addClass('home-going');
+        setTimeout(function () {
+            self.$cloneContainer.addStyle({
+                top: self._initTop + 'px'
+            });
+        }, 0);
+        setTimeout(function () {
+            self.$cloneContainer.clearChild().removeClass('home-going').remove();
+            self.$destLine.removeStyle({ top: '' }).remove();
+            self.$draggingElt.classList.remove('dragging');
+            self.$draggingElt = undefined;
+        }, 200);
     }
-    return this;
-};
-
-
-DraggableVStack.prototype.findChildBefore = function (elt) {
-    var childContainer = child.parentNode;
-    if (childContainer && childContainer.classList.conatains('absol-draggable-vstack-child-container')) {
-        return this.super(childContainer);
-    }
-};
-
-DraggableVStack.prototype.findChildAfter = function (elt) {
-    var childContainer = child.parentNode;
-    if (childContainer && childContainer.classList.conatains('absol-draggable-vstack-child-container')) {
-        return this.super(childContainer);
+    else {
+        this.$draggingElt.remove();
+        this.$destLine.removeStyle({ top: '' }).remove();
+        this.$cloneContainer.clearChild().remove();
+        this.$draggingElt.classList.remove('dragging');
+        if (this._destRecord) {
+            this.addChildBefore(this.$draggingElt, this._destRecord.elt);
+        }
+        else {
+            this.addChild(this.$draggingElt);
+        }
     }
 };
+
+
+DraggableVStack.prototype._updateDragginPosition = function () {
+    //update cloneContainer
+    var bound = this.getBoundingClientRect();
+    //style top of cloneContainer
+    this._crTop = this._mouseClientY - bound.top - this._pressY;
+    this.$cloneContainer.addStyle({
+        top: this._crTop + 'px'
+    });
+
+    //update destLine
+    var centerY = this._crTop + this._initHeight / 2;
+    var nearestRecord;
+    var nearestDistance = Math.abs(centerY - bound.height);//end of stack
+    var cDist;
+    for (var i = 0; i < this._childrentInfo.length; ++i) {
+        cDist = Math.abs(centerY - this._childrentInfo[i].top);
+        if (cDist < nearestDistance) {
+            nearestRecord = this._childrentInfo[i];
+            nearestDistance = cDist;
+        }
+    }
+    if (nearestRecord) {
+        this.$destLine.addStyle('top', nearestRecord.top + 'px');
+    }
+    else {
+        this.$destLine.addStyle('top', bound.height + 'px');
+    }
+    this._destRecord = nearestRecord;
+};
+
 
 DraggableVStack.prototype._findDragzone = function (elt) {
     while (elt && elt != this) {
@@ -132,4 +209,3 @@ DraggableVStack.prototype._findChild = function (elt) {
 Acore.install('DraggableVStack'.toLowerCase(), DraggableVStack);
 
 export default DraggableVStack;
-
