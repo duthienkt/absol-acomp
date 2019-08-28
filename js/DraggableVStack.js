@@ -6,6 +6,7 @@ var $ = Acore.$;
 
 function DraggableVStack() {
     var res = _({
+        extendEvent: 'change',
         class: 'absol-draggable-vstack'
     });
 
@@ -142,9 +143,12 @@ DraggableVStack.eventHandler.mouseFinish = function (event) {
         this.$draggingElt.classList.remove('dragging');
         if (this._destRecord) {
             this.addChildBefore(this.$draggingElt, this._destRecord.elt);
+            this.emit('change', { type: 'change', target: this, action: "BEFORE", at: this._destRecord.elt, 
+            sourceIndex: this._dragginEltIndex, destIndex: this._destIndex, elt: this.$draggingElt }, this);
         }
         else {
             this.addChild(this.$draggingElt);
+            this.emit('change', { type: 'change', target: this, action: "END", elt: this.$draggingElt, sourceIndex: this._dragginEltIndex }, this);
         }
     }
 };
@@ -187,6 +191,7 @@ DraggableVStack.prototype._updateDragginPosition = function () {
 
     }
     this._destRecord = nearestRecord;
+    this._destIndex = nearestIndex;
 };
 
 
