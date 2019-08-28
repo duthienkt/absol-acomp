@@ -164,11 +164,13 @@ DraggableVStack.prototype._updateDragginPosition = function () {
     var nearestRecord;
     var nearestDistance = Math.abs(centerY - bound.height);//end of stack
     var cDist;
+    var nearestIndex = this._childrentInfo.length;
     for (var i = 0; i < this._childrentInfo.length; ++i) {
         cDist = Math.abs(centerY - this._childrentInfo[i].top);
         if (cDist < nearestDistance) {
             nearestRecord = this._childrentInfo[i];
             nearestDistance = cDist;
+            nearestIndex = i;
         }
     }
     if (nearestRecord) {
@@ -176,6 +178,13 @@ DraggableVStack.prototype._updateDragginPosition = function () {
     }
     else {
         this.$destLine.addStyle('top', bound.height + 'px');
+    }
+    if (nearestIndex == this._dragginEltIndex || nearestIndex == this._dragginEltIndex + 1) {
+        this.$destLine.addStyle('visibility', 'hidden');
+    }
+    else {
+        this.$destLine.removeStyle('visibility', 'hidden');
+
     }
     this._destRecord = nearestRecord;
 };
