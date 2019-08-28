@@ -192,15 +192,36 @@ DraggableVStack.prototype._updateDragginPosition = function () {
     }
     this._destRecord = nearestRecord;
     this._destIndex = nearestIndex;
+
 };
 
 
+DraggableVStack.prototype._autoScrollParentIfNeed = function(){
+
+};
+
 DraggableVStack.prototype._findDragzone = function (elt) {
+    var result = null;
     while (elt && elt != this) {
-        if (elt.classList && elt.classList.contains('drag-zone')) return elt;
+        if (elt.classList && elt.classList.contains('drag-zone')) {
+            result = elt;
+            break;
+        }
         elt = elt.parentNode;
     }
-    return undefined;
+
+    if (result){
+        elt = result;
+        while (elt && elt != this) {
+            if (elt.classList && elt.classList.contains('absol-draggable-vstack')) {
+                result = null;
+                break;
+            }
+            elt = elt.parentNode;
+        }
+    }
+
+    return result;
 };
 
 DraggableVStack.prototype._findDirectChild = function (elt) {
