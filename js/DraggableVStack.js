@@ -1,5 +1,6 @@
 import Acore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import Dom from "absol/src/HTML5/Dom";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -144,8 +145,10 @@ DraggableVStack.eventHandler.mouseFinish = function (event) {
         this.$draggingElt.classList.remove('dragging');
         if (this._destRecord) {
             this.addChildBefore(this.$draggingElt, this._destRecord.elt);
-            this.emit('change', { type: 'change', target: this, action: "BEFORE", at: this._destRecord.elt, 
-            sourceIndex: this._dragginEltIndex, destIndex: this._destIndex, elt: this.$draggingElt }, this);
+            this.emit('change', {
+                type: 'change', target: this, action: "BEFORE", at: this._destRecord.elt,
+                sourceIndex: this._dragginEltIndex, destIndex: this._destIndex, elt: this.$draggingElt
+            }, this);
         }
         else {
             this.addChild(this.$draggingElt);
@@ -193,11 +196,30 @@ DraggableVStack.prototype._updateDragginPosition = function () {
     }
     this._destRecord = nearestRecord;
     this._destIndex = nearestIndex;
-
+    // setTimeout(this._autoScrollParentIfNeed.bind(this, 10), 33);
 };
 
 
-DraggableVStack.prototype._autoScrollParentIfNeed = function(){
+DraggableVStack.prototype._autoScrollParentIfNeed = function (delta) {
+    //todo: choose which element should be scroll
+    if (!(delta > 0)) delta = 10000;
+    var bound = this.getBoundingClientRect();
+    var cloneBound = this.$cloneContainer.getBoundingClientRect();
+    var outBound = Dom.traceOutBoundingClientRect(this.$cloneContainer);
+    if (outBound.bottom >= cloneBound.bottom && outBound.top <= cloneBound.top)  return;
+    var scrollables = [];
+    var current = this;
+
+    while (current) {
+        var oy = window.getComputedStyle(current);
+        oy = oy['overflow-y'] || oy['overflowY'];
+
+        if (oy == 'auto' || oy == 'scroll') {            
+            scrollables.push(current);
+        }
+        current = current.parentElement;
+    }
+    scrollables.push(document.body.parentElement);
 
 };
 
@@ -211,7 +233,7 @@ DraggableVStack.prototype._findDragzone = function (elt) {
         elt = elt.parentNode;
     }
 
-    if (result){
+    if (result) {
         elt = result;
         while (elt && elt != this) {
             if (elt.classList && elt.classList.contains('absol-draggable-vstack')) {

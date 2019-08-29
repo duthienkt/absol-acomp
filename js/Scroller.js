@@ -115,24 +115,25 @@ VScroller.prototype.removeChild = function () {
     return res;
 };
 
-VScroller.prototype.scrollInto = function (element) {
+VScroller.prototype.scrollInto = function (element, padding) {
     if (Element.prototype.isDescendantOf.call(element, this.$viewport)) {
+        padding = padding || 0;
         var elementBound = element.getBoundingClientRect();
         var viewportBound = this.$viewport.getBoundingClientRect();
         var currentScrollTop = this.$viewport.scrollTop;
         var newScrollTop = currentScrollTop;
-        if (elementBound.bottom > viewportBound.bottom) {
-            newScrollTop = currentScrollTop + (elementBound.bottom - viewportBound.bottom);
+        if (elementBound.bottom + padding > viewportBound.bottom) {
+            newScrollTop = currentScrollTop + ((elementBound.bottom + padding) - viewportBound.bottom);
         }
-        if (elementBound.top < viewportBound.top) {
-            newScrollTop = currentScrollTop - (viewportBound.top - elementBound.top);
+        if (elementBound.top - padding < viewportBound.top) {
+            newScrollTop = currentScrollTop - (viewportBound.top - (elementBound.top - padding));
         }
 
         if (newScrollTop != currentScrollTop) {
             this.$viewport.scrollTop = newScrollTop;
         }
     }
-}
+};
 
 
 

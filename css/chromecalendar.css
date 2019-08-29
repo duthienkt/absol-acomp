@@ -56,6 +56,10 @@
 
 }
 
+.absol-chrome-calendar-title {
+    cursor: pointer;
+}
+
 .absol-chrome-calendar-title>span {
     line-height: 1.5em;
 }
@@ -65,6 +69,8 @@
     border: solid 1px rgb(190, 190, 190);
     width: 14em;
     position: relative;
+    height: calc(8.4em + 3px);
+    /*border*/
 }
 
 .absol-chrome-calendar-dayofweek {
@@ -82,6 +88,7 @@
     display: inline-block;
     width: 14.2857142857%;
     border-bottom: solid 1px rgb(191, 191, 191);
+    box-sizing: border-box;
 }
 
 .absol-chrome-calendar-month {
@@ -100,8 +107,102 @@
     display: table-cell;
     text-align: right;
     padding-right: 0.4em;
+    cursor: pointer;
 }
 
 .absol-chrome-calendar-week-in-mounth>div:hover {
     background-color: rgb(224, 245, 256);
+}
+
+
+.absol-chrome-calendar-not-in-month {
+    color: rgb(190, 190, 190);
+}
+
+.absol-chrome-calendar-today {
+    border: inset 1px rgb(191, 191, 191);
+    box-sizing: border-box;
+}
+
+.absol-chrome-calendar-selected {
+    background-color: rgb(188, 205, 236);
+}
+
+.absol-chrome-calendar-years {
+    width: 100%;
+    height: 100%;
+}
+
+
+.absol-chrome-calendar:not(.view-year) .absol-chrome-calendar-years {
+    display: none;
+}
+
+.absol-chrome-calendar.view-year .absol-chrome-calendar-instance {
+    border-color: rgb(77, 114, 254)
+}
+
+.absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-month,
+.absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-dayofweek {
+    display: none;
+}
+
+.absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-title {
+    color: rgb(191, 191, 191);
+}
+
+
+.absol-chrome-calendar-year {}
+
+
+.absol-chrome-calendar-year-head {
+    background-color: rgb(241, 241, 241);
+    border-bottom: solid 1px rgb(191, 191, 191);
+    height: 1.5em;
+    text-align: center;
+    line-height: 1.5em;
+}
+
+
+.absol-chrome-calendar-year:last-child .absol-chrome-calendar-year-head {
+    border-bottom: solid 1px rgb(191, 191, 191);
+}
+
+.absol-chrome-calendar-year.start-opening .absol-chrome-calendar-year-mounths,
+.absol-chrome-calendar-year.closing .absol-chrome-calendar-year-mounths {
+    margin-bottom: -6em;
+    transition: margin-bottom 0.1s;
+}
+
+.absol-chrome-calendar-year.opening .absol-chrome-calendar-year-mounths,
+.absol-chrome-calendar-year.start-closing .absol-chrome-calendar-year-mounths {
+    margin-bottom: 0;
+    transition: margin-bottom 0.1s;
+}
+
+
+.absol-chrome-calendar-year-mounths {
+    height: 6em;
+    border-bottom: solid 1px rgb(191, 191, 191);
+}
+
+.absol-chrome-calendar-year-quater {
+    display: table-row;
+}
+
+.absol-chrome-calendar-year-month {
+    display: table-cell;
+}
+
+
+
+.absol-chrome-calendar-years:hover .absol-scrollbar {
+    opacity: 1;
+
+}
+
+.absol-chrome-calendar-years .absol-scrollbar {
+    background-color: rgba(169, 169, 172, 0.2);
+    opacity: 0;
+    transition: opacity 0.2s;
 }
