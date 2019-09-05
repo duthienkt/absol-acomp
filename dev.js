@@ -2,11 +2,14 @@ import AComp from "./AComp";
 import 'absol/src/absol';
 
 import QuickMenu from "./js/QuickMenu";
+import ChromeCalendar from "./js/ChromeCalendar";
 
 //for export to window
 absol.Tooltip = AComp.creator.tooltip;
 absol.QuickMenu = QuickMenu;
 absol.AComp = AComp;
+
+absol.ChromeCalendar = ChromeCalendar;
 
 absol.coreDom.install(AComp.core);
 
