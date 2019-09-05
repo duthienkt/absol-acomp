@@ -192,6 +192,7 @@ ChromeCalendar.prototype._isSelectedMonth = function (date) {
 ChromeCalendar.prototype.pickDate = function (date, event) {
     this._selectedDates = [date];
     this._updateMonth(this.$month);
+    if ( this.$lastOpenYearItem) this.$lastOpenYearItem.$months.updateActiveMonth();
     this.emit({
         type: 'pick', value: date,
         isTrusted: event && event.isTrusted,
