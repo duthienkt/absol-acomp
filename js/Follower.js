@@ -135,7 +135,8 @@ Follower.prototype.unfollow = function () {
     if (!this._scrollTrackEventHandler) return;// nothing to do
     this.removeClass('following');
     var trackElt;
-    for (var i = 0; this.$scrollTrackElts.length; ++i) {
+
+    for (var i = 0; i < this.$scrollTrackElts.length; ++i) {
         trackElt = this.$scrollTrackElts[i];
         if (trackElt.removeEventListener)
             trackElt.removeEventListener('scroll', this._scrollTrackEventHandler, false);
@@ -187,7 +188,7 @@ Follower.property.anchor = {
         });
         this._anchor = value;
         this._lastAnchor = undefined;
-        
+
         this.updatePosition();
     },
     get: function () {
