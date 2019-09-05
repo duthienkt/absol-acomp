@@ -74,7 +74,7 @@ Follower.prototype.updatePosition = function () {
     var x = 0;
     var y = 0;
     var score;
-    var anchors = this._lastAncho === undefined ? this.anchor : [this._lastAncho].concat(this.anchor);
+    var anchors = this._lastAnchor === undefined ? this.anchor : [this._lastAnchor].concat(this.anchor);
     var factor;
     var bestX, bestY, bestScore = -100000;
     var newContentRect;
@@ -92,8 +92,8 @@ Follower.prototype.updatePosition = function () {
             bestY = y;
         }
     }
-    
-    this._lastAncho = bestAnchor;
+
+    this._lastAnchor = bestAnchor;
     bestX -= bound.left;
     bestY -= bound.top;
     this.$contentCtn.addStyle({
@@ -187,6 +187,7 @@ Follower.property.anchor = {
         });
         this._anchor = value;
         this._lastAnchor = undefined;
+        
         this.updatePosition();
     },
     get: function () {
