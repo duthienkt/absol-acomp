@@ -74,6 +74,11 @@ import './js/EditableText';
 import './css/widthheightresizer.css';
 import './js/WidthHeightSizer';
 
+
+
+import './js/Follower';
+import './css/follower.css';
+
 import './css/tooltip.css';
 import './js/Tooltip';
 
@@ -126,6 +131,7 @@ import './js/DraggableVStack';
 
 import  './css/chromecalendar.css';
 import './js/ChromeCalendar';
+
 
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
