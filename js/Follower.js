@@ -17,7 +17,8 @@ function Follower() {
         .on('error', function () {
             res.updatePosition();
             this.updateSize = this.updateSize || res.updatePosition.bind(this);
-            Dom.addToResizeSystem(this);
+            
+            Dom.addToResizeSystem(res);
         });
     res.$contentCtn = $('.absol-follower-content-container', res);
 
@@ -66,7 +67,6 @@ Follower.ANCHOR_PRIORITY = [1, 6, 2, 5, 0, 7, 3, 4, 9, 11, 8, 10, 12, 15, 13, 14
 
 Follower.prototype.updatePosition = function () {
     if (!this.$followTarget) return;
-
     var contentCtnBound = this.$contentCtn.getBoundingClientRect();
     var targetBound = this.$followTarget.getBoundingClientRect();
     var outRect = Rectangle.fromClientRect(Dom.traceOutBoundingClientRect(this));

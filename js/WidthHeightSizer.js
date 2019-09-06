@@ -39,7 +39,7 @@ function WidthHeightResizer() {
     WidthHeightResizer.prototype[key] = function () {
         return this.$content[key].apply(this.$content, arguments);
     }
-})
+});
 
 
 WidthHeightResizer.eventHandler = {};
