@@ -1,7 +1,7 @@
 import Acore from "../ACore";
 
 import * as datetime from 'absol/src/Time/datetime';
-
+import EventEmitter from 'absol/src/HTML5/EventEmitter';
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -129,10 +129,13 @@ function ChromeCalendar() {
     res.$instance = $('.absol-chrome-calendar-instance', res);
 
     res.$month = $('.absol-chrome-calendar-month', res);
-    res._selectedDates = [new Date()];
+    res._minLimitDate = new Date(1890, 0, 1, 0, 0, 0, 0, 0);
+    res._maxLimitDate = new Date(2090, 0, 1, 0, 0, 0, 0, 0);
+
+    res._selectedDates = [datetime.beginOfDay(new Date())];
     res._viewDate = new Date();
 
-    res.$preBtn = $('.absol-chrome-calendar-header-buttons > button.prev-btn', res)
+    res.$prevBtn = $('.absol-chrome-calendar-header-buttons > button.prev-btn', res)
         .on('click', function () {
             res.viewPrevMonth();
         });
@@ -193,9 +196,9 @@ ChromeCalendar.prototype.pickDate = function (date, event) {
     this._selectedDates = [date];
     this._updateMonth(this.$month);
     if (this.$lastOpenYearItem) this.$lastOpenYearItem.$months.updateActiveMonth();
-   
-    
-    this.emit('pick',{
+
+
+    this.emit('pick', {
         type: 'pick', value: date,
         isTrusted: event && event.isTrusted,
         originEvent: event,
@@ -263,6 +266,13 @@ ChromeCalendar.prototype._updateMonth = function (monthElt) {
             cell.addClass('absol-chrome-calendar-selected');
         else
             cell.removeClass('absol-chrome-calendar-selected');
+
+        if (datetime.compareDate(this._minLimitDate, currentDate) > 0 || datetime.compareDate(currentDate, this._maxLimitDate) > 0) {
+            cell.addClass('absol-chrome-calendar-date-disabled');
+        }
+        else {
+            cell.removeClass('absol-chrome-calendar-date-disabled');
+        }
     }
 };
 
@@ -385,6 +395,7 @@ ChromeCalendar.prototype.viewToday = function () {
 };
 
 ChromeCalendar.prototype.viewMonth = function () {
+    this._updateButtons();
     this.removeClass('view-year').addClass('view-month');
     this._fillMonth(this.$month, this._viewDate);
     this._updateMonth(this.$month);
@@ -442,6 +453,33 @@ ChromeCalendar.prototype.expandYear = function (year) {
 };
 
 
+ChromeCalendar.prototype._updateButtons = function () {
+    var endOfPrevMonth = datetime.prevDate(datetime.beginOfMonth(this._viewDate));
+
+    if (datetime.compareDate(endOfPrevMonth, this._minLimitDate) < 0) {
+        this.$prevBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+    else {
+        this.$prevBtn.removeClass('absol-chrome-calendar-button-disabled');
+    }
+
+    var beginOfNextMonth = datetime.nextMonth(this._viewDate);
+
+    if (datetime.compareDate(beginOfNextMonth, this._maxLimitDate) > 0) {
+        this.$nextBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+    else {
+        this.$nextBtn.removeClass('absol-chrome-calendar-button-disabled');
+    }
+    var now = new Date();
+    if (datetime.compareDate(now, this._maxLimitDate) > 0 || datetime.compareDate(now, this._minLimitDate) < 0) {
+        this.$todayBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+    else {
+        this.$todayBtn.removeClass('absol-chrome-calendar-button-disabled');
+    }
+};
+
 ChromeCalendar.prototype._createMonths = function (year) {
     var now = new Date();
     var self = this;
@@ -494,6 +532,14 @@ ChromeCalendar.prototype._createMonths = function (year) {
                 e.removeClass('absol-chrome-calendar-selected');
 
             }
+            var beginOfMonth = datetime.beginOfMonth(e.__date__);
+            var endOfMonth = datetime.prevDate(datetime.nextMonth(e.__date__));
+            if (datetime.compareDate(self._minLimitDate, endOfMonth) > 0 || datetime.compareDate(beginOfMonth, self._maxLimitDate) > 0) {
+                e.addClass('absol-chrome-calendar-date-disabled');
+            }
+            else {
+                e.removeClass('absol-chrome-calendar-date-disabled');
+            }
         });
     }
     return res;
@@ -503,6 +549,7 @@ ChromeCalendar.prototype._createMonths = function (year) {
 
 ChromeCalendar.prototype.init = function (props) {
     props = props || {};
+    this.super(props);
     this.viewToday();
 };
 
@@ -523,6 +570,43 @@ ChromeCalendar.property.selectedDates = {
     }
 };
 
+
+ChromeCalendar.property.minLimitDate = {
+    set: function (value) {
+        if (!value) value = new Date(1890, 0, 1, 0, 0, 0, 0, 0);
+        if (typeof value == 'number') value = new Date(value);
+        this._minLimitDate = value;
+        //todo
+        this._updateButtons();
+        this.sync = this.sync.then(function () {
+            this._updateMonth(this.$month);
+            if (this.$lastOpenYearItem) {
+                this.$lastOpenYearItem.$months.updateActiveMonth();
+            }
+        }.bind(this));
+    },
+    get: function () {
+        return this._minLimitDate;
+    }
+};
+
+ChromeCalendar.property.maxLimitDate = {
+    set: function (value) {
+        if (!value) value = new Date(2090, 0, 1, 0, 0, 0, 0, 0);
+        if (typeof value == 'number') value = new Date(value);
+        this._maxLimitDate = value;
+        this._updateButtons();
+        this.sync = this.sync.then(function () {
+            this._updateMonth(this.$month);
+            if (this.$lastOpenYearItem) {
+                this.$lastOpenYearItem.$months.updateActiveMonth();
+            }
+        }.bind(this));
+    },
+    get: function () {
+        return this._minLimitDate;
+    }
+};
 
 ChromeCalendar.property.multiSelect = {
     set: function (value) {
@@ -551,8 +635,7 @@ ChromeCalendar.$follower = _('follower').addTo(ChromeCalendar.$ctn);
 ChromeCalendar._session = Math.random() * 10000000000 >> 0;
 ChromeCalendar.$calendar = _('chromecalendar')
     .on('pick', function (event) {
-       
-        if (typeof ChromeCalendar._listener == 'function'){
+        if (typeof ChromeCalendar._listener == 'function') {
             ChromeCalendar._listener(event.value);
         }
     }).addTo(ChromeCalendar.$follower);
@@ -579,17 +662,20 @@ ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calenda
         if (ChromeCalendar._session == res.currentSession) return;
 
         res.currentSession = ChromeCalendar.show(res.element, res.calendarProps, res.anchor, res.calendarPickListener, res.darkTheme);
-        
-        var finish = function () {
+
+        var finish = function (event) {
+            if (event && event.target && EventEmitter.hitElement(ChromeCalendar.$calendar, event)) return;
             document.body.removeEventListener('click', finish, false);
             ChromeCalendar.close(res.currentSession);
-            ChromeCalendar.$calendar.off('pick', calendarPickListener)
+            ChromeCalendar.$calendar.off('pick', finish);
+            
             res.currentSession = undefined;
             res.cancel = function () { };
         };
 
         setTimeout(function () {
             document.body.addEventListener('click', finish, false);
+            ChromeCalendar.$calendar.on('pick', finish);
             res.cancel = finish;
         }, 10)
     };

@@ -132,6 +132,9 @@ import './js/DraggableVStack';
 import  './css/chromecalendar.css';
 import './js/ChromeCalendar';
 
+import  './css/calendarinput.css';
+import './js/CalendarInput';
+
 
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";

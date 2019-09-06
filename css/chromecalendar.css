@@ -250,3 +250,14 @@
     opacity: 0;
     transition: opacity 0.2s;
 }
+
+.absol-chrome-calendar-date-disabled {
+    color: rgb(230, 230, 230);
+    pointer-events: none;
+}
+
+button.absol-chrome-calendar-button-disabled{
+    color: rgb(200, 200, 200);
+    pointer-events: none;
+    box-shadow: none;
+}
