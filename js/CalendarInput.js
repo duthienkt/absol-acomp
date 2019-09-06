@@ -53,7 +53,7 @@ CalendarInput.property.value = {
 CalendarInput.property.dateToString = {
     set: function (value) {
         this._dateToString = value;
-        this.$input.value = this.formartDateString(value);
+        this.$input.value = this.formartDateString(this.value);
     },
     get: function () {
         return this._dateToString;
@@ -77,8 +77,9 @@ Acore.install('calendarinput', CalendarInput);
 
 // for older code
 Acore.install('calendar-input', function (data) {
+
     return _({
-        tag: 'calendar',
+        tag: 'calendarinput',
         extendEvent:'changed',
         props: data,
         on:{
