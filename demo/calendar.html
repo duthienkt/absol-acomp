@@ -38,7 +38,9 @@
         _({
             tag: 'chromecalendar',
             props: {
-
+                selectedDates: new Date(2019, 7, 3),
+                minLimitDate: new Date(2019, 7, 3),
+                maxLimitDate: new Date(2019, 11, 3)
             }
         }).addTo(scroller);
     </script>
@@ -57,6 +59,51 @@
             }
         );
     </script>
+
+    <h1>Calendar Input</h1>
+    <div id="min-max-inputs">
+        <label id="min-lb">Min </label><input id="min-ip"/>
+        <label id="max-lb"> Max </label><input id="max-ip"/>
+    </div>
+    <script class="viewable">
+        var mmInputs = $('#min-max-inputs');
+        var minValue = new Date(2019, 0, 1);
+        var maxValue = new Date(2020, 0, 1)
+        var minIp = absol._(
+            {
+                tag: 'calendarinput',
+                props: {
+                    value: minValue,
+                    maxLimitDate: maxValue
+                },
+                on:{
+                    change: function(ev){
+                        maxIp.minLimitDate = ev.value;
+                    }
+                }
+            }
+        );
+        var maxIp = absol._(
+            {
+                tag: 'calendarinput',
+                props: {
+                    value: maxValue,
+                    minLimitDate: minValue
+                },
+                on:{
+                    change: function(ev){
+                        minIp.maxLimitDate = ev.value;
+                    }
+                }
+            }
+        );
+        $('#min-ip', mmInputs).selfReplace(minIp);
+        $('#max-ip', mmInputs).selfReplace(maxIp);
+
+
+
+    </script>
+
     <script src="./autohightlighting.js?"></script>
 
 </body>

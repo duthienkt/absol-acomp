@@ -252,12 +252,14 @@
 }
 
 .absol-chrome-calendar-date-disabled {
-    color: rgb(230, 230, 230);
+    color: rgb(240, 230, 230);
     pointer-events: none;
+    cursor: not-allowed;
 }
 
-button.absol-chrome-calendar-button-disabled{
-    color: rgb(200, 200, 200);
+button.absol-chrome-calendar-button-disabled {
+    color: rgb(220, 210, 210);
     pointer-events: none;
     box-shadow: none;
+    cursor: not-allowed;
 }

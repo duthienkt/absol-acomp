@@ -30,7 +30,7 @@ function CalendarInput() {
     });
 
     OOP.drillProperty(res, res._quickOption.calendarProps, ['minLimitDate', 'maxLimitDate']);
-    
+
 
     return res;
 }
@@ -79,7 +79,13 @@ Acore.install('calendarinput', CalendarInput);
 Acore.install('calendar-input', function (data) {
     return _({
         tag: 'calendar',
-        props: data
+        extendEvent:'changed',
+        props: data,
+        on:{
+            change:function(ev){
+                this.emit('changed', ev.value);
+            }
+        }
     });
 });
 
