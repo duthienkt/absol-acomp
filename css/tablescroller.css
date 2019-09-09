@@ -71,7 +71,7 @@
 
 .absol-table-scroller-head-line,
 .absol-table-scroller-left-line {
-    z-index: 1000;
+    z-index: 30;
     pointer-events: none;
     position: absolute;
 }
