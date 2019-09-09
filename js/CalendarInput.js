@@ -48,7 +48,41 @@ CalendarInput.property.value = {
     get: function () {
         return this._value;
     }
-}
+};
+
+
+CalendarInput.property.disabled = {
+    set: function (value) {
+        this.$input.disabled = !value;
+        if (value) {
+            this.addClass('absol-disabled');
+        }
+        else {
+            this.removeClass('absol-disabled');
+        }
+    },
+    get: function () {
+        return this.$input.disabled;
+    }
+};
+
+CalendarInput.attribute = {
+    disabled: {
+        set: function (value) {
+            this.$input.attr('disabled', value);
+            if (this.$input.disabled)
+                this.addClass('absol-disabled');
+        },
+        get: function () {
+            return this.$input.attr('disabled');
+        },
+        remove: function () {
+            this.$input.attr('disabled', undefined);
+            this.removeClass('absol-disabled');
+        }
+    }
+};
+
 
 CalendarInput.property.dateToString = {
     set: function (value) {
@@ -80,10 +114,10 @@ Acore.install('calendar-input', function (data) {
 
     return _({
         tag: 'calendarinput',
-        extendEvent:'changed',
+        extendEvent: 'changed',
         props: data,
-        on:{
-            change:function(ev){
+        on: {
+            change: function (ev) {
                 this.emit('changed', ev.value);
             }
         }

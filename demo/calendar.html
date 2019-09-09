@@ -62,8 +62,9 @@
 
     <h1>Calendar Input</h1>
     <div id="min-max-inputs">
-        <label id="min-lb">Min </label><input id="min-ip"/>
-        <label id="max-lb"> Max </label><input id="max-ip"/>
+        <label id="min-lb">Min </label><input id="min-ip" />
+        <label id="max-lb"> Max </label><input id="max-ip" />
+        <label id="disabled-lb"> Disabled </label><input id="disabled-ip" />
     </div>
     <script class="viewable">
         var mmInputs = $('#min-max-inputs');
@@ -76,8 +77,8 @@
                     value: minValue,
                     maxLimitDate: maxValue
                 },
-                on:{
-                    change: function(ev){
+                on: {
+                    change: function (ev) {
                         maxIp.minLimitDate = ev.value;
                     }
                 }
@@ -90,8 +91,8 @@
                     value: maxValue,
                     minLimitDate: minValue
                 },
-                on:{
-                    change: function(ev){
+                on: {
+                    change: function (ev) {
                         minIp.maxLimitDate = ev.value;
                     }
                 }
@@ -99,6 +100,14 @@
         );
         $('#min-ip', mmInputs).selfReplace(minIp);
         $('#max-ip', mmInputs).selfReplace(maxIp);
+        $('#disabled-ip', mmInputs).selfReplace(_({
+            tag: 'calendarinput',
+            props: {
+                value: maxValue,
+                minLimitDate: minValue,
+                disabled: true
+            }
+        }));
 
 
 
