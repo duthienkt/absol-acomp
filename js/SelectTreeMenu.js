@@ -4,7 +4,7 @@ import SelectMenu from "./SelectMenu";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
-import { phraseMatch } from "absol/src/String/stringMatching";
+import { wordsMatch } from "absol/src/String/stringMatching";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -87,17 +87,16 @@ SelectTreeMenu.prototype.updateDropdownPostion = function (searching) {
         }
         this.$vscroller.addStyle('max-height', availableTop + 'px');
     }
-    this.scrollToSelectedItem();
+    if (!searching)
+        this.scrollToSelectedItem();
 };
 
 SelectTreeMenu.prototype.scrollToSelectedItem = function () {
     this._scrolling = true;
     setTimeout(function () {
-        var selectedView = $('treelistitem.active > .absol-tree-list-item-parent', this.$vscroller);
-        if (selectedView) this.$vscroller.scrollInto(selectedView);
+        if (self.$selectedItem) this.$vscroller.scrollInto(selectedView);
         this._scrolling = false;
     }.bind(this), 5);
-
 };
 
 SelectTreeMenu.getRenderSpace = SelectMenu.getRenderSpace;
@@ -127,7 +126,7 @@ SelectTreeMenu.eventHandler.attached = function () {
 SelectTreeMenu.eventHandler.click = function (event) {
     if (EventEmitter.hitElement(this.$treelist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event))) {
         event.preventDefault();
-        setTimeout(function(){
+        setTimeout(function () {
             this.isFocus = false;
         }.bind(this), 1);
     }
@@ -147,7 +146,7 @@ SelectTreeMenu.eventHandler.searchModify = function (event) {
 }
 
 SelectTreeMenu.prototype.notifyChange = function (eventData) {
-    setTimeout(function(){
+    setTimeout(function () {
         this.emit('change', Object.assign({}, eventData), this)
     }.bind(this), 1)
 }
@@ -170,6 +169,7 @@ SelectTreeMenu.prototype.updateSelectedItem = function (scrollInto) {
     setTimeout(function () {
         $('treelistitem', self.$treelist, function (elt) {
             if (elt.value == self.value) {
+                self.$selectedItem = elt;
                 self.$holderItem.clearChild();
                 self.$holderItem.addChild(elt.$parent.cloneNode(true));
                 elt.active = true;
@@ -189,7 +189,8 @@ SelectTreeMenu.property = {};
 SelectTreeMenu.property.items = {
     set: function (value) {
         this._items = value || [];
-        this.$treelist.items = this._items;
+        this.$treelist.items = SelectTreeMenu.prepareData(this._items);
+        this.__searchcache__ = {};
         this.$treelist.realignDescription();
 
         this.treeListBound = this.$treelist.getBoundingClientRect();
@@ -308,49 +309,97 @@ SelectTreeMenu.property.hidden = {
 SelectTreeMenu.EXTRA_MATCH_SCORE = 2;
 SelectTreeMenu.UNCASE_MATCH_SCORE = 1;
 SelectTreeMenu.UVN_MATCH_SCORE = 3;
+SelectTreeMenu.EQUAL_MATCH_SCORE = 4;
+SelectTreeMenu.WORD_MATCH_SCORE = 3;
+
+/**
+ * @typedef {{text:String, __words__: Array<String>, __textNoneCase__: String, __wordsNoneCase__: Array<String>, __nvnText__:String, __nvnWords__:Array<String>, __nvnTextNoneCase__: String, __nvnWordsNoneCase__: Array<String>}} SearchItem
+ * @param {SearchItem} item
+ * @returns {SearchItem}
+ */
+SelectTreeMenu.prepareItem = function (item) {
+    var spliter =/\s+/;
+
+    item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
+    item.__words__ = item.__text__.split(spliter);
+
+    item.__textNoneCase__ = item.__text__.toLowerCase();
+    item.__wordsNoneCase__ = item.__textNoneCase__.split(spliter);
 
 
+    item.__nvnText__ = nonAccentVietnamese(item.__text__);
+    item.__nvnWords__ = item.__nvnText__.split(spliter);
 
-SelectTreeMenu.calScore = function (query, text) {
-    var textL = text.length;
-    var score = 0;
-    var extraIndex = text.indexOf(query);
-    if (extraIndex >= 0) {
-        score += SelectTreeMenu.EXTRA_MATCH_SCORE * textL - extraIndex / textL;
-    }
-    var extraIndex = text.toLowerCase().indexOf(query.toLowerCase());
-    if (extraIndex >= 0) {
-        score += SelectTreeMenu.UNCASE_MATCH_SCORE * textL - extraIndex / textL;
-    }
-    var queryNVN = nonAccentVietnamese(query).toLowerCase();
-    var textNVN = nonAccentVietnamese(text).toLowerCase();
-    var nIndex = textNVN.indexOf(queryNVN);
-    if (nIndex >= 0) score += SelectTreeMenu.UVN_MATCH_SCORE * textL - nIndex;
-
-    score += phraseMatch(query, text, 1);
-    score += phraseMatch(query.toLowerCase(), text.toLowerCase(), 1);
-    score += phraseMatch(queryNVN, textNVN, 1);
-    return score;
+    item.__nvnTextNoneCase__ = item.__nvnText__.toLowerCase();
+    item.__nvnWordsNoneCase__ = item.__nvnTextNoneCase__.split(spliter);
+    if (item.text.indexOf('-')>=0) console.log(item)
+    return item;
 }
+
+console.log("HÀNH CHÍNH-NHÂN SỰ".split( /[\s\b\-()\[\]]+/g))
+
+SelectTreeMenu.prepareData = function (items) {
+    var item;
+    for (var i = 0; i < items.length; ++i) {
+        if (typeof items[i] == 'string') {
+            items[i] = { text: items[i], value: items[i] };
+        }
+        item = items[i];
+        SelectTreeMenu.prepareItem(item);
+        if (item.items) SelectTreeMenu.prepareData(item.items);
+    }
+    return items;
+}
+
+/**
+ * @param {SearchItem} queryItem
+ * @param {SearchItem} item
+ */
+SelectTreeMenu.calScore = function (queryItem, item) {
+    var score = 0;
+
+    if (item.__text__ == queryItem.__text__)
+        score += SelectTreeMenu.EQUAL_MATCH_SCORE * queryItem.__text__.length;
+
+    var extraIndex = item.__text__.indexOf(queryItem.__text__);
+
+    if (extraIndex >= 0) {
+        score += SelectTreeMenu.EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+    }
+
+    extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
+    if (extraIndex >= 0) {
+        score += SelectTreeMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+    }
+
+    extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
+    if (extraIndex >= 0) {
+        score += SelectTreeMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+    }
+
+    score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * SelectTreeMenu.WORD_MATCH_SCORE;
+    score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * SelectTreeMenu.WORD_MATCH_SCORE;
+
+    return score;
+};
 
 SelectTreeMenu.queryTree = function (query, items) {
     var gmaxScore = 0;
     var gminScore = 1000;
-    function makeScore(item) {
-        var text;
-        if (typeof item == 'string') {
-            text = item;
-        }
-        else {
-            text = item.text;
-        }
+    var queryItem = SelectTreeMenu.prepareItem({ text: query });
 
-        var score = SelectTreeMenu.calScore(query, text);
+    function makeScore(item) {
+
+        var score = SelectTreeMenu.calScore(queryItem, item);
+
+
         gmaxScore = Math.max(score, gmaxScore);
         gminScore = Math.min(score, gminScore);
+
         var children = (item.items || []).map(function (item) {
             return makeScore(item);
         });
+
         var maxScore = children.reduce(function (ac, cr) {
             return Math.max(ac, cr.maxScore);
         }, score);
@@ -387,12 +436,12 @@ SelectTreeMenu.queryTree = function (query, items) {
     }
 
     var scoredItems = items.map(makeScore);
+
     var medianScore = (gminScore + gmaxScore) / 2;
 
-    return makeItems(scoredItems, medianScore);
+    var items = makeItems(scoredItems, medianScore);
 
-
-
+    return items;
 };
 
 SelectTreeMenu.prototype.search = function (query) {
@@ -400,12 +449,15 @@ SelectTreeMenu.prototype.search = function (query) {
         this.$treelist.items = this.items;
         this.updateSelectedItem();
         this.updateDropdownPostion(true);
+        this.scrollToSelectedItem();
     }
     else {
-        var searchResult = SelectTreeMenu.queryTree(query, this.items);
+        var searchResult = this.__searchcache__[query] || SelectTreeMenu.queryTree(query, this.items);
+        this.__searchcache__[query] = searchResult;
         this.$treelist.items = searchResult;
         this.updateSelectedItem();
         this.updateDropdownPostion(true);
+        this.$vscroller.scrollTop = 0;
     }
 };
 
