@@ -36,7 +36,16 @@ function VScroller() {
         ]
     });
     res.eventHandler = OOP.bindFunctions(res, VScroller.eventHandler);
-    res.sync = res.afterAttached();
+    res.$attachHook = _('attachhook').addTo(res);
+    res.sync = new Promise(function(rs){
+        res.$attachHook.once('error', function(){
+            rs();
+        });
+    }); 
+
+    res.$attachHook.on('error', function(){
+        res.requestUpdateSize();
+    });
     res.$vscrollbar = $('vscrollbar', res).on('scroll', res.eventHandler.scrollScrollbar);
     res.$viewport = $('.absol-vscroller-viewport', res)
         .on('scroll', res.eventHandler.scrollViewport);
@@ -58,8 +67,12 @@ VScroller.prototype.requestUpdateSize = function () {
         this.$vscrollbar.outerHeight = this.$viewport.clientHeight;
         this.$vscrollbar.innerHeight = this.$viewport.scrollHeight - 2;
         this.$vscrollbar.innerOffset = this.$viewport.scrollTop;
+        console.log(this.$vscrollbar.innerHeight <= this.$vscrollbar.outerHeight);
         if (this.$vscrollbar.innerHeight <= this.$vscrollbar.outerHeight) {
             this.$vscrollbar.hidden = true;
+            
+            
+            
             this.addClass('disabled');
         }
         else {

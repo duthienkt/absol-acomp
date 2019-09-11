@@ -407,6 +407,7 @@ ChromeCalendar.prototype.viewYear = function () {
     this.removeClass('view-month')
         .addClass('view-year');
     this.expandYear(this._viewDate.getFullYear());
+    this.$yearScroller.requestUpdateSize();
 };
 
 ChromeCalendar.prototype.expandYear = function (year) {
@@ -609,6 +610,11 @@ ChromeCalendar.property.maxLimitDate = {
         return this._minLimitDate;
     }
 };
+
+
+ChromeCalendar.property.minDateLimit = ChromeCalendar.property.minLimitDate ;
+ChromeCalendar.property.maxDateLimit = ChromeCalendar.property.maxLimitDate ;
+
 
 ChromeCalendar.property.multiSelect = {
     set: function (value) {
