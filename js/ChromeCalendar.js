@@ -429,6 +429,7 @@ ChromeCalendar.prototype.expandYear = function (year) {
             lastItemElt.$months = undefined;
         }, 100);
     }
+    
     if (lastItemElt != itemElt) {
         if (!itemElt.$months) {
             itemElt.$months = this._createMonths(year).addTo(itemElt);
@@ -441,14 +442,15 @@ ChromeCalendar.prototype.expandYear = function (year) {
                 itemElt.removeClass('opening');
             }, 100);
         }
-        var dy = itemElt.getBoundingClientRect().top - self.$yearScroller.getBoundingClientRect().top - fontSize * 0.45;
-        if (itemElt.__year__ > lastYear) {
-            dy -= 6 * fontSize;
-        }
-        self.$yearScroller.scrollBy(dy, 100);
-        this.$lastOpenYearItem = itemElt;
-        itemElt.$months.updateActiveMonth();
     }
+    var dy = itemElt.getBoundingClientRect().top - self.$yearScroller.getBoundingClientRect().top - fontSize * 0.45;
+    if (itemElt.__year__ > lastYear) {
+        dy -= 6 * fontSize;
+    }
+    
+    self.$yearScroller.scrollBy(dy, 100);
+    this.$lastOpenYearItem = itemElt;
+    itemElt.$months.updateActiveMonth();
 
 };
 
