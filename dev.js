@@ -1,5 +1,5 @@
+import "absol/src/absol";
 import AComp from "./AComp";
-import 'absol/src/absol';
 
 import QuickMenu from "./js/QuickMenu";
 import ChromeCalendar from "./js/ChromeCalendar";
