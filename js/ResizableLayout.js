@@ -13,7 +13,6 @@ function ResizableLayout() {
 
     res._colsSize = [1];
     res._rowSize = [1];
-    setTimeout(u=> res.debug(), 400);
    
     return res;
 }

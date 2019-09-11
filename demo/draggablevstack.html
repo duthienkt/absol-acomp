@@ -28,6 +28,8 @@
 <body>
     <h1>Draggable VStack</h1>
 
+    <div class="absol-bscroller" style="height: 700px">
+    </div>
 
     <script class="viewable">
         var range = absol._('div').addTo(document.body);
@@ -42,7 +44,7 @@
 
         var mStack = absol._({
             tag: 'draggablevstack',
-            child: Array(10).fill('').map(function (u, i) {
+            child: Array(50).fill('').map(function (u, i) {
                 return {
                     class: ['bg', i % 2 == 0 ? 'light' : 'dark'],
                     style: { position: 'relative' },
@@ -80,7 +82,7 @@
             })
         });
         mStack.on('change', updateRange);
-        mStack.addTo(document.body);
+        mStack.addTo(absol.$('.absol-bscroller'));
         updateRange();
 
 
