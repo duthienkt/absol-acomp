@@ -20,8 +20,8 @@ function CalendarInput() {
     res._value = beginOfDay(new Date());
 
     res._quickOption = ChromeCalendar.showWhenClick(res, {
-        minLimitDate: res.minLimitDate,
-        maxLimitDate: res.maxLimitDate,
+        minLimitDate: res.minLimitDate||res.minDateLimit,
+        maxLimitDate: res.maxLimitDate||res.maxDateLimit,
         selectedDates: [res._value]
     }, 'auto', function (value) {
         res.$input.value = res.formartDateString(value);
@@ -29,8 +29,7 @@ function CalendarInput() {
         res.emit('change', { target: res, value: value }, res);
     });
 
-    OOP.drillProperty(res, res._quickOption.calendarProps, ['minLimitDate', 'maxLimitDate']);
-
+    OOP.drillProperty(res, res._quickOption.calendarProps, ['minLimitDate', 'maxLimitDate','minDateLimit', 'maxDateLimit' ]);
 
     return res;
 }
