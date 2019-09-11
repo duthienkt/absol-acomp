@@ -332,11 +332,9 @@ SelectTreeMenu.prepareItem = function (item) {
 
     item.__nvnTextNoneCase__ = item.__nvnText__.toLowerCase();
     item.__nvnWordsNoneCase__ = item.__nvnTextNoneCase__.split(spliter);
-    if (item.text.indexOf('-')>=0) console.log(item)
     return item;
-}
+};
 
-console.log("HÀNH CHÍNH-NHÂN SỰ".split( /[\s\b\-()\[\]]+/g))
 
 SelectTreeMenu.prepareData = function (items) {
     var item;
@@ -362,24 +360,23 @@ SelectTreeMenu.calScore = function (queryItem, item) {
         score += SelectTreeMenu.EQUAL_MATCH_SCORE * queryItem.__text__.length;
 
     var extraIndex = item.__text__.indexOf(queryItem.__text__);
-
+    
     if (extraIndex >= 0) {
         score += SelectTreeMenu.EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
     }
-
+    
     extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
     if (extraIndex >= 0) {
         score += SelectTreeMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
     }
-
+    
     extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
     if (extraIndex >= 0) {
         score += SelectTreeMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
     }
-
+    
     score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * SelectTreeMenu.WORD_MATCH_SCORE;
     score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * SelectTreeMenu.WORD_MATCH_SCORE;
-
     return score;
 };
 
@@ -391,7 +388,7 @@ SelectTreeMenu.queryTree = function (query, items) {
     function makeScore(item) {
 
         var score = SelectTreeMenu.calScore(queryItem, item);
-
+        
 
         gmaxScore = Math.max(score, gmaxScore);
         gminScore = Math.min(score, gminScore);
@@ -413,7 +410,7 @@ SelectTreeMenu.queryTree = function (query, items) {
     }
 
     function sortcmp(a, b) {
-        return b.maxScore - a.makeScore;
+        return b.maxScore - a.maxScore;
     }
     function makeItems(nodes, medScore) {
         nodes.sort(sortcmp);
@@ -438,7 +435,6 @@ SelectTreeMenu.queryTree = function (query, items) {
     var scoredItems = items.map(makeScore);
 
     var medianScore = (gminScore + gmaxScore) / 2;
-
     var items = makeItems(scoredItems, medianScore);
 
     return items;
