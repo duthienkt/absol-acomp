@@ -67,12 +67,8 @@ VScroller.prototype.requestUpdateSize = function () {
         this.$vscrollbar.outerHeight = this.$viewport.clientHeight;
         this.$vscrollbar.innerHeight = this.$viewport.scrollHeight - 2;
         this.$vscrollbar.innerOffset = this.$viewport.scrollTop;
-        console.log(this.$vscrollbar.innerHeight <= this.$vscrollbar.outerHeight);
         if (this.$vscrollbar.innerHeight <= this.$vscrollbar.outerHeight) {
             this.$vscrollbar.hidden = true;
-            
-            
-            
             this.addClass('disabled');
         }
         else {
