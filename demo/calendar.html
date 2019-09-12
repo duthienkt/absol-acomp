@@ -89,7 +89,8 @@
                 tag: 'calendarinput',
                 props: {
                     value: maxValue,
-                    minLimitDate: minValue
+                    minLimitDate: minValue,
+                    dateToString:'mmm-dd-yyyy'
                 },
                 on: {
                     change: function (ev) {
@@ -103,7 +104,7 @@
         $('#disabled-ip', mmInputs).selfReplace(_({
             tag: 'calendarinput',
             props: {
-                value: maxValue,
+                // value: maxValue,
                 minLimitDate: minValue,
                 disabled: true
             }

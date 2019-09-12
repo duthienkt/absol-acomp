@@ -13,7 +13,7 @@ function CalendarInput() {
     var res = _({
         extendEvent: ['change'],
         class: 'absol-calendar-input',
-        child: 'input[type="text"][readonly="true"][value="--/--/--"]'
+        child: 'input[type="text"][readonly="true"][value="dd/mm/yyyy"]'
     });
 
     res.$input = $('input', res);
@@ -40,7 +40,7 @@ CalendarInput.property = {};
 CalendarInput.property.value = {
     set: function (value) {
         if (value === null || value === undefined) {
-            this.$input.value = '--/--/--';
+            this.$input.value = this.formartDateString(value);
             this._quickOption.calendarProps.selectedDates = [];
             this._value = value;
         }
@@ -55,6 +55,7 @@ CalendarInput.property.value = {
         return this._value;
     }
 };
+
 
 
 CalendarInput.property.disabled = {
@@ -90,6 +91,7 @@ CalendarInput.attribute = {
 };
 
 
+
 CalendarInput.property.dateToString = {
     set: function (value) {
         this._dateToString = value;
@@ -101,6 +103,10 @@ CalendarInput.property.dateToString = {
 };
 
 CalendarInput.prototype.formartDateString = function (date) {
+    if (!date) {
+        console.log(typeof this.dateToString);
+        return { 'undefined': 'dd/mm/yyyy', 'function': '--/--/--', 'object': 'dd/mm/yyyy', 'string': typeof this.dateToString }[typeof this.dateToString] || '--/--/--';
+    }
     if (!this.dateToString) {
         return formartDateString(date);
     }
