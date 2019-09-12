@@ -13,23 +13,24 @@ function CalendarInput() {
     var res = _({
         extendEvent: ['change'],
         class: 'absol-calendar-input',
-        child: 'input[type="text"][readonly="true"]'
+        child: 'input[type="text"][readonly="true"][value="--/--/--"]'
     });
 
     res.$input = $('input', res);
     res._value = beginOfDay(new Date());
 
     res._quickOption = ChromeCalendar.showWhenClick(res, {
-        minLimitDate: res.minLimitDate||res.minDateLimit,
-        maxLimitDate: res.maxLimitDate||res.maxDateLimit,
+        minLimitDate: res.minLimitDate || res.minDateLimit,
+        maxLimitDate: res.maxLimitDate || res.maxDateLimit,
         selectedDates: [res._value]
     }, 'auto', function (value) {
+        res._value = value;
         res.$input.value = res.formartDateString(value);
         res._quickOption.calendarProps.selectedDates = [value];//change new option
         res.emit('change', { target: res, value: value }, res);
     });
 
-    OOP.drillProperty(res, res._quickOption.calendarProps, ['minLimitDate', 'maxLimitDate','minDateLimit', 'maxDateLimit' ]);
+    OOP.drillProperty(res, res._quickOption.calendarProps, ['minLimitDate', 'maxLimitDate', 'minDateLimit', 'maxDateLimit']);
 
     return res;
 }
@@ -38,11 +39,17 @@ CalendarInput.property = {};
 
 CalendarInput.property.value = {
     set: function (value) {
-        value = value || beginOfDay(new Date());
-        if (typeof value == 'number') value = new Date(value);
-        this._value = value;
-        this.$input.value = this.formartDateString(value);
-        this._quickOption.calendarProps.selectedDates = [value];
+        if (value === null || value === undefined) {
+            this.$input.value = '--/--/--';
+            this._quickOption.calendarProps.selectedDates = [];
+            this._value = value;
+        }
+        else {
+            if (typeof value == 'number') value = new Date(value);
+            this._value = value;
+            this.$input.value = this.formartDateString(value);
+            this._quickOption.calendarProps.selectedDates = [value];
+        }
     },
     get: function () {
         return this._value;
