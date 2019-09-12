@@ -25,9 +25,6 @@ import './js/Modal';
 import './css/modal.css';
 
 
-import './js/ImageViewer';
-import './css/imageviewer.css';
-
 import './js/MediaInput';
 import './css/mediainput.css';
 
