@@ -311,7 +311,7 @@ function VScrollbar() {
     });
 
 
-    var body = $('body');
+    var body = $(document.body);
     var top0, innerOffset0;
     var pointerMoveEventHandler = function (event) {
         event.preventDefault();
@@ -358,7 +358,6 @@ function VScrollbar() {
     };
 
     res.on('pointerdown', pointerDownEventHandler, true);
-
 
     return res;
 };
