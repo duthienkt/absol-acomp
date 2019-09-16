@@ -55,7 +55,13 @@
                     tag: 'exptree',
                     props: {
                         name: 'Dom.js',
-                        extSrc: 'https://volcanion.cf/exticons/vivid/' + 'js' + '.svg',
+                        // extSrc: 'https://volcanion.cf/exticons/vivid/' + 'js' + '.svg'
+                        icon: {
+                            tag: 'img',
+                            attr: {
+                                src:'//volcanion.cf/exticons/other/events.svg'
+                            }
+                        }
                     }
                 },
                 {
@@ -95,8 +101,8 @@
                         tag: 'exptree',
                         props: {
                             name: 'HSL.js',
-                            extSrc: 'https://volcanion.cf/exticons/vivid/' + 'js' + '.svg',
-                            status: 'removable'
+                            status: 'removable',
+                            icon:'span.mdi.mdi-function'
                         }
                     }]
                 }
