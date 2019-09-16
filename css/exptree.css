@@ -145,17 +145,36 @@
     width: 0.5em;
 }
 
-.absol-exp-node-ext-icon {
+img.absol-exp-node-ext-icon {
     display: none;
 }
 
-.absol-exp-node-ext-icon[src] {
+.absol-exp-node-ext-icon,
+.absol-exp-node-ext-icon>img {
     display: inline-block;
     vertical-align: middle;
     width: 1.5em;
     height: 1.5em;
-
 }
+
+div.absol-exp-node-ext-icon:empty {
+    display: none;
+}
+
+div.absol-exp-node-ext-icon {
+    text-align: center;
+}
+
+.absol-exp-node-ext-icon>.mdi,
+.absol-exp-node-ext-icon>span .absol-exp-node-ext-icon>svg {
+    line-height: 1em;
+    font-size: 1.5em;
+}
+
+img.absol-exp-node-ext-icon[src] {
+    display: inline-block;
+}
+
 
 .absol-exp-tree>.absol-exp-node {
     width: 100%;
@@ -180,6 +199,6 @@
     color: rgb(169, 169, 170);
 }
 
-.dark .absol-exp-node{
+.dark .absol-exp-node {
     color: rgb(169, 169, 170);
 }

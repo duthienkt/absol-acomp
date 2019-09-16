@@ -2,6 +2,7 @@ import Acore from "../ACore";
 import { contenteditableTextOnly } from "./utils";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
+import Dom from "absol/src/HTML5/Dom";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -41,6 +42,7 @@ export function ExpNode() {
             'remove-ico',
             'toggler-ico',
             'img.absol-exp-node-ext-icon',
+            'div.absol-exp-node-ext-icon',
             'span.absol-exp-node-name',
             'span.absol-exp-node-desc'
         ]
@@ -57,7 +59,7 @@ export function ExpNode() {
             res.emit('press', { target: res, type: 'press' }, this);
     })
 
-
+    res.$iconCtn = $('div.absol-exp-node-ext-icon', res);
     res.$extIcon = $('img.absol-exp-node-ext-icon', res);
     res.$name = $('span.absol-exp-node-name', res);
     res.$desc = $('span.absol-exp-node-desc', res);
@@ -72,7 +74,34 @@ export function ExpNode() {
 
 
 
+
+
+
 ExpNode.property = {};
+
+ExpNode.property.icon = {
+    set: function (value) {
+        if (this.$iconP) {
+            this.$iconP.remove();
+            this.$iconP = undefined;
+        }
+        if (value && value != null) {
+            var newE;
+            if (!Dom.isDomNode(value)) {
+                newE = _(value);
+            }
+
+            this.$iconCtn.addChild(newE);
+            this._icon = value;
+        }
+        else {
+            this._icon = undefined;
+        }
+    },
+    get: function () {
+        return this._icon;
+    }
+};
 
 ExpNode.property.level = {
     set: function (value) {
@@ -244,7 +273,7 @@ export function ExpTree() {
     // console.log(res.$node);
 
     res.$itemsContainer = $('.absol-exp-items', res);
-    OOP.drillProperty(res, res.$node, ['desc', 'name', 'title', 'extSrc', 'active']);
+    OOP.drillProperty(res, res.$node, ['desc', 'name', 'title', 'extSrc', 'active', 'icon']);
     res.__isExpTree__ = true;
     res._level = 0;
     return res;
