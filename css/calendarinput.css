@@ -1,0 +1,33 @@
+.absol-calendar-input {
+    font-size: 14px;
+    width: 7em;
+    height: 2em;
+    box-sizing: content-box;
+    display: inline-block;
+    vertical-align: middle;
+    border: solid 1px #d6d6d6;
+    border-radius: 0.2em;
+}
+
+.absol-calendar-input>input {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+}
+
+.absol-calendar-input>input:hover,
+.absol-calendar-input>input:focus {
+    color: red;
+}
+
+.absol-calendar-input.absol-disabled {
+    pointer-events: none;
+}
+
+.absol-calendar-input.absol-disabled input {
+    color: rgb(169, 169, 171);
+}

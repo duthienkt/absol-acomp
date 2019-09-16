@@ -45,7 +45,6 @@ SearchList.eventHandler = {};
 SearchList.eventHandler.clickContent = function (event) {
     var item = this._findItem(event.target);
     if (item) {
-        console.log(item.__data__)
         this._value = this.adapter.getItemValue(item.__data__.item);
         this.$input.value = item.__data__.item.text;
         this.updateSelectedItem();

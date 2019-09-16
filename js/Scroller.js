@@ -36,7 +36,16 @@ function VScroller() {
         ]
     });
     res.eventHandler = OOP.bindFunctions(res, VScroller.eventHandler);
-    res.sync = res.afterAttached();
+    res.$attachHook = _('attachhook').addTo(res);
+    res.sync = new Promise(function(rs){
+        res.$attachHook.once('error', function(){
+            rs();
+        });
+    }); 
+
+    res.$attachHook.on('error', function(){
+        res.requestUpdateSize();
+    });
     res.$vscrollbar = $('vscrollbar', res).on('scroll', res.eventHandler.scrollScrollbar);
     res.$viewport = $('.absol-vscroller-viewport', res)
         .on('scroll', res.eventHandler.scrollViewport);
@@ -115,26 +124,54 @@ VScroller.prototype.removeChild = function () {
     return res;
 };
 
-VScroller.prototype.scrollInto = function (element) {
-    if (Element.prototype.isDescendantOf.call(element, this.$viewport)) {
+VScroller.prototype.scrollInto = function (element, padding, scrollTime, beforFrame, afterFrame) {
+    padding = padding || 0;
+    scrollTime = scrollTime || 0;
+    var frameCount = Math.ceil(scrollTime / 15 + 1);
+    var self = this;
+    function onFrame() {
+        beforFrame && beforFrame();
         var elementBound = element.getBoundingClientRect();
-        var viewportBound = this.$viewport.getBoundingClientRect();
-        var currentScrollTop = this.$viewport.scrollTop;
+        var viewportBound = self.$viewport.getBoundingClientRect();
+        var currentScrollTop = self.$viewport.scrollTop;
         var newScrollTop = currentScrollTop;
-        if (elementBound.bottom > viewportBound.bottom) {
-            newScrollTop = currentScrollTop + (elementBound.bottom - viewportBound.bottom);
+        if (elementBound.bottom + padding > viewportBound.bottom) {
+            newScrollTop = currentScrollTop + ((elementBound.bottom + padding) - viewportBound.bottom) / (Math.log(frameCount) + 1);
         }
-        if (elementBound.top < viewportBound.top) {
-            newScrollTop = currentScrollTop - (viewportBound.top - elementBound.top);
+        if (elementBound.top - padding < viewportBound.top) {
+            newScrollTop = currentScrollTop - (viewportBound.top - (elementBound.top - padding)) / (Math.log(frameCount) + 1);
         }
 
         if (newScrollTop != currentScrollTop) {
-            this.$viewport.scrollTop = newScrollTop;
+            self.$viewport.scrollTop = newScrollTop;
         }
+        afterFrame && afterFrame();
+        frameCount--;
+        if (frameCount > 0) setTimeout(onFrame, 15)
     }
-}
+
+    if (Element.prototype.isDescendantOf.call(element, this.$viewport)) {
+        onFrame();
+    }
+};
 
 
+VScroller.prototype.scrollBy = function (dy, duration) {
+    duration = duration || 0;
+    var frameCount = Math.ceil(duration / 20);
+    var timeOut = duration/frameCount;
+    var i = 0;
+    var self = this;
+    var start = self.$viewport.scrollTop;
+    var end = start + dy;
+    function onFrame() {
+        self.$viewport.scrollTop = Math.max(map(i, 0, frameCount, start, end), 0);
+        ++i;
+        if (i <= frameCount)
+            setTimeout(onFrame, timeOut);
+    }
+    onFrame();
+};
 
 
 VScroller.eventHandler = {};
@@ -274,7 +311,7 @@ function VScrollbar() {
     });
 
 
-    var body = $('body');
+    var body = $(document.body);
     var top0, innerOffset0;
     var pointerMoveEventHandler = function (event) {
         event.preventDefault();
@@ -321,7 +358,6 @@ function VScrollbar() {
     };
 
     res.on('pointerdown', pointerDownEventHandler, true);
-
 
     return res;
 };

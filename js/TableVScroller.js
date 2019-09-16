@@ -92,6 +92,13 @@ TableVScroller.prototype.updateSize = function () {
         top: theadBound.height + 'px',
         maxWidth: tableBound.width + 'px'
     });
+    
+    if (this.$viewport.clientHeight < this.$viewport.scrollHeight ){
+        this.addClass('scroll-v');
+    }
+    else{
+        this.removeClass('scroll-v');
+    }
     var realNodes = this.$tr.childNodes;
     var topNodes = this.$topTr.childNodes;
 

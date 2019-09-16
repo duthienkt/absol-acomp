@@ -5,7 +5,7 @@ var _ = Acore._;
 var $ = Acore.$;
 function DropPannelStack() {
     var res = _({
-        class: 'absol-drop-pannel-stack',
+        class: 'absol-drop-pannel-stack'
     });
     res.$attachHook = _('attachhook').addTo(res).on('error', function () {
         Dom.addToResizeSystem(this);

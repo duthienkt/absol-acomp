@@ -71,21 +71,30 @@
 
 .absol-table-scroller-head-line,
 .absol-table-scroller-left-line {
-    z-index: 1000;
+    z-index: 30;
     pointer-events: none;
     position: absolute;
 }
 
 .absol-table-scroller-head-line {
     left: 0;
-    width: calc(100% - 7px);
+    width: calc(100% - 6px);
     border-bottom: solid 2px rgb(169, 169, 170);
-
+    width: 100%;
 }
 
 .absol-table-scroller-left-line {
     top: 0;
     border-right: solid 2px  rgb(169, 169, 170);
-    height:  calc(100% - 7px);
+    height:  calc(100% - 6px);
+    height: 100%;
+}
 
+
+.absol-table-scroller.scroll-v .absol-table-scroller-head-line{
+    width: calc(100% - 6px);
+}
+
+.absol-table-scroller.scroll-h .absol-table-scroller-left-line{
+    height: calc(100% - 6px);
 }

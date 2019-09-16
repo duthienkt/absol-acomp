@@ -17,10 +17,25 @@ function SelectList() {
 
 SelectList.prototype.creatItem = function (item, index) {
     var text;
-    if (typeof item == 'string') text = item;
-    else text = item.text;
+    var extendStyle = {};
+    var extendClasses = [];
+    if (typeof item == 'string') {
+        text = item;
+    }
+    else {
+        text = item.text;
+        extendStyle = item.extendStyle || {};
+        if (typeof item.extendClasses == 'string') {
+            extendClasses = item.extendClasses.split(/\s+/);
+        }
+        else if (item.extendClasses && (extendClasses instanceof Array)) {
+            extendClasses = item.extendClasses
+        }
+    }
+
     var res = _({
-        class: 'absol-selectlist-item',
+        class: ['absol-selectlist-item'].concat(extendClasses),
+        style: extendStyle,
         child: [
             {
                 tag: 'span',

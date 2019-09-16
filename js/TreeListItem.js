@@ -143,4 +143,46 @@ TreeListItem.property = {
     }
 };
 
+
+
+TreeListItem.property.extendClasses = {
+    set: function (value) {
+        var self = this;
+        this.extendClasses.forEach(function (className) {
+            self.$parent.removeClass(className);
+        });
+        this._extendClass = [];
+        if (!value) return;
+        if (typeof value == 'string') {
+            value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
+        }
+
+        if (value instanceof Array) {
+            this._extendClass = value;
+            this._extendClass.forEach(function (className) {
+                self.$parent.addClass(className);
+            });
+        }
+        else {
+            throw new Error('Invalid extendClasses');
+        }
+    },
+    get: function () {
+        return this._extendClass || [];
+    }
+};
+
+
+TreeListItem.property.extendStyle = {
+    set: function (value) {
+        this.$parent.removeStyle(this._extendStyle || {});
+        this._extendStyle = value || {};
+        this.$parent.addStyle(this.extendStyle);
+    },
+    get: function () {
+        return this._extendStyle || {};
+    }
+};
+
+
 Acore.creator.treelistitem = TreeListItem;

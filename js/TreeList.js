@@ -62,6 +62,12 @@ TreeList.prototype.addItem = function (item) {
         if (item.desc){
             props.desc = item.desc;
         }
+        if (item.extendClasses){
+            props.extendClasses = item.extendClasses;
+        }
+        if (item.extendStyle){
+            props.extendStyle = item.extendStyle;
+        }
     }
 
     var elt = _({

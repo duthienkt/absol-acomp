@@ -25,9 +25,6 @@ import './js/Modal';
 import './css/modal.css';
 
 
-import './js/ImageViewer';
-import './css/imageviewer.css';
-
 import './js/MediaInput';
 import './css/mediainput.css';
 
@@ -73,6 +70,11 @@ import './js/EditableText';
 
 import './css/widthheightresizer.css';
 import './js/WidthHeightSizer';
+
+
+
+import './js/Follower';
+import './css/follower.css';
 
 import './css/tooltip.css';
 import './js/Tooltip';
@@ -120,6 +122,16 @@ import './js/QuickMenu';
 import './css/droppanel.css';
 import './js/DropPanel';
 import './js/DropPanelStack';
+
+import  './css/draggablevstack.css';
+import './js/DraggableVStack';
+
+import  './css/chromecalendar.css';
+import './js/ChromeCalendar';
+
+import  './css/calendarinput.css';
+import './js/CalendarInput';
+
 
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
