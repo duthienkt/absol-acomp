@@ -92,7 +92,7 @@ ContextHook.eventHandler.contextmenu = function (event) {
     var current = this.$target;
     while (current && propagation) {
         if (current.isSupportedEvent && current.isSupportedEvent('contextmenu')) {
-            current.emit('contextmenu', localEvent, this);
+            current.emit('contextmenu', localEvent, current, this);
         }
         current = current.parentElement;
     }
