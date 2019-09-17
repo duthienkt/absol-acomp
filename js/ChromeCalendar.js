@@ -431,7 +431,7 @@ ChromeCalendar.prototype.expandYear = function (year) {
             lastItemElt.$months = undefined;
         }, 100);
     }
-    
+
     if (lastItemElt != itemElt) {
         if (!itemElt.$months) {
             itemElt.$months = this._createMonths(year).addTo(itemElt);
@@ -449,7 +449,7 @@ ChromeCalendar.prototype.expandYear = function (year) {
     if (itemElt.__year__ > lastYear) {
         dy -= 6 * fontSize;
     }
-    
+
     self.$yearScroller.scrollBy(dy, 100);
     this.$lastOpenYearItem = itemElt;
     itemElt.$months.updateActiveMonth();
@@ -613,8 +613,8 @@ ChromeCalendar.property.maxLimitDate = {
 };
 
 
-ChromeCalendar.property.minDateLimit = ChromeCalendar.property.minLimitDate ;
-ChromeCalendar.property.maxDateLimit = ChromeCalendar.property.maxLimitDate ;
+ChromeCalendar.property.minDateLimit = ChromeCalendar.property.minLimitDate;
+ChromeCalendar.property.maxDateLimit = ChromeCalendar.property.maxLimitDate;
 
 
 ChromeCalendar.property.multiSelect = {
@@ -639,79 +639,81 @@ ChromeCalendar.property.multiSelect = {
 
 Acore.install('chromecalendar', ChromeCalendar);
 
-ChromeCalendar.showWhenClick = function(){
-    throw new Error("Document not ready");
+
+
+
+ChromeCalendar._session = Math.random() * 10000000000 >> 0;
+ChromeCalendar._listener = undefined;
+
+
+ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calendarPickListener, darkTheme) {
+    var res = {
+        calendarProps: calendarProps,
+        anchor: anchor,
+        currentSession: undefined,
+        element: element,
+        calendarPickListener: calendarPickListener,
+        darkTheme: darkTheme,
+        setDateValue: function (value) {
+            if (this.currentSession == ChromeCalendar._session) {
+                ChromeCalendar.$calendar.selectedDates = [value];
+            }
+        },
+        cancel: function () { }
+    };
+
+    var clickHandler = function () {
+
+        if (ChromeCalendar._session == res.currentSession) return;
+
+        res.currentSession = ChromeCalendar.show(res.element, res.calendarProps, res.anchor, res.calendarPickListener, res.darkTheme);
+
+        var finish = function (event) {
+            if (event && event.target && EventEmitter.hitElement(ChromeCalendar.$calendar, event)) return;
+            document.body.removeEventListener('click', finish, false);
+            ChromeCalendar.close(res.currentSession);
+            ChromeCalendar.$calendar.off('pick', finish);
+
+            res.currentSession = undefined;
+            res.cancel = function () { };
+        };
+
+        setTimeout(function () {
+            document.body.addEventListener('click', finish, false);
+            ChromeCalendar.$calendar.on('pick', finish);
+            res.cancel = finish;
+        }, 10)
+    };
+
+    res.remove = function () {
+        element.removeEventListener('click', clickHandler, false);
+    };
+
+    element.addEventListener('click', clickHandler, false);
+    return res;
 };
 
-Dom.documentReady.then(function(){
 
-    ChromeCalendar.$ctn = _('.absol-context-hinge-fixed-container');
-    ChromeCalendar.$follower = _('follower').addTo(ChromeCalendar.$ctn);
+ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickListener, darkTheme) {
     ChromeCalendar._session = Math.random() * 10000000000 >> 0;
-    ChromeCalendar.$calendar = _('chromecalendar')
-        .on('pick', function (event) {
-            if (typeof ChromeCalendar._listener == 'function') {
-                ChromeCalendar._listener(event.value);
-            }
-        }).addTo(ChromeCalendar.$follower);
-    ChromeCalendar._listener = undefined;
-    
-    ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calendarPickListener, darkTheme) {
-        var res = {
-            calendarProps: calendarProps,
-            anchor: anchor,
-            currentSession: undefined,
-            element: element,
-            calendarPickListener: calendarPickListener,
-            darkTheme: darkTheme,
-            setDateValue: function (value) {
-                if (this.currentSession == ChromeCalendar._session) {
-                    ChromeCalendar.$calendar.selectedDates = [value];
-                }
-            },
-            cancel: function () { }
-        };
-    
-        var clickHandler = function () {
-    
-            if (ChromeCalendar._session == res.currentSession) return;
-    
-            res.currentSession = ChromeCalendar.show(res.element, res.calendarProps, res.anchor, res.calendarPickListener, res.darkTheme);
-    
-            var finish = function (event) {
-                if (event && event.target && EventEmitter.hitElement(ChromeCalendar.$calendar, event)) return;
-                document.body.removeEventListener('click', finish, false);
-                ChromeCalendar.close(res.currentSession);
-                ChromeCalendar.$calendar.off('pick', finish);
-                
-                res.currentSession = undefined;
-                res.cancel = function () { };
-            };
-    
-            setTimeout(function () {
-                document.body.addEventListener('click', finish, false);
-                ChromeCalendar.$calendar.on('pick', finish);
-                res.cancel = finish;
-            }, 10)
-        };
-    
-        res.remove = function () {
-            element.removeEventListener('click', clickHandler, false);
-        };
-    
-        element.addEventListener('click', clickHandler, false);
-        return res;
-    };
-    
-    
-    
-    ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickListener, darkTheme) {
-        ChromeCalendar._session = Math.random() * 10000000000 >> 0;
+    function exec() {
+        if (!ChromeCalendar.$ctn) {
+            ChromeCalendar.$ctn = _('.absol-context-hinge-fixed-container');
+            ChromeCalendar.$follower = _('follower').addTo(ChromeCalendar.$ctn);
+
+            ChromeCalendar.$calendar = _('chromecalendar')
+                .on('pick', function (event) {
+                    if (typeof ChromeCalendar._listener == 'function') {
+                        ChromeCalendar._listener(event.value);
+                    }
+                }).addTo(ChromeCalendar.$follower);
+        }
+        
         ChromeCalendar.$ctn.addTo(document.body);
         // only one value need
         if (calendarProps instanceof Date) calendarProps = { selectedDates: [calendarProps] };
         if (calendarProps instanceof Array) calendarProps = { selectedDates: calendarProps };
-    
+
         Object.assign(ChromeCalendar.$calendar, calendarProps);
         if (darkTheme) ChromeCalendar.$ctn.addClass('dark');
         else ChromeCalendar.$ctn.removeClass('dark');
@@ -720,24 +722,31 @@ Dom.documentReady.then(function(){
         ChromeCalendar.$calendar.addStyle('visibility', 'hidden');//for prevent size change blink
         ChromeCalendar._listener = calendarPickListener;
         setTimeout(function () {
-    
             ChromeCalendar.$follower.updatePosition();
             ChromeCalendar.$calendar.removeStyle('visibility');
         }, 2);
-    
-        return ChromeCalendar._session;
-    };
-    
-    
-    ChromeCalendar.close = function (session) {
-        if (session !== true && session != ChromeCalendar._session) return;
+    }
+    if (document.body)
+        exec();
+    else
+        Dom.documentReady.then(exec);
+
+    return ChromeCalendar._session;
+};
+
+
+ChromeCalendar.close = function (session) {
+    if (session !== true && session != ChromeCalendar._session) return;
+    function exec() {
         ChromeCalendar.followTarget = undefined;
         ChromeCalendar._listener = undefined;
-    
         ChromeCalendar.$ctn.remove();
-    };
-    
-});
+    }
+    if (document.body) exec();
+    else Dom.documentReady.then(exec);
+
+};
+
 
 
 export default ChromeCalendar;
