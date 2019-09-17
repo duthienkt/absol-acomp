@@ -94,7 +94,7 @@ SelectTreeMenu.prototype.updateDropdownPostion = function (searching) {
 SelectTreeMenu.prototype.scrollToSelectedItem = function () {
     this._scrolling = true;
     setTimeout(function () {
-        if (self.$selectedItem) this.$vscroller.scrollInto(selectedView);
+        if (this.$selectedItem) this.$vscroller.scrollInto(this.$selectedItem);
         this._scrolling = false;
     }.bind(this), 5);
 };
@@ -388,8 +388,6 @@ SelectTreeMenu.queryTree = function (query, items) {
     function makeScore(item) {
 
         var score = SelectTreeMenu.calScore(queryItem, item);
-        
-
         gmaxScore = Math.max(score, gmaxScore);
         gminScore = Math.min(score, gminScore);
 
