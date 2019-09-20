@@ -120,7 +120,48 @@
             child: [frame1, frame2]
         }).addTo(absol.$('#demo'));
     </script>
+    <script class="viewable">
+        var demoTabItemsXP = Array(5).fill(0).map(function (u, i) {
+            return { name: 'Tab ' + i, desc: 'This is tab ' + i, ident: i };
+        })
 
+        var frame1XP = absol._('tabframe').attr({
+            'name': 'Material-design-icon',
+            id: 'matd',
+            desc: 'Material Design Icon',
+        }).addChild(absol._({
+            tag: 'iframe',
+            style: {
+                width: '100%',
+                height: '100%'
+            },
+            attr: {
+                src: "https://volcanion.cf/materialdesignicons/preview.html"
+            }
+        }));
+        var frame2XP = absol._('tabframe').attr({
+            'name': 'vchart',
+            id: 'matd2',
+            desc: 'Dual chart demo'
+        }).addChild(absol._({
+            tag: 'iframe',
+            style: {
+                width: '100%',
+                height: '100%'
+            },
+            attr: {
+                src: "https://volcanion.cf/vchart/demo/dualchart.html"
+            }
+        }));
+        var tabviewXP = absol._({
+            tag: 'tabview',
+            class:'xp-tiny',
+            style: {
+                height: '800px'
+            },
+            child: [frame1XP, frame2XP]
+        }).addTo(absol.$('#demo'));
+    </script>
 
     <script src="./autohightlighting.js?"></script>
 
