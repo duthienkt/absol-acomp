@@ -64,6 +64,13 @@ QuickMenu.updatePosition = function () {
     var menuBound = menu.getBoundingRecursiveRect(3);
     var qBound = qmenu.getBoundingClientRect();
     var outBound = Dom.traceOutBoundingClientRect(qmenu);
+    //padding
+    outBound.left += 2;
+    outBound.top += 2;
+    outBound.bottom -= 2;
+    outBound.right -= 2;
+    outBound.height -= 4;
+    outBound.width -= 4;
 
     var getPos = function (anchor) {
         anchor = anchor % 8;
@@ -140,8 +147,9 @@ QuickMenu.updatePosition = function () {
         left: pos.x + 'px',
         top: pos.y + 'px'
     });
+
     if (bestRect) {
-        menu.addStyle('max-height', bestRect.height - 5 + 'px');
+        menu.addStyle('max-height', bestRect.height + 'px');
     }
     else {
         menu.removeStyle('max-height');
