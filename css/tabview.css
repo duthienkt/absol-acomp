@@ -169,6 +169,7 @@
     right: 0;
     height: 4px;
     border-bottom: solid 1px #ccc;
+    box-sizing: border-box;
 }
 
 .absol-tabview.xp-tiny .absol-tabbar-button.absol-tabbar-button-active {
