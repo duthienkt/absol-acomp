@@ -108,9 +108,9 @@
     border: solid 1px #ccc;
     background-color: white;
     color: black;
-    padding-left:14px;
-    padding-right: 5px;  
-    margin-right:5px; 
+    padding-left: 14px;
+    padding-right: 5px;
+    margin-right: 5px;
 }
 
 .absol-tabview .absol-tabbar {
@@ -126,15 +126,15 @@
     color: white;
 }
 
-.absol-tabview .absol-tabbar-button-close{
-    color:rgb(170, 170, 170);
+.absol-tabview .absol-tabbar-button-close {
+    color: rgb(170, 170, 170);
     line-height: 30px;
-    margin-left: 14px; 
+    margin-left: 14px;
     font-size: 20px;
 }
 
-.absol-tabview .absol-tabbar-button-close:hover{
-    color:red;
+.absol-tabview .absol-tabbar-button-close:hover {
+    color: red;
 }
 
 
@@ -204,4 +204,5 @@
     border-left: solid 1px #ccc;
     border-right: solid 1px #ccc;
     border-bottom: solid 1px #ccc;
+    box-sizing: border-box;
 }
