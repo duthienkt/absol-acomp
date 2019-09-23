@@ -269,7 +269,7 @@ VMenuItem.prototype.init = function (props) {
 
 
 VMenuItem.prototype.autoFixParrentSize = function () {
-    var parentWidth = this.parentElement.getBoundingClientRect().width;
+    var parentWidth = this.$dropper.getBoundingClientRect().width;// dropper is fixed parent content size
     var buttonWidth = this.$button.getBoundingClientRect().width;
     var fontSize = this.$text.getFontSize();
     this.$text.addStyle('margin-right', (parentWidth - buttonWidth) / fontSize + 'em');
