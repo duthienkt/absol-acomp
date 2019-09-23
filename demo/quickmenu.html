@@ -260,8 +260,11 @@
                     text: 'Phạm vi tuyến tính',
                     icon: 'span.mdi.mdi-ray-start-end'
                 }
-
-            ]
+            ].concat(Array(40).fill(0).map(function (u, i) {
+                return {
+                    text: "Item số " + i, icon: 'span.mdi.mdi-ray-start-end'
+                }
+            }))
         };
 
         var docTypeBtn = absol._({
@@ -277,8 +280,8 @@
         var docTypeBtn1 = absol._({
             tag: 'menubutton',
             class: 'standard-alone',
-            style:{
-                width:'13.4em'
+            style: {
+                width: '13.4em'
             },
             props: docTypeMemuProps.items[0]
         }).addTo(absol.$('#expert-dropdown-menu'));

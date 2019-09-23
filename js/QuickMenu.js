@@ -12,7 +12,16 @@ function QuickMenu() {
     var res = _({
         extendEvent: 'requestcontextmenu',
         class: ['absol-context-hinge'],
-        child: ['vmenu.absol-context-menu']
+        child: {
+            tag: 'vmenu',
+            class: [
+                'absol-context-menu', 'absol-bscroller'
+            ],
+            style: {
+                'overflow-y': 'auto',
+                'box-sizing': 'border-box'
+            }
+        }
     });
 
     res.$contextMenu = $('vmenu.absol-context-menu', res);
@@ -52,7 +61,7 @@ QuickMenu.updatePosition = function () {
     var qmenu = QuickMenu.$elt;
     var menu = qmenu.$contextMenu;
     var ebound = QuickMenu.$element.getBoundingClientRect();
-    var menuBound = menu.getBoundingClientRect();
+    var menuBound = menu.getBoundingRecursiveRect(3);
     var qBound = qmenu.getBoundingClientRect();
     var outBound = Dom.traceOutBoundingClientRect(qmenu);
 
@@ -97,6 +106,7 @@ QuickMenu.updatePosition = function () {
     var pos;
 
     var bestSquare = -1;
+    var bestRect;
     var priority = [QuickMenu._previewAnchor].concat(QuickMenu._acceptAnchors);
 
     var cAnchor;
@@ -115,16 +125,27 @@ QuickMenu.updatePosition = function () {
             bestSquare = viewSquare;
             pos = cPos;
             QuickMenu._previewAnchor = cAnchor;
+            bestRect = outRect.collapsedRect(menuRect);
         }
     }
 
+    if (bestRect && pos.y < ebound.bottom) {
+        pos.y += menuBound.height - Math.min(menuBound.height, bestRect.height - 5);
+    }
 
     pos.x -= qBound.left;
     pos.y -= qBound.top;
+
     menu.addStyle({
         left: pos.x + 'px',
         top: pos.y + 'px'
     });
+    if (bestRect) {
+        menu.addStyle('max-height', bestRect.height - 5 + 'px');
+    }
+    else {
+        menu.removeStyle('max-height');
+    }
 
 };
 
