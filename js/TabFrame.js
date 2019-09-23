@@ -82,8 +82,6 @@ TabFrame.attribute = {};
 
 TabFrame.attribute.name = {
     set: function (value) {
-        console.log('.',value);
-
         this.name = value;
     },
     get: function () {
