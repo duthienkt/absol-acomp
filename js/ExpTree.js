@@ -70,11 +70,7 @@ export function ExpNode() {
     res._level = 0;
     res.__isExpNode__ = true;
     return res;
-}
-
-
-
-
+};
 
 
 ExpNode.property = {};
