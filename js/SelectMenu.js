@@ -112,10 +112,9 @@ SelectMenu.property.items = {
     set: function (value) {
         this._items = value;
         this.$selectlist.items = value || [];
-        this.$selectlist.sync.then(function () {
-            this.selectListBound = this.$selectlist.getBoundingClientRect();
-            this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
-        }.bind(this));
+        this.eventHandler.attached();
+        this.selectListBound = this.$selectlist.getBoundingClientRect();
+        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
 
         if (this.$selectlist.items.length > 0 && (this.$selectlist.item === undefined || this.value === undefined)) {
             this.value = this.items[0].value !== undefined ? this.items[0].value : this.items[0];
