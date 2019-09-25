@@ -60,7 +60,7 @@ CalendarInput.property.value = {
 
 CalendarInput.property.disabled = {
     set: function (value) {
-        this.$input.disabled = !value;
+        this.$input.disabled = !!value;
         if (value) {
             this.addClass('absol-disabled');
         }
