@@ -94,7 +94,9 @@ SelectTreeMenu.prototype.updateDropdownPostion = function (searching) {
 SelectTreeMenu.prototype.scrollToSelectedItem = function () {
     this._scrolling = true;
     setTimeout(function () {
-        if (this.$selectedItem) this.$vscroller.scrollInto(this.$selectedItem);
+        if (this.$selectedItem) {
+            this.$vscroller.scrollInto(this.$selectedItem.$parent);
+        }
         this._scrolling = false;
     }.bind(this), 5);
 };
@@ -155,6 +157,7 @@ SelectTreeMenu.eventHandler.treelistPress = function (event) {
     var value = event.target.value;
     if (value != this._value) {
         this._value = value;
+        this.$selectedItem = event.target;
         //not need update tree
         this.$holderItem.clearChild()
             .addChild(_(event.target.$parent.cloneNode(true)));
@@ -318,7 +321,7 @@ SelectTreeMenu.WORD_MATCH_SCORE = 3;
  * @returns {SearchItem}
  */
 SelectTreeMenu.prepareItem = function (item) {
-    var spliter =/\s+/;
+    var spliter = /\s+/;
 
     item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
     item.__words__ = item.__text__.split(spliter);
@@ -360,21 +363,21 @@ SelectTreeMenu.calScore = function (queryItem, item) {
         score += SelectTreeMenu.EQUAL_MATCH_SCORE * queryItem.__text__.length;
 
     var extraIndex = item.__text__.indexOf(queryItem.__text__);
-    
+
     if (extraIndex >= 0) {
         score += SelectTreeMenu.EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
     }
-    
+
     extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
     if (extraIndex >= 0) {
         score += SelectTreeMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
     }
-    
+
     extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
     if (extraIndex >= 0) {
         score += SelectTreeMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
     }
-    
+
     score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * SelectTreeMenu.WORD_MATCH_SCORE;
     score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * SelectTreeMenu.WORD_MATCH_SCORE;
     return score;
