@@ -24,7 +24,7 @@ Acore.creator['dropdown-ico'] = function () {
 function SelectMenu() {
     var res = _({
         class: ['absol-selectmenu'],
-        extendEvent: 'change',
+        extendEvent: ['change', 'minwidthchange'],
         attr: {
             tabindex: '1'
         },
@@ -112,9 +112,11 @@ SelectMenu.property.items = {
     set: function (value) {
         this._items = value;
         this.$selectlist.items = value || [];
-        this.eventHandler.attached();
-        this.selectListBound = this.$selectlist.getBoundingClientRect();
-        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
+        this.$selectlist.sync.then(function () {
+            this.selectListBound = this.$selectlist.getBoundingClientRect();
+            this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
+            this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
+        }.bind(this));
 
         if (this.$selectlist.items.length > 0 && (this.$selectlist.item === undefined || this.value === undefined)) {
             this.value = this.items[0].value !== undefined ? this.items[0].value : this.items[0];
