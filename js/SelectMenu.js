@@ -54,6 +54,7 @@ function SelectMenu() {
 
     res.$selectlist = _('selectlist', res).addTo(res.$renderSpace);
     res.$selectlist.on('change', res.eventHandler.selectlistChange, true);
+    OOP.drillProperty(res, res.$selectlist, 'selectedIndex');
     res.$vscroller = $('bscroller', res);
     res.on('mousedown', res.eventHandler.click, true);
     res.on('blur', res.eventHandler.blur);
@@ -87,12 +88,9 @@ SelectMenu.getRenderSpace = function () {
 
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
-    if (this.$selectlist.item) {
-        var elt = this.$selectlist.creatItem(this.$selectlist.item).addTo(this.$holderItem);
-        this.$selectlist.sync.then(function () {
-            elt.$descCtn.addStyle('width', this.$selectlist._cntWidth);
-            elt.$text.addStyle('margin-right', this.$selectlist._extMarginRight);
-        }.bind(this))
+    if (this.$selectlist.$selectedItem) {
+        var elt = _({ tag: 'selectlistitem', props: { data: this.$selectlist.$selectedItem.data } }).addTo(this.$holderItem);
+        elt.$descCtn.addStyle('width', this.$selectlist._descWidth + 'px');
     }
 };
 
@@ -112,15 +110,10 @@ SelectMenu.property.items = {
     set: function (value) {
         this._items = value;
         this.$selectlist.items = value || [];
-        this.$selectlist.sync.then(function () {
-            this.selectListBound = this.$selectlist.getBoundingClientRect();
-            this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
-            this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
-        }.bind(this));
-
-        if (this.$selectlist.items.length > 0 && (this.$selectlist.item === undefined || this.value === undefined)) {
-            this.value = this.items[0].value !== undefined ? this.items[0].value : this.items[0];
-        }
+        this.selectListBound = this.$selectlist.getBoundingClientRect();
+        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
+        this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
+        this.updateItem();
     },
     get: function () {
         return this._items || [];
@@ -129,26 +122,10 @@ SelectMenu.property.items = {
 
 SelectMenu.property.value = {
     set: function (value) {
-        if (value === undefined && this._items && this.items.length > 0) {
-            value = this._items[0].value !== undefined ? this._items[0].value : this._items[0];
-        }
         this.$selectlist.value = value;
-        this._lastValue = value;
-        this.sync = this.sync.then(this.updateItem.bind(this));
+        this.updateItem();
     },
     get: function () {
-        return this.$selectlist.value;
-    }
-};
-
-SelectMenu.property.selectedIndex = {
-    get: function () {
-        if (!this._items) return -1;
-        var value = this.value;
-        for (var i = 0; i < this._items.length; ++i) {
-            if (value == this._items[i] || value == this._items[i].value)
-                return i;
-        }
         return this.$selectlist.value;
     }
 };
