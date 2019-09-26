@@ -1,130 +1,145 @@
 import Acore from "../ACore";
+import { measureText } from "./utils";
 
 var _ = Acore._;
 var $ = Acore.$;
 
+var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
+/**
+ * Setup css
+ */
+if (isSupportedVar) {
+    SelectList.$dynamicStyle = (function () {
+        var cssElt = _('style#selectlist-dynamic-style');
+        var cssCode = [
+            '.absol-selectlist-item>span {',
+            '    margin-right: calc(1em + var(--select-list-desc-width));',
+            '}',
+
+            '.absol-selectlist-item-desc-container {',
+            '    width: var(--select-list-desc-width);',
+            '}'
+
+        ];
+
+        cssElt.innerHTML = cssCode.join('\n');
+        cssElt.addTo(document.head);
+        return cssElt;
+    })();
+}
+
 /*global absol*/
 function SelectList() {
     var res = _('.absol-selectlist');
-    res.defineEvent('change');
+    res.defineEvent(['change', 'pressitem']);
     res.$attachhook = _('attachhook').addTo(res);
     res.sync = new Promise(function (rs) {
         res.$attachhook.once('error', rs);
     });
     res.$items = [];
+    res.$itemByValue = {};//quick find element
+    res._itemViewCount = 0;//for reuse
+    res.$selectedItem = undefined;
     return res;
 };
 
-SelectList.prototype.creatItem = function (item, index) {
-    var text;
-    var extendStyle = {};
-    var extendClasses = [];
-    if (typeof item == 'string') {
-        text = item;
-    }
-    else {
-        text = item.text;
-        extendStyle = item.extendStyle || {};
-        if (typeof item.extendClasses == 'string') {
-            extendClasses = item.extendClasses.split(/\s+/);
-        }
-        else if (item.extendClasses && (extendClasses instanceof Array)) {
-            extendClasses = item.extendClasses
-        }
-    }
 
-    var res = _({
-        class: ['absol-selectlist-item'].concat(extendClasses),
-        style: extendStyle,
-        child: [
-            {
-                tag: 'span',
-                class: 'absol-selectlist-item-text',
-                props: {
-                    innerHTML: text
-                },
-            },
-            {
-                class: 'absol-selectlist-item-desc-container',
-                child: {
-                    tag: 'span',
-                    class: 'absol-selectlist-item-desc',
-                    child: item.desc ? { text: item.desc } : []
-                }
-            }
-        ]
-    });
-
-    res.$descCtn = $('.absol-selectlist-item-desc-container', res);
-    res.$text = $('.absol-selectlist-item-text', res);
-    return res;
-};
-
-SelectList.prototype.realignDescription = function (extMarginLeft) {
-    if (this.$items.length == 0) return;
-    extMarginLeft = extMarginLeft || 0;
-    var maxWidth = 0;
-    this.$items.forEach(function (elt) {
-        elt.$descCtn.removeStyle('width');
-        var bound = elt.$descCtn.getBoundingClientRect();
-
-        maxWidth = Math.max(maxWidth, bound.width);
-    });
-    var fontSize = this.$items[0].getFontSize();
-    var cntWidth = maxWidth / fontSize + 'em';
-    var extMarginRight = maxWidth / fontSize + extMarginLeft + 'em';
-    this.$items.forEach(function (elt) {
-        elt.$descCtn.addStyle('width', cntWidth);
-        elt.$text.addStyle('margin-right', extMarginRight);
-    });
-
-    this._extMarginRight = extMarginRight;
-    this._cntWidth = cntWidth;
-};
-
-
-SelectList.prototype.updateSelectItem = function () {
-    var value = this.value;
-    this.$items.forEach(function ($item) {
-        var item = $item._item;
-        if (value !== undefined && (item == value || item.value == value)) {
-            $item.addClass('selected');
-        }
-        else {
-            $item.removeClass('selected');
-        }
-    });
-};
 
 SelectList.property = {};
 SelectList.property.items = {
     set: function (value) {
         value = value || [];
         this._items = value;
-        this.clearChild();
-        this.$items = value.map(function (item, index) {
-            var $item = this.creatItem(item, index).addTo(this);
-            $item._item = item; //hold a data
-            $item.on('mousedown', function (event) {
-                this.value = typeof item == 'string' ? item : item.value;
-                event.selectlistValue = this.value;
-                this.emit('change', event);
-            }.bind(this));
-            return $item;
+        var itemCout = value.length;
+        var i;
+        var self = this;
 
-        }.bind(this));
-        this.updateSelectItem();
-        this.sync = this.sync.then(this.realignDescription.bind(this, 0));
+        function mousedownItem(params) {
+            var lastValue = this.value;
+            self.value = this.value;
+            self.emit('pressitem', { type: 'pressitem', target: self, itemElt: this, value: this.value, lastValue: lastValue });
+            if (this.value != lastValue) {
+                this.emit('change', { type: 'change', target: self, itemElt: this, value: this.value, lastValue: lastValue });
+            }
+        }
+
+        while (this.$items.length < itemCout) {
+            this.$items.push(_({
+                tag: 'selectlistitem', on: {
+                    mousedown: mousedownItem
+                }
+            }));
+        }
+
+        while (this._itemViewCount < itemCout) {
+            this.addChild(this.$items[this._itemViewCount++]);
+        }
+
+        while (this._itemViewCount > itemCout) {
+            this.$items[--this._itemViewCount].remove();
+        }
+        measureText('', 'italic 14px  sans-serif')//cache font style
+        var maxDescWidth = 0;
+
+        for (i = 0; i < value.length; ++i) {
+            if (value[i].desc) {
+                maxDescWidth = Math.max(measureText(value[i].desc).width, maxDescWidth);
+            }
+
+        }
+        this._descWidth = maxDescWidth;
+        this.$itemByValue = {};
+        for (i = 0; i < itemCout; ++i) {
+            this.$items[i].data = this._items[i];
+            if (this.$itemByValue[this.$items[i].value]) {
+                console.warn('List has more than 1 element with value = ' + this.$items[i].value);
+            }
+            this.$itemByValue[this.$items[i].value] = this.$items[i];
+        }
+
+        if (isSupportedVar) {
+            this.style.setProperty('--select-list-desc-width', maxDescWidth + 'px'); //addStyle notWork because of convert to cameCase 
+        }
+        else {
+            for (i = 0; i < this._itemViewCount; ++i) {
+                this.$item.$text.addStyle('margin-right', 'calc(1em + ' + maxDescWidth + 'px)');
+                this.$item.$descCtn.addStyle('width', maxDescWidth + 'px');
+            }
+        }
+        if (value.length > 0) {
+            var newSelectedItemElt = this.$itemByValue[this.value];
+
+            if (!newSelectedItemElt) {
+                this.value = this.$items[0].value;
+            }
+            else {
+                this.value = this.value;
+            }
+        }
     },
     get: function () {
         return this._items || [];
     }
 };
 
+
+
+
 SelectList.property.value = {
     set: function (value) {
         this._selectValue = value;
-        this.updateSelectItem();
+        var newSelectedItemElt = this.$itemByValue[value];
+
+        if (newSelectedItemElt != this.$selectedItem) {
+            if (this.$selectedItem) {
+                this.$selectedItem.removeClass('selected');
+            }
+
+            if (newSelectedItemElt) {
+                newSelectedItemElt.addClass('selected');
+                this.$selectedItem = newSelectedItemElt;
+            }
+        }
     },
 
     get: function () {
@@ -151,11 +166,6 @@ SelectList.property.item = {
 
 SelectList.prototype.init = function (props) {
     props = props || {};
-    if (props.adapter && (typeof props.adapter == 'object')) {
-        Object.assign(this, props.adapter);
-        props = Object.assign({}, props);
-        delete props['adapter'];
-    }
     var value = props.value;
     delete props.value;
     this.super(props);
@@ -164,5 +174,123 @@ SelectList.prototype.init = function (props) {
 };
 
 Acore.creator.selectlist = SelectList;
+Acore.creator.selectlist = SelectList;
+
+
+
+
+
+function SelectListItem() {
+    var res = _({
+        class: 'absol-selectlist-item',
+        child: [
+            {
+                tag: 'span',
+                class: 'absol-selectlist-item-text'
+            },
+            {
+                class: 'absol-selectlist-item-desc-container',
+                child: {
+                    tag: 'span',
+                    class: 'absol-selectlist-item-desc'
+                }
+            }
+        ]
+    });
+    res.$text = $('span.absol-selectlist-item-text', res);
+    res.$descCtn = $('.absol-selectlist-item-desc-container', res);
+    res.$desc = $('span.absol-selectlist-item-desc', res.$descCtn);
+    res._extendClasses = [];
+    res._extendStyle = {};
+    res._data = "";
+    return res;
+}
+
+//bold 14pt arial
+
+
+SelectListItem.property = {};
+
+
+SelectListItem.property.extendClasses = {
+    set: function (value) {
+        var i;
+        for (i = 0; i < this._extendClasses.length; ++i) {
+            this.removeClass(this._extendClasses[i]);
+        }
+        this._extendClasses = [];
+        if (typeof value == 'string') value = value.trim().split(/\s+/);
+        value = value || [];
+        for (i = 0; i < value.length; ++i) {
+            this._extendClasses.push(value[i]);
+            this.addClass(value[i]);
+        }
+    },
+    get: function () {
+        return this._extendClasses;
+    }
+};
+
+SelectListItem.property.extendStyle = {
+    set: function (value) {
+        this.removeStyle(this._extendStyle);
+        this._extendStyle = Object.assign({}, value || {});
+        this.addStyle(this._extendStyle);
+    },
+    get: function () {
+        return this._extendClasses;
+    }
+};
+
+
+
+SelectListItem.property.data = {
+    set: function (value) {
+        this._data = value;
+        this.$desc.clearChild();
+        if (typeof value == 'string') {
+            this.$text.clearChild().addChild(_({ text: value }));
+        }
+        else {
+            this.$text.clearChild().addChild(_({ text: value.text || '' }));
+            if (value.desc) {
+                this.$desc.addChild(_({ text: value.desc }));
+            }
+            
+            this.extendClasses = value.extendClasses;
+            this.extendStyle = value.extendStyle;
+        }
+    },
+    get: function () {
+        return this._data;
+    }
+};
+
+SelectListItem.property.value = {
+    get: function () {
+        return (typeof this._data == "string") ? this._data : this._data.value;
+    }
+};
+
+SelectListItem.property.text = {
+    get: function () {
+        return (typeof this._data == "string") ? this._data : this._data.text;
+    }
+};
+
+SelectListItem.property.desc = {
+    get: function () {
+        return (typeof this._data == "string") ? undefined : this._data.desc;
+    }
+};
+
+
+
+
+
+
+Acore.install('SelectListItem'.toLowerCase(), SelectListItem);
+
+
 
 export default SelectList;
