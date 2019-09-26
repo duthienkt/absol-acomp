@@ -55,11 +55,11 @@ SelectList.property.items = {
         var self = this;
 
         function mousedownItem(params) {
-            var lastValue = this.value;
+            var lastValue = self.value;
             self.value = this.value;
             self.emit('pressitem', { type: 'pressitem', target: self, itemElt: this, value: this.value, lastValue: lastValue });
             if (this.value != lastValue) {
-                this.emit('change', { type: 'change', target: self, itemElt: this, value: this.value, lastValue: lastValue });
+                self.emit('change', { type: 'change', target: self, itemElt: this, value: this.value, lastValue: lastValue });
             }
         }
 
@@ -107,16 +107,17 @@ SelectList.property.items = {
                 this.$items[i].$descCtn.addStyle('width', maxDescWidth + 'px');
             }
         }
-        if (value.length > 0) {
-            var newSelectedItemElt = this.$itemByValue[this.value];
+        // not select one
+        // if (value.length > 0) {
+        //     var newSelectedItemElt = this.$itemByValue[this.value];
 
-            if (!newSelectedItemElt) {
-                this.value = this.$items[0].value;
-            }
-            else {
-                this.value = this.value;
-            }
-        }
+        //     if (!newSelectedItemElt) {
+        //         this.value = this.$items[0].value;
+        //     }
+        //     else {
+        //         this.value = this.value;
+        //     }
+        // }
     },
     get: function () {
         return this._items || [];

@@ -35,34 +35,41 @@ function SelectMenu() {
                 class: 'absol-selectmenu-btn',
                 child: ['dropdown-ico']
             },
-            {
-                class: 'absol-selectmenu-dropdown-box',
-                child: [
-                    {
-                        tag: 'searchtextinput', style: {
-                            display: 'none'
-                        }
-                    },
-                    'bscroller']
-            },
             'attachhook',
         ]
     });
 
     res.eventHandler = OOP.bindFunctions(res, SelectMenu.eventHandler);
-    res.$renderSpace = SelectMenu.getRenderSpace();
 
-    res.$selectlist = _('selectlist', res).addTo(res.$renderSpace);
+    res.$holderItem = $('.absol-selectmenu-holder-item', res);
+
+
+    res.$anchorCtn = SelectMenu.getAnchorCtn();
+    res.$anchor = _('.absol-selectmenu-anchor.absol-disabled').addTo(res.$anchorCtn);
+    res.$anchorContentCtn = _('.absol-selectmenu-anchor-content-container').addTo(res.$anchor);
+
+    res.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(res.$anchorContentCtn);
+    res.$searchTextInput = _('searchtextinput').addStyle('display', 'none').addTo(res.$dropdownBox);
+    res.$vscroller = _('bscroller').addTo(res.$dropdownBox);
+    res.$selectlist = _('selectlist', res).addTo(res.$vscroller);
+
+    res.$scrollTrackElts = [];
+
+
+
+    res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
+    res._searchCache = {};
     res.$selectlist.on('change', res.eventHandler.selectlistChange, true);
-    OOP.drillProperty(res, res.$selectlist, 'selectedIndex');
-    res.$vscroller = $('bscroller', res);
+    res.$selectlist.on('pressitem', function () {
+        res.isFocus = false;
+    }, true);
+
+
     res.on('mousedown', res.eventHandler.click, true);
     res.on('blur', res.eventHandler.blur);
 
-    res.$holderItem = $('.absol-selectmenu-holder-item', res);
-    res.$dropdownBox = $('.absol-selectmenu-dropdown-box', res);
-    res.$searchTextInput = $('searchtextinput', res);
-    res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
+    OOP.drillProperty(res, res.$selectlist, 'selectedIndex');
+
     res.selectListBound = { height: 0, width: 0 };
     res.$attachhook = $('attachhook', res)
         .on('error', res.eventHandler.attached);
@@ -77,7 +84,7 @@ function SelectMenu() {
 };
 
 
-
+//will remove after SelectTreeMenu completed
 SelectMenu.getRenderSpace = function () {
     if (!SelectMenu.$renderSpace) {
         SelectMenu.$renderSpace = _('.absol-selectmenu-render-space')
@@ -85,6 +92,16 @@ SelectMenu.getRenderSpace = function () {
     };
     return SelectMenu.$renderSpace;
 };
+
+
+SelectMenu.getAnchorCtn = function () {
+    if (!SelectMenu.$anchorCtn) {
+        SelectMenu.$anchorCtn = _('.absol-selectmenu-anchor-container')
+            .addTo(document.body);
+    };
+    return SelectMenu.$anchorCtn;
+};
+
 
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
@@ -97,10 +114,14 @@ SelectMenu.prototype.updateItem = function () {
 
 
 SelectMenu.prototype.init = function (props) {
-    props = props || [];
+    props = props || {};
     Object.keys(props).forEach(function (key) {
         if (props[key] === undefined) delete props[key];
     });
+
+    if (!('value' in props)) {
+        if (props.items && props.items.length > 0) props.value = typeof props.items[0] == 'string' ? props.items[0] : props.items[0].value;
+    }
 
     this.super(props);
 };
@@ -108,6 +129,7 @@ SelectMenu.prototype.init = function (props) {
 SelectMenu.property = {};
 SelectMenu.property.items = {
     set: function (value) {
+        this._searchCache = {};
         this._items = value;
         this.$selectlist.items = value || [];
         this.selectListBound = this.$selectlist.getBoundingClientRect();
@@ -147,47 +169,105 @@ SelectMenu.property.enableSearch = {
 };
 
 SelectMenu.prototype.updateDropdownPostion = function (searching) {
-    var screenBottom = Dom.getScreenSize().height;
-
-    var outBound = Dom.traceOutBoundingClientRect(this);
-    var searchBound = this.$searchTextInput.getBoundingClientRect();
     var bound = this.getBoundingClientRect();
-    var availableTop = bound.top - outBound.top - (this.enableSearch ? searchBound.height + 8 : 0) - 20;
-    var availableBottom = Math.min(outBound.bottom, screenBottom) - bound.bottom - (this.enableSearch ? searchBound.height + 8 : 0) - 20;
-    if (this.forceDown || (!this.$dropdownBox.containsClass('up') && searching) || (!searching && (availableBottom >= this.selectListBound.height || availableBottom > availableTop))) {
-        if (!searching) {
-            this.$dropdownBox.removeClass('up');
-            this.$searchTextInput.selfRemove();
-            this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
+    if (!searching) {
+        var outBound = Dom.traceOutBoundingClientRect(this);
 
+        if (!this.isFocus || bound.top > outBound.bottom || bound.bottom < outBound.top) {
+            this.isFocus = false;
+            return;
         }
 
-        this.$vscroller.addStyle('max-height', availableBottom + 'px');
+
+        var anchorOutBound = Dom.traceOutBoundingClientRect(this.$anchor);
+        var searchBound = this.$searchTextInput.getBoundingClientRect();
+        var availableTop = bound.top - anchorOutBound.top - (this.enableSearch ? searchBound.height + 8 : 0) - 20;
+        var availableBottom = anchorOutBound.bottom - bound.bottom - (this.enableSearch ? searchBound.height + 8 : 0) - 20;
+
+        if (this.forceDown || availableBottom >= this.selectListBound.height || availableBottom > availableTop) {
+            this.isDropdowUp = false;
+            this.$searchTextInput.selfRemove();
+            if (!searching) this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
+            this.$vscroller.addStyle('max-height', availableBottom + 'px');
+
+        }
+        else {
+            this.isDropdowUp = true;
+            this.$searchTextInput.selfRemove();
+            if (!searching) this.$dropdownBox.addChild(this.$searchTextInput);
+            this.$vscroller.addStyle('max-height', availableTop + 'px');
+        }
+        this.$dropdownBox.addStyle('min-width', bound.width + 'px');
+        this.scrollToSelectedItem();
+    }
+    var boxBound = this.$dropdownBox.getBoundingClientRect();
+    var anchorBound = this.$anchor.getBoundingClientRect();
+    if (this.isDropdowUp) {
+        this.$anchorContentCtn.addStyle({
+            left: bound.left - anchorBound.left + 'px',
+            top: bound.top - anchorBound.top - boxBound.height + 'px',
+        })
     }
     else {
-        if (!searching) {
-            this.$dropdownBox.addClass('up');
-            this.$searchTextInput.selfRemove();
-            this.$dropdownBox.addChild(this.$searchTextInput);
-        }
-
-        this.$vscroller.addStyle('max-height', availableTop + 'px');
+        this.$anchorContentCtn.addStyle({
+            left: bound.left - anchorBound.left + 'px',
+            top: bound.bottom - anchorBound.top + 'px',
+        });
     }
-    this.scrollToSelectedItem();
 };
 
 SelectMenu.prototype.scrollToSelectedItem = function () {
-
+    var self = this;
     requestAnimationFrame(function () {
-        $('.selected', this.$selectlist, function (e) {
-            this.$vscroller.scrollInto(e);
-            return true;
-        }.bind(this));
+        if (self.$selectlist.$selectedItem) {
+            self.$vscroller.scrollInto(self.$selectlist.$selectedItem);
+        }
     }.bind(this));
 };
 
-SelectMenu.prototype.init = function (props) {
-    this.super(props);
+
+
+SelectMenu.prototype.startTrackScroll = function () {
+    var trackElt = this.parentElement;
+    while (trackElt) {
+        if (trackElt.addEventListener) {
+            trackElt.addEventListener('scroll', this.eventHandler.scrollParent, false);
+            // trackElt.addEventListener('wheel', this.eventHandler.scrollParent, true);
+
+        }
+        else {
+            trackElt.attachEvent('onscroll', this.eventHandler.scrollParent, false);
+            // trackElt.attachEvent('onwheel', this.eventHandler.scrollParent, true);
+        }
+
+        this.$scrollTrackElts.push(trackElt);
+        trackElt = trackElt.parentElement;
+    }
+    if (document.addEventListener) {
+        document.addEventListener('scroll', this.eventHandler.scrollParent, false);
+        // document.addEventListener('wheel', this.eventHandler.scrollParent, true);
+    }
+    else {
+        document.attachEvent('onscroll', this.eventHandler.scrollParent, false);
+        // document.attachEvent('onwheel', this.eventHandler.scrollParent, true);
+    }
+    this.$scrollTrackElts.push(document);
+};
+
+SelectMenu.prototype.stopTrackScroll = function () {
+    for (var i = 0; i < this.$scrollTrackElts.length; ++i) {
+        trackElt = this.$scrollTrackElts[i];
+        if (trackElt.removeEventListener) {
+            trackElt.removeEventListener('scroll', this.eventHandler.scrollParent, false);
+            // trackElt.removeEventListener('wheel', this.eventHandler.scrollParent, true);
+        }
+        else {
+            trackElt.dettachEvent('onscroll', this.eventHandler.scrollParent, false);
+            // trackElt.dettachEvent('onwheel', this.eventHandler.scrollParent, true);
+
+        }
+    }
+    this.$scrollTrackElts = [];
 };
 
 SelectMenu.property.isFocus = {
@@ -196,9 +276,22 @@ SelectMenu.property.isFocus = {
         if (value == this.isFocus) return;
         this._isFocus = value;
         if (value) {
-            this.addClass('focus');
-            this.$selectlist.addTo(this.$vscroller);
-            $('body').on('mousedown', this.eventHandler.bodyClick);
+            this.$anchor.removeClass('absol-disabled');
+            var isAttached = false;
+            setTimeout(function () {
+                if (isAttached) return;
+                $('body').on('mousedown', this.eventHandler.bodyClick);
+                isAttached = true;
+            }.bind(this), 1000);
+            $('body').once('click', function () {
+                setTimeout(function () {
+                    if (isAttached) return;
+                    $('body').on('mousedown', this.eventHandler.bodyClick);
+                    isAttached = true;
+                }.bind(this), 10);
+            }.bind(this));
+
+
             if (this.enableSearch) {
                 setTimeout(function () {
                     this.$searchTextInput.focus();
@@ -209,12 +302,12 @@ SelectMenu.property.isFocus = {
 
         }
         else {
-            this.$selectlist.addTo(this.$renderSpace);
+            this.$anchor.addClass('absol-disabled');
+
             $('body').off('mousedown', this.eventHandler.bodyClick);
-            this.removeClass('focus');
             this.$searchTextInput.value = '';
             this.$selectlist.items = this.items;
-            this.selectListBound = this.$selectlist.getBoundingRecursiveRect();
+            this.selectListBound = this.$selectlist.getBoundingClientRect();
             this.updateItem();
         }
     },
@@ -256,37 +349,34 @@ SelectMenu.property.hidden = {
 SelectMenu.eventHandler = {};
 
 SelectMenu.eventHandler.attached = function () {
+    this.startTrackScroll();
     if (this._updateInterval) return;
-    if (!this.$selectlist.parentNode) this.$content.addTo(this.$renderSpace);
+    if (!this.$anchor.parentNode) this.$anchor.addTo(this.$anchorCtn);
+
     this._updateInterval = setInterval(function () {
         if (!this.isDescendantOf(document.body)) {
             clearInterval(this._updateInterval);
             this._updateInterval = undefined;
-            this.$selectlist.selfRemove();
+            this.$anchor.selfRemove();
+            this.stopTrackScroll();
         }
     }.bind(this), 10000);
 };
 
+SelectMenu.eventHandler.scrollParent = function () {
+    this.updateDropdownPostion();
+};
+
 SelectMenu.eventHandler.click = function (event) {
-    if (EventEmitter.hitElement(this.$selectlist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event))) {
-        event.preventDefault();
-        setTimeout(function () {
-            this.isFocus = false;
-        }.bind(this), 5)
-    }
-    else {
-        if (!this.isFocus) {
-            this.$selectlist.addTo(this.$vscroller);
-            this.isFocus = true;
-        }
+    if (!this.isFocus) {
+        this.isFocus = true;
     }
 };
 
 
 
 SelectMenu.eventHandler.bodyClick = function (event) {
-    event.preventDefault();
-    if (!EventEmitter.hitElement(this, event)) {
+    if (!EventEmitter.hitElement(this, event) && !EventEmitter.hitElement(this.$anchor, event)) {
         setTimeout(function () {
             this.isFocus = false;
         }.bind(this), 5)
@@ -312,67 +402,73 @@ SelectMenu.eventHandler.searchModify = function (event) {
     }
     else {
         var view = [];
-        if (filterText.length == 1) {
-            view = this.items.map(function (item) {
-                var res = { item: item, text: typeof item === 'string' ? item : item.text };
-                return res;
-            }).map(function (it) {
-                it.score = 0;
-                var text = it.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-                it.score += text.toLowerCase().indexOf(filterText.toLowerCase()) >= 0 ? 100 : 0;
-                text = nonAccentVietnamese(text);
-                it.score += text.toLowerCase().indexOf(filterText.toLowerCase()) >= 0 ? 100 : 0;
-                return it;
-            });
-
-            view.sort(function (a, b) {
-                if (b.score - a.score == 0) {
-                    if (nonAccentVietnamese(b.text) > nonAccentVietnamese(a.text)) return -1;
-                    return 1;
-                }
-                return b.score - a.score;
-            });
-            view = view.filter(function (x) {
-                return x.score > 0;
-            })
-        }
-        else {
-            var its = this.items.map(function (item) {
-                var res = { item: item, text: typeof item === 'string' ? item : item.text };
-                var text = res.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-                res.score = (phraseMatch(text, filterText)
-                    + phraseMatch(nonAccentVietnamese(text), nonAccentVietnamese(filterText))) / 2;
-                if (nonAccentVietnamese(text).replace(/s/g, '').toLowerCase().indexOf(nonAccentVietnamese(filterText).toLowerCase().replace(/s/g, '')) > -1)
-                    res.score = 100;
-                return res;
-            });
-            if (its.length == 0) return;
-
-            its.sort(function (a, b) {
-                if (b.score - a.score == 0) {
-                    if (nonAccentVietnamese(b.text) > nonAccentVietnamese(a.text)) return -1;
-                    return 1;
-                }
-                return b.score - a.score;
-            });
-            var view = its.filter(function (x) {
-                return x.score > 0.5;
-            });
-            if (view.length == 0) {
-                var bestScore = its[0].score;
-                view = its.filter(function (it) {
-                    return it.score + 0.001 >= bestScore;
+        if (!this._searchCache[filterText]) {
+            if (filterText.length == 1) {
+                view = this.items.map(function (item) {
+                    var res = { item: item, text: typeof item === 'string' ? item : item.text };
+                    return res;
+                }).map(function (it) {
+                    it.score = 0;
+                    var text = it.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
+                    it.score += text.toLowerCase().indexOf(filterText.toLowerCase()) >= 0 ? 100 : 0;
+                    text = nonAccentVietnamese(text);
+                    it.score += text.toLowerCase().indexOf(filterText.toLowerCase()) >= 0 ? 100 : 0;
+                    return it;
                 });
+
+                view.sort(function (a, b) {
+                    if (b.score - a.score == 0) {
+                        if (nonAccentVietnamese(b.text) > nonAccentVietnamese(a.text)) return -1;
+                        return 1;
+                    }
+                    return b.score - a.score;
+                });
+                view = view.filter(function (x) {
+                    return x.score > 0;
+                })
             }
-            if (view[0].score == 0) view = [];
+            else {
+                var its = this.items.map(function (item) {
+                    var res = { item: item, text: typeof item === 'string' ? item : item.text };
+                    var text = res.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
+                    res.score = (phraseMatch(text, filterText)
+                        + phraseMatch(nonAccentVietnamese(text), nonAccentVietnamese(filterText))) / 2;
+                    if (nonAccentVietnamese(text).replace(/s/g, '').toLowerCase().indexOf(nonAccentVietnamese(filterText).toLowerCase().replace(/s/g, '')) > -1)
+                        res.score = 100;
+                    return res;
+                });
+                if (its.length == 0) return;
+
+                its.sort(function (a, b) {
+                    if (b.score - a.score == 0) {
+                        if (nonAccentVietnamese(b.text) > nonAccentVietnamese(a.text)) return -1;
+                        return 1;
+                    }
+                    return b.score - a.score;
+                });
+                var view = its.filter(function (x) {
+                    return x.score > 0.5;
+                });
+                if (view.length == 0) {
+                    var bestScore = its[0].score;
+                    view = its.filter(function (it) {
+                        return it.score + 0.001 >= bestScore;
+                    });
+                }
+                if (view[0].score == 0) view = [];
+            }
+            view = view.map(function (e) {
+                return e.item;
+            });
+            this._searchCache[filterText] = view;
         }
-        view = view.map(function (e) {
-            return e.item;
-        });
+        else{
+            view = this._searchCache[filterText];
+        }
         this.$selectlist.items = view;
     }
 
-    this.selectListBound = this.$selectlist.getBoundingRecursiveRect();
+    this.selectListBound = this.$selectlist.getBoundingClientRect();
     this.updateDropdownPostion(true);
 };
 
