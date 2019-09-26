@@ -32,12 +32,11 @@
     </style>
 
     <script class="viewable">
-        absol._({
+        var mList = absol._({
             tag: 'selectlist',
             style: {
                 display: 'inline-block',
-                border: 'solid 1px gray',
-                minWidth: '20%'
+                border: 'solid 1px gray'
             },
             props: {
                 items: Array(30).fill(0).map(function (u, i) {
@@ -45,8 +44,11 @@
                 })
             }
         }).addTo(document.body);
+
+        mList.items = mList.items;
     </script>
     <h1>Select Menu</h1>
+
     <script class="viewable">
         absol._({
             tag: 'selectmenu',
@@ -56,9 +58,10 @@
                 minWidth: '20%'
             },
             props: {
-                items: Array(30).fill(0).map(function (u, i) {
-                    return { text: "item " + i, value: i, desc: absol.string.randomPhrase(30), extendClasses: i % 2 == 0 ? 'hover-blue' : 'hover-red' };
-                })
+                items: Array(300).fill(0).map(function (u, i) {
+                    return { text: absol.string.randomPhrase(30), value: i, desc: absol.string.randomPhrase(30), extendClasses: i % 2 == 0 ? 'hover-blue' : 'hover-red' };
+                }),
+                enableSearch: true
             }
         }).addTo(document.body);
 
