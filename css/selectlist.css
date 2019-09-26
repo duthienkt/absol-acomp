@@ -1,4 +1,6 @@
-.absol-selectlist {}
+.absol-selectlist {
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
 
 .absol-selectlist .absol-selectlist-item:hover {
     background-color: #efefef;
@@ -42,11 +44,9 @@
     font-style: italic;
     line-height: 20px;
     white-space: nowrap;
-    margin-left: 1em;
     color: rgb(37, 37, 37);
 }
 
-.absol-selectlist-item-desc:empty{
+.absol-selectlist-item-desc:empty {
     display: none;
 }
-

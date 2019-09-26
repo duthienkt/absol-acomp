@@ -91,6 +91,7 @@ SelectList.property.items = {
         this.$itemByValue = {};
         for (i = 0; i < itemCout; ++i) {
             this.$items[i].data = this._items[i];
+            this.$items[i].__index__ = i;
             if (this.$itemByValue[this.$items[i].value]) {
                 console.warn('List has more than 1 element with value = ' + this.$items[i].value);
             }
@@ -102,8 +103,8 @@ SelectList.property.items = {
         }
         else {
             for (i = 0; i < this._itemViewCount; ++i) {
-                this.$item.$text.addStyle('margin-right', 'calc(1em + ' + maxDescWidth + 'px)');
-                this.$item.$descCtn.addStyle('width', maxDescWidth + 'px');
+                this.$items[i].$text.addStyle('margin-right', 'calc(1em + ' + maxDescWidth + 'px)');
+                this.$items[i].$descCtn.addStyle('width', maxDescWidth + 'px');
             }
         }
         if (value.length > 0) {
@@ -149,19 +150,18 @@ SelectList.property.value = {
 
 SelectList.property.item = {
     get: function () {
-        if (!this._items || this._items.length == 0) {
-            return undefined;
-        }
-        var res = this._items[0];
-        var value = this.value;
-        var matchItems = this._items.filter(function (item) {
-            return item == value || item.value == value;
-        });
-        if (matchItems.length > 0) res = matchItems[0];
-        return res;
+        if (this.$selectedItem) return this.$selectedItem.data;
+        return undefined;
     }
 };
 
+
+SelectList.property.selectedIndex = {
+    get: function () {
+        if (this.$selectedItem) return this.$selectedItem.__index__;
+        return -1;
+    }
+};
 
 
 SelectList.prototype.init = function (props) {
@@ -256,7 +256,7 @@ SelectListItem.property.data = {
             if (value.desc) {
                 this.$desc.addChild(_({ text: value.desc }));
             }
-            
+
             this.extendClasses = value.extendClasses;
             this.extendStyle = value.extendStyle;
         }
