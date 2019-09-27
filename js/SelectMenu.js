@@ -84,8 +84,12 @@ function SelectMenu() {
 };
 
 
-//will remove after SelectTreeMenu completed
+// //will remove after SelectTreeMenu completed
 SelectMenu.getRenderSpace = function () {
+    if (!SelectMenu.getRenderSpace.warned){
+        console.warn('SelectMenu.getRenderSpace() will be removed in next version');
+    }
+    SelectMenu.getRenderSpace.warned = true;
     if (!SelectMenu.$renderSpace) {
         SelectMenu.$renderSpace = _('.absol-selectmenu-render-space')
             .addTo(document.body);
