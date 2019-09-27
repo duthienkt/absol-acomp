@@ -43,6 +43,7 @@ SelectListItem.property = {};
 
 SelectListItem.property.extendClasses = {
     set: function (value) {
+        
         var i;
         for (i = 0; i < this._extendClasses.length; ++i) {
             this.removeClass(this._extendClasses[i]);
@@ -80,6 +81,8 @@ SelectListItem.property.data = {
             this.$textValue.data = value;
             this.$descValue.data = '';
             this.level = 0;
+            this.extendClasses = '';
+            this.extendStyle = {};
         }
         else {
             this.$text.clearChild().addChild(_({ text: value.text || '' }));

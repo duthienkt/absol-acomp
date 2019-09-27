@@ -59,9 +59,9 @@ SelectList.property.items = {
         function mousedownItem(params) {
             var lastValue = self.value;
             self.value = this.value;
-            self.emit('pressitem', { type: 'pressitem', target: self, itemElt: this, value: this.value, lastValue: lastValue });
+            self.emit('pressitem', { type: 'pressitem', target: self, itemElt: this, value: this.value, lastValue: lastValue, data: this.data });
             if (this.value != lastValue) {
-                self.emit('change', { type: 'change', target: self, itemElt: this, value: this.value, lastValue: lastValue });
+                self.emit('change', { type: 'change', target: self, itemElt: this, value: this.value, lastValue: lastValue, data: this.data });
             }
         }
 
