@@ -108,6 +108,7 @@ SelectList.property.items = {
                 this.$items[i].$descCtn.addStyle('width', maxDescWidth + 'px');
             }
         }
+        this.value =  this.value ;
     },
     get: function () {
         return this._items || [];
