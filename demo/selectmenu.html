@@ -29,7 +29,16 @@
         .hover-blue:hover * {
             color: blueviolet;
         }
+
+        .select-menu-color-moved{
+            color: red;
+        }
     </style>
+
+    <div style="height: 600px; overflow: auto; border: solid 1px black;">
+        <div style="height: 1800px;padding-top:500px;" id="test"></div>
+
+    </div>
 
     <script class="viewable">
         var mList = absol._({
@@ -58,12 +67,12 @@
                 minWidth: '20%'
             },
             props: {
-                items: Array(300).fill(0).map(function (u, i) {
+                items: Array(3000).fill(0).map(function (u, i) {
                     return { text: absol.string.randomPhrase(30), value: i, desc: absol.string.randomPhrase(30), extendClasses: i % 2 == 0 ? 'hover-blue' : 'hover-red' };
                 }),
                 enableSearch: true
             }
-        }).addTo(document.body);
+        }).addTo(absol.$('#test'));
 
         absol._({
             tag: 'selectmenu',
@@ -123,61 +132,17 @@
     </script>
 
 
-    <script class="viewable">
-
-        // You must call realignDescription() to align description, it's not automatic because of performance
-        absol._({
-            tag: 'treelist',
-            props: treelistProps,
-            style: {
-                display: 'inline-block',
-                border: 'solid 1px gray'
-            }
-        }).addTo(document.body).on('press', function (event, sender) {
-            var data = event.data;
-            if (data.alertMessage) alert(data.alertMessage);
-        }).realignDescription();
-
-
-
-        absol._({
-            tag: 'treelist',
-            props: treelistProps,
-            style: {
-                display: 'inline-block',
-                border: 'solid 1px gray',
-                marginLeft: '40px'
-            }
-        }).addTo(document.body).on('press', function (event, sender) {
-            console.log(event.target);
-        }).realignDescription();
-    </script>
+    
     <h1 id="stm-demo">Select Tree Menu</h1>
-    <script class="viewable">
-        absol._({
-            tag: 'selecttreemenu',
-            props: Object.assign(treelistProps, { enableSearch: false, value: 'Tầng 2' }),
-            style: {
-                display: 'inline-block',
-                border: 'solid 1px gray'
-            }
-        }).addTo(document.body).on('press', function (event, sender) {
-            console.log(event.target, event.data, event.value);
-            console.log(event.target);
-        });
-        absol._({
-            tag: 'selecttreemenu',
-            props: Object.assign(treelistProps, { enableSearch: true, value: 'Tầng 2' }),
-            style: {
-                display: 'inline-block',
-                border: 'solid 1px gray',
-                marginLeft: '40px'
-            }
-        }).addTo(document.body).on('change', function (event, sender) {
-            console.log(event.target, event.data, event.value);
-        });
-    </script>
+    
 
+<label style="display:inline-block;vertical-align: top; line-height: 30px">Select Tree Menu</label>
+    <selector id="selectmenu-place-holder"></selector><span
+        style="display:inline-block;vertical-align: top; line-height: 30px;margin-left: 12px" id="stm-value"> value =
+    </span>
+    <div style="height: 50em">
+
+    </div>
     <script>
         var afItems = [{
             "value": 3571, "text": "CÔNG TY", "desc": "01/08/2019",
@@ -1668,7 +1633,8 @@
         afItems.forEach(function (item) {
             visit(item, dic);
         });
-
+        var valueText = absol.$('#stm-value');
+        valueText.innerHTML = 'value = 2138';
         absol._({
             tag: 'selecttreemenu',
             props: {
@@ -1681,50 +1647,15 @@
                 border: 'solid 1px gray',
                 marginLeft: '40px'
             }
-        }).addTo(document.body).on('change', function (event, sender) {
-            console.log(event.target, event.data, event.value);
-        })
-
-    </script>
-    <label style="display:inline-block;vertical-align: top; line-height: 30px">Select Tree Menu</label>
-    <selector id="selectmenu-place-holder"></selector><span
-        style="display:inline-block;vertical-align: top; line-height: 30px;margin-left: 12px" id="stm-value"> value =
-    </span>
-
-    <script class="viewable">
-        var stmValueElt = absol.$('#stm-value');
-        var mSelectTreeMenu = absol._({
-            tag: 'selecttreemenu',
-            props: {
-                enableSearch: true,
-                // value: 20,
-                items: Array(30).fill(0).map(function (u, i) {
-                    return {
-                        text: 'Quận ' + (i + 1),
-                        value: i * 50,
-                        items: Array(49).fill(0).map(function (v, j) {
-                            return {
-                                text: 'Phường ' + (j + 1),
-                                value: (i * 50 + j + 1)
-                            }
-                        })
-                    }
-                })
-            },
-            style: {
-                display: 'inline-block',
-                border: 'solid 1px gray',
-            }
-        }).on('change', function (event, sender) {
-            console.log(event.target, event.data, event.value);
-            stmValueElt.innerHTML = ' value = ' + event.value;
+        }).addTo(absol.$('#selectmenu-place-holder')).on('change', function (event, sender) {
+            valueText.innerHTML = 'value = '+ event.value;
         });
-        stmValueElt.innerHTML = ' value = ' + mSelectTreeMenu.value;
-        absol.$('#selectmenu-place-holder').selfReplace(mSelectTreeMenu);
-
 
     </script>
-    <script src="./autohightlighting.js?"></script>
+    
+
+    
+    <!-- <script src="./autohightlighting.js?"></script> -->
 
 </body>
 
