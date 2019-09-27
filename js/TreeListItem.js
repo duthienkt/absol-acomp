@@ -1,6 +1,5 @@
 import Acore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
-import { randomSentence } from "absol/src/String/stringGenerate";
 var _ = Acore._;
 var $ = Acore.$;
 

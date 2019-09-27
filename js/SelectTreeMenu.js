@@ -11,8 +11,8 @@ var $ = Acore.$;
 
 function SelectTreeMenu() {
     var res = _({
-        class: ['absol-selectmenu', 'absol-selecttreemenu'],
-        extendEvent: 'change',
+        class: ['absol-selectmenu'],
+        extendEvent: ['change', 'minwidthchange'],
         attr: {
             tabindex: '1'
         },
@@ -23,34 +23,43 @@ function SelectTreeMenu() {
                 class: 'absol-selectmenu-btn',
                 child: ['dropdown-ico']
             },
-            {
-                class: 'absol-selectmenu-dropdown-box',
-                child: [
-                    {
-                        tag: 'searchtextinput', style: {
-                            display: 'none'
-                        }
-                    },
-                    'bscroller.limited-height']
-            },
             'attachhook',
         ]
     });
 
+    //only event is different with selectmenu
     res.eventHandler = OOP.bindFunctions(res, SelectTreeMenu.eventHandler);
-    res.$renderSpace = SelectTreeMenu.getRenderSpace();
 
-    res.$treelist = _('treelist', res).addTo(res.$renderSpace);
-    res.$treelist.on('press', res.eventHandler.treelistPress, true);
-    res.$vscroller = $('bscroller', res);
+    res.$holderItem = $('.absol-selectmenu-holder-item', res);
+
+
+    res.$anchorCtn = SelectMenu.getAnchorCtn();
+    res.$anchor = _('.absol-selectmenu-anchor.absol-disabled').addTo(res.$anchorCtn);
+    res.$anchorContentCtn = _('.absol-selectmenu-anchor-content-container').addTo(res.$anchor);
+
+    res.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(res.$anchorContentCtn);
+    res.$searchTextInput = _('searchtextinput').addStyle('display', 'none').addTo(res.$dropdownBox);
+    res.$vscroller = _('bscroller').addTo(res.$dropdownBox);
+    res.$selectlist = _('selectlist', res).addTo(res.$vscroller);
+
+    res.$scrollTrackElts = [];
+
+
+
+    res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
+    res._searchCache = {};
+    res.$selectlist.on('change', res.eventHandler.selectlistChange, true);
+    res.$selectlist.on('pressitem', function () {
+        res.isFocus = false;
+    }, true);
+
+
     res.on('mousedown', res.eventHandler.click, true);
     res.on('blur', res.eventHandler.blur);
 
-    res.$holderItem = $('.absol-selectmenu-holder-item', res);
-    res.$dropdownBox = $('.absol-selectmenu-dropdown-box', res);
-    res.$searchTextInput = $('searchtextinput', res);
-    res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
-    res.treeListBound = { height: 0, width: 0 };
+    OOP.drillProperty(res, res.$selectlist, 'selectedIndex');
+
+    res.selectListBound = { height: 0, width: 0 };
     res.$attachhook = $('attachhook', res)
         .on('error', res.eventHandler.attached);
 
@@ -59,85 +68,44 @@ function SelectTreeMenu() {
             rs();
         });
     });
+
+
     return res;
 }
 
-SelectTreeMenu.prototype.updateDropdownPostion = function (searching) {
-    var screenBottom = Dom.getScreenSize().height;
+SelectTreeMenu.prototype.updateItem = SelectMenu.prototype.updateItem;
 
-    var outBound = Dom.traceOutBoundingClientRect(this);
-    var searchBound = this.$searchTextInput.getBoundingClientRect();
-    var bound = this.getBoundingClientRect();
-    var availableTop = bound.top - outBound.top - (this.enableSearch ? searchBound.height + 8 : 0) - 20;
-    var availableBottom = Math.min(outBound.bottom, screenBottom) - bound.bottom - (this.enableSearch ? searchBound.height + 8 : 0) - 20;
-    if (this.forceDown || (!this.$dropdownBox.containsClass('up') && searching) || (!searching && (availableBottom >= this.treeListBound.height || availableBottom > availableTop))) {
-        if (!searching) {
-            this.$dropdownBox.removeClass('up');
-            this.$searchTextInput.selfRemove();
-            this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
+SelectTreeMenu.prototype.init = SelectMenu.prototype.init;
+SelectTreeMenu.prototype.updateDropdownPostion = SelectMenu.prototype.updateDropdownPostion;
+SelectTreeMenu.prototype.scrollToSelectedItem = SelectMenu.prototype.scrollToSelectedItem;
+SelectTreeMenu.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
+SelectTreeMenu.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
 
-        }
-        this.$vscroller.addStyle('max-height', availableBottom + 'px');
-    }
-    else {
-        if (!searching) {
-            this.$dropdownBox.addClass('up');
-            this.$searchTextInput.selfRemove();
-            this.$dropdownBox.addChild(this.$searchTextInput);
-        }
-        this.$vscroller.addStyle('max-height', availableTop + 'px');
-    }
-    if (!searching)
-        this.scrollToSelectedItem();
-};
-
-SelectTreeMenu.prototype.scrollToSelectedItem = function () {
-    this._scrolling = true;
-    setTimeout(function () {
-        if (this.$selectedItem) {
-            this.$vscroller.scrollInto(this.$selectedItem.$parent);
-        }
-        this._scrolling = false;
-    }.bind(this), 5);
-};
-
-SelectTreeMenu.getRenderSpace = SelectMenu.getRenderSpace;
 
 SelectTreeMenu.eventHandler = {};
+SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
+SelectTreeMenu.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
+SelectTreeMenu.eventHandler.click = SelectMenu.eventHandler.click;
+SelectTreeMenu.eventHandler.bodyClick = SelectMenu.eventHandler.bodyClick;
+SelectTreeMenu.eventHandler.selectlistChange = SelectMenu.eventHandler.selectlistChange;
+
+SelectTreeMenu.property = {};
+SelectTreeMenu.property.disabled = SelectMenu.property.disabled;
+SelectTreeMenu.property.hidden = SelectMenu.property.hidden;
+SelectTreeMenu.property.value = SelectMenu.property.value;
+SelectTreeMenu.property.enableSearch = SelectMenu.property.enableSearch;
 
 
-SelectTreeMenu.eventHandler.bodyClick = function (event) {
-    event.preventDefault();
-    if (!EventEmitter.hitElement(this, event)) {
-        this.isFocus = false;
+
+SelectTreeMenu.treeToList = function (items) {
+    var arr = [];
+    function visit(level, node) {
+        node.level = level;
+        arr.push(node);
+        if (node.items && node.items.length > 0) node.items.forEach(visit.bind(null, level + 1));
     }
-};
-
-SelectTreeMenu.eventHandler.attached = function () {
-    if (this._updateInterval) return;
-    if (!this.$treelist.parentNode) this.$content.addTo(this.$renderSpace);
-    this._updateInterval = setInterval(function () {
-        if (!this.isDescendantOf(document.body)) {
-            clearInterval(this._updateInterval);
-            this._updateInterval = undefined;
-            this.$treelist.selfRemove();
-        }
-    }.bind(this), 10000);
-};
-
-SelectTreeMenu.eventHandler.click = function (event) {
-    if (EventEmitter.hitElement(this.$treelist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event))) {
-        event.preventDefault();
-        setTimeout(function () {
-            this.isFocus = false;
-        }.bind(this), 1);
-    }
-    else {
-        if (!this.isFocus) {
-            this.$treelist.addTo(this.$vscroller);
-            this.isFocus = true;
-        }
-    }
+    items.forEach(visit.bind(null, 0));
+    return arr;
 };
 
 
@@ -153,103 +121,55 @@ SelectTreeMenu.prototype.notifyChange = function (eventData) {
     }.bind(this), 1)
 }
 
-SelectTreeMenu.eventHandler.treelistPress = function (event) {
-    var value = event.target.value;
-    if (value != this._value) {
-        this._value = value;
-        this.$selectedItem = event.target;
-        //not need update tree
-        this.$holderItem.clearChild()
-            .addChild(_(event.target.$parent.cloneNode(true)));
-        this.notifyChange(Object.assign({ value: value }, event));
-    }
-};
 
-SelectTreeMenu.prototype.updateSelectedItem = function (scrollInto) {
-    if (this._isUpdateSelectedItem) return;
-    this._isUpdateSelectedItem = true;
-    var self = this;
-    setTimeout(function () {
-        $('treelistitem', self.$treelist, function (elt) {
-            if (elt.value == self.value) {
-                self.$selectedItem = elt;
-                self.$holderItem.clearChild();
-                self.$holderItem.addChild(elt.$parent.cloneNode(true));
-                elt.active = true;
-                if (scrollInto) {
-                    this.$vscroller.scrollInto(elt);
-                }
-            }
-            else {
-                elt.active = false;
-            }
-        });
-        self._isUpdateSelectedItem = false;
-    }, 1)
-}
 
-SelectTreeMenu.property = {};
 SelectTreeMenu.property.items = {
     set: function (value) {
-        this._items = value || [];
-        this.$treelist.items = SelectTreeMenu.prepareData(this._items);
+        value = value || [];
+        this._items = value;
+        SelectTreeMenu.prepareData(this._items);
+    
         this.__searchcache__ = {};
-        this.$treelist.realignDescription();
+        this.__searchcache__['__EMPTY_QUERY__'] = SelectTreeMenu.treeToList(value);
+        this.$selectlist.items = this.__searchcache__['__EMPTY_QUERY__'];
 
-        this.treeListBound = this.$treelist.getBoundingClientRect();
-        this.addStyle('min-width', this.treeListBound.width + 37 + 2 + 'px');
-        if (typeof this.value == 'undefined' && this._items.length > 0) {
-            var first = this._items[0];
-            if (typeof first == 'string') {
-                this.value = first;
-            }
-            else {
-                this.value = (typeof (first.value) == 'undefined') ? first.text : first.value;
-            }
-        }
-        else {
-            this.updateSelectedItem();
-        }
+        //same with SelectMenu
+        this.selectListBound = this.$selectlist.getBoundingClientRect();
+        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
+        this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
+        this.updateItem();
+
     },
     get: function () {
         return this._items;
     }
 };
 
-SelectTreeMenu.property.value = {
-    set: function (value) {
-        this._value = value;
-        this.updateSelectedItem();
-    },
-    get: function () {
-        return this._value;
-    }
-};
 
-SelectTreeMenu.property.enableSearch = {
-    set: function (value) {
-        this._enableSearch = !!value;
-        if (value) {
-            this.$searchTextInput.removeStyle('display');
-        }
-        else {
-            this.$searchTextInput.addStyle('display', 'none');
-        }
-    },
-    get: function () {
-        return !!this._enableSearch;
-    }
-};
 
 SelectTreeMenu.property.isFocus = {
     set: function (value) {
+        var self = this;
         value = !!value;
         if (value == this.isFocus) return;
         this._isFocus = value;
         if (value) {
-            this.addClass('focus');
-            this.$treelist.addTo(this.$vscroller);
-            $('body').on('mousedown', this.eventHandler.bodyClick);
+            this.startTrackScroll();
+            this.$anchor.removeClass('absol-disabled');
+            var isAttached = false;
+            setTimeout(function () {
+                if (isAttached) return;
+                $('body').on('mousedown', this.eventHandler.bodyClick);
+                isAttached = true;
+            }.bind(this), 1000);
+            $('body').once('click', function () {
+                setTimeout(function () {
+                    if (isAttached) return;
+                    $('body').on('mousedown', this.eventHandler.bodyClick);
+                    isAttached = true;
+                }.bind(this), 10);
+            }.bind(this));
+
             if (this.enableSearch) {
                 setTimeout(function () {
                     this.$searchTextInput.focus();
@@ -257,21 +177,20 @@ SelectTreeMenu.property.isFocus = {
             }
 
             this.updateDropdownPostion();
-            this.scrollToSelectedItem();
+
         }
         else {
-            this.$treelist.addTo(this.$renderSpace);
+            this.$anchor.addClass('absol-disabled');
+            this.stopTrackScroll();
             $('body').off('mousedown', this.eventHandler.bodyClick);
-            this.removeClass('focus');
-            if (this.$searchTextInput.value.length > 0) {
-                this.$searchTextInput.value = '';
-                setTimeout(function () {
-                    this.$treelist.items = this.items;
-                    this.$treelist.realignDescription();
-                    setTimeout(this.updateSelectedItem.bind(this), 1);
-                    this.treeListBound = this.$treelist.getBoundingRecursiveRect();
-                }.bind(this), 1)
-            }
+            setTimeout(function () {
+                if (self.$searchTextInput.value != 0) {
+                    self.$searchTextInput.value = '';
+                    // different with SelectMenu
+                    self.$selectlist.items = self.__searchcache__['__EMPTY_QUERY__'];
+                }
+            }, 100)
+            this.updateItem();
         }
     },
     get: function () {
@@ -279,35 +198,8 @@ SelectTreeMenu.property.isFocus = {
     }
 };
 
+// SelectTreeMenu.property.value = Sele;
 
-SelectTreeMenu.property.disabled = {
-    set: function (value) {
-        if (value) {
-            this.addClass('disabled');
-        }
-        else {
-            this.removeClass('disabled');
-        }
-    },
-    get: function () {
-        return this.containsClass('disabled');
-    }
-};
-
-
-SelectTreeMenu.property.hidden = {
-    set: function (value) {
-        if (value) {
-            this.addClass('hidden');
-        }
-        else {
-            this.removeClass('hidden');
-        }
-    },
-    get: function () {
-        return this.addClass('hidden');
-    }
-};
 
 SelectTreeMenu.EXTRA_MATCH_SCORE = 2;
 SelectTreeMenu.UNCASE_MATCH_SCORE = 1;
@@ -387,6 +279,7 @@ SelectTreeMenu.queryTree = function (query, items) {
     var gmaxScore = 0;
     var gminScore = 1000;
     var queryItem = SelectTreeMenu.prepareItem({ text: query });
+    
 
     function makeScore(item) {
 
@@ -438,21 +331,21 @@ SelectTreeMenu.queryTree = function (query, items) {
     var medianScore = (gminScore + gmaxScore) / 2;
     var items = makeItems(scoredItems, medianScore);
 
-    return items;
+    return SelectTreeMenu.treeToList(items);
 };
 
 SelectTreeMenu.prototype.search = function (query) {
     if (query.length == 0) {
-        this.$treelist.items = this.items;
-        this.updateSelectedItem();
+        this.$selectlist.items = this.__searchcache__['__EMPTY_QUERY__'];
+        this.updateItem();
         this.updateDropdownPostion(true);
         this.scrollToSelectedItem();
     }
     else {
         var searchResult = this.__searchcache__[query] || SelectTreeMenu.queryTree(query, this.items);
         this.__searchcache__[query] = searchResult;
-        this.$treelist.items = searchResult;
-        this.updateSelectedItem();
+        this.$selectlist.items = searchResult;
+        this.updateItem();
         this.updateDropdownPostion(true);
         this.$vscroller.scrollTop = 0;
     }

@@ -79,12 +79,14 @@ SelectListItem.property.data = {
         if (typeof value == 'string') {
             this.$textValue.data = value;
             this.$descValue.data = '';
+            this.level = 0;
         }
         else {
             this.$text.clearChild().addChild(_({ text: value.text || '' }));
             if (value.desc) {
                 this.$descValue.data = value.desc || '';
             }
+            this.level = value.level || 0;
 
             this.extendClasses = value.extendClasses;
             this.extendStyle = value.extendStyle;
