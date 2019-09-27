@@ -93,7 +93,6 @@ SelectList.property.items = {
             this.$items[i].data = this._items[i];
             this.$items[i].__index__ = i;
             if (this.$itemByValue[this.$items[i].value]) {
-                console.warn('List has more than 1 element with value = ' + this.$items[i].value);
             }
             this.$itemByValue[this.$items[i].value] = this.$items[i];
         }
@@ -107,17 +106,6 @@ SelectList.property.items = {
                 this.$items[i].$descCtn.addStyle('width', maxDescWidth + 'px');
             }
         }
-        // not select one
-        // if (value.length > 0) {
-        //     var newSelectedItemElt = this.$itemByValue[this.value];
-
-        //     if (!newSelectedItemElt) {
-        //         this.value = this.$items[0].value;
-        //     }
-        //     else {
-        //         this.value = this.value;
-        //     }
-        // }
     },
     get: function () {
         return this._items || [];
@@ -187,20 +175,24 @@ function SelectListItem() {
         child: [
             {
                 tag: 'span',
-                class: 'absol-selectlist-item-text'
+                class: 'absol-selectlist-item-text',
+                child: { text: '' }
             },
             {
                 class: 'absol-selectlist-item-desc-container',
                 child: {
                     tag: 'span',
-                    class: 'absol-selectlist-item-desc'
+                    class: 'absol-selectlist-item-desc',
+                    child: { text: '' }
                 }
             }
         ]
     });
     res.$text = $('span.absol-selectlist-item-text', res);
+    res.$textValue = res.$text.childNodes[0];
     res.$descCtn = $('.absol-selectlist-item-desc-container', res);
     res.$desc = $('span.absol-selectlist-item-desc', res.$descCtn);
+    res.$descValue = res.$desc.childNodes[0];
     res._extendClasses = [];
     res._extendStyle = {};
     res._data = "";
@@ -248,14 +240,14 @@ SelectListItem.property.extendStyle = {
 SelectListItem.property.data = {
     set: function (value) {
         this._data = value;
-        this.$desc.clearChild();
         if (typeof value == 'string') {
-            this.$text.clearChild().addChild(_({ text: value }));
+            this.$textValue.data = value;
+            this.$descValue.data = '';
         }
         else {
             this.$text.clearChild().addChild(_({ text: value.text || '' }));
             if (value.desc) {
-                this.$desc.addChild(_({ text: value.desc }));
+                this.$descValue.data = value.desc ||'';
             }
 
             this.extendClasses = value.extendClasses;

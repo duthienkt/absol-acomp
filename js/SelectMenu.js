@@ -168,9 +168,9 @@ SelectMenu.property.enableSearch = {
     }
 };
 
-SelectMenu.prototype.updateDropdownPostion = function (searching) {
+SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
     var bound = this.getBoundingClientRect();
-    if (!searching) {
+    if (!updateAnchor) {
         var outBound = Dom.traceOutBoundingClientRect(this);
 
         if (!this.isFocus || bound.top > outBound.bottom || bound.bottom < outBound.top) {
@@ -187,26 +187,25 @@ SelectMenu.prototype.updateDropdownPostion = function (searching) {
         if (this.forceDown || availableBottom >= this.selectListBound.height || availableBottom > availableTop) {
             this.isDropdowUp = false;
             this.$searchTextInput.selfRemove();
-            if (!searching) this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
+            if (!updateAnchor) this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
             this.$vscroller.addStyle('max-height', availableBottom + 'px');
 
         }
         else {
             this.isDropdowUp = true;
             this.$searchTextInput.selfRemove();
-            if (!searching) this.$dropdownBox.addChild(this.$searchTextInput);
+            if (!updateAnchor) this.$dropdownBox.addChild(this.$searchTextInput);
             this.$vscroller.addStyle('max-height', availableTop + 'px');
         }
         this.$dropdownBox.addStyle('min-width', bound.width + 'px');
         this.scrollToSelectedItem();
     }
-    var boxBound = this.$dropdownBox.getBoundingClientRect();
     var anchorBound = this.$anchor.getBoundingClientRect();
     if (this.isDropdowUp) {
         this.$anchorContentCtn.addStyle({
             left: bound.left - anchorBound.left + 'px',
-            top: bound.top - anchorBound.top - boxBound.height + 'px',
-        })
+            top: bound.top - anchorBound.top - this.$dropdownBox.clientHeight - 1 + 'px',
+        });
     }
     else {
         this.$anchorContentCtn.addStyle({
@@ -218,11 +217,11 @@ SelectMenu.prototype.updateDropdownPostion = function (searching) {
 
 SelectMenu.prototype.scrollToSelectedItem = function () {
     var self = this;
-    requestAnimationFrame(function () {
+    setTimeout(function () {
         if (self.$selectlist.$selectedItem) {
             self.$vscroller.scrollInto(self.$selectlist.$selectedItem);
         }
-    }.bind(this));
+    }.bind(this), 30);
 };
 
 
@@ -232,12 +231,12 @@ SelectMenu.prototype.startTrackScroll = function () {
     while (trackElt) {
         if (trackElt.addEventListener) {
             trackElt.addEventListener('scroll', this.eventHandler.scrollParent, false);
-            // trackElt.addEventListener('wheel', this.eventHandler.scrollParent, true);
+            // trackElt.addEventListener('scroll', this.eventHandler.scrollParent, true);
 
         }
         else {
             trackElt.attachEvent('onscroll', this.eventHandler.scrollParent, false);
-            // trackElt.attachEvent('onwheel', this.eventHandler.scrollParent, true);
+            // trackElt.attachEvent('onscroll', this.eventHandler.scrollParent, true);
         }
 
         this.$scrollTrackElts.push(trackElt);
@@ -245,25 +244,25 @@ SelectMenu.prototype.startTrackScroll = function () {
     }
     if (document.addEventListener) {
         document.addEventListener('scroll', this.eventHandler.scrollParent, false);
-        // document.addEventListener('wheel', this.eventHandler.scrollParent, true);
+
+        document.addEventListener('wheel', this.eventHandler.wheelDocument, true);
     }
     else {
         document.attachEvent('onscroll', this.eventHandler.scrollParent, false);
-        // document.attachEvent('onwheel', this.eventHandler.scrollParent, true);
     }
     this.$scrollTrackElts.push(document);
+
 };
 
 SelectMenu.prototype.stopTrackScroll = function () {
+    var trackElt;
     for (var i = 0; i < this.$scrollTrackElts.length; ++i) {
         trackElt = this.$scrollTrackElts[i];
         if (trackElt.removeEventListener) {
             trackElt.removeEventListener('scroll', this.eventHandler.scrollParent, false);
-            // trackElt.removeEventListener('wheel', this.eventHandler.scrollParent, true);
         }
         else {
             trackElt.dettachEvent('onscroll', this.eventHandler.scrollParent, false);
-            // trackElt.dettachEvent('onwheel', this.eventHandler.scrollParent, true);
 
         }
     }
@@ -272,10 +271,12 @@ SelectMenu.prototype.stopTrackScroll = function () {
 
 SelectMenu.property.isFocus = {
     set: function (value) {
+        var self = this;
         value = !!value;
         if (value == this.isFocus) return;
         this._isFocus = value;
         if (value) {
+            this.startTrackScroll();
             this.$anchor.removeClass('absol-disabled');
             var isAttached = false;
             setTimeout(function () {
@@ -291,7 +292,6 @@ SelectMenu.property.isFocus = {
                 }.bind(this), 10);
             }.bind(this));
 
-
             if (this.enableSearch) {
                 setTimeout(function () {
                     this.$searchTextInput.focus();
@@ -303,11 +303,14 @@ SelectMenu.property.isFocus = {
         }
         else {
             this.$anchor.addClass('absol-disabled');
-
+            this.stopTrackScroll();
             $('body').off('mousedown', this.eventHandler.bodyClick);
-            this.$searchTextInput.value = '';
-            this.$selectlist.items = this.items;
-            this.selectListBound = this.$selectlist.getBoundingClientRect();
+            setTimeout(function () {
+                if (self.$searchTextInput.value != 0) {
+                    self.$searchTextInput.value = '';
+                    self.$selectlist.items = self.items;
+                }
+            }, 100)
             this.updateItem();
         }
     },
@@ -349,7 +352,6 @@ SelectMenu.property.hidden = {
 SelectMenu.eventHandler = {};
 
 SelectMenu.eventHandler.attached = function () {
-    this.startTrackScroll();
     if (this._updateInterval) return;
     if (!this.$anchor.parentNode) this.$anchor.addTo(this.$anchorCtn);
 
@@ -359,18 +361,30 @@ SelectMenu.eventHandler.attached = function () {
             this._updateInterval = undefined;
             this.$anchor.selfRemove();
             this.stopTrackScroll();
+
         }
     }.bind(this), 10000);
 };
 
-SelectMenu.eventHandler.scrollParent = function () {
-    this.updateDropdownPostion();
+
+
+SelectMenu.eventHandler.scrollParent = function (event) {
+    var self = this;
+    if (this._scrollFrameout > 0) {
+        this._scrollFrameout = 10;
+        return;
+    }
+    this._scrollFrameout = this._scrollFrameout || 10;
+    function update() {
+        self.updateDropdownPostion(false);
+        self._scrollFrameout--;
+        if (self._scrollFrameout > 0) requestAnimationFrame(update);
+    }
+    update();
 };
 
 SelectMenu.eventHandler.click = function (event) {
-    if (!this.isFocus) {
-        this.isFocus = true;
-    }
+    this.isFocus = !this.isFocus;
 };
 
 
@@ -462,7 +476,7 @@ SelectMenu.eventHandler.searchModify = function (event) {
             });
             this._searchCache[filterText] = view;
         }
-        else{
+        else {
             view = this._searchCache[filterText];
         }
         this.$selectlist.items = view;
