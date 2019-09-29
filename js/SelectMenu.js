@@ -424,7 +424,6 @@ SelectMenu.eventHandler.attached = function () {
     if (!this.$anchor.parentNode) this.$anchor.addTo(this.$anchorCtn);
     this.$attachhook.updateSize = this.$attachhook.updateSize || this.updateDropdownPostion.bind(this);
     Dom.addToResizeSystem(this.$attachhook);
-
     this._updateInterval = setInterval(function () {
         if (!this.isDescendantOf(document.body)) {
             clearInterval(this._updateInterval);
