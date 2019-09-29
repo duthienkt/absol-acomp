@@ -86,7 +86,7 @@ function SelectMenu() {
 
 // //will remove after SelectTreeMenu completed
 SelectMenu.getRenderSpace = function () {
-    if (!SelectMenu.getRenderSpace.warned){
+    if (!SelectMenu.getRenderSpace.warned) {
         console.warn('SelectMenu.getRenderSpace() will be removed in next version');
     }
     SelectMenu.getRenderSpace.warned = true;
@@ -173,7 +173,12 @@ SelectMenu.property.enableSearch = {
 };
 
 SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
-    if (!this.focus) return;
+    if (!this.focus) {
+        this.$anchorContentCtn
+            .removeStyle('left')
+            .removeStyle('top');
+        return;
+    }
     var bound = this.getBoundingClientRect();
     if (!updateAnchor) {
         var outBound = Dom.traceOutBoundingClientRect(this);
@@ -359,7 +364,7 @@ SelectMenu.eventHandler = {};
 SelectMenu.eventHandler.attached = function () {
     if (this._updateInterval) return;
     if (!this.$anchor.parentNode) this.$anchor.addTo(this.$anchorCtn);
-    this.$attachhook.updateSize = this.$attachhook.updateSize||this.updateDropdownPostion.bind(this);
+    this.$attachhook.updateSize = this.$attachhook.updateSize || this.updateDropdownPostion.bind(this);
     Dom.addToResizeSystem(this.$attachhook);
 
     this._updateInterval = setInterval(function () {

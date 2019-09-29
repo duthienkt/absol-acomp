@@ -95,6 +95,7 @@ SelectList.property.items = {
             this.$items[i].data = this._items[i];
             this.$items[i].__index__ = i;
             if (this.$itemByValue[this.$items[i].value]) {
+                console.warn('Value  ' + this.$items[i].value + ' is duplicated!');
             }
             this.$itemByValue[this.$items[i].value] = this.$items[i];
         }
@@ -108,7 +109,7 @@ SelectList.property.items = {
                 this.$items[i].$descCtn.addStyle('width', maxDescWidth + 'px');
             }
         }
-        this.value =  this.value ;
+        this.value = this.value;
     },
     get: function () {
         return this._items || [];
