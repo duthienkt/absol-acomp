@@ -358,6 +358,8 @@ SelectMenu.eventHandler = {};
 SelectMenu.eventHandler.attached = function () {
     if (this._updateInterval) return;
     if (!this.$anchor.parentNode) this.$anchor.addTo(this.$anchorCtn);
+    this.$attachhook.updateSize = this.$attachhook.updateSize||this.updateDropdownPostion.bind(this);
+    Dom.addToResizeSystem(this.$attachhook);
 
     this._updateInterval = setInterval(function () {
         if (!this.isDescendantOf(document.body)) {
@@ -365,7 +367,6 @@ SelectMenu.eventHandler.attached = function () {
             this._updateInterval = undefined;
             this.$anchor.selfRemove();
             this.stopTrackScroll();
-
         }
     }.bind(this), 10000);
 };
