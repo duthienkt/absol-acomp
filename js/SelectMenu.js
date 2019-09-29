@@ -173,6 +173,7 @@ SelectMenu.property.enableSearch = {
 };
 
 SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
+    if (!this.focus) return;
     var bound = this.getBoundingClientRect();
     if (!updateAnchor) {
         var outBound = Dom.traceOutBoundingClientRect(this);
