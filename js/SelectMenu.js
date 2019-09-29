@@ -452,6 +452,7 @@ SelectMenu.eventHandler.scrollParent = function (event) {
 };
 
 SelectMenu.eventHandler.click = function (event) {
+    if (EventEmitter.isMouseRight(event)) return;
     this.isFocus = !this.isFocus;
 };
 

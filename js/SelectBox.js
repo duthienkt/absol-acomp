@@ -187,6 +187,7 @@ SelectBox.property.items = {
 
 
         function mousedownItem(event) {
+            if (EventEmitter.isMouseRight(event)) return;
             self.values.push(this.value);
             self.values = self.values;//update
             self.isFocus = false;//close after click item

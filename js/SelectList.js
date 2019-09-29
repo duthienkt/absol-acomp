@@ -2,6 +2,7 @@ import Acore from "../ACore";
 import { measureText } from "./utils";
 
 import './SelectListItem';
+import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -56,7 +57,8 @@ SelectList.property.items = {
         var i;
         var self = this;
 
-        function mousedownItem(params) {
+        function mousedownItem(event) {
+            if (EventEmitter.isMouseRight(event)) return;
             var lastValue = self.value;
             self.value = this.value;
             self.emit('pressitem', { type: 'pressitem', target: self, itemElt: this, value: this.value, lastValue: lastValue, data: this.data });
