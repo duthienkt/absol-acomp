@@ -6,98 +6,76 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import { phraseMatch } from "absol/src/String/stringMatching";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 
+import './SelectBoxItem';
+import { measureText } from "./utils";
+
+var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
+
 var _ = Acore._;
 var $ = Acore.$;
 
 
 function SelectBox() {
     var res = _({
-        class: ['absol-selectbox'],
-        extendEvent: ['change', 'add', 'remove'],
+        class: ['absol-selectbox', 'absol-bscroller'],
+        extendEvent: ['change', 'add', 'remove', 'minwidthchange'],
         attr: {
             tabindex: '1'
         },
-        child: [
-            '.absol-selectbox-content-item',
-            {
-                class: 'absol-selectmenu-dropdown-box',
-                child: [
-                    {
-                        tag: 'searchtextinput', style: {
-                            display: 'none'
-                        }
-                    },
-                    {
-                        tag: 'bscroller',
-                        class: 'limited-height',
-                        child: [
-                            '.absol-selectlist.search'//handled event by itself, reusing style
 
-                        ]
-                    }]
-            },
-            'attachhook',
-        ]
+        child: 'attachhook'
     });
     res.eventHandler = OOP.bindFunctions(res, SelectBox.eventHandler);
-    res.$renderSpace = SelectMenu.getRenderSpace();
 
-    res.$vscroller = $('bscroller', res);
-    res.$attachhook = $('attachhook', res);
-    res.$selectlist = _('.absol-selectlist.choose', res).addTo(res.$renderSpace);
-    res.$searchlist = $('.absol-selectlist.search', res).addStyle('display', 'none');
-    res.on('click', res.eventHandler.click, true);
-    res.on('blur', res.eventHandler.blur);
-    res.$holderItem = $('.absol-selectbox-content-item', res);
-    res.$dropdownBox = $('.absol-selectmenu-dropdown-box', res);
-    res.$searchTextInput = $('searchtextinput', res);
+    res.on('click', res.eventHandler.click);
+
+    res.$anchorCtn = SelectMenu.getAnchorCtn();
+    res.$anchor = _('.absol-selectmenu-anchor.absol-disabled').addTo(res.$anchorCtn);
+    res.$anchorContentCtn = _('.absol-selectmenu-anchor-content-container').addTo(res.$anchor);
+    res.$scrollTrackElts = [];
+
+    res.$attachhook = $('attachhook', res)
+        .on('error', res.eventHandler.attached);
+
+    res.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(res.$anchorContentCtn);
+    res.$searchTextInput = _('searchtextinput').addStyle('display', 'none').addTo(res.$dropdownBox);
+    res.$vscroller = _('bscroller').addTo(res.$dropdownBox);
+    res.$selectlist = _('.absol-selectlist').addTo(res.$vscroller);//reuse css
+    res.$searchList = _('selectlist').addStyle('display', 'none')
+        .on('change', res.eventHandler.searchListChange).addTo(res.$vscroller);//todo: event
+
+    res.$listItems = [];
+    res._listItemViewCount = 0;
+    this.$listItemByValue = {};
+
+    res.$boxItems = [];
+    res._boxItemViewCount = 0;
+    res._valueDict = {};
+
     res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
-    res.selectListBound = { height: 0, width: 0 };//selectlist did not init  
-
-    res.sync = new Promise(function (rs) {
-        res.$attachhook.once('error', function () {
-            rs();
-        });
-    });
-
-    res.$attachhook.on('error', res.eventHandler.attached);
+    res._searchCache = {};
 
     return res;
 };
 
 
+SelectBox.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
+SelectBox.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
+SelectBox.prototype.updateDropdownPostion = SelectMenu.prototype.updateDropdownPostion;
 
 
 
-SelectBox.prototype.updateItemList = function () {
-    var self = this;
-    self.$selectlist.clearChild();
-    this._items.map(function (item) {
-        var text;
-        if (typeof item == 'string') {
-            text = item;
-        }
-        else {
-            text = item.text;
-        }
-        return _({
-            class: 'absol-selectlist-item',
-            child: '<span>' + text + '</span>',
-            props: {
-                _data: item
-            },
-            on: {
-                click: function (event) {
-                    self.eventHandler.selectlistChange(event, this);
-                }
-            }
-        }).addTo(self.$selectlist);
-    });
+SelectBox.eventHandler = {};
+SelectBox.eventHandler.attached = SelectMenu.eventHandler.attached;
 
-    this.selectListBound = this.$selectlist.getBoundingClientRect();
-    this.addStyle('min-width', this.selectListBound.width + 15 + 'px');
-};
+SelectBox.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
+// SelectTreeMenu.eventHandler.click = SelectMenu.eventHandler.click;
+// SelectTreeMenu.eventHandler.bodyClick = SelectMenu.eventHandler.bodyClick;
 
+SelectBox.property = {};
+SelectBox.property.disabled = SelectMenu.property.disabled;
+SelectBox.property.hidden = SelectMenu.property.hidden;
+SelectBox.property.enableSearch = SelectMenu.property.enableSearch;
 
 
 SelectBox.prototype.init = function (props) {
@@ -116,55 +94,8 @@ SelectBox.prototype.resetFilter = function () {
 };
 
 
-SelectBox.prototype.updateDropdownPostion = function (searching) {
-    var screenBottom = Dom.getScreenSize().height;
-    var outBound = Dom.traceOutBoundingClientRect(this);
-    var bound = this.getBoundingClientRect();
-    var searchBound = this.$searchTextInput.getBoundingClientRect();
-
-    var availableTop = bound.top - outBound.top - (this.enableSearch ? searchBound.height + 8 : 0) - 7;//for boder
-    var availableBottom = Math.min(outBound.bottom, screenBottom) - bound.bottom - (this.enableSearch ? searchBound.height + 8 : 0) - 7;
-    if (this.forceDown || (!this.$dropdownBox.containsClass('up') && searching) || (!searching && (availableBottom >= this.selectListBound.height || availableBottom > availableTop))) {
-        if (!searching) {
-            this.$dropdownBox.removeClass('up');
-            this.$searchTextInput.selfRemove();
-            this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
-
-        }
-        this.$vscroller.addStyle('max-height', availableBottom + 'px');
-    }
-    else {
-        if (!searching) {
-            this.$dropdownBox.addClass('up');
-            this.$searchTextInput.selfRemove();
-            this.$dropdownBox.addChild(this.$searchTextInput);
-        }
-        if (availableTop < this.selectListBound.height) {
-            this.$vscroller.addStyle('max-height', availableTop + 'px');
-
-        }
-        else {
-            this.$vscroller.addStyle('max-height', this.selectListBound.height + 'px');
-        }
-    }
-};
-
-SelectBox.prototype.addSelectedItem = function (data) {
-    var self = this;
-    _({
-        tag: 'selectboxitem',
-        props: {
-            data: data
-        },
-        on: {
-            close: function (event) {
-                self.eventHandler.removeItem(event, this);
-                event.itemData = data;
-                self.emit('remove', event, self);
-                self.emit('change', event, self);
-            }
-        }
-    }).addTo(this.$holderItem);
+SelectBox.prototype.scrollToSelectedItem = function () {
+    //nothing to do;
 };
 
 
@@ -180,57 +111,54 @@ SelectBox.prototype.querySelectedItems = function () {
     });
 };
 
-SelectBox.prototype.updateSelectedItem = function () {
-    if (!this._values) return;
-    var dict = this._values.reduce(function (ac, cr) {
-        var value = cr;
-        ac[value] = true;
-        return ac;
-    }, {});
-    this.$holderItem.clearChild();
-    Array.prototype.forEach.call(this.$selectlist.childNodes, function (e) {
-        var value = (typeof e._data == 'string') ? e._data : e._data.value;
-        if (dict[value]) {
-            e.addClass('selected');
-            this.addSelectedItem(e._data);
-        }
-        else {
-            e.removeClass('selected');
-        }
-    }.bind(this));
-};
-
 
 
 SelectBox.prototype.init = SelectMenu.prototype.init;
 
 
-SelectBox.property = {};
 
 SelectBox.property.isFocus = {
     set: function (value) {
         value = !!value;
         if (value == this.isFocus) return;
+        var self = this;
         this._isFocus = value;
         if (value) {
-            $('body').on('click', this.eventHandler.bodyClick);
-            this.addClass('focus');
-            this.$searchlist.addStyle('display', 'none');
-            this.$selectlist.addTo(this.$vscroller);
+            this.startTrackScroll();
+            this.$anchor.removeClass('absol-disabled');
+            var isAttached = false;
+            setTimeout(function () {
+                if (isAttached) return;
+                $('body').on('mousedown', self.eventHandler.clickBody);
+                isAttached = true;
+            }, 1000);
+            $('body').once('click', function () {
+                setTimeout(function () {
+                    if (isAttached) return;
+                    $('body').on('mousedown', self.eventHandler.clickBody);
+                    isAttached = true;
+                }, 10);
+            });
+
             if (this.enableSearch) {
                 setTimeout(function () {
-                    this.$searchTextInput.focus();
-                }.bind(this), 50);
+                    self.$searchTextInput.focus();
+                }, 50);
             }
-            this.selectListBound = this.$selectlist.getBoundingClientRect();
             this.updateDropdownPostion();
         }
         else {
-            this.$selectlist.addTo(this.$renderSpace);
-            $('body').off('click', this.eventHandler.bodyClick);
-            this.removeClass('focus');
-            this.$searchTextInput.value = '';
-            this.$searchTextInput.emit('stoptyping');
+            this.$anchor.addClass('absol-disabled');
+            this.stopTrackScroll();
+            $('body').off('mousedown', this.eventHandler.clickBody);
+            setTimeout(function () {
+                if (self.$searchTextInput.value != 0) {
+                    self.$searchTextInput.value = '';
+                    // different with SelectMenu
+                    self.$searchList.addStyle('display', 'none');
+                    self.$selectlist.removeStyle('display');
+                }
+            }, 100);
         }
     },
     get: SelectMenu.property.isFocus.get
@@ -239,287 +167,224 @@ SelectBox.property.isFocus = {
 
 
 SelectBox.property.items = {
-    set: function (value) {
-        this._items = value;
-        this.updateItemList();
-        // this.sync = this.sync.then(this.updateSelectedItem.bind(this));
+    set: function (items) {
+        var i;
+        var self = this;
+
+        items = items || [];
+        this._items = items;
+        this._searchCache = {};
+
+        var itemCount = items.length;
+
+        measureText('', 'italic 14px  sans-serif')//cache font style
+        this._descWidth = 0;
+        for (i = 0; i < itemCount; ++i) {
+            if (items[i].desc) {
+                this._descWidth = Math.max(this._descWidth, measureText(items[i].desc).width);
+            }
+        }
+
+
+        function mousedownItem(event) {
+            self.values.push(this.value);
+            self.values = self.values;//update
+            self.isFocus = false;//close after click item
+            self.emit('add', { type: 'add', itemData: this.data, itemElt: this, value: this.value, values: self.values, target: self }, self);
+            self.emit('change', { type: 'change', values: self.values, target: self }, self);
+        }
+
+        while (this.$listItems.length < itemCount) {
+            this.$listItems.push(_({
+                tag: 'selectlistitem',
+                on: {
+                    mousedown: mousedownItem
+                }
+            }))
+        }
+
+        this.$listItemByValue = {};
+        for (i = 0; i < itemCount; ++i) {
+            this.$listItems[i].data = items[i];
+            this.$listItems[i].__index__ = i;
+            this.$listItemByValue[this.$listItems[i].value] = this.$listItems[i];
+        }
+
+        while (this._listItemViewCount < itemCount) {
+            this.$selectlist.addChild(this.$listItems[this._listItemViewCount++]);
+        }
+
+        while (this._listItemViewCount > itemCount) {
+            this.$listItems[--this._listItemViewCount].remove();
+        }
+
+
+        if (isSupportedVar) {
+            this.$selectlist.style.setProperty('--select-list-desc-width', this._descWidth + 'px'); //addStyle notWork because of convert to cameCase 
+        }
+        else {
+            for (i = 0; i < this._itemViewCount; ++i) {
+                this.$items[i].$text.addStyle('margin-right', 'calc(1em + ' + this._descWidth + 'px)');
+                this.$items[i].$descCtn.addStyle('width', this._descWidth + 'px');
+            }
+        }
+
+        this.selectListBound = this.$selectlist.getBoundingClientRect();
+        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
+        this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
+
+        this.values = this.values;
     },
-    get: SelectMenu.property.items.get
+    get: function () {
+        return this._items;
+    }
 };
 
 SelectBox.property.values = {
-    set: function (value) {
-        this._values = (value instanceof Array) ? value : [value];
-        this.sync = this.sync.then(this.updateSelectedItem.bind(this));
+    set: function (values) {
+        values = values || [];
+        values = (values instanceof Array) ? values : [values];
+        this._values = values;
+        this._searchCache = {};
+        var self = this;
+        var i, key;
+        var listItemElt;
+        var boxItemElt;
+        var lastDict = this._valueDict;
+
+        function closeBoxItem(event) {
+            var itemValue = this.value;
+            var index = self.values.indexOf(itemValue);
+            if (index >= 0) {
+                self.values = self.values.slice(0, index).concat(self.values.slice(index + 1));
+                self.emit('remove', { type: 'remove', values: self.values, target: self, itemElt: this, value: this.value, itemData: this.data }, self);
+                self.emit('change', { type: 'change', values: self.values, target: self }, self);
+            }
+        }
+
+        values.sort(function (a, b) {
+            var itA = self.$listItemByValue[a];
+            var itB = self.$listItemByValue[b];
+            var indexA = itA ? itA.__index__ : -10000;
+            var indexB = itA ? itB.__index__ : 10000;
+            return indexA - indexB;
+        });
+
+        for (key in lastDict) {
+            listItemElt = self.$listItemByValue[key];
+            if (listItemElt) listItemElt.removeStyle('display');
+        }
+
+        this._valueDict = {};
+        for (i = 0; i < this._values.length; ++i) {
+            this._valueDict[this._values[i]] = true;
+            listItemElt = this.$listItemByValue[values[i]];
+            if (listItemElt)
+                listItemElt.addStyle('display', 'none');
+        }
+
+        //clear all item 
+        for (i = 0; i < this._boxItemViewCount; ++i) {
+            this.$boxItems[i].remove();
+        }
+        this._boxItemViewCount = 0;
+
+        for (i = 0; i < values.length; ++i) {
+            listItemElt = this.$listItemByValue[values[i]];
+            if (listItemElt) {
+                if (this._boxItemViewCount >= this.$boxItems.length) {
+                    boxItemElt = _({
+                        tag: 'selectboxitem',
+                        on: {
+                            close: closeBoxItem
+                        }
+                    });
+                    this.$boxItems.push(boxItemElt);
+                }
+                else {
+                    boxItemElt = this.$boxItems[this._boxItemViewCount];
+                }
+
+                boxItemElt.data = listItemElt.data;
+                this.addChild(boxItemElt);
+                this._boxItemViewCount++;
+            }
+        }
+
     },
     get: function () {
         return this._values || [];
     }
 };
 
-
-SelectBox.property.enableSearch = {
-    set: function (value) {
-        this._enableSearch = !!value;
-        if (value) {
-            this.$searchTextInput.removeStyle('display');
-        }
-        else {
-            this.$searchTextInput.addStyle('display', 'none');
-        }
-    },
-    get: function () {
-        return !!this._enableSearch;
-    }
-};
-
-SelectBox.property.disabled = {
-    set: function (value) {
-        if (value) {
-            this.addClass('disabled');
-        }
-        else {
-            this.removeClass('disabled');
-        }
-    },
-    get: function () {
-        return this.containsClass('disabled');
-    }
-};
-
-
-SelectBox.property.hidden = SelectMenu.property.hidden;
-
-SelectBox.eventHandler = Object.assign({}, SelectMenu.eventHandler);
-
-SelectBox.eventHandler.attached = function (event) {
-    if (this._updateInterval) return;
-    if (!this.$selectlist.parentNode) this.$content.addTo(this.$renderSpace);
-    this._updateInterval = setInterval(function () {
-        if (!this.isDescendantOf(document.body)) {
-            clearInterval(this._updateInterval);
-            this._updateInterval = undefined;
-            this.$selectlist.selfRemove();
-        }
-    }.bind(this), 10000);
-};
-
 SelectBox.eventHandler.click = function (event) {
-    if (EventEmitter.hitElement(this.$selectlist, event) || (this.isFocus && !EventEmitter.hitElement(this.$dropdownBox, event)) || EventEmitter.hitElement(this.$searchlist, event)) {
-        event.preventDefault();
-        setTimeout(function(){
-            this.isFocus = false;
-        }.bind(this), 5)
-    }
-    else {
-        if (!this.isFocus && (event.target == this.$holderItem || event.target == this)) {
-            this.updateDropdownPostion();
-            this.isFocus = true;
-        }
+    if (event.target == this) {
+        this.isFocus = !this.isFocus;
     }
 };
 
 
-SelectBox.eventHandler.selectlistChange = function (event, itemElt) {
-    //todo
-    this.$vscroller.removeStyle('max-height');
-    var data = itemElt._data;
-    itemElt.addClass('selected');
-    this.addSelectedItem(data);
-    this._values = this.queryValues();
-    this.resetFilter();
-    event.itemData = data;
-    this.emit('add', event, this);
-    this.emit('change', event, this);
+SelectBox.eventHandler.clickBody = function (event) {
+    if (!EventEmitter.hitElement(this.$anchor, event) && event.target != this) {
+        this.isFocus = false;
+    };
 };
 
-SelectBox.eventHandler.removeItem = function (event, item) {
-    var data = item.data;
-    item.selfRemove();
-    Array.prototype.forEach.call(this.$selectlist.childNodes, function (e) {
-        if (e._data == data) {
-            e.removeClass('selected');
-        }
-    });
-    Array.prototype.forEach.call(this.$searchlist.childNodes, function (e) {
-        if (e._data == data) {
-            e.removeClass('selected');
-        }
-    });
-    this._values = this.queryValues();
-    // this.emit('change', event, this);
-
+SelectBox.eventHandler.searchListChange = function (event) {
+    this.values.push(event.value);
+    this.values = this.values;
+    this.isFocus = false;
+    this.emit('add', { type: 'add', itemData: event.itemElt.data, value: event.value, values: this.values }, this);
 };
-
-
 
 SelectBox.eventHandler.searchModify = function (event) {
+    var self = this;
     var filterText = this.$searchTextInput.value.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
     if (filterText.length == 0) {
-        this.$selectlist.addTo(this.$vscroller);
-        this.$searchlist.addStyle('display', 'none');
+        this.$searchList.addStyle('display', 'none');
+        this.$selectlist.removeStyle('display');
     }
     else {
-        this.$searchlist.removeStyle('display');
-        this.$selectlist.addTo(this.$renderSpace);
-        var view = [];
-        if (filterText.length == 1) {
-            view = this.items.map(function (item) {
-                var res = { item: item, text: typeof item === 'string' ? item : item.text };
-                return res;
-            }).map(function (it) {
-                it.score = 0;
-                var text = it.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-                it.score += text.toLowerCase().indexOf(filterText.toLowerCase()) >= 0 ? 100 : 0;
-                text = nonAccentVietnamese(text);
-                it.score += text.toLowerCase().indexOf(filterText.toLowerCase()) >= 0 ? 100 : 0;
-                return it;
+        if (!this._searchCache['__EMPTY_QUERY__']) {
+            this._searchCache['__EMPTY_QUERY__'] = this.items.map(function (item) {
+                return SelectMenu.prepareItem(item);
+            }).filter(function (it) {// filter items were added
+                return !self._valueDict[it.value];
             });
-            view.sort(function (a, b) {
-                if (b.score - a.score == 0) {
-                    if (nonAccentVietnamese(b.text) > nonAccentVietnamese(a.text)) return -1;
-                    return 1;
-                }
-                return b.score - a.score;
+        }
+        this.$selectlist.addStyle('display', 'none');
+        this.$searchList.removeStyle('display');
+
+        var view = [];
+        if (!this._searchCache[filterText]) {
+            var gmaxScore = 0;
+            var gminScore = 1000;
+            var queryItem = SelectMenu.prepareItem({ text: filterText });
+            view = this._searchCache['__EMPTY_QUERY__'].map(function (it) {
+                var score = SelectMenu.calScore(queryItem, it);
+                gmaxScore = Math.max(gmaxScore, score);
+                gminScore = Math.min(gminScore, score);
+                return Object.assign({ score: score }, it);
             });
 
-            view = view.filter(function (x) {
-                return x.score > 0;
+            var medianScore = (gminScore + gmaxScore) / 2;
+            view = view.filter(function (it) {
+                return it.score >= medianScore;
             });
+            this._searchCache[filterText] = view;
         }
         else {
-            var its = this.items.map(function (item) {
-                var res = { item: item, text: typeof item === 'string' ? item : item.text };
-                var text = res.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-                res.score = (phraseMatch(text, filterText)
-                    + phraseMatch(nonAccentVietnamese(text), nonAccentVietnamese(filterText))) / 2;
-                if (nonAccentVietnamese(text).replace(/s/g, '').toLowerCase().indexOf(nonAccentVietnamese(filterText).toLowerCase().replace(/s/g, '')) > -1)
-                    res.score = 100;
-                return res;
-            });
-            if (its.length == 0) return;
-
-            its.sort(function (a, b) {
-                if (b.score - a.score == 0) {
-                    if (nonAccentVietnamese(b.text) > nonAccentVietnamese(a.text)) return -1;
-                    return 1;
-                }
-                return b.score - a.score;
-            });
-
-            var view = its.filter(function (x) {
-                return x.score > 0.5;
-            });
-            if (view.length == 0) {
-                var bestScore = its[0].score;
-                view = its.filter(function (it) {
-                    return it.score + 0.001 >= bestScore;
-                });
-            }
-            if (view[0].score == 0) view = [];
+            view = this._searchCache[filterText];
         }
-
-        view = view.map(function (e) {
-            return e.item;
-        });
-
-        var self = this;
-        self.$searchlist.clearChild();
-        view.map(function (item) {
-            var sameElement = Array.prototype.filter.call(self.$selectlist.childNodes, function (e) {
-                return e._data == item;
-            })[0];
-
-            if (sameElement.style.display == 'none' || sameElement.containsClass('selected')) return;
-            var text;
-            if (typeof item == 'string') {
-                text = item;
-            }
-            else {
-                text = item.text;
-            }
-            return _({
-                class: 'absol-selectlist-item',
-                child: '<span>' + text + '<span>',
-                props: {
-                    _data: item
-                },
-                on: {
-                    click: function (event) {
-                        this.addStyle('display', 'none')
-                        self.eventHandler.selectlistChange(event, sameElement);
-                    }
-                }
-            }).addTo(self.$searchlist);
-        });
-
+        this.$searchList.items = view;
     }
 
-    if (filterText.length > 0)
-        this.selectListBound = this.$searchlist.getBoundingClientRect();
-    else
-        this.selectListBound = this.$selectlist.getBoundingClientRect();
-
+    this.selectListBound = this.$selectlist.getBoundingClientRect();
     this.updateDropdownPostion(true);
-
-};;
-
-
-
-function SelectBoxItem() {
-    var res = _({
-        class: 'absol-selectbox-item',
-        extendEvent: 'close',
-        child: [
-            '.absol-selectbox-item-text',
-            {
-                class: 'absol-selectbox-item-close',
-                child: '<span class="mdi mdi-close"></span>'
-            }
-        ]
-    });
-    res.eventHandler = OOP.bindFunctions(res, SelectBoxItem.eventHandler);
-    res.$text = $('.absol-selectbox-item-text', res);
-    res.$close = $('.absol-selectbox-item-close', res);
-    res.$close.on('click', res.eventHandler.clickClose);
-    return res;
-};
-
-SelectBoxItem.eventHandler = {};
-SelectBoxItem.eventHandler.clickClose = function (event) {
-    this.emit('close', event);
-};
-
-SelectBoxItem.property = {};
-
-SelectBoxItem.property.data = {
-    set: function (value) {
-        this._data = value;
-        this.$text.clearChild();
-        this.$text.addChild(_('<span>' + this.text + '</span>'));
-    },
-    get: function () {
-        return this._data;
-    }
-};
-
-SelectBoxItem.property.text = {
-    get: function () {
-        if (typeof this._data == 'string')
-            return this._data;
-        else return this._data.text;
-    }
-};
-
-SelectBoxItem.property.value = {
-    get: function () {
-        if (typeof this._data == 'string')
-            return this._data;
-        else return this._data.value;
-    }
 };
 
 
-Acore.creator.selectbox = SelectBox;
-Acore.creator.selectboxitem = SelectBoxItem;
+
+Acore.install('SelectBox'.toLowerCase(), SelectBox);
+
 export default SelectBox;

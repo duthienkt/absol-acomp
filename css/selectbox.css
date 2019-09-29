@@ -1,15 +1,4 @@
-.absol-selectbox-item {
-    display: inline-block;
-    position: relative;
-    height: 20px;
-    border-radius: 2px;
-    overflow: hidden;
-    background-color: #5bc0de;
-    border-color: #46b8da;
-    font-size: 14px;
-    vertical-align: top;
-    white-space: normal;
-}
+
 
 .absol-selectbox {
     position: relative;
@@ -28,6 +17,20 @@
 
 .absol-selectbox .absol-selectbox-item {
     margin: 2px;
+}
+
+
+.absol-selectbox-item {
+    display: inline-block;
+    position: relative;
+    height: 20px;
+    border-radius: 2px;
+    overflow: hidden;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+    font-size: 14px;
+    vertical-align: top;
+    white-space: normal;
 }
 
 .absol-selectbox-item-text {
