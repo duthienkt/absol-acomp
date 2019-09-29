@@ -348,6 +348,7 @@ SelectBox.eventHandler.searchListChange = function (event) {
     this.values = this.values;
     this.isFocus = false;
     this.emit('add', { type: 'add', itemData: event.itemElt.data, value: event.value, values: this.values }, this);
+    this.emit('change', { type: 'change', values: self.values, target: self }, self);
 };
 
 SelectBox.eventHandler.searchModify = function (event) {
