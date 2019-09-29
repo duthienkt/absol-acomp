@@ -173,7 +173,7 @@ SelectMenu.property.enableSearch = {
 };
 
 SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
-    if (!this.focus) {
+    if (!this.isFocus) {
         this.$anchorContentCtn
             .removeStyle('left')
             .removeStyle('top');
