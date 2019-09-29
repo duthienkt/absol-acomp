@@ -1,7 +1,7 @@
 import Acore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { phraseMatch } from "absol/src/String/stringMatching";
+import { phraseMatch, wordsMatch } from "absol/src/String/stringMatching";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import Dom from "absol/src/HTML5/Dom";
 
@@ -84,7 +84,7 @@ function SelectMenu() {
 };
 
 
-// //will remove after SelectTreeMenu completed
+// //will remove after SelectMenu completed
 SelectMenu.getRenderSpace = function () {
     if (!SelectMenu.getRenderSpace.warned) {
         console.warn('SelectMenu.getRenderSpace() will be removed in next version');
@@ -106,6 +106,64 @@ SelectMenu.getAnchorCtn = function () {
     return SelectMenu.$anchorCtn;
 };
 
+
+SelectMenu.EXTRA_MATCH_SCORE = 2;
+SelectMenu.UNCASE_MATCH_SCORE = 1;
+SelectMenu.UVN_MATCH_SCORE = 3;
+SelectMenu.EQUAL_MATCH_SCORE = 4;
+SelectMenu.WORD_MATCH_SCORE = 3;
+
+
+SelectMenu.prepareItem = function (item) {
+    if (typeof item == 'string') item = { text: item, value: item };
+    var spliter = /\s+/;
+
+    item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
+    item.__words__ = item.__text__.split(spliter);
+
+    item.__textNoneCase__ = item.__text__.toLowerCase();
+    item.__wordsNoneCase__ = item.__textNoneCase__.split(spliter);
+
+
+    item.__nvnText__ = nonAccentVietnamese(item.__text__);
+    item.__nvnWords__ = item.__nvnText__.split(spliter);
+
+    item.__nvnTextNoneCase__ = item.__nvnText__.toLowerCase();
+    item.__nvnWordsNoneCase__ = item.__nvnTextNoneCase__.split(spliter);
+    return item;
+};
+
+
+/**
+ * @param {SearchItem} queryItem
+ * @param {SearchItem} item
+ */
+SelectMenu.calScore = function (queryItem, item) {
+    var score = 0;
+
+    if (item.__text__ == queryItem.__text__)
+        score += SelectMenu.EQUAL_MATCH_SCORE * queryItem.__text__.length;
+
+    var extraIndex = item.__text__.indexOf(queryItem.__text__);
+
+    if (extraIndex >= 0) {
+        score += SelectMenu.EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+    }
+
+    extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
+    if (extraIndex >= 0) {
+        score += SelectMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+    }
+
+    extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
+    if (extraIndex >= 0) {
+        score += SelectMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+    }
+
+    score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * SelectMenu.WORD_MATCH_SCORE;
+    score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * SelectMenu.WORD_MATCH_SCORE;
+    return score;
+};
 
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
@@ -197,14 +255,14 @@ SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
         if (this.forceDown || availableBottom >= this.selectListBound.height || availableBottom > availableTop) {
             this.isDropdowUp = false;
             this.$searchTextInput.selfRemove();
-            if (!updateAnchor) this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
+            this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
             this.$vscroller.addStyle('max-height', availableBottom + 'px');
 
         }
         else {
             this.isDropdowUp = true;
             this.$searchTextInput.selfRemove();
-            if (!updateAnchor) this.$dropdownBox.addChild(this.$searchTextInput);
+            this.$dropdownBox.addChild(this.$searchTextInput);
             this.$vscroller.addStyle('max-height', availableTop + 'px');
         }
         this.$dropdownBox.addStyle('min-width', bound.width + 'px');
@@ -291,21 +349,21 @@ SelectMenu.property.isFocus = {
             var isAttached = false;
             setTimeout(function () {
                 if (isAttached) return;
-                $('body').on('mousedown', this.eventHandler.bodyClick);
+                $('body').on('mousedown', self.eventHandler.bodyClick);
                 isAttached = true;
-            }.bind(this), 1000);
+            }, 1000);
             $('body').once('click', function () {
                 setTimeout(function () {
                     if (isAttached) return;
-                    $('body').on('mousedown', this.eventHandler.bodyClick);
+                    $('body').on('mousedown', self.eventHandler.bodyClick);
                     isAttached = true;
-                }.bind(this), 10);
-            }.bind(this));
+                }, 10);
+            });
 
             if (this.enableSearch) {
                 setTimeout(function () {
-                    this.$searchTextInput.focus();
-                }.bind(this), 50);
+                    self.$searchTextInput.focus();
+                }, 50);
             }
 
             this.updateDropdownPostion();
