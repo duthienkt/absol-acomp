@@ -261,14 +261,14 @@ SelectBox.property.values = {
                 self.emit('change', { type: 'change', values: self.values, target: self }, self);
             }
         }
-
-        values.sort(function (a, b) {
-            var itA = self.$listItemByValue[a];
-            var itB = self.$listItemByValue[b];
-            var indexA = itA ? itA.__index__ : -10000;
-            var indexB = itA ? itB.__index__ : 10000;
-            return indexA - indexB;
-        });
+        if (this._orderly)
+            values.sort(function (a, b) {
+                var itA = self.$listItemByValue[a];
+                var itB = self.$listItemByValue[b];
+                var indexA = itA ? itA.__index__ : -10000;
+                var indexB = itA ? itB.__index__ : 10000;
+                return indexA - indexB;
+            });
 
         for (key in lastDict) {
             listItemElt = self.$listItemByValue[key];
@@ -316,6 +316,19 @@ SelectBox.property.values = {
         return this._values || [];
     }
 };
+
+SelectBox.property.orderly = {
+    set: function (value) {
+        this._orderly = !!value;
+        if (value) {
+            this.values = this.values;
+        }
+    },
+    get: function () {
+        return !!this._orderly;
+    }
+
+}
 
 SelectBox.eventHandler.click = function (event) {
     if (event.target == this) {
