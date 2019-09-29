@@ -36,6 +36,7 @@
     box-sizing: border-box;
     background-color: white;
     display: inline-block;
+    vertical-align: top;
 }
 
 .absol-selectmenu-dropdown-box .absol-search-text-input {
