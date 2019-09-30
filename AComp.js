@@ -6,6 +6,9 @@ import './css/iconbutton.css';
 import './js/Scroller';
 import './css/scroller.css';
 
+import './js/NumberInput';
+import './css/numberinput.css';
+
 import './js/Searcher';
 import './css/searcher.css';
 

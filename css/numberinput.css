@@ -1,0 +1,69 @@
+.absol-number-input {
+    text-align: right;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    min-width: calc(1em + 2px);
+    height: calc(2em + 2px);
+    border: solid 1px rgb(169, 169, 169);
+    font-size: 14px;
+    box-sizing: border-box;
+    width: 4em;
+}
+
+.absol-number-input-button-up-container {
+    top: 0;
+}
+
+.absol-number-input-button-down-container {
+    bottom: 0;
+}
+
+.absol-number-input-button-up-container,
+.absol-number-input-button-down-container {
+    right: 0;
+    position: absolute;
+    height: 1em;
+    width: 1em;
+
+}
+
+.absol-number-input-button-up-container>button,
+.absol-number-input-button-down-container>button {
+    width: 100%;
+    height: 100%;
+    line-height: 1;
+    padding: 0;
+    border: none;
+    box-sizing: border-box;
+    outline: none;
+    color: rgb(101, 101, 101);
+    background-color: transparent;
+    background-color: rgb(101, 101, 101, 0.05);
+}
+
+.absol-number-input-button-up-container>button:active,
+.absol-number-input-button-down-container>button:active{
+    color: black;
+    background-color: rgb(101, 101, 101, 0.3);
+}
+
+.absol-number-input-text-container {
+    left: 0em;
+    right: 1.2em;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+.absol-number-input-text-container>input[type="text"] {
+    border: none;
+    outline: none;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    text-align: right;
+    padding-left:0.2em;
+    padding-right: 0.2em;  
+    box-sizing: border-box;
+}
