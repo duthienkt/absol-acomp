@@ -46,7 +46,7 @@ function SelectBox() {
 
     res.$listItems = [];
     res._listItemViewCount = 0;
-    this.$listItemByValue = {};
+    res.$listItemByValue = {};
 
     res.$boxItems = [];
     res._boxItemViewCount = 0;
