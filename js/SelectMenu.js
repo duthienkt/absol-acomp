@@ -287,7 +287,16 @@ SelectMenu.prototype.scrollToSelectedItem = function () {
     var self = this;
     setTimeout(function () {
         if (self.$selectlist.$selectedItem) {
-            self.$vscroller.scrollInto(self.$selectlist.$selectedItem);
+            var listBound = self.$selectlist.getBoundingRecursiveRect(1);
+            var itemBound = self.$selectlist.$selectedItem.getBoundingClientRect();
+            if (self.isDropdowUp) {
+                var scrollBound = self.$vscroller.getBoundingClientRect();
+                self.$vscroller.scrollTop = Math.max(itemBound.bottom - scrollBound.height - listBound.top, 0);
+
+            }
+            else {
+                self.$vscroller.scrollTop = itemBound.top - listBound.top;
+            }
         }
     }.bind(this), 30);
 };
