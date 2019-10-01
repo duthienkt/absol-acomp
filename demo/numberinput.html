@@ -16,7 +16,14 @@
 <body>
     <h1>Number Input</h1>
     <script class="viewable">
-        absol._('numberinput').addTo(document.body);
+        var mNumberInput = absol._('numberinput').addStyle({ width: '8em' }).addTo(document.body);
+        mNumberInput.floatFixed = 3;
+        mNumberInput.max = 10;
+        mNumberInput.min = -10;
+        mNumberInput.on('change', function (event) {
+            console.log(event);
+        });
+
     </script>
 
     <script src="./autohightlighting.js?"></script>
