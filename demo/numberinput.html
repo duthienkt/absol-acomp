@@ -18,6 +18,7 @@
     <script class="viewable">
         var mNumberInput = absol._('numberinput').addStyle({ width: '8em' }).addTo(document.body);
         mNumberInput.floatFixed = 3;
+        mNumberInput.decimalPadding = 2;
         mNumberInput.max = 10;
         mNumberInput.min = -10;
         mNumberInput.on('change', function (event) {
