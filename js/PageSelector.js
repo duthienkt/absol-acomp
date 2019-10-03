@@ -28,19 +28,19 @@ function PageSelector() {
                     tag: 'ul',
                     class: 'page-number-buttons',
                     child: [
-                        ` <li class="page-first">
-                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">First</a>
-                    </li>`,
-                        ` <li class="page-previous">
-                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
-                    </li>`,
+                        ' <li class="page-first">\
+                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">First</a>\
+                    </li>',
+                        ' <li class="page-previous">\
+                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>\
+                    </li>',
 
-                        `<li class="page-next" >
-                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
-                    </li>`,
-                        ` <li class="page-last">
-                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">Last</a>
-                    </li>`,
+                        '<li class="page-next" >\
+                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="7" tabindex="0" class="page-link">Next</a>\
+                    </li>',
+                        ' <li class="page-last">\
+                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">Last</a>\
+                    </li>',
                     ]
                 }
             ]

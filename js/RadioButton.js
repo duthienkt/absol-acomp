@@ -7,16 +7,16 @@ var $ = Acore.$;
 
 function RadioButton() {
     var res = _(
-        `<div class="absol-radio">
-            <input type="radio" />
-            <svg class="absol-radio-icon absol-radio-icon-left" width="20" height="20" version="1.1" viewBox="0 0 5.2917 5.2917"
-                xmlns="http://www.w3.org/2000/svg">
-                <g transform="translate(0 -291.71)">
-                    <circle class="bound" cx="2.6458" cy="294.35" r="2.4626" style="stroke-opacity:.99497;stroke-width:.26458;" />
-                    <circle class="dot" cx="2.6458" cy="294.35" r="0.92604" style="fill-rule:evenodd;" />
-                </g>
-            </svg>
-        </div>`
+        '<div class="absol-radio">\
+            <input type="radio" />\
+            <svg class="absol-radio-icon absol-radio-icon-left" width="20" height="20" version="1.1" viewBox="0 0 5.2917 5.2917" \
+                xmlns="http://www.w3.org/2000/svg">\
+                <g transform="translate(0 -291.71)">\
+                    <circle class="bound" cx="2.6458" cy="294.35" r="2.4626" style="stroke-opacity:.99497;stroke-width:.26458;" />\
+                    <circle class="dot" cx="2.6458" cy="294.35" r="0.92604" style="fill-rule:evenodd;" />\
+                </g>\
+            </svg>\
+        </div>'
     );
 
     res.$attachHook = _('attachhook').addTo(res);
@@ -175,15 +175,15 @@ RadioButton.initAfterLoad = function () {
             $(radio);
             radio.removeClass('absol-radio');
             var classes = radio.attr('class').trim().split(/\s+/);
-            var res = _(`<div class="absol-radio  standar-alone">
-                <svg class="absol-radio-icon absol-radio-icon-left" width="20" height="20" version="1.1" viewBox="0 0 5.2917 5.2917"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <g transform="translate(0 -291.71)">
-                        <circle class="bound" cx="2.6458" cy="294.35" r="2.4626" style="stroke-opacity:.99497;stroke-width:.26458;" />
-                        <circle class="dot" cx="2.6458" cy="294.35" r="0.92604" style="fill-rule:evenodd;" />
-                    </g>
-                </svg>
-            </div>`);
+            var res = _('<div class="absol-radio  standar-alone">\
+                <svg class="absol-radio-icon absol-radio-icon-left" width="20" height="20" version="1.1" viewBox="0 0 5.2917 5.2917" \
+                    xmlns="http://www.w3.org/2000/svg">\
+                    <g transform="translate(0 -291.71)">\
+                        <circle class="bound" cx="2.6458" cy="294.35" r="2.4626" style="stroke-opacity:.99497;stroke-width:.26458;" />\
+                        <circle class="dot" cx="2.6458" cy="294.35" r="0.92604" style="fill-rule:evenodd;" />\
+                    </g>\
+                </svg>\
+            </div>');
             
             radio.selfReplace(res);
             res.addChild(radio);
