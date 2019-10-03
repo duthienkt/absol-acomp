@@ -136,9 +136,9 @@ QuickMenu.updatePosition = function () {
         }
     }
 
-    if (bestRect && pos.y < ebound.bottom) {
-        pos.y += menuBound.height - Math.min(menuBound.height, bestRect.height - 5);
-    }
+    // if (bestRect && pos.y < ebound.bottom) {
+    //     pos.y += menuBound.height - Math.min(menuBound.height, bestRect.height - 5);
+    // }
 
     pos.x -= qBound.left;
     pos.y -= qBound.top;
