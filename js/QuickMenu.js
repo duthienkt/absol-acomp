@@ -148,12 +148,12 @@ QuickMenu.updatePosition = function () {
         top: pos.y + 'px'
     });
 
-    if (bestRect) {
-        menu.addStyle('max-height', bestRect.height + 'px');
-    }
-    else {
-        menu.removeStyle('max-height');
-    }
+    // if (bestRect) {
+    //     menu.addStyle('max-height', bestRect.height + 'px');
+    // }
+    // else {
+    //     menu.removeStyle('max-height');
+    // }
 
 };
 
