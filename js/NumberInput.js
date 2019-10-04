@@ -316,7 +316,6 @@ NumberInput.property.floatFixed = {
         }
 
         this._floatFixed = value;
-        this.$input
         this.updateTextValue();
     },
     get: function () {
@@ -344,6 +343,23 @@ NumberInput.property.decimalPadding = {
         return this._decimalPadding;
     }
 };
+
+
+NumberInput.property.disabled = {
+    set: function (value) {
+        this.$input.disabled = !!value;
+        this.$upBtn.disabled = !!value;
+        this.$downBtn.disabled = !!value;
+        if (value)
+            this.addClass('absol-disabled');
+        else
+            this.removeClass('absol-disabled');
+    },
+    get: function () {
+        return this.$input.disabled;
+    }
+};
+
 
 
 Acore.install('NumberInput'.toLowerCase(), NumberInput);

@@ -68,3 +68,17 @@
     padding-right: 0.2em;  
     box-sizing: border-box;
 }
+
+.absol-number-input.absol-disabled{
+    pointer-events: none;
+}
+
+.absol-number-input.absol-disabled{
+    pointer-events: none;
+}
+
+.absol-number-input.absol-disabled .absol-number-input-button-up-container,
+.absol-number-input.absol-disabled .absol-number-input-button-down-container
+{
+    opacity: 0.3;
+}
