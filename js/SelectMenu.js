@@ -354,7 +354,7 @@ SelectMenu.property.isFocus = {
         this._isFocus = value;
         if (value) {
             this.startTrackScroll();
-            this.$anchor.removeClass('absol-disabled');
+            
             var isAttached = false;
             setTimeout(function () {
                 if (isAttached) return;
@@ -376,7 +376,7 @@ SelectMenu.property.isFocus = {
             }
 
             this.updateDropdownPostion();
-
+            this.$anchor.removeClass('absol-disabled');
         }
         else {
             this.$anchor.addClass('absol-disabled');
