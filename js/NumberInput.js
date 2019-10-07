@@ -144,6 +144,7 @@ NumberInput.eventHandler.keyup = function () {
     var cValue = parseFloat(this.$input.value);
     if (!isNaN(cValue)) {
         this._value = cValue;
+        this.emit('changing', { target: this, value: this.value }, this);
     }
     this.notifyChanged();
 };
