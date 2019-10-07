@@ -113,6 +113,7 @@ NumberInput.eventHandler.mouseDownDownBtn = function (event) {
         if (pressing) {
             if (i == 0 || i >= 4) {
                 self.value = Math.ceil(self.value) - 1;
+                self.emit('changing', { target: self, value: self.value }, self);
             }
             ++i;
             self.__pressingUpTimeout__ = setTimeout(tick, 100);
