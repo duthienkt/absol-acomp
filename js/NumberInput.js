@@ -12,7 +12,7 @@ var $ = Acore.$;
 function NumberInput() {
     var res = _({
         class: 'absol-number-input',
-        extendEvent: 'change',
+        extendEvent: ['change', 'changing'],
         child: [
             {
                 class: 'absol-number-input-text-container',
@@ -75,6 +75,7 @@ NumberInput.eventHandler.mouseDownUpBtn = function (event) {
         if (pressing) {
             if (i == 0 || i >= 4) {
                 self.value = Math.floor(self.value) + 1;
+                self.emit('changing', { target: self, value: self.value }, self);
             }
             ++i;
             self.__pressingUpTimeout__ = setTimeout(tick, 100);
