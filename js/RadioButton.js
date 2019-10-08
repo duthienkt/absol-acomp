@@ -22,6 +22,7 @@ function RadioButton() {
     res.$attachHook = _('attachhook').addTo(res);
     res.defineEvent('change');
     res.defineEvent('uncheck');
+    res.defineEvent('check');
     res.$input = $('input', res);
     OOP.drillProperty(res, res.$input, 'value');
 
@@ -29,7 +30,8 @@ function RadioButton() {
         if (!res.checked) {
             if (!this.disabled) {
                 res.checked = true;
-                res.emit('change', event, res);
+                res.emit('check', { target: res }, res);
+                res.emit('change', { target: res, checked: true }, res);
             }
         }
     });
@@ -106,6 +108,8 @@ RadioButton.property = {
                             _this.removeClass('checked')
                             document.body.removeEventListener('click', finish, false);
                             _this.emit('uncheck', { target: _this }, _this);
+                            _this.emit('change', { target: _this, checked: _this.checked }, _this);
+
                         }
                     }
                     document.body.addEventListener('click', finish, false);
@@ -169,7 +173,7 @@ RadioButton.getValueByName = function (name) {
 
 RadioButton.initAfterLoad = function () {
     return Dom.documentReady.then(function () {
-        Array.apply(null,document.getElementsByTagName('input')).filter(function (e) {
+        Array.apply(null, document.getElementsByTagName('input')).filter(function (e) {
             return e.getAttribute('type') == 'radio' && e.classList.contains('absol-radio');
         }).forEach(function (radio) {
             $(radio);
@@ -184,18 +188,18 @@ RadioButton.initAfterLoad = function () {
                     </g>\
                 </svg>\
             </div>');
-            
+
             radio.selfReplace(res);
             res.addChild(radio);
             for (var i = 0; i < classes.length; ++i) {
                 if (classes[i])
-                res.addClass(classes[i]);
+                    res.addClass(classes[i]);
             }
             res.defineEvent('change');
             res.defineEvent('uncheck');
             res.$input = radio;
             OOP.drillProperty(res, res.$input, 'value');
-            
+
             res.on('click', function (event) {
                 if (!res.checked) {
                     if (!this.disabled) {
@@ -204,14 +208,14 @@ RadioButton.initAfterLoad = function () {
                     }
                 }
             });
-            
+
             res.defineAttributes(RadioButton.attribute);
-            Object.defineProperties(res,RadioButton.property);
+            Object.defineProperties(res, RadioButton.property);
             Object.assign(res, RadioButton.prototype);
             if (radio.checked) res.attr('checked', 'true');
-            res.$input.on('change', function(){
+            res.$input.on('change', function () {
                 res.checked = this.checked;
-            }); 
+            });
         });
     });
 }
