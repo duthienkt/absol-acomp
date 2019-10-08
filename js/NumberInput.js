@@ -239,6 +239,7 @@ NumberInput.property.max = {
         }
         this._max = value;
         this._value = Math.min(value, this._value);
+        this._min = Math.min(this._min, this._value);
         this.updateTextValue();
     },
     get: function () {
@@ -253,6 +254,7 @@ NumberInput.property.min = {
         }
         this._min = value;
         this._value = Math.max(value, this._value);
+        this._max = Math.max(this._max, this._value);
         this.updateTextValue();
 
     },
