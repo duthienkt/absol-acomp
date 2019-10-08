@@ -5,7 +5,7 @@
     position: relative;
     min-width: calc(1em + 2px);
     height: calc(2em + 2px);
-    border: solid 1px rgb(169, 169, 169);
+    border: solid 1px #d6d6d6;
     font-size: 14px;
     box-sizing: border-box;
     width: 4em;
@@ -25,7 +25,7 @@
     position: absolute;
     height: 1em;
     width: 1em;
-
+    max-height: 50%;
 }
 
 .absol-number-input-button-up-container>button,
