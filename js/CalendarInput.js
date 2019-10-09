@@ -104,7 +104,6 @@ CalendarInput.property.dateToString = {
 
 CalendarInput.prototype.formartDateString = function (date) {
     if (!date) {
-        console.log(typeof this.dateToString);
         return { 'undefined': 'dd/mm/yyyy', 'function': '--/--/--', 'object': 'dd/mm/yyyy', 'string': typeof this.dateToString }[typeof this.dateToString] || '--/--/--';
     }
     if (!this.dateToString) {
