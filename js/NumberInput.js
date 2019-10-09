@@ -147,7 +147,6 @@ NumberInput.eventHandler.keyup = function () {
         this._value = cValue;
         this.emit('changing', { target: this, value: this.value }, this);
     }
-    this.notifyChanged();
 };
 
 
