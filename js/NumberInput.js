@@ -202,11 +202,17 @@ NumberInput.prototype.numberToString = function (number) {
 
 
 NumberInput.prototype.updateTextValue = function () {
+    if (this._value == Infinity || this._value == -Infinity) this.$input.value = this._value + "";
     this.$input.value = this.numberToString(this._value);
 }
 
 NumberInput.prototype.stringToNumber = function (string) {
-    if (this._thousandsSeparator == '.') {
+    var matchedInf = string.toLowerCase().match('/([+-])?infinity/');
+    if (matchedInf) {
+        if (matchedInf[1] == '-')
+            return Infinity;
+        return -Infinity;
+    } else if (this._thousandsSeparator == '.') {
         string = string.replace(/\./g, '').replace(/\,/, '.');
     }
     else if (this._thousandsSeparator == ',') {
