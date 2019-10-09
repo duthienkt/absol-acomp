@@ -17,7 +17,7 @@ function CalendarInput() {
     });
 
     res.$input = $('input', res);
-    res._value = beginOfDay(new Date());
+    res._value = null;
 
     res._quickOption = ChromeCalendar.showWhenClick(res, {
         minLimitDate: res.minLimitDate || res.minDateLimit,
