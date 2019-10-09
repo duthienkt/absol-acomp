@@ -8,7 +8,7 @@ var $ = Acore.$;
 function EditableText() {
     var res = _({
         class: 'absol-editabe-text',
-        extendEvent: ['blur', 'focus', 'change', 'modify'], 
+        extendEvent: ['blur', 'focus', 'change', 'modify'],
         child: [
             {
                 class: 'absol-editabe-text-higne',
@@ -26,7 +26,9 @@ function EditableText() {
 
     OOP.drillProperty(res, res.$input, ['selectionStart', 'selectionEnd']);
     res.eventHanler = OOP.bindFunctions(res, EditableText.eventHanler);
-    res.sync = res.afterAttached();
+    res.sync = new Promise(function (rs) {
+        _('attachhook').addTo(res).once('error', rs);
+    });
 
     res.$input.on('keydown', res.eventHanler.inputKeyDown, true);
     res.$input.on('change', res.eventHanler.inputChange);
