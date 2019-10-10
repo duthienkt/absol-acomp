@@ -281,4 +281,61 @@ QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, da
 };
 
 
+/**
+ * @typedef {Object} QuickMenuAdaptor 
+ * @property {Function} getFlowedElement default is trigger
+ * @property {Function} getMenuProps define menuProps if un-change
+ * @property {Function} getAnchor default is 'auto', define anchor if un-change
+ * @property {Function} onClose callback
+ * @property {Function} onOpen callback
+ * @property {Function} onSelect calback
+ * @property {Function} isDarkTheme default is false, define darkThem if un-change
+ * 
+ * 
+ * @typedef {Object} QuickMenuDataHolder
+ * @property {Function} remove
+ * 
+ * @param {Element} trigger
+ * @param {QuickMenuAdaptor} adaptor
+ * @returns {QuickMenuDataHolder}
+ */
+QuickMenu.toggleWhenClick = function (trigger, adaptor) {
+    var res = {
+        trigger: trigger,
+        adaptor: adaptor,
+        currentSession: undefined,
+    };
+
+    var clickHandler = function () {
+        if (QuickMenu._session == res.currentSession) return;
+
+        res.currentSession = QuickMenu.show(res.adaptor.getFlowedElement ? res.adaptor.getFlowedElement() : trigger,
+            res.adaptor.getMenuProps ? res.adaptor.getMenuProps() : (adaptor.menuProps || []),
+            res.adaptor.getAnchor ? res.adaptor.getAnchor() : (adaptor.anchor || 'auto'),
+            res.adaptor.onSelect,
+            res.adaptor.isDarkTheme ? res.adaptor.isDarkTheme() : !!res.adaptor.darkTheme);
+        if (res.adaptor.onOpen) res.adaptor.onOpen();
+
+        var finish = function () {
+            document.body.removeEventListener('click', finish, false);
+            QuickMenu.close(res.currentSession);
+            if (adaptor.onClose) adaptor.onClose();
+            res.currentSession = undefined;
+        };
+
+        setTimeout(function () {
+            document.body.addEventListener('click', finish, false);
+        }, 10);
+    };
+
+    res.remove = function () {
+        trigger.removeEventListener('click', clickHandler, false);
+    };
+
+    trigger.addEventListener('click', clickHandler, false);
+    return res;
+
+};
+
+
 export default QuickMenu;
