@@ -37,13 +37,13 @@ function VScroller() {
     });
     res.eventHandler = OOP.bindFunctions(res, VScroller.eventHandler);
     res.$attachHook = _('attachhook').addTo(res);
-    res.sync = new Promise(function(rs){
-        res.$attachHook.once('error', function(){
+    res.sync = new Promise(function (rs) {
+        res.$attachHook.once('error', function () {
             rs();
         });
-    }); 
+    });
 
-    res.$attachHook.on('error', function(){
+    res.$attachHook.on('error', function () {
         res.requestUpdateSize();
     });
     res.$vscrollbar = $('vscrollbar', res).on('scroll', res.eventHandler.scrollScrollbar);
@@ -159,7 +159,7 @@ VScroller.prototype.scrollInto = function (element, padding, scrollTime, beforFr
 VScroller.prototype.scrollBy = function (dy, duration) {
     duration = duration || 0;
     var frameCount = Math.ceil(duration / 20);
-    var timeOut = duration/frameCount;
+    var timeOut = duration / frameCount;
     var i = 0;
     var self = this;
     var start = self.$viewport.scrollTop;
@@ -274,10 +274,9 @@ HScroller.prototype.scrollInto = function (element) {
 
 
 function Scrollbar() {
-
     var res = _({
-        class: ['absol-scrollbar', 'absol-hidden'],
-        extendEvent: ['scroll', 'active'],
+        class: ['absol-scrollbar'],
+        extendEvent: ['scroll', 'active', 'deactive'],
         child: '.absol-scrollbar-button'
     });
 
@@ -308,6 +307,7 @@ function VScrollbar() {
 
     var res = _({
         tag: 'scrollbar',
+        class: 'absol-vscrollbar'
     });
 
 
@@ -330,6 +330,8 @@ function VScrollbar() {
         body.off('pointerleave', finishEventHandler);
         body.off('pointerup', finishEventHandler);
         body.off('pointermove', pointerMoveEventHandler);
+        res.removeClass('absol-active');
+        res.emit('deactive', { type: 'deactive', originEvent: event, tagert: res });
     };
 
     var pointerDownEventHandler = function (event) {
@@ -354,7 +356,8 @@ function VScrollbar() {
         body.on('pointerleave', finishEventHandler);
         body.on('pointerup', finishEventHandler);
         body.on('pointermove', pointerMoveEventHandler);
-
+        res.addClass('absol-active');
+        res.emit('active', { type: 'active', originEvent: event, tagert: res });
     };
 
     res.on('pointerdown', pointerDownEventHandler, true);
@@ -420,6 +423,7 @@ function HScrollbar() {
 
     var res = _({
         tag: 'scrollbar',
+        class: 'absol-hscrollbar'
     });
 
     var body = $('body');
@@ -441,6 +445,8 @@ function HScrollbar() {
         body.off('pointerleave', finishEventHandler);
         body.off('pointerup', finishEventHandler);
         body.off('pointermove', pointerMoveEventHandler);
+        res.removeClass('absol-active');
+        res.emit('deactive', { type: 'deactive', originEvent: event, tagert: res });
     };
 
     var pointerDownEventHandler = function (event) {
@@ -465,7 +471,8 @@ function HScrollbar() {
         body.on('pointerleave', finishEventHandler);
         body.on('pointerup', finishEventHandler);
         body.on('pointermove', pointerMoveEventHandler);
-
+        res.addClass('absol-active');
+        res.emit('active', { type: 'deactive', originEvent: event, tagert: res });
     };
 
     res.on('pointerdown', pointerDownEventHandler, true);
