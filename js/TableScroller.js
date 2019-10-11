@@ -99,7 +99,11 @@ Dom.getScrollSize().then(function (size) {
         '.absol-table-scroller .absol-table-scroller-viewport {',// 
         '    width: calc(100% + ' + size.width + 'px);',
         '    height: calc(100% + ' + size.width + 'px);',
+        '}',
+        '.absol-table-scroller .absol-table-scroller-header-hscroller-viewport {',
+        '    margin-bottom: -' + size.width + 'px;/*default*/',
         '}'
+
     ].join('\n');
     Dom.updateResizeSystem();
     setTimeout(Dom.updateResizeSystem.bind(Dom), 30);// css load delay
@@ -302,7 +306,7 @@ TableScroller.prototype._updateFixedTableSize = function () {
 TableScroller.prototype._updateHeaderScrollerSize = function () {
     var headHeight = Element.prototype.getComputedStyleValue.call(this.$contentThead, 'height');
     this.$headScrollerTable.addStyle('height', headHeight);
-    this.$headScroller.addStyle('height', headHeight);
+    // this.$headScroller.addStyle('height', headHeight);
     this._headScrollerTr.forEach(function (elt) {
 
         var styleHeight = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'height');
@@ -350,7 +354,7 @@ TableScroller.prototype._updateLinesSize = function () {
         left: this._leftWidth + 'px'
     });
     this.$headLine.addStyle({
-        top: this.$contentThead.getComputedStyleValue('height'),
+        top: this.$contentThead.getBoundingClientRect().height+'px',
         maxWidth: this.$content.getComputedStyleValue('width')
     });
 };
