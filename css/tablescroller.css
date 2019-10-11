@@ -57,6 +57,7 @@
 .absol-table-scroller-header-hscroller-viewport {
     max-width: 100%;
     overflow-x: scroll;
+    margin-bottom: -17px;/*default*/
 }
 
 .absol-table-scroller-header-hscroller-viewport table {
