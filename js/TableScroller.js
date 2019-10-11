@@ -2,15 +2,18 @@ import Acore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 import Element from "absol/src/HTML5/Element";
+import BScroller from "./BScroller";
 
 var $ = Acore.$;
 var _ = Acore._;
+
+
 
 function TableScroller() {
     var res = _({
         class: 'absol-table-scroller',
         child: [
-            'bscroller.absol-table-scroller-viewport',
+            '.absol-table-scroller-viewport',
             '.absol-table-scroller-fixed-viewport',//place holder
             {
                 class: 'absol-table-scroller-header-hscroller',
@@ -21,7 +24,19 @@ function TableScroller() {
                 child: '.absol-table-scroller-left-vscroller-viewport'
             },
             '.absol-table-scroller-head-line',
-            '.absol-table-scroller-left-line'
+            '.absol-table-scroller-left-line',
+            {
+                class: 'absol-table-scroller-vscrollbar-container',
+                child: {
+                    tag: 'vscrollbar'
+                }
+            },
+            {
+                class: 'absol-table-scroller-hscrollbar-container',
+                child: {
+                    tag: 'hscrollbar'
+                }
+            }
         ]
     });
 
@@ -49,13 +64,46 @@ function TableScroller() {
         res.$attachHook.on('error', rs)
     });
 
-    res.$viewport = $('bscroller.absol-table-scroller-viewport', res)
+    res.$viewport = $('.absol-table-scroller-viewport', res)
         .on('scroll', res.eventHandler.scrollViewport);
+
+    res.$viewport.scrollInto = BScroller.prototype.scrollInto;
 
     res.$leftLine = $('.absol-table-scroller-left-line', res);
     res.$headLine = $('.absol-table-scroller-head-line', res);
+
+    res.$vscrollbarCtn = $('.absol-table-scroller-vscrollbar-container', res);
+    res.$vscrollbar = $('.absol-table-scroller-vscrollbar-container vscrollbar', res)
+        .on('scroll', function () {
+            res.$viewport.scrollTop = this.innerOffset;
+        });
+
+
+    res.$hscrollbarCtn = $('.absol-table-scroller-hscrollbar-container', res);
+    res.$hscrollbar = $('.absol-table-scroller-hscrollbar-container hscrollbar', res)
+        .on('scroll', function () {
+            res.$viewport.scrollLeft = this.innerOffset;
+        });
+
+    res.$vscrollbar.hidden = false;
+    res.$hscrollbar.hidden = false;
     return res;
 }
+
+TableScroller.scrollSize = 17;//default 
+
+Dom.getScrollSize().then(function (size) {
+    TableScroller.scrollSize = size.width;//default scroller
+    TableScroller.$style = _('style[id="table-scroller-css"]').addTo(document.head);
+    TableScroller.$style.innerHTML = [
+        '.absol-table-scroller .absol-table-scroller-viewport {',// 
+        '    width: calc(100% + ' + size.width + 'px);',
+        '    height: calc(100% + ' + size.width + 'px);',
+        '}'
+    ].join('\n');
+    Dom.updateResizeSystem();
+    setTimeout(Dom.updateResizeSystem.bind(Dom), 30);// css load delay
+});
 
 TableScroller.eventHandler = {};
 TableScroller.eventHandler.scrollViewport = function (event) {
@@ -63,6 +111,8 @@ TableScroller.eventHandler.scrollViewport = function (event) {
         this.__scrollingElement__ = this.$viewport;
         this.$headScrollerViewport.scrollLeft = this.$viewport.scrollLeft;
         this.$leftViewport.scrollTop = this.$viewport.scrollTop;
+        this.$vscrollbar.innerOffset = this.$viewport.scrollTop;
+        this.$hscrollbar.innerOffset = this.$viewport.scrollLeft;
 
         if (this.__scrollTimer__ > 0) {
             clearTimeout(this.__scrollTimer__);
@@ -112,11 +162,12 @@ TableScroller.prototype.clearChild = function () {
 TableScroller.prototype.addChild = function (elt) {
     if (this.$viewport.childNodes.length == 0) {
         if (elt.tagName && elt.tagName.toLowerCase() == 'table') {
+
             this.$viewport.addChild(elt);
             this.$content = elt;
             this._updateContent();
             this.sync.then(this._updateContentSize.bind(this)).then(function () {
-                setTimeout(this._updateContentSize.bind(this), 30)
+                setTimeout(this._updateContentSize.bind(this), 30);
             }.bind(this));
         }
         else {
@@ -280,17 +331,17 @@ TableScroller.prototype._updateLeftTableSize = function () {
 };
 
 TableScroller.prototype._updateLinesSize = function () {
-    if (this.$viewport.clientHeight < this.$viewport.scrollHeight ){
+    if (this.$viewport.clientHeight < this.$viewport.scrollHeight) {
         this.addClass('scroll-v');
     }
-    else{
+    else {
         this.removeClass('scroll-v');
     }
-    
-    if (this.$viewport.clientWidth < this.$viewport.scrollWidth ){
+
+    if (this.$viewport.clientWidth < this.$viewport.scrollWidth) {
         this.addClass('scroll-h');
     }
-    else{
+    else {
         this.removeClass('scroll-h');
     }
 
@@ -304,11 +355,41 @@ TableScroller.prototype._updateLinesSize = function () {
     });
 };
 
+
+TableScroller.prototype._updateScrollBarSize = function () {
+    var viewportBound = this.$viewport.getBoundingClientRect();
+    var tableBound = this.$content.getBoundingClientRect();
+    this.$vscrollbar.innerHeight = this.$viewport.scrollHeight;
+    this.$vscrollbar.outerHeight = viewportBound.height - TableScroller.scrollSize;
+
+
+    this.$hscrollbar.innerWidth = this.$viewport.scrollWidth;
+    this.$hscrollbar.outerWidth = viewportBound.width - TableScroller.scrollSize;
+
+    var overHeight = this.$viewport.clientHeight < this.$viewport.scrollHeight;
+    var overWidth = this.$viewport.clientWidth < this.$viewport.scrollWidth;
+    if (overHeight) {
+        if (overWidth) {
+            this.$hscrollbarCtn.removeStyle('bottom');
+            this.$vscrollbarCtn.removeStyle('right');
+        }
+        else {
+            this.$vscrollbarCtn.addStyle('right', viewportBound.width - TableScroller.scrollSize - tableBound.width + 'px');
+        }
+    }
+    else {
+        if (overWidth) {
+            this.$hscrollbarCtn.addStyle('bottom', viewportBound.height - TableScroller.scrollSize - tableBound.height + 'px');
+        }
+    }
+};
+
 TableScroller.prototype._updateContentSize = function () {
     this._updateFixedTableSize();
     this._updateHeaderScrollerSize();
     this._updateLeftTableSize();
     this._updateLinesSize();
+    this._updateScrollBarSize();
 };
 
 TableScroller.property = {};

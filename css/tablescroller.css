@@ -3,9 +3,24 @@
     overflow: hidden;
 }
 
+.absol-table-scroller-render-space {
+    position: fixed;
+    overflow: scroll;
+    left: 0;
+    top: 0;
+    max-width: calc(99vw - 30px);
+    max-height: calc(99vh -30px);
+    opacity: 0;
+    z-index: -1000;
+    visibility: hidden;
+}
+
+
 .absol-table-scroller-viewport {
-    max-width: 100%;
-    max-height: 100%;
+    box-sizing: border-box;
+    overflow: scroll;
+    width: calc(100% + 17px);
+    height: calc(100% + 17px);
 }
 
 .absol-table-scroller-fixed-viewport {
@@ -20,7 +35,6 @@
 .absol-table-scroller-fixed-viewport>table>thead,
 .absol-table-scroller-fixed-viewport>table {
     border-top-color: transparent !important;
-    /*firefox bug*/
 }
 
 .absol-table-scroller-fixed-hidden {
@@ -34,7 +48,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    right: 6px;
+    right: 0;
     z-index: 9;
     overflow: hidden;
     pointer-events: none;
@@ -54,9 +68,9 @@
     position: absolute;
     top: 0;
     left: 0;
-    bottom: 6px;
+    bottom: 0;
     z-index: 7;
-    width: 200px;
+    /* width: 200px; */
     overflow-x: hidden;
     pointer-events: none;
 }
@@ -85,16 +99,81 @@
 
 .absol-table-scroller-left-line {
     top: 0;
-    border-right: solid 2px  rgb(169, 169, 170);
-    height:  calc(100% - 6px);
+    border-right: solid 2px rgb(169, 169, 170);
+    height: calc(100% - 6px);
     height: 100%;
 }
 
 
-.absol-table-scroller.scroll-v .absol-table-scroller-head-line{
-    width: calc(100% - 6px);
+.absol-table-scroller.scroll-v .absol-table-scroller-head-line {
+    width: 100%;
 }
 
-.absol-table-scroller.scroll-h .absol-table-scroller-left-line{
-    height: calc(100% - 6px);
+.absol-table-scroller.scroll-h .absol-table-scroller-left-line {
+    height: 100%;
+}
+
+
+.absol-table-scroller:not(.scroll-v) .absol-table-scroller-head-line {
+    display: none;
+}
+
+.absol-table-scroller:not(.scroll-h) .absol-table-scroller-left-line {
+    display: none;
+}
+
+
+
+.absol-table-scroller-vscrollbar-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 8px;
+    bottom: 0;
+    z-index: 31;
+}
+
+.absol-table-scroller-vscrollbar-container .absol-scrollbar-button {
+    left: 1px;
+    right: 1px;
+}
+
+
+.absol-table-scroller-vscrollbar-container>div,
+.absol-table-scroller-hscrollbar-container>div {
+    width: 100%;
+    height: 100%;
+}
+
+.absol-table-scroller-hscrollbar-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 12px;
+    bottom: 0;
+    z-index: 31;
+}
+
+
+.absol-table-scroller-hscrollbar-container .absol-scrollbar-button {
+    top: 1px;
+    bottom: 1px;
+}
+
+
+.absol-table-scroller:not(.scroll-v) .absol-table-scroller-vscrollbar-container {
+    display: none;
+}
+
+.absol-table-scroller:not(.scroll-h) .absol-table-scroller-hscrollbar-container {
+    display: none;
+}
+
+
+.absol-table-scroller.scroll-h .absol-table-scroller-vscrollbar-container {
+    bottom: 12px;
+}
+
+.absol-table-scroller.scroll-v .absol-table-scroller-hscrollbar-container {
+    left: 8px;
 }

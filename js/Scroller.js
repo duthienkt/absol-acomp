@@ -277,7 +277,7 @@ function Scrollbar() {
 
     var res = _({
         class: ['absol-scrollbar', 'absol-hidden'],
-        extendEvent: 'scroll',
+        extendEvent: ['scroll', 'active'],
         child: '.absol-scrollbar-button'
     });
 
