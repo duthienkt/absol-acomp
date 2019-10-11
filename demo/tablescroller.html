@@ -1142,7 +1142,7 @@
 
         /**********************************************************************/
     </style>
-    <table id="example">
+    <table id="example" style="width: 300px;">
         <thead>
             <tr>
                 <th align="center">Tên</th>
@@ -2642,18 +2642,19 @@
 
     <h2>Table Scroller</h2>
     <script>
-        absol._({
+        var mTableScroller = absol._({
             tag: 'tablescroller',
             class: 'KPIsimpletableclass KPItablehover row2colors'.split(/\s+/),
             style: {
-                height: '50vh',
-                width: '60vw'
+                height: '300px',
+                width: '500px'
             },
             props: {
                 fixedCol: 2
             },
-            child: absol.$(absol.$('#example').cloneNode(true)).addStyle('width', '1800px')
+            child: absol.$(absol.$('#example').cloneNode(true)).addStyle('width', '1900px')
         }).addTo(document.body);
+        document.body.insertBefore(mTableScroller, document.body.childNodes[0]);
     </script>
 
     <script src="./autohightlighting.js?"></script>
