@@ -213,7 +213,7 @@ function HScroller() {
             res.requestUpdateSize();
             return res;
         }
-    })
+    });
     return res;
 };
 
@@ -281,6 +281,14 @@ function Scrollbar() {
     });
 
     res.$button = $('.absol-scrollbar-button', res);
+    res.on('active', function () {
+        if (!res.$forceModal) res.$forceModal = _('.absol-scrollbar-force-modal');
+        res.$forceModal.addTo(document.body);
+    }).on('deactive', function () {
+        setTimeout(function () {
+            res.$forceModal.remove();
+        }, 30);
+    });
     return res;
 };
 
@@ -308,7 +316,7 @@ function VScrollbar() {
     var res = _({
         tag: 'scrollbar',
         class: 'absol-vscrollbar'
-    });
+    }, true);
 
 
     var body = $(document.body);
@@ -424,7 +432,7 @@ function HScrollbar() {
     var res = _({
         tag: 'scrollbar',
         class: 'absol-hscrollbar'
-    });
+    }, true);
 
     var body = $('body');
     var left0, innerOffset0;
