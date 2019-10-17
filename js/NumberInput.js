@@ -12,7 +12,7 @@ var $ = Acore.$;
 function NumberInput() {
     var res = _({
         class: 'absol-number-input',
-        extendEvent: ['change', 'changing'],
+        extendEvent: ['change'],
         child: [
             {
                 class: 'absol-number-input-text-container',
@@ -75,7 +75,7 @@ NumberInput.eventHandler.mouseDownUpBtn = function (event) {
         if (pressing) {
             if (i == 0 || i >= 4) {
                 self.value = Math.floor(self.value) + 1;
-                self.emit('changing', { target: self, value: self.value }, self);
+                self.notifyChanged({ by: 'long_press_button' });
             }
             ++i;
             self.__pressingUpTimeout__ = setTimeout(tick, 100);
@@ -113,7 +113,8 @@ NumberInput.eventHandler.mouseDownDownBtn = function (event) {
         if (pressing) {
             if (i == 0 || i >= 4) {
                 self.value = Math.ceil(self.value) - 1;
-                self.emit('changing', { target: self, value: self.value }, self);
+                self.notifyChanged({ by: 'long_press_button' });
+
             }
             ++i;
             self.__pressingUpTimeout__ = setTimeout(tick, 100);
@@ -145,7 +146,7 @@ NumberInput.eventHandler.keyup = function (event) {
     var cValue = parseFloat(this.$input.value);
     if (!isNaN(cValue)) {
         this._value = cValue;
-        this.emit('changing', { target: this, value: this.value, originEvent: event, by: 'keyup' }, this);
+        this.notifyChanged({ originEvent: event, by: 'keyup' });
     }
 };
 
@@ -188,9 +189,11 @@ NumberInput.eventHandler.paste = function (e) {
 
 
 NumberInput.prototype.notifyChanged = function (option) {
-    if (this._previusValue != this.value) {
+    option = option || {};
+    if (this._previusValue != this.value || this._prevBy !== option.by) {
         this.emit('change', Object.assign({ target: this, value: this.value }, option || {}), this);
         this._previusValue = this.value;
+        this._prevBy = option.by;
     }
 }
 
