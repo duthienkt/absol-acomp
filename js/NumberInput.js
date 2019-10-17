@@ -93,7 +93,7 @@ NumberInput.eventHandler.mouseDownUpBtn = function (event) {
         if (event.type == 'mouseup') {
             self.$input.focus();
         }
-        self.notifyChanged();
+        self.notifyChanged({ originEvent: event, by: 'press_button' });
     }
 
     body.on('mouseup', finish);
@@ -131,7 +131,7 @@ NumberInput.eventHandler.mouseDownDownBtn = function (event) {
         if (event.type == 'mouseup') {
             self.$input.focus();
         }
-        self.notifyChanged();
+        self.notifyChanged({ originEvent: event, by: 'press_button' });
     }
 
     body.on('mouseup', finish);
@@ -141,11 +141,11 @@ NumberInput.eventHandler.mouseDownDownBtn = function (event) {
 
 
 
-NumberInput.eventHandler.keyup = function () {
+NumberInput.eventHandler.keyup = function (event) {
     var cValue = parseFloat(this.$input.value);
     if (!isNaN(cValue)) {
         this._value = cValue;
-        this.emit('changing', { target: this, value: this.value }, this);
+        this.emit('changing', { target: this, value: this.value, originEvent: event, by: 'keyup' }, this);
     }
 };
 
@@ -162,9 +162,9 @@ NumberInput.eventHandler.keydown = function () {
     }
 };
 
-NumberInput.eventHandler.change = function () {
+NumberInput.eventHandler.change = function (event) {
     this.value = parseFloat(this.$input.value);
-    this.notifyChanged();
+    this.notifyChanged({ originEvent: event, by: 'input_change' });
 };
 
 NumberInput.eventHandler.paste = function (e) {
@@ -187,9 +187,9 @@ NumberInput.eventHandler.paste = function (e) {
 };
 
 
-NumberInput.prototype.notifyChanged = function () {
+NumberInput.prototype.notifyChanged = function (option) {
     if (this._previusValue != this.value) {
-        this.emit('change', { target: this, value: this.value }, this);
+        this.emit('change', Object.assign({ target: this, value: this.value }, option || {}), this);
         this._previusValue = this.value;
     }
 }
