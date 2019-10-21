@@ -28,6 +28,9 @@ import './js/Modal';
 import './css/modal.css';
 
 
+import './js/TextEditor';
+import './css/texteditor.css';
+
 import './js/MediaInput';
 import './css/mediainput.css';
 
@@ -64,6 +67,7 @@ import './js/Switch';
 import './css/checkbox.css';
 import './js/CheckBox';
 import './js/CheckboxButton';
+import './js/CandyBoxButton';
 
 
 import './js/TextClipboard';
@@ -126,13 +130,14 @@ import './css/droppanel.css';
 import './js/DropPanel';
 import './js/DropPanelStack';
 
-import  './css/draggablevstack.css';
+import './css/draggablestack.css';
 import './js/DraggableVStack';
+import './js/DraggableHStack';
 
-import  './css/chromecalendar.css';
+import './css/chromecalendar.css';
 import './js/ChromeCalendar';
 
-import  './css/calendarinput.css';
+import './css/calendarinput.css';
 import './js/CalendarInput';
 
 

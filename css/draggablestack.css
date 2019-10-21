@@ -1,0 +1,66 @@
+.absol-draggable-stack {
+    position: relative;
+}
+
+.absol-draggable-stack .drag-zone {}
+
+.absol-draggable-stack>.dragging {
+    opacity: 0.2 !important;
+}
+
+.absol-draggable-stack-child-container.dragging {
+    opacity: 0.2 !important;
+}
+
+.absol-draggable-stack-clone-container {
+    position: absolute;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    z-index: 100;
+    pointer-events: all;
+    opacity: 0.5;
+    background: white;
+}
+
+.absol-draggable-vstack>.absol-draggable-stack-clone-container {
+    left: 0;
+    right: 0;
+
+}
+
+.absol-draggable-stack-clone-container * {
+    pointer-events: none !important;
+}
+
+.absol-draggable-stack-clone-container.home-going {
+    transition: top 0.2s;
+}
+
+.absol-draggable-stack-dest-line {
+    position: absolute;
+    z-index: 99;
+    box-sizing: content-box;
+}
+
+.absol-draggable-vstack>.absol-draggable-stack-dest-line {
+    transition: top 0.1s;
+
+    left: 0;
+    right: 0;
+    border-top: solid 3px rgb(74, 174, 233);
+    border-bottom: solid 3px rgb(74, 174, 233);
+}
+
+.absol-draggable-hstack>.absol-draggable-stack-dest-line {
+    transition: left 0.1s;
+    top: 0;
+    bottom: 0;
+    border-left: solid 3px rgb(74, 174, 233);
+    border-right: solid 3px rgb(74, 174, 233);
+}
+.absol-draggable-hstack>*{
+    display: inline-block;
+    vertical-align: middle;
+}
