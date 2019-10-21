@@ -12,6 +12,7 @@ absol.AComp = AComp;
 absol.ChromeCalendar = ChromeCalendar;
 
 absol.coreDom.install(AComp.core);
+absol.ShareCreator = Object.assign(absol.ShareCreator || {}, AComp.creator);
 
 window.AComp = absol.AComp;
 setTimeout(function () {

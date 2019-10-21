@@ -78,7 +78,7 @@ export function preventNotNumberInput(elt) {
         }
     }).addEventListener('keydown', function (event) {
         var key = event.key;
-        if (key && key.length == 1) {
+        if (key && key.length == 1 &&!event.ctrlKey && !event.altKey) {
             if (key.match(/[0-9.\-\+]/)) {
                 if (key == '.' && this.value.indexOf('.') >= 0) event.preventDefault();
                 if ((key == '+' || key == '-') && (this.value.indexOf('+') >= 0 || this.value.indexOf('-') >= 0 || getCaretPosition(this) > 0)) event.preventDefault();

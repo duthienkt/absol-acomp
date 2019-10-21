@@ -1,0 +1,74 @@
+.absol-text-editor {
+    position: relative;
+    min-height: 1.5em;
+    /* for dev*/
+    outline: none;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+.absol-text-editor-text-layer {
+    cursor: text;
+    height: 5em;
+
+}
+
+.absol-text-editor-line {
+    height: 1.5em;
+    white-space: pre-wrap;
+}
+
+
+.absol-text-editor-position {
+    pointer-events: none;
+    right: 0.5em;
+    bottom: 0.2em;
+    position: absolute;
+    color: rgba(169, 169, 169, 0.7);
+}
+
+.absol-text-editor-forceground {
+    position: absolute;
+    background: transparent;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 80;
+}
+
+.absol-text-editor.absol-focus .absol-text-editor-cursor {
+    position: absolute;
+    z-index: 100;
+    height: 1.5em;
+    border-left: solid 1px black;
+}
+
+/* 
+.absol-text-editor-cursor {
+    animation: blink-cursor-animation 1s steps(2, start) infinite;
+    -webkit-animation: blink-cursor-animation 1s steps(2, start) infinite;
+} */
+
+/* @keyframes blink-cursor-animation {
+    to {
+        visibility: hidden;
+    }
+}
+
+@-webkit-keyframes blink-cursor-animation {
+    to {
+        visibility: hidden;
+    }
+} */
+
+.absol-text-editor-edittable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    /* width: 10px;
+    height: 10px; */
+    overflow: hidden;
+    z-index: 0;
+    opacity: 0.1;
+}
