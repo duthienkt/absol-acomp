@@ -63,7 +63,7 @@ DraggableHStack.eventHandler.mouseDown = function (event) {
             top: this._initTop + 'px',
             left: this._initLeft + 'px',
             width: this._initWidth + 'px'
-        }).addChild($(element.cloneNode(true)).addStyle('width', '100%'));
+        }).addChild($(element.cloneNode(true)).addStyle({'width': '100%', 'box-sizing':'border-box'}));
 
         this.$destLine.addStyle('left', this._initLeft + 'px');
 
