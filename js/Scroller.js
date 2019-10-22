@@ -203,7 +203,15 @@ function HScroller() {
         ]
     });
     res.eventHandler = OOP.bindFunctions(res, HScroller.eventHandler);
-    res.sync = res.afterAttached();
+    res.$attachHook = _('attachhook').addTo(res)
+        .on('error', function(){
+            this.requestUpdateSize =this.requestUpdateSize || res.requestUpdateSize.bind(res); 
+            Dom.addToResizeSystem(this);
+        });
+
+    res.sync = new Promise(function(rs, rj){
+        res.$attachHook.once('error', rs);
+    });
     res.$hscrollbar = $('hscrollbar', res).on('scroll', res.eventHandler.scrollScrollbar);
     res.$viewport = $('.absol-hscroller-viewport', res)
         .on('scroll', res.eventHandler.scrollViewport);
