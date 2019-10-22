@@ -1,6 +1,5 @@
 .absol-text-editor {
     position: relative;
-    min-height: 1.5em;
     /* for dev*/
     outline: none;
     font-family: Helvetica, Arial, sans-serif;
@@ -9,7 +8,7 @@
 
 .absol-text-editor-text-layer {
     cursor: text;
-    height: 5em;
+    min-height: 1.5em;
 
 }
 

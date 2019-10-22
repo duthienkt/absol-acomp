@@ -27,18 +27,6 @@ function TextEditor() {
                 class: 'absol-text-editor-position',
                 child: { text: 'Ln 1, Col 1' }
             }
-            // {
-            //     class: 'absol-text-editor-forceground',
-            //     child: {
-            //         class: 'absol-text-editor-cursor'
-            //     }
-            // },
-            // {
-            //     class: 'absol-text-editor-edittable',
-            //     attr: {
-            //         contenteditable: 'true'
-            //     }
-            // }
         ]
     });
 
@@ -96,17 +84,70 @@ TextEditor.eventHandler.mouseup = function () {
 };
 
 
-TextEditor.eventHandler.paste = function(event){
-    // console.log(event.target.innerHTML);   
-    // setTimeout();
+TextEditor.eventHandler.paste = function (event) {
+    setTimeout(this._normalizeLineElt.bind(this, this._lineOf(event.target)), 1);
 };
 
-TextEditor.prototype._normalizeLineElt = function(elt){
+TextEditor.prototype._normalizeLineEltFrom = function (elt){
+
+}
+
+TextEditor.prototype._normalizeLineElt = function (elt) {
+    if (elt.classList.contains('absol-text-editor-line') && elt.childNodes.length == 1) return false;
+    var texts = getTextIn(elt).split('\n');
+    var text, childStruct;
+    var newOffset;
+    text = texts.shift();
+    newOffset = text.length;
+    var cLine = $(elt).clearChild().addChild(_({ text: text }));
+    var lLine;
+    while (texts.length > 1) {
+        text = texts.shift();
+        newOffset = text.length;
+        lLine = cLine;
+        cLine = _({ class: 'absol-text-editor-line', child: { text: text } });
+        this.$textLayter.addChildAfter(cLine, lLine);
+    }
+    if (texts.length == 1) {
+        text = texts.shift();
+        newOffset = text.length;
+
+        lLine = cLine;
+        var lLineIndex = this._lineIndexOf(lLine);
+        if (lLineIndex == this.$textLayter.childNodes.length - 1) {
+            if (text == '')
+                childStruct = 'br';
+            else childStruct = { text: text };
+            cLine = _({ class: 'absol-text-editor-line', child: childStruct });
+            this.$textLayter.addChild(cLine);
+        }
+        else {
+            cLine = $(this.$textLayter.childNodes[lLineIndex + 1]);
+            text = text + getTextIn(cLine);
+            cLine.clearChild()
+                .addChild(_({ text: text }));
+        }
+    }
+
+    var range = document.createRange();
+    
+    range.setStart(cLine.childNodes[0], newOffset);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+
 
 };
 
 TextEditor.prototype._updateCursorPosition = function () {
-    this._selection = document.getSelection();
+    var selection = document.getSelection();
+    this._selection = {};
+    this._selection.anchorNode = selection.anchorNode;
+    this._selection.anchorOffset = selection.anchorOffset;
+    this._selection.focusNode = selection.focusNode;
+    this._selection.focusOffset = selection.focusOffset;
+    this._selection.type = selection.type;
     var r = this._lineIndexOf(this._selection.focusNode);
     var c = this._selection.focusOffset;
     this.$cursorPos.innerHTML = "Ln " + (r + 1) + ', ' + 'Col ' + (c + 1);
@@ -121,6 +162,19 @@ TextEditor.prototype._lineIndexOf = function (node) {
     }
     return -1;
 };
+
+
+TextEditor.prototype._lineOf = function (node) {
+    while (node) {
+        if (node.tagName == 'DIV' && node.classList.contains('absol-text-editor-line')) {
+            return node;
+        }
+        node = node.parentElement;
+    }
+    return undefined;
+};
+
+
 
 
 TextEditor.prototype.getSelection = function () {
