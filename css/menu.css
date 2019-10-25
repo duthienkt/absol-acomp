@@ -149,6 +149,13 @@ img.absol-vmenu-button-icon[src] {
 }
 
 
+.absol-vmenu-button-ext-icon-container>svg,
+.absol-vmenu-button-ext-icon-container>img {
+    height: 1.2em;
+    width: 1.2em;
+    display: block;
+}
+
 
 .absol-vmenu-button-text,
 .absol-vmenu-button-key {
