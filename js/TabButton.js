@@ -15,16 +15,34 @@ function TabButton() {
             class: 'absol-tabbar-button-text',
         },
         {
-            tag:'span', 
-            class: ['absol-tabbar-button-close', 'mdi', 'mdi-close'],
-            attr: { title: 'Close' },
-            on: {
-                click: function (event) {
-                    event.tabButtonEventName = 'delete';
-                    res.emit('close', event);
+            class: 'absol-tabbar-button-icon-container',
+            child: [
+                {
+                    tag: 'span',
+                    class: ['absol-tabbar-button-close', 'mdi-close', 'mdi'],
+                
+                    attr: { title: 'Close (Ctrl+F4)' },
+                    on: {
+                        click: function (event) {
+                            event.tabButtonEventName = 'delete';
+                            res.emit('close', event);
+                        }
+                    }
+                },
+                {
+                    tag: 'span',
+                    class: ['absol-tabbar-button-modified-flag', 'mdi', 'mdi-checkbox-blank-circle'],
+                    
+                    on: {
+                        click: function (event) {
+                            event.tabButtonEventName = 'delete';
+                            res.emit('close', event);
+                        }
+                    }
                 }
-            }
-        }],
+            ]
+        }
+    ],
         on: {
             click: function (event) {
                 if (event.tabButtonEventName) return;
@@ -73,6 +91,22 @@ TabButton.property.desc = {
     get:function(){
         return this.attr('title');
     }
-}
+};
+
+
+
+TabButton.property.modified = {
+    set: function (value) {
+        if (value) {
+            this.addClass('absol-tabbar-button-modified');
+        }
+        else {
+            this.removeClass('absol-tabbar-button-modified');
+        }
+    },
+    get: function () {
+        return this.containsClass('absol-tabbar-button-modified');
+    }
+};
 
 Acore.creator.tabbutton = TabButton;
