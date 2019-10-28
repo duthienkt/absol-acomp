@@ -327,7 +327,6 @@ function VScrollbar() {
     }, true);
 
 
-    var body = $(document.body);
     var top0, innerOffset0;
     var pointerMoveEventHandler = function (event) {
         event.preventDefault();
@@ -343,6 +342,7 @@ function VScrollbar() {
     };
 
     var finishEventHandler = function (event) {
+    var body = $(document.body);
         body.off('pointerleave', finishEventHandler);
         body.off('pointerup', finishEventHandler);
         body.off('pointermove', pointerMoveEventHandler);
@@ -368,7 +368,7 @@ function VScrollbar() {
             innerOffset0 = newInnerOffset;
             res.emit('scroll', event);
         }
-
+        var body = $(document.body);
         body.on('pointerleave', finishEventHandler);
         body.on('pointerup', finishEventHandler);
         body.on('pointermove', pointerMoveEventHandler);
@@ -442,7 +442,6 @@ function HScrollbar() {
         class: 'absol-hscrollbar'
     }, true);
 
-    var body = $('body');
     var left0, innerOffset0;
     var pointerMoveEventHandler = function (event) {
         event.preventDefault();
@@ -458,6 +457,7 @@ function HScrollbar() {
     };
 
     var finishEventHandler = function (event) {
+        var body = $(document.body);
         body.off('pointerleave', finishEventHandler);
         body.off('pointerup', finishEventHandler);
         body.off('pointermove', pointerMoveEventHandler);
@@ -483,7 +483,7 @@ function HScrollbar() {
             innerOffset0 = newInnerOffset;
             res.emit('scroll', event);
         }
-
+        var body = $(document.body);
         body.on('pointerleave', finishEventHandler);
         body.on('pointerup', finishEventHandler);
         body.on('pointermove', pointerMoveEventHandler);
