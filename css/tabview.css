@@ -5,32 +5,47 @@
 }
 
 
-.absol-tabbar .absol-hscroller-viewport{
-    overflow-y:hidden ;
+.absol-tabbar .absol-hscroller-viewport {
+    overflow-y: hidden;
 }
+
 .absol-tabbar .absol-tabbar-button {
     height: 100%;
 }
 
-.absol-tabbar .absol-scrollbar-container {
+/* .absol-tabbar .absol-scrollbar-container {
     height: 5px;
+} */
+
+.absol-tabbar .absol-scrollbar-container.horizontal {
+    bottom: -2px;
 }
 
-.absol-tabbar .absol-scrollbar-button {
+.absol-tabbar .absol-scrollbar-container {
     opacity: 0;
     transition: opacity 0.2s;
+    background: rgba(169, 169, 169, 0.1);
 }
 
-.absol-tabbar:hover .absol-scrollbar-button {
+.absol-tabbar:hover .absol-scrollbar-container,
+.absol-tabbar .absol-scrollbar.absol-active {
     opacity: 1;
 }
 
 .absol-tabbar .absol-scrollbar-button {
-    background-color: rgba(196, 196, 196, 0.1)
+    background-color: rgba(33, 33, 40, 0.1);
 }
 
-.absol-tabbar .absol-scrollbar-button:active {
-    background-color: rgba(255, 255, 255, 0.3)
+.absol-tabbar .absol-scrollbar-button:hover {
+    background-color: rgba(33, 33, 40, 0.3);
+}
+
+
+
+.absol-tabbar .absol-scrollbar-button:active,
+.absol-tabbar .absol-hscrollbar.absol-active .absol-scrollbar-button {
+    background-color: rgba(47, 47, 55, 0.4);
+
 }
 
 
@@ -43,6 +58,7 @@
     margin-right: 1px;
     border: none;
     outline: none;
+    font-size: 1em;
 }
 
 .absol-tabbar .absol-tabbar-button-active {
@@ -57,7 +73,6 @@
 }
 
 .absol-tabbar-button .absol-tabbar-button-close {
-    margin-left: 0.5em;
     visibility: hidden;
     color: rgb(190, 190, 190);
     font-size: 1em
@@ -68,6 +83,21 @@
     visibility: visible;
     color: red;
 }
+
+.absol-tabbar-button-active .absol-tabbar-button-modified-flag {
+    color: lightblue;
+}
+
+.absol-tabbar-button-modified-flag {
+    color: mediumaquamarine;
+}
+
+.absol-tabbar-button:not(.absol-tabbar-button-modified) .absol-tabbar-button-modified-flag,
+.absol-tabbar-button.absol-tabbar-button-modified:not(.active) .absol-tabbar-button-icon-container:hover .absol-tabbar-button-modified-flag,
+.absol-tabbar-button.absol-tabbar-button-modified .absol-tabbar-button-icon-container:not(:hover) .absol-tabbar-button-close {
+    display: none;
+}
+
 
 .absol-button-range {}
 
@@ -204,7 +234,7 @@
     top: 22px;
 }
 
-.absol-tabview.xp-tiny .absol-tab-frame {
+.absol-tabview.xp-tiny .absol-tab-absol {
     border-left: solid 1px #ccc;
     border-right: solid 1px #ccc;
     border-bottom: solid 1px #ccc;
