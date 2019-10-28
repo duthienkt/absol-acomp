@@ -4,6 +4,10 @@
     white-space: nowrap;
 }
 
+
+.absol-tabbar .absol-hscroller-viewport{
+    overflow-y:hidden ;
+}
 .absol-tabbar .absol-tabbar-button {
     height: 100%;
 }
@@ -53,7 +57,7 @@
 }
 
 .absol-tabbar-button .absol-tabbar-button-close {
-    margin-left: 1em;
+    margin-left: 0.5em;
     visibility: hidden;
     color: rgb(190, 190, 190);
     font-size: 1em
@@ -103,18 +107,18 @@
 
 .absol-tabview .absol-tabbar-button {
     border-radius: 10px 10px 0 0;
-    height: 34px;
+    height: 2em;
     box-sizing: border-box;
     border: solid 1px #ccc;
     background-color: white;
     color: black;
-    padding-left: 14px;
-    padding-right: 5px;
-    margin-right: 5px;
+    padding-left: 1em;
+    padding-right: 0.357em;
+    margin-right: 0.357em;
 }
 
 .absol-tabview .absol-tabbar {
-    height: 34px;
+    height: 2em;
     overflow-y: hidden;
     border-bottom: 1px solid #ccc;
     box-sizing: border-box;
@@ -126,12 +130,12 @@
     color: white;
 }
 
-.absol-tabview .absol-tabbar-button-close {
+/* .absol-tabview .absol-tabbar-button-close {
     color: rgb(170, 170, 170);
-    line-height: 30px;
-    margin-left: 14px;
-    font-size: 20px;
-}
+    line-height: 1.5em;
+    margin-left: 1em;
+    font-size: 1.3em;
+} */
 
 .absol-tabview .absol-tabbar-button-close:hover {
     color: red;

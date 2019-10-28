@@ -88,10 +88,12 @@ TabView.prototype.removeTab = function (id, userActive) {
             self.emit('removetab', eventData, self);
             eventData.__promise__.then(function () {
                 //if ok
-                this._frameHolders = this._frameHolders.filter(function (x) { return x.id != holder.id; })
+                self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; })
+
                 holder.tabFrame.notifyDetach();
                 self.$tabbar.removeTab(holder.id);
                 holder.containterElt.remove();
+                self.activeLastTab();
             }, function () {
                 //if reject
             });
@@ -158,19 +160,28 @@ TabView.prototype.addChild = function () {
 };
 
 TabView.prototype.activeLastTab = function () {
-    // var dict = this._frameHolders.reduce(function (ac, holder) {
-    //     ac[holder.id] = true;
-    //     return ac;
-    // }, {});
-    //todo
+    var dict = this._frameHolders.reduce(function (ac, holder) {
+        ac[holder.id] = true;
+        return ac;
+    }, {});
+    
+    while (this._history.length>0){
+        var id = this._history.pop();
+        if (dict[id]){
+            this.activeTab(id);
+            break;
+        }
+    }
 };
 
-TabView.prototype.getChildAt = function () {
-    //todo
+TabView.prototype.getChildAt = function (index) {
+    return this._frameHolders[index];
 };
 
 TabView.prototype.getAll = function () {
-    //todo
+    return this._frameHolders.map(function(holder){
+        return holder.tabFrame;
+    });
 };
 
 

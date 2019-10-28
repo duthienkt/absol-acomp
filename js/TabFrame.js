@@ -1,10 +1,13 @@
 import Acore from "../ACore";
+var $ = Acore.$;
+var _ = Acore._;
 
-function TabFrame() {
-    return Acore._({
-        class: 'absol-tab-frame',
-        extendEvent: ['attached', 'detached']
-    });
+function TabFrame(data) {
+    data = data || {};
+    data.elt = data.elt || _('div');
+    $(data.elt).addClass('absol-tab-frame');
+    data.elt.defineEvent(['attached', 'detached']);
+    return data.elt;
 }
 
 
@@ -42,7 +45,7 @@ TabFrame.property = {};
 
 TabFrame.property.name = {
     set: function (value) {
-        
+
         if (typeof name == "undefined") {
             this._name = undefined;
         }
