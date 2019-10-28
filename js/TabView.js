@@ -1,5 +1,6 @@
 import Acore from "../ACore";
 import { randomIdent } from 'absol/src/String/stringGenerate';
+import OOP from "absol/src/HTML5/OOP";
 var _ = Acore._;
 var $ = Acore.$;
 
@@ -121,6 +122,13 @@ TabView.prototype.notifyUpdateName = function (elt) {
     }
 };
 
+TabView.prototype.notifyUpdateModified = function (elt) {
+    var holder = this.findHolder(elt);
+    if (holder) {
+        holder.tabButton.modified = elt.modified;
+    }
+};
+
 TabView.prototype.findHolder = function (elt) {
     for (var i = 0; i < this._frameHolders.length; ++i) {
         var holder = this._frameHolders[i];
@@ -133,7 +141,6 @@ TabView.prototype.findHolder = function (elt) {
 TabView.prototype.addChild = function () {
     var self = this;
     Array.prototype.forEach.call(arguments, function (elt) {
-
         if (!elt.notifyAttached || !elt.notifyDetach) {
             throw new Error('element is not a tabframe');
         }
@@ -143,18 +150,30 @@ TabView.prototype.addChild = function () {
         var id = elt.attr('id') || randomIdent(16);
         var desc = elt.attr('desc') || undefined;
         var name = elt.attr('name') || 'NoName';
+        var modified = elt.modified;
 
-        var tabButton = self.$tabbar.addTab({ name: name, id: id, desc: desc });
+        var tabButton = self.$tabbar.addTab({ name: name, id: id, desc: desc, modified: modified });
         containterElt.addChild(elt);
         elt.notifyAttached(self);
-        self._frameHolders.push({
-            name: name,
-            id: id,
-            desc: desc,
-            tabButton: tabButton,
-            tabFrame: elt,
-            containterElt: containterElt
+        var holder = {};
+        OOP.drillProperty(holder, elt, 'id');
+        OOP.drillProperty(holder, elt, 'desc');
+        OOP.drillProperty(holder, elt, 'name');
+        Object.defineProperties(holder, {
+            tabButton: {
+                value: tabButton,
+                writable: false
+            },
+            tabFrame: {
+                value: elt,
+                writable: false
+            },
+            containterElt: {
+                value: containterElt,
+                writable: false
+            }
         });
+        self._frameHolders.push(holder);
         self.activeTab(id);
     });
 };
@@ -164,10 +183,10 @@ TabView.prototype.activeLastTab = function () {
         ac[holder.id] = true;
         return ac;
     }, {});
-    
-    while (this._history.length>0){
+
+    while (this._history.length > 0) {
         var id = this._history.pop();
-        if (dict[id]){
+        if (dict[id]) {
             this.activeTab(id);
             break;
         }
@@ -175,11 +194,11 @@ TabView.prototype.activeLastTab = function () {
 };
 
 TabView.prototype.getChildAt = function (index) {
-    return this._frameHolders[index];
+    return this._frameHolders[index].tabFrame;
 };
 
 TabView.prototype.getAll = function () {
-    return this._frameHolders.map(function(holder){
+    return this._frameHolders.map(function (holder) {
         return holder.tabFrame;
     });
 };

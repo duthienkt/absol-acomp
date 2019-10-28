@@ -1,11 +1,12 @@
 import Acore from "../ACore";
+import { randomIdent } from "absol/src/String/stringGenerate";
 var $ = Acore.$;
 var _ = Acore._;
 
 function TabFrame(data) {
     data = data || {};
     data.elt = data.elt || _('div');
-    $(data.elt).addClass('absol-tab-frame');
+    $(data.elt).addClass('absol-tab-frame').attr('id', 'tabframe-'+randomIdent());
     data.elt.defineEvent(['attached', 'detached']);
     return data.elt;
 }
@@ -52,7 +53,6 @@ TabFrame.property.name = {
         else {
             this._name = value + '';
         }
-        //todo: change name from parent
         if (this.$parent) {
             this.$parent.notifyUpdateName(this);
         }
@@ -60,7 +60,21 @@ TabFrame.property.name = {
     get: function () {
         return this._name;
     }
-}
+};
+
+
+TabFrame.property.modified = {
+    set: function (value) {
+        this._modified = !!value;
+        if (this.$parent) {
+            this.$parent.notifyUpdateModified(this);
+        }
+    },
+    get: function () {
+        return !!this._modified;
+    }
+};
+
 
 TabFrame.property.desc = {
     set: function (value) {
@@ -70,7 +84,6 @@ TabFrame.property.desc = {
         else {
             this._desc = value + '';
         }
-        //todo: change name from parent
         if (this.$parent) {
             this.$parent.notifyUpdateDesc(this);
         }
@@ -106,6 +119,18 @@ TabFrame.attribute.desc = {
     },
     remove: function () {
         this.desc = undefined;
+    }
+};
+
+TabFrame.attribute.modified = {
+    set: function (value) {
+        this.modified = value == 'true' || value == '1' || value === true;
+    },
+    get: function () {
+        return this.modified ? 'true' : undefined;
+    },
+    remove: function () {
+        this.desc = false;
     }
 };
 
