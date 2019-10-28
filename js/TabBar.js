@@ -8,10 +8,20 @@ var $ = Acore.$;
 function TabBar() {
     var res = _('hscroller.absol-tabbar');
     res.defineEvent(['active', 'close']);
+    res.on('wheel', function (event) {
+        var lastLeft = this.$viewport.scrollLeft;
+        if (event.deltaY > 1) {
+            this.$viewport.scrollLeft += 50;
+        }
+        else if (event.deltaY < -1) {
+            this.$viewport.scrollLeft -= 50;
+        }
+        if (lastLeft != this.$viewport.scrollLeft)
+            event.preventDefault();
+    });
     res._tabs = [];
     return res;
 };
-
 
 
 TabBar.prototype.getAllTabButtons = function () {
@@ -21,6 +31,12 @@ TabBar.prototype.getAllTabButtons = function () {
     });
     return buttons;
 };
+
+
+TabBar.prototype.getButtonByIdent = function (ident) {
+    return $('tabbutton#tab-' + ident, this);
+};
+
 
 
 TabBar.eventHander = {};
@@ -122,6 +138,13 @@ TabBar.prototype.activeTab = function (id) {
     var mButton = $('#tabbuton-' + id, this);
     if (mButton) {
         mButton.active = true;
+    }
+};
+
+TabBar.prototype.setModified = function (ident, flag) {
+    var bt = this.getButtonByIdent(ident);
+    if (bt) {
+        bt.modified = flag;
     }
 };
 
