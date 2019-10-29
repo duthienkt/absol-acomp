@@ -41,20 +41,88 @@
             },
             child: [
                 {
-                    tag: 'frame',
+                    tag: 'singlepage',
                     id: 'frame-problems',
-                    child: {
-                        tag: 'h1',
-                        child: { text: 'PROBLEMS' }
-                    }
+                    child: [
+                        {
+                            class: 'absol-single-page-header',
+                            child: {
+                                style: {
+                                    padding: '10px',
+                                    'background-color': 'white',
+                                    'border-bottom': '1px solid #ddd'
+                                },
+                                child: Array(30).fill('<button style="margin:5px;">Random Button</button>')
+                            }
+                        },
+                        {
+                            tag: 'div',
+                            child: {
+                                tag: 'span',
+                                style: {
+                                    margin: '10px'
+                                },
+                                child: { text: 'PROBLEMS' }
+                            }
+                        }
+                        ,
+                        {
+                            class: 'absol-single-page-footer',
+                            style: {
+                                'text-align': 'right'
+                            },
+                            child: { text: 'single-page-footer' }
+                        }
+                    ]
                 },
                 {
-                    tag: 'frame',
+                    tag: 'singlepage',
                     id: 'frame-output',
-                    child: {
-                        tag: 'h1',
-                        child: { text: 'OUTPUT' }
-                    }
+                    child: [
+                        {
+                            class: 'absol-single-page-header',
+                            child: {
+                                style: {
+                                    padding: '10px',
+                                    'background-color': 'white',
+                                    'border-bottom': '1px solid #ddd'
+                                },
+                                child: Array(30).fill('<button style="margin:5px;">Random Button</button>')
+                            }
+                        },
+                        {
+                            tag: 'div',
+                            child: [{
+                                tag: 'span',
+                                style: {
+                                    margin: '10px'
+                                },
+                                child: { text: 'PROBLEMS' }
+                            },
+                            {
+                                style: {
+                                    height: '500px',
+                                    'background-color': 'gray'
+                                }
+                            },
+                            {
+                                style: {
+                                    height: '100px',
+                                    'background-color': 'darkgray'
+                                }
+                            }
+                            ]
+                        }
+                        ,
+                        {
+                            class: 'absol-single-page-footer',
+                            style: {
+                                'text-align': 'right',
+                                'background-color': 'rgb(230,230,255)'
+                            },
+                            child: { text: 'single-page-footer' }
+                        }
+                    ]
                 },
                 {
                     tag: 'frame',
