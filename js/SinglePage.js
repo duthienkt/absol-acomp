@@ -29,10 +29,10 @@ function SinglePage() {
 
 SinglePage.prototype.updateSize = function () {
     if (this.$header) {
-        var headerBound = this.$header.getBoundingClientRect();
-        this.$viewport.addStyle('padding-top', headerBound.height + 'px');
         var viewportBound = this.$viewport.getBoundingClientRect();
         this.$header.addStyle('width', viewportBound.width + 'px');
+        var headerBound = this.$header.getBoundingClientRect();
+        this.$viewport.addStyle('padding-top', headerBound.height + 'px');
     }
     if (this.$footer) {
         var footerBound = this.$footer.getBoundingClientRect();
