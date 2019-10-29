@@ -89,6 +89,12 @@ import './js/Tooltip';
 // import './js/TextArea2';
 // import './css/textarea2.css';
 
+import './css/frame.css';
+import './css/frameview.css';
+import './js/Frame';
+import './js/FrameView';
+
+
 import './css/tabview.css';
 import './js/TabBar';
 import './js/TabButton';

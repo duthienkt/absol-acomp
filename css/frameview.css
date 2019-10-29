@@ -1,0 +1,19 @@
+.absol-frame-view{
+    position: relative;
+}
+
+
+.absol-frame-view-frame-container{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top:0;
+    bottom: 0;
+}
+
+
+.absol-frame-view-frame-container:not(.absol-active){
+    z-index: -100;
+    visibility: hidden;
+    opacity: 0;
+}
