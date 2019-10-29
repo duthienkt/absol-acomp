@@ -101,6 +101,9 @@ import './js/TabButton';
 import './js/TabFrame';
 import './js/TabView';
 
+import './js/SinglePage';
+import './css/singlepage.css';
+
 import './css/pageselector.css';
 import './js/PageSelector';
 
