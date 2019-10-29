@@ -197,7 +197,7 @@ TabView.prototype.getChildAt = function (index) {
     return this._frameHolders[index].tabFrame;
 };
 
-TabView.prototype.getAll = function () {
+TabView.prototype.getAllChild = function () {
     return this._frameHolders.map(function (holder) {
         return holder.tabFrame;
     });
