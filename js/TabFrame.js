@@ -1,12 +1,11 @@
 import Acore from "../ACore";
-import { randomIdent } from "absol/src/String/stringGenerate";
 var $ = Acore.$;
 var _ = Acore._;
 
-function TabFrame(data) {
+function TabFrame() {
     var res = _({
-        tag:'frame',
-        class:'absol-tab-frame'
+        tag: 'frame',
+        class: 'absol-tab-frame'
     }, true);
     return res;
 }
@@ -25,7 +24,8 @@ TabFrame.property.name = {
             this._name = value + '';
         }
         if (this.$parent) {
-            this.$parent.notifyUpdateName(this);
+            if (this.$parent.notifyUpdateName)
+                this.$parent.notifyUpdateName(this);
         }
     },
     get: function () {
@@ -38,7 +38,8 @@ TabFrame.property.modified = {
     set: function (value) {
         this._modified = !!value;
         if (this.$parent) {
-            this.$parent.notifyUpdateModified(this);
+            if (this.$parent.notifyUpdateModified)
+                this.$parent.notifyUpdateModified(this);
         }
     },
     get: function () {
@@ -56,7 +57,8 @@ TabFrame.property.desc = {
             this._desc = value + '';
         }
         if (this.$parent) {
-            this.$parent.notifyUpdateDesc(this);
+            if (this.$parent.notifyUpdateDesc)
+                this.$parent.notifyUpdateDesc(this);
         }
 
     },
