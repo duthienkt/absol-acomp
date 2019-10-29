@@ -1,4 +1,5 @@
 import Acore from "../ACore"
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 var _ = Acore._;
 var $ = Acore.$;
@@ -6,6 +7,9 @@ var $ = Acore.$;
 function Frame() {
     var res = _({
         class: 'absol-frame',
+        attr:{
+            id:randomIdent(12),
+        },
         extendEvent: ['attached', 'detached']
     });
     res.$parent = null;// FrameView or TabView

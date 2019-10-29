@@ -4,42 +4,13 @@ var $ = Acore.$;
 var _ = Acore._;
 
 function TabFrame(data) {
-    data = data || {};
-    data.elt = data.elt || _('div');
-    $(data.elt).addClass('absol-tab-frame').attr('id', 'tabframe-'+randomIdent());
-    data.elt.defineEvent(['attached', 'detached']);
-    return data.elt;
+    var res = _({
+        tag:'frame',
+        class:'absol-tab-frame'
+    }, true);
+    return res;
 }
 
-
-TabFrame.prototype.preInit = function () {
-    this.$parent = null;
-};
-
-TabFrame.prototype.notifyAttached = function (parentElt) {
-    this.$parent = parentElt;
-    this.emit('attached', { target: this, parent: parentElt }, this);
-};
-
-TabFrame.prototype.notifyDetach = function () {
-    this.emit('attached', { target: this, parent: this.$parent }, this);
-    this.$parent = undefined;
-};
-
-TabFrame.prototype.selfRemove = function () {
-    if (this.$parent)
-        this.$parent.removeChild(this);
-};
-
-TabFrame.prototype.getParent = function () {
-    return this.$parent;
-};
-
-
-
-TabFrame.prototype.init = function () {
-    this.super.apply(this, arguments);
-};
 
 
 TabFrame.property = {};

@@ -141,13 +141,13 @@ TabView.prototype.findHolder = function (elt) {
 TabView.prototype.addChild = function () {
     var self = this;
     Array.prototype.forEach.call(arguments, function (elt) {
-        if (!elt.notifyAttached || !elt.notifyDetach) {
+        if (!elt.notifyAttached || !elt.notifyDetached) {
             throw new Error('element is not a tabframe');
         }
         var containterElt = _('.absol-tabview-container');
         self.appendChild(containterElt);//origin function
         elt.selfRemove();
-        var id = elt.attr('id') || randomIdent(16);
+        var id = elt.attr('id');
         var desc = elt.attr('desc') || undefined;
         var name = elt.attr('name') || 'NoName';
         var modified = elt.modified;
