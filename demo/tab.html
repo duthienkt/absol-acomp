@@ -34,6 +34,49 @@
         <div class="dark bg"></div>
     </div>
     <script class="viewable">
+        var frameView = absol._({
+            tag: 'frameview',
+            style: {
+                height: '300px'
+            },
+            child: [
+                {
+                    tag: 'frame',
+                    id: 'frame-problems',
+                    child: {
+                        tag: 'h1',
+                        child: { text: 'PROBLEMS' }
+                    }
+                },
+                {
+                    tag: 'frame',
+                    id: 'frame-output',
+                    child: {
+                        tag: 'h1',
+                        child: { text: 'OUTPUT' }
+                    }
+                },
+                {
+                    tag: 'frame',
+                    id: 'frame-debug-console',
+                    child: {
+                        tag: 'h1',
+                        child: { text: 'DEBUG_CONSOLE' }
+                    }
+                },
+                {
+                    tag: 'frame',
+                    id: 'frame-terminal',
+                    child: {
+                        tag: 'h1',
+                        child: { text: 'TERMINAL' }
+                    }
+                }
+            ]
+        }).addTo(absol.$('#static-tabbar-demo'));
+
+        frameView.activeFrameById('frame-terminal');
+
         var statictabParams = {
             tag: 'statictabbar',
             attr: {
@@ -43,7 +86,7 @@
                 items: [
                     {
                         text: 'PROBLEMS',
-                        value: 'proplems'
+                        value: 'problems'
                     },
                     {
                         text: 'OUTPUT',
@@ -51,7 +94,7 @@
                     },
                     {
                         text: 'DEBUG_CONSOLE',
-                        value: 'debug_console'
+                        value: 'debug-console'
                     },
                     {
                         text: 'TERMINAL',
@@ -63,6 +106,7 @@
             on: {
                 change: function () {
                     var self = this;
+                    frameView.activeFrameById('frame-' + this.value);
                     absol.$('statictabbar[data-group="group1"]', false, function (e) {
                         if (e != self) {
                             e.value = self.value;
