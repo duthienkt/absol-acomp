@@ -10,7 +10,7 @@ var $ = Acore.$;
  * If a element want to capture contextmenu event, it extendEvent: 'contextmenu'
  * 
  */
-function ContextHook() {
+export function ContextHook() {
     var res = _({
         tag: 'textarea',
         class: 'absol-context-menu-hook'
@@ -120,7 +120,7 @@ ContextHook.eventHandler.mousefinish = function (event) {
  * Add this element to some thing like body, and when mousedown event was fired, let call `thisElement.handle`
  * every element in event pathlist will fire contextmenu event if supported  
  * */
-function ContextCaptor() {
+export function ContextCaptor() {
 
     var res = _({
         extendEvent: 'requestcontextmenu',
@@ -233,3 +233,5 @@ ContextCaptor.prototype.hideContextMenu = function () {
 Acore.creator.contextcaptor = ContextCaptor;
 Acore.creator.contexthook = ContextHook;
 //todo: may be need closeContextMenu
+
+

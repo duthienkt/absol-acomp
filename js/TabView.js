@@ -205,3 +205,5 @@ TabView.prototype.getAllChild = function () {
 
 
 Acore.install('tabview', TabView);
+
+export default TabView;

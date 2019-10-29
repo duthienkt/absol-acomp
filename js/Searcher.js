@@ -152,3 +152,5 @@ Acore.creator.searchcrosstextinput = function () {
 };
 
 Acore.creator.searchtextinput = SearchTextInput;
+
+export default SearchTextInput;

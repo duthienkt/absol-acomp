@@ -421,3 +421,6 @@ AutoCompleteInput.attribute.disabled = {
 
 
 Acore.install('AutoCompleteInput'.toLowerCase(), AutoCompleteInput);
+
+
+export default AutoCompleteInput;

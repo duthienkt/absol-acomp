@@ -382,3 +382,5 @@ ExpTree.prototype.accessByPath = function (path) {
 Acore.install('expnode', ExpNode);
 Acore.install('exptree', ExpTree);
 
+
+export default ExpTree;

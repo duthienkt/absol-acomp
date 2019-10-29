@@ -71,3 +71,5 @@ IconButton.prototype.clearChild = function () {
 };
 
 Acore.creator.iconbutton = IconButton;
+
+export default IconButton;

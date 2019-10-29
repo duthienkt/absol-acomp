@@ -8,7 +8,7 @@ var $ = Acore.$;
 
 
 
-function MenuButton() {
+export function MenuButton() {
     var res = _({
         tag: 'button',
         class: 'absol-vmenu-button',
@@ -108,7 +108,7 @@ MenuButton.property.extendStyle = {
 Acore.install('menubutton', MenuButton);
 
 
-function Dropdown(data) {
+export function Dropdown(data) {
     data = data || {};
 
     var res = _({
@@ -196,7 +196,7 @@ Dropdown.prototype.init = function (props) {
 
 
 
-function Dropright(data) {
+export function Dropright(data) {
     data = data || {};
     //default : hidden
     var res = _({
@@ -218,11 +218,11 @@ Dropright.prototype.clearChild = Dropdown.prototype.clearChild;
 Dropright.property = Object.assign({}, Dropdown.property);
 
 
-function VMenuLine() {
+export function VMenuLine() {
     return _('<div class="absol-vmenu-line"><div></div></div>');
 }
 
-function VMenuItem() {
+export function VMenuItem() {
 
     var res = _({
         tag: 'dropright',
@@ -334,8 +334,7 @@ VMenuItem.property.disable = {
 
 
 
-function VMenu() {
-
+export function VMenu() {
     var res = _({
         class: 'absol-vmenu',
         extendEvent: 'press'
@@ -532,7 +531,7 @@ HMenuItem.prototype.init = function (props) {
 
 
 
-function HMenu() {
+export function HMenu() {
 
 
     var res = _({

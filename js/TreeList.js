@@ -118,5 +118,3 @@ TreeList.property.level = {
 Acore.creator.treelist = TreeList;
 
 export default TreeList;
-
-// TreeList.prototype.

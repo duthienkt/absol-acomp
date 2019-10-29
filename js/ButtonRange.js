@@ -85,3 +85,4 @@ ButtonRange.eventHandler.click = function (event) {
     }
 };
 
+export default ButtonRange;

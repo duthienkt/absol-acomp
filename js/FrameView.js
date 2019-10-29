@@ -185,7 +185,6 @@ FrameView.prototype.activeFrameById = function (id) {
 };
 
 
-
-// some feature is not nead, because we don't care 
-
 Acore.install('frameview', FrameView);
+
+export default FrameView;

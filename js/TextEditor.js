@@ -269,3 +269,5 @@ TextEditor.prototype.isEmptyText = function () {
 // };
 
 Acore.install('texteditor', TextEditor);
+
+// not comleted yet

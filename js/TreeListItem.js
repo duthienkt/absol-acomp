@@ -185,3 +185,5 @@ TreeListItem.property.extendStyle = {
 
 
 Acore.creator.treelistitem = TreeListItem;
+
+export default TreeListItem;

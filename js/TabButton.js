@@ -110,3 +110,5 @@ TabButton.property.modified = {
 };
 
 Acore.creator.tabbutton = TabButton;
+
+export default TabButton;

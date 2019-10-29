@@ -25,7 +25,7 @@ Acore.$scrollStyle = (function () {
 }
 )();
 
-function VScroller() {
+export function VScroller() {
     var res = _({
         class: 'absol-vscroller',
         child: ['.absol-vscroller-viewport',
@@ -192,7 +192,7 @@ VScroller.eventHandler.scrollScrollbar = function (event) {
 
 
 
-function HScroller() {
+export function HScroller() {
     var res = _({
         class: 'absol-hscroller',
         child: ['.absol-hscroller-viewport',
@@ -281,7 +281,7 @@ HScroller.prototype.scrollInto = function (element) {
 }
 
 
-function Scrollbar() {
+export function Scrollbar() {
     var res = _({
         class: ['absol-scrollbar'],
         extendEvent: ['scroll', 'active', 'deactive'],
@@ -319,7 +319,7 @@ Scrollbar.property.hidden = {
 
 
 
-function VScrollbar() {
+export function VScrollbar() {
 
     var res = _({
         tag: 'scrollbar',
@@ -435,7 +435,7 @@ VScrollbar.property = {
 
 
 
-function HScrollbar() {
+export function HScrollbar() {
 
     var res = _({
         tag: 'scrollbar',

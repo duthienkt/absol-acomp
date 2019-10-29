@@ -7,8 +7,8 @@ var $ = Acore.$;
 function Frame() {
     var res = _({
         class: 'absol-frame',
-        attr:{
-            id:randomIdent(12),
+        attr: {
+            id: randomIdent(12),
         },
         extendEvent: ['attached', 'detached']
     });
@@ -40,3 +40,5 @@ Frame.prototype.getParent = function () {
 
 
 Acore.install('frame', Frame);
+
+export default Frame;
