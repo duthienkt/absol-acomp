@@ -170,6 +170,7 @@ FrameView.prototype.activeFrame = function (frameElt) {
 
 
 FrameView.prototype.notifyActiveFrame = function (frameElt, originEvent) {
+    frameElt.emit('active', {target:frameElt, type:'active', originEvent: originEvent});
     this.emit('activeframe', { type: 'activeframe', target: this, frameElt: frameElt, originEvent: originEvent }, this);
 };
 

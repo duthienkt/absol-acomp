@@ -45,9 +45,10 @@ TabView.prototype.activeTab = function (id, userActive) {
             self._history.push(id);
             holder.containterElt.removeClass('absol-tabview-container-hidden');
             var eventData = {
+                type: 'active',
                 id: id,
                 userActive: !!userActive,
-                target: self,
+                target: holder.tabFrame,
                 tabFrame: holder.tabFrame,
                 tabButton: holder.tabButton,
                 holder: holder,
@@ -56,6 +57,9 @@ TabView.prototype.activeTab = function (id, userActive) {
                     this.__promise__ = promise;
                 }
             };
+            holder.tabFrame.emit('active', eventData, holder.tabFrame);
+            eventData.target = self;
+            eventData.type = 'activetab';
             self.emit('activetab', eventData, self);
             eventData.__promise__.then(function () {
                 //if ok
@@ -65,7 +69,10 @@ TabView.prototype.activeTab = function (id, userActive) {
             });
         }
         else {
-            holder.containterElt.addClass('absol-tabview-container-hidden');
+            if (holder.containterElt.containsClass('absol-tabview-container-hidden')) {
+                holder.tabFrame.emit('deactive', { type: 'deactive', target: holder.tabFrame }, holder.tabFrame);
+                holder.containterElt.addClass('absol-tabview-container-hidden');
+            }
         }
     });
 };
@@ -75,9 +82,10 @@ TabView.prototype.removeTab = function (id, userActive) {
     this._frameHolders.forEach(function (holder) {
         if (holder.id == id) {
             var eventData = {
+                type:'renove',
                 id: id,
                 userActive: !!userActive,
-                target: self,
+                target: holder.tabFrame,
                 tabFrame: holder.tabFrame,
                 tabButton: holder.tabButton,
                 holder: holder,
@@ -86,11 +94,13 @@ TabView.prototype.removeTab = function (id, userActive) {
                     this.__promise__ = promise;
                 }
             };
+            holder.tabFrame.emit('remove', eventData, holder.tabFrame);
+            eventData.type = 'removetab';
+            eventData.target = self;
             self.emit('removetab', eventData, self);
             eventData.__promise__.then(function () {
                 //if ok
-                self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; })
-
+                self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; });
                 holder.tabFrame.notifyDetached();
                 self.$tabbar.removeTab(holder.id);
                 holder.containterElt.remove();
@@ -99,9 +109,6 @@ TabView.prototype.removeTab = function (id, userActive) {
                 //if reject
             });
 
-        }
-        else {
-            holder.containterElt.addClass('absol-tabview-container-hidden');
         }
     });
 };

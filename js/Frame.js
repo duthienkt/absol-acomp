@@ -10,7 +10,7 @@ function Frame() {
         attr: {
             id: randomIdent(12),
         },
-        extendEvent: ['attached', 'detached']
+        extendEvent: ['attached', 'detached', 'deactive', 'active']// deactive and active event will be send by parent
     });
     res.$parent = null;// FrameView or TabView
     return res;
@@ -26,6 +26,7 @@ Frame.prototype.notifyDetached = function () {
     this.emit('detached', { type: 'detached', target: this, parentElt: this.$parent }, this);
     this.$parent = undefined;
 };
+
 
 Frame.prototype.selfRemove = function () {
     if (this.$parent)

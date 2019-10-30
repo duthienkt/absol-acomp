@@ -5,7 +5,8 @@ var _ = Acore._;
 function TabFrame() {
     var res = _({
         tag: 'frame',
-        class: 'absol-tab-frame'
+        class: 'absol-tab-frame',
+        extendEvent:['remove']
     }, true);
     return res;
 }
