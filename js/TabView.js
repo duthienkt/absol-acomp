@@ -91,7 +91,7 @@ TabView.prototype.removeTab = function (id, userActive) {
                 //if ok
                 self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; })
 
-                holder.tabFrame.notifyDetach();
+                holder.tabFrame.notifyDetached();
                 self.$tabbar.removeTab(holder.id);
                 holder.containterElt.remove();
                 self.activeLastTab();
