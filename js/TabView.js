@@ -69,7 +69,7 @@ TabView.prototype.activeTab = function (id, userActive) {
             });
         }
         else {
-            if (holder.containterElt.containsClass('absol-tabview-container-hidden')) {
+            if (!holder.containterElt.containsClass('absol-tabview-container-hidden')) {
                 holder.tabFrame.emit('deactive', { type: 'deactive', target: holder.tabFrame }, holder.tabFrame);
                 holder.containterElt.addClass('absol-tabview-container-hidden');
             }
