@@ -39,6 +39,12 @@ Frame.prototype.getParent = function () {
 };
 
 
+Frame.prototype.requestActive = function(){
+    if (this.$parent){
+        this.$parent.activeFrame(this);
+    }
+};
+
 Acore.install('frame', Frame);
 
 export default Frame;

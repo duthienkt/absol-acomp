@@ -204,6 +204,11 @@ TabView.prototype.getAllChild = function () {
 };
 
 
+TabView.prototype.activeFrame = function (elt) {
+    this.activeLastTab(elt.attr('id'));
+};
+
+
 Acore.install('tabview', TabView);
 
 export default TabView;
