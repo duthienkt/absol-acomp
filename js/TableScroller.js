@@ -189,7 +189,6 @@ TableScroller.prototype.addChild = function (elt) {
 
 TableScroller.prototype._updateFixedTable = function () {
     var fixedCol = this.fixedCol;
-
     this.$fixedViewport.clearChild();
     this.$fixedTable = $(this.$content.cloneNode(false)).addClass('absol-table-scroller-fixed-table').addTo(this.$fixedViewport);
     this.$fixedTableThead = $(this.$contentThead.cloneNode(false)).addTo(this.$fixedTable);
@@ -208,7 +207,7 @@ TableScroller.prototype._updateFixedTable = function () {
 
     this._fixedTableThs = this._fixedTableTr.map(function (tr) {
         return Array.prototype.filter.call(tr.__originElement__.childNodes, function (elt1) {
-            return elt1.tagName == "TH";
+            return elt1.tagName == "TH" || elt1.tagName == "TD";
         }).reduce(function (ac, th) {
             var colspan = th.getAttribute('colspan');
             if (colspan) {
@@ -228,6 +227,7 @@ TableScroller.prototype._updateFixedTable = function () {
             return ac;
         }, { result: [], colspanSum: 0 }).result;
     });
+    
 };
 
 
@@ -262,6 +262,7 @@ TableScroller.prototype._updateHeaderScroller = function () {
 
 
 TableScroller.prototype._updateLeftTable = function () {
+    this.$leftViewport.clearChild();
     this.$leftTable = $(this.$content.cloneNode(true)).addTo(this.$leftViewport);
 
 
@@ -283,42 +284,42 @@ TableScroller.prototype._updateFixedTableSize = function () {
         l = Math.min(l, b.left);
         r = Math.max(r, b.right);
     });
-
     this._leftWidth = r - l;
+    
     this.$fixedViewport.addStyle('width', this._leftWidth + 2 + 'px');
 
     this._fixedTableTr.forEach(function (elt) {
-        var styleHeight = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'height');
+        var styleHeight = elt.__originElement__.getBoundingClientRect().height + 'px';
         elt.addStyle('height', styleHeight);
     });
 
     this._fixedTableThs.forEach(function (row) {
         row.forEach(function (elt) {
-            var styleWidth = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'width');
-
+            var styleWidth = elt.__originElement__.getBoundingClientRect().width + 'px';
             elt.addStyle('width', styleWidth);
         });
 
     });
+
     this.$fixedTable.addStyle({
-        height: this.$contentThead.getComputedStyleValue('height')
+        height:this.$contentThead.getBoundingClientRect().height + 'px',
+        width: this.$content.getBoundingClientRect().width + 'px',
     });
 };
 
 
 TableScroller.prototype._updateHeaderScrollerSize = function () {
-    var headHeight = Element.prototype.getComputedStyleValue.call(this.$contentThead, 'height');
+    var headHeight = this.$contentThead.getBoundingClientRect().height + 'px';
     this.$headScrollerTable.addStyle('height', headHeight);
-    // this.$headScroller.addStyle('height', headHeight);
+    this.$headScrollerTable.addStyle('width', this.$content.getBoundingClientRect().width +'px');
     this._headScrollerTr.forEach(function (elt) {
-
-        var styleHeight = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'height');
+        var styleHeight = elt.__originElement__.getBoundingClientRect().height + 'px';
         elt.addStyle('height', styleHeight);
     });
 
     this._headScrollerTds.forEach(function (row) {
         row.forEach(function (elt) {
-            var styleWidth = Element.prototype.getComputedStyleValue.call(elt.__originElement__, 'width');
+            var styleWidth = elt.__originElement__.getBoundingClientRect().width + 'px';
             elt.addStyle('width', styleWidth);
         });
     });
@@ -326,10 +327,10 @@ TableScroller.prototype._updateHeaderScrollerSize = function () {
 
 TableScroller.prototype._updateLeftTableSize = function () {
     if (!this.$leftTable.style.width) {
-        this.$leftTable.addStyle('width', this.$content.getComputedStyleValue('width'));
+        this.$leftTable.addStyle('width', this.$content.getBoundingClientRect().width + 'px');
     }
     if (!this.$leftTable.style.height) {
-        this.$leftTable.addStyle('height', this.$content.getComputedStyleValue('height'));
+        this.$leftTable.addStyle('height', this.$content.getBoundingClientRect().height + 'px');
     }
 
     // console.log(this._leftWidth);
@@ -353,12 +354,12 @@ TableScroller.prototype._updateLinesSize = function () {
     }
 
     this.$leftLine.addStyle({
-        maxHeight: this.$content.getComputedStyleValue('height'),
+        maxHeight: this.$content.getBoundingClientRect().height + 'px',
         left: this._leftWidth + 'px'
     });
     this.$headLine.addStyle({
-        top: this.$contentThead.getBoundingClientRect().height+'px',
-        maxWidth: this.$content.getComputedStyleValue('width')
+        top: this.$contentThead.getBoundingClientRect().height + 'px',
+        maxWidth: this.$content.getBoundingClientRect().width + 'px'
     });
 };
 
