@@ -227,7 +227,7 @@ TableScroller.prototype._updateFixedTable = function () {
             return ac;
         }, { result: [], colspanSum: 0 }).result;
     });
-    
+
 };
 
 
@@ -285,7 +285,7 @@ TableScroller.prototype._updateFixedTableSize = function () {
         r = Math.max(r, b.right);
     });
     this._leftWidth = r - l;
-    
+
     this.$fixedViewport.addStyle('width', this._leftWidth + 2 + 'px');
 
     this._fixedTableTr.forEach(function (elt) {
@@ -302,7 +302,7 @@ TableScroller.prototype._updateFixedTableSize = function () {
     });
 
     this.$fixedTable.addStyle({
-        height:this.$contentThead.getBoundingClientRect().height + 'px',
+        height: this.$contentThead.getBoundingClientRect().height + 'px',
         width: this.$content.getBoundingClientRect().width + 'px',
     });
 };
@@ -311,7 +311,7 @@ TableScroller.prototype._updateFixedTableSize = function () {
 TableScroller.prototype._updateHeaderScrollerSize = function () {
     var headHeight = this.$contentThead.getBoundingClientRect().height + 'px';
     this.$headScrollerTable.addStyle('height', headHeight);
-    this.$headScrollerTable.addStyle('width', this.$content.getBoundingClientRect().width +'px');
+    this.$headScrollerTable.addStyle('width', this.$content.getBoundingClientRect().width + 'px');
     this._headScrollerTr.forEach(function (elt) {
         var styleHeight = elt.__originElement__.getBoundingClientRect().height + 'px';
         elt.addStyle('height', styleHeight);
@@ -326,15 +326,8 @@ TableScroller.prototype._updateHeaderScrollerSize = function () {
 };
 
 TableScroller.prototype._updateLeftTableSize = function () {
-    if (!this.$leftTable.style.width) {
-        this.$leftTable.addStyle('width', this.$content.getBoundingClientRect().width + 'px');
-    }
-    if (!this.$leftTable.style.height) {
-        this.$leftTable.addStyle('height', this.$content.getBoundingClientRect().height + 'px');
-    }
-
-    // console.log(this._leftWidth);
-
+    this.$leftTable.addStyle('width', this.$content.getBoundingClientRect().width + 'px');
+    this.$leftTable.addStyle('height', this.$content.getBoundingClientRect().height + 'px');
     this.$leftScroller.addStyle('width', this._leftWidth + 2 + 'px');
 };
 
