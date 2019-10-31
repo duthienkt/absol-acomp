@@ -61,6 +61,12 @@ function OnScreenWindow() {
     res._windowIcon = 'span.absol-onscreen-window-head-bar-icon.mdi.mdi-settings';
     res._windowTitle = '';
     res.$bodyContainer = $('.absol-onscreen-window-body-container', res);
+    res.$attachhook = _('attachhook').addTo(res)
+        .on('error', function () {
+            this.updateSize = this.updateSize || res.relocation.bind(res);
+            Dom.addToResizeSystem(this);
+        });
+
     return res;
 }
 
@@ -143,6 +149,17 @@ OnScreenWindow.property.windowTitle = {
     }
 };
 
+
+OnScreenWindow.prototype.relocation = function () {
+    var bound = this.getBoundingClientRect();
+    var screenSize = Dom.getScreenSize();
+    if (bound.bottom >= screenSize.height) {
+        this.addStyle('top', Math.max(0, screenSize.height - bound.height) + 'px');
+    }
+    if (bound.right >= screenSize.width) {
+        this.addStyle('left', Math.max(0, screenSize.width - bound.width) + 'px');
+    }
+};
 
 
 Acore.install('OnScreenWindow'.toLowerCase(), OnScreenWindow);
