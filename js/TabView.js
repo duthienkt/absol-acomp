@@ -211,7 +211,7 @@ TabView.prototype.getAllChild = function () {
 
 
 TabView.prototype.activeFrame = function (elt) {
-    this.activeLastTab(elt.attr('id'));
+    this.activeTab(elt.attr('id'));
 };
 
 

@@ -11,8 +11,6 @@ function TabFrame() {
     return res;
 }
 
-
-
 TabFrame.property = {};
 
 TabFrame.property.name = {
