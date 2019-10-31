@@ -1,6 +1,6 @@
 {
     "name": "absol-acomp",
-    "version": "0.7.4",
+    "version": "0.7.5",
     "description": "HTML5 components base on absol.js",
     "main": "AComp.js",
     "directories": {
@@ -27,7 +27,7 @@
     },
     "homepage": "https://github.com/duthienkt/absol-acomp",
     "dependencies": {
-        "absol": "^1.8.11"
+        "absol": "^1.8.18"
     },
     "devDependencies": {
         "@babel/core": "^7.4.5",
