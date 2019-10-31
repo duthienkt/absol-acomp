@@ -1,5 +1,4 @@
 import Acore from "../ACore";
-import { randomIdent } from 'absol/src/String/stringGenerate';
 import OOP from "absol/src/HTML5/OOP";
 var _ = Acore._;
 var $ = Acore.$;
