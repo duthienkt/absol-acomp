@@ -17,11 +17,3 @@
     visibility: hidden;
     opacity: 0;
 }
-
-.absol-frame-view-frame-container>div,
-.absol-frame-view-frame-container>pre{
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-}
