@@ -149,6 +149,8 @@ import './js/ChromeCalendar';
 import './css/calendarinput.css';
 import './js/CalendarInput';
 
+import './css/onscreenwindow.css';
+import './js/OnsScreenWindow';
 
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";

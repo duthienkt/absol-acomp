@@ -1,0 +1,90 @@
+.absol-onscreen-window {
+    z-index: 1002;
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    width: 12em;
+    height: 5em;/*default size*/
+}
+
+.absol-onscreen-window-content {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: white;
+    -webkit-box-shadow: 2px 2px 17px -1px rgba(0, 0, 0, 0.54);
+    -moz-box-shadow: 2px 2px 17px -1px rgba(0, 0, 0, 0.54);
+    box-shadow: 2px 2px 17px -1px rgba(0, 0, 0, 0.54);
+}
+
+.absol-onscreen-window-head-bar {
+    height: 1.4em;
+    position: relative;
+    background-color: rgba(169, 169, 169, 0.15);
+    padding: 0.2em;
+    box-sizing: border-box;
+}
+
+span.absol-onscreen-window-head-bar-icon {
+    line-height: 1.2em;
+    font-size: 1em;
+    margin-right: 0.2em;
+}
+
+span.absol-onscreen-window-head-bar-title {
+    line-height: 1.2em;
+    font-size: 1em;
+    color: rgba(33, 33, 34);
+}
+
+.absol-onscreen-window-head-bar-buttons {
+    position: absolute;
+    right: 0.1em;
+    top: 0.1em;
+    bottom: 0.1em;
+}
+
+.absol-onscreen-window-head-bar-buttons>button {
+    height: 100%;
+    width: 1em;
+    font-size: 1em;
+    padding: 0;
+    margin: 0 0 0 0.1em;
+    border: none;
+    color: rgba(169, 169, 169);
+    outline: none;
+}
+
+.absol-onscreen-window-head-bar-buttons>button:hover {
+    color: rgba(103, 103, 103);
+}
+
+.absol-onscreen-window-head-bar-buttons>button:active {
+    color: rgba(33, 33, 34);
+}
+
+.absol-onscreen-window-head-bar-buttons>button:hover>.mdi-close {
+    color: rgb(255, 59, 59);
+}
+
+.absol-onscreen-window-head-bar-buttons>button>span {
+    vertical-align: middle;
+}
+
+.absol-onscreen-window-body-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 1.4em;
+    bottom: 0;
+}
+
+
+.absol-onscreen-window-moving-modal {
+    position: fixed;
+    left: 1px;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    z-index: 100006;
+}
