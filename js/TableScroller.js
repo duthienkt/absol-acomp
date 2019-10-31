@@ -159,8 +159,11 @@ TableScroller.eventHandler.scrollLeftScrollerViewport = function () {
 
 TableScroller.prototype.clearChild = function () {
     this.$viewport.clearChild();
-    this.$topTable.clearChild();
+    this.$fixedViewport.clearChild();
+    this.$headScrollerViewport.clearChild();
+    this.$leftViewport.clearChild();
     this.$content = null;
+    return this;
 };
 
 TableScroller.prototype.addChild = function (elt) {
