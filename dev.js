@@ -24,7 +24,7 @@ setTimeout(function () {
             tag: 'link',
             attr: {
                 rel: 'stylesheet',
-                href: '//cdn.materialdesignicons.com/3.6.95/css/materialdesignicons.min.css'
+                href: '//cdn.materialdesignicons.com/4.5.95/css/materialdesignicons.min.css'
             }
         }).addTo(document.head);
     }
