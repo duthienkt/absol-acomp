@@ -284,7 +284,7 @@ TableScroller.prototype._updateFixedTableSize = function () {
         l = Math.min(l, b.left);
         r = Math.max(r, b.right);
     });
-    this._leftWidth = r - l;
+    this._leftWidth = Math.max(r - l, 0);
 
     this.$fixedViewport.addStyle('width', this._leftWidth + 2 + 'px');
 
