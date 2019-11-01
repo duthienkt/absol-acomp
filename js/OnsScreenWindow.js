@@ -10,6 +10,7 @@ var $ = Acore.$;
 
 function OnScreenWindow() {
     var res = _({
+        extendEvent:['sizechange'],
         class: 'absol-onscreen-window',
         child: {
             class: 'absol-onscreen-window-content',
@@ -230,6 +231,7 @@ OnScreenWindow.eventHandler.dragTop = function (event) {
         'top': newTop + 'px',
         'height': newHeight + 'px',
     });
+    this.emit('sizechange', event, this);
 };
 
 
@@ -263,6 +265,7 @@ OnScreenWindow.eventHandler.dragLeft = function (event) {
         width: newWidth + 'px',
         left: newLeft +'px'
     });
+    this.emit('sizechange', event, this);
 };
 
 
@@ -299,6 +302,7 @@ OnScreenWindow.eventHandler.dragButtonRight = function (event) {
     var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));    
     this.addStyle('width', newWidth + 'px');
     this.addStyle('height', newHeight + 'px');
+    this.emit('sizechange', event, this);
 };
 
 
@@ -338,6 +342,7 @@ OnScreenWindow.eventHandler.dragBottomLeft = function (event) {
         width: newWidth + 'px',
         left: newLeft +'px'
     });
+    this.emit('sizechange', event, this);
 };
 
 
@@ -380,6 +385,7 @@ OnScreenWindow.eventHandler.dragTopLeft = function (event) {
         width: newWidth + 'px',
         left: newLeft +'px'
     });
+    this.emit('sizechange', event, this);
 };
 
 
@@ -422,6 +428,7 @@ OnScreenWindow.eventHandler.dragTopRight = function (event) {
         'height': newHeight + 'px',
         width:newWidth + 'px'
     });
+    this.emit('sizechange', event, this);
 };
 
 
