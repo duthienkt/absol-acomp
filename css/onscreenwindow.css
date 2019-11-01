@@ -4,7 +4,10 @@
     left: 10px;
     top: 10px;
     width: 12em;
-    height: 5em;/*default size*/
+    height: 5em;
+    /*default size*/
+    /* min-width: 12em;
+    min-height: 1.4em; */
 }
 
 .absol-onscreen-window-content {
@@ -87,4 +90,99 @@ span.absol-onscreen-window-head-bar-title {
     top: 1px;
     bottom: 1px;
     z-index: 100006;
+    background: rgba(0, 0, 30, 0.1);
+}
+
+.absol-onscreen-window-resizer {
+    position: absolute;
+}
+
+.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom {
+    bottom: -3px;
+    height: 6px;
+    left: 3px;
+    right: 3px;
+    z-index: 3;
+}
+
+.absol-onscreen-window-resizer.absol-onscreen-window-resize-top {
+    top: -3px;
+    height: 6px;
+    left: 3px;
+    right: 3px;
+    z-index: 3;
+}
+
+.absol-onscreen-window-resizer.absol-onscreen-window-resize-left {
+    left: -3px;
+    top: 3px;
+    bottom: 3px;
+    width: 6px;
+    cursor: ew-resize;
+}
+
+.absol-onscreen-window-resizer.absol-onscreen-window-resize-right {
+    right: -3px;
+    top: 3px;
+    bottom: 3px;
+    width: 6px;
+    cursor: ew-resize;
+}
+
+.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-right {
+    width: 6px;
+    height: 6px;
+    right: -3px;
+    bottom: -3px;
+}
+
+.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-left {
+    width: 6px;
+    height: 6px;
+    left: -3px;
+    bottom: -3px;
+}
+
+.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-left {
+    width: 6px;
+    height: 6px;
+    left: -3px;
+    top: -3px;
+}
+
+.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-right {
+    width: 6px;
+    height: 6px;
+    right: -3px;
+    top: -3px;
+}
+
+
+.absol-onscreen-window-resize-top,
+.absol-onscreen-window-resize-bottom {
+    cursor: ns-resize;
+
+}
+
+.absol-onscreen-window-resize-left,
+.absol-onscreen-window-resize-right {
+    cursor: ew-resize;
+
+}
+
+
+.absol-onscreen-window-resize-bottom-right {
+    cursor: se-resize;
+}
+
+.absol-onscreen-window-resize-bottom-left {
+    cursor: sw-resize;
+}
+
+.absol-onscreen-window-resize-top-left {
+    cursor: nw-resize;
+}
+
+.absol-onscreen-window-resize-top-right {
+    cursor: ne-resize;
 }
