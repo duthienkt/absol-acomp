@@ -90,7 +90,6 @@ span.absol-onscreen-window-head-bar-title {
     top: 1px;
     bottom: 1px;
     z-index: 100006;
-    background: rgba(0, 0, 30, 0.1);
 }
 
 .absol-onscreen-window-resizer {
