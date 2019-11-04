@@ -10,7 +10,7 @@ var $ = Acore.$;
 
 function OnScreenWindow() {
     var res = _({
-        extendEvent:['sizechange'],
+        extendEvent: ['sizechange', 'drag', 'relocation'],
         class: 'absol-onscreen-window',
         child: {
             class: 'absol-onscreen-window-content',
@@ -135,6 +135,7 @@ OnScreenWindow.eventHandler.dragHeaderbar = function (event) {
         top: newY + 'px',
         left: newX + 'px'
     });
+    this.emit('drag', event, this);
 };
 
 OnScreenWindow.eventHandler.endDragHeaderbar = function (event) {
@@ -155,7 +156,7 @@ OnScreenWindow.eventHandler.beginDragBottom = function (event) {
     var bound = this.getBoundingClientRect();
     this.__moveData__ = {
         bound: bound,
-        minHeight:this.getFontSize()*1.4,
+        minHeight: this.getFontSize() * 1.4,
         maxHeight: screenSize.height - bound.top,
         modal: _('.absol-onscreen-window-moving-modal.absol-onscreen-window-resize-bottom').addTo(document.body)
     };
@@ -263,7 +264,7 @@ OnScreenWindow.eventHandler.dragLeft = function (event) {
     var newWidth = this.__moveData__.bound.right - newLeft;
     this.addStyle({
         width: newWidth + 'px',
-        left: newLeft +'px'
+        left: newLeft + 'px'
     });
     this.emit('sizechange', event, this);
 };
@@ -286,7 +287,7 @@ OnScreenWindow.eventHandler.beginDragButtonRight = function (event) {
     var bound = this.getBoundingClientRect();
     var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;
     this.__moveData__ = {
-        minHeight:this.getFontSize()*1.4,
+        minHeight: this.getFontSize() * 1.4,
         minWidth: minWidth,
         bound: bound,
         maxWidth: screenSize.width - bound.left,
@@ -299,7 +300,7 @@ OnScreenWindow.eventHandler.dragButtonRight = function (event) {
     var dx = event.moveDX;
     var dy = event.moveDY;
     var newWidth = Math.max(this.__moveData__.minWidth, Math.min(this.__moveData__.maxWidth, this.__moveData__.bound.width + dx));
-    var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));    
+    var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));
     this.addStyle('width', newWidth + 'px');
     this.addStyle('height', newHeight + 'px');
     this.emit('sizechange', event, this);
@@ -321,11 +322,11 @@ OnScreenWindow.eventHandler.beginDragBottomLeft = function (event) {
     this.$bottomLeftResizer.on('enddrag', this.eventHandler.endDragBottomLeft);
     var bound = this.getBoundingClientRect();
     var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;
-    var screenSize = Dom.getScreenSize();    
+    var screenSize = Dom.getScreenSize();
     this.__moveData__ = {
         maxLeft: bound.right - minWidth,
         bound: bound,
-        minHeight:this.getFontSize()*1.4,
+        minHeight: this.getFontSize() * 1.4,
         maxHeight: screenSize.height - bound.top,
         modal: _('.absol-onscreen-window-moving-modal.absol-onscreen-window-resize-bottom-left').addTo(document.body)
     };
@@ -340,7 +341,7 @@ OnScreenWindow.eventHandler.dragBottomLeft = function (event) {
     this.addStyle('height', newHeight + 'px');
     this.addStyle({
         width: newWidth + 'px',
-        left: newLeft +'px'
+        left: newLeft + 'px'
     });
     this.emit('sizechange', event, this);
 };
@@ -383,7 +384,7 @@ OnScreenWindow.eventHandler.dragTopLeft = function (event) {
         top: newTop + 'px',
         height: newHeight + 'px',
         width: newWidth + 'px',
-        left: newLeft +'px'
+        left: newLeft + 'px'
     });
     this.emit('sizechange', event, this);
 };
@@ -406,7 +407,7 @@ OnScreenWindow.eventHandler.beginDragTopRight = function (event) {
     var screenSize = Dom.getScreenSize();
     var bound = this.getBoundingClientRect();
     var fontSize = this.getFontSize();
-    var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;    
+    var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;
     this.__moveData__ = {
         minWidth: minWidth,
         fontSize: fontSize,
@@ -426,7 +427,7 @@ OnScreenWindow.eventHandler.dragTopRight = function (event) {
     this.addStyle({
         'top': newTop + 'px',
         'height': newHeight + 'px',
-        width:newWidth + 'px'
+        width: newWidth + 'px'
     });
     this.emit('sizechange', event, this);
 };
@@ -486,11 +487,18 @@ OnScreenWindow.property.windowTitle = {
 OnScreenWindow.prototype.relocation = function () {
     var bound = this.getBoundingClientRect();
     var screenSize = Dom.getScreenSize();
+    var isRelocated = false;
     if (bound.bottom >= screenSize.height) {
         this.addStyle('top', Math.max(0, screenSize.height - bound.height) + 'px');
+        isRelocated = true;
     }
     if (bound.right >= screenSize.width) {
         this.addStyle('left', Math.max(0, screenSize.width - bound.width) + 'px');
+        isRelocated = true;
+    }
+
+    if (isRelocated){
+        this.emit('relocation', {type:'relocation', target: this}, this)
     }
 };
 
