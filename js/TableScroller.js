@@ -56,12 +56,11 @@ function TableScroller() {
     res.$attachHook = _('attachhook').addTo(res);
     res.$attachHook.on('error', function () {
         Dom.addToResizeSystem(res.$attachHook);
-        res.$attachHook.updateSize = res._updateContentSize.bind(res);
-
+        res.$attachHook.updateSize = res.$attachHook.updateSize||res._updateContentSize.bind(res);
     });
 
     res.sync = new Promise(function (rs) {
-        res.$attachHook.on('error', rs)
+        res.$attachHook.once('error', rs)
     });
 
     res.$viewport = $('.absol-table-scroller-viewport', res)
