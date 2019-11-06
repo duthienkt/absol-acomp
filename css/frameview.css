@@ -17,3 +17,8 @@
     visibility: hidden;
     opacity: 0;
 }
+
+.absol-frame-view-frame-container>div{
+    width: 100%;
+    height: 100%;
+}
