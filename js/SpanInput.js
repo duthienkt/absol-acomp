@@ -116,7 +116,7 @@ SpanInput.eventHandler.paste = function (event) {
 SpanInput.property = {};
 SpanInput.property.value = {
     set: function (value) {
-        if (this._inputType == 1 && isNaN(value)) value = '';
+        if (this._inputType == 1 && isNaN(value)) value = null;
         this.clearChild();
         if (value !== null) this.addChild(_({ text: value + '' }));
     },
