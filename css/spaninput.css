@@ -1,0 +1,18 @@
+.absol-span-input {
+    white-space: pre;
+}
+
+.absol-span-input:focus {
+    outline-color: rgba(30, 150, 255, 0.3);
+    outline-width: 1px;
+}
+
+.absol-span-input:empty::before {
+    content: " ";
+    display: inline;
+    white-space: pre;
+}
+
+.absol-span-input.absol-span-input-empty-minus:empty::before {
+    content: "-";
+}

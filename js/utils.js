@@ -42,28 +42,31 @@ export function measureText(text, font) {
 }
 
 
-export function preventNotNumberInput(elt) {
-    function getCaretPosition(oField) {
-        var iCaretPos = 0;
-        if (document.selection) {
-            oField.focus();
-            var oSel = document.selection.createRange();
-            oSel.moveStart('character', -oField.value.length);
-            iCaretPos = oSel.text.length;
-        }
-        else if (oField.selectionStart || oField.selectionStart == '0')
-            iCaretPos = oField.selectionDirection == 'backward' ? oField.selectionStart : oField.selectionEnd;
-        return iCaretPos;
-    }
 
+export function getCaretPosition(oField) {
+    var iCaretPos = 0;
+    if (document.selection) {
+        oField.focus();
+        var oSel = document.selection.createRange();
+        oSel.moveStart('character', -oField.value.length);
+        iCaretPos = oSel.text.length;
+    }
+    else if (oField.selectionStart || oField.selectionStart == '0')
+        iCaretPos = oField.selectionDirection == 'backward' ? oField.selectionStart : oField.selectionEnd;
+    return iCaretPos;
+}
+
+
+export function preventNotNumberInput(elt) {
     elt.addEventListener('keyup', function () {
-        var lastValue = self.attributes.value;
+        var lastValue = (elt.tagname == "DIV" || elt.tagname == "SPAN") ? elt.innerHTML : elt.attributes.value;
         var cValue = parseFloat(this.value);
         if (this.value != lastValue) {
-            self.attributes.value = cValue;
-            self.emit('change', cValue, self);
+            elt.attributes.value = cValue;
+            elt.emit('change', cValue, elt);
         }
-    }).addEventListener("paste", function (e) {
+    });
+    elt.addEventListener("paste", function (e) {
         e.preventDefault();
         var text = "";
         if (e.clipboardData && e.clipboardData.getData) {
@@ -76,9 +79,10 @@ export function preventNotNumberInput(elt) {
         if (matched) {
             this.value = matched[0];
         }
-    }).addEventListener('keydown', function (event) {
+    });
+    elt.addEventListener('keydown', function (event) {
         var key = event.key;
-        if (key && key.length == 1 &&!event.ctrlKey && !event.altKey) {
+        if (key && key.length == 1 && !event.ctrlKey && !event.altKey) {
             if (key.match(/[0-9.\-\+]/)) {
                 if (key == '.' && this.value.indexOf('.') >= 0) event.preventDefault();
                 if ((key == '+' || key == '-') && (this.value.indexOf('+') >= 0 || this.value.indexOf('-') >= 0 || getCaretPosition(this) > 0)) event.preventDefault();

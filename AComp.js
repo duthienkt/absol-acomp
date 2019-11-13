@@ -1,5 +1,8 @@
 import Acore from "./ACore";
 
+import './js/SpanInput';
+import './css/spaninput.css';
+
 import './js/IconButton';
 import './css/iconbutton.css';
 
