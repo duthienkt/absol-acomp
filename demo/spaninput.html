@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TextArea</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <script class="viewable">
+        var ip = absol._('spaninput').addTo(document.body)
+        .on('change', function(event){
+            console.log(event);
+            
+        });
+        ip.value = "This is text";
+        ip.type = 'text';
+
+        var textInput = absol._('input[type="text"]').on('change', function (event) {
+            console.log(this.value);
+
+        }).addTo(document.body)
+        var ip1 = absol._('spaninput').addTo(document.body);
+        ip1.type = 'number';
+        ip1.value = 25;
+        var textInput = absol._('input[type="text"]');
+        ip1.on('change', function(event){
+            console.log(event);
+            
+            textInput.value = event.value;
+        })
+    </script>
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>
