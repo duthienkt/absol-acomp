@@ -155,9 +155,14 @@ import './js/CalendarInput';
 import './css/onscreenwindow.css';
 import './js/OnsScreenWindow';
 
+import './js/HRuler';
+import './css/hruler.css';
+import './js/VRuler';
+import './css/vruler.css';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
-
+import Draggable from "./js/Draggable";
 
 
 var AComp = {
@@ -166,7 +171,8 @@ var AComp = {
     _: Acore._,
     creator: Acore.creator,
     buildDom: Acore.buildDom,
-    runDebugTask: DebugTask.start.bind(DebugTask)
+    runDebugTask: DebugTask.start.bind(DebugTask),
+    Draggable:Draggable
 };
 
 window.runDebugTask = DebugTask.start.bind(DebugTask);

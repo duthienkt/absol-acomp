@@ -1,0 +1,32 @@
+/*margin for border size*/
+.as-hruler {
+    position: relative;
+    height: 1.5em;
+    border: solid 1px black;
+    overflow: hidden;
+    font-family: courier, "courier new", monospace;
+    box-sizing: border-box;
+}
+
+
+.as-hruler-line {
+    position: absolute;
+    bottom: 0;
+    height: 25%;
+    border-left: solid 1px rgb(17, 48, 43);
+    box-sizing: border-box;
+}
+
+.as-hruler-line.major {
+    height: 50%;
+    border-left: solid 1px rgb(5, 20, 18);
+}
+
+.as-hruler-major-number{
+    position: absolute;
+    text-align: center;
+    width: 5em;
+    pointer-events: none;
+    font-size: 0.7em;
+    bottom: 50%;
+} 
