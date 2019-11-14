@@ -119,14 +119,15 @@
 
             })
             .on('endmove', function (e) {
-                console.log(e);
-                
                 if (e.option.body) {
                     myCat._left = myCat._left + e.clientDX;
                     myCat._top = myCat._top + e.clientDY;
                 }
                 modal.remove();
 
+            })
+            .on('click', function(){
+                console.log("Click");
             });
         myResizebox.canResize = true;
         myResizebox.canClick = true;
