@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>OnScreenWindow</title>
+    <title>Ruler</title>
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -66,66 +66,111 @@
         myCat._left = 0;
         myCat._top = 0;
 
-        var myVruler =  absol._({
+        var myVruler = absol._({
             tag: 'vruler',
-            style:{
-                height:'100%'
+            style: {
+                height: '100%'
             },
-            props:{
-                inverse: true
+            props: {
+                // inverse: true
             }
-
         }).addTo(absol.$('#vruler-container'));
 
         var myHruler = absol._({
             tag: 'hruler'
-           
+
+        });
+        var modal = absol._({
+            style: {
+                left: '0',
+                top: '0',
+                right: '0',
+                bottom: '0',
+                position: 'fixed',
+                zIndex: '1000000'
+            }
         });
         absol.$(document.body).addChildAfter(myHruler, myCat);
+        var myResizebox = absol._('resizebox').addTo(document.body)
+            .on('beginmove', function (event) {
+                modal.addTo(document.body);
+                myCat._beginBound = myCat.getBoundingClientRect();
+            })
+            .on('moving', function (e) {
 
-        myHruler.measureElement(absol.$('path', myCat));
-        myVruler.measureElement(absol.$('path', myCat));
-        absol.AComp.Draggable(myCat)
-            .on('drag', function (event) {
-                this.addStyle('left', this._left + event.moveDX + 'px');
-                this.addStyle('top', this._top + event.moveDY + 'px');
+                var newWidth = myCat._beginBound.width;
+                var newHeight = myCat._beginBound.height;
+                if (e.option.right) {
+                    newWidth += e.clientDX;
+                }
+                if (e.option.bottom) {
+                    newHeight += e.clientDY;
+                }
+                myCat.addStyle('width', newWidth + 'px');
+                myCat.addStyle('height', newHeight + 'px');
+                
+                if (e.option.body) {
+                    myCat.addStyle('left', myCat._left + e.clientDX + 'px');
+                    myCat.addStyle('top', myCat._top + e.clientDY + 'px');
+                }
                 myHruler.update();
-                myVruler.update();
+                myVruler.update()
+                updateResizebox();
 
             })
-            .on('enddrag', function (event) {
-                this._left = this._left + event.moveDX;
-                this._top = this._top + event.moveDY;
+            .on('endmove', function (e) {
+                console.log(e);
+                
+                if (e.option.body) {
+                    myCat._left = myCat._left + e.clientDX;
+                    myCat._top = myCat._top + e.clientDY;
+                }
+                modal.remove();
 
             });
+        myResizebox.canResize = true;
+        myResizebox.canClick = true;
+        function updateResizebox() {
+            var catBound = myCat.getBoundingClientRect();
+            myResizebox.addStyle({
+                left: catBound.left + 'px',
+                top: catBound.top + 'px',
+                width: catBound.width + 'px',
+                height: catBound.height + 'px'
+            })
+        }
+
+        myHruler.measureElement(myCat);
+        myVruler.measureElement(myCat);
+        updateResizebox();
         var mouseXLine = absol._({
-            style:{
-                position:'absolute',
-                top:'2px',
-                boxSizing:'border-box',
-                bottom:'0',
-                border:'solid 1px red'
+            style: {
+                position: 'absolute',
+                top: '2px',
+                boxSizing: 'border-box',
+                bottom: '0',
+                border: 'solid 1px red'
             }
         }).addTo(myHruler);
 
         var mouseYLine = absol._({
-            style:{
-                position:'absolute',
-                left:'2px',
-                boxSizing:'border-box',
-                right:'0',
-                border:'solid 1px red'
+            style: {
+                position: 'absolute',
+                left: '2px',
+                boxSizing: 'border-box',
+                right: '0',
+                border: 'solid 1px red'
             }
         }).addTo(myVruler);
-        document.addEventListener('scroll', function(){
+        document.addEventListener('scroll', function () {
             myHruler.update();
-                myVruler.update();
+            myVruler.update();
         });
-        absol.$(document.body).on('mousemove', function(event){
+        absol.$(document.body).on('mousemove', function (event) {
             var myHrulerBound = myHruler.getBoundingClientRect();
             var myVrulerBound = myVruler.getBoundingClientRect();
-            mouseXLine.addStyle('left', event.clientX - myHrulerBound.left - 1.5 +'px');
-            mouseYLine.addStyle('top', event.clientY - myVrulerBound.top - 1.5 +'px');
+            mouseXLine.addStyle('left', event.clientX - myHrulerBound.left - 1.5 + 'px');
+            mouseYLine.addStyle('top', event.clientY - myVrulerBound.top - 1.5 + 'px');
         });
     </script>
 
