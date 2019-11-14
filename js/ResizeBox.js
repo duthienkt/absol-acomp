@@ -66,6 +66,7 @@ ResizeBox.eventHandler.mouseDownBody = function (event) {
 };
 
 ResizeBox.eventHandler.mouseMoveBody = function (event) {
+    if (this._mousedownEventData.option.body && !this.canMove) return;
     if (this._mousedownEventData && !this._mousedownEventData.begin && !this._mousedownEventData.prevented) {
         this.emit('beginmove', this._mousedownEventData, this);
         if (this._mousedownEventData.prevented) {
@@ -125,7 +126,8 @@ ResizeBox.eventHandler.mouseFinishBody = function (event) {
         this.emit('endmove', this._mousefinishEventData, this);
     }
     else {
-        this.emit('click', event, this);
+        if (EventEmitter.hitElement(this, event))
+            this.emit('click', event, this);
     }
 };
 
