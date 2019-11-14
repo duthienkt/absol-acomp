@@ -98,6 +98,35 @@
                 this._top = this._top + event.moveDY;
 
             });
+        var mouseXLine = absol._({
+            style:{
+                position:'absolute',
+                top:'2px',
+                boxSizing:'border-box',
+                bottom:'0',
+                border:'solid 1px red'
+            }
+        }).addTo(myHruler);
+
+        var mouseYLine = absol._({
+            style:{
+                position:'absolute',
+                left:'2px',
+                boxSizing:'border-box',
+                right:'0',
+                border:'solid 1px red'
+            }
+        }).addTo(myVruler);
+        document.addEventListener('scroll', function(){
+            myHruler.update();
+                myVruler.update();
+        });
+        absol.$(document.body).on('mousemove', function(event){
+            var myHrulerBound = myHruler.getBoundingClientRect();
+            var myVrulerBound = myVruler.getBoundingClientRect();
+            mouseXLine.addStyle('left', event.clientX - myHrulerBound.left - 1.5 +'px');
+            mouseYLine.addStyle('top', event.clientY - myVrulerBound.top - 1.5 +'px');
+        });
     </script>
 
     <script src="./autohightlighting.js?"></script>
