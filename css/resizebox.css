@@ -1,0 +1,135 @@
+.as-resize-box {
+    position: absolute;
+    /*or fixed*/
+    z-index: 1;
+    box-sizing: border-box;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.as-resize-box-body {
+    margin: -1px;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    position: relative;
+    box-sizing: border-box;
+    border: solid 2px rgb(32, 150, 218);
+}
+
+.as-resize-box.as-can-move .as-resize-box-body {
+    cursor: move;
+    pointer-events: all;
+}
+
+.as-resize-box.as-can-click .as-resize-box-body {
+    pointer-events: all;
+}
+
+.as-resize-box.as-can-move .as-resize-box-dot,
+.as-resize-box.as-can-resize .as-resize-box-dot.right,
+.as-resize-box.as-can-resize .as-resize-box-dot.bottom,
+.as-resize-box.as-can-resize .as-resize-box-dot.right-bottom {
+    display: unset;
+
+}
+
+.as-resize-box-dot {
+    position: absolute;
+    width: 0.6em;
+    height: 0.6em;
+    background: rgb(32, 150, 218);
+    display: none;
+    pointer-events: all;
+}
+
+.as-resize-box-dot.left-top {
+    top: calc(-0.3em - 1px);
+    left: calc(-0.3em - 1px);
+    cursor: nw-resize;
+}
+
+.as-resize-box-dot.left-bottom {
+    bottom: calc(-0.3em - 1px);
+    left: calc(-0.3em - 1px);
+    cursor: sw-resize;
+}
+
+.as-resize-box-dot.left {
+    top: calc(50% - 0.3em);
+    left: calc(-0.3em - 1px);
+    cursor: w-resize;
+}
+
+.as-resize-box-dot.top {
+    top: calc(-0.3em - 1px);
+    left: calc(50% - 0.3em);
+    cursor: n-resize;
+}
+
+.as-resize-box-dot.bottom {
+    bottom: calc(-0.3em - 1px);
+    left: calc(50% - 0.3em);
+    cursor: s-resize;
+}
+
+.as-resize-box-dot.right-top {
+    top: calc(-0.3em - 1px);
+    right: calc(-0.3em - 1px);
+    cursor: ne-resize;
+}
+
+.as-resize-box-dot.right-bottom {
+    bottom: calc(-0.3em - 1px);
+    right: calc(-0.3em - 1px);
+    cursor: se-resize;
+}
+
+
+.as-resize-box-dot.right {
+    top: calc(50% - 0.3em);
+    right: calc(-0.3em - 1px);
+    cursor: e-resize;
+}
+
+.as-resize-box-overiding .as-resize-box-dot,
+.as-resize-box-overiding .as-resize-box-body {
+    cursor: unset;
+}
+
+.as-resize-box-overiding.body {
+    cursor: move;
+}
+
+
+.as-resize-box-overiding.left-top {
+    cursor: nw-resize;
+}
+
+.as-resize-box-overiding.left-bottom {
+    cursor: sw-resize;
+}
+
+.as-resize-box-overiding.left {
+    cursor: w-resize;
+}
+
+.as-resize-box-overiding.top {
+    cursor: n-resize;
+}
+
+.as-resize-box-overiding.bottom {
+    cursor: s-resize;
+}
+
+.as-resize-box-overiding.right-top {
+    cursor: ne-resize;
+}
+
+.as-resize-box-overiding.right-bottom {
+    cursor: se-resize;
+}
+
+
+.as-resize-box-overiding.right {
+    cursor: e-resize;
+}

@@ -160,6 +160,9 @@ import './css/hruler.css';
 import './js/VRuler';
 import './css/vruler.css';
 
+import './js/ResizeBox';
+import './css/resizebox.css';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 import Draggable from "./js/Draggable";
