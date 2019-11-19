@@ -193,11 +193,13 @@ SelectMenu.property.items = {
     set: function (value) {
         this._searchCache = {};
         this._items = value;
+        this.$dropdownBox.removeStyle('min-width');
         this.$selectlist.items = value || [];
         this.selectListBound = this.$selectlist.getBoundingClientRect();
         this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
         this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
         this.updateItem();
+        this.updateDropdownPostion();
     },
     get: function () {
         return this._items || [];
@@ -235,6 +237,7 @@ SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
         this.$anchorContentCtn
             .removeStyle('left')
             .removeStyle('top');
+        this.$dropdownBox.removeStyle('min-width');
         return;
     }
     var bound = this.getBoundingClientRect();
@@ -354,7 +357,7 @@ SelectMenu.property.isFocus = {
         this._isFocus = value;
         if (value) {
             this.startTrackScroll();
-            
+
             var isAttached = false;
             setTimeout(function () {
                 if (isAttached) return;
