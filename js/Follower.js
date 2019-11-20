@@ -17,7 +17,7 @@ function Follower() {
         .on('error', function () {
             res.updatePosition();
             this.updateSize = this.updateSize || res.updatePosition.bind(this);
-            
+
             Dom.addToResizeSystem(res);
         });
     res.$contentCtn = $('.absol-follower-content-container', res);
@@ -32,9 +32,16 @@ function Follower() {
 
 ['addChild', 'addChildBefore', 'addChildAfter', 'clearChild'].forEach(function (key) {
     Follower.prototype[key] = function () {
+        this.$contentCtn[key].apply(this.$contentCtn, arguments);
+        return this;
+    }
+});
+
+['findChildBefore', 'findChildAfter'].forEach(function (key) {
+    Follower.prototype[key] = function () {
         return this.$contentCtn[key].apply(this.$contentCtn, arguments);
     }
-})
+});
 
 
 /**
