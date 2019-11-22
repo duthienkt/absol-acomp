@@ -6,6 +6,9 @@ import './css/spaninput.css';
 import './js/IconButton';
 import './css/iconbutton.css';
 
+import './js/FlexiconButton';
+import './css/flexiconbutton.css';
+
 import './js/Scroller';
 import './css/scroller.css';
 

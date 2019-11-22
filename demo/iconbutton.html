@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>IconButton</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="//cdn.materialdesignicons.com/4.5.95/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <style>
+        .dark.bg {
+            background-color: rgba(30, 30, 32, 1);
+            /* background-color: white; */
+            color: white;
+
+        }
+
+        .bg {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border: solid 1px rgb(30, 30, 32);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>IconButton</h1>
+    <div id="ctn" style="font-size: 14px;">
+
+    </div>
+    <script class="viewable">
+        var _ = absol._;
+        var $ = absol.$;
+
+    </script>
+
+    <script class="viewable">
+        var theme = ['', 'primary','secondary', 'success', 'danger', 'warning', 'info', 'light', 'dark', 'link'];
+        var propsTestList = [{
+            icon: 'span.mdi.mdi-content-save',
+            text: 'Save'
+        },
+        {
+            icon: 'span.mdi.mdi-content-save'
+        },
+        {
+            text: 'Save(without icon)'
+        }
+        ]
+        var ctn = $('#ctn');
+        theme.forEach(function (theme) {
+            var rowElt = _('div').addTo(ctn);
+            _('<h3>Theme: ' + (theme|| 'none') + '</h3>').addTo(rowElt);
+            propsTestList.forEach(function(props){
+                var button = _({
+                    tag: 'flexiconbutton',
+                    style:{
+                        margin:'0.2em'
+                    },
+                    class: theme||[],
+                    props: props
+                }).addTo(rowElt);
+            })
+        });
+
+
+    </script>
+
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>
