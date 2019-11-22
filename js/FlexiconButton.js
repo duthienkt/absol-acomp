@@ -6,6 +6,7 @@ var $ = Acore.$;
 
 function FlexiconButton() {
     this._icon = null;
+    this.$content = $('.as-flexicon-button-content', this);
     this.$iconCtn = $('.as-flexicon-button-icon-container', this);
     this.$textCtn = $('.as-flexicon-button-text-container', this);
 }
