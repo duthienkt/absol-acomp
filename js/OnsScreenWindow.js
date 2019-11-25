@@ -148,7 +148,6 @@ OnScreenWindow.eventHandler.endDragHeaderbar = function (event) {
 
 
 OnScreenWindow.eventHandler.beginDragBottom = function (event) {
-
     if (event.target != this.$bottomResizer) return;
     this.$bottomResizer.on('drag', this.eventHandler.dragBottom);
     this.$bottomResizer.on('enddrag', this.eventHandler.endDragBottom);
@@ -166,6 +165,7 @@ OnScreenWindow.eventHandler.dragBottom = function (event) {
     var dy = event.moveDY;
     var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));
     this.addStyle('height', newHeight + 'px');
+    this.emit('sizechange', event, this);
 };
 
 
@@ -196,6 +196,7 @@ OnScreenWindow.eventHandler.dragRight = function (event) {
     var dx = event.moveDX;
     var newWidth = Math.max(this.__moveData__.minWidth, Math.min(this.__moveData__.maxWidth, this.__moveData__.bound.width + dx));
     this.addStyle('width', newWidth + 'px');
+    this.emit('sizechange', event, this);
 };
 
 
@@ -497,8 +498,8 @@ OnScreenWindow.prototype.relocation = function () {
         isRelocated = true;
     }
 
-    if (isRelocated){
-        this.emit('relocation', {type:'relocation', target: this}, this)
+    if (isRelocated) {
+        this.emit('relocation', { type: 'relocation', target: this }, this)
     }
 };
 
