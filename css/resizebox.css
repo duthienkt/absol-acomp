@@ -97,39 +97,39 @@
 }
 
 .as-resize-box-overiding.body {
-    cursor: move;
+    cursor: move !important;
 }
 
 
 .as-resize-box-overiding.left-top {
-    cursor: nw-resize;
+    cursor: nw-resize !important;
 }
 
 .as-resize-box-overiding.left-bottom {
-    cursor: sw-resize;
+    cursor: sw-resize !important;
 }
 
 .as-resize-box-overiding.left {
-    cursor: w-resize;
+    cursor: w-resize !important;
 }
 
 .as-resize-box-overiding.top {
-    cursor: n-resize;
+    cursor: n-resize !important;
 }
 
 .as-resize-box-overiding.bottom {
-    cursor: s-resize;
+    cursor: s-resize !important;
 }
 
 .as-resize-box-overiding.right-top {
-    cursor: ne-resize;
+    cursor: ne-resize !important;
 }
 
 .as-resize-box-overiding.right-bottom {
-    cursor: se-resize;
+    cursor: se-resize !important;
 }
 
 
 .as-resize-box-overiding.right {
-    cursor: e-resize;
+    cursor: e-resize !important;
 }
