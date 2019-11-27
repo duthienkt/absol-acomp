@@ -39,6 +39,7 @@ TabView.eventHandler.activeTab = function (event) {
 
 TabView.prototype.activeTab = function (id, userActive) {
     var self = this;
+    var resPromise = [];
     this._frameHolders.forEach(function (holder) {
         if (holder.id == id) {
             self._history.push(id);
@@ -60,12 +61,14 @@ TabView.prototype.activeTab = function (id, userActive) {
             eventData.target = self;
             eventData.type = 'activetab';
             self.emit('activetab', eventData, self);
-            eventData.__promise__.then(function () {
-                //if ok
-                self.$tabbar.activeTab(holder.id);
-            }, function () {
-                //if reject
-            });
+            resPromise.push(
+                eventData.__promise__.then(function () {
+                    //if ok
+                    self.$tabbar.activeTab(holder.id);
+                }, function () {
+                    //if reject
+                })
+            );
         }
         else {
             if (!holder.containterElt.containsClass('absol-tabview-container-hidden')) {
@@ -74,14 +77,16 @@ TabView.prototype.activeTab = function (id, userActive) {
             }
         }
     });
+    return Promise.all(resPromise);
 };
 
 TabView.prototype.removeTab = function (id, userActive) {
     var self = this;
+    var resPromise = [];
     this._frameHolders.forEach(function (holder) {
         if (holder.id == id) {
             var eventData = {
-                type:'renove',
+                type: 'renove',
                 id: id,
                 userActive: !!userActive,
                 target: holder.tabFrame,
@@ -97,19 +102,22 @@ TabView.prototype.removeTab = function (id, userActive) {
             eventData.type = 'removetab';
             eventData.target = self;
             self.emit('removetab', eventData, self);
-            eventData.__promise__.then(function () {
-                //if ok
-                self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; });
-                holder.tabFrame.notifyDetached();
-                self.$tabbar.removeTab(holder.id);
-                holder.containterElt.remove();
-                self.activeLastTab();
-            }, function () {
-                //if reject
-            });
-
+            resPromise.push(
+                eventData.__promise__.then(function () {
+                    //if ok
+                    self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; });
+                    holder.tabFrame.notifyDetached();
+                    self.$tabbar.removeTab(holder.id);
+                    holder.containterElt.remove();
+                    self.activeLastTab();
+                }, function () {
+                    //if reject
+                })
+            );
         }
     });
+    return Promise.all(resPromise);
+
 };
 
 
@@ -211,7 +219,7 @@ TabView.prototype.getAllChild = function () {
 
 
 TabView.prototype.activeFrame = function (elt) {
-    this.activeTab(elt.attr('id'));
+    return this.activeTab(elt.attr('id'));
 };
 
 
