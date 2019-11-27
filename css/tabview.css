@@ -28,7 +28,7 @@
 }
 
 .absol-tabbar:hover .absol-scrollbar-container,
-.absol-tabbar .absol-scrollbar.absol-active {
+.absol-tabbar:active .absol-scrollbar-container{
     opacity: 1;
 }
 
