@@ -40,6 +40,21 @@ TabView.eventHandler.activeTab = function (event) {
 TabView.prototype.activeTab = function (id, userActive) {
     var self = this;
     var resPromise = [];
+    var needDeactiveHolder = [];
+    var needActiveHolder = [];
+    this._frameHolders.forEach(function (holder) {
+        if (holder.containterElt.containsClass('absol-tabview-container-hidden')) {
+            if (holder.id == id){
+                needActiveHolder.push(holder);
+            }
+        }
+        else {
+            if (holder.id != id){
+                needDeactiveHolder.push(holder);
+            }
+        }
+        return !holder.containterElt.containsClass('absol-tabview-container-hidden') && holder.id != id;
+    });
     this._frameHolders.forEach(function (holder) {
         if (holder.id == id) {
             self._history.push(id);
