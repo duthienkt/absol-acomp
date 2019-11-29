@@ -87,7 +87,7 @@ TabView.prototype.activeTab = function (id, userActive) {
             tabButton: holder.tabButton,
             holder: holder
         }, self);
-    });   
+    });
 };
 
 TabView.prototype.removeTab = function (id, userActive) {
@@ -96,7 +96,7 @@ TabView.prototype.removeTab = function (id, userActive) {
     this._frameHolders.forEach(function (holder) {
         if (holder.id == id) {
             var eventData = {
-                type: 'renove',
+                type: 'remove',
                 id: id,
                 userActive: !!userActive,
                 target: holder.tabFrame,
@@ -115,6 +115,14 @@ TabView.prototype.removeTab = function (id, userActive) {
             resPromise.push(
                 eventData.__promise__.then(function () {
                     //if ok
+                    holder.tabFrame.emit('deactive', {
+                        type: 'deactive',
+                        target: holder.tabFrame,
+                        id: holder.id,
+                        userActive: !!userActive,
+                        tabButton: holder.tabButton,
+                        holder: holder
+                    }, holder.tabFrame);
                     self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; });
                     holder.tabFrame.notifyDetached();
                     self.$tabbar.removeTab(holder.id);
