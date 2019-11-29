@@ -272,8 +272,8 @@ OnScreenWindow.eventHandler.dragLeft = function (event) {
 
 
 OnScreenWindow.eventHandler.endDragLeft = function (event) {
-    this.$rightResizer.off('drag', this.eventHandler.dragLeft);
-    this.$rightResizer.off('enddrag', this.eventHandler.endDragLeft);
+    this.$leftResizer.off('drag', this.eventHandler.dragLeft);
+    this.$leftResizer.off('enddrag', this.eventHandler.endDragLeft);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 };
@@ -505,3 +505,5 @@ OnScreenWindow.prototype.relocation = function () {
 
 
 Acore.install('OnScreenWindow'.toLowerCase(), OnScreenWindow);
+
+export default OnScreenWindow;
