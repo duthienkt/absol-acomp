@@ -34,6 +34,7 @@ VRuler.render = function () {
 VRuler.prototype.measureElement = function (elt) {
     if (typeof elt == "string") elt = $(elt);
     this.$measureTarget = elt;
+    this.update();
 };
 
 
