@@ -7,7 +7,7 @@ var $ = Acore.$;
 function TabView() {
     var res = _({
         class: 'absol-tabview',
-        extendEvent: ['activetab', 'removetab'],
+        extendEvent: ['activetab', 'deactivetab', 'removetab', 'requestremovetab'],
         child: [
             'tabbar',
 
@@ -96,7 +96,7 @@ TabView.prototype.removeTab = function (id, userActive) {
     this._frameHolders.forEach(function (holder) {
         if (holder.id == id) {
             var eventData = {
-                type: 'remove',
+                type: 'requestremove',
                 id: id,
                 userActive: !!userActive,
                 target: holder.tabFrame,
@@ -108,25 +108,36 @@ TabView.prototype.removeTab = function (id, userActive) {
                     this.__promise__ = promise;
                 }
             };
-            holder.tabFrame.emit('remove', eventData, holder.tabFrame);
-            eventData.type = 'removetab';
+            holder.tabFrame.emit('requestremove', eventData, holder.tabFrame);
+            eventData.type = 'requestremovetab';
             eventData.target = self;
-            self.emit('removetab', eventData, self);
+            self.emit('requestremovetab', eventData, self);
             resPromise.push(
                 eventData.__promise__.then(function () {
                     //if ok
-                    holder.tabFrame.emit('deactive', {
+                    var eventData2 = {
                         type: 'deactive',
                         target: holder.tabFrame,
                         id: holder.id,
                         userActive: !!userActive,
                         tabButton: holder.tabButton,
                         holder: holder
-                    }, holder.tabFrame);
+                    };
+                    holder.tabFrame.emit('deactive', eventData2, holder.tabFrame);
+                    eventData2.type = 'deactivetab';
+                    eventData2.target = self;
+                    self.emit('deactivetab', eventData2, self);
                     self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; });
                     holder.tabFrame.notifyDetached();
                     self.$tabbar.removeTab(holder.id);
                     holder.containterElt.remove();
+
+                    eventData2.type = 'remove';
+                    eventData2.target = holder.tabFrame;
+                    holder.tabFrame.emit('remove', eventData2, holder.tabFrame);
+                    eventData2.type = 'removetab';
+                    eventData2.target = self;
+                    self.emit('removetab', eventData2, self);
                     self.activeLastTab();
                 }, function () {
                     //if reject

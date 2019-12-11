@@ -6,7 +6,7 @@ function TabFrame() {
     var res = _({
         tag: 'frame',
         class: 'absol-tab-frame',
-        extendEvent:['remove']
+        extendEvent:['requestremove','remove']
     }, true);
     return res;
 }
