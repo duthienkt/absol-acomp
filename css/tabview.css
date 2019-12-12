@@ -84,6 +84,11 @@
     margin-left: 0.5em;
 }
 
+.absol-tabbar-button-icon-container>span{
+    display: inline-block;
+    vertical-align: middle;
+}
+
 
 .absol-tabbar-button:hover .absol-tabbar-button-close,
 .absol-tabbar-button-active .absol-tabbar-button-close {
