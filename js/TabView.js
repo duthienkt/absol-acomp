@@ -123,10 +123,12 @@ TabView.prototype.removeTab = function (id, userActive) {
                         tabButton: holder.tabButton,
                         holder: holder
                     };
-                    holder.tabFrame.emit('deactive', eventData2, holder.tabFrame);
+                    if (!holder.containterElt.containsClass('absol-tabview-container-hidden'))
+                        holder.tabFrame.emit('deactive', eventData2, holder.tabFrame);
                     eventData2.type = 'deactivetab';
                     eventData2.target = self;
-                    self.emit('deactivetab', eventData2, self);
+                    if (!holder.containterElt.containsClass('absol-tabview-container-hidden'))
+                        self.emit('deactivetab', eventData2, self);
                     self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; });
                     holder.tabFrame.notifyDetached();
                     self.$tabbar.removeTab(holder.id);
