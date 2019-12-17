@@ -17,11 +17,14 @@ FlexiconButton.render = function () {
         tag: 'button',
         class: 'as-flexicon-button',
         child: {
-            class: 'as-flexicon-button-content',
-            child: [
-                '.as-flexicon-button-icon-container',
-                '.as-flexicon-button-text-container',
-            ]
+            class: 'as-icon-button-table-box',
+            child: {
+                class: 'as-flexicon-button-content',
+                child: [
+                    '.as-flexicon-button-icon-container',
+                    '.as-flexicon-button-text-container',
+                ]
+            }
         }
     });
 };
