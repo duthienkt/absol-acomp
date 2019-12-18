@@ -21,10 +21,16 @@
     right: 8em;
 }
 
-/* .absol-color-picker.with-alpha  */
+.as-color-picker-input{
+    width: 30px;
+    height: 30px;
+    padding: 0px;
+}
 
-
-
+.as-color-picker-input-icon{
+    width:100%;
+    height:100%;
+}
 
 .absol-color-picker,
 .absol-color-picker * {
