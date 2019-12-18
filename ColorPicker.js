@@ -446,6 +446,7 @@ ColorPicker.prototype._updateColorText = function () {
 ColorPicker.eventHandler = {};
 
 ColorPicker.eventHandler.colorPointerDown = function (event) {
+    event.value=this.value;
     var newSV = this._getSVOfEvent(event);
     this.saturation = newSV.s;
     this.brightness = newSV.b;
@@ -454,7 +455,7 @@ ColorPicker.eventHandler.colorPointerDown = function (event) {
         .on('pointermove', this.eventHandler.colorPointerMove)
         .on('pointerup', this.eventHandler.colorPointerFinish)
         .on('pointerleave', this.eventHandler.colorPointerFinish);
-    this.emit('change', { target: this });
+    this.emit('change', event);
 };
 
 ColorPicker.eventHandler.colorPointerFinish = function (event) {
@@ -465,17 +466,18 @@ ColorPicker.eventHandler.colorPointerFinish = function (event) {
 };
 
 ColorPicker.eventHandler.colorPointerMove = function (event) {
+    event.value=this.value;
     var newSV = this._getSVOfEvent(event);
     this.saturation = newSV.s;
     this.brightness = newSV.b;
     event.preventDefault();
-    this.emit('change');
-
+    this.emit('change', event);
 };
 
 
 
 ColorPicker.eventHandler.huePointerDown = function (event) {
+    event.value=this.value;
     var newH = this._getHOfEvent(event);
     this.hue = newH;
     event.preventDefault();
@@ -483,7 +485,7 @@ ColorPicker.eventHandler.huePointerDown = function (event) {
         .on('pointermove', this.eventHandler.huePointerMove)
         .on('pointerup', this.eventHandler.huePointerFinish)
         .on('pointerleave', this.eventHandler.huePointerFinish);
-    this.emit('change');
+    this.emit('change', event);
 };
 
 ColorPicker.eventHandler.huePointerFinish = function (event) {
@@ -496,15 +498,17 @@ ColorPicker.eventHandler.huePointerFinish = function (event) {
 };
 
 ColorPicker.eventHandler.huePointerMove = function (event) {
+    event.value=this.value;
     var newH = this._getHOfEvent(event);
     this.hue = newH;
     event.preventDefault();
-    this.emit('change');
+    this.emit('change', event);
 };
 
 
 
 ColorPicker.eventHandler.alphaPointerDown = function (event) {
+    event.value=this.value;
     var newA = this._getAOfEvent(event);
     this.alpha = newA;
 
@@ -513,10 +517,11 @@ ColorPicker.eventHandler.alphaPointerDown = function (event) {
         .on('pointerup', this.eventHandler.alphaPointerFinish)
         .on('pointerleave', this.eventHandler.alphaPointerFinish);
     event.preventDefault();
-    this.emit('change');
+    this.emit('change', event);
 };
 
 ColorPicker.eventHandler.alphaPointerFinish = function (event) {
+    event.value=this.value;
     absol.$(document.body)
         .off('pointermove', this.eventHandler.alphaPointerMove)
         .off('pointerup', this.eventHandler.alphaPointerFinish)
@@ -526,10 +531,11 @@ ColorPicker.eventHandler.alphaPointerFinish = function (event) {
 };
 
 ColorPicker.eventHandler.alphaPointerMove = function (event) {
+    event.value=this.value;
     var newA = this._getAOfEvent(event);
     this.alpha = newA;
     event.preventDefault();
-    this.emit('change');
+    this.emit('change',event);
 };
 
 ColorPicker.eventHandler.modeClick = function (event) {
