@@ -250,13 +250,13 @@ ColorPicker.property.mode = {
 
         if (value.match(/^H/)) {
             this._num0LimitOption.max = 360;
-            this._num0LimitOption.max = 100;
-            this._num0LimitOption.max = 100;
+            this._num1LimitOption.max = 100;
+            this._num2LimitOption.max = 100;
         }
         else if (value.match(/^RGB/)) {
             this._num0LimitOption.max = 255;
-            this._num0LimitOption.max = 255;
-            this._num0LimitOption.max = 255;
+            this._num1LimitOption.max = 255;
+            this._num2LimitOption.max = 255;
         }
 
         if (value.match(/^(HSB|HSL|RGB|RGBA|HSBA|HSLA)$/)) {
