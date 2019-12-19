@@ -4,31 +4,31 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 var _ = CPCore._;
 var $ = CPCore.$;
 
-function ColorIconInput() {
+function ColorPickerButton() {
     this.$icon = $('.as-color-picker-input-icon', this);
-    
+
     this.prepare();
     this.on('click', this.eventHandler.click);
 }
 
-ColorIconInput.eventHandler = {};
+ColorPickerButton.eventHandler = {};
 
-ColorIconInput.eventHandler.click = function (event) {
+ColorPickerButton.eventHandler.click = function (event) {
     this.togglePicker();
 };
 
-ColorIconInput.eventHandler.changeColor = function(event){
-    this.$icon.addStyle("background-color",event.value.toString());
+ColorPickerButton.eventHandler.changeColor = function (event) {
+    this.$icon.addStyle("background-color", event.value.toString());
     this._value = event.value;
     this.emit('change', event, this);
 }
 
-ColorIconInput.eventHandler.clickBody = function (event) {
+ColorPickerButton.eventHandler.clickBody = function (event) {
     if (EventEmitter.hitElement(this, event) || EventEmitter.hitElement(this.$ColorPicker, event)) return;
     this.closePicker();
 };
 
-ColorIconInput.prototype.togglePicker = function () {
+ColorPickerButton.prototype.togglePicker = function () {
     if (this.containsClass('as-color-picker-selecting')) {
         this.closePicker();
     }
@@ -38,71 +38,71 @@ ColorIconInput.prototype.togglePicker = function () {
 };
 
 
-ColorIconInput.prototype.openPicker = function () {
-    if (ColorIconInput.lastOpen) {
-        ColorIconInput.lastOpen.closePicker();
+ColorPickerButton.prototype.openPicker = function () {
+    if (ColorPickerButton.lastOpen) {
+        ColorPickerButton.lastOpen.closePicker();
     }
-    ColorIconInput.lastOpen = this;
+    ColorPickerButton.lastOpen = this;
     this.addClass('as-color-picker-selecting');
     this.$ColorPicker.on('change', this.eventHandler.changeColor);
     this.$ctn.addTo(document.body);
     this.$follower.followTarget = this;
     $(document.body).on('click', this.eventHandler.clickBody);
-    ColorIconInput.$ColorPicker.value = this.value;
+    ColorPickerButton.$ColorPicker.value = this.value;
 };
 
 
-ColorIconInput.prototype.closePicker = function () {
+ColorPickerButton.prototype.closePicker = function () {
     this.removeClass('as-color-picker-selecting');
-    if (ColorIconInput.lastOpen == this) {
-        ColorIconInput.lastOpen == null;
+    if (ColorPickerButton.lastOpen == this) {
+        ColorPickerButton.lastOpen == null;
         this.$ctn.remove();
     }
     this.$ColorPicker.off('change', this.eventHandler.changeColor);
     $(document.body).off('click', this.eventHandler.clickBody);
 };
 
-ColorIconInput.prototype.prepare = function () {
-    if (!ColorIconInput.$ColorPicker) {
-        ColorIconInput.$ctn = _('.absol-context-hinge-fixed-container');
-        ColorIconInput.$follower = _('follower').addTo(ColorIconInput.$ctn);
-        ColorIconInput.$ColorPicker = _({
-            tag:'colorpicker',
-            props:{
-                mode:'RGBA'
+ColorPickerButton.prototype.prepare = function () {
+    if (!ColorPickerButton.$ColorPicker) {
+        ColorPickerButton.$ctn = _('.absol-context-hinge-fixed-container');
+        ColorPickerButton.$follower = _('follower').addTo(ColorPickerButton.$ctn);
+        ColorPickerButton.$ColorPicker = _({
+            tag: 'colorpicker',
+            props: {
+                mode: 'RGBA'
             }
-        }).addTo(ColorIconInput.$follower);
-        
-        ColorIconInput.lastOpen = null;
+        }).addTo(ColorPickerButton.$follower);
+
+        ColorPickerButton.lastOpen = null;
     }
 
-    this.$follower = ColorIconInput.$follower;
+    this.$follower = ColorPickerButton.$follower;
 
-    this.$ColorPicker = ColorIconInput.$ColorPicker;
-    this.$ctn = ColorIconInput.$ctn;
+    this.$ColorPicker = ColorPickerButton.$ColorPicker;
+    this.$ctn = ColorPickerButton.$ctn;
 };
 
-ColorIconInput.render = function () {
+ColorPickerButton.render = function () {
     return _({
         extendEvent: 'change',
         tag: 'button',
         extendEvent: 'change',
         class: 'as-color-picker-input',
-        child:[
+        child: [
             {
-                tag:"div",
-                class:"as-color-picker-input-icon"
+                tag: "div",
+                class: "as-color-picker-input-icon"
             }
         ]
     });
-}
+};
 
-ColorIconInput.property = {};
-ColorIconInput.property.value = {
+ColorPickerButton.property = {};
+ColorPickerButton.property.value = {
     set: function (value) {
         this._value = value;
         if (this._value) {
-            this.$icon.addStyle("background-color",value);
+            this.$icon.addStyle("background-color", value);
         }
         else {
         }
@@ -112,6 +112,7 @@ ColorIconInput.property.value = {
     }
 };
 
-CPCore.creator.coloriconinput = ColorIconInput;
 
-export default ColorIconInput;
+CPCore.install('colorpickerbutton', ColorPickerButton);
+
+export default ColorPickerButton;
