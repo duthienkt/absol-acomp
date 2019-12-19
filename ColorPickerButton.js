@@ -5,7 +5,7 @@ var _ = CPCore._;
 var $ = CPCore.$;
 
 function ColorPickerButton() {
-    this.$icon = $('.as-color-picker-input-icon', this);
+    this.$innerValue = $('.as-color-picker-button-inner-value', this);
 
     this.prepare();
     this.on('click', this.eventHandler.click);
@@ -18,7 +18,7 @@ ColorPickerButton.eventHandler.click = function (event) {
 };
 
 ColorPickerButton.eventHandler.changeColor = function (event) {
-    this.$icon.addStyle("background-color", event.value.toString());
+    this.$innerValue.addStyle("background-color", event.value.toString());
     this._value = event.value;
     this.emit('change', event, this);
 }
@@ -87,11 +87,12 @@ ColorPickerButton.render = function () {
         extendEvent: 'change',
         tag: 'button',
         extendEvent: 'change',
-        class: 'as-color-picker-input',
+        class: 'as-color-picker-button',
         child: [
             {
                 tag: "div",
-                class: "as-color-picker-input-icon"
+                class: "as-color-picker-button-inner", 
+                child: '.as-color-picker-button-inner-value'
             }
         ]
     });
@@ -102,7 +103,7 @@ ColorPickerButton.property.value = {
     set: function (value) {
         this._value = value;
         if (this._value) {
-            this.$icon.addStyle("background-color", value);
+            this.$innerValue.addStyle("background-color", value);
         }
         else {
         }
