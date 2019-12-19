@@ -48,6 +48,7 @@ ColorPickerButton.prototype.openPicker = function () {
     this.$ctn.addTo(document.body);
     this.$follower.followTarget = this;
     $(document.body).on('click', this.eventHandler.clickBody);
+    this._lastValue = this.value;
     ColorPickerButton.$ColorPicker.value = this.value;
 };
 
@@ -60,6 +61,9 @@ ColorPickerButton.prototype.closePicker = function () {
     }
     this.$ColorPicker.off('change', this.eventHandler.changeColor);
     $(document.body).off('click', this.eventHandler.clickBody);
+    if (this.value != this._lastValue) {
+        this.emit('stopchange', { target: this, value: this.value }, this);
+    }
 };
 
 ColorPickerButton.prototype.prepare = function () {
@@ -84,14 +88,13 @@ ColorPickerButton.prototype.prepare = function () {
 
 ColorPickerButton.render = function () {
     return _({
-        extendEvent: 'change',
         tag: 'button',
-        extendEvent: 'change',
+        extendEvent: ['change', 'stopchange'],
         class: 'as-color-picker-button',
         child: [
             {
                 tag: "div",
-                class: "as-color-picker-button-inner", 
+                class: "as-color-picker-button-inner",
                 child: '.as-color-picker-button-inner-value'
             }
         ]
