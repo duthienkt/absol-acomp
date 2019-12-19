@@ -3,16 +3,17 @@ import AComp from "./AComp";
 
 import QuickMenu from "./js/QuickMenu";
 import ChromeCalendar from "./js/ChromeCalendar";
+import Radio from "./js/Radio";
 
 //for export to window
 absol.Tooltip = AComp.creator.tooltip;
 absol.QuickMenu = QuickMenu;
 absol.AComp = AComp;
+absol.Radio = Radio;
 
 absol.ChromeCalendar = ChromeCalendar;
-
 absol.coreDom.install(AComp.core);
-absol.ShareCreator = Object.assign(absol.ShareCreator || {}, AComp.creator);
+
 
 window.AComp = absol.AComp;
 setTimeout(function () {
