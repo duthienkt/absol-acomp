@@ -6,7 +6,7 @@ function TabFrame() {
     var res = _({
         tag: 'frame',
         class: 'absol-tab-frame',
-        extendEvent:['requestremove','remove']
+        extendEvent: ['requestremove', 'remove']
     }, true);
     return res;
 }
@@ -107,6 +107,14 @@ TabFrame.attribute.modified = {
 };
 
 
+TabFrame.property.requestRemove = function () {
+    if (this.$parent && this.$parent.removeTab) {
+        this.$parent.removeTab(this.id, false);
+    }
+    else {
+        this.selfRemove();
+    }
+};
 
 Acore.install('tabframe', TabFrame);
 export default TabFrame;
