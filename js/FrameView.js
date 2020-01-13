@@ -35,6 +35,43 @@ FrameView.prototype.addChild = function (elt) {
 };
 
 
+FrameView.prototype.addLast = function (elt) {
+    this.addChild(elt);
+    this.activeFrame(elt);
+};
+
+
+FrameView.prototype.removeLast = function () {
+    if (this.$containers.length > 0) {
+        this.removeChild(this.$containers[this.$containers.length - 1].__elt__);
+    }
+
+    if (this.$containers.length > 0) {
+        this.activeFrame(this.$containers[this.$containers.length - 1].__elt__);
+    }
+};
+
+
+FrameView.prototype.getLength = function () {
+    return this.$containers.length;
+};
+
+
+FrameView.prototype.getAllChild = function () {
+    return this.$containers.map(function (ctn) {
+        return ctn.__elt__;
+    });
+};
+
+
+FrameView.prototype.getLast = function () {
+    if (this.$containers.length > 0) {
+        return (this.$containers[this.$containers.length - 1].__elt__);
+    }
+
+    return null;
+};
+
 FrameView.prototype.addChildBefore = function (elt, at) {
     if (elt.containsClass && elt.containsClass('absol-frame')) {
         elt.selfRemove();
@@ -170,7 +207,7 @@ FrameView.prototype.activeFrame = function (frameElt) {
 
 
 FrameView.prototype.notifyActiveFrame = function (frameElt, originEvent) {
-    frameElt.emit('active', {target:frameElt, type:'active', originEvent: originEvent});
+    frameElt.emit('active', { target: frameElt, type: 'active', originEvent: originEvent });
     this.emit('activeframe', { type: 'activeframe', target: this, frameElt: frameElt, originEvent: originEvent }, this);
 };
 

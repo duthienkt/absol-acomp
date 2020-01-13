@@ -118,6 +118,7 @@ TabBar.prototype.addTab = function (value) {
     }).addTo(this);
     if (value.id) tabButton.attr('id', 'tabbuton-' + value.id);
     this._tabs.push(tabButton);
+    this.requestUpdateSize();
     return tabButton;
 };
 
@@ -127,10 +128,12 @@ TabBar.prototype.removeTab = function (id) {
         return value == id;
     });
     $('#tabbuton-' + id, this).remove();
+    this.requestUpdateSize();
 };
 
 
 TabBar.prototype.activeTab = function (id) {
+    var self = this;
     var activedbtn = $('.absol-tabbar-button-active', this);
     if (activedbtn && activedbtn.attr('id') != id) {
         activedbtn.active = false;
@@ -138,7 +141,11 @@ TabBar.prototype.activeTab = function (id) {
     var mButton = $('#tabbuton-' + id, this);
     if (mButton) {
         mButton.active = true;
+        setTimeout(function () {
+            self.scrollInto(mButton);
+        }, 30)
     }
+
 };
 
 TabBar.prototype.setModified = function (ident, flag) {
