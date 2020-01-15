@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <link rel="stylesheet" href="https://absol.cf/css/materialdesignicons/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <script src="../dist/absol-acomp.js?"></script>
+    <script>
+        var $ = absol.$;
+        var _ = absol._;
+    </script>
+    <style>
+        .dark.bg {
+            background-color: rgba(30, 30, 32, 1);
+            /* background-color: white; */
+        }
+
+        .bg {
+            padding-left: 5px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border: solid 1px rgb(30, 30, 32);
+            overflow: auto;
+        }
+
+        .bg>button {
+            margin: 50px;
+        }
+
+        .hover-blue:hover {
+            color: blue;
+        }
+
+        .hover-yellow:hover {
+            color: yellow;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script>
+        var contextCaptor = absol._('contextcaptor').addTo(document.body).attachTo(document.body);
+        $(document.body).defineEvent('contextmenu').on('contextmenu', function (event) {
+            event.showContextMenu({
+                items: [{ text: 'Expand Down', value: 1, icon: 'span.mdi.mdi-arrow-expand-down' }, { text: 'Expand Up', value: 2, icon: 'span.mdi.mdi-arrow-expand-up' }]
+            }, function (event) {
+                console.log(event.menuItem.text);
+            });
+        }); 
+    </script>
+    <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>

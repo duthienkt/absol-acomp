@@ -1,55 +1,42 @@
-.absol-context-menu-hook {
-    position: absolute;
-    z-index: -100000;
-    width: 14px;
-    height: 14px;
+
+.absol-context-menu-anchor {
+    position: fixed;
+    z-index: -1000;
+    left: 0;
     top: 0;
+    display: block;
     opacity: 0;
+    visibility: hidden;
+    font-size: 12px;
+}
+
+.absol-context-menu-anchor>textarea {
+    width: 20px;
+    height: 20px;
+    margin: 0;
     resize: none;
+    border: none;
+    opacity: 0;
     cursor: default;
 }
 
-.absol-context-hinge-fixed-container {
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 1000;
+.absol-context-menu-anchor.absol-active {
+    z-index: 100000000;
+    opacity: 1;
+    visibility: visible;
 }
 
-.absol-context-hinge {
-    position: relative;
-    width: 0;
-    height: 0;
-}
 
-.absol-context-hinge>.absol-context-menu {
-    position: absolute;
-    top: -10000px;
-    left: -10000px;
-    visibility: hidden;
-    z-index: 55;
-    display: inline-block;
-
-}
-
-.absol-context-hinge .absol-vmenu,
-.absol-context-hinge .absol-hmenu {
+.absol-context-menu-anchor .absol-vmenu,
+.absol-context-menu-anchor .absol-hmenu {
     padding-top: 0.4em;
     padding-bottom: 0.4em;
-    /* background-color: rgb(37, 37, 38);
     -webkit-box-shadow: 2px 2px 9px 0px rgba(7, 7, 7, 1);
     -moz-box-shadow: 2px 2px 9px 0px rgb(7, 7, 7, 1);
-    box-shadow: 2px 2px 9px 0px rgba(7, 7, 7, 1); */
+    box-shadow: 2px 2px 9px 0px rgba(7, 7, 7, 1);
     color: black;
     background-color: rgb(252, 252, 255);
     -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
     -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
     box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-}
-
-.absol-context-hinge.dark .absol-hmenu,
-.absol-context-hinge.dark .absol-vmenu,
-.dark .absol-context-hinge .absol-hmenu,
-.dark .absol-context-hinge .absol-vmenu {
-    background-color: rgb(37, 37, 38);
 }
