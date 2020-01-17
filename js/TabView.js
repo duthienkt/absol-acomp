@@ -230,10 +230,13 @@ TabView.prototype.activeLastTab = function () {
     }, {});
 
     while (this._history.length > 0) {
-        var id = this._history.pop();
+        var id =  this._history[ this._history.length - 1];
         if (dict[id]) {
             this.activeTab(id);
             break;
+        }
+        else{
+            this._history.pop();
         }
     }
 };

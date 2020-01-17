@@ -161,4 +161,4 @@ ContextCaptor.eventHandler.contextmenu = function (event) {
     }
 };
 
-Acore.install('contextcaptor', ContextCaptor)
+Acore.install('contextcaptor', ContextCaptor);
