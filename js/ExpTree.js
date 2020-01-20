@@ -199,7 +199,12 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
             span.blur();
             span.attr('contenteditable', undefined);
         }
-
+        else if(key == "ESC"){
+            event.preventDefault();
+            span.innerHTML = lastName;
+            span.blur();
+            span.attr('contenteditable', undefined);
+        }
     }
     function blurEventHandle(event) {
         finish();
