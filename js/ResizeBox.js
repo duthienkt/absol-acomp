@@ -129,7 +129,7 @@ ResizeBox.eventHandler.mouseFinishBody = function (event) {
     else {
         if (EventEmitter.hitElement(this, event)) {
             this.emit('click', event, this);
-            var now = new Date().getDate();
+            var now = new Date().getTime();
             if (now - this._lastClickTime < 500) {
                 this.emit('dblclick', event, this);
                 this._lastClickTime = 0;
