@@ -10,12 +10,13 @@ function ResizeBox() {
     this.on('mousedown', this.eventHandler.mouseDownBody);
     this._mousedownEventData = undefined;
     this._mousemoveEventData = undefined;
+    this._lastClickTime = 0;
 }
 
 ResizeBox.render = function () {
     return _({
         class: 'as-resize-box',
-        extendEvent: ['beginmove', 'endmove', 'moving', 'click'],//override click event
+        extendEvent: ['beginmove', 'endmove', 'moving', 'click', 'dblclick'],//override click event
         child: {
             class: 'as-resize-box-body',
             child: [
@@ -126,8 +127,15 @@ ResizeBox.eventHandler.mouseFinishBody = function (event) {
         this.emit('endmove', this._mousefinishEventData, this);
     }
     else {
-        if (EventEmitter.hitElement(this, event))
+        if (EventEmitter.hitElement(this, event)) {
             this.emit('click', event, this);
+            var now = new Date().getDate();
+            if (now - this._lastClickTime < 500) {
+                this.emit('dblclick', event, this);
+                this._lastClickTime = 0;
+            }
+            this._lastClickTime = now;
+        }
     }
 };
 
