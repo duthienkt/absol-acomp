@@ -192,6 +192,17 @@ SelectMenu.property = {};
 SelectMenu.property.items = {
     set: function (value) {
         this._searchCache = {};
+        /**
+         * verity data
+         */
+        if (value) {
+            value.forEach(function (it) {
+                if (it && it.text) {
+                    it.text = it.text + '';
+                }
+            });
+        }
+
         this._items = value;
         this.$dropdownBox.removeStyle('min-width');
         this.$selectlist.items = value || [];
