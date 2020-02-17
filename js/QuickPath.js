@@ -205,7 +205,7 @@ QuickPath.property.path = {
 
 QuickPath.property.textPath = {
     get: function () {
-
+        return this.path.join('/');
     }
 };
 
