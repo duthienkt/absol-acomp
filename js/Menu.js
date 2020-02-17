@@ -86,10 +86,13 @@ MenuButton.property.icon = {
 
 MenuButton.property.iconSrc = {
     set: function (value) {
-        this.icon = { tag: 'img', attr: { src: value } };
+        if (value)
+            this.icon = { tag: 'img', props: { src: value } };
+        else
+            this.icon = value;
     },
     get: function () {
-        return this.icon.attr.src;
+        return this.icon && this.icon.props && this.icon.props.src;
     }
 };
 
@@ -242,12 +245,12 @@ export function VMenuItem() {
     res.$dropper = $('dropright', res);
     res.$vmenu = $('vmenu', res);
     res.$button = $('menubutton', res);
-    
+
     res.$text = res.$button.$text;
 
     res.$key = res.$button.$key;
     res.$arrow = res.$button.$arrow;
-    res.$iconCtn =  res.$button.$iconCtn;
+    res.$iconCtn = res.$button.$iconCtn;
 
 
     OOP.drillProperty(res, res.$button, ['text', 'extendClasses', 'extendStyle', 'key', 'icon', 'iconSrc']);
