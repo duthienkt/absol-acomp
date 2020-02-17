@@ -6,24 +6,28 @@ var _ = Acore._;
 var $ = Acore.$;
 
 function QuickPath() {
-    var res = _({
-        class: 'absol-quick-path',
-        extendEvent: ['change', 'press']
-    });
-
-    res.eventHandler = OOP.bindFunctions(res, QuickPath.eventHandler);
-    res._itemSeq = [];
-    res.on('click', res.eventHandler.click);
-    return res;
+    this._itemSeq = [];
+    this.on('click', this.eventHandler.click);
 }
 
-
+/**
+ * @type {QuickPath}
+ */
 QuickPath.eventHandler = {};
 
 QuickPath.eventHandler.click = function (event) {
     var button = this._fileButton(event.target)
     if (button) this.pressButton(button);
+};
 
+/**
+ * @returns {QuickPath}
+ */
+QuickPath.render = function () {
+    return _({
+        class: 'absol-quick-path',
+        extendEvent: ['change', 'press']
+    });
 };
 
 
