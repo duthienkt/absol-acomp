@@ -74,7 +74,9 @@ QuickPath.prototype._createButton = function (pathItem, index) {
                             var res = {
                                 text: it.name,
                                 menuIndex: menuIndex,
-                                icon: it.iconSrc ? { tag: 'img', props: { src: it.iconSrc } } : (it.icon || undefined)
+                                icon: it.iconSrc ? { tag: 'img', props: { src: it.iconSrc } } : (it.icon || undefined),
+                                extendStyle: it.extendStyle || {},
+                                extendClass: it.extendClass || [],
                             }
                             return res;
                         })
