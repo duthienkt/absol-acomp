@@ -51,7 +51,7 @@ QuickPath.prototype._createButton = function (pathItem, index) {
     });
     buttom.status = 'close';
     buttom.name = pathItem.name;
-    if (buttom.icon) {
+    if (pathItem.icon) {
         buttom.icon = pathItem.icon;
     }
     if (pathItem.iconSrc) {
@@ -164,9 +164,3 @@ QuickPath.property.textPath = {
 Acore.install('quickpath', QuickPath);
 
 export default QuickPath;
-
-
-
-
-
-
