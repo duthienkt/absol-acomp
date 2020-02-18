@@ -5,11 +5,13 @@
     -webkit-user-select: none;
     -ms-user-select: none;
     -moz-user-select: none;
+    min-height: 1.5em;
 }
 
 .absol-quick-path button {
     outline: none;
     color: rgb(69, 69, 69);
+    height: 1.5em;
 }
 
 .absol-quick-path button:hover {
@@ -34,13 +36,6 @@
 }
 
 
-.absol-quick-path-btn {
-    font-size: 1em;
-    padding: 0;
-    border: none;
-    background: transparent;
-    padding-right: 0.3em;
-}
 
 .absol-quick-path-btn:focus span {
     text-decoration: underline;
