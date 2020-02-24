@@ -1,6 +1,6 @@
 {
     "name": "absol-acomp",
-    "version": "0.8.8",
+    "version": "0.8.9",
     "description": "HTML5 components base on absol.js",
     "main": "AComp.js",
     "directories": {
