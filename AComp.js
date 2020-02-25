@@ -166,6 +166,9 @@ import './css/vruler.css';
 import './js/ResizeBox';
 import './css/resizebox.css';
 
+import './js/PreInput';
+import './css/preinput.css';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 import Draggable from "./js/Draggable";
