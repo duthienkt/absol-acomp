@@ -4,7 +4,7 @@ var _ = Acore._;
 var $ = Acore.$;
 
 function PreInput() {
-    this.defineEvent(['pasteimg', 'pastetext']);
+    this.defineEvent(['pasteimg', 'pastetext', 'change']);
     this.on('paste', this.eventHandler.paste);
     this.on('keydown', this.eventHandler.keydown);
     this.history = [];
@@ -40,6 +40,7 @@ PreInput.prototype.undo = function () {
     this.historyIndex--;
     var record = this.history[this.historyIndex];
     this.applyData(record.text, record.offset);
+    this.emit('change', { target: this, value: record.text, action: 'undo', record: record, type: 'change' }, this);
 };
 
 
@@ -48,23 +49,28 @@ PreInput.prototype.redo = function () {
     this.historyIndex++;
     var record = this.history[this.historyIndex];
     this.applyData(record.text, record.offset);
+    this.emit('change', { target: this, value: record.text, action: 'redo', record: record, type: 'change' }, this);
 };
 
 
 
 PreInput.prototype.commitChange = function (text, offset) {
-    while (this.historyIndex > this.history.length - 1) this.history.pop();
-    var lastText = this.history.length > 0 ? this.history[0].text : null;
+    while (this.historyIndex < this.history.length - 1) {
+        this.history.pop();
+    }
+    var lastText = this.history.length > 0 ? this.history[this.history.length - 1].text : null;
     if (text === lastText) {
-        if (this.history[0].offset != offset)
-            this.history[0].offset = offset;
+        if (this.history[this.history.length - 1].offset != offset)
+            this.history[this.history.length - 1].offset = offset;
     }
     else {
         this.historyIndex = this.history.length;
-        this.history.push({
+        var record = {
             text: text,
             offset: offset
-        });
+        };
+        this.history.push(record);
+        this.emit('change', { target: this, value: record.text, action: 'commit', record: record, type: 'change' }, this);
     }
 };
 
@@ -74,7 +80,7 @@ PreInput.prototype.waitToCommit = function (text, offset) {
         clearTimeout(this._commitTimeout);
     this._commitTimeout = setTimeout(function () {
         thisInput.commitChange(text, offset);
-    }, 100);
+    }, 50);
 };
 
 PreInput.prototype.getPosition = function (node, offset) {
@@ -84,6 +90,7 @@ PreInput.prototype.getPosition = function (node, offset) {
     var parent = node.parentElement;
     var text = '';
     var child;
+    var lastBr = false;
     for (var i = 0; i < parent.childNodes.length; ++i) {
         child = parent.childNodes[i];
         if (child == node) break;
@@ -92,16 +99,26 @@ PreInput.prototype.getPosition = function (node, offset) {
     return this.getPosition(parent, text.length + offset);
 };
 
+PreInput.prototype.setCaretPosition = function (pos) {
+    var text = '';
+    for (var i = 0; i < this.childNodes.length; ++i) {
+
+    }
+};
+
 PreInput.prototype.stringOf = function (node) {
     if (!node) return '';
     if (node.nodeType == 3) {
         return node.data;
     }
+    if (node.tagName == 'BR' || node.tagName == 'br') return '\n';
     var thisInput = this;
 
-    return Array.prototype.map.call(node.childNodes, function (cNode) {
+    return Array.prototype.map.call(node.childNodes, function (cNode, index, arr) {
+        if ((cNode.tagName == 'BR' || cNode.tagName == 'br') && (index + 1 >= arr.length)) return '';
         return thisInput.stringOf(cNode);
     }).join('');
+
 }
 
 /**
@@ -196,6 +213,19 @@ PreInput.eventHandler.keydown = function (event) {
                 console.error('May not support!');
             }
         }.bind(this), 1);
+    }
+};
+
+PreInput.property = {};
+
+PreInput.property.value = {
+    set: function (value) {
+        value = value || '';
+        this.applyData(value, value.length);
+        this.commitChange(value, value.length);
+    },
+    get: function () {
+        return this.stringOf(this);
     }
 };
 
