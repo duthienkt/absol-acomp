@@ -18,10 +18,19 @@ PreInput.render = function () {
 };
 
 PreInput.prototype.applyData = function (text, offset) {
-    console.log(text, offset);
-
+    var textNode = _({ text: text });
     this.clearChild()
-        .addChild(_({ text: text }));
+        .addChild(textNode);
+    if (document.getSelection) {
+        var sel = document.getSelection();
+        sel.removeAllRanges();
+        var range = document.createRange();
+        range.setStart(textNode, offset);
+        sel.addRange(range);
+    }
+    else {
+        console.error("PreInput: Not support!");
+    }
 
     // this.
 };
@@ -65,11 +74,12 @@ PreInput.prototype.waitToCommit = function (text, offset) {
         clearTimeout(this._commitTimeout);
     this._commitTimeout = setTimeout(function () {
         thisInput.commitChange(text, offset);
-    }, 500);
+    }, 100);
 };
 
 PreInput.prototype.getPosition = function (node, offset) {
-    if (node == this || !node)
+    if (!node) return NaN;
+    if (node == this)
         return offset;
     var parent = node.parentElement;
     var text = '';
@@ -141,6 +151,7 @@ PreInput.eventHandler.paste = function (event) {
                     }
                 } else if (document.selection && document.selection.createRange) {
                     document.selection.createRange().text = text;
+                    console.error('May not support!');
                 }
             });
         }
@@ -170,6 +181,21 @@ PreInput.eventHandler.keydown = function (event) {
             default:
                 break;
         }
+    }
+    if (!event.ctrlKey && !event.altKey) {
+        setTimeout(function () {
+            if (window.getSelection) {
+                var sel = window.getSelection();
+                if (sel.getRangeAt && sel.rangeCount) {
+                    var range = sel.getRangeAt(0);
+                    var text = this.stringOf(this);
+                    var offset = this.getPosition(range.startContainer, range.startOffset);
+                    this.waitToCommit(text, offset);
+                }
+            } else if (document.selection) {
+                console.error('May not support!');
+            }
+        }.bind(this), 1);
     }
 };
 
