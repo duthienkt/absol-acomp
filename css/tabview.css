@@ -28,7 +28,7 @@
 }
 
 .absol-tabbar:hover .absol-scrollbar-container,
-.absol-tabbar:active .absol-scrollbar-container{
+.absol-tabbar:active .absol-scrollbar-container {
     opacity: 1;
 }
 
@@ -78,13 +78,13 @@
     font-size: 1em
 }
 
-.absol-tabbar-button-icon-container{
+.absol-tabbar-button-icon-container {
     display: inline-block;
     vertical-align: middle;
     margin-left: 0.5em;
 }
 
-.absol-tabbar-button-icon-container>span{
+.absol-tabbar-button-icon-container>span {
     display: inline-block;
     vertical-align: middle;
 }
@@ -251,4 +251,13 @@
     border-right: solid 1px #ccc;
     border-bottom: solid 1px #ccc;
     box-sizing: border-box;
+}
+
+
+.absol-tabview.as-without-close-button>.absol-tabbar .absol-tabbar-button .absol-tabbar-button-icon-container {
+    display: none;
+}
+
+.absol-tabview.as-without-close-button>.absol-tabbar .absol-tabbar-button {
+    padding-right: 1em;
 }

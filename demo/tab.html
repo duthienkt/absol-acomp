@@ -224,7 +224,7 @@
                 src: "https://absol.cf/vchart/demo/dualchart.html"
             }
         }));
-        var tabbar1 = absol._({
+        var tabview1 = absol._({
             tag: 'tabview',
             style: {
                 height: '800px'
@@ -238,6 +238,47 @@
                 }
             }))
         }).addTo(absol.$('#demo'));
+
+
+        var frame3 = absol._('tabframe').attr({
+            'name': 'Material-design-icon',
+            id: 'matd',
+            desc: 'Material Design Icon',
+        }).addChild(absol._({
+            tag: 'iframe',
+            style: {
+                width: '100%',
+                height: '100%'
+            },
+            attr: {
+                src: "https://absol.cf/materialdesignicons/preview.html"
+            }
+        }));
+        var frame4 = absol._('tabframe').attr({
+            'name': 'vchart',
+            id: 'matd2',
+            desc: 'Dual chart demo'
+        }).addChild(absol._({
+            tag: 'iframe',
+            style: {
+                width: '100%',
+                height: '100%'
+            },
+            attr: {
+                src: "https://absol.cf/vchart/demo/dualchart.html"
+            }
+        }));
+
+        var tabview2= absol._({
+            tag: 'tabview',
+            class:'as-without-close-button',
+            style: {
+                height: '800px'
+            },
+            child: [frame3, frame4]
+        }).addTo(absol.$('#demo'));
+
+
     </script>
     <script class="viewable">
         var demoTabItemsXP = Array(5).fill(0).map(function (u, i) {
