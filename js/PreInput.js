@@ -100,7 +100,7 @@ PreInput.prototype.getPosition = function (node, offset) {
 };
 
 
-PreInput.prototype.getSelectPostion = function () {
+PreInput.prototype.getSelectPosition = function () {
     if (window.getSelection) {
         var sel = window.getSelection();
         if (sel.getRangeAt && sel.rangeCount) {
