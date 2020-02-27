@@ -99,10 +99,21 @@ PreInput.prototype.getPosition = function (node, offset) {
     return this.getPosition(parent, text.length + offset);
 };
 
-PreInput.prototype.setCaretPosition = function (pos) {
-    var text = '';
-    for (var i = 0; i < this.childNodes.length; ++i) {
 
+PreInput.prototype.getSelectPostion = function () {
+    if (window.getSelection) {
+        var sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            var range = sel.getRangeAt(0);
+            var startOffset = this.getPosition(range.startContainer, range.startOffset);
+            var endOffset = this.getPosition(range.endContainer, range.endOffset);
+            if (isNaN(startOffset)) return null;
+            return {
+                start: startOffset, end: endOffset
+            }
+        }
+    } else if (document.selection) {
+        console.error('May not support!');
     }
 };
 
