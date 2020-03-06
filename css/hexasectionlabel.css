@@ -1,0 +1,49 @@
+.as-hexa-section-label{
+    position: relative;
+}
+
+.as-hexa-section-label-text{
+    display: inline-block;
+    vertical-align: middle;
+    height: 4.5em;
+    line-height: 4.5em;
+    padding-left: 1.25em;
+    padding-right: 2.5em;
+    color: white;
+}
+
+
+.as-hexa-section-label-index{
+    font-size: 1.16666666667em;
+    display: inline-block;
+    vertical-align: middle;
+    height: 3.85714285714em;
+    line-height: 3.85714285714em;
+    width:4.45384493375em;
+    text-align: center;
+    color: rgb(237, 147, 54);
+    font-weight: bolder;
+}
+
+.as-hexa-section-label-background{
+    position: absolute;
+    top: 0;
+    left:0;
+    bottom: 0;
+    z-index: -1;
+}
+
+.as-hexa-section-label-background>svg{
+    display: block;
+}
+
+.as-hexa-section-label-index-box{
+    stroke: rgb(251, 186, 130);
+    fill: white;
+    stroke-width: 2.5;
+}
+
+.as-hexa-section-label-text-box{
+    fill: rgb(237, 147, 54);
+    stroke: none;
+}

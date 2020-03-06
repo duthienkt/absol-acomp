@@ -169,6 +169,9 @@ import './css/resizebox.css';
 import './js/PreInput';
 import './css/preinput.css';
 
+import './css/hexasectionlabel.css';
+import './js/HexaSectionLabel';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 import Draggable from "./js/Draggable";
