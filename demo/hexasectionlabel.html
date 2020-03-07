@@ -26,14 +26,15 @@
 
 <body>
     <script class="viewable">
-        [12,14,16, 20, 30, 40].forEach(function (fontSize) {
+        [12,14,16, 20].forEach(function (fontSize) {
 
             absol._({
                 tag: 'hexasectionlabel',
                 style: {
                     fontSize: fontSize + 'px',
                     fontFamily:'"Helvetica Neue\", Arial',
-                    fontWeight:'bold'
+                    fontWeight:'bold',
+                    margin:'12px'
                 },
                 props: {
                     index: 2,

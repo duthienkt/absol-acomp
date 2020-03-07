@@ -8,6 +8,46 @@ var $ = Acore.$;
 var _g = Svg.ShareInstance._;
 var $g = Svg.ShareInstance.$;
 
+
+var Design = {
+    hexaHeight: 425,
+    textBoxHeight: 286,
+    textHeight: 96,
+    indextHeight: 110,
+    textBoxPaddingLeft: 127,
+    borderWidth: 38
+};
+
+var StyleSheet = {
+    '.as-hexa-section-label-text': {
+        height: Design.textBoxHeight / Design.textHeight + 'em',
+        'padding-left': Design.textBoxPaddingLeft / Design.textBoxHeight + 'em',
+        'line-height': Design.textBoxHeight / Design.textHeight + 'em'
+    },
+    '.as-hexa-section-label-index': {
+        'font-size': Design.indextHeight / Design.textHeight + 'em',
+        height: Design.hexaHeight / Design.indextHeight + 'em',
+        'line-height': Design.hexaHeight / Design.indextHeight + 'em',
+        width: ((Design.hexaHeight + Design.borderWidth) / Math.cos(Math.PI / 6)) / Design.indextHeight + 'em'
+    },
+
+};
+
+_({
+    tag: 'style',
+    id: 'hexa-section-label-style',
+    props: {
+        innerHTML: Object.keys(StyleSheet).map(function (key) {
+            var style = StyleSheet[key];
+            return key + ' {\n'
+                + Object.keys(style).map(function (propName) {
+                    return propName + ': ' + style[propName] + ';';
+                }).join('\n')
+                + '}';
+        }).join('\n')
+    }
+}).addTo(document.head);
+
 function HexaSectionLabel() {
     this.$background = $('.as-hexa-section-label-background', this);
     this.$index = $('.as-hexa-section-label-index', this);
@@ -44,7 +84,8 @@ HexaSectionLabel.prototype.redrawBackground = function () {
         viewBox: [0, 0, cWidth, cHeight].join(' ')
     });
 
-    var radius = (cHeight / Math.cos(Math.PI / 6) / 2) * 0.8;
+    var borderWidth = cHeight * Design.borderWidth / Design.hexaHeight;
+    var radius = (cHeight / Math.cos(Math.PI / 6) / 2) - borderWidth / 2;
     var x0 = indexBound.width / 2;
     var y0 = cHeight / 2;
 
@@ -59,11 +100,12 @@ HexaSectionLabel.prototype.redrawBackground = function () {
             strokeWidth: cHeight / 11 + ''
         });
     var skewX = 18 / 45;
+    var textBoxHeight = textBound.height;
     this.$textBox.attr('d', [
-        [x0, cHeight / 6],
-        [cWidth - 1, cHeight / 6],
-        [cWidth - 1 - cHeight * skewX * 2 / 3, cHeight - cHeight / 6],
-        [x0, cHeight - cHeight / 6],
+        [x0, (cHeight - textBoxHeight)/2],
+        [cWidth - 1, (cHeight - textBoxHeight) / 2],
+        [cWidth - 1 - textBoxHeight * skewX, (cHeight - textBoxHeight) / 2 + textBoxHeight],
+        [x0, (cHeight - textBoxHeight) / 2 + textBoxHeight],
     ].map(function (point, i) { return (i == 0 ? 'M' : 'L') + point.join(' ') }).join(' ') + 'Z')
 
 
