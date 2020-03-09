@@ -21,7 +21,7 @@ var Design = {
 var StyleSheet = {
     '.as-hexa-section-label-text': {
         height: Design.textBoxHeight / Design.textHeight + 'em',
-        'padding-left': Design.textBoxPaddingLeft / Design.textBoxHeight + 'em',
+        'padding-left': Design.textBoxPaddingLeft / Design.textHeight + 'em',
         'line-height': Design.textBoxHeight / Design.textHeight + 'em'
     },
     '.as-hexa-section-label-index': {
@@ -97,12 +97,12 @@ HexaSectionLabel.prototype.redrawBackground = function () {
         return (i == 0 ? 'M' : 'L') + x + ' ' + y;
     }).join(' ') + 'Z')
         .addStyle({
-            strokeWidth: cHeight / 11 + ''
+            strokeWidth: borderWidth + ''
         });
     var skewX = 18 / 45;
     var textBoxHeight = textBound.height;
     this.$textBox.attr('d', [
-        [x0, (cHeight - textBoxHeight)/2],
+        [x0, (cHeight - textBoxHeight) / 2],
         [cWidth - 1, (cHeight - textBoxHeight) / 2],
         [cWidth - 1 - textBoxHeight * skewX, (cHeight - textBoxHeight) / 2 + textBoxHeight],
         [x0, (cHeight - textBoxHeight) / 2 + textBoxHeight],
