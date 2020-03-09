@@ -14,9 +14,10 @@ var Design = {
     textHeight: 56,
     barHeight: 97,
     barBlockWidth: 79,
+    barBlockMargin: 19,
     valueTextHeight: 70,
-    valueStrokWidth: 5,
-    valueHeight: 89,
+    valueStrokeWidth: 5,
+    valueHeight: 99,
     valueWidth: 52,
     valueTripHeight: 32,
     height: 430,
@@ -30,7 +31,7 @@ var SyleSheet = {
     '.as-linear-color-value-text': {
         'font-size': Design.valueTextHeight / Design.textHeight + 'em'
     }
-}
+};
 
 
 buildCss(SyleSheet);
@@ -57,7 +58,6 @@ function LinearColorBar() {
         width: 0,
     });
     this.$attachhook.requestUpdateSize = this.redraw.bind(this);
-    this.$valueArrow = _g('path.as-linear-color-value-arrow').addTo(this.$background);
     this.$defs = _g('defs').addTo(this.$background);
 
     this.$gradient = _g('linearGradient#gradient_' + this._indent)
@@ -72,6 +72,9 @@ function LinearColorBar() {
             fill: 'url(#gradient_' + this._indent + ')'
         })
         .addTo(this.$background);
+    this.$splitLine = _g('path.as-linear-color-split-line').addTo(this.$background)
+    this.$valueArrow = _g('path.as-linear-color-value-arrow').addTo(this.$background);
+
     this.colorMapping = 'rainbow';
 }
 
@@ -79,20 +82,21 @@ LinearColorBar.prototype.redraw = function () {
     var bBound = this.getBoundingClientRect();
     var cWidth = bBound.width;
     var cHeight = bBound.height;
-    var fontSize = this.getFontSize();
-    var minTextBound = this.$minValueText.getBoundingClientRect();
     var maxTextBound = this.$maxValueText.getBoundingClientRect();
+    var valueTextBound = this.$valueText.getBoundingClientRect();
 
-    var minValueX = minTextBound.width / 2;
-    var maxValueX = Math.min(cWidth - maxTextBound.width / 2, minValueX + (cWidth - minValueX) / (1 + this._extendValue));
-    this.$valueText.addStyle('left', minValueX + this._value * (maxValueX - minValueX) + 'px');
+    var minValueX = 0;
+    var maxValueX = Math.min(cWidth - maxTextBound.width / 2 - Design.valueWidth, minValueX + (cWidth - Design.valueWidth - minValueX) / (1 + this._extendValue));
+    var extendX = maxValueX + (maxValueX - minValueX) * this._extendValue;
+    var valueX = minValueX + this._value * (maxValueX - minValueX);
+    this.$valueText.addStyle('left', valueX - valueTextBound.width / 2 + 'px');
     this.$maxValueText.addStyle('left', maxValueX - maxTextBound.width / 2 + 'px');
     var barY = Design.barY / Design.height * cHeight;
     var barHeight = Design.barHeight / Design.height * cHeight;
     this.$rect.attr({
         x: '' + minValueX,
         y: '' + barY,
-        width: maxValueX - minValueX + '',
+        width: extendX - minValueX + '',
         height: barHeight
     });
 
@@ -101,15 +105,42 @@ LinearColorBar.prototype.redraw = function () {
         width: cWidth + '',
         viewBox: [0, 0, cWidth, cHeight].join(' ')
     });
+
+    var valueWidth = Design.valueWidth / Design.height * cHeight;
+    var valueTripHeight = Design.valueTripHeight / Design.height * cHeight;
+    var valueHeight = Design.valueHeight / Design.height * cHeight;
+    this.$valueArrow
+        .addStyle('stroke-width', Design.valueStrokeWidth / Design.height * cHeight + '')
+        .attr('d', [
+            [
+                [valueX, barY],
+                [valueX - valueWidth / 2, barY - valueTripHeight],
+                [valueX - valueWidth / 2, barY - valueHeight],
+                [valueX + valueWidth / 2, barY - valueHeight],
+                [valueX + valueWidth / 2, barY - valueTripHeight]
+
+            ]
+        ].map(function (point, i) {
+            return (i == 0 ? 'M' : 'L') + point.join(' ')
+        }).join(' ') + 'Z');
+
+    var splitDist = (Design.barBlockWidth + Design.barBlockMargin) / Design.height * cHeight;
+    this.$splitLine.addStyle('stroke-width', Design.barBlockMargin / Design.height * cHeight + '')
+        .attr({
+            d: Array(Math.ceil((maxValueX - minValueX) / splitDist)).fill(0).map(function (u, i) {
+                return 'M' + (maxValueX - i * splitDist) + ' ' + (barY - 1) + 'v' + (barHeight + 2);
+            }).join(' ')
+        })
 };
 
 LinearColorBar.prototype._updateGradient = function () {
+    var barMax = 1 + this._extendValue;
     var gradientElt = this.$gradient.clearChild();
     this._colorMapping.forEach(function (it) {
         _g({
             tag: 'stop',
             attr: {
-                offset: it.value * 100 + '%'
+                offset: (it.value <= 1 ? it.value / barMax * 100 : 100) + '%'
             },
             style: {
                 'stop-color': it.color + '',
@@ -121,9 +152,38 @@ LinearColorBar.prototype._updateGradient = function () {
 
 
 LinearColorBar.prototype.BUILDIN_COLORS_RANGE = {
-    'rainbow': [{ value: 0, color: 'red' }, { value: 1, color: 'blue' }],
-    'rainbow-invert': [],
-    'red-green': []
+    'rainbow': [
+        { value: 0, color: 'red' },
+        { value: 1 / 6, color: 'orange' },
+        { value: 1 / 3, color: 'yellow' },
+        { value: 1 / 2, color: 'green' },
+        { value: 2 / 3, color: 'blue' },
+        { value: 5 / 6, color: 'indigo' },
+        { value: 1, color: 'violet' },
+        { value: Infinity, color: 'violet' }
+    ],
+    'rainbow-invert': [
+        { value: 0, color: 'violet' },
+        { value: 1 / 6, color: 'indigo' },
+        { value: 1 / 3, color: 'blue' },
+        { value: 1 / 2, color: 'green' },
+        { value: 2 / 3, color: 'yellow' },
+        { value: 5 / 6, color: 'orange' },
+        { value: 1, color: 'red' },
+        { value: Infinity, color: 'violet' }
+    ],
+    'performance': [
+        { value: 0, color: 'red' },
+        { value: 0.5, color: 'orange' },
+        { value: 1, color: 'green' },
+        { value: Infinity, color: 'green' }
+    ],
+    'performance-invert': [
+        { value: 0, color: 'green' },
+        { value: 0.5, color: 'orange' },
+        { value: 1, color: 'red' },
+        { value: Infinity, color: 'red' }
+    ]
 }
 
 
@@ -183,11 +243,24 @@ LinearColorBar.property.value = {
     }
 };
 
+LinearColorBar.property.extendValue = {
+    set: function (value) {
+        this._extendValue = value;
+        this._updateGradient();
+    },
+    get: function () {
+        return this._extendValue;
+    }
+};
+
 
 LinearColorBar.property.colorMapping = {
     set: function (value) {
         if (typeof (value) == "string") value = this.BUILDIN_COLORS_RANGE[value];
-        this._colorMapping = value;
+        this._colorMapping = value.slice();
+        this._colorMapping.sort(function (a, b) {
+            return a.value - b.value;
+        })
         this._updateGradient();
     },
     get: function () {

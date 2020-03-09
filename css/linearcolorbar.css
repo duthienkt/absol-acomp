@@ -15,19 +15,34 @@
 .as-linear-color-value-text {
     position: absolute;
     top: 0;
+    font-weight: 900;
+    white-space: nowrap;
 }
 
 .as-linear-color-min-value-text,
 .as-linear-color-max-value-text {
     position: absolute;
     bottom: 0;
+    white-space: nowrap;
+    font-weight: bold;
 }
+
 
 
 .as-linear-color-min-value-text {
     left: 0;
 }
 
-.as-linear-color-rect{
+.as-linear-color-rect {
     stroke: none;
+}
+
+
+.as-linear-color-value-arrow {
+    fill: rgb(244, 124, 32);
+    stroke: rgb(244, 124, 32);
+}
+
+.as-linear-color-split-line {
+    stroke: white;
 }
