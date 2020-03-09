@@ -1,0 +1,33 @@
+.as-linear-color-bar {
+    position: relative;
+    height: 2em;
+}
+
+.as-linear-color-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+}
+
+.as-linear-color-value-text {
+    position: absolute;
+    top: 0;
+}
+
+.as-linear-color-min-value-text,
+.as-linear-color-max-value-text {
+    position: absolute;
+    bottom: 0;
+}
+
+
+.as-linear-color-min-value-text {
+    left: 0;
+}
+
+.as-linear-color-rect{
+    stroke: none;
+}

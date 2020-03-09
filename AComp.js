@@ -172,6 +172,9 @@ import './css/preinput.css';
 import './css/hexasectionlabel.css';
 import './js/HexaSectionLabel';
 
+import './css/linearcolorbar.css';
+import './js/LinearColorBar';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 import Draggable from "./js/Draggable";

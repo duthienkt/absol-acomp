@@ -1,3 +1,5 @@
+import Acore from "../ACore";
+
 export function insertTextAtCursor(text) {
     var sel, range;
     if (window.getSelection) {
@@ -90,4 +92,21 @@ export function preventNotNumberInput(elt) {
             else event.preventDefault();
         }
     });
+}
+
+
+export function buildCss(StyleSheet) {
+    Acore._({
+        tag: 'style',
+        props: {
+            innerHTML: Object.keys(StyleSheet).map(function (key) {
+                var style = StyleSheet[key];
+                return key + ' {\n'
+                    + Object.keys(style).map(function (propName) {
+                        return propName + ': ' + style[propName] + ';';
+                    }).join('\n')
+                    + '}';
+            }).join('\n')
+        }
+    }).addTo(document.head);
 }
