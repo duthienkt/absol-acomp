@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Circle Section Label</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <style>
+        .dark.bg {
+            background-color: rgba(30, 30, 32, 1);
+            /* background-color: white; */
+
+        }
+
+        .bg {
+            padding-top: 10em;
+            padding-bottom: 10em;
+            border: solid 1px rgb(30, 30, 32);
+        }
+    </style>
+</head>
+
+<body>
+    <script class="viewable">
+        [12, 14, 16, 20].forEach(function (fontSize) {
+
+            absol._({
+                tag: 'circlesectionlabel',
+                style: {
+                    fontSize: fontSize + 'px',
+                    fontFamily: '"Helvetica Neue\", Arial',
+                    fontWeight: 'bold',
+                    margin: '12px'
+                },
+                props: {
+                    index: 2,
+                    text: 'Quy trình đánh giá năng lực',
+                }
+            }).addTo(document.body);
+
+        });
+    </script>
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>

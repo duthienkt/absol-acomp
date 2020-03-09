@@ -172,6 +172,9 @@ import './css/preinput.css';
 import './css/hexasectionlabel.css';
 import './js/HexaSectionLabel';
 
+import './css/circlesectionlabel.css';
+import './js/CircleSectionLabel';
+
 import './css/linearcolorbar.css';
 import './js/LinearColorBar';
 
