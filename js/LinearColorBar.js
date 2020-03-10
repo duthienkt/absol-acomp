@@ -83,11 +83,15 @@ LinearColorBar.prototype.redraw = function () {
     var cWidth = bBound.width;
     var cHeight = bBound.height;
     var maxTextBound = this.$maxValueText.getBoundingClientRect();
+    var minTextBound = this.$minValueText.getBoundingClientRect();
     var valueTextBound = this.$valueText.getBoundingClientRect();
 
-    var minValueX = 0;
-    var maxValueX = Math.min(cWidth - maxTextBound.width / 2 - Design.valueWidth, minValueX + (cWidth - Design.valueWidth - minValueX) / (1 + this._extendValue));
-    var extendX = maxValueX + (maxValueX - minValueX) * this._extendValue;
+    var valueWidth = Design.valueWidth / Design.height * cHeight;
+    var minValueX = valueWidth / 1.5;
+    this.$minValueText.addStyle('left', Math.max((minValueX - minTextBound.width) / 2, 0) + 'px');
+
+    var maxValueX = (cWidth - Design.valueWidth) / (1 + this._extendValue);
+    var extendX = cWidth - valueWidth / 1.5;
     var valueX = minValueX + this._value * (maxValueX - minValueX);
     this.$valueText.addStyle('left', valueX - valueTextBound.width / 2 + 'px');
     this.$maxValueText.addStyle('left', maxValueX - maxTextBound.width / 2 + 'px');
@@ -106,7 +110,6 @@ LinearColorBar.prototype.redraw = function () {
         viewBox: [0, 0, cWidth, cHeight].join(' ')
     });
 
-    var valueWidth = Design.valueWidth / Design.height * cHeight;
     var valueTripHeight = Design.valueTripHeight / Design.height * cHeight;
     var valueHeight = Design.valueHeight / Design.height * cHeight;
     this.$valueArrow
