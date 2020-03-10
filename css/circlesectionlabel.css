@@ -26,6 +26,18 @@
     z-index: 2;
 }
 
+
+@media print {
+    .as-circle-section-label-text {
+        color: white !important;
+    }
+
+    .as-circle-section-label-index {
+        color: rgb(30, 162, 245) !important;
+    }
+}
+
+
 .as-circle-section-label-background {
     position: absolute;
     top: 0;

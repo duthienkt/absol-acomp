@@ -1,6 +1,7 @@
 .as-hexa-section-label {
     position: relative;
-    -webkit-print-color-adjust: exact;/*friendly print*/
+    -webkit-print-color-adjust: exact;
+    /*friendly print*/
 }
 
 .as-hexa-section-label-text {
@@ -12,6 +13,16 @@
     color: white;
     font-weight: bold;
     z-index: 2;
+}
+
+@media print {
+    .as-hexa-section-label-text {
+        color: white !important;
+    }
+
+    .as-hexa-section-label-index {
+        color: rgb(237, 147, 54) !important;
+    }
 }
 
 
