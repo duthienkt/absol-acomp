@@ -4,21 +4,25 @@
 }
 
 .as-hexa-section-label-text {
+    position: relative;
     display: inline-block;
     vertical-align: middle;
     font-size: 1em;
     padding-right: 2.5em;
     color: white;
     font-weight: bold;
+    z-index: 2;
 }
 
 
 .as-hexa-section-label-index {
+    position: relative;
     display: inline-block;
     vertical-align: middle;
     text-align: center;
     color: rgb(237, 147, 54);
     font-weight: 900;
+    z-index: 2;
 }
 
 .as-hexa-section-label-background {
@@ -26,7 +30,7 @@
     top: 0;
     left: 0;
     bottom: 0;
-    z-index: -1;
+    z-index: 1;
 }
 
 .as-hexa-section-label-background>svg {
