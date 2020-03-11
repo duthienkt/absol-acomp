@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Hexa Section Label</title>
+    <title>LinearColorBar</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
@@ -26,12 +26,13 @@
 
 <body>
     <script class="viewable">
+        {
             absol._({
                 tag: 'linearcolorbar',
                 style: {
                     fontSize: 12 + 'px',
-                    fontFamily:'"Helvetica Neue\", Arial',
-                    margin:'12px',
+                    fontFamily: '"Helvetica Neue\", Arial',
+                    margin: '12px',
                     width: '80vw'
                 },
                 props: {
@@ -40,7 +41,7 @@
                     minValueText: '0%',
                     maxValueText: '100%',
                     valueText: '70%',
-                    colorMapping:'performance'
+                    colorMapping: 'performance'
                 }
             }).addTo(document.body);
 
@@ -48,9 +49,9 @@
                 tag: 'linearcolorbar',
                 style: {
                     fontSize: 12 + 'px',
-                    fontFamily:'"Helvetica Neue\", Arial',
-                    margin:'12px',
-                    width: '80vw'
+                    fontFamily: '"Helvetica Neue\", Arial',
+                    margin: '12px',
+                    width: '50vw'
                 },
                 props: {
                     value: 1.2,
@@ -58,7 +59,7 @@
                     minValueText: '0%',
                     maxValueText: '100%',
                     valueText: '150%',
-                    colorMapping:'performance'
+                    colorMapping: 'performance'
                 }
             }).addTo(document.body);
 
@@ -66,9 +67,9 @@
                 tag: 'linearcolorbar',
                 style: {
                     fontSize: 12 + 'px',
-                    fontFamily:'"Helvetica Neue\", Arial',
-                    margin:'12px',
-                    width: '80vw'
+                    fontFamily: '"Helvetica Neue\", Arial',
+                    margin: '12px',
+                    width: '30vw'
                 },
                 props: {
                     value: 1.3,
@@ -76,16 +77,16 @@
                     minValueText: 'An toàn',
                     maxValueText: 'Nguy hiểm',
                     valueText: 'Rất nguy hiểm',
-                    colorMapping:'performance-invert'
+                    colorMapping: 'performance-invert'
                 }
             }).addTo(document.body);
 
             absol._({
                 tag: 'linearcolorbar',
                 style: {
-                    fontSize: 12 + 'px',
-                    fontFamily:'"Helvetica Neue\", Arial',
-                    margin:'12px',
+                    fontSize: 24 + 'px',
+                    fontFamily: '"Helvetica Neue\", Arial',
+                    margin: '12px',
                     width: '80vw'
                 },
                 props: {
@@ -94,17 +95,17 @@
                     minValueText: '0%',
                     maxValueText: '100%',
                     valueText: '150%',
-                    colorMapping:'rainbow'
+                    colorMapping: 'rainbow'
                 }
             }).addTo(document.body);
 
             absol._({
                 tag: 'linearcolorbar',
                 style: {
-                    fontSize: 12 + 'px',
-                    fontFamily:'"Helvetica Neue\", Arial',
-                    margin:'12px',
-                    width: '80vw'
+                    fontSize: 8 + 'px',
+                    fontFamily: '"Helvetica Neue\", Arial',
+                    margin: '12px',
+                    width: '30vw'
                 },
                 props: {
                     value: 0.52,
@@ -112,9 +113,10 @@
                     minValueText: '0%',
                     maxValueText: '100%',
                     valueText: '52%',
-                    colorMapping:'rainbow-invert'
+                    colorMapping: 'rainbow-invert'
                 }
             }).addTo(document.body);
+        }
     </script>
     <script src="./autohightlighting.js?"></script>
 

@@ -127,10 +127,21 @@ LinearColorBar.prototype.redraw = function () {
             return (i == 0 ? 'M' : 'L') + point.join(' ')
         }).join(' ') + 'Z');
 
-    var splitDist = (Design.barBlockWidth + Design.barBlockMargin) / Design.height * cHeight;
+    var splitDistMin = (Design.barBlockWidth + Design.barBlockMargin) / Design.height * cHeight;
+    var splitCounts = [100, 50, 20, 10, 5, 2, 1];
+    var splitDist = maxValueX - minValueX;
+    var splitCount = 1;
+    for (var i = 0; i < splitCounts.length; ++i) {
+        splitDist = (maxValueX - minValueX) / splitCounts[i];
+        if (splitDist >= splitDistMin) {
+            splitCount =  splitCounts[i];
+            break;
+        }
+    }
+
     this.$splitLine.addStyle('stroke-width', Design.barBlockMargin / Design.height * cHeight + '')
         .attr({
-            d: Array(Math.ceil((maxValueX - minValueX) / splitDist)).fill(0).map(function (u, i) {
+            d: Array(splitCount + 1).fill(0).map(function (u, i) {
                 return 'M' + (maxValueX - i * splitDist) + ' ' + (barY - 1) + 'v' + (barHeight + 2);
             }).join(' ')
         })
