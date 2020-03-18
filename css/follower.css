@@ -1,14 +1,4 @@
 .absol-follower{
-    position: relative;
-}
-
-.absol-follower-content-container{
-    position: absolute;
-    left: -10000px;
-    top: -10000px;
-    z-index: -1000;
-}
-
-.absol-follower.following .absol-follower-content-container{
+    position: fixed;
     z-index: 100;
 }
