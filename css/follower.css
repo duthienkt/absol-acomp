@@ -1,4 +1,10 @@
-.absol-follower{
+.absol-follower {
     position: fixed;
     z-index: 100;
+}
+
+.absol-follower-hidden{
+    z-index: -1000 !important;
+    opacity: 0;
+    visibility: hidden;
 }
