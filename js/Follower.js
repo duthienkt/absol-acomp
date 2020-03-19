@@ -12,10 +12,10 @@ function Follower() {
     this.$attachHook = _('attachhook', this)
         .addTo(this)
         .on('error', function () {
-            this.updatePosition();
+            this.requestUpdateSize();
             Dom.addToResizeSystem(this);
         });
-    this.$attachHook.updatePosition = this.updatePosition.bind(this);
+    this.$attachHook.requestUpdateSize = this.updatePosition.bind(this);
 
     this.$followTarget = undefined;
     this.$scrollTrackElts = [];
@@ -108,6 +108,7 @@ Follower.prototype.updatePosition = function () {
 
 Follower.prototype.refollow = function () {
     if (!this.$followTarget) return;
+    this.updatePosition();
     this.addClass('following');
 
     if (this._scrollTrackEventHandler) this.unfollow();
@@ -166,7 +167,6 @@ Follower.property.followTarget = {
             this.$followTarget = elt;
             this._lastAncho = undefined;
             this.refollow();
-            this.updatePosition();
         }
         else throw new Error("Invalid element");
     },
