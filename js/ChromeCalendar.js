@@ -10,7 +10,60 @@ var $ = Acore.$;
 
 
 function ChromeCalendar() {
-    var res = _({
+    var thisCal = this; 
+    this.$title = $('.absol-chrome-calendar-title', this)
+        .on('click', function () {
+            thisCal.viewYear();
+        });
+    this.$titleTime = $('.absol-chrome-calendar-title > .title-time', this);
+
+    this.$instance = $('.absol-chrome-calendar-instance', this);
+
+    this.$month = $('.absol-chrome-calendar-month', this);
+    this._minLimitDate = new Date(1890, 0, 1, 0, 0, 0, 0, 0);
+    this._maxLimitDate = new Date(2090, 0, 1, 0, 0, 0, 0, 0);
+
+    this._selectedDates = [datetime.beginOfDay(new Date())];
+    this._viewDate = new Date();
+
+    this.$prevBtn = $('.absol-chrome-calendar-header-buttons > button.prev-btn', this)
+        .on('click', function () {
+            thisCal.viewPrevMonth();
+        });
+    this.$todayBtn = $('.absol-chrome-calendar-header-buttons > button.today-btn', this)
+        .on('click', function () {
+            thisCal.viewToday();
+            thisCal.pickDate(new Date());
+        });
+    this.$nextBtn = $('.absol-chrome-calendar-header-buttons > button.next-btn', this)
+        .on('click', function () {
+            thisCal.viewNexMounth();
+        });
+
+    this.$yearScroller = $('vscroller.absol-chrome-calendar-years', this);
+    this.$yearItems = [];
+
+    $('.absol-chrome-calendar-year', this.$yearScroller, function (e) {
+        thisCal.$yearItems.push(e);
+    });
+
+    this.$attachHook = _('attachhook').addTo(this)
+        .on('error', function () {
+            thisCal.$yearScroller.requestUpdateSize();
+            thisCal.expandYear(thisCal._viewDate.getFullYear());
+        });
+
+    this.sync = new Promise(function (rs) {
+        thisCal.$attachHook.on('error', rs);
+    });
+
+    return this;
+}
+
+
+
+ChromeCalendar.render = function () {
+    return _({
         class: 'absol-chrome-calendar',
         extendEvent: 'pick',
         child: [
@@ -120,55 +173,8 @@ function ChromeCalendar() {
         ]
     });
 
-
-    res.$title = $('.absol-chrome-calendar-title', res)
-        .on('click', function () {
-            res.viewYear();
-        });
-    res.$titleTime = $('.absol-chrome-calendar-title > .title-time', res);
-
-    res.$instance = $('.absol-chrome-calendar-instance', res);
-
-    res.$month = $('.absol-chrome-calendar-month', res);
-    res._minLimitDate = new Date(1890, 0, 1, 0, 0, 0, 0, 0);
-    res._maxLimitDate = new Date(2090, 0, 1, 0, 0, 0, 0, 0);
-
-    res._selectedDates = [datetime.beginOfDay(new Date())];
-    res._viewDate = new Date();
-
-    res.$prevBtn = $('.absol-chrome-calendar-header-buttons > button.prev-btn', res)
-        .on('click', function () {
-            res.viewPrevMonth();
-        });
-    res.$todayBtn = $('.absol-chrome-calendar-header-buttons > button.today-btn', res)
-        .on('click', function () {
-            res.viewToday();
-            res.pickDate(new Date());
-        });
-    res.$nextBtn = $('.absol-chrome-calendar-header-buttons > button.next-btn', res)
-        .on('click', function () {
-            res.viewNexMounth();
-        });
-
-    res.$yearScroller = $('vscroller.absol-chrome-calendar-years', res);
-    res.$yearItems = [];
-
-    $('.absol-chrome-calendar-year', res.$yearScroller, function (e) {
-        res.$yearItems.push(e);
-    })
-
-    res.$attachHook = _('attachhook').addTo(res).on('error', function () {
-        // res.updateSize();
-        res.$yearScroller.requestUpdateSize();
-        res.expandYear(res._viewDate.getFullYear());
-    });
-
-    res.sync = new Promise(function (rs) {
-        res.$attachHook.on('error', rs);
-    });
-
-    return res;
 }
+
 
 
 /**
@@ -648,7 +654,7 @@ ChromeCalendar._listener = undefined;
 
 ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calendarPickListener, darkTheme) {
     var res = {
-        calendarProps: calendarProps,
+        calendarProps: Object.assign({ maxDateLimit: null, minDateLimit: null }, calendarProps),
         anchor: anchor,
         currentSession: undefined,
         element: element,
@@ -708,7 +714,7 @@ ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickList
                     }
                 }).addTo(ChromeCalendar.$follower);
         }
-        
+
         ChromeCalendar.$ctn.addTo(document.body);
         // only one value need
         if (calendarProps instanceof Date) calendarProps = { selectedDates: [calendarProps] };
