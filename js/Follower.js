@@ -9,40 +9,36 @@ var $ = Acore.$;
 
 
 function Follower() {
-    var res = _({
-        class: 'absol-follower',
-        child: ['.absol-follower-content-container', 'attachhook'],
-    });
-    res.$attachHook = $('attachhook', res)
+    this.$attachHook = _('attachhook', this)
+        .addTo(this)
         .on('error', function () {
-            res.updatePosition();
-            this.updateSize = this.updateSize || res.updatePosition.bind(this);
-
-            Dom.addToResizeSystem(res);
+            this.requestUpdateSize();
+            Dom.addToResizeSystem(this);
         });
-    res.$contentCtn = $('.absol-follower-content-container', res);
+    this.$attachHook.requestUpdateSize = this.updatePosition.bind(this);
 
-    res.$followTarget = undefined;
-    res.$scrollTrackElts = [];
-    res._scrollTrackEventHandler = undefined;
-    res._anchor = Follower.ANCHOR_PRIORITY;
+    this.$followTarget = undefined;
+    this.$scrollTrackElts = [];
+    this._scrollTrackEventHandler = undefined;
+    this._anchor = Follower.ANCHOR_PRIORITY;
 
-    return res;
 }
 
-['addChild', 'addChildBefore', 'addChildAfter', 'clearChild'].forEach(function (key) {
-    Follower.prototype[key] = function () {
-        this.$contentCtn[key].apply(this.$contentCtn, arguments);
-        return this;
-    }
-});
+Follower.render = function () {
+    return _('.absol-follower');
+};
 
-['findChildBefore', 'findChildAfter'].forEach(function (key) {
-    Follower.prototype[key] = function () {
-        return this.$contentCtn[key].apply(this.$contentCtn, arguments);
-    }
-});
 
+Follower.prototype.clearChild = function () {
+    var children = Array.prototype.slice.call(this.children);
+    var attachhookElt = this.$attachHook;
+    children.forEach(function (elt) {
+        if (elt != attachhookElt)
+            elt.remove();
+    });
+}
+
+//Todo: remove child, find child....
 
 /**
  * X = $target.x + F[anchor_index][0] * $target.width + F[anchor_index][1] * $content.width 
@@ -74,9 +70,9 @@ Follower.ANCHOR_PRIORITY = [1, 6, 2, 5, 0, 7, 3, 4, 9, 11, 8, 10, 12, 15, 13, 14
 
 Follower.prototype.updatePosition = function () {
     if (!this.$followTarget) return;
-    var contentCtnBound = this.$contentCtn.getBoundingClientRect();
     var targetBound = this.$followTarget.getBoundingClientRect();
-    var outRect = Rectangle.fromClientRect(Dom.traceOutBoundingClientRect(this));
+    var screenSize = Dom.getScreenSize();
+    var outRect = new Rectangle(0, 0, screenSize.width, screenSize.height);
     var bound = this.getBoundingClientRect();
     var x = 0;
     var y = 0;
@@ -88,9 +84,9 @@ Follower.prototype.updatePosition = function () {
     var bestAnchor;
     for (var i = 0; i < anchors.length; ++i) {
         factor = Follower.ANCHOR_FACTORS[anchors[i]];
-        x = targetBound.left + factor[0] * targetBound.width + factor[1] * contentCtnBound.width;
-        y = targetBound.top + factor[2] * targetBound.height + factor[3] * contentCtnBound.height;
-        newContentRect = new Rectangle(x, y, contentCtnBound.width, contentCtnBound.height);
+        x = targetBound.left + factor[0] * targetBound.width + factor[1] * bound.width;
+        y = targetBound.top + factor[2] * targetBound.height + factor[3] * bound.height;
+        newContentRect = new Rectangle(x, y, bound.width, bound.height);
         score = newContentRect.collapsedSquare(outRect);
         if (score - 10 > bestScore) {
             bestAnchor = anchors[i];
@@ -101,9 +97,8 @@ Follower.prototype.updatePosition = function () {
     }
 
     this._lastAnchor = bestAnchor;
-    bestX -= bound.left;
-    bestY -= bound.top;
-    this.$contentCtn.addStyle({
+  
+    this.addStyle({
         left: bestX + 'px',
         top: bestY + 'px'
     });
@@ -113,6 +108,7 @@ Follower.prototype.updatePosition = function () {
 
 Follower.prototype.refollow = function () {
     if (!this.$followTarget) return;
+    this.updatePosition();
     this.addClass('following');
 
     if (this._scrollTrackEventHandler) this.unfollow();
@@ -171,7 +167,6 @@ Follower.property.followTarget = {
             this.$followTarget = elt;
             this._lastAncho = undefined;
             this.refollow();
-            this.updatePosition();
         }
         else throw new Error("Invalid element");
     },

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <link rel="stylesheet" href="https://absol.cf/css/materialdesignicons/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <script src="../dist/absol-acomp.js?"></script>
+    <script>
+        var $ = absol.$;
+        var _ = absol._;
+    </script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div class="demo">
+
+
+    </div>
+
+    <script class="viewable">
+        var mDemoDiv = absol.$('.demo');
+
+        var mTrigger = absol._({
+            tag: 'button',
+            child: { text: 'Open' }
+        }).addTo(mDemoDiv);
+
+        var mFollower = absol._({
+            tag: 'follower',
+            style: {
+                //zIndex: thay đổi nếu bị che,
+                //tùy chọn style
+                background: 'white'
+            },
+            child: [{
+                tag: 'img',
+                attr: {
+                    src: 'https://upload.wikimedia.org/wikipedia/commons/4/49/Star_empty.svg'
+                }
+            },
+            {
+                tag: 'button',
+                child: { text: 'X' },
+                on: {
+                    click: function () {
+                        mFollowerTrigger.close();
+                    }
+                }
+            }
+            ]
+        }).addTo(mDemoDiv);
+
+        var mFollowerTrigger = _({
+            elt: mTrigger,//thêm chức năng cho mTrigger,
+            tag: 'followertoggler',
+            on: {
+                close: function () {
+                    mTrigger.clearChild().addChild(absol._({ text: 'open' }));
+
+                },
+                open: function () {
+                    mTrigger.clearChild().addChild(absol._({ text: 'Close' }))
+                },
+                preopen: function () {
+                    //hàm này gọi trước khi cửa sổ nhìn thấy 1ms
+                }
+            }
+        });//vẫn trả về mTrigger nhưng có thêm chức năng
+        mFollowerTrigger.bindFollower(mFollower);
+
+    </script>
+
+
+
+    <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>

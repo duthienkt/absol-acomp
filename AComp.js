@@ -87,6 +87,7 @@ import './js/WidthHeightSizer';
 
 
 import './js/Follower';
+import './js/FollowerToggler';
 import './css/follower.css';
 
 import './css/tooltip.css';
