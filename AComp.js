@@ -153,6 +153,9 @@ import './js/DraggableHStack';
 import './css/chromecalendar.css';
 import './js/ChromeCalendar';
 
+import './css/timepicker.css';
+import './js/TimePicker';
+
 import './css/calendarinput.css';
 import './js/CalendarInput';
 

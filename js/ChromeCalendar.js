@@ -10,7 +10,30 @@ var $ = Acore.$;
 
 
 function ChromeCalendar() {
-    var thisCal = this; 
+    var thisCal = this;
+    this.$years = $('.absol-chrome-calendar-years', this);
+    _({
+        child: Array(200).fill(0).map(function (u, i) {
+            return {
+                class: 'absol-chrome-calendar-year',
+                child: [
+                    {
+                        class: 'absol-chrome-calendar-year-head',
+                        child: { text: i + 1890 + '' },
+                    }
+                ],
+                props: {
+                    __year__: i + 1890
+                },
+                on: {
+                    click: function () {
+
+                        thisCal.expandYear(this.__year__);
+                    }
+                }
+            };
+        })
+    }).addTo(this.$years);
     this.$title = $('.absol-chrome-calendar-title', this)
         .on('click', function () {
             thisCal.viewYear();
@@ -146,26 +169,7 @@ ChromeCalendar.render = function () {
                         tag: 'vscroller',
                         class: 'absol-chrome-calendar-years',
                         child: {
-                            child: Array(200).fill(0).map(function (u, i) {
-                                return {
-                                    class: 'absol-chrome-calendar-year',
-                                    child: [
-                                        {
-                                            class: 'absol-chrome-calendar-year-head',
-                                            child: { text: i + 1890 + '' },
-                                        }
-                                    ],
-                                    props: {
-                                        __year__: i + 1890
-                                    },
-                                    on: {
-                                        click: function () {
 
-                                            res.expandYear(this.__year__);
-                                        }
-                                    }
-                                };
-                            })
                         }
                     }
                 ]

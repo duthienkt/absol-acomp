@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TimePicker</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <style>
+        .dark.bg {
+            background-color: rgba(30, 30, 32, 1);
+            /* background-color: white; */
+            color: white;
+
+        }
+
+        .bg {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border: solid 1px rgb(30, 30, 32);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>TimePicker</h1>
+
+    <div class="absol-bscroller" style="height: 300px;">
+    </div>
+
+    <script class="viewable">
+        var _ = absol._;
+        var $ = absol.$;
+        var scroller = $('.absol-bscroller');
+        _({
+            tag: 'timepicker',
+            props: {
+                minute:0,
+               hour:0
+            }
+        }).addTo(scroller);
+    </script>
+
+
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>

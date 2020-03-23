@@ -1,0 +1,81 @@
+.ac-time-picker {
+    /*like chrome-calender*/
+    display: inline-block;
+    font-family: Arial;
+    font-size: 14px;
+    padding: 0.6em;
+    border: solid 1px rgb(191, 191, 191);
+    box-shadow: 1px 1px 2px rgb(240, 240, 240);
+    z-index: 100;
+    touch-action: manipulation;
+    user-select: none;
+    background-color: rgb(255, 255, 255);
+    white-space: initial;
+}
+
+.ac-time-picker-header {
+    font-size: 2.8em;
+    text-align: center;
+}
+
+.ac-time-picker-header>span {
+    font-size: inherit;
+}
+
+.ac-time-picker-clock {
+    width: 12em;
+    height: 12em;
+}
+
+.ac-time-picker-clock-hour-pm {
+    fill: rgb(20, 20, 20);
+    font-size: 0.7em;
+}
+
+
+.ac-time-picker-clock-hour-am {
+    fill: black;
+    font-size: 0.8em;
+}
+
+.ac-time-picker-clock-minute {
+    fill: black;
+    font-size: 0.8em;
+}
+
+
+.ac-time-picker-clock-center,
+.ac-time-picker-clock-select-circle {
+    fill: rgb(115, 166, 248);
+}
+
+.ac-time-picker-clock-select-center {
+    fill: white;
+}
+
+.ac-time-picker-clock-select-line {
+    stroke-width: 1;
+    stroke: rgb(115, 166, 248);
+}
+
+
+.ac-time-picker-hour,
+.ac-time-picker-minute{
+   outline: none;
+}
+
+.ac-time-picker-edit-hour .ac-time-picker-hour,
+.ac-time-picker-edit-minute .ac-time-picker-minute
+{
+    color: rgb(62, 125, 189);
+}
+
+.ac-time-picker:not(.ac-time-picker-edit-hour) .ac-time-picker-clock-hour-ctn,
+.ac-time-picker:not(.ac-time-picker-edit-minute) .ac-time-picker-clock-minute-ctn
+{
+    visibility: hidden;
+}
+
+.ac-time-picker:not(.ac-time-picker-edit-hour):not(.ac-time-picker-edit-minute) .ac-time-picker-clock-select-ctn{
+    visibility: hidden;
+}
