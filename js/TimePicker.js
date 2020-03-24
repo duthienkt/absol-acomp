@@ -20,6 +20,8 @@ function TimePicker() {
     this._minute = 0;
     this._state = 'none';
     var thisPicker = this;
+    if (isTouchDevice)
+        this.addClass('ac-time-picker-touch');
     this.$attachook = _('attachhook').addTo(this).on('error', function () {
         Dom.addToResizeSystem(this);
         this.requestUpdateSize();
@@ -37,8 +39,10 @@ function TimePicker() {
         });
 
     //only support if is none touch device
-    this.$hour.attr('contenteditable', 'true');
-    this.$minute.attr('contenteditable', 'true');
+    if (!isTouchDevice) {
+        this.$hour.attr('contenteditable', 'true');
+        this.$minute.attr('contenteditable', 'true');
+    }
 
     this.$clock = $g('.ac-time-picker-clock', this)
         .on({
@@ -223,7 +227,30 @@ TimePicker.render = function () {
                         }
                     ]
                 }
-            )
+            ),
+            {
+                class: 'ac-time-picker-footer',
+                child: [
+                    {
+                        tag: 'button',
+                        class: 'ac-time-picker-keyboard-btn',
+                        child: 'span.mdi.mdi-keyboard-outline'
+                    },
+                    {
+                        class: 'ac-time-picker-footer-right',
+                        child: [
+                            {
+                                tag: 'button',
+                                child: { text: 'CANCEL' }
+                            },
+                            {
+                                tag: 'button',
+                                child: { text: 'OK' }
+                            }
+
+                        ]
+                    }]
+            }
         ]
     });
 };
@@ -339,6 +366,10 @@ TimePicker.eventHandler.keydownHour = function (event) {
         }
     } if (event.key == 'Enter') {
         event.preventDefault();
+        var hour = parseFloat(this.$hour.innerHTML) || 0;
+        if (hour < 0 || hour >= 24)
+            hour = this._preHour;
+        this.$hour.clearChild().addChild(_({ text: (hour < 10 ? '0' : '') + hour + '' }));
         this.$hour.blur();
         this.editMinute();
     }
@@ -358,6 +389,10 @@ TimePicker.eventHandler.keydownMinute = function (event) {
     }
     if (event.key == 'Enter') {
         event.preventDefault();
+        var minute = parseFloat(this.$minute.innerHTML) || 0;
+        if (minute < 0 || minute >= 60)
+            minute = this._preMinute
+        this.$minute.clearChild().addChild(_({ text: (minute < 10 ? '0' : '') + minute + '' }));
         this.$minute.blur();
     }
     else {
@@ -421,9 +456,8 @@ TimePicker.eventHandler.mousefinishClock = function () {
     document.body.removeEventListener('mousemove', this.eventHandler.mousemoveClock);
     document.body.removeEventListener('mouseup', this.eventHandler.mousefinishClock);
     document.body.removeEventListener('mouseleave', this.eventHandler.mousefinishClock);
+    if (this._state == 'EDIT_HOUR') this.editMinute();
 };
-
-
 
 
 Acore.install('timepicker', TimePicker);

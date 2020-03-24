@@ -84,3 +84,51 @@
     content: "0";
     display: inline;
 }
+
+.ac-time-picker-footer {
+    display: block;
+    position: relative;
+    min-height: 1.5em;
+}
+
+.ac-time-picker-footer-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.ac-time-picker-footer button {
+    font-size: 1em;
+    height: 1.5em;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+}
+
+.ac-time-picker-footer button:hover {
+    background-color: rgba(170, 170, 170, 0.3);
+}
+
+.ac-time-picker-footer>button {
+    margin-right: 1m;
+}
+
+.ac-time-picker-footer-right>button {
+    margin-left: 1em;
+}
+
+
+.ac-time-picker-footer button .mdi {
+    font-size: 1.3em;
+}
+
+
+.ac-time-picker:not(.ac-time-picker-touch) .ac-time-picker-keyboard-btn {
+    display: none;
+}
+
+/* keyboard-outline */
