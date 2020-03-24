@@ -16,6 +16,7 @@
 .ac-time-picker-header {
     font-size: 2.8em;
     text-align: center;
+    min-width: 4.28571428571em;
 }
 
 .ac-time-picker-header>span {
@@ -60,22 +61,26 @@
 
 
 .ac-time-picker-hour,
-.ac-time-picker-minute{
-   outline: none;
+.ac-time-picker-minute {
+    outline: none;
 }
 
 .ac-time-picker-edit-hour .ac-time-picker-hour,
-.ac-time-picker-edit-minute .ac-time-picker-minute
-{
+.ac-time-picker-edit-minute .ac-time-picker-minute {
     color: rgb(62, 125, 189);
 }
 
 .ac-time-picker:not(.ac-time-picker-edit-hour) .ac-time-picker-clock-hour-ctn,
-.ac-time-picker:not(.ac-time-picker-edit-minute) .ac-time-picker-clock-minute-ctn
-{
+.ac-time-picker:not(.ac-time-picker-edit-minute) .ac-time-picker-clock-minute-ctn {
     visibility: hidden;
 }
 
-.ac-time-picker:not(.ac-time-picker-edit-hour):not(.ac-time-picker-edit-minute) .ac-time-picker-clock-select-ctn{
-    visibility: hidden;
+.ac-time-picker:not(.ac-time-picker-edit-hour):not(.ac-time-picker-edit-minute) .ac-time-picker-clock {
+    display: none;
+}
+
+.ac-time-picker-hour:empty::before,
+.ac-time-picker-minute:empty::before {
+    content: "0";
+    display: inline;
 }
