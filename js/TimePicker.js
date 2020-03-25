@@ -179,7 +179,6 @@ TimePicker.prototype.updateSize = function () {
 };
 
 
-
 TimePicker.prototype.updateSelectPosition = function () {
     var angle, radius;
     if (this._state == "EDIT_MINUTE") {
@@ -200,6 +199,7 @@ TimePicker.prototype.updateSelectPosition = function () {
     }
     this._drawSelect(radius, angle);
 };
+
 
 TimePicker.prototype._drawSelect = function (radius, angle) {
     var x = radius * Math.cos(angle);
@@ -229,6 +229,7 @@ TimePicker.prototype.notifySizeChange = function () {
         this.emit('sizechange', { name: 'sizechange', bound: bound, target: this }, this);
     }
 };
+
 
 TimePicker.render = function () {
     return _({
@@ -391,6 +392,7 @@ TimePicker.prototype._editContent = function (elt) {
     }
 };
 
+
 TimePicker.prototype.editHour = function () {
     this._state = "EDIT_HOUR";
     this._preHour = this._hour;
@@ -402,7 +404,6 @@ TimePicker.prototype.editHour = function () {
     if (!isTouchDevice)
         setTimeout(this._editContent.bind(this, this.$hour), 2);
 };
-
 
 
 TimePicker.prototype.editMinute = function () {
@@ -435,6 +436,7 @@ TimePicker.prototype.editHourInput = function () {
     }, 1)
 };
 
+
 TimePicker.prototype.editMinuteInput = function () {
     var thisPicker = this;
     this._state = "EDIT_MINUTE_INPUT";
@@ -455,9 +457,11 @@ TimePicker.prototype.finishSelect = function () {
     this.emit('finish', { target: this, hour: this.hour, minute: this.minute, dayOffset: this.dayOffset, name: 'finish' }, this);
 };
 
+
 TimePicker.prototype.cancelSelect = function () {
     this.emit('cancel', { target: this, name: 'cancel' }, this);
 };
+
 
 TimePicker.eventHandler = {};
 
@@ -465,6 +469,7 @@ TimePicker.eventHandler.clickHour = function () {
     if (this._state != 'EDIT_HOUR') this.editHour();
     else this._editContent(this.$hour)
 };
+
 
 TimePicker.eventHandler.clickMinute = function () {
     if (this._state != 'EDIT_MINUTE') this.editMinute();
@@ -525,6 +530,7 @@ TimePicker.property.minute = {
     }
 };
 
+
 TimePicker.property.dayOffset = {
     set: function (value) {
         value = value || 0;
@@ -536,15 +542,16 @@ TimePicker.property.dayOffset = {
 
         this.hour = Math.floor(value / MILLIS_PER_HOUR);
         this.minute = Math.floor((value % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE);
-
     },
     get: function () {
         return this._hour * MILLIS_PER_HOUR + this._minute * MILLIS_PER_MINUTE;
     }
-}
+};
+
 
 TimePicker.prototype._showSelectByHourText = function () {
     var hour = parseFloat(this.$hour.innerHTML) || 0;
+    if (hour < 0 || hour >= 24) return;
     var radius;
     var angle = Math.PI * (hour - 3) / 6;
     if ((hour < 24 && hour > 12) || hour == 0) {
@@ -562,6 +569,7 @@ TimePicker.prototype._showSelectByHourText = function () {
 
 TimePicker.prototype._showSelectByMinuteText = function () {
     var minute = parseFloat(this.$minute.innerHTML) || 0;
+    if (minute < 0 || minute >= 60) return;
     var angle = Math.PI * (minute - 15) / 30;
     if (minute >= 0 && minute < 60) {
         this._drawSelect(this._clockRadius, angle);
@@ -570,14 +578,16 @@ TimePicker.prototype._showSelectByMinuteText = function () {
 
 
 TimePicker.eventHandler.keydownHour = function (event) {
-    if (event.key.length == 1) {
+    var thisPicker = this;
+    if (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey) {
         if (event.key.match(/[0-9]/)) {
             setTimeout(this._showSelectByHourText.bind(this), 1);
+            setTimeout(this.notifyChange.bind(this), 2);
         }
         else {
             event.preventDefault();
         }
-    } if (event.key == 'Enter') {
+    } else if (event.key == 'Enter') {
         event.preventDefault();
         var hour = parseFloat(this.$hour.innerHTML) || 0;
         if (hour < 0 || hour >= 24)
@@ -585,22 +595,41 @@ TimePicker.eventHandler.keydownHour = function (event) {
         this.hour = hour;
         this.$hour.blur();
         this.editMinute();
+        setTimeout(this._showSelectByHourText.bind(this), 1);
+        setTimeout(this.notifyChange.bind(this), 2);
     }
     else {
-        setTimeout(this._showSelectByHourText.bind(this), 1);
+        var cText = this.$hour.innerHTML;
+        setTimeout(function () {
+            var newText = thisPicker.$hour.innerHTML;
+            console.log(cText, newText);
+            if (cText != newText) {
+                var hour = parseFloat(newText) || 0;
+                if (hour < 0 || hour >= 24)
+                    hour = thisPicker._preHour;
+                thisPicker.hour = hour;
+                thisPicker.$hour.blur();
+                thisPicker.editMinute();
+                thisPicker._showSelectByHourText();
+                thisPicker.notifyChange();
+            }
+        }, 1);
     }
-}
+};
+
 
 TimePicker.eventHandler.keydownMinute = function (event) {
-    if (event.key.length == 1) {
+    var thisPicker = this;
+    if (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey) {
         if (event.key.match(/[0-9]/)) {
             setTimeout(this._showSelectByMinuteText.bind(this), 1);
+            setTimeout(this.notifyChange.bind(this), 2);
         }
         else {
             event.preventDefault();
         }
     }
-    if (event.key == 'Enter') {
+    else if (event.key == 'Enter') {
         this.$minute.blur();
         event.preventDefault();
         var minute = parseFloat(this.$minute.innerHTML) || 0;
@@ -610,20 +639,33 @@ TimePicker.eventHandler.keydownMinute = function (event) {
         setTimeout(this.finishSelect.bind(this), 1);
     }
     else {
-        setTimeout(this._showSelectByMinuteText.bind(this), 1);
+        var cText = this.$minute.innerHTML;
+        setTimeout(function () {
+            var newText = thisPicker.$minute.innerHTML;
+            if (cText != newText) {
+                var minute = parseFloat(newText) || 0;
+                if (minute < 0 || minute >= 60)
+                    minute = thisPicker._preMinute;
+                thisPicker.minute = minute;
+                thisPicker._showSelectByMinuteText();
+                thisPicker.notifyChange();
+            }
+        }, 1);
     }
 };
 
 
 TimePicker.eventHandler.keydownHourInput = function (event) {
-    if (event.key.length == 1) {
+    var thisPicker = this;
+
+    if (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey) {
         if (event.key.match(/[0-9]/)) {
-            //todo
+            this.notifyChange();
         }
         else {
             event.preventDefault();
         }
-    } if (event.key == 'Enter') {
+    } else if (event.key == 'Enter') {
         event.preventDefault();
         var hour = parseFloat(this.$hourInput.value) || 0;
         if (hour < 0 || hour >= 24)
@@ -633,24 +675,34 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
         this.editMinuteInput();
     }
     else {
-        // setTimeout(this._showSelectByHourInputText.bind(this), 1);
-        //nothing to do
+        var cText = this.$hourInput.value;
+        setTimeout(function () {
+            var newText = thisPicker.$hourInput.value;
+            if (cText != newText) {
+                var hour = parseFloat(newText) || 0;
+                if (hour < 0 || hour >= 24)
+                    hour = thisPicker._preHour;
+                thisPicker.hour = hour;
+                thisPicker.$hourInput.blur();
+                thisPicker.editMinuteInput();
+                thisPicker.notifyChange();
+            }
+        }, 1);
     }
 };
 
 
-
-
 TimePicker.eventHandler.keydownMinuteInput = function (event) {
-    if (event.key.length == 1) {
+    var thisPicker = this;
+    if (event.key.length == 1 && !event.ctrlKey && !event.altKey) {
         if (event.key.match(/[0-9]/)) {
-            // setTimeout(this._showSelectByMinuteText.bind(this), 1);
+            this.notifyChange();
         }
         else {
             event.preventDefault();
         }
     }
-    if (event.key == 'Enter') {
+    else if (event.key == 'Enter') {
         this.$minute.blur();
         event.preventDefault();
         var minute = parseFloat(this.$minuteInput.value) || 0;
@@ -660,7 +712,19 @@ TimePicker.eventHandler.keydownMinuteInput = function (event) {
         setTimeout(this.finishSelect.bind(this), 1);
     }
     else {
-        // setTimeout(this._showSelectByMinuteText.bind(this), 1);
+        var cText = this.$minuteInput.value;
+        setTimeout(function () {
+            var newText = thisPicker.$minuteInput.value;
+            if (cText != newText) {
+                var minute = parseFloat(newText) || 0;
+                if (minute < 0 || minute >= 60)
+                    minute = thisPicker._preMinute;
+                thisPicker.minute = minute;
+                thisPicker.$minuteInput.focus();
+                thisPicker.$minuteInput.select();
+                thisPicker.notifyChange(this);
+            }
+        }, 1);
     }
 };
 
@@ -698,6 +762,7 @@ TimePicker.eventHandler.dragOnClock = function (event) {
         angle = index * (Math.PI / 30);
         var minute = (index + (60 + 15)) % 60;
         this.minute = minute;
+        this.notifyChange();
     }
     else {
         return;
