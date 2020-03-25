@@ -291,7 +291,7 @@ TimePicker.render = function () {
                                         tag: 'input',
                                         class: 'ac-time-picker-hour-input',
                                         attr: {
-                                            type: 'text',
+                                            type: 'number',
                                             placeHolder: '00'
                                         }
                                     },
@@ -303,7 +303,7 @@ TimePicker.render = function () {
                                         tag: 'input',
                                         class: 'ac-time-picker-minute-input',
                                         attr: {
-                                            type: 'text',
+                                            type: 'number',
                                             placeHolder: '00'
                                         }
                                     }
@@ -657,10 +657,12 @@ TimePicker.eventHandler.keydownMinute = function (event) {
 
 TimePicker.eventHandler.keydownHourInput = function (event) {
     var thisPicker = this;
-
-    if (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey) {
+    console.log(event);
+    
+    if ((isTouchDevice && event.key == "Unidentified") || (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey)) {
         if (event.key.match(/[0-9]/)) {
-            this.notifyChange();
+            setTimeout(this.notifyChange.bind(this), 2);
+
         }
         else {
             event.preventDefault();
@@ -674,7 +676,7 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
         this.$hourInput.blur();
         this.editMinuteInput();
     }
-    else {
+    else if (!event.key && !event.key.toLowerCase().match(/arrow|back/)){
         var cText = this.$hourInput.value;
         setTimeout(function () {
             var newText = thisPicker.$hourInput.value;
@@ -694,9 +696,10 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
 
 TimePicker.eventHandler.keydownMinuteInput = function (event) {
     var thisPicker = this;
-    if (event.key.length == 1 && !event.ctrlKey && !event.altKey) {
-        if (event.key.match(/[0-9]/)) {
-            this.notifyChange();
+    if ((isTouchDevice && event.key == "Unidentified") || event.key.length == 1 && !event.ctrlKey && !event.altKey) {
+        if ((isTouchDevice && event.key == "Unidentified") || event.key.match(/[0-9]/)) {
+            setTimeout(this.notifyChange.bind(this), 2);
+
         }
         else {
             event.preventDefault();
@@ -711,7 +714,7 @@ TimePicker.eventHandler.keydownMinuteInput = function (event) {
         this.minute = minute;
         setTimeout(this.finishSelect.bind(this), 1);
     }
-    else {
+    else if(event.key != 'Enter') {
         var cText = this.$minuteInput.value;
         setTimeout(function () {
             var newText = thisPicker.$minuteInput.value;
