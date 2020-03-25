@@ -18,7 +18,10 @@ var _g = Svg.ShareInstance._;
 function TimePicker() {
     this._hour = 0;
     this._minute = 0;
+    this._lastDayOffset = 0;
     this._state = 'none';
+    this._mode = 'CLOCK';
+    this._latBound = { width: 0, height: 0 };
     var thisPicker = this;
     if (isTouchDevice)
         this.addClass('ac-time-picker-touch');
@@ -38,6 +41,18 @@ function TimePicker() {
             keydown: this.eventHandler.keydownMinute
         });
 
+    this.$hourInput = $('.ac-time-picker-hour-input', this)
+        .on({
+            click: this.eventHandler.clickHourInput,
+            keydown: this.eventHandler.keydownHourInput
+        });
+
+    this.$minuteInput = $('.ac-time-picker-minute-input', this)
+        .on({
+            click: this.eventHandler.clickMinuteInput,
+            keydown: this.eventHandler.keydownMinuteInput
+        })
+
     //only support if is none touch device
     if (!isTouchDevice) {
         this.$hour.attr('contenteditable', 'true');
@@ -45,9 +60,8 @@ function TimePicker() {
     }
 
     this.$clock = $g('.ac-time-picker-clock', this)
-        .on({
-            mousedown: this.eventHandler.mousedownClock
-        });
+        .on(isTouchDevice ? 'touchstart' : 'mousedown', this.eventHandler.mousedownClock
+        );
 
     this._clockWidth = 400;
     this._clockHeight = 400;
@@ -110,7 +124,13 @@ function TimePicker() {
         tag: 'circle',
         class: 'ac-time-picker-clock-select-center'
     }).addTo(this.$selectCtn);
-}
+    this.$finishBtn = $('.ac-time-picker-finish-btn', this)
+        .on('click', this.finishSelect.bind(this));
+    this.$keyboardBtn = $('.ac-time-picker-keyboard-btn', this)
+        .on('click', this.timeMode.bind(this));
+    this.$clockBtn = $('.ac-time-picker-clock-btn', this)
+        .on('click', this.clockMode.bind(this));
+};
 
 
 TimePicker.prototype.updateSize = function () {
@@ -155,6 +175,7 @@ TimePicker.prototype.updateSize = function () {
         });
     });
     this.updateSelectPosition();
+    this.notifySizeChange();
 };
 
 
@@ -190,44 +211,116 @@ TimePicker.prototype._drawSelect = function (radius, angle) {
         cx: x, cy: y
     });
     this.$clockSelectLine.attr('d', 'M0,0L' + x + ',' + y);
-}
+};
 
+
+TimePicker.prototype.notifyChange = function (force) {
+    if (this._lastDayOffset != this.dayOffset || force) {
+        this.emit('change', { target: this, hour: this.hour, minute: this.minute, dayOffset: this.dayOffset, name: 'change' }, this);
+    }
+};
+
+
+TimePicker.prototype.notifySizeChange = function () {
+    var bound = this.getBoundingClientRect();
+    if (this._latBound.width != bound.width || this._latBound.height != bound.height) {
+        this._latBound.width = bound.width;
+        this._latBound.height = bound.height;
+        this.emit('sizechange', { name: 'sizechange', bound: bound, target: this }, this);
+    }
+};
 
 TimePicker.render = function () {
     return _({
-        class: 'ac-time-picker',
+        extendEvent: ['change', 'finish', 'cancel', 'sizechange'],
+        class: ['ac-time-picker', 'ac-time-picker-clock-mode'],//clock mode is default
         child: [
             {
-                class: 'ac-time-picker-header',
-                child: [
-                    {
-                        tag: 'span',
-                        class: 'ac-time-picker-hour',
-                        child: { text: '00' }
-                    },
-                    {
-                        tag: 'span',
-                        text: ':'
-                    },
-                    {
-                        tag: 'span',
-                        class: 'ac-time-picker-minute',
-                        child: { text: '00' }
-                    },
-                ]
-            },
-            _g(
-                {
-                    tag: 'svg',
-                    class: 'ac-time-picker-clock',
+                class: 'ac-time-picker-set-clock',
+                child: [{
+                    class: 'ac-time-picker-set-clock-header',
                     child: [
                         {
-                            class: 'ac-time-picker-clock-content',
-                            child: ['.ac-time-picker-clock-select-ctn', '.ac-time-picker-clock-hour-ctn', '.ac-time-picker-clock-minute-ctn']
+                            tag: 'span',
+                            class: 'ac-time-picker-hour',
+                            child: { text: '00' }
+                        },
+                        {
+                            tag: 'span',
+                            text: ':'
+                        },
+                        {
+                            tag: 'span',
+                            class: 'ac-time-picker-minute',
+                            child: { text: '00' }
                         }
                     ]
-                }
-            ),
+                },
+                _g(
+                    {
+                        tag: 'svg',
+                        class: 'ac-time-picker-clock',
+                        child: [
+                            {
+                                class: 'ac-time-picker-clock-content',
+                                child: ['.ac-time-picker-clock-select-ctn', '.ac-time-picker-clock-hour-ctn', '.ac-time-picker-clock-minute-ctn']
+                            }
+                        ]
+                    }
+                )]
+            },
+            {
+                class: 'ac-time-picker-set-time',
+                child: [
+                    {
+                        class: 'ac-time-picker-set-time-header',
+                        child: { text: 'Set time' }
+                    },
+                    {
+                        class: 'ac-time-picker-set-time-label',
+                        child: { text: 'Type in time' }
+                    },
+                    {
+                        class: 'ac-time-picker-set-time-input-group',
+                        child: [
+                            {
+                                class: 'ac-time-picker-set-time-input-hm',
+                                child: [
+                                    {
+                                        tag: 'input',
+                                        class: 'ac-time-picker-hour-input',
+                                        attr: {
+                                            type: 'text',
+                                            placeHolder: '00'
+                                        }
+                                    },
+                                    {
+                                        tag: 'span',
+                                        child: { text: ':' }
+                                    },
+                                    {
+                                        tag: 'input',
+                                        class: 'ac-time-picker-minute-input',
+                                        attr: {
+                                            type: 'text',
+                                            placeHolder: '00'
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                class: 'ac-time-picker-set-time-input-label-hm',
+                                child: [
+                                    { tag: 'span', child: { text: 'hour' } },
+                                    { tag: 'span', style: { visibility: 'hidden' }, child: { text: ':' } },
+                                    { tag: 'span', child: { text: 'minute' } }
+
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
             {
                 class: 'ac-time-picker-footer',
                 child: [
@@ -237,14 +330,21 @@ TimePicker.render = function () {
                         child: 'span.mdi.mdi-keyboard-outline'
                     },
                     {
+                        tag: 'button',
+                        class: 'ac-time-picker-clock-btn',
+                        child: 'span.mdi.mdi-clock-outline'
+                    },
+                    {
                         class: 'ac-time-picker-footer-right',
                         child: [
                             {
                                 tag: 'button',
+                                class: 'ac-time-picker-cancel-btn',
                                 child: { text: 'CANCEL' }
                             },
                             {
                                 tag: 'button',
+                                class: 'ac-time-picker-finish-btn',
                                 child: { text: 'OK' }
                             }
 
@@ -255,35 +355,143 @@ TimePicker.render = function () {
     });
 };
 
+
+TimePicker.prototype.clockMode = function () {
+    if (this._mode == "CLOCK") return;
+    this._mode = 'CLOCK';
+    this.removeClass('ac-time-picker-time-mode')
+        .addClass('ac-time-picker-clock-mode');
+    this.editHour();
+    this.updateSize();
+
+};
+
+
+TimePicker.prototype.timeMode = function () {
+    if (this._mode == "TIME") return;
+    this._mode = 'TIME';
+    this.addClass('ac-time-picker-time-mode')
+        .removeClass('ac-time-picker-clock-mode');
+    this.editHourInput();
+    this.updateSize();
+};
+
+
+TimePicker.prototype._editContent = function (elt) {
+    var sel, range;
+    elt.focus();
+    if (window.getSelection) {
+        sel = window.getSelection();
+        sel.removeAllRanges();
+        var range = document.createRange();
+        range.selectNode(elt.childNodes[elt.childNodes.length - 1]);
+        sel.addRange(range);
+    } else {
+        console.error("TimePicker: Not support!")
+    }
+};
+
 TimePicker.prototype.editHour = function () {
     this._state = "EDIT_HOUR";
     this._preHour = this._hour;
     this.removeClass('ac-time-picker-edit-minute')
-        .addClass('ac-time-picker-edit-hour');
+        .addClass('ac-time-picker-edit-hour')
+        .removeClass('ac-time-picker-edit-hour-input')
+        .removeClass('ac-time-picker-edit-minute-input');
     this.updateSize();
+    if (!isTouchDevice)
+        setTimeout(this._editContent.bind(this, this.$hour), 2);
 };
+
 
 
 TimePicker.prototype.editMinute = function () {
     this._state = "EDIT_MINUTE";
     this._preMinute = this._minute;
     this.addClass('ac-time-picker-edit-minute')
-        .removeClass('ac-time-picker-edit-hour');
+        .removeClass('ac-time-picker-edit-hour')
+        .removeClass('ac-time-picker-edit-hour-input')
+        .removeClass('ac-time-picker-edit-minute-input');
     this.updateSize();
+    if (!isTouchDevice)
+        setTimeout(this._editContent.bind(this, this.$minute), 2);
+};
 
+
+TimePicker.prototype.editHourInput = function () {
+    var thisPicker = this;
+    this._state = "EDIT_HOUR_INPUT";
+    this._preHour = this._hour;
+    this.removeClass('ac-time-picker-edit-minute')
+        .removeClass('ac-time-picker-edit-hour')
+        .addClass('ac-time-picker-edit-hour-input')
+        .removeClass('ac-time-picker-edit-minute-input');
+    this.updateSize();
+    setTimeout(function () {
+        thisPicker.$hourInput.focus();
+        thisPicker.$hourInput.select();
+        console.log(thisPicker.$hourInput);
+
+    }, 1)
+};
+
+TimePicker.prototype.editMinuteInput = function () {
+    var thisPicker = this;
+    this._state = "EDIT_MINUTE_INPUT";
+    this._preMinute = this._minute;
+    this.removeClass('ac-time-picker-edit-minute')
+        .removeClass('ac-time-picker-edit-hour')
+        .removeClass('ac-time-picker-edit-hour-input')
+        .addClass('ac-time-picker-edit-minute-input');
+    this.updateSize();
+    setTimeout(function () {
+        thisPicker.$minuteInput.focus();
+        thisPicker.$minuteInput.select();
+    }, 1)
+};
+
+
+TimePicker.prototype.finishSelect = function () {
+    this.emit('finish', { target: this, hour: this.hour, minute: this.minute, dayOffset: this.dayOffset, name: 'finish' }, this);
+};
+
+TimePicker.prototype.cancelSelect = function () {
+    this.emit('cancel', { target: this, name: 'cancel' }, this);
 };
 
 TimePicker.eventHandler = {};
 
 TimePicker.eventHandler.clickHour = function () {
     if (this._state != 'EDIT_HOUR') this.editHour();
+    else this._editContent(this.$hour)
 };
 
 TimePicker.eventHandler.clickMinute = function () {
     if (this._state != 'EDIT_MINUTE') this.editMinute();
-
+    else this._editContent(this.$minute)
 };
 
+
+
+TimePicker.eventHandler.clickHourInput = function () {
+    if (this._state != 'EDIT_HOUR') this.editHourInput();
+    else {
+        this.$hourInput.focus();
+        this.$hourInput.select();
+    };
+};
+
+
+
+
+TimePicker.eventHandler.clickMinuteInput = function () {
+    if (this._state != 'EDIT_MINUTE_INPUT') this.editMinuteInput();
+    else {
+        this.$minuteInput.focus();
+        this.$minuteInput.select();
+
+    };
+};
 
 TimePicker.property = {};
 
@@ -292,7 +500,9 @@ TimePicker.property.hour = {
     set: function (value) {
         value = (value % 24) || 0;
         this._hour = value;
-        this.$hour.clearChild().addChild(_({ text: (value < 10 ? '0' : '') + value + '' }));
+        var text = (value < 10 ? '0' : '') + value + '';
+        this.$hour.clearChild().addChild(_({ text: text }));
+        this.$hourInput.value = text;
         this.updateSelectPosition();
     },
     get: function () {
@@ -305,7 +515,9 @@ TimePicker.property.minute = {
     set: function (value) {
         value = (value % 60) || 0;
         this._minute = value;
-        this.$minute.clearChild().addChild(_({ text: (value < 10 ? '0' : '') + value + '' }));
+        var text = (value < 10 ? '0' : '') + value + '';
+        this.$minute.clearChild().addChild(_({ text: text }));
+        this.$minuteInput.value = text;
         this.updateSelectPosition();
     },
     get: function () {
@@ -356,6 +568,7 @@ TimePicker.prototype._showSelectByMinuteText = function () {
     }
 };
 
+
 TimePicker.eventHandler.keydownHour = function (event) {
     if (event.key.length == 1) {
         if (event.key.match(/[0-9]/)) {
@@ -369,7 +582,7 @@ TimePicker.eventHandler.keydownHour = function (event) {
         var hour = parseFloat(this.$hour.innerHTML) || 0;
         if (hour < 0 || hour >= 24)
             hour = this._preHour;
-        this.$hour.clearChild().addChild(_({ text: (hour < 10 ? '0' : '') + hour + '' }));
+        this.hour = hour;
         this.$hour.blur();
         this.editMinute();
     }
@@ -388,19 +601,74 @@ TimePicker.eventHandler.keydownMinute = function (event) {
         }
     }
     if (event.key == 'Enter') {
+        this.$minute.blur();
         event.preventDefault();
         var minute = parseFloat(this.$minute.innerHTML) || 0;
         if (minute < 0 || minute >= 60)
-            minute = this._preMinute
-        this.$minute.clearChild().addChild(_({ text: (minute < 10 ? '0' : '') + minute + '' }));
-        this.$minute.blur();
+            minute = this._preMinute;
+        this.minute = minute;
+        setTimeout(this.finishSelect.bind(this), 1);
     }
     else {
         setTimeout(this._showSelectByMinuteText.bind(this), 1);
     }
 };
 
+
+TimePicker.eventHandler.keydownHourInput = function (event) {
+    if (event.key.length == 1) {
+        if (event.key.match(/[0-9]/)) {
+            //todo
+        }
+        else {
+            event.preventDefault();
+        }
+    } if (event.key == 'Enter') {
+        event.preventDefault();
+        var hour = parseFloat(this.$hourInput.value) || 0;
+        if (hour < 0 || hour >= 24)
+            hour = this._preHour;
+        this.hour = hour;
+        this.$hourInput.blur();
+        this.editMinuteInput();
+    }
+    else {
+        // setTimeout(this._showSelectByHourInputText.bind(this), 1);
+        //nothing to do
+    }
+};
+
+
+
+
+TimePicker.eventHandler.keydownMinuteInput = function (event) {
+    if (event.key.length == 1) {
+        if (event.key.match(/[0-9]/)) {
+            // setTimeout(this._showSelectByMinuteText.bind(this), 1);
+        }
+        else {
+            event.preventDefault();
+        }
+    }
+    if (event.key == 'Enter') {
+        this.$minute.blur();
+        event.preventDefault();
+        var minute = parseFloat(this.$minuteInput.value) || 0;
+        if (minute < 0 || minute >= 60)
+            minute = this._preMinute;
+        this.minute = minute;
+        setTimeout(this.finishSelect.bind(this), 1);
+    }
+    else {
+        // setTimeout(this._showSelectByMinuteText.bind(this), 1);
+    }
+};
+
+
+
+
 TimePicker.eventHandler.dragOnClock = function (event) {
+    event = (event.changedTouches && event.changedTouches[0]) || event;
     var cBound = this.$clock.getBoundingClientRect();
     var cx = (cBound.left + cBound.right) / 2;
     var cy = (cBound.top + cBound.bottom) / 2;
@@ -438,16 +706,18 @@ TimePicker.eventHandler.dragOnClock = function (event) {
 
 
 TimePicker.eventHandler.mousedownClock = function (event) {
+    event.preventDefault();
     this.eventHandler.dragOnClock(event);
-    document.body.addEventListener('mousemove', this.eventHandler.mousemoveClock);
-    document.body.addEventListener('mouseup', this.eventHandler.mousefinishClock);
-    document.body.addEventListener('mouseleave', this.eventHandler.mousefinishClock);
-
+    document.body.addEventListener(isTouchDevice ? 'touchmove' : 'mousemove', this.eventHandler.mousemoveClock);
+    document.body.addEventListener(isTouchDevice ? 'touchend' : 'mouseup', this.eventHandler.mousefinishClock);
+    if (!isTouchDevice)
+        document.body.addEventListener('mouseleave', this.eventHandler.mousefinishClock);
 };
 
 
 
 TimePicker.eventHandler.mousemoveClock = function (event) {
+    event.preventDefault();
     this.eventHandler.dragOnClock(event);
 };
 
@@ -457,6 +727,9 @@ TimePicker.eventHandler.mousefinishClock = function () {
     document.body.removeEventListener('mouseup', this.eventHandler.mousefinishClock);
     document.body.removeEventListener('mouseleave', this.eventHandler.mousefinishClock);
     if (this._state == 'EDIT_HOUR') this.editMinute();
+    else if (this._state == 'EDIT_MINUTE') {
+        this.$minute.click();// refocus
+    }
 };
 
 

@@ -13,13 +13,38 @@
     white-space: initial;
 }
 
-.ac-time-picker-header {
+
+@media (orientation: portrait) {
+    .ac-time-picker.ac-time-picker-touch {
+        font-size: 5vw;
+    }
+}
+
+@media (orientation: landscape) {
+    .ac-time-picker.ac-time-picker-touch {
+        font-size: 4vh;
+    }
+}
+
+
+.ac-time-picker:not(.ac-time-picker-clock-mode) .ac-time-picker-set-clock,
+.ac-time-picker:not(.ac-time-picker-clock-mode) .ac-time-picker-keyboard-btn,
+.ac-time-picker:not(.ac-time-picker-touch) .ac-time-picker-keyboard-btn,
+
+.ac-time-picker:not(.ac-time-picker-time-mode) .ac-time-picker-set-time,
+.ac-time-picker:not(.ac-time-picker-time-mode) .ac-time-picker-clock-btn {
+    display: none;
+}
+
+.ac-time-picker-set-clock-header {
     font-size: 2.8em;
     text-align: center;
     min-width: 4.28571428571em;
+    font-weight: bold;
+
 }
 
-.ac-time-picker-header>span {
+.ac-time-picker-set-clock-header>span {
     font-size: inherit;
 }
 
@@ -89,6 +114,7 @@
     display: block;
     position: relative;
     min-height: 1.5em;
+    min-width: 12em;
 }
 
 .ac-time-picker-footer-right {
@@ -127,8 +153,57 @@
 }
 
 
-.ac-time-picker:not(.ac-time-picker-touch) .ac-time-picker-keyboard-btn {
+/* .ac-time-picker:not(.ac-time-picker-touch) .ac-time-picker-keyboard-btn {
     display: none;
-}
+} */
 
 /* keyboard-outline */
+
+.ac-time-picker-set-time-header {
+    font-size: 1.4em;
+    font-weight: bold;
+    margin-bottom: 1em;
+}
+
+.ac-time-picker-set-time-label {
+    font-size: 1em;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+}
+
+.ac-time-picker-set-time-input-group {
+    margin-bottom: 0.3em;
+    font-size: 1em;
+    white-space: nowrap;
+}
+
+.ac-time-picker-set-time-input-hm>input {
+    height: 1.2em;
+    line-height: 1.2em;
+    width: 2em;
+    text-align: center;
+    font-size: 1em;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid rgb(70, 70, 72);
+    outline: none;
+}
+
+.ac-time-picker-set-time-input-label-hm {
+    font-size: 1em;
+    white-space: nowrap;
+
+}
+
+.ac-time-picker-set-time-input-label-hm span {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 1em;
+
+}
+
+
+.ac-time-picker-set-time-input-label-hm>span:first-child {
+    width: 2em;
+}
