@@ -28,17 +28,22 @@
 <body>
     <h1>TimePicker</h1>
 
-    <div class="absol-bscroller" style="height: 300px;">
+    <div class="standar">
     </div>
 
     <script class="viewable">
         var _ = absol._;
         var $ = absol.$;
-        var scroller = $('.absol-bscroller');
+        var scroller = $('.standar');
         _({
             tag: 'timepicker',
             props: {
                dayOffset: new Date()
+            },
+            on:{
+                finish: function(){
+                    alert(this.hour+":"+ this.minute);
+                }
             }
         }).addTo(scroller);
     </script>

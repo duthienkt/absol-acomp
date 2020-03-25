@@ -4,7 +4,7 @@ import Dom from "absol/src/HTML5/Dom";
 import { beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
 
 //todo: add this to absol
-var isTouchDevice = 'ontouchstart' in window ||
+export var isTouchDevice = 'ontouchstart' in window ||
     window.DocumentTouch && document instanceof window.DocumentTouch ||
     navigator.maxTouchPoints > 0 ||
     window.navigator.msMaxTouchPoints > 0;
@@ -28,6 +28,7 @@ function TimePicker() {
     this.$attachook = _('attachhook').addTo(this).on('error', function () {
         Dom.addToResizeSystem(this);
         this.requestUpdateSize();
+        thisPicker.addStyle('font-size', thisPicker.getComputedStyleValue('font-size'));
     });
     this.$attachook.requestUpdateSize = this.updateSize.bind(this);
     this.$hour = $('.ac-time-picker-hour', this)

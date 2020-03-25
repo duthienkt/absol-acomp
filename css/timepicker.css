@@ -14,13 +14,13 @@
 }
 
 
-@media (orientation: portrait) {
+@media screen and (orientation: portrait) {
     .ac-time-picker.ac-time-picker-touch {
         font-size: 5vw;
     }
 }
 
-@media (orientation: landscape) {
+@media screen and (orientation: landscape) {
     .ac-time-picker.ac-time-picker-touch {
         font-size: 4vh;
     }
