@@ -127,6 +127,8 @@ function TimePicker() {
     }).addTo(this.$selectCtn);
     this.$finishBtn = $('.ac-time-picker-finish-btn', this)
         .on('click', this.finishSelect.bind(this));
+    this.$cancelBtn = $('.ac-time-picker-cancel-btn', this)
+        .on('click', this.cancelSelect.bind(this));
     this.$keyboardBtn = $('.ac-time-picker-keyboard-btn', this)
         .on('click', this.timeMode.bind(this));
     this.$clockBtn = $('.ac-time-picker-clock-btn', this)
@@ -460,6 +462,8 @@ TimePicker.prototype.finishSelect = function () {
 
 
 TimePicker.prototype.cancelSelect = function () {
+    console.log('cancel');
+    
     this.emit('cancel', { target: this, name: 'cancel' }, this);
 };
 
@@ -603,7 +607,6 @@ TimePicker.eventHandler.keydownHour = function (event) {
         var cText = this.$hour.innerHTML;
         setTimeout(function () {
             var newText = thisPicker.$hour.innerHTML;
-            console.log(cText, newText);
             if (cText != newText) {
                 var hour = parseFloat(newText) || 0;
                 if (hour < 0 || hour >= 24)
@@ -658,8 +661,6 @@ TimePicker.eventHandler.keydownMinute = function (event) {
 
 TimePicker.eventHandler.keydownHourInput = function (event) {
     var thisPicker = this;
-    console.log(event);
-    
     if ((isTouchDevice && event.key == "Unidentified") || (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey)) {
         if (event.key.match(/[0-9]/)) {
             setTimeout(this.notifyChange.bind(this), 2);

@@ -158,6 +158,7 @@ Follower.property.followTarget = {
         if (elt === null || elt === undefined || !elt) {
             this.unfollow();
             this.$followTarget = undefined;
+            return;
         }
         else if (typeof elt == 'string') {
             elt = $(elt) || document.getElementById(elt);

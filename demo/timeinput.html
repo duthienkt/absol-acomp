@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TimeInput</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+    <h1>TimeInput</h1>
+    <div class="input-demo">
+
+    </div>
+    <script>
+        var _ = absol._;
+        var $ = absol.$;
+        var isTouchDevice = 'ontouchstart' in window ||
+            window.DocumentTouch && document instanceof window.DocumentTouch ||
+            navigator.maxTouchPoints > 0 ||
+            window.navigator.msMaxTouchPoints > 0;
+    </script>
+    <script class="viewable">
+        var inputDemoDiv = $('.input-demo');
+        _({
+            tag: 'timeinput',
+            style: {
+                fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+            },
+            props: {
+                dayOffset: new Date(),//now, dayOffset can be Date or Number 
+                // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59 
+                // hour: 20, or set hour and minute
+                // minute:59
+            },
+            on: {
+                change: function () {
+                    alert(this.hour + ":" + this.minute + '=>' + this.dayOffset);
+                }
+            }
+        }).addTo(inputDemoDiv);
+    </script>
+
+    <h2>Expert</h2>
+    <div>
+        <span>From </span><time-input data-day-offset="3600000"></time-input><span> to </span> <time-input data-day-offset="7200000"></time-input>
+    </div>
+    <script  class="viewable">
+        /**
+         *  <div>
+         *    <span>From </span><time-input data-day-offset="3600000"></time-input><span> to </span> <time-input data-day-offset="7200000"></time-input>
+         *   </div>
+         */
+        $('time-input', false, function(elt){
+            $(elt);
+            var dayOffset = parseInt(elt.attr('data-day-offset'));
+            elt.selfReplace(_({
+                tag:'timeinput',
+                props:{
+                    dayOffset: dayOffset
+                }
+            }));
+        });
+    </script>
+
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>

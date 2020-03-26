@@ -155,6 +155,8 @@ import './js/ChromeCalendar';
 
 import './css/timepicker.css';
 import './js/TimePicker';
+import './css/timeinput.css';
+import './js/TimeInput';
 
 import './css/calendarinput.css';
 import './js/CalendarInput';
@@ -194,7 +196,7 @@ var AComp = {
     creator: Acore.creator,
     buildDom: Acore.buildDom,
     runDebugTask: DebugTask.start.bind(DebugTask),
-    Draggable:Draggable
+    Draggable: Draggable
 };
 
 window.runDebugTask = DebugTask.start.bind(DebugTask);
