@@ -1,4 +1,4 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu";
 import Dom from "absol/src/HTML5/Dom";
@@ -11,8 +11,8 @@ import { measureText } from "./utils";
 
 var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function SelectBox() {
@@ -400,6 +400,6 @@ SelectBox.eventHandler.searchModify = function (event) {
 
 
 
-Acore.install('SelectBox'.toLowerCase(), SelectBox);
+ACore.install('SelectBox'.toLowerCase(), SelectBox);
 
 export default SelectBox;

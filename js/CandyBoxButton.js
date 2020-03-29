@@ -1,4 +1,4 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import '../css/candyboxbutton.css'; 
 
@@ -62,6 +62,6 @@ CandyBoxButton.property.paths = {
     }
 };
 
-Acore.install('candyboxbutton', CandyBoxButton);
+ACore.install('candyboxbutton', CandyBoxButton);
 
 //not completed yet

@@ -1,7 +1,7 @@
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
-import Acore from '../ACore';
-var _ = Acore._;
-var $ = Acore.$;
+import ACore from '../ACore';
+var _ = ACore._;
+var $ = ACore.$;
 
 function FollowerToggler() {
     this.defineEvent(['close', 'open', 'preopen']);
@@ -77,6 +77,6 @@ FollowerToggler.eventHandler.click = function () {
     this.toggle();
 };
 
-Acore.install('FollowerToggler'.toLowerCase(), FollowerToggler);
+ACore.install('FollowerToggler'.toLowerCase(), FollowerToggler);
 
 export default FollowerToggler;

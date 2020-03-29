@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import XHR from "absol/src/Network/XHR";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 
@@ -76,7 +76,7 @@ RemoteSvg.loadIcon = function (path) {
 };
 
 
-Acore.install('remotesvg', RemoteSvg);
+ACore.install('remotesvg', RemoteSvg);
 
 
 export default RemoteSvg;

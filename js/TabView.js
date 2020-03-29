@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function TabView() {
@@ -257,6 +257,6 @@ TabView.prototype.activeFrame = function (elt) {
 };
 
 
-Acore.install('tabview', TabView);
+ACore.install('tabview', TabView);
 
 export default TabView;

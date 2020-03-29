@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Element from "absol/src/HTML5/Element";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function BScroller(data) {
     if (data && data.elt) {
@@ -46,6 +46,6 @@ BScroller.prototype.scrollInto = function (element) {
 }
 
 
-Acore.install('bscroller', BScroller);
+ACore.install('bscroller', BScroller);
 
 export default BScroller;

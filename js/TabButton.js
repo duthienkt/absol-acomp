@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import { randomIdent } from "absol/src/String/stringGenerate";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function TabButton() {
@@ -109,6 +109,6 @@ TabButton.property.modified = {
     }
 };
 
-Acore.creator.tabbutton = TabButton;
+ACore.creator.tabbutton = TabButton;
 
 export default TabButton;

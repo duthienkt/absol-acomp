@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function ToolTip() {
     var res = _({
@@ -26,7 +26,7 @@ function ToolTip() {
     }
 });
 
-Acore.install('tooltip', ToolTip);
+ACore.install('tooltip', ToolTip);
 
 
 ToolTip.$root = _('.absol-tooltip-root').addStyle('visibility', 'hidden');

@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function FlexiconButton() {
@@ -60,7 +60,7 @@ FlexiconButton.property.text = {
 };
 
 
-Acore.install('flexiconbutton', FlexiconButton);
+ACore.install('flexiconbutton', FlexiconButton);
 
 
 export default FlexiconButton;

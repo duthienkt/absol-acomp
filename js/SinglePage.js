@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function SinglePage() {
     var res = _({
@@ -75,6 +75,6 @@ SinglePage.prototype.removeChild = function (elt) {
 
 
 
-Acore.install('singlepage', SinglePage);
+ACore.install('singlepage', SinglePage);
 
 export default SinglePage;

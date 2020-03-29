@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function VRuler() {
@@ -162,6 +162,6 @@ VRuler.property.inverse = {
     }
 };
 
-Acore.install('vruler', VRuler);
+ACore.install('vruler', VRuler);
 
 export default VRuler;

@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
 function Modal() {
-    var $ = Acore.$;
-    var _ = Acore._;
+    var $ = ACore.$;
+    var _ = ACore._;
 
     var res = _({
         class: 'absol-modal',
@@ -42,6 +42,6 @@ Modal.property.show = {
 };
 
 
-Acore.creator.modal = Modal;
+ACore.creator.modal = Modal;
 
 export default Modal;

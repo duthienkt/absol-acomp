@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import RadioButton from "./RadioButton";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function Radio() {
     var res = _(
@@ -137,6 +137,6 @@ Radio.getValueByName = function (name) {
 };
 
 
-Acore.creator.radio = Radio;
+ACore.creator.radio = Radio;
 
 export default Radio;

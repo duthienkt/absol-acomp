@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function CheckBoxButton() {
@@ -179,5 +179,5 @@ CheckBoxButton.initAfterLoad = function () {
     });
 }
 
-Acore.install('CheckBoxButton'.toLowerCase(), CheckBoxButton);
+ACore.install('CheckBoxButton'.toLowerCase(), CheckBoxButton);
 export default CheckBoxButton;

@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function DraggableVStack() {
     var res = _({
@@ -257,6 +257,6 @@ DraggableVStack.prototype._findDirectChild = function (elt) {
 
 
 
-Acore.install('DraggableVStack'.toLowerCase(), DraggableVStack);
+ACore.install('DraggableVStack'.toLowerCase(), DraggableVStack);
 
 export default DraggableVStack;

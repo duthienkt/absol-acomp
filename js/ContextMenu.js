@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 export function ContextCaptor() {
     this.attachedElt = null;
@@ -161,4 +161,4 @@ ContextCaptor.eventHandler.contextmenu = function (event) {
     }
 };
 
-Acore.install('contextcaptor', ContextCaptor);
+ACore.install('contextcaptor', ContextCaptor);

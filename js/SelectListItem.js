@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function SelectListItem() {
@@ -129,7 +129,7 @@ SelectListItem.property.level = {
 }
 
 
-Acore.install('SelectListItem'.toLowerCase(), SelectListItem);
+ACore.install('SelectListItem'.toLowerCase(), SelectListItem);
 
 
 export default SelectListItem;

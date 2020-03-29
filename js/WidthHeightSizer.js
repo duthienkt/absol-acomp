@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Draggable from "./Draggable";
 import OOP from "absol/src/HTML5/OOP";
 import Element from "absol/src/HTML5/Element";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function WidthHeightResizer() {
     var res = _({
@@ -109,6 +109,6 @@ WidthHeightResizer.eventHandler.dragTopLeft = function (event) {
     this.emit('sizechange', newEvent);
 };
 
-Acore.creator.widthheightresizer = WidthHeightResizer;
+ACore.creator.widthheightresizer = WidthHeightResizer;
 
 export default WidthHeightResizer;

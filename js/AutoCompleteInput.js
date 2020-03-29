@@ -1,4 +1,4 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 import SearchStringArrayAdapter from "./adapter/SearchStringArrayAdapter";
@@ -6,8 +6,8 @@ import SearchObjectArrayAdapter from "./adapter/SearchObjectArrayAdapter";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function AutoCompleteInput() {
     var res = _({
@@ -420,7 +420,7 @@ AutoCompleteInput.attribute.disabled = {
 };
 
 
-Acore.install('AutoCompleteInput'.toLowerCase(), AutoCompleteInput);
+ACore.install('AutoCompleteInput'.toLowerCase(), AutoCompleteInput);
 
 
 export default AutoCompleteInput;

@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Svg from "absol/src/HTML5/Svg";
 import { buildCss } from "./utils";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 var _g = Svg.ShareInstance._;
@@ -282,5 +282,5 @@ LinearColorBar.property.colorMapping = {
     }
 };
 
-Acore.install('linearcolorbar', LinearColorBar);
+ACore.install('linearcolorbar', LinearColorBar);
 export default LinearColorBar;

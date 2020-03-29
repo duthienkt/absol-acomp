@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function ResizeBox() {
@@ -184,7 +184,7 @@ ResizeBox.property.canClick = {
     }
 };
 
-Acore.install('resizebox', ResizeBox);
+ACore.install('resizebox', ResizeBox);
 
 
 export default ResizeBox;

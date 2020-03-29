@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function TreeListItem() {
     var res = _({
@@ -184,6 +184,6 @@ TreeListItem.property.extendStyle = {
 };
 
 
-Acore.creator.treelistitem = TreeListItem;
+ACore.creator.treelistitem = TreeListItem;
 
 export default TreeListItem;

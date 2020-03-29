@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import SelectMenu from "./SelectMenu";
 import OOP from "absol/src/HTML5/OOP";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function TextArea2() {
@@ -158,5 +158,5 @@ TextArea2.prototype.getInputSelection = function () {
     };
 }
 
-Acore.install('textarea2', TextArea2);
+ACore.install('textarea2', TextArea2);
 export default TextArea2;

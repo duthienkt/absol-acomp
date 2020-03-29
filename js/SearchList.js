@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import SearchListAdapter from "./adapter/SearchListAdapter";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function SearchList() {
     var res = _({
@@ -476,5 +476,5 @@ SearchList.prototype.init = function (props) {
     }
 };
 
-Acore.install('SearchList'.toLowerCase(), SearchList);
+ACore.install('SearchList'.toLowerCase(), SearchList);
 export default SearchList;

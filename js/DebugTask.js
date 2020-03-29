@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 var originSetTimeout = setTimeout;
 var originClearTimeout = setTimeout;
@@ -234,7 +234,7 @@ DebugTask.start = function () {
     });
 };
 
-Acore.install('debugtask', DebugTask);
+ACore.install('debugtask', DebugTask);
 
 
 

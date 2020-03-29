@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 var _g = Svg.ShareInstance._;
 var $g = Svg.ShareInstance.$;
@@ -190,5 +190,5 @@ CircleSectionLabel.property.text = {
 }
 
 
-Acore.install('circlesectionlabel', CircleSectionLabel);
+ACore.install('circlesectionlabel', CircleSectionLabel);
 export default CircleSectionLabel;

@@ -1,4 +1,4 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
 import { beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
@@ -9,8 +9,8 @@ export var isTouchDevice = 'ontouchstart' in window ||
     navigator.maxTouchPoints > 0 ||
     window.navigator.msMaxTouchPoints > 0;
 //todo: re select text after click
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 var $g = Svg.ShareInstance.$;
 var _g = Svg.ShareInstance._;
@@ -803,4 +803,4 @@ TimePicker.eventHandler.mousefinishClock = function () {
 };
 
 
-Acore.install('timepicker', TimePicker);
+ACore.install('timepicker', TimePicker);

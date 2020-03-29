@@ -1,11 +1,11 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
 
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function QuickMenu() {
     //like context menu without right-click
@@ -36,7 +36,7 @@ function QuickMenu() {
 
 // };
 
-Acore.install('quickmenu', QuickMenu);
+ACore.install('quickmenu', QuickMenu);
 QuickMenu.PRIORITY_ANCHORS = [0, 3, 7, 4, 1, 2, 6, 5];
 QuickMenu.DEFAULT_ANCHOR = 0;
 

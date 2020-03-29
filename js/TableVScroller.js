@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function TableVScroller() {
     var res = _(
@@ -124,6 +124,6 @@ TableVScroller.prototype.init = function (props) {
     this.$attachHook.updateSize = this.update.bind(this);
 };
 
-Acore.install('tablevscroller', TableVScroller);
+ACore.install('tablevscroller', TableVScroller);
 
 export default TableVScroller;

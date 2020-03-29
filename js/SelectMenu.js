@@ -1,4 +1,4 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import { phraseMatch, wordsMatch } from "absol/src/String/stringMatching";
@@ -6,11 +6,11 @@ import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import Dom from "absol/src/HTML5/Dom";
 
 /*global absol*/
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
-Acore.creator['dropdown-ico'] = function () {
+ACore.creator['dropdown-ico'] = function () {
     return _([
         '<svg class="dropdown" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">',
         '<g transform="translate(0,-197)">',
@@ -578,6 +578,6 @@ SelectMenu.eventHandler.searchModify = function (event) {
     this.updateDropdownPostion(true);
 };
 
-Acore.creator.selectmenu = SelectMenu;
+ACore.creator.selectmenu = SelectMenu;
 
 export default SelectMenu;

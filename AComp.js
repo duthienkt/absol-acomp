@@ -1,4 +1,4 @@
-import Acore from "./ACore";
+import ACore from "./ACore";
 
 import './js/SpanInput';
 import './css/spaninput.css';
@@ -184,17 +184,21 @@ import './js/CircleSectionLabel';
 import './css/linearcolorbar.css';
 import './js/LinearColorBar';
 
+import './css/boardtable.css';
+import './js/BoardTable';
+import './js/Board';
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 import Draggable from "./js/Draggable";
 
 
 var AComp = {
-    core: Acore,
-    $: Acore.$,
-    _: Acore._,
-    creator: Acore.creator,
-    buildDom: Acore.buildDom,
+    core: ACore,
+    $: ACore.$,
+    _: ACore._,
+    creator: ACore.creator,
+    buildDom: ACore.buildDom,
     runDebugTask: DebugTask.start.bind(DebugTask),
     Draggable: Draggable
 };

@@ -1,6 +1,6 @@
-import Acore from "../ACore";
-var _ = Acore._;
-var $ = Acore.$;
+import ACore from "../ACore";
+var _ = ACore._;
+var $ = ACore.$;
 
 function TreeList() {
     var res = _({
@@ -115,6 +115,6 @@ TreeList.property.level = {
     }
 };
 
-Acore.creator.treelist = TreeList;
+ACore.creator.treelist = TreeList;
 
 export default TreeList;

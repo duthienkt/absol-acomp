@@ -1,4 +1,4 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
 export function insertTextAtCursor(text) {
     var sel, range;
@@ -96,7 +96,7 @@ export function preventNotNumberInput(elt) {
 
 
 export function buildCss(StyleSheet) {
-    Acore._({
+    ACore._({
         tag: 'style',
         props: {
             innerHTML: Object.keys(StyleSheet).map(function (key) {

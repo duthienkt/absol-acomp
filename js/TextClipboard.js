@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function TextClipboard() {
     
@@ -32,6 +32,6 @@ TextClipboard.prototype.paste = function () {
     document.execCommand('paste');
 };
 
-Acore.creator.textclipboard = TextClipboard;
+ACore.creator.textclipboard = TextClipboard;
 
 export default TextClipboard;

@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function PageSelector() {
     var res = _({
@@ -189,6 +189,6 @@ PageSelector.prototype.init = function (props) {
 };
 
 
-Acore.install('pageselector', PageSelector);
+ACore.install('pageselector', PageSelector);
 
 export default PageSelector;

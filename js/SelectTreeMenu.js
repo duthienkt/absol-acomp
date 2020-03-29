@@ -1,4 +1,4 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
@@ -6,8 +6,8 @@ import Dom from "absol/src/HTML5/Dom";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import { wordsMatch } from "absol/src/String/stringMatching";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function SelectTreeMenu() {
     var res = _({
@@ -352,6 +352,6 @@ SelectTreeMenu.prototype.search = function (query) {
 };
 
 
-Acore.creator.selecttreemenu = SelectTreeMenu;
+ACore.creator.selecttreemenu = SelectTreeMenu;
 
 export default SelectTreeMenu;

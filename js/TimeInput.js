@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import { isTouchDevice } from "./TimePicker";
 import { MILLIS_PER_HOUR, MILLIS_PER_MINUTE, MILLIS_PER_DAY, beginOfDay } from "absol/src/Time/datetime";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function TimeInput() {
@@ -164,4 +164,4 @@ TimeInput.eventHandler.pickerCancel = function (event) {
     this.closePicker();
 }
 
-Acore.install('timeinput', TimeInput);
+ACore.install('timeinput', TimeInput);

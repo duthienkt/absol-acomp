@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 
@@ -108,7 +108,7 @@ MenuButton.property.extendStyle = {
     }
 };
 
-Acore.install('menubutton', MenuButton);
+ACore.install('menubutton', MenuButton);
 
 
 export function Dropdown(data) {
@@ -643,11 +643,11 @@ HMenu.property.activeTab = {
 
 
 
-Acore.creator.hmenu = HMenu;
-Acore.creator.vmenuitem = VMenuItem;
-Acore.creator.vmenu = VMenu;
-Acore.creator.dropright = Dropright;
-Acore.creator.vmenuline = VMenuLine;
+ACore.creator.hmenu = HMenu;
+ACore.creator.vmenuitem = VMenuItem;
+ACore.creator.vmenu = VMenu;
+ACore.creator.dropright = Dropright;
+ACore.creator.vmenuline = VMenuLine;
 
-Acore.creator.dropdown = Dropdown;
-Acore.creator.hmenuitem = HMenuItem;
+ACore.creator.dropdown = Dropdown;
+ACore.creator.hmenuitem = HMenuItem;

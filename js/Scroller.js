@@ -1,13 +1,13 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import Element from "absol/src/HTML5/Element";
 import { map } from 'absol/src/Math/int';
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
-Acore.$scrollStyle = (function () {
+ACore.$scrollStyle = (function () {
     var element = _('style#vscroller-style');
     element.innerHTML = [
         '.absol-vscroller-viewport{ margin-right: ' + (-17) + 'px;  min-width: calc(100% + ' + (17) + 'px);}',
@@ -549,8 +549,8 @@ HScrollbar.property = {
 
 
 
-Acore.creator.vscrollbar = VScrollbar;
-Acore.creator.hscrollbar = HScrollbar;
-Acore.creator.scrollbar = Scrollbar;
-Acore.creator.vscroller = VScroller;
-Acore.creator.hscroller = HScroller;
+ACore.creator.vscrollbar = VScrollbar;
+ACore.creator.hscrollbar = HScrollbar;
+ACore.creator.scrollbar = Scrollbar;
+ACore.creator.vscroller = VScroller;
+ACore.creator.hscroller = HScroller;

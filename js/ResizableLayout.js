@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Color from "absol/src/Color/Color";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function ResizableLayout() {
     var res = _({
@@ -86,7 +86,7 @@ ResizableLayout.prototype.init = function (props) {
     Object.assign(this, props || {});
 };
 
-Acore.creator.resizablelayout = ResizableLayout;
+ACore.creator.resizablelayout = ResizableLayout;
 
 // not completed yet
 export default ResizableLayout;

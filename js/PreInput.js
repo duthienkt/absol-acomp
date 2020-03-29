@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function PreInput() {
     this.defineEvent(['pasteimg', 'pastetext', 'change']);
@@ -241,6 +241,6 @@ PreInput.property.value = {
 };
 
 
-Acore.install('preinput', PreInput);
+ACore.install('preinput', PreInput);
 
 export default PreInput;

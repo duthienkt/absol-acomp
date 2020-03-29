@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 function DropPannelStack() {
     var res = _({
         class: 'absol-drop-pannel-stack'
@@ -74,6 +74,6 @@ DropPannelStack.prototype.addChild = function (child) {
     }
 };
 
-Acore.install('droppanelstack', DropPannelStack);
+ACore.install('droppanelstack', DropPannelStack);
 
 export default DropPannelStack;

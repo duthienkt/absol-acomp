@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import QuickMenu from "./QuickMenu";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function QuickPath() {
     this._holders = [];
@@ -161,6 +161,6 @@ QuickPath.property.textPath = {
     }
 };
 
-Acore.install('quickpath', QuickPath);
+ACore.install('quickpath', QuickPath);
 
 export default QuickPath;

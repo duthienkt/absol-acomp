@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function FrameView() {
     var res = _({
@@ -223,6 +223,6 @@ FrameView.prototype.activeFrameById = function (id) {
 };
 
 
-Acore.install('frameview', FrameView);
+ACore.install('frameview', FrameView);
 
 export default FrameView;

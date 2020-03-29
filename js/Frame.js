@@ -1,8 +1,8 @@
-import Acore from "../ACore"
+import ACore from "../ACore"
 import { randomIdent } from "absol/src/String/stringGenerate";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function Frame() {
     var res = _({
@@ -46,6 +46,6 @@ Frame.prototype.requestActive = function(){
     }
 };
 
-Acore.install('frame', Frame);
+ACore.install('frame', Frame);
 
 export default Frame;

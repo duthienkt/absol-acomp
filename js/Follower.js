@@ -1,11 +1,11 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
 
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function Follower() {
@@ -200,6 +200,6 @@ Follower.property.anchor = {
 }
 
 
-Acore.install('follower', Follower);
+ACore.install('follower', Follower);
 
 export default Follower;

@@ -1,6 +1,6 @@
-import Acore from "../ACore";
-var $ = Acore.$;
-var _ = Acore._;
+import ACore from "../ACore";
+var $ = ACore.$;
+var _ = ACore._;
 
 function TabFrame() {
     var res = _({
@@ -116,5 +116,5 @@ TabFrame.property.requestRemove = function () {
     }
 };
 
-Acore.install('tabframe', TabFrame);
+ACore.install('tabframe', TabFrame);
 export default TabFrame;

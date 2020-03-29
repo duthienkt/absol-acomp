@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function IconButton() {
@@ -70,6 +70,6 @@ IconButton.prototype.clearChild = function () {
     return this;
 };
 
-Acore.creator.iconbutton = IconButton;
+ACore.creator.iconbutton = IconButton;
 
 export default IconButton;

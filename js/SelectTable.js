@@ -1,4 +1,4 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import { phraseMatch } from "absol/src/String/stringMatching";
@@ -7,7 +7,7 @@ import Svg from "absol/src/HTML5/Svg";
 import OOP from "absol/src/HTML5/OOP";
 import "./BScroller";
 
-var privateDom = new Dom().install(Acore);
+var privateDom = new Dom().install(ACore);
 var $ = privateDom.$;
 var _ = privateDom._;
 
@@ -694,6 +694,6 @@ privateDom.install({
 SelectTable.privateDom = privateDom;
 
 
-Acore.creator.selecttable = SelectTable;
+ACore.creator.selecttable = SelectTable;
 
 export default SelectTable;

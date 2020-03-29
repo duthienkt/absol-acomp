@@ -1,5 +1,5 @@
 import Dom from "absol/src/HTML5/Dom";
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import { blobToFile, blobToArrayBuffer, dataURItoBlob } from "absol/src/Converter/file";
 import Element from "absol/src/HTML5/Element";
@@ -8,15 +8,15 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 import { getTextIn, setSelectionRange } from 'absol/src/HTML5/Text';
 
-var MediaCore = new Dom({ creator: Object.assign({}, Acore.creator) });
+var MediACore = new Dom({ creator: Object.assign({}, ACore.creator) });
 
-var _ = MediaCore._;
-var $ = MediaCore.$;
+var _ = MediACore._;
+var $ = MediACore.$;
 
 
 function openFileDialog(props) {
-    if (!MediaCore.$fileInput) {
-        MediaCore.$fileInput = _({
+    if (!MediACore.$fileInput) {
+        MediACore.$fileInput = _({
             tag: 'input',
             class: 'vmedia-no-show',
             attr: {
@@ -30,28 +30,28 @@ function openFileDialog(props) {
 
     if (props.accept) {
         if (props.accept instanceof Array)
-            MediaCore.$fileInput.attr('accept', props.accept.join(','));
+            MediACore.$fileInput.attr('accept', props.accept.join(','));
         else
-            MediaCore.$fileInput.attr('accept', props.accept);
+            MediACore.$fileInput.attr('accept', props.accept);
     }
     else {
-        MediaCore.$fileInput.attr('accept', null);
+        MediACore.$fileInput.attr('accept', null);
     }
 
     if (props.multiple) {
-        MediaCore.$fileInput.attr('multiple', 'true');
+        MediACore.$fileInput.attr('multiple', 'true');
     }
     else {
-        MediaCore.$fileInput.attr('multiple');
+        MediACore.$fileInput.attr('multiple');
     }
-    MediaCore.$fileInput.value = null;
-    MediaCore.$fileInput.click();
+    MediACore.$fileInput.value = null;
+    MediACore.$fileInput.click();
 
 
     return new Promise(function (resolve, reject) {
         var finish = false;
         var body = $('body');
-        MediaCore.$fileInput.once('change', function () {
+        MediACore.$fileInput.once('change', function () {
             finish = true;
             resolve(Array.prototype.map.call(this.files, function (file) {
                 return file;
@@ -814,11 +814,11 @@ function FilePreview() {
 
 
 
-MediaCore.creator.mediainput = MediaInput;
-MediaCore.creator.imagepreview = ImagePreview;
-MediaCore.creator.filepreview = FilePreview;
+MediACore.creator.mediainput = MediaInput;
+MediACore.creator.imagepreview = ImagePreview;
+MediACore.creator.filepreview = FilePreview;
 
-MediaCore.creator['send-ico'] = function () {
+MediACore.creator['send-ico'] = function () {
     return _(
         [
             '<svg class="send" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458">',
@@ -830,7 +830,7 @@ MediaCore.creator['send-ico'] = function () {
     );
 };
 
-MediaCore.creator['add-file-ico'] = function () {
+MediACore.creator['add-file-ico'] = function () {
     return _(
         [
             '<svg class="add-file" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg">',
@@ -843,7 +843,7 @@ MediaCore.creator['add-file-ico'] = function () {
         ].join('')
     );
 };
-MediaCore.creator['add-image-ico'] = function () {
+MediACore.creator['add-image-ico'] = function () {
     return _(
         [
             '<svg class="add-image" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="absol/src/HTML5/Elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">',
@@ -858,7 +858,7 @@ MediaCore.creator['add-image-ico'] = function () {
     );
 };
 
-MediaCore.creator['attachment-ico'] = function () {
+MediACore.creator['attachment-ico'] = function () {
     return _(
         [
             '<svg class="attachment" width="1024" height="1024"  version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" >',
@@ -873,7 +873,7 @@ MediaCore.creator['attachment-ico'] = function () {
     );
 };
 
-MediaCore.creator['attachment-ico'].property = {
+MediACore.creator['attachment-ico'].property = {
     ext: {
         set: function (value) {
             value = value || '';
@@ -890,7 +890,7 @@ MediaCore.creator['attachment-ico'].property = {
 
 
 
-MediaCore.creator['times-ico'] = function () {
+MediACore.creator['times-ico'] = function () {
     return _(
         [
             '<svg class="times" width="100" height="100" version="1.1" viewBox="0 0 26.458 26.458" xmlns="http://www.w3.org/2000/svg">',
@@ -902,7 +902,7 @@ MediaCore.creator['times-ico'] = function () {
 };
 
 
-MediaCore.creator['download-ico'] = function () {
+MediACore.creator['download-ico'] = function () {
     return _(
         [
             '<svg class="download" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">',
@@ -915,7 +915,7 @@ MediaCore.creator['download-ico'] = function () {
     );
 };
 
-MediaCore.creator['plus-ico'] = function () {
+MediACore.creator['plus-ico'] = function () {
     return _(
 
         '<svg class="_7oal" height="24" width="24" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><polygon points="-6,30 30,30 30,-6 -6,-6 "></polygon><path d="m18,11l-5,0l0,-5c0,-0.552 -0.448,-1 -1,-1c-0.5525,0 -1,0.448 -1,1l0,5l-5,0c-0.5525,0 -1,0.448 -1,1c0,0.552 0.4475,1 1,1l5,0l0,5c0,0.552 0.4475,1 1,1c0.552,0 1,-0.448 1,-1l0,-5l5,0c0.552,0 1,-0.448 1,-1c0,-0.552 -0.448,-1 -1,-1m-6,13c-6.6275,0 -12,-5.3725 -12,-12c0,-6.6275 5.3725,-12 12,-12c6.627,0 12,5.3725 12,12c0,6.6275 -5.373,12 -12,12" ></path></g></svg>'
@@ -923,7 +923,7 @@ MediaCore.creator['plus-ico'] = function () {
 };
 
 
-Acore.creator.mediainput = MediaInput;
+ACore.creator.mediainput = MediaInput;
 
 
 

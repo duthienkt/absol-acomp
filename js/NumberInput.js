@@ -1,12 +1,12 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import OOP from "absol/src/HTML5/OOP";
 import { getCaretPosition } from "absol/src/HTML5/Text";
 import { numberToString } from "absol/src/Math/int";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function NumberInput() {
@@ -375,7 +375,7 @@ NumberInput.property.disabled = {
 
 
 
-Acore.install('NumberInput'.toLowerCase(), NumberInput);
+ACore.install('NumberInput'.toLowerCase(), NumberInput);
 
 export default NumberInput;
 

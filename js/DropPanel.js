@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Element from "absol/src/HTML5/Element";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 
@@ -113,6 +113,6 @@ DropPanel.property.show = {
 };
 
 
-Acore.install('DropPanel'.toLowerCase(), DropPanel);
+ACore.install('DropPanel'.toLowerCase(), DropPanel);
 
 export default DropPanel;

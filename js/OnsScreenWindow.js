@@ -1,11 +1,11 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Draggable from "./Draggable";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function OnScreenWindow() {
@@ -504,6 +504,6 @@ OnScreenWindow.prototype.relocation = function () {
 };
 
 
-Acore.install('OnScreenWindow'.toLowerCase(), OnScreenWindow);
+ACore.install('OnScreenWindow'.toLowerCase(), OnScreenWindow);
 
 export default OnScreenWindow;

@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 import DraggableVStack from "./DraggableVStack";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function DraggableHStack() {
     var res = _({
@@ -205,5 +205,5 @@ DraggableHStack.prototype._updateDragginPosition = function () {
 };
 
 
-Acore.install('DraggableHStack'.toLowerCase(), DraggableHStack);
+ACore.install('DraggableHStack'.toLowerCase(), DraggableHStack);
 export default DraggableHStack;

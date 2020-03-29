@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import { randomIdent } from 'absol/src/String/stringGenerate';
 
 
-var $ = Acore.$;
-var _ = Acore._;
+var $ = ACore.$;
+var _ = ACore._;
 
 
 function StaticTabbar() {
@@ -111,7 +111,7 @@ StaticTabbar.prototype.activeTab = function (ident) {
 
 };
 
-Acore.install('statictabbar', StaticTabbar);
+ACore.install('statictabbar', StaticTabbar);
 
 export default StaticTabbar;
 

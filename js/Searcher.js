@@ -1,11 +1,11 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
-Acore.creator['find-ico'] = function () {
+ACore.creator['find-ico'] = function () {
     var res = _(
         '<svg class="find" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">' +
         ' <g transform="matrix(-1 0 0 1 99.478 -193.73)">' +
@@ -17,7 +17,7 @@ Acore.creator['find-ico'] = function () {
 };
 
 
-Acore.creator['times-circle-ico'] = function () {
+ACore.creator['times-circle-ico'] = function () {
     var res = _(
         '<svg class="times" width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">\
             <g transform="translate(0,-197)">\
@@ -146,11 +146,11 @@ SearchTextInput.eventHandler.inputKeyUp = function (event) {
 
 
 
-Acore.creator.searchcrosstextinput = function () {
+ACore.creator.searchcrosstextinput = function () {
     var res = _('searchtextinput', true);
     return res;
 };
 
-Acore.creator.searchtextinput = SearchTextInput;
+ACore.creator.searchtextinput = SearchTextInput;
 
 export default SearchTextInput;

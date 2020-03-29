@@ -1,11 +1,11 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
 import * as datetime from 'absol/src/Time/datetime';
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 
@@ -647,7 +647,7 @@ ChromeCalendar.property.multiSelect = {
     }
 };
 
-Acore.install('chromecalendar', ChromeCalendar);
+ACore.install('chromecalendar', ChromeCalendar);
 
 
 

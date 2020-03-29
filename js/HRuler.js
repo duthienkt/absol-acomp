@@ -1,8 +1,8 @@
 import Dom from "absol/src/HTML5/Dom";
-import Acore from "../ACore";
+import ACore from "../ACore";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function HRuler() {
@@ -166,6 +166,6 @@ HRuler.property.inverse = {
     }
 };
 
-Acore.install('hruler', HRuler);
+ACore.install('hruler', HRuler);
 
 export default HRuler;

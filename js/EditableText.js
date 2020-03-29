@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function EditableText() {
@@ -139,6 +139,6 @@ EditableText.eventHanler.inputBlur = function (event) {
     this.emit('blur', event);
 };
 
-Acore.creator.editabletext = EditableText;
+ACore.creator.editabletext = EditableText;
 
 export default EditableText;

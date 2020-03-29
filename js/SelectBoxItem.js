@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function SelectBoxItem() {
     var res = _({
@@ -58,6 +58,6 @@ SelectBoxItem.property.value = {
     }
 };
 
-Acore.install('SelectBoxItem'.toLowerCase(), SelectBoxItem);
+ACore.install('SelectBoxItem'.toLowerCase(), SelectBoxItem);
 
 export default SelectBoxItem;

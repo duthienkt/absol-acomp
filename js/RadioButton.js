@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 function RadioButton() {
     var res = _(
@@ -220,6 +220,6 @@ RadioButton.initAfterLoad = function () {
     });
 }
 
-Acore.install('RadioButton'.toLowerCase(), RadioButton);
+ACore.install('RadioButton'.toLowerCase(), RadioButton);
 
 export default RadioButton;

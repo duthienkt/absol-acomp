@@ -1,15 +1,15 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import { contenteditableTextOnly } from "./utils";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 
-Acore.install('toggler-ico', function () {
+ACore.install('toggler-ico', function () {
     var res = _(
         '<svg class="toggler-ico" width="14" height="14" version="1.1" viewBox="0 0 3.7042 3.7042" xmlns="http://www.w3.org/2000/svg" >' +
         '    <g transform="translate(0 -293.3)" class="toggle-close">' +
@@ -23,7 +23,7 @@ Acore.install('toggler-ico', function () {
     return res;
 });
 
-Acore.install('remove-ico', function () {
+ACore.install('remove-ico', function () {
     return _('<svg class="remove-ico" width="24" height="24" viewBox="0 0 24 24">\
                 <path class="close" d="M3,16.74L7.76,12L3,7.26L7.26,3L12,7.76L16.74,3L21,7.26L16.24,12L21,16.74L16.74,21L12,16.24L7.26,21L3,16.74" />\
                 <circle class="modified" cx="12" cy="12" r="10" />\
@@ -384,8 +384,8 @@ ExpTree.prototype.accessByPath = function (path) {
 
 
 
-Acore.install('expnode', ExpNode);
-Acore.install('exptree', ExpTree);
+ACore.install('expnode', ExpNode);
+ACore.install('exptree', ExpTree);
 
 
 export default ExpTree;

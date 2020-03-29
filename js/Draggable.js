@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
 function Draggable(element) {
-    if (!element) element = Acore._('div');
-    else Acore.$(element);
+    if (!element) element = ACore._('div');
+    else ACore.$(element);
     element.defineEvent(['predrag', 'drag', 'begindrag', 'enddrag']);
-    var body = Acore.$('body');
+    var body = ACore.$('body');
     var isMoving = false;
     var firstMove = false;
     var offsetX;

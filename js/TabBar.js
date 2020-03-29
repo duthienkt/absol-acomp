@@ -1,8 +1,8 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function TabBar() {
@@ -156,6 +156,6 @@ TabBar.prototype.setModified = function (ident, flag) {
 };
 
 
-Acore.creator.tabbar = TabBar;
+ACore.creator.tabbar = TabBar;
 
 export default TabBar;

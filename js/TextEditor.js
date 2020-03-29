@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import { getTextNodesIn, getTextIn, measureText } from "absol/src/HTML5/Text";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function TextEditor() {
@@ -268,6 +268,6 @@ TextEditor.prototype.isEmptyText = function () {
 
 // };
 
-Acore.install('texteditor', TextEditor);
+ACore.install('texteditor', TextEditor);
 
 // not comleted yet

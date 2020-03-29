@@ -1,11 +1,11 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 import Element from "absol/src/HTML5/Element";
 import BScroller from "./BScroller";
 
-var $ = Acore.$;
-var _ = Acore._;
+var $ = ACore.$;
+var _ = ACore._;
 
 
 
@@ -413,6 +413,6 @@ TableScroller.property.fixedCol = {
 
 
 
-Acore.install('TableScroller'.toLowerCase(), TableScroller);
+ACore.install('TableScroller'.toLowerCase(), TableScroller);
 
 export default TableScroller;

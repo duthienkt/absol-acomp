@@ -1,9 +1,9 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import { insertTextAtCursor } from "./utils";
 import { getTextIn } from "absol/src/HTML5/Text";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function SpanInput() {
@@ -160,6 +160,6 @@ SpanInput.render = function () {
 };
 
 
-Acore.install('spaninput', SpanInput);
+ACore.install('spaninput', SpanInput);
 
 export default SpanInput;

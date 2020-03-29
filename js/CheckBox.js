@@ -1,7 +1,7 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 function CheckBox() {
@@ -122,5 +122,5 @@ CheckBox.property = {
     }
 };
 
-Acore.creator.checkbox = CheckBox;
+ACore.creator.checkbox = CheckBox;
 export default CheckBox;

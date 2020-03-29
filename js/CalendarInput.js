@@ -1,10 +1,10 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import { beginOfDay, formartDateString } from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 
 
@@ -117,11 +117,11 @@ CalendarInput.prototype.formartDateString = function (date) {
     }
 };
 
-Acore.install('calendarinput', CalendarInput);
+ACore.install('calendarinput', CalendarInput);
 
 
 // for older code
-Acore.install('calendar-input', function (data) {
+ACore.install('calendar-input', function (data) {
 
     return _({
         tag: 'calendarinput',

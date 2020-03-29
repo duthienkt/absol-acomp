@@ -1,11 +1,11 @@
-import Acore from "../ACore";
+import ACore from "../ACore";
 import { measureText } from "./utils";
 
 import './SelectListItem';
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
-var _ = Acore._;
-var $ = Acore.$;
+var _ = ACore._;
+var $ = ACore.$;
 
 var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
 /**
@@ -168,7 +168,7 @@ SelectList.prototype.init = function (props) {
         this.value = value;
 };
 
-Acore.creator.selectlist = SelectList;
+ACore.creator.selectlist = SelectList;
 
 
 
