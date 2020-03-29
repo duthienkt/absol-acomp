@@ -214,14 +214,16 @@ BoardTable.prototype.findChildHolderIndex = function (elt) {
 
 
 BoardTable.prototype._findDragZone = function (elt) {
+    var res = null;
     while (elt != this && elt) {
         if (elt.classList.contains('as-board-table')) return null;//maybe in other
-        if (elt.classList.contains('as-board-drag-zone')) return elt;
-        if (elt.classList.contains('as-board-free-zone')) return null;
-
+        if (!res && elt.classList.contains('as-board-drag-zone')) {
+            res= elt;
+        }
+        if (!res && elt.classList.contains('as-board-free-zone')) return null;// do not drag
         elt = elt.parentElement;
     }
-    return null;
+    return res;
 };
 
 BoardTable.prototype._findCard = function (elt) {
