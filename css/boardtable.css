@@ -1,0 +1,29 @@
+.as-board-table {
+    overflow: visible;
+    position: relative;
+}
+
+
+.as-board {
+    /* display: inline-block; */
+    white-space: normal;
+    box-sizing: border-box;
+    position: relative;
+    vertical-align: middle;
+}
+
+
+.as-board-moving {
+    transform-origin: 30% 55%;
+    transform: rotate(5deg);
+    transition: transform 0.05s;
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
+}
+
+
+.as-board-place-holder {
+    opacity: 0.3;
+}
