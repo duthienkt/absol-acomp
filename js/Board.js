@@ -5,25 +5,7 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function Board() {
-    this.$attachhook = _('attachhook').addTo(this)
-    .on('error', this.notifySizeChange.bind(this));
-    
 }
-
-
-Board.prototype.notifySizeChange = function () {
-    var bound = this.getBoundingClientRect();
-    if (!this._lastBound || this._lastBound.width != bound.width || this._lastBound.height != this._lastBound.height) {
-        this.emit('sizechange', {name: 'sizechange', target: this, bound: bound});
-    }
-    this._lastBound = { width: bound.width, height: bound.height };
-};
-
-Board.prototype.cancelWaitingSizeChange= function(){
-    var bound = this.getBoundingClientRect();
-    this._lastBound = { width: bound.width, height: bound.height };
-    return bound;
-};
 
 
 Board.render = function () {
