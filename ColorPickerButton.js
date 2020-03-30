@@ -50,6 +50,7 @@ ColorPickerButton.prototype.openPicker = function () {
     $(document.body).on('click', this.eventHandler.clickBody);
     this._lastValue = this.value;
     ColorPickerButton.$ColorPicker.value = this.value;
+    ColorPickerButton.$ColorPicker.mode = this.mode||"RGBA";
 };
 
 
