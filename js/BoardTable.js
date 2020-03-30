@@ -379,7 +379,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
     })
 };
 
-BoardTable.prototype.getAllCard = function () {
+BoardTable.prototype.getAllBoards  = function () {
     return this._childHolders.map(function (holder) {
         return holder.elt;
     });

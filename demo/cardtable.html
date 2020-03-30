@@ -42,7 +42,7 @@
             var simpleDemoDiv = $('#simple-demo');
 
             //lưu board theo id cho dễ tìm sau khi sắp xếp
-            var cardDataList = {
+            var boardDataList = {
                 c001: {
                     name: "Thẻ 1",
                     desc: 'Một thẻ bình thường'
@@ -80,10 +80,10 @@
 
             };
 
-            var cardIds = Object.keys(cardDataList);//thứ tự board, ở đây đơn giản cứ lấy hết
+            var boardIds = Object.keys(boardDataList);//thứ tự board, ở đây đơn giản cứ lấy hết
 
             //hãy tạo board theo cách của bạn, đừng làm theo cách này
-            function makeCard(data) {
+            function makeBoard(data) {
                 //trả về object của absol, có thể trả html cũng được
                 var res = {
                     tag: 'board',//phải tag là board,
@@ -126,8 +126,8 @@
 
             var mBoardTable = absol._({
                 tag: 'boardtable',
-                child: cardIds.map(function (id) {
-                    return makeCard(cardDataList[id])
+                child: boardIds.map(function (id) {
+                    return makeBoard(boardDataList[id])
                 })
             });
 
@@ -252,7 +252,7 @@
             var $ = absol.$;
             var _ = absol._;
             //tạo module board cho dễ dùng
-            function TaskCard() {
+            function TaskBoard() {
                 this.$removeBtn = $('.task-board-remove-btn', this)
                     .on('click', this.eventHandler.clickRemoveBtn);
                 this.$descInput = $('.task-board-body preinput', this);
@@ -263,7 +263,7 @@
             //hàm này được gọi khi tạo thẻ, gọi trước khi các thuộc tính khác của thẻ được tạo ra
             //khác với property được nhận trong props, data sẽ được nhân khi đối tượng được tạo ra, và nó sẽ không đổi, hoặc đổi
             // nếu property có hỗ trợ
-            TaskCard.render = function (data) {
+            TaskBoard.render = function (data) {
                 return _({
                     tag: 'board',
                     class: ['task-board', 'as-board-drag-zone'],
@@ -302,9 +302,9 @@
             };
 
 
-            TaskCard.property = {};
+            TaskBoard.property = {};
 
-            TaskCard.property.desc = {
+            TaskBoard.property.desc = {
                 set: function (value) {
                     this.$descInput.value = value + '';
                 },
@@ -313,7 +313,7 @@
                 }
             };
 
-            TaskCard.property.name = {
+            TaskBoard.property.name = {
                 set: function (value) {
                     this.$name.clearChild().addChild(_({ text: '' + value }))
                 },
@@ -322,12 +322,12 @@
                 }
             }
 
-            TaskCard.eventHandler = {};// bắt đầu khai báo các event handler
-            TaskCard.eventHandler.clickRemoveBtn = function (event) {
+            TaskBoard.eventHandler = {};// bắt đầu khai báo các event handler
+            TaskBoard.eventHandler.clickRemoveBtn = function (event) {
                 this.emit('pressremove', { name: 'pressremove', target: this }, this);// viết thêm name, target, sender cho đủ thôi, chỉ cần truyền event ra là được
             };
 
-            absol.coreDom.install('taskcard', TaskCard);// dùng tag: 'taskcard'
+            absol.coreDom.install('taskboard', TaskBoard);// dùng tag: 'taskboard'
 
 
 
@@ -339,15 +339,15 @@
             simpleDemo1Div.addChild(mBoardTable);
             var mLog = _('div.table-log');
             simpleDemo1Div.addChild(mLog);
-            var mIndexCardBox = _('div.index-board-box');
-            simpleDemo1Div.addChild(mIndexCardBox);
+            var mIndexBoardBox = _('div.index-board-box');
+            simpleDemo1Div.addChild(mIndexBoardBox);
 
-            function updateCardBox() {
-                var cards = mBoardTable.getAllCard();
-                mIndexCardBox.clearChild();
-                for (var i = 0; i < cards.length; ++i) {
-                    mIndexCardBox.addChild(_({
-                        child: { text: cards[i].name }
+            function updateBoardBox() {
+                var boards = mBoardTable.getAllBoards();
+                mIndexBoardBox.clearChild();
+                for (var i = 0; i < boards.length; ++i) {
+                    mIndexBoardBox.addChild(_({
+                        child: { text: boards[i].name }
                     }));
                 }
             }
@@ -362,27 +362,27 @@
 
             mBoardTable.on('change', function (event) {
                 log("Chuyển từ  " + event.from + " qua " + event.to);
-                updateCardBox();
+                updateBoardBox();
             });
 
 
-            //tạo một board cho bảng tableCard
-            function makeCard(tableCard, props) {
+            //tạo một board cho bảng tableBoard
+            function makeBoard(tableBoard, props) {
                 var board = _({
-                    tag: 'taskcard',
+                    tag: 'taskboard',
                     props: props
                 });
                 board.on('pressremove', function () {
-                    log('Xóa ở vị trí ' + tableCard.findChildHolderIndex(board));
+                    log('Xóa ở vị trí ' + tableBoard.findChildHolderIndex(board));
                     //board.selfRemove();
-                    tableCard.removeChild(board);//2 cách gọi như nhau, tự xóa nó, đối với selfRemove thì không cần biết tableCard
+                    tableBoard.removeChild(board);//2 cách gọi như nhau, tự xóa nó, đối với selfRemove thì không cần biết tableBoard
 
-                    updateCardBox();
+                    updateBoardBox();
                 })
                 return board;
             }
 
-            var cardProps = [
+            var boardProps = [
                 {
                     name: 'Task 1',
                     desc: "Nội dung công việc 1"
@@ -392,7 +392,7 @@
                     desc: "Nội dung công việc 2"
                 },
             ].forEach(function (props, index) {
-                mBoardTable.addChild(makeCard(mBoardTable, props));
+                mBoardTable.addChild(makeBoard(mBoardTable, props));
             });
 
 
@@ -404,7 +404,7 @@
                 on: {
                     click: function () {
                         mBoardTable.addChildBefore(
-                            makeCard(mBoardTable, {
+                            makeBoard(mBoardTable, {
                                 name: 'Task ' + autoNameTaskIndex,
                                 desc: "Nội dung công việc " + (autoNameTaskIndex++)
 
@@ -412,13 +412,13 @@
                         //nếu trong bảng có chứa sẵn board thì có thể gọi addChild(board), lúc này nó sẽ thêm vào sau board cuối cùng,
                         //nhưng nếu không có thẻ nào, sẽ bị thêm sau plusButton
                         log('Thêm vào cuối');
-                        updateCardBox();
+                        updateBoardBox();
                     }
                 }
             });
 
             mBoardTable.addChild(plusButton);
-            updateCardBox();
+            updateBoardBox();
 
 
         })();
