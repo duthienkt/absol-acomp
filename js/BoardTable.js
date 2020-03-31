@@ -63,7 +63,7 @@ BoardTable.prototype.addChild = function (elt) {
         }
         var holder = {
             elt: elt,
-            onsizechange: this.eventHandler.cardresize.bind(this, elt),
+            onsizechange: this.eventHandler.boardresize.bind(this, elt),
         };
         elt.on('sizechange', holder.onsizechange);
         this._childHolders.push(holder);
@@ -123,7 +123,7 @@ BoardTable.prototype.addChildBefore = function (elt, at) {
         this.insertBefore(elt, at);
         var holder = {
             elt: elt,
-            onsizechange: this.eventHandler.cardresize.bind(this, elt),
+            onsizechange: this.eventHandler.boardresize.bind(this, elt),
         };
         elt.on('sizechange', holder.onsizechange);
         this._childHolders.splice(atIndex, 0, holder);
@@ -157,7 +157,7 @@ BoardTable.prototype.addChildAfter = function (elt, at) {
 
         var holder = {
             elt: elt,
-            onsizechange: this.eventHandler.cardresize.bind(this, elt),
+            onsizechange: this.eventHandler.boardresize.bind(this, elt),
         };
         elt.on('sizechange', holder.onsizechange);
         if (!afterAt) {
@@ -218,7 +218,7 @@ BoardTable.prototype._findDragZone = function (elt) {
     while (elt != this && elt) {
         if (elt.classList.contains('as-board-table')) return null;//maybe in other
         if (!res && elt.classList.contains('as-board-drag-zone')) {
-            res= elt;
+            res = elt;
         }
         if (!res && elt.classList.contains('as-board-free-zone')) return null;// do not drag
         elt = elt.parentElement;
@@ -226,7 +226,7 @@ BoardTable.prototype._findDragZone = function (elt) {
     return res;
 };
 
-BoardTable.prototype._findCard = function (elt) {
+BoardTable.prototype._findBoard = function (elt) {
     while (elt != this && elt) {
         if (elt.classList.contains('as-board')) return elt;
         elt = elt.parentElement;
@@ -240,12 +240,12 @@ BoardTable.prototype._findCard = function (elt) {
  */
 BoardTable.eventHandler = {};
 
-BoardTable.eventHandler.cardresize = function (cardElt, event) {
-    if (cardElt.getParent() == this) {
+BoardTable.eventHandler.boardresize = function (boardElt, event) {
+    if (boardElt.getParent() == this) {
         //todo
     }
     else {
-        this._removeInChildList(cardElt);
+        this._removeInChildList(boardElt);
     }
     // this.updateSize();
 };
@@ -257,16 +257,17 @@ BoardTable.eventHandler.cardresize = function (cardElt, event) {
 BoardTable.eventHandler.mousedown = function (event) {
     var dragzone = this._findDragZone(event.target);
     if (dragzone) {
-        var cardElt = this._findCard(dragzone);
-        var holderIndex = this.findChildHolderIndex(cardElt);
+        var boardElt = this._findBoard(dragzone);
+        var holderIndex = this.findChildHolderIndex(boardElt);
+        if (holderIndex < 0) return;// can not move
         var mousePos = new Vec2(event.clientX, event.clientY);
-        var cBound = cardElt.getBoundingClientRect();
-        var mouseCardOffset = mousePos.sub(new Vec2(cBound.left, cBound.top));
+        var cBound = boardElt.getBoundingClientRect();
+        var mouseBoardOffset = mousePos.sub(new Vec2(cBound.left, cBound.top));
         this._dragEventData = {
-            cardElt: cardElt,
+            boardElt: boardElt,
             state: 'PRE_DRAG',
             mouseStartPos: mousePos,
-            mouseCardOffset: mouseCardOffset,
+            mouseBoardOffset: mouseBoardOffset,
             holderIndex: holderIndex
         };
         $(document.body).on({
@@ -279,19 +280,19 @@ BoardTable.eventHandler.mousedown = function (event) {
 
 BoardTable.eventHandler.mousemove = function (event) {
     event.preventDefault();
-    var cBound = this._dragEventData.cardElt.getBoundingClientRect();
+    var cBound = this._dragEventData.boardElt.getBoundingClientRect();
     var mousePos = new Vec2(event.clientX, event.clientY);
     if (this._dragEventData.state == 'PRE_DRAG') {
         if (mousePos.sub(this._dragEventData.mouseStartPos).abs() > 8) {
-            this._dragEventData.placeHolderElt = $(this._dragEventData.cardElt.cloneNode(false))
+            this._dragEventData.placeHolderElt = $(this._dragEventData.boardElt.cloneNode(false))
                 .addClass('as-board-place-holder')
                 .addStyle({
                     width: cBound.width + 'px',
                     height: cBound.height + 'px'
                 });
-            this.insertBefore(this._dragEventData.placeHolderElt, this._dragEventData.cardElt);
+            this.insertBefore(this._dragEventData.placeHolderElt, this._dragEventData.boardElt);
             this._dragEventData.state = "DRAG";
-            this._dragEventData.cardElt.addClass('as-board-moving');
+            this._dragEventData.boardElt.addClass('as-board-moving');
             this._dragEventData.cartAt = this._dragEventData.holderIndex;
         }
     }
@@ -338,10 +339,10 @@ BoardTable.eventHandler.mousemove = function (event) {
 
         var bound = this.getBoundingClientRect();
         var mouseOffSet = mousePos.sub(new Vec2(bound.left, bound.top));
-        var cardPos = mouseOffSet.sub(this._dragEventData.mouseCardOffset);
-        this._dragEventData.cardElt.addStyle({
-            left: cardPos.x + 'px',
-            top: cardPos.y + 'px'
+        var boardPos = mouseOffSet.sub(this._dragEventData.mouseBoardOffset);
+        this._dragEventData.boardElt.addStyle({
+            left: boardPos.x + 'px',
+            top: boardPos.y + 'px'
         });
     }
 };
@@ -350,26 +351,26 @@ BoardTable.eventHandler.mousemove = function (event) {
 
 BoardTable.eventHandler.mousefinish = function (event) {
     if (this._dragEventData.state == 'DRAG') {
-        this._dragEventData.cardElt.removeClass('as-board-moving')
+        this._dragEventData.boardElt.removeClass('as-board-moving')
             .removeStyle('left')
             .removeStyle('top');
         this._dragEventData.placeHolderElt.remove();
         this._dragEventData.state = "FINISH";
         if (this._dragEventData.holderIndex != this._dragEventData.cartAt) {
             if (this._dragEventData.holderIndex > this._dragEventData.cartAt) {
-                this.insertBefore(this._dragEventData.cardElt, this._childHolders[this._dragEventData.cartAt].elt);
+                this.insertBefore(this._dragEventData.boardElt, this._childHolders[this._dragEventData.cartAt].elt);
             }
             else if (this._dragEventData.holderIndex < this._dragEventData.cartAt) {
                 var bf = Element.prototype.findChildAfter.call(this, this._childHolders[this._dragEventData.cartAt].elt);
                 if (bf)
-                    this.insertBefore(this._dragEventData.cardElt, bf);
+                    this.insertBefore(this._dragEventData.boardElt, bf);
                 else {
-                    this.appendChild(this._dragEventData.cardElt);
+                    this.appendChild(this._dragEventData.boardElt);
                 }
             }
             var holder = this._childHolders.splice(this._dragEventData.holderIndex, 1)[0];
             this._childHolders.splice(this._dragEventData.cartAt, 0, holder);
-            this.emit('change', { name: 'change', cardElt: holder.elt, action: 'move', from: this._dragEventData.holderIndex, to: this._dragEventData.cartAt, target: this, }, this);
+            this.emit('change', { name: 'change', boardElt: holder.elt, action: 'move', from: this._dragEventData.holderIndex, to: this._dragEventData.cartAt, target: this, }, this);
         }
     }
     $(document.body).off({
@@ -379,7 +380,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
     })
 };
 
-BoardTable.prototype.getAllBoards  = function () {
+BoardTable.prototype.getAllBoards = function () {
     return this._childHolders.map(function (holder) {
         return holder.elt;
     });
