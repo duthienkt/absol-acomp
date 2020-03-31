@@ -290,6 +290,17 @@ BoardTable.eventHandler.mousemove = function (event) {
                     width: cBound.width + 'px',
                     height: cBound.height + 'px'
                 });
+
+            this._dragEventData.cardStyle = {
+                width: this._dragEventData.boardElt.style.width,
+                height: this._dragEventData.boardElt.style.height
+            };
+
+            this._dragEventData.boardElt.addStyle({
+                width: cBound.width + 'px',
+                height: cBound.height + 'px'
+            });
+
             this.insertBefore(this._dragEventData.placeHolderElt, this._dragEventData.boardElt);
             this._dragEventData.state = "DRAG";
             this._dragEventData.boardElt.addClass('as-board-moving');
@@ -354,6 +365,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
         this._dragEventData.boardElt.removeClass('as-board-moving')
             .removeStyle('left')
             .removeStyle('top');
+        this._dragEventData.boardElt.addStyle(this._dragEventData.cardStyle);
         this._dragEventData.placeHolderElt.remove();
         this._dragEventData.state = "FINISH";
         if (this._dragEventData.holderIndex != this._dragEventData.cartAt) {
