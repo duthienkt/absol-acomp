@@ -21,18 +21,19 @@ PreInput.prototype.applyData = function (text, offset) {
     var textNode = _({ text: text });
     this.clearChild()
         .addChild(textNode);
-    if (document.getSelection) {
-        var sel = document.getSelection();
-        sel.removeAllRanges();
-        var range = document.createRange();
-        range.setStart(textNode, offset);
-        sel.addRange(range);
-    }
-    else {
-        console.error("PreInput: Not support!");
-    }
+    if (this.isDescendantOf(document.body)) {
+        if (document.getSelection) {
 
-    // this.
+            var sel = document.getSelection();
+            sel.removeAllRanges();
+            var range = document.createRange();
+            range.setStart(textNode, offset);
+            sel.addRange(range);
+        }
+        else {
+            console.error("PreInput: Not support!");
+        }
+    }
 };
 
 PreInput.prototype.undo = function () {
