@@ -188,10 +188,14 @@ import './css/boardtable.css';
 import './js/BoardTable';
 import './js/Board';
 
+import './js/Sprite';
+
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 import Draggable from "./js/Draggable";
-
+import EmojiChars from "./js/EmojiChars";
+import EmojiAnims from "./js/EmojiAnims";
 
 var AComp = {
     core: ACore,
@@ -200,7 +204,9 @@ var AComp = {
     creator: ACore.creator,
     buildDom: ACore.buildDom,
     runDebugTask: DebugTask.start.bind(DebugTask),
-    Draggable: Draggable
+    Draggable: Draggable,
+    EmojiChars: EmojiChars,
+    EmojiAnims: EmojiAnims
 };
 
 window.runDebugTask = DebugTask.start.bind(DebugTask);
