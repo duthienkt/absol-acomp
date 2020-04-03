@@ -3,6 +3,7 @@ import ACore from "../ACore";
 import './Board';
 import Vec2 from "absol/src/Math/Vec2";
 import Element from "absol/src/HTML5/Element";
+import Dom from "absol/src/HTML5/Dom";
 
 
 var _ = ACore._;
@@ -14,6 +15,7 @@ function BoardTable() {
     });
     this._childHolders = [];
     this._dragEventData = null;
+    this._friends = [];
 }
 
 BoardTable.render = function () {
@@ -154,7 +156,6 @@ BoardTable.prototype.addChildAfter = function (elt, at) {
             }
         }
 
-
         var holder = {
             elt: elt,
             onsizechange: this.eventHandler.boardresize.bind(this, elt),
@@ -213,6 +214,18 @@ BoardTable.prototype.findChildHolderIndex = function (elt) {
 };
 
 
+
+BoardTable.prototype.getEffectZone = function () {
+    var ez = this;
+    while (ez) {
+        if (ez.classList.contains('as-board-table-effect-zone')) {
+            return ez;
+        }
+        ez = ez.parentElement;
+    }
+    return this;
+};
+
 BoardTable.prototype._findDragZone = function (elt) {
     var res = null;
     while (elt != this && elt) {
@@ -235,6 +248,28 @@ BoardTable.prototype._findBoard = function (elt) {
 };
 
 
+BoardTable.prototype.getAllFriends = function () {
+    var thisBT = this;
+    var res = [];
+    var friendQR;
+    for (var i = 0; i < this._friends.length; ++i) {
+        friendQR = this._friends[i];
+        if (friendQR != this && friendQR && friendQR.classList && friendQR.classList.contains('as-board-table')) {
+            res.push(friendQR);
+        }
+        else if (typeof friendQR == 'string') {// query
+            $(friendQR, false, function (elt) {
+                if (thisBT != elt && elt.classList && elt.classList.contains('as-board-table')) {
+                    res.push(elt);
+                }
+                return false;
+            });
+        }
+    }
+
+    return res;
+};
+
 /**
  * @type {BoardTable}
  */
@@ -251,15 +286,13 @@ BoardTable.eventHandler.boardresize = function (boardElt, event) {
 };
 
 
-
-
-
 BoardTable.eventHandler.mousedown = function (event) {
     var dragzone = this._findDragZone(event.target);
     if (dragzone) {
         var boardElt = this._findBoard(dragzone);
         var holderIndex = this.findChildHolderIndex(boardElt);
         if (holderIndex < 0) return;// can not move
+
         var mousePos = new Vec2(event.clientX, event.clientY);
         var cBound = boardElt.getBoundingClientRect();
         var mouseBoardOffset = mousePos.sub(new Vec2(cBound.left, cBound.top));
@@ -268,8 +301,9 @@ BoardTable.eventHandler.mousedown = function (event) {
             state: 'PRE_DRAG',
             mouseStartPos: mousePos,
             mouseBoardOffset: mouseBoardOffset,
-            holderIndex: holderIndex
+            holderIndex: holderIndex,
         };
+
         $(document.body).on({
             mousemove: this.eventHandler.mousemove,
             mouseup: this.eventHandler.mousefinish,
@@ -278,70 +312,83 @@ BoardTable.eventHandler.mousedown = function (event) {
     }
 };
 
+
 BoardTable.eventHandler.mousemove = function (event) {
+    var dragEventData = this._dragEventData;
+    var thisBT = this;
     event.preventDefault();
-    var cBound = this._dragEventData.boardElt.getBoundingClientRect();
+    var cBound = dragEventData.boardElt.getBoundingClientRect();
     var mousePos = new Vec2(event.clientX, event.clientY);
-    if (this._dragEventData.state == 'PRE_DRAG') {
-        if (mousePos.sub(this._dragEventData.mouseStartPos).abs() > 8) {
-            this._dragEventData.placeHolderElt = $(this._dragEventData.boardElt.cloneNode(false))
+    if (dragEventData.state == 'PRE_DRAG') {
+        if (mousePos.sub(dragEventData.mouseStartPos).abs() > 8) {
+            dragEventData.placeHolderElt = $(dragEventData.boardElt.cloneNode(false))
                 .addClass('as-board-place-holder')
                 .addStyle({
                     width: cBound.width + 'px',
                     height: cBound.height + 'px'
                 });
-
-            this._dragEventData.cardStyle = {
-                width: this._dragEventData.boardElt.style.width,
-                height: this._dragEventData.boardElt.style.height
+            dragEventData.friendHolders = this.getAllFriends().concat([this]).map(function (elt) {
+                //include itself
+                var enterEvent = thisBT.eventHandler.enterFriendEffectZone.bind(thisBT, elt);
+                elt.on('mouseenter', enterEvent)
+                return {
+                    elt: elt,
+                    effectZone: elt.getEffectZone(),
+                    enterEvent: enterEvent
+                }
+            });
+            dragEventData.inEffectZoneOf = this
+            dragEventData.cardStyle = {
+                width: dragEventData.boardElt.style.width,
+                height: dragEventData.boardElt.style.height
             };
 
-            this._dragEventData.boardElt.addStyle({
+            dragEventData.boardElt.addStyle({
                 width: cBound.width + 'px',
                 height: cBound.height + 'px'
             });
 
-            this.insertBefore(this._dragEventData.placeHolderElt, this._dragEventData.boardElt);
-            this._dragEventData.state = "DRAG";
-            this._dragEventData.boardElt.addClass('as-board-moving');
-            this._dragEventData.cartAt = this._dragEventData.holderIndex;
+            this.insertBefore(dragEventData.placeHolderElt, dragEventData.boardElt);
+            dragEventData.state = "DRAG";
+            dragEventData.boardElt.addClass('as-board-moving');
+            dragEventData.cartAt = dragEventData.holderIndex;
         }
     }
 
 
-    if (this._dragEventData.state == 'DRAG') {
+    if (dragEventData.state == 'DRAG') {
         var fbound;
         for (var i = 0; i < this._childHolders.length; ++i) {
-            if (i == this._dragEventData.holderIndex) continue;
+            if (i == dragEventData.holderIndex) continue;
             var viewIndex;
-            if ((i < this._dragEventData.holderIndex && i < this._dragEventData.cartAt)
-                || (i > this._dragEventData.holderIndex && i > this._dragEventData.cartAt)
-                || this._dragEventData.holderIndex == this._dragEventData.cartAt) {
+            if ((i < dragEventData.holderIndex && i < dragEventData.cartAt)
+                || (i > dragEventData.holderIndex && i > dragEventData.cartAt)
+                || dragEventData.holderIndex == dragEventData.cartAt) {
                 viewIndex = i;
             }
             else {
-                if (this._dragEventData.holderIndex > this._dragEventData.cartAt) {
+                if (dragEventData.holderIndex > dragEventData.cartAt) {
                     viewIndex = i + 1;
                 }
                 else {
                     viewIndex = i - 1;
                 }
             }
-            if (viewIndex == this._dragEventData.cartAt) continue;
+            if (viewIndex == dragEventData.cartAt) continue;
             fbound = this._childHolders[i].elt.getBoundingClientRect();
 
             if (mousePos.x > fbound.left && mousePos.x < fbound.right
                 && mousePos.y > fbound.top && mousePos.y < fbound.bottom) {
-                this._dragEventData.cartAt = viewIndex;
-                if (this._dragEventData.holderIndex >= viewIndex) {
-                    this.insertBefore(this._dragEventData.placeHolderElt, this._childHolders[viewIndex].elt);
+                dragEventData.cartAt = viewIndex;
+                if (dragEventData.holderIndex >= viewIndex) {
+                    this.insertBefore(dragEventData.placeHolderElt, this._childHolders[viewIndex].elt);
                 }
                 else {
                     var bf = Element.prototype.findChildAfter.call(this, this._childHolders[viewIndex].elt);
                     if (bf)
-                        this.insertBefore(this._dragEventData.placeHolderElt, bf);
+                        this.insertBefore(dragEventData.placeHolderElt, bf);
                     else {
-                        this.appendChild(this._dragEventData.placeHolderElt);
+                        this.appendChild(dragEventData.placeHolderElt);
                     }
                 }
                 break;
@@ -350,8 +397,8 @@ BoardTable.eventHandler.mousemove = function (event) {
 
         var bound = this.getBoundingClientRect();
         var mouseOffSet = mousePos.sub(new Vec2(bound.left, bound.top));
-        var boardPos = mouseOffSet.sub(this._dragEventData.mouseBoardOffset);
-        this._dragEventData.boardElt.addStyle({
+        var boardPos = mouseOffSet.sub(dragEventData.mouseBoardOffset);
+        dragEventData.boardElt.addStyle({
             left: boardPos.x + 'px',
             top: boardPos.y + 'px'
         });
@@ -361,30 +408,37 @@ BoardTable.eventHandler.mousemove = function (event) {
 
 
 BoardTable.eventHandler.mousefinish = function (event) {
-    if (this._dragEventData.state == 'DRAG') {
-        this._dragEventData.boardElt.removeClass('as-board-moving')
+    var dragEventData = this._dragEventData;
+    if (dragEventData.state == 'DRAG') {
+        dragEventData.boardElt.removeClass('as-board-moving')
             .removeStyle('left')
             .removeStyle('top');
-        this._dragEventData.boardElt.addStyle(this._dragEventData.cardStyle);
-        this._dragEventData.placeHolderElt.remove();
-        this._dragEventData.state = "FINISH";
-        if (this._dragEventData.holderIndex != this._dragEventData.cartAt) {
-            if (this._dragEventData.holderIndex > this._dragEventData.cartAt) {
-                this.insertBefore(this._dragEventData.boardElt, this._childHolders[this._dragEventData.cartAt].elt);
+        dragEventData.boardElt.addStyle(dragEventData.cardStyle);
+        dragEventData.placeHolderElt.remove();
+        dragEventData.state = "FINISH";
+        dragEventData.friendHolders.forEach(function (holder) {
+            holder.elt.off('mouseenter', holder.enterEvent);
+        });
+        if (dragEventData.holderIndex != dragEventData.cartAt) {
+            if (dragEventData.holderIndex > dragEventData.cartAt) {
+                this.insertBefore(dragEventData.boardElt, this._childHolders[dragEventData.cartAt].elt);
             }
-            else if (this._dragEventData.holderIndex < this._dragEventData.cartAt) {
-                var bf = Element.prototype.findChildAfter.call(this, this._childHolders[this._dragEventData.cartAt].elt);
+            else if (dragEventData.holderIndex < dragEventData.cartAt) {
+                var bf = Element.prototype.findChildAfter.call(this, this._childHolders[dragEventData.cartAt].elt);
                 if (bf)
-                    this.insertBefore(this._dragEventData.boardElt, bf);
+                    this.insertBefore(dragEventData.boardElt, bf);
                 else {
-                    this.appendChild(this._dragEventData.boardElt);
+                    this.appendChild(dragEventData.boardElt);
                 }
             }
-            var holder = this._childHolders.splice(this._dragEventData.holderIndex, 1)[0];
-            this._childHolders.splice(this._dragEventData.cartAt, 0, holder);
-            this.emit('change', { name: 'change', boardElt: holder.elt, action: 'move', from: this._dragEventData.holderIndex, to: this._dragEventData.cartAt, target: this, }, this);
+            var holder = this._childHolders.splice(dragEventData.holderIndex, 1)[0];
+            this._childHolders.splice(dragEventData.cartAt, 0, holder);
+
+            this.emit('change', { name: 'change', boardElt: holder.elt, action: 'move', from: dragEventData.holderIndex, to: dragEventData.cartAt, target: this, }, this);
         }
     }
+
+
     $(document.body).off({
         mousemove: this.eventHandler.mousemove,
         mouseup: this.eventHandler.mousefinish,
@@ -392,10 +446,29 @@ BoardTable.eventHandler.mousefinish = function (event) {
     })
 };
 
+BoardTable.eventHandler.enterFriendEffectZone = function (friendElt, event) {
+    this._dragEventData.inEffectZoneOf = friendElt;
+};
+
 BoardTable.prototype.getAllBoards = function () {
     return this._childHolders.map(function (holder) {
         return holder.elt;
     });
+};
+
+
+
+BoardTable.property = {};
+BoardTable.property.friends = {
+    set: function (value) {
+        value = value || [];
+        if (!(value instanceof Array))
+            value = [value];
+        this._friends = value;
+    },
+    get: function () {
+        return this._friends;
+    }
 };
 
 
