@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Auto Complete Input</title>
+    <title>Checkbox</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
@@ -11,7 +11,40 @@
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
 
     <style>
-
+        body {
+            --blue: #122246;
+            --indigo: #6610f2;
+            --purple: #6f42c1;
+            --pink: #e83e8c;
+            --red: #dc3545;
+            --orange: #fd7e14;
+            --yellow: #ffc107;
+            --green: #28a745;
+            --teal: #20c997;
+            --cyan: #17a2b8;
+            --white: #fff;
+            --gray: #6c757d;
+            --gray-dark: #343a40;
+            --primary: #007bff;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --info: #17a2b8;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --breakpoint-xs: 0;
+            --breakpoint-sm: 41.1429rem;
+            --breakpoint-md: 54.8571rem;
+            --breakpoint-lg: 70.8571rem;
+            --breakpoint-xl: 85.7143rem;
+            --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            --border-color: #253863;
+            --color-body: #eef5f9;
+            --color-input-color: #d6d6d6;
+            --control-height: 30px;
+        }
     </style>
 </head>
 
@@ -73,6 +106,9 @@
         });
         var mCheckbox = absol._({
             tag: 'switch',
+            style: {
+                'font-size': '20px'
+            },
             props: {
                 checked: false
             },
@@ -88,10 +124,34 @@
             }
         }).addTo(mmSwitchRowExt);
         valueText.addTo(mmSwitchRowExt);
-
     </script>
 
-    <script src="./autohightlighting.js?"></script>
+    <h2>Config Height</h2>
+    <div id="demo-config"></div>
+    <script class="viewable">
+        var demoCofigDiv = absol.$('#demo-config');
+        var configHeigSwitch = absol._({
+                tag: 'switch',
+                style: {
+                    'font-size': parseFloat(absol.$(document.body).getComputedStyleValue('--control-height').replace('px', ''))/1.2+'px',
+                    margin:'0'// overide bootstrap style
+                },
+                props: {
+                    checked: false
+                },
+                on: {
+                    change: function () {
+                        if (this.checked) {
+                            valueText.innerHTML = '🥰';
+                        }
+                        else {
+                            valueText.innerHTML = 'FALSE';
+                        }
+                    }
+                }
+            }).addTo(demoCofigDiv);
+    </script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 </body>
 
 </html>
