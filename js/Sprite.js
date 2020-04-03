@@ -1,5 +1,4 @@
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 
 var _ = ACore._;
