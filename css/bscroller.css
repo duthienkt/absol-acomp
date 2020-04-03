@@ -1,5 +1,4 @@
 .absol-bscroller {
-    overflow: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(151, 151, 151, 0.4) rgba(220, 220, 220, 0.4);
 

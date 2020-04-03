@@ -190,6 +190,9 @@ import './js/Board';
 
 import './js/Sprite';
 
+import './js/EmojiPicker';
+import './css/emojipicker.css';
+
 
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";

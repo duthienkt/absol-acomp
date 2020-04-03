@@ -1,20 +1,5 @@
 var EmojiAnims = [
     [
-        "(smile)",
-        "smile.png",
-        null
-    ],
-    [
-        "(sad)",
-        "sad.png",
-        null
-    ],
-    [
-        "(laugh)",
-        "laugh.png",
-        null
-    ],
-    [
         "(cool)",
         "cool.png",
         "Cool"
@@ -48,16 +33,6 @@ var EmojiAnims = [
         "(xd)",
         "xd.png",
         "XD smiley"
-    ],
-    [
-        "(surprised)",
-        "surprised.png",
-        null
-    ],
-    [
-        "(wink)",
-        "wink.png",
-        null
     ],
     [
         ":)",

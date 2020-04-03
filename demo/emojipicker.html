@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sprite</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <h1>Emoji Picker</h1>
+    <div id="demo1"></div>
+    <script class="viewable">
+        (function () {
+            var _ = absol._;
+            var $ = absol.$;
+            var demo1 = $('#demo1');
+            var ep = _('emojipicker').addTo(demo1);
+            var input = _('textarea').addStyle({width:'90vw'}).addTo(demo1);
+            ep.on('pick', function(event){
+                input.value += event.key;
+            });
+            
+        })()
+
+    </script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
+
+</body>
+
+</html>
