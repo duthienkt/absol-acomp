@@ -1,0 +1,452 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>BoardTable</title>
+    <script type="text/javascript" src="../dist/absol-acomp.js?"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+
+
+</head>
+
+<body>
+    <script>
+
+    </script>
+    <h1>Board Table</h1>
+
+    <h2>Tối giản</h2>
+    <div id="simple-demo">
+
+    </div>
+
+    <style class="viewable">
+        .my-board {
+            background-color: rgb(145, 228, 251);
+            box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
+            border-radius: 4px;
+            width: 200px;
+            min-height: 190px;
+            padding: 10px;
+            text-align: center;
+            margin: 5px;
+            display: inline-block;
+        }
+    </style>
+    <script type="text/javascript" class="viewable">
+        (function () {//đây chỉ là phần để chạy ví dụ,  để đảm bảo các biến chỉ có scope cở local
+            var $ = absol.$;
+            var _ = absol._;
+            var simpleDemoDiv = $('#simple-demo');
+
+            //lưu board theo id cho dễ tìm sau khi sắp xếp
+            var boardDataList = {
+                c001: {
+                    name: "Thẻ 1",
+                    desc: 'Một thẻ bình thường'
+                },
+                c002: {
+                    name: "Thẻ 2",
+                    desc: "Thẻ này có hình bé bé",
+                    image: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+                },
+                c003: {
+                    name: "Thẻ 3",
+                    desc: "Thẻ này dùng hình nền",
+                    background: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+                },
+                c004: {
+                    name: "Thẻ 4"
+                },
+                c005: {
+                    name: "Thẻ 5",
+                    desc: 'Một thẻ bình thường'
+                },
+                c006: {
+                    name: "Thẻ 6",
+                    desc: "Thẻ này có hình bé bé",
+                    image: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+                },
+                c007: {
+                    name: "Thẻ 7",
+                    desc: "Thẻ này dùng hình nền",
+                    background: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+                },
+                c008: {
+                    name: "Thẻ 8"
+                },
+
+            };
+
+            var boardIds = Object.keys(boardDataList);//thứ tự board, ở đây đơn giản cứ lấy hết
+
+            //hãy tạo board theo cách của bạn, đừng làm theo cách này
+            function makeBoard(data) {
+                //trả về object của absol, có thể trả html cũng được
+                var res = {
+                    tag: 'board',//phải tag là board,
+                    class: ['my-board', 'as-board-drag-zone'], //class để format board, as-board-drag-zone để quy định vùng nào có thể nắm kéo được
+                    child: [
+                        {
+                            tag: 'h4',
+                            child: { text: data.name }
+                        }
+                    ]
+                };
+                if (data.desc) {
+                    res.child.push({
+                        child: {
+                            text: data.desc
+                        }
+                    });
+                }
+
+                if (data.image) {
+                    res.child.push({
+                        tag: 'img',
+                        style: {
+                            width: 'calc(100% - 10px)'
+                        },
+                        props: {
+                            src: data.image
+                        }
+                    })
+
+                }
+                if (data.background) {
+                    res.style = {
+                        backgroundImage: 'url(' + data.background + ')'
+                    }
+                }
+                return res;
+            }
+
+
+            var mBoardTable1 = absol._({
+                tag: 'boardtable',
+                child: boardIds.slice(0, 4).map(function (id) {
+                    return makeBoard(boardDataList[id])
+                }),
+                props: {
+                    friends: '#simple-demo boardtable'
+                }
+            });
+
+            simpleDemoDiv.addChild(mBoardTable1);
+
+            var mBoardTable2 = absol._({
+                tag: 'boardtable',
+                child: boardIds.slice(2, 6).map(function (id) {
+                    return makeBoard(boardDataList[id])
+                }),
+                props: {
+                    friends: '#simple-demo boardtable'
+                }
+            });
+
+            simpleDemoDiv.addChild(mBoardTable2);
+            var mBoardTable3 = absol._({
+                tag: 'boardtable',
+                child: boardIds.slice(4, 8).map(function (id) {
+                    return makeBoard(boardDataList[id])
+                    friends: '#simple-demo boardtable'
+                })
+            });
+
+            simpleDemoDiv.addChild(mBoardTable3);
+        })();
+    </script>
+
+    <h2 id="demo-2">Tương tác thêm, xóa từ bên trong</h2>
+    <div id="simple-demo-1"></div>
+    <style class="viewable">
+        .as-board-table .task-board {
+            margin: 5px;
+        }
+
+        .task-board {
+            font-size: 14px;
+            width: 200px;
+            min-height: 90px;
+            box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
+            border-radius: 4px;
+            background-color: white;
+            box-sizing: border-box;
+            display: inline-block;
+        }
+
+        .task-board-header {
+            position: relative;
+            height: 1.4em;
+            background-color: rgba(0, 0, 0, 0.175);
+            padding-left: 5px;
+        }
+
+        .task-board-name {
+            line-height: 1.4;
+            font-weight: bold;
+        }
+
+        .task-board-actions-ctn {
+            position: absolute;
+            right: 0px;
+            top: 0px;
+        }
+
+        .task-board-body {
+            padding: 5px;
+            width: 100%;
+        }
+
+        .task-board-remove-btn {
+            font-size: inherit;
+            border: none;
+            padding: 0;
+            width: 1.2em;
+            height: 1.2em;
+            margin: 2px;
+            background-color: transparent;
+            outline: none;
+        }
+
+        .task-board-remove-btn:hover {
+            color: red;
+        }
+
+
+        .task-board-body .as-preinput {
+            display: inline-block;
+            outline: none;
+            width: calc(100% - 10px);
+            white-space: pre-wrap;
+        }
+
+        .task-board-body .as-preinput:focus {
+            background-color: azure;
+        }
+
+        .task-plus {
+            width: 90px;
+            height: 90px;
+            text-align: center;
+            display: inline-block;
+            vertical-align: middle;
+            box-shadow: 3px 3px 5px 0px rgba(0, 0, 0, 0.75);
+            background-color: white;
+        }
+
+        .task-plus:hover {
+            background-color: rgb(240, 240, 240);
+        }
+
+        .task-plus:active {
+            box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.75);
+        }
+
+        .task-plus .mdi {
+            color: rgb(73, 84, 92);
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.75);
+            font-size: 50px;
+            line-height: 90px;
+            border-radius: 4px;
+            width: 90px;
+            height: 90px;
+            font-weight: 900;
+        }
+
+        .index-board-box {
+            border: 1px solid black;
+            border-radius: 4px;
+            padding: 5px;
+            display: inline-block;
+        }
+
+        .table-log {
+            height: 6em;
+            line-height: 1.5em;
+            overflow-y: auto;
+        }
+    </style>
+    <script class="viewable">
+        (function () {
+            /********* TẠO MODULE BOARD CỦA CHÍNH MÌNH ********************/
+            var $ = absol.$;
+            var _ = absol._;
+            //tạo module board cho dễ dùng
+            function TaskBoard() {
+                this.$removeBtn = $('.task-board-remove-btn', this)
+                    .on('click', this.eventHandler.clickRemoveBtn);
+                this.$descInput = $('.task-board-body preinput', this);
+                this.$name = $('.task-board-name', this)
+            }
+
+
+            //hàm này được gọi khi tạo thẻ, gọi trước khi các thuộc tính khác của thẻ được tạo ra
+            //khác với property được nhận trong props, data sẽ được nhân khi đối tượng được tạo ra, và nó sẽ không đổi, hoặc đổi
+            // nếu property có hỗ trợ
+            TaskBoard.render = function (data) {
+                return _({
+                    tag: 'board',
+                    class: ['task-board', 'as-board-drag-zone'],
+                    extendEvent: ['pressremove'],
+                    child: [
+                        {
+                            class: 'task-board-header',
+                            child: [
+                                {
+                                    class: 'task-board-name',
+                                    child: { text: '' }
+                                },
+                                {
+                                    class: 'task-board-actions-ctn',
+                                    child: [
+                                        {
+                                            tag: 'button',
+                                            attr: { title: 'remove' },
+                                            class: 'task-board-remove-btn',
+                                            child: 'span.mdi.mdi-close'
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            class: 'task-board-body',
+                            child: 'preinput.as-board-free-zone'// để vùng này không bị kéo đi khi bôi đen chữ
+                        },
+                        {
+                            class: 'task-board-footer'
+                        }
+                    ]
+
+                }, true);//true vì kế thừa từ thẻ board
+            };
+
+
+            TaskBoard.property = {};
+
+            TaskBoard.property.desc = {
+                set: function (value) {
+                    this.$descInput.value = value + '';
+                },
+                get: function () {
+                    return this.$descInput.value;
+                }
+            };
+
+            TaskBoard.property.name = {
+                set: function (value) {
+                    this.$name.clearChild().addChild(_({ text: '' + value }))
+                },
+                get: function () {
+                    return this.$name.childNodes[0].data;
+                }
+            }
+
+            TaskBoard.eventHandler = {};// bắt đầu khai báo các event handler
+            TaskBoard.eventHandler.clickRemoveBtn = function (event) {
+                this.emit('pressremove', { name: 'pressremove', target: this }, this);// viết thêm name, target, sender cho đủ thôi, chỉ cần truyền event ra là được
+            };
+
+            absol.coreDom.install('taskboard', TaskBoard);// dùng tag: 'taskboard'
+
+
+
+            /**************************************************/
+
+            var simpleDemo1Div = $('#simple-demo-1');
+
+            var mBoardTable = _('boardtable').addTo(simpleDemo1Div);
+            simpleDemo1Div.addChild(mBoardTable);
+            var mLog = _('div.table-log');
+            simpleDemo1Div.addChild(mLog);
+            var mIndexBoardBox = _('div.index-board-box');
+            simpleDemo1Div.addChild(mIndexBoardBox);
+
+            function updateBoardBox() {
+                var boards = mBoardTable.getAllBoards();
+                mIndexBoardBox.clearChild();
+                for (var i = 0; i < boards.length; ++i) {
+                    mIndexBoardBox.addChild(_({
+                        child: { text: boards[i].name }
+                    }));
+                }
+            }
+
+            function log(text) {
+                mLog.addChild(_({
+                    child: { text: text }
+                }));
+                mLog.scrollTop = mLog.scrollHeight;
+            }
+
+
+            mBoardTable.on('change', function (event) {
+                log("Chuyển từ  " + event.from + " qua " + event.to);
+                updateBoardBox();
+            });
+
+
+            //tạo một board cho bảng tableBoard
+            function makeBoard(tableBoard, props) {
+                var board = _({
+                    tag: 'taskboard',
+                    props: props
+                });
+                board.on('pressremove', function () {
+                    log('Xóa ở vị trí ' + tableBoard.findChildHolderIndex(board));
+                    //board.selfRemove();
+                    tableBoard.removeChild(board);//2 cách gọi như nhau, tự xóa nó, đối với selfRemove thì không cần biết tableBoard
+
+                    updateBoardBox();
+                })
+                return board;
+            }
+
+            var boardProps = [
+                {
+                    name: 'Task 1',
+                    desc: "Nội dung công việc 1"
+                },
+                {
+                    name: 'Task 2',
+                    desc: "Nội dung công việc 2"
+                },
+            ].forEach(function (props, index) {
+                mBoardTable.addChild(makeBoard(mBoardTable, props));
+            });
+
+
+            var autoNameTaskIndex = 3;//đã thêm 2 task trước đó rồi
+
+            var plusButton = _({
+                class: 'task-plus',
+                child: 'span.mdi.mdi-plus',
+                on: {
+                    click: function () {
+                        mBoardTable.addChildBefore(
+                            makeBoard(mBoardTable, {
+                                name: 'Task ' + autoNameTaskIndex,
+                                desc: "Nội dung công việc " + (autoNameTaskIndex++)
+
+                            }), plusButton);
+                        //nếu trong bảng có chứa sẵn board thì có thể gọi addChild(board), lúc này nó sẽ thêm vào sau board cuối cùng,
+                        //nhưng nếu không có thẻ nào, sẽ bị thêm sau plusButton
+                        log('Thêm vào cuối');
+                        updateBoardBox();
+                    }
+                }
+            });
+
+            mBoardTable.addChild(plusButton);
+            updateBoardBox();
+
+
+        })();
+    </script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+</body>
+
+</html>
