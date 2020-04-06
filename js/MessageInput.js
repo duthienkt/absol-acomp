@@ -33,6 +33,9 @@ function MessageInput() {
     this.$imageBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-image', this)
         .on('click', this.openImageFileDialog.bind(this));
 
+    this.$sendBtn = $('.as-message-input-send-btn', this)
+                    .on('click', this.notifySend.bind(this));
+
     this.$extenalTool = $('.as-message-input-extenal-tools', this);
     this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
     this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
