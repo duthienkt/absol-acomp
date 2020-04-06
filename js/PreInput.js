@@ -1,4 +1,6 @@
 import ACore from "../ACore";
+import Dom from "absol/src/HTML5/Dom";
+import { dataURItoBlob, blobToFile, blobToArrayBuffer } from "absol/src/Converter/file";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -27,12 +29,52 @@ PreInput.prototype.applyData = function (text, offset) {
             var sel = document.getSelection();
             sel.removeAllRanges();
             var range = document.createRange();
-            range.setStart(textNode, offset);
+            if (typeof offset == 'number') {
+                range.setStart(textNode, offset);
+            }
+            else {
+                range.setStart(textNode, offset.start);
+                range.setEnd(textNode, offset.end);
+            }
             sel.addRange(range);
+            this.scrollIntoRange(range);
+
         }
         else {
             console.error("PreInput: Not support!");
         }
+    }
+};
+
+
+PreInput.prototype.scrollIntoRange = function (range) {
+    var elementBound = range.getBoundingClientRect();
+
+    var viewportBound = this.getBoundingClientRect();
+    var currentScrollTop = this.scrollTop;
+    var newScrollTop = currentScrollTop;
+    if (elementBound.bottom > viewportBound.bottom) {
+        newScrollTop = currentScrollTop + (elementBound.bottom - viewportBound.bottom);
+    }
+    if (elementBound.top < viewportBound.top) {
+        newScrollTop = currentScrollTop - (viewportBound.top - elementBound.top);
+    }
+
+    if (newScrollTop != currentScrollTop) {
+        this.scrollTop = newScrollTop;
+    }
+
+    var currentScrollLeft = this.scrollLeft;
+    var newScrollLeft = currentScrollLeft;
+    if (elementBound.right > viewportBound.right) {
+        newScrollLeft = currentScrollLeft + (elementBound.right - viewportBound.right);
+    }
+    if (elementBound.left < viewportBound.left) {
+        newScrollLeft = currentScrollLeft - (viewportBound.left - elementBound.left);
+    }
+
+    if (newScrollLeft != currentScrollLeft) {
+        this.scrollLeft = newScrollLeft;
     }
 };
 
@@ -89,6 +131,7 @@ PreInput.prototype.getPosition = function (node, offset) {
     if (node == this)
         return offset;
     var parent = node.parentElement;
+    if (!parent) return NaN;
     var text = '';
     var child;
     var lastBr = false;
@@ -133,65 +176,115 @@ PreInput.prototype.stringOf = function (node) {
 
 }
 
+
+PreInput.prototype._pasteText = function (text) {
+    var sel = window.getSelection();
+    var range;
+    if (window.getSelection) {
+        sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            range = sel.getRangeAt(0);
+            range.deleteContents();
+            var textNode = _({ text: text });
+            range.insertNode(textNode);
+            sel.removeRange(range);
+            range = document.createRange();
+            range.setStart(textNode, text.length);
+            sel.addRange(range);
+            this.scrollIntoRange(range);
+            this.commitChange(this.stringOf(this), this.getPosition(textNode, text.length));
+        }
+    } else if (document.selection && document.selection.createRange) {
+        document.selection.createRange().text = text;
+        console.error('May not support!');
+    }
+};
+
+
 /**
  * @type {PreInput}
 */
 PreInput.eventHandler = {};
 
 
+
+
 PreInput.eventHandler.paste = function (event) {
-    var thisInput = this;
-
-    var pasteData = (event.clipboardData || window.clipboardData);
+    var thisIp = this;
+    var clipboardData = (event.clipboardData || window.clipboardData);
     /**Safari bug */
-    if (pasteData && pasteData.items) {
-        var items = Array.prototype.slice.call(pasteData.items);
-        var imgItems = items.filter(function (item) {
-            return item.type.indexOf('image') >= 0;
-        });
-
-        var plainTextItems = items.filter(function (item) {
-            return item.type.indexOf('text/plain') >= 0;
-        });
-
-        if (imgItems.length > 0) {
-            var imgFiles = imgItems.map(function (it) {
-                return it.getAsFile();
-            })
-            this.emit('pasteimg', { target: this, imageFile: imgFiles[0], imageFiles: imgFiles, orginEvent: event }, this);
-        }
-        else if (plainTextItems.length > 0) {
-            var plainTextItem = plainTextItems[0];//only one item
-            plainTextItem.getAsString(function (text) {
-                var sel = window.getSelection();
-                var range;
-                if (window.getSelection) {
-                    sel = window.getSelection();
-                    if (sel.getRangeAt && sel.rangeCount) {
-                        range = sel.getRangeAt(0);
-                        range.deleteContents();
-                        var textNode = _({ text: text });
-                        range.insertNode(textNode);
-                        sel.removeRange(range);
-                        range = document.createRange();
-                        range.setStart(textNode, text.length);
-                        sel.addRange(range);
-                        thisInput.commitChange(thisInput.stringOf(thisInput), thisInput.getPosition(textNode, text.length));
-                    }
-                } else if (document.selection && document.selection.createRange) {
-                    document.selection.createRange().text = text;
-                    console.error('May not support!');
-                }
+    if (clipboardData) {
+        if (clipboardData.items) {
+            var items = Array.prototype.slice.call(clipboardData.items);
+            var imgItems = items.filter(function (item) {
+                return item.type.indexOf('image') >= 0;
             });
+
+            var plainTextItems = items.filter(function (item) {
+                return item.type.indexOf('text/plain') >= 0;
+            });
+
+            if (imgItems.length > 0) {
+                var imgFiles = imgItems.map(function (it) {
+                    return it.getAsFile();
+                });
+                this.emit('pasteimg', { target: this, imageFile: imgFiles[0], imageFiles: imgFiles, orginEvent: event }, this);
+            }
+            else if (plainTextItems.length > 0) {
+                var plainTextItem = plainTextItems[0];//only one item
+                plainTextItem.getAsString(function (text) {
+                    thisIp.pasteText(text);
+                });
+            }
+            else {
+                console.error("Can not handle clipboard data");
+            }
+            event.preventDefault();
         }
         else {
-            console.error("Can not handle clipboard data");
+            var text = event.clipboardData.getData('text/plain');
+            if (text) {
+                event.preventDefault();
+                this._pasteText(text);
+            }
+            else {
+                var currentText = this.stringOf(this);
+                var currentSelection = this.getSelectPosition();
+                console.log(currentSelection);
+
+                setTimeout(function () {
+                    var images = [];
+                    $('img', thisIp, function (elt) {
+                        images.push(elt);
+                    });
+
+                    Promise.all(images.map(function (img) {
+                        return Dom.imageToCanvas(img).then(function (canvas) {
+                            var dataURI = canvas.toDataURL();
+                            var blob = dataURItoBlob(dataURI);
+                            var file = blobToFile(blob);
+                            return {
+                                file: file, blob: blob, url: dataURI
+                            }
+                        }, function (error) { console.error(error) }).catch(function (error) { console.error(error) });
+                    })).then(function (results) {
+                        results = results.filter(function (it) { return !!it; });
+                        if (results.length > 0) {
+                            var imgFiles = results.map(function (it) { return it.file });
+                            var urls = results.map(function (it) { return it.url });
+                            thisIp.emit('pasteimg', { target: this, imageFile: imgFiles[0], imageFiles: imgFiles, urls: urls, url: urls[0], orginEvent: event }, thisIp);
+                        }
+                    });
+                    thisIp.applyData(currentText, currentSelection);
+                }, 1);
+
+            }
         }
     }
     else {
-        console.warn("Not support browser!");
+        console.error("Not support browser!");
+
     }
-    event.preventDefault();
 };
 
 
