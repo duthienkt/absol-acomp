@@ -5,12 +5,13 @@
     max-height: 6em;
     line-height: 1.5em;
     overflow-y: auto;
-    background-color: white;
+    outline: none;
 }
 
 .as-message-input {
     border-top: 1px solid #d4d4d7;
     border-bottom: 1px solid #d4d4d7;
+    background-color: white;
 }
 
 .as-message-input-extenal-tools-popup {
@@ -85,7 +86,7 @@
     display: inline-block;
     vertical-align: middle;
     position: relative;
-    margin-right: 5px;
+    margin: 5px;
 }
 
 .as-message-input-attach-preview-image {
