@@ -5,14 +5,13 @@ var _ = ACore._;
 var $ = ACore.$;
 
 var originSetTimeout = setTimeout;
-var originClearTimeout = setTimeout;
+var originClearTimeout = clearTimeout;
 var originSetInterval = setInterval;
 var originClearInterval = clearInterval;
 var pendingTimeout = 0;
 var pendingInterval = 0;
 var timeoutDict = {};
 var intervalDict = {};
-
 
 function DebugTask() {
     var res = _({
@@ -165,13 +164,12 @@ DebugTask.start = function () {
     }
 
     global.clearTimeout = function (timeoutId) {
-        var args = Array.prototype.map.call(arguments, function (x) { return x; });
         if (timeoutDict[timeoutId]) {
             pendingTimeout--;
             delete timeoutDict[timeoutId];
             DebugTask.$view.timeout = pendingTimeout;
         }
-        return originClearTimeout.apply(global, args);
+        return originClearTimeout.apply(global, arguments);
 
     };
 
