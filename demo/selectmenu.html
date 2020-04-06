@@ -35,17 +35,14 @@
         }
     </style>
 
-    <div style="height: 600px; overflow: auto; border: solid 1px black;">
-        <div style="height: 1800px;padding-top:500px;" id="test"></div>
-
-    </div>
+  
 
     <script class="viewable">
         var mList = absol._({
             tag: 'selectlist',
             style: {
                 display: 'inline-block',
-                border: 'solid 1px gray'
+                border: 'solid 1px gray',
             },
             props: {
                 items: Array(30).fill(0).map(function (u, i) {
@@ -57,7 +54,10 @@
         mList.items = mList.items;
     </script>
     <h1>Select Menu</h1>
+<div style="height: 600px; overflow: auto; border: solid 1px black;">
+    <div style="padding: 3em;height: 1800px;padding-top:500px;" id="test"></div>
 
+</div>
     <script class="viewable">
         absol._({
             tag: 'selectmenu',

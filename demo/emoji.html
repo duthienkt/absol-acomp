@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Emoji</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/absol/polyfill.js"></script>
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+SC|Alegreya+Sans|Alegreya+Sans+SC|Alfa+Slab+One|Amatic+SC|Andika|Anton|Archivo|Archivo+Narrow|Arima+Madurai|Arimo|Arsenal|Asap|Asap+Condensed|Athiti|Bahianita|Bai+Jamjuree|Baloo|Baloo+Bhai|Baloo+Bhaijaan|Baloo+Bhaina|Baloo+Chettan|Baloo+Da|Baloo+Paaji|Baloo+Tamma|Baloo+Tammudu|Baloo+Thambi|Bangers|Barlow|Barlow+Condensed|Barlow+Semi+Condensed|Barriecito|Be+Vietnam|Bevan|Big+Shoulders+Display|Big+Shoulders+Text|Bungee|Bungee+Hairline|Bungee+Inline|Bungee+Outline|Bungee+Shade|Cabin|Cabin+Condensed|Chakra+Petch|Charm|Charmonman|Chonburi|Coiny|Comfortaa|Cormorant|Cormorant+Garamond|Cormorant+Infant|Cormorant+SC|Cormorant+Unicase|Cormorant+Upright|Cousine|Crimson+Pro|Cuprum|Dancing+Script|Darker+Grotesque|David+Libre|Dosis|EB+Garamond|Encode+Sans|Encode+Sans+Condensed|Encode+Sans+Expanded|Encode+Sans+Semi+Condensed|Encode+Sans+Semi+Expanded|Exo|Exo+2|Fahkwang|Farsan|Faustina|Fira+Sans|Fira+Sans+Condensed|Fira+Sans+Extra+Condensed|Francois+One|Grenze|Hepta+Slab|IBM+Plex+Mono|IBM+Plex+Sans|IBM+Plex+Sans+Condensed|IBM+Plex+Serif|Inconsolata|Itim|Josefin+Sans|Judson|Jura|K2D|Kanit|KoHo|Kodchasan|Krub|Lalezar|Lemonada|Lexend+Deca|Lexend+Exa|Lexend+Giga|Lexend+Mega|Lexend+Peta|Lexend+Tera|Lexend+Zetta|Literata|Livvic|Lobster|Lora|M+PLUS+1p|M+PLUS+Rounded+1c|Maitree|Major+Mono+Display|Mali|Manuale|Markazi+Text|Maven+Pro|Merriweather|Metrophobic|Mitr|Montserrat|Montserrat+Alternates|Muli|Niramit|Noticia+Text|Noto+Sans|Noto+Sans+SC|Noto+Serif|Noto+Serif+SC|Noto+Serif+TC|Nunito|Nunito+Sans|Old+Standard+TT|Open+Sans|Open+Sans+Condensed:300|Oswald|Pacifico|Pangolin|Patrick+Hand|Patrick+Hand+SC|Pattaya|Paytone+One|Philosopher|Play|Playfair+Display|Playfair+Display+SC|Podkova|Prata|Pridi|Prompt|Quicksand|Roboto|Roboto+Condensed|Roboto+Mono|Roboto+Slab|Rokkitt|Rosario|Saira|Saira+Condensed|Saira+Extra+Condensed|Saira+Semi+Condensed|Saira+Stencil+One|Sarabun|Sawarabi+Gothic|Sedgwick+Ave|Sedgwick+Ave+Display|Sigmar+One|Source+Code+Pro|Source+Sans+Pro|Space+Mono|Spectral|Spectral+SC|Sriracha|Srisakdi|Taviraj|Thasadith|Tinos|Trirong|VT323|Varela+Round|Vollkorn|Vollkorn+SC|Yanone+Kaffeesatz|Yeseva+One&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.materialdesignicons.com/4.5.95/css/materialdesignicons.min.css">
+
+    <style>
+        .cell {
+            border: 1px solid gray;
+            width: 1.5em;
+            height: 1.5em;
+            text-align: center;
+            line-height: 1.5;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .result-search-ctn {
+            min-height: 5em;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>EMOJI</h1>
+    <script>
+        var _ = absol._;
+        var $ = absol.$;
+
+    </script>
+
+    <script class="viewablex">
+        var emojies = {
+            // "(smile)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/smile/views/default_20_anim_f?etag=v4",
+            // "(sad)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/sad/views/default_20_anim_f?etag=v3",
+            // "(laugh)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/laugh/views/default_20_anim_f?etag=v8",
+            "(cool)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/cool/views/default_20_anim_f?etag=v4",
+            "(hearteyes)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/hearteyes/views/default_20_anim_f?etag=v12",
+            "(stareyes)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/stareyes/views/default_20_anim_f?etag=v16",
+            "(like)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/like/views/default_20_anim_f?etag=v8",
+            "(unamused)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/unamused/views/default_20_anim_f?etag=v12",
+            "(cwl)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/cwl/views/default_20_anim_f?etag=v7",
+            "(xd)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/xd/views/default_20_anim_f?etag=v5",
+            // "(surprised)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/surprised/views/default_20_anim_f?etag=v6",
+            // "(wink)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/wink/views/default_20_anim_f?etag=v5",
+            ":)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/smile/views/default_20_anim_f?etag=v4",
+            ":(": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/sad/views/default_20_anim_f?etag=v3",
+            ":D": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/laugh/views/default_20_anim_f?etag=v8",
+            ":O": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/surprised/views/default_20_anim_f?etag=v6",
+            ";)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/wink/views/default_20_anim_f?etag=v5",
+            ";(": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/cry/views/default_20_anim_f?etag=v7",
+            "(shivering)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/shivering/views/default_20_anim_f?etag=v9",
+            "(:|": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/sweat/views/default_20_anim_f?etag=v6",
+            ":|": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/speechless/views/default_20_anim_f?etag=v5",
+            ":P": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/tongueout/views/default_20_anim_f?etag=v5",
+            ":$": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/blush/views/default_20_anim_f?etag=v6",
+            "(inlove)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/inlove/views/default_20_anim_f?etag=v5",
+            "(kiss)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/kiss/views/default_20_anim_f?etag=v7",
+            ":^)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/wonder/views/default_20_anim_f?etag=v5",
+            "|-)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/sleepy/views/default_20_anim_f?etag=v5",
+            "|-(": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/dull/views/default_20_anim_f?etag=v5",
+            "(yawn)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/yawn/views/default_20_anim_f?etag=v5",
+            "(puke)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/puke/views/default_20_anim_f?etag=v8",
+            "(doh)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/doh/views/default_20_anim_f?etag=v6",
+            "(angry)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/angry/views/default_20_anim_f?etag=v7",
+            "(wasntme)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/wasntme/views/default_20_anim_f?etag=v5",
+            "(worry)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/worry/views/default_20_anim_f?etag=v5",
+            "(mm)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/mmm/views/default_20_anim_f?etag=v6",
+            "(nerd)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/nerdy/views/default_20_anim_f?etag=v6",
+            "(rainbowsmile)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/rainbowsmile/views/default_20_anim_f?etag=v14",
+            ":x": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/lipssealed/views/default_20_anim_f?etag=v6",
+            "(devil)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/devil/views/default_20_anim_f?etag=v4",
+            "(angel)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/angel/views/default_20_anim_f?etag=v4",
+            "(envy)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/envy/views/default_20_anim_f?etag=v6",
+            "(makeup)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/makeup/views/default_20_anim_f?etag=v6",
+            "(think)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/think/views/default_20_anim_f?etag=v5",
+            "(rofl)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/rofl/views/default_20_anim_f?etag=v5",
+            "(happy)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/happy/views/default_20_anim_f?etag=v5",
+            "(smirk)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/smirk/views/default_20_anim_f?etag=v4",
+            "(nod)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/nod/views/default_20_anim_f?etag=v4",
+            "(shake)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/shake/views/default_20_anim_f?etag=v3",
+            "(waiting)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/waiting/views/default_20_anim_f?etag=v5",
+            "(emo)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/emo/views/default_20_anim_f?etag=v15",
+            "(donttalk)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/donttalktome/views/default_20_anim_f?etag=v5",
+            "(idea)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/idea/views/default_20_anim_f?etag=v6",
+            "(talk)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/talk/views/default_20_anim_f?etag=v5",
+            "(swear)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/swear/views/default_20_anim_f?etag=v9",
+            "]:)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/evilgrin/views/default_20_anim_f?etag=v6",
+            "(headbang)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/headbang/views/default_20_anim_f?etag=v6",
+            "(learn)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/learn/views/default_20_anim_f?etag=v8",
+            "(headphones)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/headphones/views/default_20_anim_f?etag=v5",
+            "(morningafter)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/hungover/views/default_20_anim_f?etag=v5",
+            "(selfie)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/selfie/views/default_20_anim_f?etag=v8",
+            "(shock)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/shock/views/default_20_anim_f?etag=v20",
+            "(llsshock)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/llsshock/views/default_20_anim_f?etag=v23",
+            "(ttm)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/ttm/views/default_20_anim_f?etag=v13",
+            "(dream)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/dream/views/default_20_anim_f?etag=v9",
+            "(ill)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/ill/views/default_20_anim_f?etag=v13",
+            "(tired)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/tired/views/default_20_anim_f?etag=v12",
+            "(party)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/party/views/default_20_anim_f?etag=v7",
+            "(bandit)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/bandit/views/default_20_anim_f?etag=v5",
+            "(tauri)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/tauri/views/default_20_anim_f?etag=v8",
+            "(nazar)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/nazar/views/default_20_anim_f?etag=v5",
+            "(movember)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/movember/views/default_20_anim_f?etag=v15",
+            "(mysteryskype)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/mysteryskype/views/default_20_anim_f?etag=v9",
+            "(dotdfemale)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/dotdfemale/views/default_20_anim_f?etag=v13",
+            "(dotdmale)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/dotdmale/views/default_20_anim_f?etag=v10",
+            "(selfiediwali)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/selfiediwali/views/default_20_anim_f?etag=v8",
+            "(diwaliselfie)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/diwaliselfie/views/default_20_anim_f?etag=v15",
+            "(steveaoki)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/steveaoki/views/default_20_anim_f?etag=v12",
+            "(aokijump)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/aokijump/views/default_20_anim_f?etag=v12",
+            "(cakethrow)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/cakethrow/views/default_20_anim_f?etag=v9",
+            "(kolony)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/kolony/views/default_20_anim_f?etag=v8",
+            "(joy)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/joy/views/default_20_anim_f?etag=v9",
+            "(anger)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/anger/views/default_20_anim_f?etag=v7",
+            "(sadness)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/sadness/views/default_20_anim_f?etag=v20",
+            "(disgust)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/disgust/views/default_20_anim_f?etag=v5",
+            "(fear)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/fear/views/default_20_anim_f?etag=v2",
+            "(hestonfacepalm)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/hestonfacepalm/views/default_20_anim_f?etag=v18",
+            "(heston)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/heston/views/default_20_anim_f?etag=v18",
+            "(stormtrooper)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/stormtrooper/views/default_20_anim_f?etag=v8",
+            "(kyloren)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/kyloren/views/default_20_anim_f?etag=v9",
+            "(captainphasma)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/captainphasma/views/default_20_anim_f?etag=v12",
+            "(malthe)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/malthe/views/default_20_anim_f?etag=v5",
+            "(ladyvamp)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/ladyvampire/views/default_20_anim_f?etag=v9",
+            "(vampire)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/vampire/views/default_20_anim_f?etag=v4",
+            "(ghost)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/ghost/views/default_20_anim_f?etag=v6",
+            "(skull)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/skull/views/default_20_anim_f?etag=v7",
+            "(pumpkin)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/pumpkin/views/default_20_anim_f?etag=v8",
+            "(santa)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/santa/views/default_20_anim_f?etag=v7",
+            "(xmascwl)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/xmascwl/views/default_20_anim_f?etag=v13",
+            "(festiveparty)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/festiveparty/views/default_20_anim_f?etag=v19",
+            "(holidayspirit)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/holidayspirit/views/default_20_anim_f?etag=v6",
+            "(rudolfsurprise)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/rudolfsurprise/views/default_20_anim_f?etag=v11",
+            "(rudolfidea)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/rudolfidea/views/default_20_anim_f?etag=v9",
+            "(wtf)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/wtf/views/default_20_anim_f?etag=v9",
+            "(smoking)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/smoke/views/default_20_anim_f?etag=v7",
+            "(drunk)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/drunk/views/default_20_anim_f?etag=v7",
+            "(finger)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/finger/views/default_20_anim_f?etag=v7",
+            "(oliver)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/oliver/views/default_20_anim_f?etag=v6",
+            "(xmassarcastic)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/xmassarcastic/views/default_20_anim_f?etag=v13",
+            "(xmascry)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/xmascry/views/default_20_anim_f?etag=v10",
+            "(wave)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/hi/views/default_20_anim_f?etag=v6",
+            "(highfive)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/highfive/views/default_20_anim_f?etag=v8",
+            "(clap)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/clap/views/default_20_anim_f?etag=v7",
+            "(sarcastic)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/sarcastic/views/default_20_anim_f?etag=v4",
+            "(chuckle)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/giggle/views/default_20_anim_f?etag=v5",
+            "(facepalm)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/facepalm/views/default_20_anim_f?etag=v8",
+            "(rock)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/rock/views/default_20_anim_f?etag=v5",
+            "(yn)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/fingerscrossed/views/default_20_anim_f?etag=v6",
+            "(listening)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/listening/views/default_20_anim_f?etag=v6",
+            "(wait)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/wait/views/default_20_anim_f?etag=v6",
+            "(whew)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/whew/views/default_20_anim_f?etag=v5",
+            "(tmi)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/tmi/views/default_20_anim_f?etag=v5",
+            "(call)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/call/views/default_20_anim_f?etag=v5",
+            "(punch)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/punch/views/default_20_anim_f?etag=v6",
+            "(talktothehand)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/talktothehand/views/default_20_anim_f?etag=v5",
+            "(whistle)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/whistle/views/default_20_anim_f?etag=v5",
+            "(slap)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/slap/views/default_20_anim_f?etag=v5",
+            "(lalala)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/lalala/views/default_20_anim_f?etag=v5",
+            "(y)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/yes/views/default_20_anim_f?etag=v4",
+            "(n)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/no/views/default_20_anim_f?etag=v4",
+            "(handshake)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/handshake/views/default_20_anim_f?etag=v5",
+            "(fistbump)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/fistbump/views/default_20_anim_f?etag=v5",
+            "(poke)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/poke/views/default_20_anim_f?etag=v9",
+            "(celebrate)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/handsinair/views/default_20_anim_f?etag=v7",
+            "(hearthands)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/hearthands/views/default_20_anim_f?etag=v11",
+            "(victory)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/victory/views/default_20_anim_f?etag=v6",
+            "(noworries)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/noworries/views/default_20_anim_f?etag=v7",
+            "(ok)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/ok/views/default_20_anim_f?etag=v6",
+            "(pray)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/praying/views/default_20_anim_f?etag=v6",
+            "(flex)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/muscle/views/default_20_anim_f?etag=v17",
+            "(ek)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/naturescall/views/default_20_anim_f?etag=v5",
+            "(woty)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/woty/views/default_20_anim_f?etag=v11",
+            "(glassceiling)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/glassceiling/views/default_20_anim_f?etag=v14",
+            "(deadyes)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/deadyes/views/default_20_anim_f?etag=v11",
+            "(xmasyes)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/xmasyes/views/default_20_anim_f?etag=v9",
+            "(dropthemic)": "https://static-asm.secure.skypeassets.com/pes/v1/emoticons/dropthemic/views/default_20_anim_f?etag=v5"
+        }
+
+        var emojiDesc = {
+                "(doh)": "Doh!",
+                ":|": "Speechless",
+                ":)": "Smile",
+                ":(": "Sad",
+                ":D": "Laugh",
+                "(cool)": "Cool",
+                "(hearteyes)": "Heart eyes",
+                "(stareyes)": "Star eyes",
+                "(like)": "Like",
+                "(shivering)": "Cold shivering",
+                ";(": "Crying",
+                ";)": "Wink",
+                ":O": "Surprised",
+                "(xd)": "XD smiley",
+                "(cwl)": "Crying with laughter",
+                "(unamused)": "Unamused",
+                "(:|": "Sweating",
+                ":P": "Cheeky",
+                ":$": "Blushing",
+                "(inlove)": "In love",
+                "(kiss)": "Kiss",
+                ":^)": "Wondering",
+                "(wasntme)": "It wasn't me!",
+                "(angry)": "Angry",
+                "(puke)": "Vomiting",
+                "(yawn)": "Yawn",
+                "|-(": "Dull",
+                "|-)": "Sleepy",
+                "(worry)": "Worried",
+                "(mm)": "Mmmmm…",
+                "(nerd)": "Nerdy",
+                "(rainbowsmile)": "Rainbow smile",
+                ":x": "My lips are sealed",
+                "(devil)": "Devil",
+                "(angel)": "Angel",
+                "(nod)": "Nodding",
+                "(smirk)": "Smirking",
+                "(happy)": "Happy",
+                "(rofl)": "Rolling on the floor laughing",
+                "(think)": "Thinking",
+                "(makeup)": "Make-up",
+                "(envy)": "Envy",
+                "(shake)": "Shake",
+                "(waiting)": "Waiting",
+                "(emo)": "Emo",
+                "(donttalk)": "Don't talk to me",
+                "(idea)": "Idea",
+                "(talk)": "Talking",
+                "(swear)": "Swearing",
+                "]:)": "Evil grin",
+                "(headbang)": "Banging head on wall",
+                "(learn)": "Global Learning",
+                "(headphones)": "Listening to headphones",
+                "(morningafter)": "Morning after party",
+                "(selfie)": "Selfie",
+                "(shock)": "Spoiler alert",
+                "(bandit)": "Bandit",
+                "(party)": "Party",
+                "(tired)": "Tired",
+                "(ill)": "Ill",
+                "(dream)": "Dreaming",
+                "(ttm)": "Talking too much",
+                "(llsshock)": "Spoiler alert",
+                "(tauri)": "Bald man with glasses",
+                "(nazar)": "Blessing",
+                "(movember)": "Movember",
+                "(mysteryskype)": "Mystery Skype",
+                "(dotdfemale)": "Day of the dead",
+                "(dotdmale)": "Day of the dead",
+                "(selfiediwali)": "Selfie Diwali",
+                "(anger)": "Anger",
+                "(joy)": "Joy",
+                "(kolony)": "Kolony",
+                "(cakethrow)": "Cake throw",
+                "(aokijump)": "Aoki jump",
+                "(steveaoki)": "Steve Aoki",
+                "(diwaliselfie)": "Diwali selfie",
+                "(sadness)": "Sadness",
+                "(disgust)": "Disgust",
+                "(fear)": "Fear",
+                "(hestonfacepalm)": "Heston facepalm",
+                "(heston)": "Heston Blumenthal",
+                "(stormtrooper)": "Storm trooper",
+                "(kyloren)": "Kylo Ren",
+                "(pumpkin)": "Pumpkin",
+                "(skull)": "Skull",
+                "(ghost)": "Ghost",
+                "(vampire)": "Vampire",
+                "(ladyvamp)": "Lady vampire",
+                "(malthe)": "Smiling man with glasses",
+                "(captainphasma)": "Captain Phasma",
+                "(santa)": "Santa",
+                "(xmascwl)": "Xmas crying with laughter",
+                "(festiveparty)": "Festive party",
+                "(holidayspirit)": "Holiday spirit",
+                "(rudolfsurprise)": "Surprised Rudolf",
+                "(rudolfidea)": "Rudolf idea",
+                "(wtf)": "WTF…",
+                "(xmascry)": "Xmas cry",
+                "(xmassarcastic)": "Xmas sarcastic",
+                "(oliver)": "Man saying come on",
+                "(finger)": "Finger",
+                "(drunk)": "Drunk",
+                "(smoking)": "Smoking",
+                "(rock)": "Rock",
+                "(facepalm)": "Facepalm",
+                "(chuckle)": "Giggle",
+                "(sarcastic)": "Sarcastic",
+                "(clap)": "Clapping",
+                "(highfive)": "High five",
+                "(wave)": "Hi",
+                "(call)": "Call",
+                "(tmi)": "Too much information",
+                "(whew)": "Relieved",
+                "(wait)": "Wait",
+                "(listening)": "Listening",
+                "(punch)": "Punch",
+                "(yn)": "Fingers crossed",
+                "(talktothehand)": "Talk to the hand",
+                "(whistle)": "Whistle",
+                "(slap)": "Slap",
+                "(lalala)": "Lalala",
+                "(y)": "Yes",
+                "(n)": "No",
+                "(handshake)": "Handshake",
+                "(ok)": "OK",
+                "(noworries)": "No worries",
+                "(victory)": "Victory sign",
+                "(hearthands)": "Heart hands",
+                "(celebrate)": "Hands celebrating",
+                "(poke)": "Poke",
+                "(fistbump)": "Fist bump",
+                "(xmasyes)": "Xmas yes",
+                "(deadyes)": "Dead yes",
+                "(glassceiling)": "Glass ceiling",
+                "(woty)": "Woman of the year",
+                "(ek)": "Nature's call",
+                "(flex)": "Muscle",
+                "(pray)": "Praying",
+                "(dropthemic)": "Drop the mic"
+            }
+    </script>
+
+    <table>
+        <tbody id="demo1-body"></tbody>
+    </table>
+    <h3>File name</h3>
+    <pre id="map-file-name">
+    </pre>
+    <h3>Download script</h3>
+    <pre id="wget-code">
+    </pre>
+
+    <script>
+
+        var preFName = $('#map-file-name');
+        var nameMap = Object.keys(emojies).map(key => {
+            var url = emojies[key];
+            var paths = url.split('/');
+            var fName = paths[paths.indexOf('emoticons') + 1] + '.png';
+            var desc = emojiDesc[key];
+            return [
+                key, fName, desc
+            ];
+        });
+        preFName.innerHTML = JSON.stringify(nameMap, null, '    ');
+
+
+        var preWget = $('#wget-code');
+        var code = Object.keys(emojies).map(key => {
+            var url = emojies[key];
+            var paths = url.split('/');
+            var fName = paths[paths.indexOf('emoticons') + 1] + '.png';
+            return [30, 40, 50, 80, 100, 120, 160].map(x=>{
+                return `wget ${url.replace('20_anim', x+'')} -o x${x}/${fName}`
+            }).join('\n');
+        }).join('\n');
+        preWget.innerHTML = code;
+
+
+
+
+        var demo1body = $('#demo1-body');
+        var sync = Promise.resolve();
+        nameMap.forEach(item => {
+            sync = sync.then(() => {
+                var mSprite = _({
+                    tag: 'sprite',
+                    attr: {
+                        title: nameMap[0]
+                    },
+                    props: {
+                        loadTextureTimeout: 10000,
+                        src: `https://absol.cf/emoji/anim/x60/${item[1]}`,
+                        fps: 15,
+                        loop: true,
+                        width: 60,
+                        height: 60,
+                        frames: {
+                            type: 'grid',
+                            col: 1,
+                            row: 1
+                        }
+                    },
+                    on: {
+                        ready: function () {
+
+                        },
+                        stop: function () {
+                            playBtn.innerHTML = "PLAY";
+                        },
+                        frame: function () {
+                        }
+                    }
+                });
+                demo1body.addChild(_({
+                    tag: 'tr',
+                    child: [
+                        {
+                            tag: 'td',
+                            child: { text: item[0] }
+                        },
+                        {
+                            tag: 'td',
+                            child: mSprite
+                        },
+                        {
+                            tag:'td',
+                            child:{text: item[2]}
+                        }
+                    ]
+                }));
+                return mSprite.afterReady().then(function () {
+                    mSprite.width = mSprite.texture.naturalWidth;
+                    mSprite.height = mSprite.width;
+                    console.log(mSprite.width, mSprite.height);
+
+                    mSprite.frames = {
+                        type: 'grid',
+                        col: 1,
+                        row: Math.floor(mSprite.texture.naturalHeight / mSprite.height)
+                    }
+
+                    mSprite.play();
+
+                });
+            })
+
+        });
+
+    </script>
+
+    <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
+
+</body>
+
+</html>
