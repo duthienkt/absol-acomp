@@ -14,7 +14,7 @@ export var ERROR = 6;
 export var STATE_TO_STRING = ['NOT_READY', 'READY', 'START', 'RUNNING', 'PAUSE', 'STOP', 'ERROR'];
 
 function Sprite() {
-    this.loadTextureTimeout = 5000; 
+    this.loadTextureTimeout = 5000;
     this._textureLoaded = false;
     this._state = NOT_READY;
     this.defineEvent(['ready', 'srcerror', 'play', 'resume', 'pause', 'stop', 'reset', 'end', 'frame']);
@@ -28,7 +28,7 @@ function Sprite() {
     this._overTime = 0;
     this.draw = this.draw.bind(this);
     this.texture = null;
-    this._frames = {type: 'grid', col: 1, row: 1};
+    this._frames = { type: 'grid', col: 1, row: 1 };
     this._loop = false;
 }
 
@@ -96,10 +96,9 @@ Sprite.prototype.pause = function () {
     if (this._state != RUNNING) return this;
     this._state = PAUSE;
     if (this._timeout > 0) {
-        clearInterval(this._timeout);
+        clearTimeout(this._timeout);
         this._timeout = -1;
     }
-    this._state = PAUSE;
     var now = new Date().getTime();
     this._overTime += now - this._lastDrawMilis;
     this.emit('pause', { name: 'pause', target: this }, this);
@@ -212,7 +211,7 @@ Sprite.property.src = {
             this._state = NOT_READY;
             var thisSprite = this;
             this._textureLoaded = false;
-            Dom.waitImageLoaded(this.texture,  this.loadTextureTimeout).then(function (rs) {
+            Dom.waitImageLoaded(this.texture, this.loadTextureTimeout).then(function (rs) {
                 if (thisSprite.texture == cImage) {
                     thisSprite._textureLoaded = true;
                     if (thisSprite._frames) {
@@ -252,7 +251,7 @@ Sprite.property.fps = {
         value = Math.max(value || 0, 0);
         this._fps = value;
         if (this._state == RUNNING) {
-            clearInterval(this._timeout);
+            clearTimeout(this._timeout);
             this._timeout = -1;
             var now = new Date().getTime();
             this._overTime += now - this._lastDrawMilis;
@@ -262,7 +261,7 @@ Sprite.property.fps = {
 
     },
     get: function () {
-
+        return this._fps;
     }
 };
 
