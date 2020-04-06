@@ -31,10 +31,11 @@ function EmojiPicker() {
     }, {});
 }
 
+EmojiPicker.assetRoot = 'https://absol.cf/emoji';
 
 EmojiPicker.render = function (data) {
     data = data || {};
-    data.assetRoot = data.assetRoot || 'https://absol.cf/emoji';
+    data.assetRoot = data.assetRoot || EmojiPicker.assetRoot;
     return _({
         class: 'as-emoji-picker',
         extendEvent: 'pick',

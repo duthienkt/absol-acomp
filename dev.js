@@ -8,6 +8,8 @@ import ChromeCalendar from "./js/ChromeCalendar";
 import Radio from "./js/Radio";
 import EmojiChars from "./js/EmojiChars";
 import EmojiAnims from "./js/EmojiAnims";
+import MessageInput from './js/MessageInput';
+import EmojiPicker from './js/EmojiPicker';
 
 //for export to window
 absol.Tooltip = AComp.creator.tooltip;
@@ -19,7 +21,8 @@ absol.EmojiAnims = EmojiAnims;
 absol.ChromeCalendar = ChromeCalendar;
 absol.coreDom.install(AComp.core);
 Object.assign(absol.string, string);
-
+absol.MessageInput = MessageInput
+absol.EmojiPicker = EmojiPicker;
 
 window.AComp = absol.AComp;
 setTimeout(function () {

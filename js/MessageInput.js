@@ -41,9 +41,11 @@ function MessageInput() {
 };
 
 
+MessageInput.iconAssetRoot = 'https://absol.cf/exticons/vivid';
+
 MessageInput.render = function (data) {
     data = data || {};
-    data.iconAssetRoot = data.iconAssetRoot || 'https://absol.cf/exticons/vivid';
+    data.iconAssetRoot = data.iconAssetRoot || MessageInput.iconAssetRoot;
     return _({
         class: 'as-message-input',
         attr: {
