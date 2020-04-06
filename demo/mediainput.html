@@ -88,7 +88,7 @@
             border: solid 1px #ddd;
         }
 
-        .message-ctn {
+        .input-ctn {
             position: absolute;
             left: 0;
             bottom: 0;
@@ -96,6 +96,8 @@
             background-color: aliceblue;
             overflow-y: auto;
         }
+
+        .message-ctn{}
 
         .message {
             width: 50%;
@@ -113,8 +115,8 @@
                 var _ = absol._;
                 var $ = absol.$;
                 var messBox = $('.message-box');
-                var inputCtn = $('.message-ctn');
-                var messageCtn = $('.input-ctn');
+                var inputCtn = $('.input-ctn');
+                var messageCtn = $('.message-ctn');
                 var messInput = _({
                     tag: 'messageinput',
                     on: {
