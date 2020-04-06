@@ -1,20 +1,28 @@
 import ACore from "../ACore";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import { openFileDialog } from "./utils";
+import XHR from "absol/src/Network/XHR";
 var _ = ACore._;
 var $ = ACore.$;
 
 
+var iconCatalogCaches = {};
+
 function MessageInput() {
+    this._iconAssetRoot = this.attr('data-icon-asset-root');
+    var catalogiUrl = this._iconAssetRoot + '/catalog.json';
+    this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? iconCatalogCaches[catalogiUrl] : XHR.getRequest(catalogiUrl).then(function (result) {
+        iconCatalogCaches[catalogiUrl] = JSON.parse(result);
+        return iconCatalogCaches[catalogiUrl];
+    });
     this.$preInput = $('preinput', this);
     this.$preInput.on('change', this.eventHandler.preInputChange)
         .on('keyup', this.eventHandler.preInputKeyUp)
-        .on('keydown', setTimeout.bind(window, this.notifySizeChange.bind(this), 1))
+        .on('keydown', this.eventHandler.preInputKeyDown)
         .on('pasteimg', this.eventHandler.preInputPasteImg);
     //every can make size change
     this._imageFiles = [];
     this._files = [];
-
     this._latBound = {};
 
     this.$fileList = $('.as-message-input-file-list', this);
@@ -22,20 +30,26 @@ function MessageInput() {
         .on('click', this.eventHandler.clickEmojiBtn);
     this.$fileBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-file', this)
         .on('click', this.openFileDialog.bind(this));
+    this.$imageBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-image', this)
+        .on('click', this.openImageFileDialog.bind(this));
 
     this.$extenalTool = $('.as-message-input-extenal-tools', this);
     this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
     this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
         .on('pick', this.eventHandler.pickEmoji);
     this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
-}
+};
 
 
 MessageInput.render = function (data) {
     data = data || {};
+    data.iconAssetRoot = data.iconAssetRoot || 'https://absol.cf/exticons/vivid';
     return _({
         class: 'as-message-input',
-        extendEvent: ['sizechange'],
+        attr: {
+            'data-icon-asset-root': data.iconAssetRoot
+        },
+        extendEvent: ['sizechange', 'change', 'send'],
         child: [
             {
                 class: 'as-message-input-extenal-tools',
@@ -64,7 +78,12 @@ MessageInput.render = function (data) {
             {
                 class: 'as-message-input-body',
                 child: [
-                    'preinput.as-message-input-text-input.absol-bscroller'
+                    'preinput.as-message-input-text-input.absol-bscroller',
+                    {
+                        tag: 'button',
+                        class: 'as-message-input-send-btn',
+                        child: 'span.mdi.mdi-send'
+                    }
                 ]
             },
             {
@@ -73,6 +92,9 @@ MessageInput.render = function (data) {
         ]
     });
 };
+
+
+
 
 MessageInput.prototype.toggleEmoji = function () {
     if (this.containsClass('as-message-input-show-emoji'))
@@ -96,14 +118,132 @@ MessageInput.prototype.showEmoji = function () {
 };
 
 
-MessageInput.prototype.addImageFiles = function (imageFiles) {
-    var iFile;
-    for (var i = 0; i < imageFiles.length; ++i) {
-        iFile = imageFiles[i];
-        console.log(iFile.name);
-
-    }
+MessageInput.prototype.notifyChange = function () {
+    this.emit('change', { name: 'change', target: this }, this);
 };
+
+MessageInput.prototype.notifySend = function () {
+    this.emit('send', {
+        name: 'send', target: this, clearAllContent: this.clearAllContent.bind(this)
+    }, this);
+};
+
+MessageInput.prototype.clearAllContent = function () {
+    this.text = '';
+    this.files = [];
+    this.images = [];
+};
+
+MessageInput.prototype.focus = function () {
+    this.$preInput.focus();
+};
+
+MessageInput.prototype.blur = function () {
+    this.$preInput.blur();
+};
+
+MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
+    var thisMi = this;
+    Array.prototype.forEach.call(imageFiles, function (file, index) {
+        thisMi._imageFiles.push(file);
+        var src;
+        if (urls) {
+            src = urls[index];
+        }
+        if (!src) {
+            src = URL.createObjectURL(file);
+        }
+        var itemElt = _({
+            class: ['as-message-input-attach-preview', 'as-message-input-attach-image'],
+            attr: {
+                title: file.name
+            },
+            child: [
+                {
+                    tag: 'img',
+                    class: 'as-message-input-attach-preview-image',
+                    props: {
+                        src: src
+                    }
+                },
+                {
+                    tag: 'button',
+                    class: 'as-message-input-attach-preview-close-btn',
+                    child: 'span.mdi.mdi-close',
+                    attr: {
+                        title: 'remove'
+                    },
+                    on: {
+                        click: function () {
+                            thisMi._imageFiles = thisMi._imageFiles.filter(function (it) {
+                                return it != file;
+                            });
+                            itemElt.remove();
+                            thisMi.notifyChange();
+                        }
+                    }
+                }
+            ]
+        }).addTo(thisMi.$fileList);
+    });
+    this.notifySizeChange();
+    this.$preInput.focus();
+};
+
+MessageInput.prototype.addFiles = function (files) {
+    var thisMi = this;
+    Array.prototype.forEach.call(files, function (file, index) {
+        thisMi._files.push(file);
+        thisMi._iconSupportAsync.then(function (ExtensionIcons) {
+            var src;
+            var ext = file.name.split('.').pop().toLowerCase();
+            if (ExtensionIcons.indexOf(ext) > 0) {
+                src = thisMi._iconAssetRoot + '/' + ext + '.svg'
+            }
+            else {
+                src = thisMi._iconAssetRoot + '/' + 'default' + '.svg'
+
+            }
+            var itemElt = _({
+                class: ['as-message-input-attach-preview', 'as-message-input-attach-file'],
+                attr: {
+                    title: file.name
+                },
+                child: [
+                    {
+                        tag: 'img',
+                        class: 'as-message-input-attach-preview-image',
+                        props: {
+                            src: src
+                        }
+                    },
+                    {
+                        tag: 'button',
+                        class: 'as-message-input-attach-preview-close-btn',
+                        child: 'span.mdi.mdi-close',
+                        attr: {
+                            title: 'remove'
+                        },
+                        on: {
+                            click: function () {
+                                thisMi._files = thisMi._files.filter(function (it) {
+                                    return it != file;
+                                });
+                                itemElt.remove();
+                                thisMi.notifyChange();
+                            }
+                        }
+                    }
+                ]
+            }).addTo(thisMi.$fileList);
+        });
+        thisMi.notifySizeChange();
+    });
+    thisMi.$preInput.focus();
+
+
+};
+
 
 MessageInput.prototype.closeEmoji = function () {
     if (!this.containsClass('as-message-input-show-emoji')) return;
@@ -115,14 +255,21 @@ MessageInput.prototype.closeEmoji = function () {
 MessageInput.prototype.openFileDialog = function () {
     var thisMi = this;
     openFileDialog({ multiple: true }).then(function (files) {
-        if (files.length > 0)
-            thisMi.addImageFiles(files);
+        if (files.length > 0) {
+            thisMi.addFiles(files);
+            thisMi.notifyChange();
+        }
     });
 };
 
 
 MessageInput.prototype.openImageFileDialog = function () {
-    openFileDialog({ multiple: true }).then(function (files) {
+    var thisMi = this;
+    openFileDialog({ multiple: true, accept: "image/*" }).then(function (files) {
+        if (files.length > 0) {
+            thisMi.addImageFiles(files);
+            thisMi.notifyChange();
+        }
 
     });
 };
@@ -143,6 +290,15 @@ MessageInput.eventHandler = {};
 
 MessageInput.eventHandler.preInputChange = function (event) {
     this.notifySizeChange();
+    this.notifyChange();
+};
+
+MessageInput.eventHandler.preInputKeyDown = function (event) {
+    if (!event.shiftKey && event.key == 'Enter') {
+        this.notifySend();
+        event.preventDefault();
+    }
+    setTimeout(this.notifySizeChange.bind(this), 1);
 };
 
 MessageInput.eventHandler.preInputKeyUp = function (event) {
@@ -151,7 +307,8 @@ MessageInput.eventHandler.preInputKeyUp = function (event) {
 };
 
 MessageInput.eventHandler.preInputPasteImg = function (event) {
-
+    this.addImageFiles(event.imageFiles, event.urls);
+    this.notifyChange();
 };
 
 
@@ -174,7 +331,48 @@ MessageInput.eventHandler.pickEmoji = function (event) {
     this.$preInput.commitChange(newText, newOffset);
     this.notifySizeChange();
     this.$preInput.focus();//older firefox version will be lost focus
+    this.notifyChange();
 };
+
+MessageInput.property = {};
+
+MessageInput.property.files = {
+    set: function (value) {
+        $('.as-message-input-attach-file', this.$fileList, function (elt) {
+            elt.remove();
+        });
+        value = value || [];
+        this._files = [];
+        this.addFiles(value);
+    },
+    get: function () {
+        return this._files;
+    }
+};
+
+MessageInput.property.images = {
+    set: function (value) {
+        $('.as-message-input-attach-image', this.$fileList, function (elt) {
+            elt.remove();
+        });
+        value = value || [];
+        this._imageFiles = [];
+        this.addImageFiles(value);
+    },
+    get: function () {
+        return this._imageFiles;
+    }
+};
+
+MessageInput.property.text = {
+    set: function (value) {
+        this.$preInput.value = '' + value;
+    },
+    get: function () {
+        return this.$preInput.value;
+    }
+}
+
 
 ACore.install('messageinput', MessageInput);
 
