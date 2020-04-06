@@ -110,3 +110,60 @@ export function buildCss(StyleSheet) {
         }
     }).addTo(document.head);
 }
+
+
+
+export function openFileDialog(props) {
+    return new Promise(function (resolve) {
+        var input = ACore._({
+            tag: 'input',
+            style: {
+                display: 'none'
+            },
+            attr: {
+                type: 'file'
+            }
+        }).addTo(document.body);
+        props = props || {};
+
+
+        if (props.accept) {
+            if (props.accept instanceof Array)
+                input.attr('accept', props.accept.join(','));
+            else
+                input.attr('accept', props.accept);
+        }
+        else {
+            input.attr('accept', null);
+        }
+
+        if (props.multiple) {
+            input.attr('multiple', 'true');
+        }
+        else {
+            input.attr('multiple');
+        }
+        input.value = null;
+        input.click();
+        var finished = false;
+        setTimeout(function () {
+            ACore.$(document.body).once('click', function () {
+                finished = true;
+            })
+        }, 100)
+        function waitFinish() {
+            if (input.files.length > 0) {
+                resolve(input.files);
+            }
+            else {
+                if (finished)
+                    resolve([]);
+                else {
+                    setTimeout(waitFinish, 400);
+                }
+            }
+        }
+        setTimeout(waitFinish, 300);
+    });
+
+};

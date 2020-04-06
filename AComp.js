@@ -194,6 +194,10 @@ import './js/EmojiPicker';
 import './css/emojipicker.css';
 
 
+import './js/MessageInput';
+import './css/messageinput.css';
+
+
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
 import Draggable from "./js/Draggable";

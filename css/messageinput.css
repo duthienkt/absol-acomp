@@ -1,0 +1,58 @@
+.as-message-input-text-input {
+    min-height: 1.5em;
+    font-size: 14px;
+    outline: none;
+    max-height: 6em;
+    line-height: 1.5em;
+    overflow-y: scroll;
+}
+
+
+.as-message-input-extenal-tools-popup {
+    position: absolute;
+    left: 10px;
+    bottom: 100%;
+    right: 10px;
+    background: white;
+}
+
+
+.as-message-input-extenal-tools {
+    position: relative;
+}
+
+.as-message-input-plugin-btn {
+    border: none;
+    height: 2.5em;
+    padding: 0;
+    width: 2.5em;
+    font-size: inherit;
+    background-color: transparent;
+    color: #767676;
+    outline: none;
+}
+
+.as-message-input-plugin-btn:hover,
+.as-message-input-plugin-btn-active {
+    color: #0068ff;
+}
+
+
+.as-message-input-plugin-btn span {
+    font-size: 1.5em;
+}
+
+.as-message-input-body {
+    border-top: 1px solid #d4d4d7;
+}
+
+
+.as-message-input-img-list:empty {
+    display: none;
+}
+
+.as-message-input-show-emoji {}
+
+.as-message-input-file-list {
+    display: block;
+}

@@ -1,3 +1,4 @@
+import 'absol/src/polyfill';
 import "absol/src/absol";
 import AComp from "./AComp";
 import * as string from 'absol/src/String/stringMatching';

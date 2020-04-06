@@ -233,7 +233,7 @@ PreInput.eventHandler.paste = function (event) {
             else if (plainTextItems.length > 0) {
                 var plainTextItem = plainTextItems[0];//only one item
                 plainTextItem.getAsString(function (text) {
-                    thisIp.pasteText(text);
+                    thisIp._pasteText(text);
                 });
             }
             else {
@@ -283,7 +283,6 @@ PreInput.eventHandler.paste = function (event) {
     }
     else {
         console.error("Not support browser!");
-
     }
 };
 
