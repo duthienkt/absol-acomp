@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
 
-    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <!-- <script src="https://absol.cf/hightlight/highlight.pack.js"></script> -->
+    <script src="https://absol.cf/absol/dist/polyfill.js"></script>
     <!-- <script>hljs.initHighlightingOnLoad();</script> -->
     <script src="../dist/absol-acomp.js?"></script>
     <style>
@@ -16,12 +17,9 @@
 </head>
 
 <body>
-
-    <div id="first"></div>
-    <div id="second"></div>
+    <h2>Media Input</h2>
     <script>
         runDebugTask();
-
     </script>
     <script class="viewable">
         var textEditor = absol._('texteditor').addTo(document.body).addStyle('font-size', '14px');
@@ -79,10 +77,26 @@
         ]
     </script>
 
+    <h2 id="h-2">Message Input</h2>
+    <div id="message-box"></div>
+    <script class="viewable">
+            (function () {
+                var _ = absol._;
+                var $ = absol.$;
+                var messBox = $('#message-box');
+                var messInput = _('messageinput').on('sizechange', function(event){
+                    console.log("Sizechange:", event.bound);
+                    
+                });
+                
+                messBox.addChild(messInput);
+
+            })()
+    </script>
 
 
 
-    <!-- <script src="./autohightlighting.js?"></script> -->
+    <!-- <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script> -->
 
 
 </body>
