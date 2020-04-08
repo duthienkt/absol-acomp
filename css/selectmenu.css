@@ -169,3 +169,8 @@
 .absol-selectmenu .absol-selectlist-item-desc-container {
     right: 40px;
 }
+
+
+.absol-selectmenu-dropdown-box .absol-bscroller {
+    overflow-y: auto;
+}
