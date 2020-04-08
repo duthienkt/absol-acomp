@@ -126,6 +126,12 @@
 
             var mBoardTable1 = absol._({
                 tag: 'boardtable',
+                style: {
+                    'min-width': '70px',
+                    'min-height': '70px',
+                    border: '1px solid black',
+                    margin: '5px'
+                },
                 child: boardIds.slice(0, 4).map(function (id) {
                     return makeBoard(boardDataList[id])
                 }),
@@ -138,6 +144,13 @@
 
             var mBoardTable2 = absol._({
                 tag: 'boardtable',
+                style: {
+                    'min-width': '70px',
+                    'min-height': '70px',
+                    border: '1px solid black',
+                    margin: '5px'
+                },
+
                 child: boardIds.slice(2, 6).map(function (id) {
                     return makeBoard(boardDataList[id])
                 }),
@@ -149,6 +162,12 @@
             simpleDemoDiv.addChild(mBoardTable2);
             var mBoardTable3 = absol._({
                 tag: 'boardtable',
+                style: {
+                    'min-width': '70px',
+                    'min-height': '70px',
+                    border: '1px solid black',
+                    margin: '5px'
+                },
                 child: boardIds.slice(4, 8).map(function (id) {
                     return makeBoard(boardDataList[id])
                     friends: '#simple-demo boardtable'
