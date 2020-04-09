@@ -286,6 +286,7 @@ BoardTable.eventHandler.mousedown = function (event) {
             mouseStartPos: mousePos,
             mouseBoardOffset: mouseBoardOffset,
             holderIndex: holderIndex,
+            boardBound: cBound
         };
 
         $(document.body).on({
@@ -345,7 +346,6 @@ BoardTable.eventHandler.mousemovePredrag = function (event) {
 BoardTable.eventHandler.mousemoveDragInSelf = function (event) {
     var dragEventData = this._dragEventData;
     var mousePos = new Vec2(event.clientX, event.clientY);
-    var fbound;
     if (this._childHolders.length < 2) {
         if (dragEventData.boardIn != this) {
             this.insertBefore(dragEventData.placeHolderElt, this._childHolders[0].elt);
@@ -375,12 +375,35 @@ BoardTable.eventHandler.mousemoveDragInSelf = function (event) {
                     viewIndex = i - 1;
                 }
             }
-            if (viewIndex != dragEventData.boardAt) {
 
-                fbound = this._childHolders[i].elt.getBoundingClientRect();
-
-                if (mousePos.x > fbound.left && mousePos.x < fbound.right
-                    && mousePos.y > fbound.top && mousePos.y < fbound.bottom) {
+            var fbound = this._childHolders[i].elt.getBoundingClientRect();
+            var displayStyple = this._childHolders[i].elt.getComputedStyleValue('display');
+            if (mousePos.x > fbound.left && mousePos.x < fbound.right
+                && mousePos.y > fbound.top && mousePos.y < fbound.bottom) {
+                if (displayStyple.startsWith('inline')) {
+                    if (dragEventData.boardBound.width < fbound.width) {
+                        if (dragEventData.boardAt > viewIndex && mousePos.x > fbound.left + dragEventData.boardBound.width) {
+                            viewIndex += 1;
+                        }
+                        else if (dragEventData.boardAt < viewIndex && mousePos.x < fbound.left + fbound.width - dragEventData.boardBound.width) {
+                            viewIndex -= 1;
+                        }
+                    }
+                }
+                else {
+                    if (dragEventData.boardBound.height < fbound.height) {
+                        if (mousePos.y < fbound.top + dragEventData.boardBound.height) {
+                            if (dragEventData.boardAt > viewIndex && mousePos.y > fbound.top + dragEventData.boardBound.height) {
+                                viewIndex += 1;
+                            }
+                            else if (dragEventData.boardAt < viewIndex && mousePos.y < fbound.top + fbound.height - dragEventData.boardBound.height) {
+                                viewIndex -= 1;
+                            }
+                        }
+                    }
+                }
+                viewIndex = Math.max(0, Math.min(this._childHolders.length, viewIndex));
+                if (viewIndex != dragEventData.boardAt) {
                     dragEventData.boardAt = viewIndex;
                     if (dragEventData.holderIndex >= viewIndex) {
                         this.insertBefore(dragEventData.placeHolderElt, this._childHolders[viewIndex].elt);
@@ -414,7 +437,6 @@ BoardTable.eventHandler.mousemoveDragInOther = function (event) {
         if (i >= 0) {
             if (dragEventData.boardIn != other) {
                 dragEventData.boardIn = other;
-
             }
             var displayStyple = other._childHolders[i].elt.getComputedStyleValue('display');
             var di = 0;
@@ -440,7 +462,6 @@ BoardTable.eventHandler.mousemoveDragInOther = function (event) {
             }
             dragEventData.boardAt = i;
         }
-
     }
 };
 
@@ -510,7 +531,6 @@ BoardTable.eventHandler.mousefinish = function (event) {
                 }
                 var holder = this._childHolders.splice(dragEventData.holderIndex, 1)[0];
                 this._childHolders.splice(dragEventData.boardAt, 0, holder);
-
                 this.emit('orderchange', { name: 'orderchange', boardElt: holder.elt, action: 'move', from: dragEventData.holderIndex, to: dragEventData.boardAt, target: this, }, this);
             }
         }
