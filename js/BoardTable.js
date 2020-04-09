@@ -3,9 +3,7 @@ import ACore from "../ACore";
 import './Board';
 import Vec2 from "absol/src/Math/Vec2";
 import Element from "absol/src/HTML5/Element";
-import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
-
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -22,7 +20,7 @@ function BoardTable() {
 BoardTable.render = function () {
     return _({
         class: 'as-board-table',
-        extendEvent: ['sizechange', 'change', 'itemleave', 'itementer']
+        extendEvent: ['sizechange', 'orderchange', 'itemleave', 'itementer']
     });
 };
 
@@ -517,7 +515,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
                 var holder = this._childHolders.splice(dragEventData.holderIndex, 1)[0];
                 this._childHolders.splice(dragEventData.boardAt, 0, holder);
 
-                this.emit('change', { name: 'change', boardElt: holder.elt, action: 'move', from: dragEventData.holderIndex, to: dragEventData.boardAt, target: this, }, this);
+                this.emit('orderchange', { name: 'orderchange', boardElt: holder.elt, action: 'move', from: dragEventData.holderIndex, to: dragEventData.boardAt, target: this, }, this);
             }
         }
         else {
