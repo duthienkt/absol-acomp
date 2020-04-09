@@ -1,10 +1,6 @@
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu";
-import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { phraseMatch } from "absol/src/String/stringMatching";
-import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 
 import './SelectBoxItem';
 import { measureText } from "./utils";
@@ -49,7 +45,7 @@ function SelectBox() {
 
 SelectBox.render = function () {
     return _({
-        tag: 'boardtable',
+        tag: 'bscroller',
         class: ['absol-selectbox', 'absol-bscroller'],
         extendEvent: ['change', 'add', 'remove', 'minwidthchange'],
         attr: {
@@ -193,6 +189,7 @@ SelectBox.property.items = {
             self.isFocus = false;//close after click item
             self.emit('add', { type: 'add', itemData: this.data, itemElt: this, value: this.value, values: self.values, target: self }, self);
             self.emit('change', { type: 'change', values: self.values, target: self }, self);
+            self.scrollTop = self.scrollHeight;
         }
 
         while (this.$listItems.length < itemCount) {

@@ -6,9 +6,15 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function SelectBoxItem() {
-    var res = _({
-        tag: 'board',
-        class: ['absol-selectbox-item', 'as-board-drag-zone'],
+    this.$text = $('.absol-selectbox-item-text', this);
+    this.$close = $('.absol-selectbox-item-close', this);
+    this.$close.on('click', this.eventHandler.clickClose);
+};
+
+
+SelectBoxItem.render = function(){
+    return _({
+        class: ['absol-selectbox-item'],
         extendEvent: 'close',
         child: [
             '.absol-selectbox-item-text',
@@ -18,12 +24,8 @@ function SelectBoxItem() {
             }
         ]
     });
-    res.eventHandler = OOP.bindFunctions(res, SelectBoxItem.eventHandler);
-    res.$text = $('.absol-selectbox-item-text', res);
-    res.$close = $('.absol-selectbox-item-close', res);
-    res.$close.on('click', res.eventHandler.clickClose);
-    return res;
 };
+
 
 SelectBoxItem.eventHandler = {};
 SelectBoxItem.eventHandler.clickClose = function (event) {

@@ -7,6 +7,8 @@
     box-sizing: border-box;
     cursor: pointer;
     padding-right: 20px;
+    overflow-y: auto;
+    cursor: copy;
 }
 
 .absol-selectbox {
@@ -35,6 +37,7 @@
     -ms-user-select: none;
     user-select: none;
     color: white;
+    cursor: pointer;
 }
 
 .absol-selectbox-item.as-confirmed {
