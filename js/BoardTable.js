@@ -314,10 +314,11 @@ BoardTable.eventHandler.mousemovePredrag = function (event) {
         dragEventData.friendHolders = this.getAllFriends().concat([this]).map(function (elt) {
             //include itself
             var enterEvent = thisBT.eventHandler.enterFriendEffectZone.bind(thisBT, elt);
-            elt.on('mouseenter', enterEvent)
+            var effectZone = elt.getEffectZone();
+            effectZone.on('mouseenter', enterEvent)
             return {
                 elt: elt,
-                effectZone: elt.getEffectZone(),
+                effectZone: effectZone,
                 enterEvent: enterEvent
             }
         });
@@ -495,7 +496,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
         dragEventData.placeHolderElt.remove();
         dragEventData.state = "FINISH";
         dragEventData.friendHolders.forEach(function (holder) {
-            holder.elt.off('mouseenter', holder.enterEvent);
+            holder.effectZone.off('mouseenter', holder.enterEvent);
         });
         if (dragEventData.boardIn == this) {
             if (dragEventData.holderIndex != dragEventData.boardAt) {
