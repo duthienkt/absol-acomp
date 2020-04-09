@@ -7,7 +7,8 @@ var $ = ACore.$;
 
 function SelectBoxItem() {
     var res = _({
-        class: 'absol-selectbox-item',
+        tag: 'board',
+        class: ['absol-selectbox-item', 'as-board-drag-zone'],
         extendEvent: 'close',
         child: [
             '.absol-selectbox-item-text',

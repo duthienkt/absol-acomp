@@ -16,47 +16,49 @@ var $ = ACore.$;
 
 
 function SelectBox() {
-    var res = _({
+    this.on('click', this.eventHandler.click);
+
+    this.$anchorCtn = SelectMenu.getAnchorCtn();
+    this.$anchor = _('.absol-selectmenu-anchor.absol-disabled').addTo(this.$anchorCtn);
+    this.$anchorContentCtn = _('.absol-selectmenu-anchor-content-container').addTo(this.$anchor);
+    this.$scrollTrackElts = [];
+
+    this.$attachhook = $('attachhook', this)
+        .on('error', this.eventHandler.attached);
+
+    this.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(this.$anchorContentCtn);
+    this.$searchTextInput = _('searchtextinput').addStyle('display', 'none').addTo(this.$dropdownBox);
+    this.$vscroller = _('bscroller').addTo(this.$dropdownBox);
+    this.$selectlist = _('.absol-selectlist').addTo(this.$vscroller);//reuse css
+    this.$searchList = _('selectlist').addStyle('display', 'none')
+        .on('change', this.eventHandler.searchListChange).addTo(this.$vscroller);//todo: event
+
+    this.$listItems = [];
+    this._listItemViewCount = 0;
+    this.$listItemByValue = {};
+
+    this.$boxItems = [];
+    this._boxItemViewCount = 0;
+    this._valueDict = {};
+
+    this.$searchTextInput.on('stoptyping', this.eventHandler.searchModify);
+    this._searchCache = {};
+
+    return this;
+};
+
+SelectBox.render = function () {
+    return _({
+        tag: 'boardtable',
         class: ['absol-selectbox', 'absol-bscroller'],
         extendEvent: ['change', 'add', 'remove', 'minwidthchange'],
         attr: {
             tabindex: '1'
         },
-
         child: 'attachhook'
-    });
-    res.eventHandler = OOP.bindFunctions(res, SelectBox.eventHandler);
-
-    res.on('click', res.eventHandler.click);
-
-    res.$anchorCtn = SelectMenu.getAnchorCtn();
-    res.$anchor = _('.absol-selectmenu-anchor.absol-disabled').addTo(res.$anchorCtn);
-    res.$anchorContentCtn = _('.absol-selectmenu-anchor-content-container').addTo(res.$anchor);
-    res.$scrollTrackElts = [];
-
-    res.$attachhook = $('attachhook', res)
-        .on('error', res.eventHandler.attached);
-
-    res.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(res.$anchorContentCtn);
-    res.$searchTextInput = _('searchtextinput').addStyle('display', 'none').addTo(res.$dropdownBox);
-    res.$vscroller = _('bscroller').addTo(res.$dropdownBox);
-    res.$selectlist = _('.absol-selectlist').addTo(res.$vscroller);//reuse css
-    res.$searchList = _('selectlist').addStyle('display', 'none')
-        .on('change', res.eventHandler.searchListChange).addTo(res.$vscroller);//todo: event
-
-    res.$listItems = [];
-    res._listItemViewCount = 0;
-    res.$listItemByValue = {};
-
-    res.$boxItems = [];
-    res._boxItemViewCount = 0;
-    res._valueDict = {};
-
-    res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
-    res._searchCache = {};
-
-    return res;
+    }, true);
 };
+
 
 
 SelectBox.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
@@ -69,8 +71,6 @@ SelectBox.eventHandler = {};
 SelectBox.eventHandler.attached = SelectMenu.eventHandler.attached;
 
 SelectBox.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
-// SelectTreeMenu.eventHandler.click = SelectMenu.eventHandler.click;
-// SelectTreeMenu.eventHandler.bodyClick = SelectMenu.eventHandler.bodyClick;
 
 SelectBox.property = {};
 SelectBox.property.disabled = SelectMenu.property.disabled;
