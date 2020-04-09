@@ -214,8 +214,6 @@ BoardTable.prototype._findDragZone = function (elt) {
         if (!res && elt.classList.contains('as-board-free-zone')) return null;// do not drag
         elt = elt.parentElement;
     }
-    console.log(res);
-    
     return res;
 };
 
