@@ -351,7 +351,6 @@ BoardTable.eventHandler.mousemoveDragInSelf = function (event) {
             this.insertBefore(dragEventData.placeHolderElt, this._childHolders[0].elt);
             this.boardIn = this;
             dragEventData.boardAt = 0;
-            console.log("Come back");
         }
     }
     else {
@@ -415,8 +414,6 @@ BoardTable.eventHandler.mousemoveDragInOther = function (event) {
         if (i >= 0) {
             if (dragEventData.boardIn != other) {
                 dragEventData.boardIn = other;
-                //todo 
-                console.log('next');
 
             }
             var displayStyple = other._childHolders[i].elt.getComputedStyleValue('display');
@@ -535,8 +532,6 @@ BoardTable.eventHandler.mousefinish = function (event) {
                 }
                 else {
                     var bf = other.findDomChildAfter(other._childHolders.elt);
-                    console.log(bf);
-                    
                     if (bf) {
                         other.insertBefore(holder.elt, bf);
                     }
