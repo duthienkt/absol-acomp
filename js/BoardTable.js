@@ -181,19 +181,6 @@ BoardTable.prototype.addChildAfter = function (elt, at) {
 };
 
 
-
-
-BoardTable.prototype._removeInChildList = function (elt) {
-    var holderIndex = this.findChildHolderIndex();
-    if (holderIndex >= 0) {
-        var holder = this._childHolders[holderIndex];
-        this._childHolders.splice(holderIndex, 1);
-        //todo: update size from row
-        // holder.row = 
-    }
-};
-
-
 BoardTable.prototype.findChildHolder = function (elt) {
     return this._childHolders[this.findChildHolderIndex(elt)];
 };
@@ -229,6 +216,8 @@ BoardTable.prototype._findDragZone = function (elt) {
         if (!res && elt.classList.contains('as-board-free-zone')) return null;// do not drag
         elt = elt.parentElement;
     }
+    console.log(res);
+    
     return res;
 };
 
