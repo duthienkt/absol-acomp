@@ -393,11 +393,6 @@ BoardTable.eventHandler.mousemoveDragInSelf = function (event) {
                 }
                 else {
                     if (dragEventData.boardBound.height < fbound.height) {
-                        console.log(dragEventData.boardAt, viewIndex, mousePos.y, fbound.top, dragEventData.boardBound.height,
-                            dragEventData.boardAt > viewIndex,
-                            mousePos.y >= fbound.top + dragEventData.boardBound.height
-                        );
-
                         if (dragEventData.boardAt > viewIndex && mousePos.y >= fbound.top + dragEventData.boardBound.height) {
                             viewIndex += 1;
                         }
