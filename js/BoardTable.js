@@ -378,6 +378,7 @@ BoardTable.eventHandler.mousemoveDragInSelf = function (event) {
 
             var fbound = this._childHolders[i].elt.getBoundingClientRect();
             var displayStyple = this._childHolders[i].elt.getComputedStyleValue('display');
+
             if (mousePos.x > fbound.left && mousePos.x < fbound.right
                 && mousePos.y > fbound.top && mousePos.y < fbound.bottom) {
                 if (displayStyple.startsWith('inline')) {
@@ -392,13 +393,16 @@ BoardTable.eventHandler.mousemoveDragInSelf = function (event) {
                 }
                 else {
                     if (dragEventData.boardBound.height < fbound.height) {
-                        if (mousePos.y < fbound.top + dragEventData.boardBound.height) {
-                            if (dragEventData.boardAt > viewIndex && mousePos.y > fbound.top + dragEventData.boardBound.height) {
-                                viewIndex += 1;
-                            }
-                            else if (dragEventData.boardAt < viewIndex && mousePos.y < fbound.top + fbound.height - dragEventData.boardBound.height) {
-                                viewIndex -= 1;
-                            }
+                        console.log(dragEventData.boardAt, viewIndex, mousePos.y, fbound.top, dragEventData.boardBound.height,
+                            dragEventData.boardAt > viewIndex,
+                            mousePos.y >= fbound.top + dragEventData.boardBound.height
+                        );
+
+                        if (dragEventData.boardAt > viewIndex && mousePos.y >= fbound.top + dragEventData.boardBound.height) {
+                            viewIndex += 1;
+                        }
+                        else if (dragEventData.boardAt < viewIndex && mousePos.y <= fbound.top + fbound.height - dragEventData.boardBound.height) {
+                            viewIndex -= 1;
                         }
                     }
                 }
