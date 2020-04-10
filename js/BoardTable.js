@@ -493,11 +493,12 @@ BoardTable.eventHandler.mousemoveDragInOther = function (event) {
             var displayStyple = other._childHolders[i].elt.getComputedStyleValue('display');
             var di = 0;
             var bbound = other._childHolders[i].elt.getBoundingClientRect();
+            
             if (displayStyple.startsWith('inline')) {
-                if (event.clientX > bbound.left + bbound.width / 2) di++;
+                if (mousePos.x > bbound.left + bbound.width / 2) di++;
             }
             else {
-                if (event.clientY > bbound.top + bbound.height / 2) di++;
+                if (mousePos.y > bbound.top + bbound.height / 2) di++;
             }
             i += di;
             if (i < other._childHolders.length) {
