@@ -161,4 +161,16 @@ ContextCaptor.eventHandler.contextmenu = function (event) {
     }
 };
 
+
+ContextCaptor.auto = function () {
+    if (ContextCaptor.$elt) return;
+    ContextCaptor.$elt = _('contextcaptor');
+    Dom.documentReady.then(function () {
+        ContextCaptor.$elt.addTo(document.body); 
+        ContextCaptor.$elt.attachTo(document.body);
+    });
+};
+
 ACore.install('contextcaptor', ContextCaptor);
+
+export default ContextCaptor;
