@@ -118,8 +118,8 @@ MessageInput.prototype.showEmoji = function () {
     var thisMi = this;
     setTimeout(function () {
         $(document.body).on('mousedown', thisMi.eventHandler.mousedownOutEmoji);
-
     }, 100);
+    this.$preInput.focus();
 };
 
 
