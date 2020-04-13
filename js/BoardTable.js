@@ -319,7 +319,7 @@ BoardTable.eventHandler.readyDrag = function (event) {
     $(document.body).on(bodyEvents);
     if (isTouch)
         $(document.body).addClass('as-has-board-table-drag');
-    this.emit('dragitemstart', { type: 'dragitemstart', target: this }, this);
+    this.emit('dragitemstart', { type: 'dragitemstart', target: this, boardElt: this._dragEventData.boardElt }, this);
 };
 
 BoardTable.eventHandler.mousemovePredrag = function (event) {
@@ -676,7 +676,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
         bodyEvents.mouseleave = this.eventHandler.mousefinish;
     }
     $(document.body).off(bodyEvents);
-    this.emit('dragitemend', { type: 'dragitemend', target: this, changed: changed }, this);
+    this.emit('dragitemend', { type: 'dragitemend', target: this, changed: changed, boardElt: this._dragEventData.boardElt }, this);
 
 };
 
@@ -689,7 +689,6 @@ BoardTable.prototype.getAllBoards = function () {
         return holder.elt;
     });
 };
-
 
 
 BoardTable.property = {};

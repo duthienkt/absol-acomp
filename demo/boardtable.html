@@ -137,6 +137,17 @@
                 }),
                 props: {
                     friends: '#simple-demo boardtable'
+                },
+                on:{orderchange: function(){
+                        console.log('order change');
+                    },
+                    
+                    dragitemstart: function(event){
+                        console.log('drag start', event.boardElt);
+                    },
+                    dragitemend: function(){
+                        console.log('drag end');
+                    }
                 }
             });
 
