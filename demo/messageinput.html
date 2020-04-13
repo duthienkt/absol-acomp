@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Media Input</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://absol.cf/absol/dist/polyfill.js"></script>
+    <!-- <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css"> -->
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+
+    <!-- <script src="https://absol.cf/hightlight/highlight.pack.js"></script> -->
+    <!-- <script>hljs.initHighlightingOnLoad();</script> -->
+    <script src="../dist/absol-acomp.js?"></script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <script>
+        runDebugTask();
+    </script>
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .message-box {
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            border: solid 1px #ddd;
+            overflow-y: auto;
+        }
+
+        .input-ctn {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background-color: aliceblue;
+        }
+
+        .message-ctn {}
+
+        .message {
+            width: 50%;
+            padding: 10px;
+            background-color: deepskyblue;
+        }
+    </style>
+    <div class="message-box">
+        <div class="message-ctn absol-bscroller"></div>
+        <div class="input-ctn"></div>
+    </div>
+
+    <script>
+        (function () {
+            var _ = absol._;
+            var $ = absol.$;
+            var messBox = $('.message-box');
+            var inputCtn = $('.input-ctn');
+            var messageCtn = $('.message-ctn');
+            var messInput = _({
+                tag: 'messageinput',
+                on: {
+                    change: function () {
+                        // console.log(this.text, this.files, this.images);// files, images : Array<Files> text: String
+
+                    },
+                    sizechange: function (event) {
+                        messageCtn.addStyle('height', 'calc(100% - ' + (event.bound.height) + 'px)')
+                    },
+                    send: function () {
+                        console.log('send', this.text, this.files, this.images)
+                        this.clearAllContent()
+                        this.blur();
+                    }
+                }
+            });
+            inputCtn.addChild(messInput);
+
+        })()
+    </script>
+</body>
+
+</html>
