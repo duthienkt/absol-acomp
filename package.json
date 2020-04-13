@@ -1,13 +1,13 @@
 {
     "name": "absol-acomp",
-    "version": "0.8.18",
+    "version": "0.8.19",
     "description": "HTML5 components base on absol.js",
     "main": "AComp.js",
     "directories": {
         "test": "test"
     },
     "scripts": {
-        "dev": "webpack-dev-server --config webpack.config.js",
+        "dev": "webpack-dev-server --config webpack.config.js --publicx absol.cf:9000",
         "dist": "webpack --config webpack.config.js --progress --profile --colors --mode production "
     },
     "repository": {
@@ -27,7 +27,7 @@
     },
     "homepage": "https://github.com/duthienkt/absol-acomp",
     "dependencies": {
-        "absol": "^1.12.3"
+        "absol": "^1.12.4"
     },
     "devDependencies": {
         "@babel/core": "^7.4.5",
