@@ -23,7 +23,7 @@ function BoardTable() {
 BoardTable.render = function () {
     return _({
         class: 'as-board-table',
-        extendEvent: ['sizechange', 'orderchange', 'itemleave', 'itementer']
+        extendEvent: ['sizechange', 'orderchange', 'itemleave', 'itementer', 'dragitemstart', 'dragitemend']
     });
 };
 
@@ -319,6 +319,7 @@ BoardTable.eventHandler.readyDrag = function (event) {
     $(document.body).on(bodyEvents);
     if (isTouch)
         $(document.body).addClass('as-has-board-table-drag');
+    this.emit('dragitemstart', { type: 'dragitemstart', target: this }, this);
 };
 
 BoardTable.eventHandler.mousemovePredrag = function (event) {
@@ -597,6 +598,7 @@ BoardTable.eventHandler.mousemove = function (event) {
 
 BoardTable.eventHandler.mousefinish = function (event) {
     var dragEventData = this._dragEventData;
+    var changed = false;
     if (dragEventData.state == 'DRAG') {
         setTimeout(function () {
             $(document.body).removeClass('as-has-board-table-drag');
@@ -627,6 +629,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
                 }
                 var holder = this._childHolders.splice(dragEventData.holderIndex, 1)[0];
                 this._childHolders.splice(dragEventData.boardAt, 0, holder);
+                changed = 'orderchange';
                 this.emit('orderchange', { name: 'orderchange', boardElt: holder.elt, action: 'move', from: dragEventData.holderIndex, to: dragEventData.boardAt, target: this, }, this);
             }
         }
@@ -634,6 +637,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
             var holder = this._childHolders.splice(dragEventData.holderIndex, 1)[0];
             holder.elt.remove();
             ///remove all event
+            changed = 'itemleave';
             this.emit('itemleave', { name: 'itemleave', item: holder.elt, target: this }, this);
             var other = dragEventData.boardIn;
             if (other._childHolders.length == 0) {
@@ -672,6 +676,8 @@ BoardTable.eventHandler.mousefinish = function (event) {
         bodyEvents.mouseleave = this.eventHandler.mousefinish;
     }
     $(document.body).off(bodyEvents);
+    this.emit('dragitemend', { type: 'dragitemend', target: this, changed: changed }, this);
+
 };
 
 BoardTable.eventHandler.enterFriendEffectZone = function (friendElt, event) {
