@@ -399,7 +399,7 @@ VMenu.property.extendClasses = {
         this._extendClass = [];
         if (!value) return;
         if (typeof value == 'string') {
-            value = value.split(/\s+/).filter(function (c) { c.length > 0 });
+            value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
         }
         if (value instanceof Array) {
             this._extendClass = value;
