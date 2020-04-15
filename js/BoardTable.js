@@ -319,7 +319,6 @@ BoardTable.eventHandler.readyDrag = function (event) {
     $(document.body).on(bodyEvents);
     if (isTouch)
         $(document.body).addClass('as-has-board-table-drag');
-    this.emit('dragitemstart', { type: 'dragitemstart', target: this, boardElt: this._dragEventData.boardElt }, this);
 };
 
 BoardTable.eventHandler.mousemovePredrag = function (event) {
@@ -380,6 +379,7 @@ BoardTable.eventHandler.mousemovePredrag = function (event) {
         dragEventData.boardElt.addClass('as-board-moving');
         dragEventData.boardAt = dragEventData.holderIndex;
         dragEventData.boardIn = thisBT;
+        this.emit('dragitemstart', { type: 'dragitemstart', target: this, boardElt: this._dragEventData.boardElt }, this);
     }
 };
 
@@ -662,6 +662,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
                 other.emit('itementer', { name: 'itementer', item: holder.elt, target: other }, other);
             }
         }
+        this.emit('dragitemend', { type: 'dragitemend', target: this, changed: changed, boardElt: this._dragEventData.boardElt }, this);
     }
 
     var bodyEvents = {};
@@ -676,7 +677,6 @@ BoardTable.eventHandler.mousefinish = function (event) {
         bodyEvents.mouseleave = this.eventHandler.mousefinish;
     }
     $(document.body).off(bodyEvents);
-    this.emit('dragitemend', { type: 'dragitemend', target: this, changed: changed, boardElt: this._dragEventData.boardElt }, this);
 
 };
 
