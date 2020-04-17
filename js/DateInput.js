@@ -1,5 +1,6 @@
 import ACore from "../ACore";
 import { daysInMonth, beginOfDay, compareDate, formartDateString } from "absol/src/Time/datetime";
+import ChromeCalendar from "./ChromeCalendar";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -13,8 +14,18 @@ function DateInput() {
         .on('mouseup', this.eventHandler.mouseup)
         .on('keydown', this.eventHandler.keydown)
         .on('paste', this.eventHandler.paste)
-        .on('blur', this.eventHandler.blur)
-        .on('cut', this.eventHandler.cut);
+        .on('cut', this.eventHandler.cut)
+        .on('focus', this.eventHandler.focus);
+    this._minLimitDate = new Date(1890, 0, 1, 0, 0, 0, 0);
+    this._maxLimitDate = new Date(2090, 0, 1, 0, 0, 0, 0);
+    this.$calendarBtn = $('.as-date-input-icon-ctn', this)
+        .on('mousedown', this.eventHandler.mousedownCalendarBtn);
+    this._calendarHolder = ChromeCalendar.showWhenClick(this.$calendarBtn, {
+        minLimitDate: this._minLimitDate,
+        maxLimitDate: this._maxLimitDate,
+        selectedDates: [new Date()],
+    }, 'auto', this.eventHandler.calendarSelect);
+    this._calendarHolder.element = this;
 
 }
 
@@ -126,7 +137,12 @@ DateInput.eventHandler.mouseup = function () {
     setTimeout(this._autoSelect.bind(this), 1);
 };
 
+DateInput.eventHandler.focus = function () {
+    this.$input.on('blur', this.eventHandler.blur);
+};
+
 DateInput.eventHandler.blur = function () {
+    this.$input.off('blur', this.eventHandler.blur);
     var value = this.$input.value;
     var slashValueCount = value.replace(/[^\/]/g, '').length;
     for (var i = slashValueCount; i < 2; ++i) value += '/';
@@ -134,7 +150,7 @@ DateInput.eventHandler.blur = function () {
     var day = parseInt(texts[0]);
     var month = parseInt(texts[1]);
     var year = parseInt(texts[2]);
-    if (!isNaN(year)) year = Math.min(2100, Math.max(year, 1890));
+    if (!isNaN(year)) year = Math.min(2090, Math.max(year, 1890));
     if (!isNaN(month)) month = Math.max(1, Math.min(12, month));
     if (!isNaN(day)) {
         day = Math.max(1, Math.min(31, day));
@@ -143,11 +159,8 @@ DateInput.eventHandler.blur = function () {
             if (!isNaN(year)) day = Math.min(daysInMonth(year, month), day);
         }
     }
-    console.log(day, month, year);
-    
-
     if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
-        
+
         var dateValue = new Date(year, month - 1, day, 0, 0, 0, 0);
         if (this._lastValue == null || compareDate(dateValue, this._lastValue) != 0) {
             this.value = dateValue;
@@ -166,6 +179,11 @@ DateInput.eventHandler.blur = function () {
     }
 };
 
+
+DateInput.eventHandler.calendarSelect = function (value) {
+    this.value = value;
+    this.notifyChange();
+};
 
 DateInput.eventHandler.keydown = function (event) {
     var slEnd = this.$input.selectionEnd;
@@ -241,7 +259,7 @@ DateInput.eventHandler.keydown = function (event) {
     else if (!event.ctrlKey && !event.altKey && event.key && event.key.length == 1) {
         if (event.key.match(/[0-9\/]/)) {
             if (event.key == '/') {
-                if (slashSelectedCount == 0 && slashValueCount >= 2) {
+                if (slashSelectedCount == 0 && slashValueCount >= 2 && value.charAt(slStart) != '/') {
                     event.preventDefault();
                 }
                 else if (value.charAt(slStart) == '/') {
@@ -273,6 +291,7 @@ DateInput.eventHandler.keydown = function (event) {
     }
 };
 
+
 DateInput.property = {};
 
 DateInput.property.value = {
@@ -290,7 +309,7 @@ DateInput.property.value = {
             this.$input.value = formartDateString(this._value, 'dd/mm/yyyy');
         }
         this._lastValue = this._value;
-        
+        this._calendarHolder.calendarProps.selectedDates = [this._value || new Date()];
     },
     get: function () {
         return this._value;

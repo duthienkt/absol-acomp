@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TimeInput</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+    <h1>TimeInput</h1>
+    <div class="input-demo">
+
+    </div>
+    <script>
+        var _ = absol._;
+        var $ = absol.$;
+        
+    </script>
+    <script class="viewable">
+        var inputDemoDiv = $('.input-demo');
+        _({
+            tag: 'dateinput',
+            props: {
+                value: new Date()
+            },
+            on: {
+                change: function () {
+                   console.log(this.value);
+                }
+            }
+        }).addTo(inputDemoDiv);
+    </script>
+
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>
