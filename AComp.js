@@ -194,6 +194,9 @@ import './js/EmojiPicker';
 import './css/emojipicker.css';
 
 
+import './js/DateInput';
+import './css/dateinput.css';
+
 import './js/MessageInput';
 import './css/messageinput.css';
 
