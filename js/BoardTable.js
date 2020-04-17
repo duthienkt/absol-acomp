@@ -659,8 +659,8 @@ BoardTable.eventHandler.mousefinish = function (event) {
                     }
                     other._childHolders.push(holder);
                 }
-                other.emit('itementer', { name: 'itementer', item: holder.elt, target: other }, other);
             }
+            other.emit('itementer', { name: 'itementer', item: holder.elt, target: other }, other);
         }
         this.emit('dragitemend', { type: 'dragitemend', target: this, changed: changed, boardElt: this._dragEventData.boardElt }, this);
     }
