@@ -18,23 +18,96 @@
     <script>
         var _ = absol._;
         var $ = absol.$;
-        
+
     </script>
     <script class="viewable">
         var inputDemoDiv = $('.input-demo');
-        _({
-            tag: 'dateinput',
-            props: {
-                value: new Date()
-            },
-            on: {
-                change: function () {
-                   console.log(this.value);
+        var supportFomarts = [null, 'dd/mm/yyyy', 'dd-mm-yyyy', 'dd.mm.yyyy', 'yyyy/mm/dd', 'yyyy-mm-dd', 'mm/dd/yyyy'];
+        supportFomarts.forEach(function (format) {
+            _(
+                {
+                    style: {
+                        'margin-bottom': '10px'
+                    },
+                    child: [
+                        {
+                            tag: 'label',
+                            style: { width: '7em', 'line-height': '30px', display: 'inline-block' },
+                            child: { text: format + '' }
+                        },
+                        {
+                            tag: 'dateinput',
+                            props: {
+                                value: new Date(),
+                                format: format
+                            },
+                            on: {
+                                change: function () {
+                                    console.log(this.value);
+                                }
+                            }
+                        }
+                    ]
                 }
-            }
-        }).addTo(inputDemoDiv);
+            ).addTo(inputDemoDiv);
+        })
+
     </script>
 
+
+    <h1>Expert</h1>
+    <div id="min-max-inputs">
+        <label id="min-lb">Min </label><input id="min-ip" />
+        <label id="max-lb"> Max </label><input id="max-ip" />
+        <label id="disabled-lb"> Disabled </label><input id="disabled-ip" />
+    </div>
+    <script class="viewable">
+        var mmInputs = $('#min-max-inputs');
+        var minValue = new Date(2019, 0, 1);
+        var maxValue = new Date(2020, 0, 1)
+        var minIp = absol._(
+            {
+                tag: 'dateinput',
+                props: {
+                    value: minValue,
+                    maxLimitDate: maxValue
+                },
+                on: {
+                    change: function (ev) {
+                        maxIp.minLimitDate = ev.value;
+                    }
+                }
+            }
+        );
+        var maxIp = absol._(
+            {
+                tag: 'dateinput',
+                props: {
+                    value: maxValue,
+                    minLimitDate: minValue,
+                    // dateToString: 'mmm-dd-yyyy', only support dd/mm/yyyy now
+                },
+                on: {
+                    change: function (ev) {
+                        minIp.maxLimitDate = ev.value;
+                    }
+                }
+            }
+        );
+        $('#min-ip', mmInputs).selfReplace(minIp);
+        $('#max-ip', mmInputs).selfReplace(maxIp);
+        $('#disabled-ip', mmInputs).selfReplace(_({
+            tag: 'calendarinput',
+            props: {
+                // value: maxValue,
+                minLimitDate: minValue,
+                disabled: true
+            }
+        }));
+
+
+
+    </script>
     <script src="./autohightlighting.js?"></script>
 
 </body>
