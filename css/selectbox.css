@@ -40,15 +40,15 @@
     cursor: pointer;
 }
 
-.absol-selectbox-item.as-confirmed {
+.absol-selectbox-item.as-theme-confirmed {
     background-color: rgb(145, 228, 251);
 }
 
-.absol-selectbox-item.as-declined {
+.absol-selectbox-item.as-theme-declined {
     background-color: rgb(255, 138, 138)
 }
 
-.absol-selectbox-item.as-waiting {
+.absol-selectbox-item.as-theme-waiting {
     background-color: rgb(255, 227, 174);
     color: black;
 }

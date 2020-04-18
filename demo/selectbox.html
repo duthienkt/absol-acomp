@@ -23,6 +23,10 @@
     </div>
 
     <script class="viewable">
+        function randomTheme() {
+            return ['confirmed', 'declined', 'waiting', null][Math.random() * 4 >> 0];
+        }
+
         absol._({
             tag: 'selectbox',
             style: {
@@ -33,7 +37,7 @@
             },
             props: {
                 items: Array(30).fill(0).map(function (u, i) {
-                    return { text: absol.string.randomPhrase(30), value: i, desc: absol.string.randomPhrase(30) };
+                    return { text: absol.string.randomPhrase(30), value: i, desc: absol.string.randomPhrase(30) , theme: randomTheme()};
                 }),
                 values: [5, 2, 1],
                 enableSearch: true,
