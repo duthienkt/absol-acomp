@@ -93,6 +93,9 @@ import './css/follower.css';
 import './css/tooltip.css';
 import './js/Tooltip';
 
+import './css/quicklistbutton.css';
+import './js/QuickListButton';
+
 // import './js/TextArea2';
 // import './css/textarea2.css';
 

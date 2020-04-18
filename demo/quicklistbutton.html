@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>QuickListButton</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <script src="../dist/absol-acomp.js?"></script>
+    <style>
+        body, html{
+            padding-top: 0;
+            padding-bottom: 0;
+            margin-top: 0;
+            margin-bottom: 0;
+            min-height: calc(100vh - 50px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>QuickListButton</h1>
+    <div id="test"></div>
+
+    <script class="viewable">
+        var testElt = absol.$('#test');
+        absol._({
+            tag: 'quicklistbutton',
+            style: {
+                display: 'inline-block',
+                border: 'solid 1px gray'
+            },
+            props: {
+                items: Array(30).fill(0).map(function (u, i) {
+                    return { text: absol.string.randomPhrase(30), value: i, desc: absol.string.randomPhrase(30), extendClasses: i % 2 == 0 ? 'hover-blue' : 'hover-red' };
+                })
+            },
+            on:{
+                select: function(event){
+                    var item = event.data;
+                    absol._({
+                        tag:'p',
+                        child:{
+                            text: item.text
+                        }
+                    }).addTo(testElt);
+                }
+            }
+        }).addTo(testElt);
+    </script>
+
+    
+
+
+
+    <!-- <script src="./autohightlighting.js?"></script> -->
+
+</body>
+
+</html>

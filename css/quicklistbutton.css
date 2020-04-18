@@ -1,0 +1,23 @@
+.as-quick-list-button {
+    box-sizing: border-box;
+    height: calc(2em + 2px);
+    font-size: 14px;
+}
+
+.as-quick-list-button .as-flexicon-button-text-container {
+    border-right: solid 1px #bfbfbf;
+}
+
+
+.as-quick-list-button-follower .absol-selectlist {
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
+    border: solid 1px rgb(100, 100, 255);
+    box-sizing: border-box;
+    background-color: white;
+    display: inline-block;
+    vertical-align: top;
+    -webkit-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+    -moz-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+    box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+}

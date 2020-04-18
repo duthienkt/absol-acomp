@@ -8,10 +8,10 @@
     overflow: hidden;
 }
 
-.as-icon-button-table-box{
-  display: table;
-  width:100%;
-  height:100%;
+.as-icon-button-table-box {
+    display: table;
+    width: 100%;
+    height: 100%;
 }
 
 .as-flexicon-button:hover .as-flexicon-button-content {
@@ -34,7 +34,7 @@
     display: table-cell;
     box-sizing: content-box;
     vertical-align: middle;
-  text-align: center;
+    text-align: center;
 }
 
 .as-flexicon-button-icon-container:empty,
@@ -59,11 +59,12 @@
 .as-flexicon-button-text-container {
     padding-left: 0.357em;
     padding-right: 0.357em;
+    box-sizing: border-box;
     min-width: 2em;
 }
 
 
-.as-flexicon-button-text-container {
+.as-flexicon-button-icon-container+.as-flexicon-button-text-container {
     border-left: solid 1px #bfbfbf;
 }
 
@@ -203,6 +204,6 @@
     border-left-color: transparent;
 }
 
-.as-flexicon-button.link:hover .as-flexicon-button-text-container{
+.as-flexicon-button.link:hover .as-flexicon-button-text-container {
     text-decoration: underline;
 }
