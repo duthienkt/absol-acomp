@@ -5,7 +5,7 @@ import { beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 //todo: add this to absol
-var isTouchDevice = BrowserDetector.isTouchDevice;
+var isTouchDevice = BrowserDetector.hasTouch && !BrowserDetector.os.type.match(/windows|X11|Ubuntu|Linux/) ;
 //todo: re select text after click
 var _ = ACore._;
 var $ = ACore.$;

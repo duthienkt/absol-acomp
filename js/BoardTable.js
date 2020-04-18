@@ -9,7 +9,8 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 var _ = ACore._;
 var $ = ACore.$;
 
-var isTouch = BrowserDetector.isTouchDevice;
+var isTouch = BrowserDetector.hasTouch && !BrowserDetector.os.type.match(/windows|X11|Ubuntu|Linux/);
+
 
 function BoardTable() {
     var events = {};
