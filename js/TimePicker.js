@@ -2,12 +2,10 @@ import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
 import { beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 //todo: add this to absol
-export var isTouchDevice = 'ontouchstart' in window ||
-    window.DocumentTouch && document instanceof window.DocumentTouch ||
-    navigator.maxTouchPoints > 0 ||
-    window.navigator.msMaxTouchPoints > 0;
+var isTouchDevice = BrowserDetector.isTouchDevice;
 //todo: re select text after click
 var _ = ACore._;
 var $ = ACore.$;
