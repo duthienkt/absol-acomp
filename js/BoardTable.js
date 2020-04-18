@@ -4,17 +4,17 @@ import './Board';
 import Vec2 from "absol/src/Math/Vec2";
 import Element from "absol/src/HTML5/Element";
 import Rectangle from "absol/src/Math/Rectangle";
-import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-var isTouch = BrowserDetector.hasTouch && !BrowserDetector.os.type.match(/windows|X11|Ubuntu|Linux/);
-
 
 function BoardTable() {
     var events = {};
-    events[isTouch ? 'touchstart' : 'mousedown'] = this.eventHandler.mousedown;
+    this.on({
+        touchstart: this.eventHandler.mousedown,
+        mousedown: this.eventHandler.mousedown
+    });
     this.on(events);
     this._childHolders = [];
     this._dragEventData = null;
@@ -280,7 +280,10 @@ BoardTable.eventHandler.mousedown = function (event) {
         if (event.changedTouches[0].identifier > 0) return;// only once touch a
         mousePos = new Vec2(event.touches[0].clientX, event.touches[0].clientY);
     }
-    else {
+    else if (this._dragEventDat){
+        return;// not finish last drag
+    }
+    else{
         mousePos = new Vec2(event.clientX, event.clientY);
     }
 
@@ -298,6 +301,7 @@ BoardTable.eventHandler.mousedown = function (event) {
             mouseBoardOffset: mouseBoardOffset,
             holderIndex: holderIndex,
             boardBound: cBound,
+            isTouch: event.type == 'touchstart'
         };
         this.eventHandler.readyDrag(event);
     }
@@ -305,9 +309,10 @@ BoardTable.eventHandler.mousedown = function (event) {
 
 
 BoardTable.eventHandler.readyDrag = function (event) {
-    this._dragEventData.state = "PRE_DRAG";
+    var dragEventData = this._dragEventData;
+    dragEventData.state = "PRE_DRAG";
     var bodyEvents = {};
-    if (isTouch) {
+    if (dragEventData.isTouch) {
         bodyEvents.touchmove = this.eventHandler.mousemove;
         bodyEvents.touchcancel = this.eventHandler.mousefinish;
         bodyEvents.touchend = this.eventHandler.mousefinish;
@@ -318,13 +323,14 @@ BoardTable.eventHandler.readyDrag = function (event) {
         bodyEvents.mouseleave = this.eventHandler.mousefinish;
     }
     $(document.body).on(bodyEvents);
-    if (isTouch)
+    if (dragEventData.isTouch)
         $(document.body).addClass('as-has-board-table-drag');
 };
 
 BoardTable.eventHandler.mousemovePredrag = function (event) {
+    var dragEventData = this._dragEventData;
     var mousePos;
-    if (isTouch) {
+    if (dragEventData.isTouch) {
         if (event.changedTouches[0].identifier > 0) return;// only once touch a
         mousePos = new Vec2(event.touches[0].clientX, event.touches[0].clientY);
     }
@@ -351,9 +357,9 @@ BoardTable.eventHandler.mousemovePredrag = function (event) {
                 elt: elt,
                 effectZone: effectZone
             }
-            if (!isTouch) {
+            if (!dragEventData.isTouch) {
                 var enterEvent = thisBT.eventHandler.enterFriendEffectZone.bind(thisBT, elt);
-                effectZone.on(isTouch ? 'touchmove' : 'mouseenter', enterEvent);
+                effectZone.on(dragEventData.isTouch ? 'touchmove' : 'mouseenter', enterEvent);
                 res.enterEvent = enterEvent;
             }
             else {
@@ -559,7 +565,7 @@ BoardTable.eventHandler.dragOnEffectZone = function (evennt) {
     var mousePos;
     var dragEventData = this._dragEventData;
     var friendHolders = dragEventData.friendHolders;
-    if (isTouch) {
+    if (dragEventData.isTouch) {
         if (event.changedTouches[0].identifier > 0) return;// only once touch a
         mousePos = new Vec2(event.touches[0].clientX, event.touches[0].clientY);
     }
@@ -582,7 +588,7 @@ BoardTable.eventHandler.mousemove = function (event) {
     }
     event.preventDefault();
     var dragEventData = this._dragEventData;
-    if (isTouch && dragEventData.state == 'DRAG') {
+    if (dragEventData.isTouch && dragEventData.state == 'DRAG') {
         this.eventHandler.dragOnEffectZone(event);//because touch not have mouseenter event
     }
     if (dragEventData.state == 'PRE_DRAG') {
@@ -610,7 +616,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
         dragEventData.boardElt.addStyle(dragEventData.cardStyle);
         dragEventData.placeHolderElt.remove();
         dragEventData.state = "FINISH";
-        if (!isTouch)
+        if (!dragEventData.isTouch)
             dragEventData.friendHolders.forEach(function (holder) {
                 holder.effectZone.off('mouseenter', holder.enterEvent);
             });
@@ -667,7 +673,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
     }
 
     var bodyEvents = {};
-    if (isTouch) {
+    if (dragEventData.isTouch) {
         bodyEvents.touchmove = this.eventHandler.mousemove;
         bodyEvents.touchcancel = this.eventHandler.mousefinish;
         bodyEvents.touchend = this.eventHandler.mousefinish;
@@ -678,7 +684,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
         bodyEvents.mouseleave = this.eventHandler.mousefinish;
     }
     $(document.body).off(bodyEvents);
-
+    this._dragEventData = null;
 };
 
 BoardTable.eventHandler.enterFriendEffectZone = function (friendElt, event) {
