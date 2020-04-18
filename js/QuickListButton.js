@@ -1,8 +1,5 @@
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
-import Rectangle from "absol/src/Math/Rectangle";
-
-
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -24,7 +21,7 @@ function QuickListButton() {
     this.$list = null;
     this._listUpdated = true;
     this._opened = false;
-    this._anchor = [12, 13, 15, 14];
+    this.anchor = [12, 13, 15, 14];//todo: add property
 }
 
 
@@ -71,7 +68,7 @@ QuickListButton.eventHandler = {};
 
 QuickListButton.eventHandler.preopen = function () {
     this.$shareFollower.addTo(document.body);
-    this.$shareFollower.anchor = [12, 13, 15, 14];
+    this.$shareFollower.anchor = this.anchor;
     if (this.$list == null) {
         this.$list = _('selectlist.absol-bscroller')
         .on('pressitem', this.eventHandler.pressitem);

@@ -34,7 +34,9 @@
             props: {
                 items: Array(30).fill(0).map(function (u, i) {
                     return { text: absol.string.randomPhrase(30), value: i, desc: absol.string.randomPhrase(30), extendClasses: i % 2 == 0 ? 'hover-blue' : 'hover-red' };
-                })
+                }),
+                //Anchor: https://absol.cf/acomp/demo/follower.html
+                anchor:[12, 15, 13, 14]// default 
             },
             on:{
                 select: function(event){
@@ -49,12 +51,7 @@
             }
         }).addTo(testElt);
     </script>
-
-    
-
-
-
-    <!-- <script src="./autohightlighting.js?"></script> -->
+    <script src="./autohightlighting.js?"></script>
 
 </body>
 
