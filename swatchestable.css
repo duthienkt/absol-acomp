@@ -1,9 +1,6 @@
 .as-swatches-table {
     display: table;
     table-layout: fixed;
-    width: 400px;
-    height: 400px;
-
 }
 
 .as-swatches-table-row {
