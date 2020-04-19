@@ -4,6 +4,7 @@ import './Board';
 import Vec2 from "absol/src/Math/Vec2";
 import Element from "absol/src/HTML5/Element";
 import Rectangle from "absol/src/Math/Rectangle";
+import Dom from "absol/src/HTML5/Dom";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -280,10 +281,10 @@ BoardTable.eventHandler.mousedown = function (event) {
         if (event.changedTouches[0].identifier > 0) return;// only once touch a
         mousePos = new Vec2(event.touches[0].clientX, event.touches[0].clientY);
     }
-    else if (this._dragEventDat){
+    else if (this._dragEventDat) {
         return;// not finish last drag
     }
-    else{
+    else {
         mousePos = new Vec2(event.clientX, event.clientY);
     }
 
@@ -551,9 +552,7 @@ BoardTable.eventHandler.boarDrag = function (event) {
         mousePos = new Vec2(event.clientX, event.clientY);
     }
     var dragEventData = this._dragEventData;
-    var bound = this.getBoundingClientRect();
-    var mouseOffSet = mousePos.sub(new Vec2(bound.left, bound.top));
-    var boardPos = mouseOffSet.sub(dragEventData.mouseBoardOffset);
+    var boardPos = mousePos.sub(dragEventData.mouseBoardOffset);
     dragEventData.boardElt.addStyle({
         left: boardPos.x + 'px',
         top: boardPos.y + 'px'
@@ -561,7 +560,7 @@ BoardTable.eventHandler.boarDrag = function (event) {
 };
 
 
-BoardTable.eventHandler.dragOnEffectZone = function (evennt) {
+BoardTable.eventHandler.dragOnEffectZone = function (event) {
     var mousePos;
     var dragEventData = this._dragEventData;
     var friendHolders = dragEventData.friendHolders;
@@ -582,6 +581,75 @@ BoardTable.eventHandler.dragOnEffectZone = function (evennt) {
     }
 };
 
+BoardTable.eventHandler.mousemoveOverflow = function (event) {
+    var scroller =  this;
+    while(scroller){
+        var overlowStyle = window.getComputedStyle(scroller)['overflow'];
+        if (overlowStyle == 'auto' || overlowStyle == 'scroll' || scroller.tagName =='BODY') break;
+        scroller = scroller.parentElement;
+    }
+    if (!scroller) return;
+
+    var outBound = scroller.getBoundingClientRect();
+    var bBound = this._dragEventData.boardElt.getBoundingClientRect();
+    var screenSize = Dom.getScreenSize();
+    outBound = {
+        left: Math.max(outBound.left, 0),
+        top: Math.max(outBound.top, 0),
+        bottom: Math.min(outBound.bottom, screenSize.height),
+        right: Math.min(outBound.right, screenSize.width)
+    }
+    var vx = 0;
+    var vy = 0;
+    if (bBound.right > outBound.right) {
+        vx = bBound.right - outBound.right;
+    }
+    else if (bBound.left < outBound.left) {
+        vx = bBound.left - outBound.left;
+    }
+
+    if (bBound.bottom > outBound.bottom) {
+        vy = bBound.bottom - outBound.bottom;
+    }
+    else if (bBound.top < outBound.top) {
+        vy = bBound.top - outBound.top;
+    }
+    var dt = 1 / 30;
+    
+    if (vx!=0 || vy !=0){
+        var copyEvent = {
+            type: event.type,
+            preventDefault: function () {/* noop */ },
+            target: event.target
+        };
+        if (event.type == 'touchmove') {
+            copyEvent.changedTouches = Array.prototype.map.call(event.changedTouches, function(it){
+                return { identifier: it.identifier, clientX: it.clientX, clientY: it.clientY, target: it.target}
+            });
+            copyEvent.touches = Array.prototype.map.call(event.touches, function (it) {
+                return { identifier: it.identifier, clientX: it.clientX, clientY: it.clientY, target: it.target }
+            });
+        }
+        else{
+            copyEvent.clientX = event.clientX;
+            copyEvent.clientY = event.clientY
+        }
+        var thisBT = this;
+        setTimeout(function(){
+             if (scroller.scrollHeight > scroller.clientHeight) {
+                scroller.scrollTop += vy * dt;
+            }
+
+            if (scroller.scrollWidth > scroller.clientWidth) {
+                scroller.scrollLeft += vx * dt;
+            }
+            if (thisBT._dragEventData && thisBT._dragEventData.state == "DRAG"){
+                thisBT.eventHandler.mousemoveOverflow(copyEvent);
+            }
+        }, dt*1000);
+    }
+};
+
 BoardTable.eventHandler.mousemove = function (event) {
     if (event.type == 'touchmove') {
         if (event.changedTouches[0].identifier > 0) return;// only once touch a
@@ -598,6 +666,7 @@ BoardTable.eventHandler.mousemove = function (event) {
     if (dragEventData.state == 'DRAG') {
         this.eventHandler.mousemoveDrag(event);
         this.eventHandler.boarDrag(event);
+        this.eventHandler.mousemoveOverflow(event);
     }
 };
 

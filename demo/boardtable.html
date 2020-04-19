@@ -19,7 +19,7 @@
 
     <h2>Tối giản</h2>
     <div id="simple-demo">
-
+        <div class="my-board-table-wrapper"></div>
     </div>
 
     <style class="viewable">
@@ -34,12 +34,24 @@
             margin: 5px;
             display: inline-block;
         }
+
+        .my-board-table {
+            white-space: nowrap;
+        display: inline-block;
+        }
+
+        .my-board-table-wrapper {
+            overflow: auto;
+            width: 80vw;
+            max-height: calc(100vh - 130px);
+        }
     </style>
     <script type="text/javascript" class="viewable">
         (function () {//đây chỉ là phần để chạy ví dụ,  để đảm bảo các biến chỉ có scope cở local
             var $ = absol.$;
             var _ = absol._;
             var simpleDemoDiv = $('#simple-demo');
+            var wrapper = $('.my-board-table-wrapper', simpleDemoDiv);
 
             //lưu board theo id cho dễ tìm sau khi sắp xếp
             var boardDataList = {
@@ -126,66 +138,62 @@
 
             var mBoardTable1 = absol._({
                 tag: 'boardtable',
-                style: {
-                    'min-width': '70px',
-                    'min-height': '70px',
-                    border: '1px solid black',
-                    margin: '5px'
-                },
+                class: 'my-board-table',
                 child: boardIds.slice(0, 4).map(function (id) {
                     return makeBoard(boardDataList[id])
                 }),
                 props: {
                     friends: '#simple-demo boardtable'
                 },
-                on:{orderchange: function(){
+                on: {
+                    orderchange: function () {
                         console.log('order change');
                     },
-                    
-                    dragitemstart: function(event){
+
+                    dragitemstart: function (event) {
                         console.log('drag start', event.boardElt);
                     },
-                    dragitemend: function(){
+                    dragitemend: function () {
                         console.log('drag end');
                     }
                 }
             });
 
-            simpleDemoDiv.addChild(mBoardTable1);
+            wrapper.addChild(mBoardTable1);
 
-            var mBoardTable2 = absol._({
-                tag: 'boardtable',
-                style: {
-                    'min-width': '70px',
-                    'min-height': '70px',
-                    border: '1px solid black',
-                    margin: '5px'
-                },
+            // var mBoardTable2 = absol._({
+            //     tag: 'boardtable',
+            //     style: {
+            //         'min-width': '70px',
+            //         'min-height': '70px',
+            //         border: '1px solid black',
+            //         margin: '5px'
+            //     },
 
-                child: boardIds.slice(2, 6).map(function (id) {
-                    return makeBoard(boardDataList[id])
-                }),
-                props: {
-                    friends: '#simple-demo boardtable'
-                }
-            });
+            //     child: boardIds.slice(2, 6).map(function (id) {
+            //         return makeBoard(boardDataList[id])
+            //     }),
+            //     props: {
+            //         friends: '#simple-demo boardtable'
+            //     }
+            // });
 
-            simpleDemoDiv.addChild(mBoardTable2);
-            var mBoardTable3 = absol._({
-                tag: 'boardtable',
-                style: {
-                    'min-width': '70px',
-                    'min-height': '70px',
-                    border: '1px solid black',
-                    margin: '5px'
-                },
-                child: boardIds.slice(4, 8).map(function (id) {
-                    return makeBoard(boardDataList[id])
-                    friends: '#simple-demo boardtable'
-                })
-            });
+            // simpleDemoDiv.addChild(mBoardTable2);
+            // var mBoardTable3 = absol._({
+            //     tag: 'boardtable',
+            //     style: {
+            //         'min-width': '70px',
+            //         'min-height': '70px',
+            //         border: '1px solid black',
+            //         margin: '5px'
+            //     },
+            //     child: boardIds.slice(4, 8).map(function (id) {
+            //         return makeBoard(boardDataList[id])
+            //         friends: '#simple-demo boardtable'
+            //     })
+            // });
 
-            simpleDemoDiv.addChild(mBoardTable3);
+            // simpleDemoDiv.addChild(mBoardTable3);
         })();
     </script>
 

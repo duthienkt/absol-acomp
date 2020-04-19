@@ -37,8 +37,8 @@
     transition: transform 0.05s;
     user-select: none;
     pointer-events: none;
-    position: absolute;
-    z-index: 2;
+    position: fixed;
+    z-index: 2000;
 }
 
 
