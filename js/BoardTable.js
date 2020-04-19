@@ -582,10 +582,10 @@ BoardTable.eventHandler.dragOnEffectZone = function (event) {
 };
 
 BoardTable.eventHandler.mousemoveOverflow = function (event) {
-    var scroller =  this;
-    while(scroller){
+    var scroller = this;
+    while (scroller) {
         var overlowStyle = window.getComputedStyle(scroller)['overflow'];
-        if (overlowStyle == 'auto' || overlowStyle == 'scroll' || scroller.tagName =='BODY') break;
+        if (overlowStyle == 'auto' || overlowStyle == 'scroll' || scroller.tagName == 'BODY') break;
         scroller = scroller.parentElement;
     }
     if (!scroller) return;
@@ -601,52 +601,53 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
     }
     var vx = 0;
     var vy = 0;
-    if (bBound.right > outBound.right) {
-        vx = bBound.right - outBound.right;
-    }
-    else if (bBound.left < outBound.left) {
+    if (bBound.left < outBound.left) {
         vx = bBound.left - outBound.left;
     }
-
-    if (bBound.bottom > outBound.bottom) {
-        vy = bBound.bottom - outBound.bottom;
+    else if (bBound.right > outBound.right) {
+        vx = bBound.right - outBound.right;
     }
-    else if (bBound.top < outBound.top) {
+
+    if (bBound.top < outBound.top) {
         vy = bBound.top - outBound.top;
     }
-    var dt = 1 / 30;
+    else if (bBound.bottom > outBound.bottom) {
+        vy = bBound.bottom - outBound.bottom;
+    }
     
-    if (vx!=0 || vy !=0){
+    var dt = 1 / 30;
+
+    if (vx != 0 || vy != 0) {
         var copyEvent = {
             type: event.type,
             preventDefault: function () {/* noop */ },
             target: event.target
         };
         if (event.type == 'touchmove') {
-            copyEvent.changedTouches = Array.prototype.map.call(event.changedTouches, function(it){
-                return { identifier: it.identifier, clientX: it.clientX, clientY: it.clientY, target: it.target}
+            copyEvent.changedTouches = Array.prototype.map.call(event.changedTouches, function (it) {
+                return { identifier: it.identifier, clientX: it.clientX, clientY: it.clientY, target: it.target }
             });
             copyEvent.touches = Array.prototype.map.call(event.touches, function (it) {
                 return { identifier: it.identifier, clientX: it.clientX, clientY: it.clientY, target: it.target }
             });
         }
-        else{
+        else {
             copyEvent.clientX = event.clientX;
             copyEvent.clientY = event.clientY
         }
         var thisBT = this;
-        setTimeout(function(){
-             if (scroller.scrollHeight > scroller.clientHeight) {
+        setTimeout(function () {
+            if (scroller.scrollHeight > scroller.clientHeight) {
                 scroller.scrollTop += vy * dt;
             }
 
             if (scroller.scrollWidth > scroller.clientWidth) {
                 scroller.scrollLeft += vx * dt;
             }
-            if (thisBT._dragEventData && thisBT._dragEventData.state == "DRAG"){
+            if (thisBT._dragEventData && thisBT._dragEventData.state == "DRAG") {
                 thisBT.eventHandler.mousemoveOverflow(copyEvent);
             }
-        }, dt*1000);
+        }, dt * 1000);
     }
 };
 
