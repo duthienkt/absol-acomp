@@ -1,0 +1,70 @@
+.as-flexicon-input-icon-ctn>span,
+.as-flexicon-input-icon-ctn>i,
+.as-flexicon-input-icon-ctn>svg,
+.as-flexicon-input-icon-ctn>img {
+    font-size: 1em;
+    line-height: 1;
+}
+
+.as-flexicon-input {
+    position: relative;
+    border: 1px solid #dddddd;
+    display: inline-block;
+    vertical-align: center;
+    height: 2em;
+    font-size: 14px;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+
+
+.as-flexicon-input.as-flexicon-input-has-icon {
+    padding-left: 1.2em;
+}
+
+.as-flexicon-input-icon-ctn:empty {
+    display: none;
+}
+
+
+
+.as-flexicon-input-icon-ctn {
+    width: 1em;
+    height: 1em;
+    position: absolute;
+    left: 0.1em;
+    top: calc(50% - 0.5em);
+    height: 1em;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.as-flexicon-input-unit-ctn {
+    width: 1em;
+    height: 1em;
+    position: absolute;
+    right: 0.25em;
+    top: calc(50% - 0.5em);
+    height: 1em;
+    text-align: center;
+    line-height: 1;
+}
+
+
+.as-flexicon-input.as-flexicon-input-has-unit {
+    padding-right: 1.1em;
+    text-align: right;
+}
+
+
+.as-flexicon-input input {
+    border: none;
+    font-size: 1em;
+    outline: none;
+    height: 100%;
+    background-color: transparent;
+    box-sizing: border-box;
+    width: 100%;
+    font: inherit;
+    text-align: inherit;
+}

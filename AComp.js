@@ -9,6 +9,9 @@ import './css/iconbutton.css';
 import './js/FlexiconButton';
 import './css/flexiconbutton.css';
 
+import './js/FlexiconInput';
+import './css/flexiconinput.css';
+
 import './js/Scroller';
 import './css/scroller.css';
 

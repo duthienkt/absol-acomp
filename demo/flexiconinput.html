@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>FlexiconInput</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css?family=Alegreya|Alegreya+SC|Alegreya+Sans|Alegreya+Sans+SC|Alfa+Slab+One|Amatic+SC|Andika|Anton|Archivo|Archivo+Narrow|Arima+Madurai|Arimo|Arsenal|Asap|Asap+Condensed|Athiti|Bahianita|Bai+Jamjuree|Baloo|Baloo+Bhai|Baloo+Bhaijaan|Baloo+Bhaina|Baloo+Chettan|Baloo+Da|Baloo+Paaji|Baloo+Tamma|Baloo+Tammudu|Baloo+Thambi|Bangers|Barlow|Barlow+Condensed|Barlow+Semi+Condensed|Barriecito|Be+Vietnam|Bevan|Big+Shoulders+Display|Big+Shoulders+Text|Bungee|Bungee+Hairline|Bungee+Inline|Bungee+Outline|Bungee+Shade|Cabin|Cabin+Condensed|Chakra+Petch|Charm|Charmonman|Chonburi|Coiny|Comfortaa|Cormorant|Cormorant+Garamond|Cormorant+Infant|Cormorant+SC|Cormorant+Unicase|Cormorant+Upright|Cousine|Crimson+Pro|Cuprum|Dancing+Script|Darker+Grotesque|David+Libre|Dosis|EB+Garamond|Encode+Sans|Encode+Sans+Condensed|Encode+Sans+Expanded|Encode+Sans+Semi+Condensed|Encode+Sans+Semi+Expanded|Exo|Exo+2|Fahkwang|Farsan|Faustina|Fira+Sans|Fira+Sans+Condensed|Fira+Sans+Extra+Condensed|Francois+One|Grenze|Hepta+Slab|IBM+Plex+Mono|IBM+Plex+Sans|IBM+Plex+Sans+Condensed|IBM+Plex+Serif|Inconsolata|Itim|Josefin+Sans|Judson|Jura|K2D|Kanit|KoHo|Kodchasan|Krub|Lalezar|Lemonada|Lexend+Deca|Lexend+Exa|Lexend+Giga|Lexend+Mega|Lexend+Peta|Lexend+Tera|Lexend+Zetta|Literata|Livvic|Lobster|Lora|M+PLUS+1p|M+PLUS+Rounded+1c|Maitree|Major+Mono+Display|Mali|Manuale|Markazi+Text|Maven+Pro|Merriweather|Metrophobic|Mitr|Montserrat|Montserrat+Alternates|Muli|Niramit|Noticia+Text|Noto+Sans|Noto+Sans+SC|Noto+Serif|Noto+Serif+SC|Noto+Serif+TC|Nunito|Nunito+Sans|Old+Standard+TT|Open+Sans|Open+Sans+Condensed:300|Oswald|Pacifico|Pangolin|Patrick+Hand|Patrick+Hand+SC|Pattaya|Paytone+One|Philosopher|Play|Playfair+Display|Playfair+Display+SC|Podkova|Prata|Pridi|Prompt|Quicksand|Roboto|Roboto+Condensed|Roboto+Mono|Roboto+Slab|Rokkitt|Rosario|Saira|Saira+Condensed|Saira+Extra+Condensed|Saira+Semi+Condensed|Saira+Stencil+One|Sarabun|Sawarabi+Gothic|Sedgwick+Ave|Sedgwick+Ave+Display|Sigmar+One|Source+Code+Pro|Source+Sans+Pro|Space+Mono|Spectral|Spectral+SC|Sriracha|Srisakdi|Taviraj|Thasadith|Tinos|Trirong|VT323|Varela+Round|Vollkorn|Vollkorn+SC|Yanone+Kaffeesatz|Yeseva+One&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="//cdn.materialdesignicons.com/4.5.95/css/materialdesignicons.min.css">
+
+    <style>
+        .dark.bg {
+            background-color: rgba(30, 30, 32, 1);
+            /* background-color: white; */
+            color: white;
+
+        }
+
+        .bg {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border: solid 1px rgb(30, 30, 32);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>FlexiconInput</h1>
+    <div id="ctn" style="font-size: 14px;">
+        <p>
+            <span>Nhiệt độ</span>
+            <span id="ip0"></span>
+        </p>
+        <p>
+            <div id="ip1"></div>
+        </p>
+        <p>
+            <span>Màu sắc</span>
+            <span id="ip2"></span>
+        </p>
+    </div>
+    <script>
+        var _ = absol._;
+        var $ = absol.$;
+    </script>
+
+    <script class="viewable">
+        var ctn = $('#ctn');
+        var input0 = _({
+            tag: 'flexiconinput',
+            style: {
+                'font-family': "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
+                margin: '0.2em',
+                width: '3.9em'
+            },
+            props: {
+                value: '20',
+                unit: '℃'// only 1 character 
+            }
+        });
+
+        var input1 = _({
+            tag: 'flexiconinput',
+            style: {
+                'font-family': "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
+                margin: '0.2em',
+                width: '5em'
+            },
+            props: {
+                icon: 'span.mdi.mdi-coolant-temperature',
+                value: '20',
+                unit: '℃'// only 1 character 
+            }
+        });
+
+        var input2 = _({
+            tag: 'flexiconinput',
+            style: {
+                'font-family': "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
+                margin: '0.2em',
+                width: '6em'
+            },
+            props: {
+                icon: 'span.mdi.mdi-music-accidental-sharp',
+                value: 'FFDDEE'
+            }
+        });
+
+        $('#ip0').selfReplace(input0);
+        $('#ip1').selfReplace(input1);
+        $('#ip2').selfReplace(input2);
+    </script>
+
+    <script src="./autohightlighting.js?"></script>
+
+</body>
+
+</html>
