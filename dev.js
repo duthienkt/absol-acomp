@@ -10,6 +10,7 @@ import EmojiChars from "./js/EmojiChars";
 import EmojiAnims from "./js/EmojiAnims";
 import MessageInput from './js/MessageInput';
 import EmojiPicker from './js/EmojiPicker';
+import ContextCaptor from './js/ContextMenu';
 
 //for export to window
 absol.Tooltip = AComp.creator.tooltip;
@@ -23,7 +24,7 @@ absol.coreDom.install(AComp.core);
 Object.assign(absol.string, string);
 absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
-
+absol.ContextCaptor = ContextCaptor;
 window.AComp = absol.AComp;
 setTimeout(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
