@@ -15,7 +15,8 @@ SwatchesTable.render = function () {
         child: [{
             class: 'as-swatches-table-row',
             child: {
-                class: 'as-swatches-table-cell'
+                class: 'as-swatches-table-cell',
+                child:'.as-swatches-table-cell-color'
             }
         }]
     });
@@ -63,25 +64,27 @@ SwatchesTable.property.data = {
             while (rowElt.childNodes.length < row.length) {
                 if (this._poolRows.length > 0)
                     child = this._poolCells.pop();
-                else child = _('.as-swatches-table-cell');
+                else child = _({
+                    class: 'as-swatches-table-cell', child: '.as-swatches-table-cell-color'
+                });
                 rowElt.addChild(child);
             }
             for (var j = 0; j < row.length; ++j) {
                 if (!row[j]) {
-                    rowElt.childNodes[j].removeStyle('background-color')
+                    rowElt.childNodes[j]
                         .attr('title', null)
-                        .addClass('.as-swatches-table-cell-transparent');
+                    rowElt.childNodes[j].firstChild.removeStyle('background-color');
                 }
                 else if (typeof row[j] == 'object') {
                     if (row[j].value)
-                        rowElt.childNodes[j].addStyle('background-color', row[j].value);
+                        rowElt.childNodes[j].firstChild.addStyle('background-color', row[j].value);
                     else
-                        elserowElt.childNodes[j].removeStyle('background-color');
+                        elserowElt.childNodes[j].firstChild.removeStyle('background-color');
                     rowElt.childNodes[j].attr('title', row[j].name || null)
                 }
                 else if (typeof row[j] == 'string') {
-                    rowElt.childNodes[j].addStyle('background-color', row[j])
-                        .attr('title', null);
+                    rowElt.childNodes[j].firstChild.addStyle('background-color', row[j]);
+                    rowElt.childNodes[j].attr('title', null);
                 }
             }
         }
