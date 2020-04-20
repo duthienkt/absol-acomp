@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ButtonArray</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+    <div id="demo0"></div>
+    <script>
+        var _ = absol._;
+        var $ = absol.$;
+    </script>
+    <script>
+
+        var ba0 = _({
+            tag: 'buttonarray',
+            props: {
+                items: [
+                    true, false, null, 1, 2, 3, 4, 5
+                ]
+            },
+            on: {
+                change: function (event) {
+                    console.log(event.value);
+                }
+            }
+        });
+
+        $('#demo0').addChild(ba0);
+
+
+
+    </script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
+
+</body>
+
+</html>

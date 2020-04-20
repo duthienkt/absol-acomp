@@ -121,6 +121,9 @@ import './css/pageselector.css';
 import './js/PageSelector';
 
 
+import './js/ButtonArray';
+import './css/buttonarray.css';
+
 import './css/bscroller.css';
 import './js/BScroller';
 

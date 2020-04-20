@@ -1,0 +1,31 @@
+.as-button-array {
+    font-size: 14px;
+    border: 1px solid #006ce5;
+    display: inline-block;
+    border-radius: 0.2em;
+    overflow: hidden;
+}
+
+.as-button-array-item {
+    font-size: inherit;
+    height: 2em;
+    border: none;
+    box-sizing: border-box;
+    padding-left: 0.35714em;
+    padding-right: 0.35714em;
+    outline: none;
+    color: #006ce5;
+    background-color: white;
+    border-radius: 0;
+    transition: background-color 0.1s, color 0.1s;
+}
+
+.as-button-array-item:not(:first-child) {
+    border-left: 1px solid #006ce5;
+}
+
+
+.as-button-array-item.as-active {
+    color: white;
+    background-color: #006ce5;
+}
