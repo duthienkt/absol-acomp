@@ -7,11 +7,10 @@
     display: table-row;
 }
 
-.as-swatches-table-cell {
-    display: table-cell;
-}
 
-.as-swatches-table-cell-transparent {
+.as-swatches-table-cell {
+    position: relative;
+    display: table-cell;
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAaSURBVBhXYzh8+PD///8hJAOcBSRxyRw+DABJUCox2kjvSgAAAABJRU5ErkJggg==');
     background-size: 1.5em;
     image-rendering: optimizeSpeed;
@@ -28,4 +27,12 @@
     /* CSS3 Proposed                  */
     -ms-interpolation-mode: nearest-neighbor;
     /* IE8+                           */
+}
+
+.as-swatches-table-cell-color {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
