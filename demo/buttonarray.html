@@ -17,27 +17,23 @@
         var _ = absol._;
         var $ = absol.$;
     </script>
-    <script>
-
-        var ba0 = _({
-            tag: 'buttonarray',
-            props: {
-                items: [
-                    true, false, null, 1, 2, 3, 4, 5
-                ]
-            },
-            on: {
-                change: function (event) {
-                    console.log(event.value);
-                }
+<script class="viewable">
+    var ba0 = _({
+        tag: 'buttonarray',
+        props: {
+            items: [
+                true, false, null, 1, 2, 3, 4, 5
+            ]
+        },
+        on: {
+            change: function (event) {
+                console.log(event.value);
             }
-        });
+        }
+    });
 
-        $('#demo0').addChild(ba0);
-
-
-
-    </script>
+    $('#demo0').addChild(ba0);
+</script>
     <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 
 </body>
