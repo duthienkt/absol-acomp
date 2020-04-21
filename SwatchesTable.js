@@ -1,4 +1,5 @@
 import CPCore from "./CPCore";
+import Color from 'absol/src/Color/Color';
 var _ = CPCore._;
 var $ = CPCore.$;
 
@@ -7,6 +8,7 @@ function SwatchesTable() {
     this._data = [];
     this._poolCells = [];
     this._poolRows = [];
+    this._dict = {};
 }
 
 SwatchesTable.render = function () {
@@ -14,6 +16,28 @@ SwatchesTable.render = function () {
         extendEvent: 'clickcell',
         class: 'as-swatches-table'
     });
+};
+
+
+SwatchesTable.prototype.getCell = function () {
+    if (arguments.length == 1) {
+        var key = arguments[0];
+        if (key.toHex8) {
+            key = key.toHex8();
+        }
+        else if (typeof key == 'string') {
+            key = Color.parse(key);
+            if (key)
+                key = key.toHex8();
+        }
+        key = key + '';
+        console.log(key);
+        
+        return this._dict[key];
+    }
+    else if (arguments.length == 2) {
+        return this.childNodes[arguments[0]] && this.childNodes[arguments[0]].childNodes[arguments[1]];
+    }
 };
 
 SwatchesTable.eventHandler = {};
@@ -33,17 +57,17 @@ SwatchesTable.property = {};
 
 SwatchesTable.property.data = {
     set: function (value) {
-        value = value || [null];
+        this._dict = {};
+        value = value || [[null]];
         if (typeof value == 'string') {
             value = {
                 classic: MoqupsClassicSwathes,
                 material: MaterialSwatches,
                 bootstrap: BootstrapSwatches,
-                ios: iOsSwatches
-            }[value] || [null];
+                ios: iOsSwatches,
+                moqupsclassic: MoqupsClassicSwathes
+            }[value] || [[null]];
         }
-        console.log(value);
-
         this._data = value;
         var child;
         while (this.childNodes.length > value.length) {
@@ -63,12 +87,12 @@ SwatchesTable.property.data = {
             rowElt = this.childNodes[i];
             row = value[i];
             while (rowElt.childNodes.length > row.length) {
-                child = this.firstChild;
+                child = rowElt.firstChild;
                 this._poolCells.push(child);
                 rowElt.removeChild(child);
             }
             while (rowElt.childNodes.length < row.length) {
-                if (this._poolRows.length > 0)
+                if (this._poolCells.length > 0)
                     child = this._poolCells.pop();
                 else {
                     child = _({
@@ -82,22 +106,28 @@ SwatchesTable.property.data = {
             for (var j = 0; j < row.length; ++j) {
                 rowElt.childNodes[j].__swatchescell_row_idx = i;
                 rowElt.childNodes[j].__swatchescell_col_idx = j;
-                rowElt.childNodes[j].__swatchescell_value = row[j];
                 if (!row[j]) {
                     rowElt.childNodes[j]
                         .attr('title', null)
                     rowElt.childNodes[j].firstChild.removeStyle('background-color');
+                    rowElt.childNodes[j].__swatchescell_value = row[j];
+                    this._dict['null'] = rowElt.childNodes[j];
                 }
                 else if (typeof row[j] == 'object') {
-                    if (row[j].value)
+                    if (row[j].value){
                         rowElt.childNodes[j].firstChild.addStyle('background-color', row[j].value);
-                    else
+                        this._dict[Color.parse(row[j].value + '').toHex8()] = rowElt.childNodes[j];
+                    }
+                    else{
                         elserowElt.childNodes[j].firstChild.removeStyle('background-color');
+                        this._dict[Color.parse('transparent').toHex8()] = rowElt.childNodes[j];
+                    }
                     rowElt.childNodes[j].attr('title', row[j].name || null)
                 }
                 else if (typeof row[j] == 'string') {
                     rowElt.childNodes[j].firstChild.addStyle('background-color', row[j]);
                     rowElt.childNodes[j].attr('title', null);
+                    this._dict[Color.parse(row[j]).toHex8()] = rowElt.childNodes[j];
                 }
             }
         }
