@@ -34,13 +34,15 @@ function MessageInput() {
         .on('click', this.openImageFileDialog.bind(this));
 
     this.$sendBtn = $('.as-message-input-send-btn', this)
-                    .on('click', this.notifySend.bind(this));
+        .on('click', this.notifySend.bind(this));
 
     this.$extenalTool = $('.as-message-input-extenal-tools', this);
     this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
     this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
         .on('pick', this.eventHandler.pickEmoji);
     this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
+    this.on('drop', this.eventHandler.drop)
+        .on('dragover', this.eventHandler.dragover);
 };
 
 
@@ -52,7 +54,8 @@ MessageInput.render = function (data) {
     return _({
         class: 'as-message-input',
         attr: {
-            'data-icon-asset-root': data.iconAssetRoot
+            'data-icon-asset-root': data.iconAssetRoot,
+            tabindex: '1' //tabindex to prevent open new tab after drop 
         },
         extendEvent: ['sizechange', 'change', 'send'],
         child: [
@@ -245,8 +248,6 @@ MessageInput.prototype.addFiles = function (files) {
         thisMi.notifySizeChange();
     });
     thisMi.$preInput.focus();
-
-
 };
 
 
@@ -261,7 +262,20 @@ MessageInput.prototype.openFileDialog = function () {
     var thisMi = this;
     openFileDialog({ multiple: true }).then(function (files) {
         if (files.length > 0) {
-            thisMi.addFiles(files);
+            var imageFiles= [];
+            var otherFiles = [];
+            var file;
+            for (var i = 0; i < files.length; ++i){
+                file = files[i];
+                if (!!file.type && file.type.match && file.type.match(/^image\//)){
+                    imageFiles.push(file);
+                }
+                else{
+                    otherFiles.push(file);
+                }
+            }
+            thisMi.addImageFiles(imageFiles);
+            thisMi.addFiles(otherFiles);
             thisMi.notifyChange();
         }
     });
@@ -275,7 +289,6 @@ MessageInput.prototype.openImageFileDialog = function () {
             thisMi.addImageFiles(files);
             thisMi.notifyChange();
         }
-
     });
 };
 
@@ -338,6 +351,58 @@ MessageInput.eventHandler.pickEmoji = function (event) {
     this.$preInput.focus();//older firefox version will be lost focus
     this.notifyChange();
 };
+
+
+MessageInput.eventHandler.dragover = function (event) {
+    event.preventDefault();
+    //todo:
+};
+
+MessageInput.eventHandler.drop = function (event) {
+    event.preventDefault();
+    var imageFiles = [];
+    var otherFiles = [];
+    if (event.dataTransfer.items) {
+        for (var i = 0; i < event.dataTransfer.items.length; i++) {
+            if (event.dataTransfer.items[i].kind === 'file') {
+                var file = event.dataTransfer.items[i].getAsFile();
+                if (!file.type && file.size % 4096 == 0) {
+                    //todo: folder
+                }
+                else {
+                    if (!!file.type && file.type.match && file.type.match(/^image\//)) {
+                        imageFiles.push(file);
+                    }
+                    else {
+                        otherFiles.push(file);
+                    }
+                }
+
+            }
+        }
+    }
+    else {
+        for (var i = 0; i < event.dataTransfer.files.length; i++) {
+            var file = event.dataTransfer.files[i];
+            if (!file.type && file.size % 4096 == 0) {
+
+            }
+            else {
+                if (!!file.type && file.type.match && file.type.match(/^image\//)) {
+                    imageFiles.push(file);
+                }
+                else {
+                    otherFiles.push(file);
+                }
+            }
+        }
+    }
+
+    this.addImageFiles(imageFiles);
+    this.addFiles(otherFiles);
+    this.notifyChange();
+};
+
 
 MessageInput.property = {};
 
