@@ -50,6 +50,9 @@
     line-height: 1;
 }
 
+.as-flexicon-input-unit-ctn:empty {
+    display: none;
+}
 
 .as-flexicon-input.as-flexicon-input-has-unit {
     padding-right: 1.1em;
