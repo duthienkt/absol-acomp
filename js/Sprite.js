@@ -59,8 +59,10 @@ Sprite.prototype.draw = function () {
     this._frameIndex = frameIndex;
 
     this._timeout = -1;
-    if (this._loop || frameIndex + 1 < this._length)
-        this._timeout = setTimeout(this.draw, nextTime);
+    if (this._loop || frameIndex + 1 < this._length) {
+        if (this._state == RUNNING)
+            this._timeout = setTimeout(this.draw, nextTime);
+    }
     else this.stop();
 };
 
