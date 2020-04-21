@@ -5,9 +5,11 @@ var $ = ACore.$;
 
 function EmojiPicker() {
     var thisPicker = this;
+    this._aliveTimeout = 90;
     this._assetRoot = this.attr('data-asset-root');
     this.$previewAnim = $('sprite.as-emoji-picker-preview-anim', this)
-        .on('ready', this.eventHandler.previewAnimReady);
+        .on('ready', this.eventHandler.previewAnimReady)
+        .on('frame', this.eventHandler.previewAnimFrame);
     this.$previewAnim.loop = true;
     this.$previewAnim.src = this._assetRoot + '/anim/x120/' + EmojiAnims[0][1];
     this.$previewAnim.fps = 30;
@@ -29,6 +31,7 @@ function EmojiPicker() {
         ac[it[0]] = itemElt;
         return ac;
     }, {});
+    this.$attachook = _('attachhook').addTo(this).on('error', this.eventHandler.attach);
 }
 
 EmojiPicker.assetRoot = 'https://absol.cf/emoji';
@@ -62,7 +65,17 @@ EmojiPicker.render = function (data) {
     });
 };
 
+
+/**
+ * @type {EmojiPicker}
+ */
 EmojiPicker.eventHandler = {};
+
+
+EmojiPicker.eventHandler.attach = function () {
+    this._aliveTimeout = 90;
+    setTimeout(this.$previewAnim.play.bind(this.$previewAnim), 1);
+};
 
 EmojiPicker.eventHandler.previewAnimReady = function () {
     this.$previewAnim.frames = {
@@ -72,6 +85,21 @@ EmojiPicker.eventHandler.previewAnimReady = function () {
     };
     this.$previewAnim.play();
 };
+
+EmojiPicker.eventHandler.previewAnimFrame = function () {
+    if (this._aliveTimeout == 0) {
+        var bound = this.getBoundingClientRect();
+        if (bound.width == 0) {
+            this.$previewAnim.stop();
+        }
+        else {
+            this._aliveTimeout = 90;
+        }
+        console.log(bound);
+    }
+    this._aliveTimeout--;
+};
+
 
 EmojiPicker.eventHandler.mouseenterItem = function (itemData, itemElt, event) {
     if (this.$lastHoverItem == itemElt) return;
