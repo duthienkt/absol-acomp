@@ -95,7 +95,6 @@ EmojiPicker.eventHandler.previewAnimFrame = function () {
         else {
             this._aliveTimeout = 90;
         }
-        console.log(bound);
     }
     this._aliveTimeout--;
 };
