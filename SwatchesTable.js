@@ -11,16 +11,22 @@ function SwatchesTable() {
 
 SwatchesTable.render = function () {
     return _({
-        class: 'as-swatches-table',
-        child: [{
-            class: 'as-swatches-table-row',
-            child: {
-                class: 'as-swatches-table-cell',
-                child:'.as-swatches-table-cell-color'
-            }
-        }]
+        extendEvent: 'clickcell',
+        class: 'as-swatches-table'
     });
 };
+
+SwatchesTable.eventHandler = {};
+
+SwatchesTable.eventHandler.clickCell = function (cell, event) {
+    this.emit('clickcell', {
+        target: this,
+        cellElt: cell,
+        value: cell.__swatchescell_value,
+        rowIdx: cell.__swatchescell_row_idx,
+        colIdx: cell.__swatchescell_col_idx
+    });
+}
 
 SwatchesTable.property = {};
 
@@ -64,12 +70,19 @@ SwatchesTable.property.data = {
             while (rowElt.childNodes.length < row.length) {
                 if (this._poolRows.length > 0)
                     child = this._poolCells.pop();
-                else child = _({
-                    class: 'as-swatches-table-cell', child: '.as-swatches-table-cell-color'
-                });
+                else {
+                    child = _({
+                        class: 'as-swatches-table-cell',
+                        child: '.as-swatches-table-cell-color'
+                    });
+                    child.on('click', this.eventHandler.clickCell.bind(this, child));
+                }
                 rowElt.addChild(child);
             }
             for (var j = 0; j < row.length; ++j) {
+                rowElt.childNodes[j].__swatchescell_row_idx = i;
+                rowElt.childNodes[j].__swatchescell_col_idx = j;
+                rowElt.childNodes[j].__swatchescell_value = row[j];
                 if (!row[j]) {
                     rowElt.childNodes[j]
                         .attr('title', null)
