@@ -12,15 +12,15 @@ function FlexiconInput() {
 }
 
 FlexiconInput.prototype.on = function () {
-    this.$input.on.apply(this.$input, arguments);
+    return this.$input.on.apply(this.$input, arguments);
 };
 
 FlexiconInput.prototype.once = function () {
-    this.$input.once.apply(this.$input, arguments);
+    return this.$input.once.apply(this.$input, arguments);
 };
 
 FlexiconInput.prototype.off = function () {
-    this.$input.off.apply(this.$input, arguments);
+    return this.$input.off.apply(this.$input, arguments);
 };
 
 FlexiconInput.render = function () {
@@ -65,18 +65,18 @@ FlexiconInput.property.icon = {
 };
 
 FlexiconInput.property.unit = {
-    set: function(value){
+    set: function (value) {
         this._unit = value;
-        if (this._unit){
+        if (this._unit) {
             this.addClass('as-flexicon-input-has-unit');
-            this.$unitCtn.clearChild().addChild(_({text:value+''}));
+            this.$unitCtn.clearChild().addChild(_({ text: value + '' }));
         }
-        else{
+        else {
             this.removeClass('as-flexicon-input-has-unit');
             this.$unitCtn.clearChild();
         }
     },
-    get: function(){
+    get: function () {
         return this._unit;
     }
 };
