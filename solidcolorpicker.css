@@ -1,3 +1,14 @@
+.as-solid-color-picker:not(.as-solid-color-picker-mode-swatches) .as-solid-color-picker-swatches-select-ctn,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-swatches) .as-solid-color-picker-swatches-ctn,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-picker) .as-solid-color-picker-spectrum,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-picker) .as-solid-color-picker-hue,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-picker) .as-solid-color-picker-alpha,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-picker) .as-solid-color-picker-near {
+    display: none;
+}
+
+
+
 .as-solid-color-picker {
     display: inline-block;
     border: 1px solid black;
@@ -14,9 +25,7 @@
 }
 
 .as-solid-color-picker-header {
-    padding-top: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
+    padding: 10px;
 }
 
 .as-solid-color-picker-mode {
@@ -90,7 +99,7 @@
 .as-solid-color-picker-selected {
     height: 2em;
     width: 5em;
-    border: 1px solid  #ddd;
+    border: 1px solid #ddd;
     box-sizing: border-box;
 }
 
@@ -122,8 +131,101 @@
     position: absolute;
     width: 1em;
     height: 1em;
-    box-shadow: inset 0px 0px 0.1em 0.025em rgba(255, 255, 255, 0.7);
-
+    box-shadow: inset 0px 0px 0.3em 0.125em rgba(255, 255, 255, 0.7);
     z-index: 1;
     border-radius: 50%;
+}
+
+
+.as-solid-color-picker-spectrum {
+    width: 20em;
+    height: 13.3em;
+    background-color: red;
+    position: relative;
+}
+
+.as-solid-color-picker-spectrum-dot {
+    width: 1em;
+    height: 1em;
+    box-shadow: inset 0px 0px 0.3em 0.125em rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    border-radius: 50%;
+    position: absolute;
+    bottom: calc(100% - 0.5em);
+    left: calc(100% - 0.5em);
+}
+
+
+.as-solid-color-picker-hue {
+    width: 20em;
+    height: 2em;
+    background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    position: relative;
+}
+
+.as-solid-color-picker-hue-dot {
+    width: 1em;
+    height: 1em;
+    box-shadow: inset 0px 0px 0.3em 0.125em rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    border-radius: 50%;
+    position: absolute;
+    top: calc(50% - 0.5em);
+    left: calc(0% - 0.5em);
+}
+
+
+
+.as-solid-color-picker-alpha {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAaSURBVBhXYzh8+PD///8hJAOcBSRxyRw+DABJUCox2kjvSgAAAABJRU5ErkJggg==');
+    background-size: 1.5em;
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+
+    width: 20em;
+    height: 2em;
+    position: relative;
+}
+
+.as-solid-color-picker-alpha-color {
+    background: linear-gradient(to right, rgba(255, 0, 0, 0.0) 0%, rgba(255, 0, 0, 1) 100%);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.as-solid-color-picker-alpha-dot {
+    width: 1em;
+    height: 1em;
+    box-shadow: inset 0px 0px 0.3em 0.125em rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    border-radius: 50%;
+    position: absolute;
+    top: calc(50% - 0.5em);
+    left: calc(100% - 0.5em);
+}
+
+
+
+.as-solid-color-picker-near {
+    margin-top: 0.5em;
+    width: 20em;
+    height: 4.2em;
+}
+
+.as-solid-color-picker-near .as-swatches-table-cell-color {
+    transition: transform 0.1s;
+}
+
+
+.as-solid-color-picker-near .as-swatches-table-cell-color:hover {
+    transform: scale(1.2);
+    z-index: 2;
 }
