@@ -11,7 +11,7 @@ var iconCatalogCaches = {};
 function MessageInput() {
     this._iconAssetRoot = this.attr('data-icon-asset-root');
     var catalogiUrl = this._iconAssetRoot + '/catalog.json';
-    this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? iconCatalogCaches[catalogiUrl] : XHR.getRequest(catalogiUrl).then(function (result) {
+    this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
         iconCatalogCaches[catalogiUrl] = JSON.parse(result);
         return iconCatalogCaches[catalogiUrl];
     });
