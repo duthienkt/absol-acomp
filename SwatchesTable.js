@@ -13,7 +13,7 @@ function SwatchesTable() {
 
 SwatchesTable.render = function () {
     return _({
-        extendEvent: 'clickcell',
+        extendEvent: 'presscell',
         class: 'as-swatches-table'
     });
 };
@@ -31,8 +31,6 @@ SwatchesTable.prototype.getCell = function () {
                 key = key.toHex8();
         }
         key = key + '';
-        console.log(key);
-        
         return this._dict[key];
     }
     else if (arguments.length == 2) {
@@ -43,7 +41,7 @@ SwatchesTable.prototype.getCell = function () {
 SwatchesTable.eventHandler = {};
 
 SwatchesTable.eventHandler.clickCell = function (cell, event) {
-    this.emit('clickcell', {
+    this.emit('presscell', {
         target: this,
         cellElt: cell,
         value: cell.__swatchescell_value,
@@ -114,12 +112,13 @@ SwatchesTable.property.data = {
                     this._dict['null'] = rowElt.childNodes[j];
                 }
                 else if (typeof row[j] == 'object') {
-                    if (row[j].value){
+                    if (row[j].value) {
                         rowElt.childNodes[j].firstChild.addStyle('background-color', row[j].value);
+                        rowElt.childNodes[j].__swatchescell_value = row[j].value;
                         this._dict[Color.parse(row[j].value + '').toHex8()] = rowElt.childNodes[j];
                     }
-                    else{
-                        elserowElt.childNodes[j].firstChild.removeStyle('background-color');
+                    else {
+                        rowElt.childNodes[j].firstChild.removeStyle('background-color');
                         this._dict[Color.parse('transparent').toHex8()] = rowElt.childNodes[j];
                     }
                     rowElt.childNodes[j].attr('title', row[j].name || null)
@@ -127,6 +126,7 @@ SwatchesTable.property.data = {
                 else if (typeof row[j] == 'string') {
                     rowElt.childNodes[j].firstChild.addStyle('background-color', row[j]);
                     rowElt.childNodes[j].attr('title', null);
+                    rowElt.childNodes[j].__swatchescell_value = row[j];
                     this._dict[Color.parse(row[j]).toHex8()] = rowElt.childNodes[j];
                 }
             }
