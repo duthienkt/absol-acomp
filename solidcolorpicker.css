@@ -1,0 +1,129 @@
+.as-solid-color-picker {
+    display: inline-block;
+    border: 1px solid black;
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.as-solid-color-picker-body {
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #dddddd;
+}
+
+.as-solid-color-picker-header {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.as-solid-color-picker-mode {
+    font-size: 0.9em;
+}
+
+.as-solid-color-picker-mode button {
+    height: 1.5em;
+    min-width: 7em;
+}
+
+.as-solid-color-picker-swatches-name {
+    color: #006ce5;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.as-solid-color-picker-swatches-select-ctn {
+    line-height: 2em;
+}
+
+.as-solid-color-picker-swatches-ctn {
+    overflow-y: auto;
+    width: 20em;
+    height: 20em;
+    box-sizing: content-box;
+}
+
+.as-solid-color-picker-swatches-ctn .as-swatches-table,
+.as-solid-color-picker-recent-swatches-ctn .as-swatches-table {
+    width: 100%;
+}
+
+.as-solid-color-picker-swatches-ctn .as-swatches-table-row,
+.as-solid-color-picker-recent-swatches-ctn .as-swatches-table-row {
+    height: 2em;
+}
+
+.as-solid-color-picker-recent-title {
+    line-height: 1.5em;
+    margin-top: 0.5em;
+    font-weight: bold;
+}
+
+.as-solid-color-picker-recent-swatches-ctn {
+    overflow-y: auto;
+    width: 20em;
+    height: 4em;
+    box-sizing: content-box;
+}
+
+.as-solid-color-picker-footer {
+    padding: 10px;
+}
+
+.as-solid-color-picker-selected-ctn {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAaSURBVBhXYzh8+PD///8hJAOcBSRxyRw+DABJUCox2kjvSgAAAABJRU5ErkJggg==');
+    background-size: 1.5em;
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-solid-color-picker-selected {
+    height: 2em;
+    width: 5em;
+    border: 1px solid  #ddd;
+    box-sizing: border-box;
+}
+
+.as-solid-color-picker-color-hex,
+.as-solid-color-picker-color-opacity {
+    font-size: inherit;
+}
+
+
+
+.as-solid-color-picker-color-hex input {
+    width: 4em;
+}
+
+.as-solid-color-picker-color-opacity input {
+    width: 3em;
+}
+
+.as-solid-color-picker-footer *:not(:first-child) {
+    margin-left: 0.5em;
+}
+
+.as-swatches-table-cell .as-solid-color-picker-selected-dot {
+    left: calc(50% - 0.5em);
+    top: calc(50% - 0.5em);
+}
+
+.as-solid-color-picker-selected-dot {
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    box-shadow: inset 0px 0px 0.1em 0.025em rgba(255, 255, 255, 0.7);
+
+    z-index: 1;
+    border-radius: 50%;
+}
