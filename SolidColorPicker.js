@@ -2,6 +2,7 @@ import CPCore from "./CPCore";
 import { MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches } from "./SwatchesTable";
 import QuickMenu from "absol-acomp/js/QuickMenu";
 import Color from "absol/src/Color/Color";
+import Draggable from "absol-acomp/js/Draggable";
 var _ = CPCore._;
 var $ = CPCore.$;
 
@@ -9,14 +10,21 @@ function SolidColorPicker() {
     this.$swatchesName = $('.as-solid-color-picker-swatches-name', this);
     var thisSP = this;
     this._lastEmitHex8 = '';
-    this._rgb = 'ffffff';
+    this._rgb = 'ff0000';
     this._opatictyPercent = 100;
-    this._value = new Color([1, 1, 1, 1]);
+    this._value = new Color([1, 0, 0, 1]);
+    this._hue = 0;
+    this._sat = 1;
+    this._brightness = 1;
     this._swatchesNames = ['Moqups Classic', 'Material Design', 'Bootstrap', 'iOS'];
     this._swatchesShortName = ['moqups', 'material', 'bootstrap', 'ios'];
     this._swatchesIcons = ['span.mdi.mdi-palette', 'span.mdi.mdi-material-design', 'span.mdi.mdi-bootstrap', 'span.mdi.mdi-apple-ios'];
 
     this._swatchesData = [MoqupsClassicSwathes, MaterialSwatches, BootstrapSwatches, iOsSwatches];
+
+    this._mode = 'swatches';
+    this.$mode = $('.as-solid-color-picker-mode', this)
+        .on('change', this.eventHandler.modeChange);
 
     /**
      * @type {import('absol-acomp/js/BScroller').default}
@@ -58,13 +66,30 @@ function SolidColorPicker() {
         .on('change', this.eventHandler.opacityChange)
         .on('keyup', this.eventHandler.opacityKeyUp);
     this.$selected = $('.as-solid-color-picker-selected', this);
-    this._autoAddDotCell();
+
+    this.$spectrum = Draggable($('.as-solid-color-picker-spectrum', this))
+        .on('predrag', this.eventHandler.spectrumDrag)
+        .on('drag', this.eventHandler.spectrumDrag);
+    this.$spectrumDot = $('.as-solid-color-picker-spectrum-dot', this);
+
+    this.$alpha = Draggable($('.as-solid-color-picker-alpha', this))
+        .on('predrag', this.eventHandler.alphaDrag)
+        .on('drag', this.eventHandler.alphaDrag);
+    this.$alphaDot = $('.as-solid-color-picker-alpha-dot', this);
+
+    this.$hue = Draggable($('.as-solid-color-picker-hue', this))
+        .on('predrag', this.eventHandler.hueDrag)
+        .on('drag', this.eventHandler.hueDrag);
+    this.$hueDot = $('.as-solid-color-picker-hue-dot', this);
+    this.$near = $('.as-solid-color-picker-near', this)
+        .on('presscell', this.eventHandler.nearPressCell);
+    this._updateNear();
 };
 
 SolidColorPicker.render = function () {
     return _({
-        extendEvent: ['change'],
-        class: 'as-solid-color-picker',
+        extendEvent: ['change', 'sizechange'],
+        class: ['as-solid-color-picker', 'as-solid-color-picker-mode-swatches'],
         child: [
             {
                 class: 'as-solid-color-picker-header',
@@ -76,8 +101,8 @@ SolidColorPicker.render = function () {
                             class: 'as-solid-color-picker-mode',
                             props: {
                                 items: [
-                                    { text: 'SWATCHES', value: 0 },
-                                    { text: 'PICKER', value: 1 },
+                                    { text: 'SWATCHES', value: 'swatches' },
+                                    { text: 'PICKER', value: 'picker' },
                                 ]
                             }
                         }
@@ -87,7 +112,6 @@ SolidColorPicker.render = function () {
             {
                 class: 'as-solid-color-picker-body',
                 child: [
-
                     {
                         class: ['as-solid-color-picker-swatches-select-ctn',],
                         child: [
@@ -116,6 +140,26 @@ SolidColorPicker.render = function () {
                         }
                     },
                     {
+                        tag: 'spectrumcolor',
+                        class: 'as-solid-color-picker-spectrum',
+                        child: '.as-solid-color-picker-spectrum-dot'
+                    },
+                    {
+                        class: 'as-solid-color-picker-hue',
+                        child: '.as-solid-color-picker-hue-dot'
+                    },
+                    {
+                        class: 'as-solid-color-picker-alpha',
+                        child: [
+                            '.as-solid-color-picker-alpha-color',
+                            '.as-solid-color-picker-alpha-dot',
+                        ]
+                    },
+                    {
+                        tag: 'swatchestable',
+                        class: 'as-solid-color-picker-near'
+                    },
+                    {
                         class: 'as-solid-color-picker-recent-title',
                         child: { text: 'RECENT COLOR' }
                     },
@@ -127,7 +171,6 @@ SolidColorPicker.render = function () {
                                 data: MoqupsClassicSwathes.slice(0, 2)
                             }
                         }
-
                     }
                 ]
             },
@@ -174,7 +217,7 @@ SolidColorPicker.prototype._addDotToCell = function (cell, cellColor) {
     cell.addChild(this.$selectedDot);
 };
 
-SolidColorPicker.prototype._autoAddDotCell = function () {
+SolidColorPicker.prototype._autoAdDotToCell = function () {
     this.$selectedDot.remove();
     var cell = this.$swatchesTable.getCell('#' + this._rgb);
     if (cell) {
@@ -190,6 +233,88 @@ SolidColorPicker.prototype._autoAddDotCell = function () {
     }
 };
 
+
+/**
+ * Need to call first
+ * @param {Color} color
+ */
+SolidColorPicker.prototype._setValue = function (color) {
+    this._value = color;
+    this.$selected.addStyle('background-color', color.toString());
+    this._updateNear();
+};
+
+SolidColorPicker.prototype._setRGB = function (rgb) {
+    this._rgb = rgb;
+    this.$hex.value = this._rgb;
+    this.$selectedDot.remove();
+    this._autoAdDotToCell();
+};
+
+SolidColorPicker.prototype._setOpacityPercent = function (opacity) {
+    this._opatictyPercent = opacity;
+    this.$opacity.value = opacity;
+    this._updateOpacityPercent();
+};
+
+SolidColorPicker.prototype._updateOpacityPercent = function () {
+    this.$alphaDot.addStyle('left', 'calc(' + this._opatictyPercent + '% - 0.5em)');
+};
+
+SolidColorPicker.prototype._setHue = function (hue) {
+    this._hue = hue;
+    var spectrumColor = Color.fromHSB(hue / 360, 1, 1);
+    var hueDotColor = spectrumColor.getContrastYIQ();
+    hueDotColor.rgba[3] = 0.7;
+    this.$hueDot.addStyle({
+        'box-shadow': 'inset 0px 0px 0.3em 0.125em ' + hueDotColor.toString(),
+        left: 'calc(' + (hue / 3.6) + '% - 0.5em)'
+    })
+    this.$spectrum.addStyle('background-color', spectrumColor.toString());
+    this._updateSpectrumDot();
+};
+
+SolidColorPicker.prototype._setSatBrightness = function (sat, brightness) {
+    this._sat = sat;
+    this._brightness = brightness;
+    this._updateSpectrumDot();
+};
+
+SolidColorPicker.prototype._updateSpectrumDot = function () {
+    var dotColor = this._value.getContrastYIQ();
+    dotColor.rgba[3] = 0.7;
+    this.$spectrumDot.addStyle({
+        bottom: 'calc(' + this._brightness + '% - 0.5em)',
+        left: 'calc(' + this._sat + '% - 0.5em)',
+        'box-shadow': 'inset 0px 0px 0.3em 0.125em ' + dotColor.toString()
+    });
+};
+
+
+SolidColorPicker.prototype._updateNear = function () {
+    var hsba = Color.rgbaToHSBA(this._value.rgba);
+    var sat = hsba[1];
+    var hue = hsba[0];
+    var brightness = hsba[2];
+
+    var whiterColors = Array(7).fill(null).map(function (u, i) {
+        return Color.fromHSB(hue, sat * (7 - i) / 8, brightness);
+    });
+    var darkerColors = Array(7).fill(null).map(function (u, i) {
+        return Color.fromHSB(hue, sat, brightness * (7 - i) / 8);
+    });
+
+    var hueNearColors = [-5, -3, -2, 1, 2, 3, 5].map(function (u) {
+        var nHue = hue + u / 40;
+        if (nHue > 1) nHue -= 1;
+        else if (nHue < 0) nHue += 1;
+
+        return Color.fromHSB(nHue, sat, brightness);
+    });
+
+    this.$near.data = [whiterColors, darkerColors, hueNearColors];
+};
+
 SolidColorPicker.prototype.notifyCanBeChanged = function () {
     var cHex8 = this._value.toHex8();
     if (cHex8 != this._lastEmitHex8) {
@@ -202,6 +327,18 @@ SolidColorPicker.prototype.notifyChange = function () {
     this.emit('change', { target: this, value: this.value, type: 'change' }, this);
 };
 
+SolidColorPicker.prototype.notifySizeCanBeChanged = function () {
+    var bound = this.getBoundingClientRect();
+    if (!this._lastSize || this._lastSize.width != bound.width || this._lastSize.height != bound.height) {
+        this._lastSize = { width: bound.width, height: bound.height };
+        this.notifySizeChange();
+    }
+};
+
+SolidColorPicker.prototype.notifySizeChange = function () {
+    this.emit('change', { target: this, size: this._lastSize, type: 'sizechange' }, this);
+};
+
 
 SolidColorPicker.property = {};
 
@@ -210,6 +347,10 @@ SolidColorPicker.property = {};
  * @type {SolidColorPicker}
  */
 SolidColorPicker.property.value = {
+    /**
+     * 
+     * @param {Color} value 
+     */
     set: function (value) {
         value = value || 'transparent';
         if (!value.toHex8) {
@@ -219,14 +360,15 @@ SolidColorPicker.property.value = {
                 value = new Color([0, 0, 0, 0]);
             }
         }
-        this._value = value;
         this._lastEmitHex8 = value.toHex8();
-        this._rgb = value.toHex6();
-        this._opatictyPercent = Math.round(value.rgba[3] * 100);
-        this._autoAddDotCell();
-        this.$selected.addStyle('background-color', value.toString());
-        this.$hex.value = this._rgb;
-        this.$opacity.value = this._opatictyPercent;
+        this._setValue(value);
+        this._setRGB(value.toHex6());
+        this._setOpacityPercent(Math.round(value.rgba[3] * 100));
+
+        var hsba = Color.rgbaToHSBA(value.rgba);
+        this._setHue(hsba[0] * 360);
+        this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
+        this._updateNear();
     },
     get: function () {
         return this._value;
@@ -247,12 +389,28 @@ SolidColorPicker.property.swatches = {
             this.$swatchesTable.data = this._swatchesData[index];
             this.$swatchesName.childNodes[0].data = this._swatchesNames[index];
         }
-        this._autoAddDotCell();
+        this._autoAdDotToCell();
     },
     get: function () {
         return this._swatches;
     }
 };
+
+SolidColorPicker.property.mode = {
+    set: function (value) {
+        if (value == this._mode) return;
+        this.removeClass('as-solid-color-picker-mode-' + this._mode);
+        this._mode = value + '';
+        this.addClass('as-solid-color-picker-mode-' + this._mode);
+        this.$mode.value = this._mode;
+        this.notifySizeCanBeChanged();
+    },
+    get: function () {
+        return this._mode;
+    }
+};
+
+
 
 
 /**
@@ -260,33 +418,66 @@ SolidColorPicker.property.swatches = {
  */
 SolidColorPicker.eventHandler = {};
 
+SolidColorPicker.eventHandler.modeChange = function () {
+    var value = this.$mode.value;
+    if (value == this._mode) return;
+    this.removeClass('as-solid-color-picker-mode-' + this._mode);
+    this._mode = value + '';
+    this.addClass('as-solid-color-picker-mode-' + this._mode);
+    this.$mode.value = this._mode;
+    this.notifySizeCanBeChanged();
+};
+
 SolidColorPicker.eventHandler.swatchesPressCell = function (event) {
     try {
-        var valueColor = Color.parse(event.value);
-        this._addDotToCell(event.cellElt, valueColor);
-        this._rgb = valueColor.toHex6();
+        var value = Color.parse(event.value + '');
+        value.rgba[3] = this._opatictyPercent / 100;
+        this._setValue(value);
+        this._addDotToCell(event.cellElt, value);
+        this._rgb = value.toHex6();
         this.$hex.value = this._rgb;
-        valueColor.rgba[3] = this._opatictyPercent / 100;
-        this._value = valueColor;
-        this.$selected.addStyle('background-color', valueColor.toString())
+
+        var hsba = Color.rgbaToHSBA(value.rgba);
+        this._setHue(hsba[0] * 360);
+        this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
     }
     catch (e) {
         this.$selectedDot.removeStyle('box-shadow');
         this.$hex.value = 'ffffff';
+    }
+    this.notifyCanBeChanged();
+};
 
+SolidColorPicker.eventHandler.nearPressCell = function (event) {
+    try {
+        var value = Color.parse(event.value + '');
+        value.rgba[3] = this._opatictyPercent / 100;
+        this._setValue(value);
+        this._setRGB(value.toHex6());
+
+        var hsba = Color.rgbaToHSBA(value.rgba);
+        this._setHue(hsba[0] * 360);
+        this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
+    }
+    catch (e) {
+        this.$selectedDot.removeStyle('box-shadow');
+        this.$hex.value = 'ffffff';
     }
     this.notifyCanBeChanged();
 };
 
 SolidColorPicker.eventHandler.hexKeyup = function () {
     try {
-        var color = Color.parse('#' + this.$hex.value.trim());
-        if (color.rgba[3] == 1) {
-            this._rgb = color.toHex6();
-            color.rgba[3] = this._opatictyPercent / 100;
-            this._value = color;
-            this.$selected.addStyle('background-color', color.toString());
-            this._autoAddDotCell();
+        var value = Color.parse('#' + this.$hex.value.trim());
+        if (value.rgba[3] == 1) {
+            value.rgba[3] = this._opatictyPercent / 100;
+            this._setValue(value);
+            this._rgb = value.toHex6();
+            this._autoAdDotToCell();
+
+            var hsba = Color.rgbaToHSBA(value.rgba);
+            this._setHue(hsba[0] * 360);
+            this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
         }
     }
     catch (e) {
@@ -308,8 +499,8 @@ SolidColorPicker.eventHandler.opacityKeyUp = function () {
         this._opatictyPercent = opacity;
         var color = Color.parse('#' + this._rgb);
         color.rgba[3] = opacity / 100;
-        this._value = color;
-        this.$selected.addStyle('background-color', color.toString())
+        this._setValue(color);
+        this._updateOpacityPercent();
     }
 };
 
@@ -321,6 +512,38 @@ SolidColorPicker.eventHandler.opacityChange = function () {
     this.notifyCanBeChanged();
 };
 
+SolidColorPicker.eventHandler.alphaDrag = function (event) {
+    var aBound = this.$alpha.getBoundingClientRect();
+    var opacity = (event.clientX - aBound.left) * 100 / aBound.width;
+    opacity = Math.max(0, Math.min(100, Math.round(opacity)));
+    var color = Color.parse('#' + this._rgb);
+    color.rgba[3] = opacity / 100;
+    this._setValue(color);
+    this._setOpacityPercent(opacity);;
+};
+
+SolidColorPicker.eventHandler.hueDrag = function (event) {
+    var hBound = this.$hue.getBoundingClientRect();
+    var hue = (event.clientX - hBound.left) * 360 / hBound.width;
+    hue = Math.max(0, Math.min(360, Math.round(hue)));
+    var value = Color.fromHSBA(hue / 360, this._sat / 100, this._brightness / 100, this._opatictyPercent / 100);
+    this._setValue(value);
+    this._setHue(hue);
+    this._setRGB(value.toHex6());
+
+};
+
+SolidColorPicker.eventHandler.spectrumDrag = function (event) {
+    var sBound = this.$spectrum.getBoundingClientRect();
+    var brightness = (sBound.bottom - event.clientY) * 100 / sBound.height;
+    brightness = Math.max(0, Math.min(100, Math.round(brightness)));
+    var sat = (event.clientX - sBound.left) * 100 / sBound.width;
+    sat = Math.max(0, Math.min(100, Math.round(sat)));
+    var value = Color.fromHSBA(this._hue / 360, sat / 100, brightness / 100, this._opatictyPercent / 100);
+    this._setValue(value);
+    this._setSatBrightness(sat, brightness);
+    this._setRGB(value.toHex6());
+};
 
 CPCore.install('solidcolorpicker', SolidColorPicker);
 
