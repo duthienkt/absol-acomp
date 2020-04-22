@@ -111,6 +111,12 @@ SwatchesTable.property.data = {
                     rowElt.childNodes[j].__swatchescell_value = row[j];
                     this._dict['null'] = rowElt.childNodes[j];
                 }
+                else if (row[j].toHex8) {
+                    rowElt.childNodes[j].firstChild.addStyle('background-color', row[j].toString());
+                    rowElt.childNodes[j].attr('title', null);
+                    rowElt.childNodes[j].__swatchescell_value = row[j];
+                    this._dict[row[j].toHex8()] = rowElt.childNodes[j];
+                }
                 else if (typeof row[j] == 'object') {
                     if (row[j].value) {
                         rowElt.childNodes[j].firstChild.addStyle('background-color', row[j].value);
@@ -129,6 +135,7 @@ SwatchesTable.property.data = {
                     rowElt.childNodes[j].__swatchescell_value = row[j];
                     this._dict[Color.parse(row[j]).toHex8()] = rowElt.childNodes[j];
                 }
+                
             }
         }
     },
