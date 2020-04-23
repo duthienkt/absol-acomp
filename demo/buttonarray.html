@@ -17,23 +17,77 @@
         var _ = absol._;
         var $ = absol.$;
     </script>
-<script class="viewable">
-    var ba0 = _({
-        tag: 'buttonarray',
-        props: {
-            items: [
-                true, false, null, 1, 2, 3, 4, 5
-            ]
-        },
-        on: {
-            change: function (event) {
-                console.log(event.value);
+    <script class="viewable">
+        var ba0 = _({
+            tag: 'buttonarray',
+            props: {
+                items: [
+                    true, false, null, 1, 2, 3, 4, 5
+                ]
+            },
+            on: {
+                change: function (event) {
+                    console.log(event.value, this.value);
+                }
             }
-        }
-    });
+        });
 
-    $('#demo0').addChild(ba0);
-</script>
+
+        $('#demo0').addChild(ba0);
+    </script>
+    <h2>Expert</h2>
+    <div id="demo1"></div>
+    <style class="viewable">
+        .button-on-off{
+           
+        }
+
+        .button-on-off.off .as-button-array-item.as-active{
+            background-color: rgb(255, 40, 40);
+            color: white;
+        }
+        .button-on-off.off {
+            border-color: red;
+        }
+
+        .button-on-off.off .as-button-array-item{
+            color: red;
+            border-color: red;
+        }
+
+    </style>
+    <script>
+          var ba1 = _({
+                tag: 'buttonarray',
+                class:['button-on-off', 'off'],
+                props: {
+                    items: [
+                        {
+                            text: 'On',
+                            value: true
+                        },
+                        {
+                            text: 'Off',
+                            value: false
+                        }
+                    ],
+                    value: false
+
+                },
+                on: {
+                    change: function (event) {
+                        if (this.value){
+                            this.removeClass('off');
+                        }
+                        else{
+                             this.addClass('off');
+                        }
+                    }
+                }
+            });
+            $('#demo1').addChild(ba1);
+    </script>
+
     <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 
 </body>
