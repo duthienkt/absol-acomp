@@ -65,8 +65,14 @@
             var _ = absol._;
             var $ = absol.$;
             var messBox = $('.message-box');
+            var focusButton = _('<button>Focus</button>').on('click', function () {
+                messInput.focus();
+            });
+
+
             var inputCtn = $('.input-ctn');
             var messageCtn = $('.message-ctn');
+            messageCtn.addChild(focusButton);
             var messInput = _({
                 tag: 'messageinput',
                 on: {
