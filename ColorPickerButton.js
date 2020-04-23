@@ -6,7 +6,6 @@ var $ = CPCore.$;
 
 function ColorPickerButton() {
     this.$innerValue = $('.as-color-picker-button-inner-value', this);
-
     this.prepare();
     this.on('click', this.eventHandler.click);
 }
@@ -28,6 +27,10 @@ ColorPickerButton.eventHandler.clickBody = function (event) {
     this.closePicker();
 };
 
+ColorPickerButton.eventHandler.submit = function (event) {
+    this.closePicker();
+};
+
 ColorPickerButton.prototype.togglePicker = function () {
     if (this.containsClass('as-color-picker-selecting')) {
         this.closePicker();
@@ -43,14 +46,19 @@ ColorPickerButton.prototype.openPicker = function () {
         ColorPickerButton.lastOpen.closePicker();
     }
     ColorPickerButton.lastOpen = this;
+    var thisBt = this;
     this.addClass('as-color-picker-selecting');
-    this.$ColorPicker.on('change', this.eventHandler.changeColor);
-    this.$ctn.addTo(document.body);
+    this.$ColorPicker.on('change', this.eventHandler.changeColor)
+        .on('submit', this.eventHandler.submit);
+    this.$follower.addStyle('visibility', 'hidden');
+    this.$follower.addTo(document.body);
     this.$follower.followTarget = this;
     $(document.body).on('click', this.eventHandler.clickBody);
     this._lastValue = this.value;
     ColorPickerButton.$ColorPicker.value = this.value;
-    ColorPickerButton.$ColorPicker.mode = this.mode||"RGBA";
+    setTimeout(function () {
+        thisBt.$follower.removeStyle('visibility');
+    }, 1);
 };
 
 
@@ -58,9 +66,10 @@ ColorPickerButton.prototype.closePicker = function () {
     this.removeClass('as-color-picker-selecting');
     if (ColorPickerButton.lastOpen == this) {
         ColorPickerButton.lastOpen == null;
-        this.$ctn.remove();
+        this.$follower.remove();
     }
-    this.$ColorPicker.off('change', this.eventHandler.changeColor);
+    this.$ColorPicker.off('change', this.eventHandler.changeColor)
+        .off('submit', this.eventHandler.submit);
     $(document.body).off('click', this.eventHandler.clickBody);
     if (this.value != this._lastValue) {
         this.emit('stopchange', { target: this, value: this.value }, this);
@@ -69,22 +78,16 @@ ColorPickerButton.prototype.closePicker = function () {
 
 ColorPickerButton.prototype.prepare = function () {
     if (!ColorPickerButton.$ColorPicker) {
-        ColorPickerButton.$ctn = _('.absol-context-hinge-fixed-container');
-        ColorPickerButton.$follower = _('follower').addTo(ColorPickerButton.$ctn);
+        ColorPickerButton.$follower = _('follower.as-color-picker-button-follower');
         ColorPickerButton.$ColorPicker = _({
-            tag: 'colorpicker',
-            props: {
-                mode: 'RGBA'
-            }
+            tag: 'solidcolorpicker'
         }).addTo(ColorPickerButton.$follower);
 
         ColorPickerButton.lastOpen = null;
     }
 
     this.$follower = ColorPickerButton.$follower;
-
     this.$ColorPicker = ColorPickerButton.$ColorPicker;
-    this.$ctn = ColorPickerButton.$ctn;
 };
 
 ColorPickerButton.render = function () {
