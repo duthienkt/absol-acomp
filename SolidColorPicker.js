@@ -7,6 +7,7 @@ var _ = CPCore._;
 var $ = CPCore.$;
 
 function SolidColorPicker() {
+    this.on('keydown', this.eventHandler.keydown);
     this.$swatchesName = $('.as-solid-color-picker-swatches-name', this);
     var thisSP = this;
     this._lastEmitHex8 = '';
@@ -54,10 +55,11 @@ function SolidColorPicker() {
             }
         },
         onSelect: function (item) {
-            console.log(item.value);
             thisSP.swatches = item.value;
         }
     });
+
+    this.$attachhook = _('attachhook').on('error', this.eventHandler.attached);
 
     this.$hex = $('.as-solid-color-picker-color-hex', this)
         .on('keyup', this.eventHandler.hexKeyup)
@@ -83,12 +85,18 @@ function SolidColorPicker() {
     this.$hueDot = $('.as-solid-color-picker-hue-dot', this);
     this.$near = $('.as-solid-color-picker-near', this)
         .on('presscell', this.eventHandler.nearPressCell);
+
+    this.$submitBtn = $('.as-solid-color-picker-submit-btn', this)
+        .on('click', this.notifySubmit.bind(this));
     this._updateNear();
 };
 
 SolidColorPicker.render = function () {
     return _({
-        extendEvent: ['change', 'sizechange'],
+        attr: {
+            tabindex: '1'
+        },
+        extendEvent: ['change', 'sizechange', 'submit'],
         class: ['as-solid-color-picker', 'as-solid-color-picker-mode-swatches'],
         child: [
             {
@@ -203,11 +211,110 @@ SolidColorPicker.render = function () {
                             value: 100
                         }
                     },
+                    {
+                        tag: 'flexiconbutton',
+                        class: 'as-solid-color-picker-submit-btn',
+                        props: {
+                            icon: 'span.mdi.mdi-check-bold'
+                        }
+                    }
 
                 ]
             }
         ]
     });
+};
+
+SolidColorPicker._settingKey = "absol_solid_color_setting";
+
+//only Hex6
+SolidColorPicker.setting = {
+    recentColors: ['#ffffff', '#00ffff', '#0000ff', '#ffffff', '#000000']
+};
+
+SolidColorPicker._loadSetting = function () {
+    var setting = localStorage.getItem(SolidColorPicker._settingKey);
+    try {
+        setting = JSON.parse(setting);
+    }
+    catch (e) {
+        setting = {};
+    }
+    if (setting) {
+        Object.assign(SolidColorPicker.setting, setting);
+    }
+};
+
+SolidColorPicker._loadSetting();
+
+SolidColorPicker._writeSetting = function () {
+    localStorage.setItem(SolidColorPicker._settingKey, JSON.stringify(SolidColorPicker.setting));
+    SolidColorPicker.updateInstancesSetting();
+};
+
+SolidColorPicker.pushInstances = function (elt) {
+    var instances = SolidColorPicker.$instances;
+    var aliveInstance = [];
+    var instance;
+    var found = false;
+    while (instances.length > 0) {
+        instance = instances.pop();
+        if (instance.isDescendantOf(document.body)) {
+            aliveInstance.push(instance);
+        };
+        if (instance == elt) found = true;
+    }
+    while (aliveInstance.length > 0) {
+        instances.push(aliveInstance.pop());
+    }
+    if (!found) {
+        instances.push(elt);
+    }
+};
+
+SolidColorPicker.updateInstancesSetting = function () {
+    var instances = SolidColorPicker.$instances;
+    var aliveInstance = [];
+    var instance;
+    while (instances.length > 0) {
+        instance = instances.pop();
+        if (instance.isDescendantOf(document.body)) {
+            aliveInstance.push(instance);
+        };
+    }
+    while (aliveInstance.length > 0) {
+        instance = aliveInstance.pop();
+        instances.push(instance);
+        instance.reloadSetting();
+    }
+};
+
+SolidColorPicker.$instances = [];
+
+/**
+ * @param {Color} color
+ */
+SolidColorPicker.pushColorHistory = function (color) {
+    var hex6Color = color.toString('hex6');
+    var recentColors = SolidColorPicker.setting.recentColors;
+    var index = recentColors.indexOf(hex6Color);
+    if (index >= 0) {
+        recentColors.splice(index, 1);
+    }
+    recentColors.unshift(hex6Color);
+    while (recentColors.length > 24) recentColors.pop();
+    setTimeout(SolidColorPicker._writeSetting.bind(SolidColorPicker), 1)
+};
+
+
+SolidColorPicker.prototype.reloadSetting = function () {
+    var recentColors = SolidColorPicker.setting.recentColors.slice();
+    var swatches = [];
+    while (recentColors.length > 0) {
+        swatches.push(recentColors.splice(0, 12));
+    }
+    this.$recentSwatchesTable.data = swatches;
+    this._autoAdDotToCell();
 };
 
 SolidColorPicker.prototype._addDotToCell = function (cell, cellColor) {
@@ -336,7 +443,12 @@ SolidColorPicker.prototype.notifySizeCanBeChanged = function () {
 };
 
 SolidColorPicker.prototype.notifySizeChange = function () {
-    this.emit('change', { target: this, size: this._lastSize, type: 'sizechange' }, this);
+    this.emit('sizechange', { target: this, size: this._lastSize, type: 'sizechange' }, this);
+};
+
+SolidColorPicker.prototype.notifySubmit = function () {
+    SolidColorPicker.pushColorHistory(this._value);
+    this.emit('submit', { target: this, value: this._value, type: 'submit' }, this);
 };
 
 
@@ -418,6 +530,11 @@ SolidColorPicker.property.mode = {
  */
 SolidColorPicker.eventHandler = {};
 
+SolidColorPicker.eventHandler.attached = function () {
+    SolidColorPicker.pushInstances(this);
+    this.reloadSetting();
+};
+
 SolidColorPicker.eventHandler.modeChange = function () {
     var value = this.$mode.value;
     if (value == this._mode) return;
@@ -478,6 +595,7 @@ SolidColorPicker.eventHandler.hexKeyup = function () {
             var hsba = Color.rgbaToHSBA(value.rgba);
             this._setHue(hsba[0] * 360);
             this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
+            this.notifyCanBeChanged();
         }
     }
     catch (e) {
@@ -488,7 +606,6 @@ SolidColorPicker.eventHandler.hexKeyup = function () {
 SolidColorPicker.eventHandler.hexChange = function () {
     if (this.$hex.value != this._rgb)
         this.$hex.value = this._rgb;
-    this.notifyCanBeChanged();
 };
 
 
@@ -501,6 +618,7 @@ SolidColorPicker.eventHandler.opacityKeyUp = function () {
         color.rgba[3] = opacity / 100;
         this._setValue(color);
         this._updateOpacityPercent();
+        this.notifyCanBeChanged();
     }
 };
 
@@ -509,7 +627,6 @@ SolidColorPicker.eventHandler.opacityChange = function () {
     if (this.$opacity.value != opacity) {
         this.$opacity.value = opacity + '';
     }
-    this.notifyCanBeChanged();
 };
 
 SolidColorPicker.eventHandler.alphaDrag = function (event) {
@@ -519,7 +636,8 @@ SolidColorPicker.eventHandler.alphaDrag = function (event) {
     var color = Color.parse('#' + this._rgb);
     color.rgba[3] = opacity / 100;
     this._setValue(color);
-    this._setOpacityPercent(opacity);;
+    this._setOpacityPercent(opacity);
+    this.notifyCanBeChanged();
 };
 
 SolidColorPicker.eventHandler.hueDrag = function (event) {
@@ -530,7 +648,7 @@ SolidColorPicker.eventHandler.hueDrag = function (event) {
     this._setValue(value);
     this._setHue(hue);
     this._setRGB(value.toHex6());
-
+    this.notifyCanBeChanged();
 };
 
 SolidColorPicker.eventHandler.spectrumDrag = function (event) {
@@ -543,6 +661,15 @@ SolidColorPicker.eventHandler.spectrumDrag = function (event) {
     this._setValue(value);
     this._setSatBrightness(sat, brightness);
     this._setRGB(value.toHex6());
+    this.notifyCanBeChanged();
+};
+
+SolidColorPicker.eventHandler.keydown = function (event) {
+    if (event.key == 'Enter') {
+        event.preventDefault();
+        event.target.blur();
+        this.notifySubmit();
+    }
 };
 
 CPCore.install('solidcolorpicker', SolidColorPicker);
