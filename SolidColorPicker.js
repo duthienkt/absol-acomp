@@ -326,7 +326,10 @@ SolidColorPicker.prototype._addDotToCell = function (cell, cellColor) {
 
 SolidColorPicker.prototype._autoAdDotToCell = function () {
     this.$selectedDot.remove();
-    var cell = this.$swatchesTable.getCell('#' + this._rgb);
+    var cell;
+    if (this._mode == 'swatches') {
+        cell = this.$swatchesTable.getCell('#' + this._rgb);
+    }
     if (cell) {
         this._addDotToCell(cell, this._value);
         this.$swatchesTableCtn.scrollInto(cell);
