@@ -70,4 +70,6 @@
     width: 100%;
     font: inherit;
     text-align: inherit;
+    padding-left: 0;
+    padding-right: 0;
 }
