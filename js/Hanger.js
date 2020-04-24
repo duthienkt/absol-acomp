@@ -57,13 +57,16 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
     var startingPoint;
     var isTouch = event.type == 'touchstart';
     var pointerIdent = -1;
+    var target;
     if (isTouch) {
         var touch = event.changedTouches[0];
+        target = touch.target;
         pointerIdent = touch.identifier;
         startingPoint = new Vec2(touch.clientX, touch.clientY);
     }
     else {
         startingPoint = new Vec2(event.clientX, event.clientY);
+        target = event.target;
     }
     var offsetVec = startingPoint.sub(new Vec2(bound.left, bound.top));
 
@@ -73,7 +76,8 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
         bound: bound,
         startingPoint: startingPoint,
         offsetVec: offsetVec,
-        pointerIdent: pointerIdent
+        pointerIdent: pointerIdent,
+        target: target
     };
     var preDragEvent = {
         type: 'predrag',
@@ -87,7 +91,10 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
         canceled: false,
         cancel: function () {
             this.cancel = true;
-        }
+        },
+        clientX: startingPoint.x,
+        clientY: startingPoint.y,
+        target: target
     };
     if (preDragEvent.canceled) return;
     $(document.body);
@@ -125,7 +132,10 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
                 startingPoint: pointerData.startingPoint,
                 offsetVec: pointerData.offsetVec,
                 pointerIdent: pointerIdent,
-                currentPoint: currentPoint
+                currentPoint: currentPoint,
+                target: pointerData.target,
+                clientX: currentPoint.x,
+                clientY: currentPoint.y
             };
             pointerData.state = 1;
             this.emit('dragstart', dragStartEvent, this);
@@ -141,7 +151,10 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
             startingPoint: pointerData.startingPoint,
             offsetVec: pointerData.offsetVec,
             pointerIdent: pointerIdent,
-            currentPoint: currentPoint
+            currentPoint: currentPoint,
+            target: pointerData.target,
+            clientX: currentPoint.x,
+            clientY: currentPoint.y
         };
         this.emit('drag', dragEvent, this);
     }
@@ -171,7 +184,10 @@ Hanger.eventHandler.hangerPointerFinish = function () {
             startingPoint: pointerData.startingPoint,
             offsetVec: pointerData.offsetVec,
             pointerIdent: pointerIdent,
-            currentPoint: currentPoint
+            currentPoint: currentPoint,
+            target: pointerData.target,
+            clientX: currentPoint.x,
+            clientY: currentPoint.y
         };
         this.emit('dragend', dragEndEvent, this);
     }
