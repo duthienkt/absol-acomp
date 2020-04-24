@@ -1,5 +1,8 @@
 import ACore from "./ACore";
 
+import Hanger from './js/Hanger';
+import  './css/hanger.css';
+
 import './js/SpanInput';
 import './css/spaninput.css';
 
