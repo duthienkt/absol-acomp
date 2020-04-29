@@ -30,6 +30,11 @@
     visibility: hidden;
 }
 
-.ac-time-input-picker-ctn-hidden:not(.absol-follower){
+.ac-time-input-picker-ctn-hidden:not(.absol-follower) {
     transition: all 0.1s;
+}
+
+.ac-time-input.as-disabled {
+    color: rgb(102, 102, 102);
+    pointer-events: none;
 }

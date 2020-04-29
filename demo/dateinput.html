@@ -8,6 +8,11 @@
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
     <script src="../dist/absol-acomp.js?"></script>
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <style>
+        /* body{
+            background-color: black;
+        } */
+    </style>
 </head>
 
 <body>
@@ -22,7 +27,7 @@
     </script>
     <script class="viewable">
         var inputDemoDiv = $('.input-demo');
-        var supportFomarts = [null, 'dd/mm/yyyy', 'dd-mm-yyyy', 'dd.mm.yyyy', 'yyyy/mm/dd', 'yyyy-mm-dd', 'mm/dd/yyyy'];
+        var supportFomarts = [null, 'dd/mm/yyyy', 'dd-mm-yyyy', 'dd.mm.yyyy', 'yyyy/mm/dd', 'yyyy-mm-dd', 'mm/dd/yyyy', 'mmm-dd,yyyy'];
         supportFomarts.forEach(function (format) {
             _(
                 {
@@ -32,7 +37,7 @@
                     child: [
                         {
                             tag: 'label',
-                            style: { width: '7em', 'line-height': '30px', display: 'inline-block' },
+                            style: { width: '10em', 'line-height': '30px', display: 'inline-block' },
                             child: { text: format + '' }
                         },
                         {
@@ -104,8 +109,6 @@
                 disabled: true
             }
         }));
-
-
 
     </script>
     <script src="./autohightlighting.js?"></script>

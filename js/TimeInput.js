@@ -154,6 +154,18 @@ TimeInput.property.dayOffset = {
 };
 
 
+TimeInput.property.disabled = {
+    set: function (value) {
+        value = !!value;
+        this._disabled = value;
+        if (value) this.addClass('as-disabled');
+        else this.removeClass('as-disabled');
+    },
+    get: function () {
+        return this._disabled;
+    }
+}
+
 TimeInput.eventHandler = {};
 
 

@@ -8,6 +8,11 @@
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
     <script src="../dist/absol-acomp.js?"></script>
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <style>
+        body{
+            /* background-color: black; */
+        }
+    </style>
 </head>
 
 <body>
@@ -35,6 +40,24 @@
                 // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59 
                 // hour: 20, or set hour and minute
                 // minute:59
+            },
+            on: {
+                change: function () {
+                    alert(this.hour + ":" + this.minute + '=>' + this.dayOffset);
+                }
+            }
+        }).addTo(inputDemoDiv);
+        _({
+            tag: 'timeinput',
+            style: {
+                fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+            },
+            props: {
+                // dayOffset: new Date(),//now, dayOffset can be Date or Number 
+                // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59 
+                // hour: 20, or set hour and minute
+                // minute:59
+                disabled: true
             },
             on: {
                 change: function () {
