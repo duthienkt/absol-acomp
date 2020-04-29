@@ -133,7 +133,7 @@ DateInput2.property = {};
 DateInput2.property.value = {
     set: function (value) {
         if (value === false || value === null || value === undefined) {
-            this.$input.value = this._format;
+            this.$input.value = '';
             this._value = null;
         }
         else if ((typeof value == 'string') || (typeof value == 'number')) {
