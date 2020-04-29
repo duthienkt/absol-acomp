@@ -206,11 +206,13 @@ import './js/EmojiPicker';
 import './css/emojipicker.css';
 
 
-import './js/DateInput';
+// import './js/DateInput';
+import './js/DateInput2';
 import './css/dateinput.css';
 
 import './js/MessageInput';
 import './css/messageinput.css';
+
 
 
 import DebugTask from "./js/DebugTask";
