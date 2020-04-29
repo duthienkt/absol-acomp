@@ -1,6 +1,7 @@
 import ACore from "../ACore";
 import { isTouchDevice } from "./TimePicker";
 import { MILLIS_PER_HOUR, MILLIS_PER_MINUTE, MILLIS_PER_DAY, beginOfDay } from "absol/src/Time/datetime";
+import EventEmitter from 'absol/src/HTML5/EventEmitter';
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -89,10 +90,12 @@ TimeInput.prototype.openPicker = function () {
     this.$timePicker
         .on('finish', this.eventHandler.pickerFinish)
         .on('cancel', this.eventHandler.pickerCancel);
+    $(document.body).on('click', this.eventHandler.clickBody);
 };
 
 TimeInput.prototype.closePicker = function () {
     if (!this._isOpenPicker) return;
+    var thisTI = this;
     this._isOpenPicker = false;
     this.$timePickerCtn.addClass('ac-time-input-picker-ctn-hidden');
     if (!isTouchDevice)
@@ -100,6 +103,9 @@ TimeInput.prototype.closePicker = function () {
     this.$timePicker
         .off('finish', this.eventHandler.pickerFinish)
         .off('cancel', this.eventHandler.pickerCancel);
+    setTimeout(function(){
+        $(document.body).off('click', thisTI.eventHandler.clickBody);
+    }, 100);
 };
 
 TimeInput.property = {};
@@ -162,6 +168,11 @@ TimeInput.eventHandler.pickerFinish = function (event) {
 
 TimeInput.eventHandler.pickerCancel = function (event) {
     this.closePicker();
-}
+};
+
+TimeInput.eventHandler.clickBody = function(event){
+    if (EventEmitter.hitElement(this.$timePicker, event) || EventEmitter.hitElement(this, event)) return;
+    this.closePicker();
+};
 
 ACore.install('timeinput', TimeInput);
