@@ -1,5 +1,6 @@
 import ACore from "../ACore";
 import Vec2 from "absol/src/Math/Vec2";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -9,7 +10,7 @@ function Hanger() {
     this.defineEvent(['predrag', 'dragstart', 'drag', 'dragend']);
     this._hangOn = 0;
     this._hangerPointerData = null;
-    this.on({
+    this.on2({
         mousedown: this.eventHandler.hangerPointerDown,
         touchstart: this.eventHandler.hangerPointerDown,
     });
@@ -26,9 +27,35 @@ function Hanger() {
     };
 }
 
+
+
 Hanger.render = function () {
     return _('div');
 };
+
+Hanger.prototype.on2 = function () {
+    if (arguments.length == 1) {
+        for (var name in arguments[0]) {
+            Hanger.prototype.on2.call(this, name, arguments[0][name]);
+        }
+    }
+    else if (arguments.length == 2) {
+        this.addEventListener(arguments[0], arguments[1], BrowserDetector.supportPassiveEvent ? { passive: false } : true);
+    }
+};
+
+
+Hanger.prototype.off2 = function () {
+    if (arguments.length == 1) {
+        for (var name in arguments[0]) {
+            Hanger.prototype.off2.call(this, name, arguments[0][name]);
+        }
+    }
+    else if (arguments.length == 2) {
+        this.removeEventListener(arguments[0], arguments[1], BrowserDetector.supportPassiveEvent ? { passive: false } : true);
+    }
+};
+
 
 Hanger.property = {};
 
@@ -94,14 +121,16 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
         },
         clientX: startingPoint.x,
         clientY: startingPoint.y,
-        target: target
+        target: target,
+        preventDefault: function () {
+            event.preventDefault();
+        }
     };
     if (preDragEvent.canceled) return;
-    $(document.body);
     if (isTouch)
-        document.body.on(this._touchEvents)
+        this.on2.call(document.body, this._touchEvents)
     else
-        document.body.on(this._mouseEvents);
+        this.on2.call(document.body, this._mouseEvents);
     this.emit('predrag', preDragEvent, this);
 };
 
@@ -119,7 +148,6 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
         currentPoint = new Vec2(event.clientX, event.clientY);
     }
     if (pointerIdent != pointerData.pointerIdent) return;
-    event.preventDefault();
     pointerData.currentPoint = currentPoint;
     if (pointerData.state == 0) {
         var distance = currentPoint.sub(pointerData.startingPoint).abs();
@@ -135,7 +163,10 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
                 currentPoint: currentPoint,
                 target: pointerData.target,
                 clientX: currentPoint.x,
-                clientY: currentPoint.y
+                clientY: currentPoint.y,
+                preventDefault: function () {
+                    event.preventDefault();
+                }
             };
             pointerData.state = 1;
             this.emit('dragstart', dragStartEvent, this);
@@ -154,7 +185,10 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
             currentPoint: currentPoint,
             target: pointerData.target,
             clientX: currentPoint.x,
-            clientY: currentPoint.y
+            clientY: currentPoint.y,
+            preventDefault: function () {
+                event.preventDefault();
+            }
         };
         this.emit('drag', dragEvent, this);
     }
@@ -175,7 +209,7 @@ Hanger.eventHandler.hangerPointerFinish = function () {
     }
     if (pointerIdent != pointerData.pointerIdent) return;
 
-    if (pointerData.state == 1){
+    if (pointerData.state == 1) {
         var dragEndEvent = {
             type: 'dragend',
             originEvent: event,
@@ -187,16 +221,19 @@ Hanger.eventHandler.hangerPointerFinish = function () {
             currentPoint: currentPoint,
             target: pointerData.target,
             clientX: currentPoint.x,
-            clientY: currentPoint.y
+            clientY: currentPoint.y,
+            preventDefault: function () {
+                event.preventDefault();
+            }
         };
         this.emit('dragend', dragEndEvent, this);
     }
 
     this._hangerPointerData = null;
     if (isTouch)
-        document.body.off(this._touchEvents)
+        this.off2.call(document.body, this._touchEvents)
     else
-        document.body.off(this._mouseEvents);
+        this.off2.call(document.body, this._mouseEvents);
 };
 
 ACore.install('hanger', Hanger);
