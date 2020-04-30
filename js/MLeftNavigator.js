@@ -35,7 +35,7 @@ MLeftNavigator.render = function () {
     };
 });
 
-MLeftNavigator.prototype.getChildNodes = function(){
+MLeftNavigator.prototype.getChildNodes = function () {
     return this.$modal.childNodes;
 };
 
@@ -48,8 +48,6 @@ MLeftNavigator.prototype.open = function (v0) {
     var dt = Math.sqrt(2 * dx / v0) / 2;
     this.$content.addStyle('transition', 'right ease-out ' + dt + 's');
     this.$modal.addStyle('transition', 'opacity ease-out ' + dt + 's');
-    console.log('opacity ease-out ' + dt + 's');
-
     this.$content.addStyle('right', 'calc(100% - ' + ctBound.width + 'px)');
     this.$modal.addStyle('opacity', '0.5');
 
@@ -60,11 +58,13 @@ MLeftNavigator.prototype.open = function (v0) {
         thisnm._state = 1;
         thisnm.$content.removeStyle('transition');
         thisnm.$modal.removeStyle('transition');
+        thisnm.$modal.on('click', thisnm.eventHandler.clickModal);
     }, dt * 1000 + 1);
 };
 
 MLeftNavigator.prototype.close = function (v0) {
-    if (this._state == 0) return;
+    if (this._state == -1) return;
+    this.$modal.off('click', this.eventHandler.clickModal);
     v0 = v0 || 0;
     v0 = v0 || 1000;
     v0 = Math.max(400, Math.min(4000, v0));
@@ -97,8 +97,10 @@ MLeftNavigator.prototype.close = function (v0) {
 MLeftNavigator.eventHandler = {};
 
 MLeftNavigator.eventHandler.modalDragStart = function (event) {
+    this.$modal.off('click', this.eventHandler.clickModal);
     this.addClass('as-dragging');
     this._contentWidth = this.$content.getBoundingClientRect().width;
+    this._prevState = this._state;
     this._preDragTime = new Date().getTime();
     this._preMoveDistance = 0;
     this._dragSpeed = 0;
@@ -157,12 +159,17 @@ MLeftNavigator.eventHandler.clickModal = function (event) {
  */
 MLeftNavigator.eventHandler.modalDragEnd = function () {
     this.removeClass('as-dragging');
+    this._state = 0;//animating state
     var ctBound = this.$content.getBoundingClientRect();
     if (this._dragSpeed > -200 || (ctBound.right > ctBound.width / 2 && this._dragSpeed >= 0)) {
         this.open(this._dragSpeed);
     }
     else if (this._dragSpeed < -200 || (ctBound.right < ctBound.width / 2 && this._dragSpeed <= 0)) {
         this.close(-this._dragSpeed);
+    }
+    else {
+        if (this._prevState == 1) this.open();
+        else if (this._prevState == -1) this.close();
     }
 };
 
