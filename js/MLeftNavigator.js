@@ -31,7 +31,7 @@ MLeftNavigator.render = function () {
 
 ['addChild', 'addChildBefore', 'addChildAfter', 'clearChild', 'findChildBefore', 'findChildAfter', 'removeChild'].forEach(function (key) {
     MLeftNavigator.prototype[key] = function () {
-        return this.$content[key].apply(this.$bodyContainer, arguments);
+        return this.$content[key].apply(this.$content, arguments);
     };
 });
 
