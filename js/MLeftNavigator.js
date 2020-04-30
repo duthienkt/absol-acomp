@@ -28,6 +28,17 @@ MLeftNavigator.render = function () {
     });
 };
 
+
+['addChild', 'addChildBefore', 'addChildAfter', 'clearChild', 'findChildBefore', 'findChildAfter', 'removeChild'].forEach(function (key) {
+    MLeftNavigator.prototype[key] = function () {
+        return this.$content[key].apply(this.$bodyContainer, arguments);
+    };
+});
+
+MLeftNavigator.prototype.getChildNodes = function(){
+    return this.$modal.childNodes;
+};
+
 MLeftNavigator.prototype.open = function (v0) {
     if (this._state == 1) return;
     v0 = v0 || 1000;
