@@ -9,6 +9,7 @@ var $ = ACore.$;
 var iconCatalogCaches = {};
 
 function MessageInput() {
+    this._editMode = "new";//edit
     this._iconAssetRoot = this.attr('data-icon-asset-root');
     var catalogiUrl = this._iconAssetRoot + '/catalog.json';
     this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
@@ -265,15 +266,15 @@ MessageInput.prototype.openFileDialog = function () {
     var thisMi = this;
     openFileDialog({ multiple: true }).then(function (files) {
         if (files.length > 0) {
-            var imageFiles= [];
+            var imageFiles = [];
             var otherFiles = [];
             var file;
-            for (var i = 0; i < files.length; ++i){
+            for (var i = 0; i < files.length; ++i) {
                 file = files[i];
-                if (!!file.type && file.type.match && file.type.match(/^image\//)){
+                if (!!file.type && file.type.match && file.type.match(/^image\//)) {
                     imageFiles.push(file);
                 }
-                else{
+                else {
                     otherFiles.push(file);
                 }
             }
@@ -328,6 +329,7 @@ MessageInput.eventHandler.preInputKeyUp = function (event) {
 };
 
 MessageInput.eventHandler.preInputPasteImg = function (event) {
+    if (this._mode == 'edit') return;
     this.addImageFiles(event.imageFiles, event.urls);
     this.notifyChange();
 };
@@ -444,7 +446,27 @@ MessageInput.property.text = {
     get: function () {
         return this.$preInput.value;
     }
-}
+};
+
+
+/**
+ * @type {MessageInput}
+ */
+MessageInput.property.mode = {
+    set: function (value) {
+        if (value == 'edit'){
+            this.addClass('as-mode-edit');
+        }
+        else{
+            value = 'new';
+            this.removeClass('as-mode-edit');
+        }
+        this._mode = value;
+    },
+    get: function () {
+        return this._mode;
+    }
+};
 
 
 ACore.install('messageinput', MessageInput);
