@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Menu</title>
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
-    <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://absol.cf/css/materialdesignicons/materialdesignicons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <script src="../dist/absol-acomp.js?"></script>
@@ -33,6 +33,13 @@
 
         .hover-yellow:hover {
             color: yellow;
+        }
+
+        body{
+            font-size: 20px;
+        }
+        *{
+            box-sizing: border-box;
         }
     </style>
 </head>
@@ -148,15 +155,17 @@
     <script class="viewable">
         var menuProps = {
             items: [
-                { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' },
-                { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' },
-                "================================",
                 {
                     text: 'Cut', key: 'extendStyle[color=red]', cmd: 'cut',
                     extendStyle: {
                         color: 'red'
-                    }
+                    },
+                    icon: 'span.mdi.mdi-content-cut'
                 },
+                "================================",
+                { text: 'Undo', key: 'Ctrl+Z', cmd: 'undo' , icon:'span.mdi.mdi-undo'},
+                { text: 'Redo', key: 'Ctrl+Y', cmd: 'redo' ,  icon: 'span.mdi.mdi-redo'},
+                
                 { text: 'Copy', key: 'extendClasses[hover-blue]', cmd: 'copy', extendClasses: 'hover-blue' },
                 { text: 'Paste', key: 'icon[.mdi.mdi-flash]', cmd: 'paste', icon: 'span.mdi.mdi-flash', extendClasses: 'hover-yellow' },
                 "==============================",
