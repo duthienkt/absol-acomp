@@ -9,7 +9,7 @@ var $ = ACore.$;
 var iconCatalogCaches = {};
 
 function MessageInput() {
-    this._editMode = "new";//edit
+    this._mode = "new";//edit
     this._iconAssetRoot = this.attr('data-icon-asset-root');
     var catalogiUrl = this._iconAssetRoot + '/catalog.json';
     this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
