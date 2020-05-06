@@ -1,6 +1,7 @@
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 
 
@@ -199,7 +200,7 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     QuickMenu.updatePosition();
     setTimeout(function () {
         menu.addStyle('visibility', 'visible');
-    }, 2);
+    }, BrowserDetector.isMobile ? 33 : 2);
 
     //track element
     var trackElt = element.parentElement;
