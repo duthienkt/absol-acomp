@@ -96,9 +96,14 @@
                         messageCtn.addStyle('height', 'calc(100% - ' + (event.bound.height) + 'px)')
                     },
                     send: function () {
+                        //callback này gọi khi enter
                         console.log('send', this.text, this.files, this.images)
                         this.clearAllContent()
                         this.blur();
+                    },
+                    cancel:function(){
+                        //callback này chỉ gọi trong chế độ mode="edit", khi người dùng nhấn ESC hoặc click vào X
+                        console.log('Cancel');
                     }
                 }
             });
