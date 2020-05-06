@@ -29,7 +29,7 @@
     visibility: hidden;
     z-index: 55;
     display: inline-block;
-
+    font-size: 14px;
 }
 
 .absol-context-hinge .absol-vmenu,
