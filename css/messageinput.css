@@ -55,7 +55,8 @@
     position: relative;
 }
 
-.as-message-input-send-btn {
+.as-message-input-send-btn,
+.as-message-input-cancel-btn {
     position: absolute;
     right: 5px;
     height: 30px;
@@ -65,12 +66,20 @@
     padding: 0;
     border: 0;
     background-color: transparent;
+    outline: none;
 }
 
-.as-message-input-send-btn span {
+.as-message-input-send-btn span,
+.as-message-input-cancel-btn span {
     font-size: 20px;
 }
 
+/* .as-message-input-cancel-btn {
+    color: white;
+    border-radius: 50%;
+    background-color: rgba(169, 169, 169);
+
+} */
 
 .as-message-input-img-list:empty {
     display: none;
@@ -128,7 +137,8 @@
 }
 
 .as-message-input.as-mode-edit .as-message-input-plugin-image,
-.as-message-input.as-mode-edit .as-message-input-plugin-file
-{
+.as-message-input.as-mode-edit .as-message-input-plugin-file,
+.as-message-input:not(.as-mode-edit) .as-message-input-cancel-btn,
+.as-message-input.as-mode-edit .as-message-input-send-btn {
     display: none;
 }

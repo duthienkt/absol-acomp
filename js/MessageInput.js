@@ -37,6 +37,9 @@ function MessageInput() {
     this.$sendBtn = $('.as-message-input-send-btn', this)
         .on('click', this.notifySend.bind(this));
 
+    this.$cancelBtn = $('.as-message-input-cancel-btn', this)
+        .on('click', this.notifyCancel.bind(this));
+
     this.$extenalTool = $('.as-message-input-extenal-tools', this);
     this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
     this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
@@ -58,7 +61,7 @@ MessageInput.render = function (data) {
             'data-icon-asset-root': data.iconAssetRoot,
             tabindex: '1' //tabindex to prevent open new tab after drop 
         },
-        extendEvent: ['sizechange', 'change', 'send'],
+        extendEvent: ['sizechange', 'change', 'send', 'cancel'],
         child: [
             {
                 class: 'as-message-input-extenal-tools',
@@ -92,6 +95,11 @@ MessageInput.render = function (data) {
                         tag: 'button',
                         class: 'as-message-input-send-btn',
                         child: 'span.mdi.mdi-send'
+                    },
+                    {
+                        tag: 'button',
+                        class: 'as-message-input-cancel-btn',
+                        child: 'span.mdi.mdi-close'
                     }
                 ]
             },
@@ -133,6 +141,13 @@ MessageInput.prototype.notifyChange = function () {
 
 MessageInput.prototype.notifySend = function () {
     this.emit('send', {
+        name: 'send', target: this, clearAllContent: this.clearAllContent.bind(this)
+    }, this);
+};
+
+MessageInput.prototype.notifyCancel = function () {
+    this.emit('cancel', {
+        type: 'cancel',
         name: 'send', target: this, clearAllContent: this.clearAllContent.bind(this)
     }, this);
 };
@@ -318,6 +333,10 @@ MessageInput.eventHandler.preInputChange = function (event) {
 MessageInput.eventHandler.preInputKeyDown = function (event) {
     if (!event.shiftKey && event.key == 'Enter') {
         this.notifySend();
+        event.preventDefault();
+    }
+    else if (event.key == "Escape" && this._mode == 'edit'){
+        this.notifyCancel();
         event.preventDefault();
     }
     setTimeout(this.notifySizeChange.bind(this), 1);
