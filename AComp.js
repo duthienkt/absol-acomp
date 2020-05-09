@@ -213,6 +213,10 @@ import './css/dateinput.css';
 import './js/MessageInput';
 import './css/messageinput.css';
 
+import './js/ProgressBar';
+import './css/progressbar.css';
+
+
 
 
 

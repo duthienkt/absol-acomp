@@ -1,0 +1,55 @@
+.as-progress-bar {
+    height: 1em;
+    background-color: #e9ecef;
+    border-radius: .25em;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+
+.as-progress-bar-value {
+    height: 100%;
+    width: 0;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    background-color: #007bff;
+    transition: width .6s ease;
+}
+
+.as-progress-bar.as-variant-success .as-progress-bar-value {
+    background-color: #28a745;
+}
+
+.as-progress-bar.as-variant-info .as-progress-bar-value {
+    background-color: #17a2b8;
+}
+
+.as-progress-bar.as-variant-warning .as-progress-bar-value {
+    background-color: #ffc107;
+}
+
+.as-progress-bar.as-variant-danger .as-progress-bar-value {
+    background-color: #dc3545;
+}
+
+
+.as-progress-bar.as-striped .as-progress-bar-value,
+.as-progress-bar.as-animated .as-progress-bar-value {
+    background-image: linear-gradient(45deg, hsla(0, 0%, 100%, .15) 25%, transparent 0, transparent 50%, hsla(0, 0%, 100%, .15) 0, hsla(0, 0%, 100%, .15) 75%, transparent 0, transparent);
+    background-size: 1.33333em 1.33333em;
+}
+
+@keyframes as-progress-bar-stripes {
+    0% {
+        background-position: 1.33333em 0
+    }
+
+    to {
+        background-position: 0 0
+    }
+}
+
+.as-progress-bar.as-animated .as-progress-bar-value {
+    animation: as-progress-bar-stripes 1s linear infinite;
+}
