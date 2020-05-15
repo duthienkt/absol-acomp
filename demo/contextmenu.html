@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Menu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=0">
+    <title>ContextMenu</title>
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <link rel="stylesheet" href="https://absol.cf/css/materialdesignicons/materialdesignicons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -42,14 +43,26 @@
         body {
             min-height: 100vh;
         }
+        #test-zone{
+            width: 50vw;
+            height: 50vh;
+            border: 1px solid black;
+        }
+        #free-zone {
+            width: 50%;
+            height: 50%;
+            border: 1px solid green;
+        }
     </style>
 </head>
 
 <body>
-
+    <div id="test-zone"> right click to me
+        <div id="free-zone" class="as-system-context-menu">Vùng này không chặn chuột phải</div>
+    </div>
     <script>
-        var contextCaptor = absol._('contextcaptor').addTo(document.body).attachTo(document.body);
-        $(document.body).defineEvent('contextmenu').on('contextmenu', function (event) {
+        absol.ContextCaptor.auto();
+        $('#test-zone').defineEvent('contextmenu').on('contextmenu', function (event) {
             event.showContextMenu({
                 items: [{ text: 'Expand Down', value: 1, icon: 'span.mdi.mdi-arrow-expand-down' }, { text: 'Expand Up', value: 2, icon: 'span.mdi.mdi-arrow-expand-up' }]
             }, function (event) {
@@ -58,7 +71,7 @@
         }); 
     </script>
     <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
-    <script src="./autohightlighting.js?"></script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 
 </body>
 
