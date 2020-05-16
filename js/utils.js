@@ -125,7 +125,18 @@ export function openFileDialog(props) {
             }
         }).addTo(document.body);
         props = props || {};
-
+        if (props == 'camera') {
+            props = {
+                accept: 'image/*',
+                capture: 'camera'
+            }
+        }
+        else if (props == 'microphone') {
+            props = {
+                accept: 'audio/',
+                capture: "microphone"
+            }
+        }
 
         if (props.accept) {
             if (props.accept instanceof Array)
@@ -137,6 +148,9 @@ export function openFileDialog(props) {
             input.attr('accept', null);
         }
 
+        if (props.capture) {
+            input.attr('capture', props.capture);
+        }
         if (props.multiple) {
             input.attr('multiple', 'true');
         }
