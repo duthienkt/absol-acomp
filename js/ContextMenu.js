@@ -150,7 +150,7 @@ ContextCaptor.eventHandler.mousedown = function (event) {
             thisCT.moveTo(thisCT._posCurrent);
             thisCT.active(true);
             thisCT._longPressTimeout = -1;
-        }, 500);
+        }, 400);
         this.$target = target;
         this._isTouch = isTouch;
         this._touchId = touchId;
