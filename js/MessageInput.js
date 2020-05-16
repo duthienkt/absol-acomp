@@ -373,7 +373,7 @@ MessageInput.eventHandler.pickEmoji = function (event) {
     this.$preInput.commitChange(newText, newOffset);
     this.notifySizeChange();
     this.$preInput.focus();//older firefox version will be lost focus
-    this.notifyChange();
+    // this.notifyChange();//not need
 };
 
 
