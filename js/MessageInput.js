@@ -335,7 +335,7 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
         this.notifySend();
         event.preventDefault();
     }
-    else if (event.key == "Escape" && this._mode == 'edit'){
+    else if (event.key == "Escape" && this._mode == 'edit') {
         this.notifyCancel();
         event.preventDefault();
     }
@@ -473,10 +473,10 @@ MessageInput.property.text = {
  */
 MessageInput.property.mode = {
     set: function (value) {
-        if (value == 'edit'){
+        if (value == 'edit') {
             this.addClass('as-mode-edit');
         }
-        else{
+        else {
             value = 'new';
             this.removeClass('as-mode-edit');
         }
