@@ -17,6 +17,7 @@ function SinglePage() {
         .on('error', function () {
             this.updateSize = this.updateSize || res.updateSize.bind(res);
             this.updateSize();
+            setTimeout(this.updateSize, 20);
             Dom.addToResizeSystem(this);
         });
     res.$header = null;
@@ -29,8 +30,12 @@ function SinglePage() {
 
 SinglePage.prototype.updateSize = function () {
     if (this.$header) {
-        var viewportBound = this.$viewport.getBoundingClientRect();
-        this.$header.addStyle('width', viewportBound.width + 'px');
+        if (this.$scroller.scrollHeight > this.$scroller.clientHeight) {
+            this.$header.addStyle('right', '17px');
+        }
+        else {
+            this.$header.removeStyle('right');
+        }
         var headerBound = this.$header.getBoundingClientRect();
         this.$viewport.addStyle('padding-top', headerBound.height + 'px');
     }
