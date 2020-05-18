@@ -10,6 +10,7 @@
     left: 0;
     right: 0;
     box-sizing: border-box;
+    z-index: 2;
 }
 
 .absol-single-page-footer {
