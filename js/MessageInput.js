@@ -496,11 +496,10 @@ export default MessageInput;
 
 
 
-var urlRex = /^(firefox|opera|chrome|https|http|wss|ws):\/\/[^\s]+$/
+var urlRex = /^(firefox|opera|chrome|https|http|wss|ws):\/\/[^\s]+$/;
 export function parseMessage(text, data) {
     data = data || {};
     data.emojiAssetRoot = data.emojiAssetRoot || EmojiPicker.assetRoot;
-
     var textLines = text.split(/\r?\n/);
     var lines = textLines.map(function (textLine) {
         var longTokenTexts = textLine.split(/\s/);
@@ -510,49 +509,59 @@ export function parseMessage(text, data) {
                 type: 'text',
                 value: ' '
             });
-            var urlMatched = longTokenText.match(urlRex);
-            if (urlMatched) {
-                tokens.push({
-                    type: 'url',
-                    value: longTokenText,
-                    protocal: urlMatched[1]
-                });
-            }
-            else {
-                var emojiKey;
-                var subIndex;
-                var leftToken;
-                var found;
-                while (longTokenText.length > 0) {
-                    found = false;
-                    for (var i = 0; i < EmojiAnims.length && !found; ++i) {
-                        emojiKey = EmojiAnims[i][0];
-                        subIndex = longTokenText.indexOf(emojiKey);
-                        if (subIndex >= 0) {
-                            leftToken = longTokenText.substr(0, subIndex);
-                            longTokenText = longTokenText.substr(subIndex + emojiKey.length);
-                            if (leftToken.length > 0) {
-                                tokens.push({
-                                    type: 'text',
-                                    value: leftToken
-                                });
-                            };
-                            tokens.push({
-                                type: 'emoji',
-                                value: EmojiAnims[i]
-                            });
-                            found = true;
-                        }
-                    }
-                    if (!found) {
-                        tokens.push({
-                            type: 'text',
-                            value: longTokenText
-                        });
-                        longTokenText = '';
+
+            var emojiKey, emojiKeyTemp;
+            var subIndex, subIndexTemp;
+            var leftToken;
+            var found;
+            var emoji;
+            while (longTokenText.length > 0) {
+                found = false;
+                subIndex = 10000000;
+                for (var i = 0; i < EmojiAnims.length; ++i) {
+                    emojiKeyTemp = EmojiAnims[i][0];
+                    subIndexTemp = longTokenText.indexOf(emojiKeyTemp);
+                    if (subIndexTemp >= 0 && subIndexTemp < subIndex) {
+                        subIndex = subIndexTemp;
+                        emojiKey = emojiKeyTemp;
+                        emoji = EmojiAnims[i];
+                        found = true;
                     }
                 }
+
+                if (found) {
+                    if (subIndex >= 0) {
+                        leftToken = longTokenText.substr(0, subIndex);
+                        longTokenText = longTokenText.substr(subIndex + emojiKey.length);
+                        if (leftToken.length > 0) {
+                            tokens.push({
+                                type: 'text',
+                                value: leftToken
+                            });
+                        };
+                        tokens.push({
+                            type: 'emoji',
+                            value: emoji
+                        });
+                        found = true;
+                    }
+                }
+                else {
+                    tokens.push({
+                        type: 'text',
+                        value: longTokenText
+                    });
+                    longTokenText = '';
+                }
             }
+
+            tokens.forEach(function (token) {
+                if (token.type == 'text') {
+                    var urlMatched = token.value.match(urlRex);
+                    token.type = 'url';
+                    token.protocal = urlMatched[1]
+                }
+            })
             return tokens;
         });
         var tokens = [];
