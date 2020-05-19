@@ -2,6 +2,8 @@ import ACore from "../ACore";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import { openFileDialog } from "./utils";
 import XHR from "absol/src/Network/XHR";
+import EmojiAnims from "./EmojiAnims";
+import EmojiPicker from "./EmojiPicker";
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -491,3 +493,115 @@ MessageInput.property.mode = {
 ACore.install('messageinput', MessageInput);
 
 export default MessageInput;
+
+
+
+var urlRex = /^(firefox|opera|chrome|https|http|wss|ws):\/\/[^\s]+$/
+export function parseMessage(text, data) {
+    data = data || {};
+    data.emojiAssetRoot = data.emojiAssetRoot || EmojiPicker.assetRoot;
+
+    var textLines = text.split(/\r?\n/);
+    var lines = textLines.map(function (textLine) {
+        var longTokenTexts = textLine.split(/\s/);
+        var tokenGoups = longTokenTexts.map(function (longTokenText, longTokenIndex) {
+            var tokens = [];
+            if (longTokenIndex > 0) tokens.push({
+                type: 'text',
+                value: ' '
+            });
+            var urlMatched = longTokenText.match(urlRex);
+            if (urlMatched) {
+                tokens.push({
+                    type: 'url',
+                    value: longTokenText,
+                    protocal: urlMatched[1]
+                });
+            }
+            else {
+                var emojiKey;
+                var subIndex;
+                var leftToken;
+                var found;
+                while (longTokenText.length > 0) {
+                    found = false;
+                    for (var i = 0; i < EmojiAnims.length && !found; ++i) {
+                        emojiKey = EmojiAnims[i][0];
+                        subIndex = longTokenText.indexOf(emojiKey);
+                        if (subIndex >= 0) {
+                            leftToken = longTokenText.substr(0, subIndex);
+                            longTokenText = longTokenText.substr(subIndex + emojiKey.length);
+                            if (leftToken.length > 0) {
+                                tokens.push({
+                                    type: 'text',
+                                    value: leftToken
+                                });
+                            };
+                            tokens.push({
+                                type: 'emoji',
+                                value: EmojiAnims[i]
+                            });
+                            found = true;
+                        }
+                    }
+                    if (!found) {
+                        tokens.push({
+                            type: 'text',
+                            value: longTokenText
+                        });
+                        longTokenText = '';
+                    }
+                }
+            }
+            return tokens;
+        });
+        var tokens = [];
+
+        for (var i = 0; i < tokenGoups.length; ++i) {
+            tokens.push.apply(tokens, tokenGoups[i]);
+        }
+
+        return tokens.reduce(function (ac, token) {
+            if (token.type == 'text' && ac.last.type == 'text') {
+                ac.last.value += token.value;
+            }
+            else {
+                ac.last = token;
+                ac.result.push(token);
+            }
+            return ac;
+        },
+            { result: [], last: { type: 'null' } })
+            .result;
+    });
+    return lines.reduce(function (ac, line, lineIndex, lines) {
+        line.reduce(function (ac, token) {
+            if (token.type == 'text') {
+                ac.push({
+                    tag:'span',
+                    child: { text: token.value}
+                })
+            }
+            else if (token.type == 'url') {
+                ac.push({
+                    tag: 'a',
+                    class:'as-protocal-'+ token.protocal,
+                    child: { text: token.value }
+                })
+            }
+            else if (token.type == 'emoji') {
+                ac.push({
+                    tag:'img', 
+                    class:'as-emoji',
+                    props:{
+                        src: data.emojiAssetRoot + '/static/x20/' + token.value[1]
+                    }
+                })
+            }
+            return ac;
+        }, ac);
+        if (lineIndex < lines.length - 1 || line.length == 0)
+            ac.push('br');
+        return ac;
+    }, []);
+}

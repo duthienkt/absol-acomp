@@ -8,9 +8,11 @@ import ChromeCalendar from "./js/ChromeCalendar";
 import Radio from "./js/Radio";
 import EmojiChars from "./js/EmojiChars";
 import EmojiAnims from "./js/EmojiAnims";
-import MessageInput from './js/MessageInput';
+import MessageInput, { parseMessage } from './js/MessageInput';
 import EmojiPicker from './js/EmojiPicker';
 import ContextCaptor from './js/ContextMenu';
+
+absol.parseMessage = parseMessage;
 
 //for export to window
 absol.Tooltip = AComp.creator.tooltip;
