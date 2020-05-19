@@ -583,7 +583,7 @@ export function parseMessage(text, data) {
             { result: [], last: { type: 'null' } })
             .result;
     });
-    return lines.reduce(function (ac, line, lineIndex, lines) {
+    var res =  lines.reduce(function (ac, line, lineIndex, lines) {
         line.reduce(function (ac, token) {
             if (token.type == 'text') {
                 ac.push({
@@ -613,4 +613,7 @@ export function parseMessage(text, data) {
             ac.push('br');
         return ac;
     }, []);
+
+
+    return res;
 }

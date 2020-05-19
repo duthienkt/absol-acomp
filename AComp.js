@@ -202,6 +202,8 @@ import './js/Board';
 
 import './js/Sprite';
 
+import './js/IconSprite';
+
 import './js/EmojiPicker';
 import './css/emojipicker.css';
 
