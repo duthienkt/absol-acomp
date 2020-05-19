@@ -22,7 +22,7 @@ PreInput.render = function () {
 PreInput.prototype.applyData = function (text, offset) {
     var textNode = _({ text: text });
     this.clearChild()
-        .addChild(textNode);
+        .addChild(textNode).addChild(_('br'));
     if (this.isDescendantOf(document.body)) {
         if (document.getSelection) {
 
