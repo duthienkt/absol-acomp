@@ -578,22 +578,22 @@ export function parseMessage(text, data) {
         line.reduce(function (ac, token) {
             if (token.type == 'text') {
                 ac.push({
-                    tag:'span',
-                    child: { text: token.value}
+                    tag: 'span',
+                    child: { text: token.value }
                 })
             }
             else if (token.type == 'url') {
                 ac.push({
                     tag: 'a',
-                    class:'as-protocal-'+ token.protocal,
+                    class: 'as-protocal-' + token.protocal,
                     child: { text: token.value }
                 })
             }
             else if (token.type == 'emoji') {
                 ac.push({
-                    tag:'img', 
-                    class:'as-emoji',
-                    props:{
+                    tag: 'img',
+                    class: 'as-emoji',
+                    props: {
                         src: data.emojiAssetRoot + '/static/x20/' + token.value[1]
                     }
                 })

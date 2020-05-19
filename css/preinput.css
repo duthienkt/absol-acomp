@@ -2,8 +2,11 @@
     margin: 0;
     padding: 0;
     white-space: pre-wrap;
+    -moz-user-modify: read-write;
+    -webkit-user-modify: read-write;
 }
 
-.as-preinput img{
+
+.as-preinput img {
     display: none;
 }
