@@ -500,6 +500,8 @@ var urlRex = /^(firefox|opera|chrome|https|http|wss|ws):\/\/[^\s]+$/;
 export function parseMessage(text, data) {
     data = data || {};
     data.emojiAssetRoot = data.emojiAssetRoot || EmojiPicker.assetRoot;
+    data.staticSize = data.staticSize || 20;
+    data.animSize = data.animSize || 60;
     var textLines = text.split(/\r?\n/);
     var lines = textLines.map(function (textLine) {
         var longTokenTexts = textLine.split(/\s/);
@@ -558,8 +560,10 @@ export function parseMessage(text, data) {
             tokens.forEach(function (token) {
                 if (token.type == 'text') {
                     var urlMatched = token.value.match(urlRex);
-                    token.type = 'url';
-                    token.protocal = urlMatched[1]
+                    if (urlMatched) {
+                        token.type = 'url';
+                        token.protocal = urlMatched[1]
+                    }
                 }
             })
             return tokens;
@@ -595,7 +599,10 @@ export function parseMessage(text, data) {
                 ac.push({
                     tag: 'a',
                     class: 'as-protocal-' + token.protocal,
-                    child: { text: token.value }
+                    child: { text: token.value },
+                    props: {
+                        href: token.value
+                    }
                 })
             }
             else if (token.type == 'emoji') {
@@ -603,7 +610,7 @@ export function parseMessage(text, data) {
                     tag: 'img',
                     class: 'as-emoji',
                     props: {
-                        src: data.emojiAssetRoot + '/static/x20/' + token.value[1]
+                        src: data.emojiAssetRoot + '/static/x' + data.staticSize + '/' + token.value[1]
                     }
                 })
             }
@@ -616,7 +623,7 @@ export function parseMessage(text, data) {
     if (res.length == 1 && res[0].class == 'as-emoji') {
         res[0].tag = 'iconsprite',
             res[0].props.fps = 15;
-        res[0].props.src = res[0].props.src.replace('static/x20', 'amim/x60');
+        res[0].props.src = res[0].props.src.replace('/static/x' + data.staticSize, 'anim/x' + data.animSize);
     }
     return res;
 }
