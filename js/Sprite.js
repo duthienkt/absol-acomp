@@ -135,8 +135,8 @@ Sprite.prototype.play = function () {
 
 Sprite.prototype.afterReady = function () {
     var thisSprite = this;
-    if (this._state == READY)
-        Promise.resolve();
+    if (this._state != NOT_READY && this._state != ERROR)
+       return Promise.resolve();
     else return new Promise(function (rs, rj) {
         thisSprite.once('ready', rs);
         thisSprite.once('srcerror', rj);
