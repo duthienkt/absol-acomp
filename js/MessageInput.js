@@ -583,7 +583,7 @@ export function parseMessage(text, data) {
             { result: [], last: { type: 'null' } })
             .result;
     });
-    var res =  lines.reduce(function (ac, line, lineIndex, lines) {
+    var res=  lines.reduce(function (ac, line, lineIndex, lines) {
         line.reduce(function (ac, token) {
             if (token.type == 'text') {
                 ac.push({
@@ -613,7 +613,10 @@ export function parseMessage(text, data) {
             ac.push('br');
         return ac;
     }, []);
-
-
+    if (res.length == 1 && res[0].class == 'as-emoji'){
+        res[0].tag = 'iconsprite',
+        res[0].props.fps = 15;
+        res[0].props.src = res[0].props.src.replace('static/x20', 'amim/x60');
+    }
     return res;
 }
