@@ -84,6 +84,45 @@
         })()
 
     </script>
+
+    <h1>AutoSprite</h1>
+    <div id="demo2"></div>
+    <script>
+          (function () {
+                var _ = absol._;
+                var $ = absol.$;
+                var demo2 = $('#demo2')
+                var sprites = Array(5).fill(0).map(function () {
+                    var mSprite = _({
+                        tag: 'iconsprite',
+                        props: {
+                            src: 'https://absol.cf/emoji/anim/x120/sleepy.png',
+                            fps: 15,
+                            frames: {
+                                type: 'grid',
+                                col: 1,
+                                row: 77
+                            }
+                        },
+                        on: {
+                            ready: function () {
+
+                            },
+                            stop: function () {
+                               
+                            },
+                            frame: function () {
+                            }
+                        }
+                    });
+                    demo2.addChild(mSprite);
+                    
+                    return mSprite;
+                });
+                
+            })()
+
+    </script>
     <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 
 </body>
