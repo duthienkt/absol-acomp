@@ -16,7 +16,13 @@ function PreInput() {
 
 
 PreInput.render = function () {
-    return _('pre.as-preinput[contenteditable="true"]');
+    return _({
+        tag: 'pre',
+        attr: {
+            contenteditable: 'true'
+        },
+        child: 'br'
+    });
 };
 
 PreInput.prototype.applyData = function (text, offset) {
@@ -166,7 +172,9 @@ PreInput.prototype.stringOf = function (node) {
     if (node.nodeType == 3) {
         return node.data;
     }
-    if (node.tagName == 'BR' || node.tagName == 'br') return '\n';
+    if (node.tagName == 'BR' || node.tagName == 'br') {
+        return '\n';
+    }
     var thisInput = this;
 
     return Array.prototype.map.call(node.childNodes, function (cNode, index, arr) {
