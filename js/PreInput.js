@@ -18,6 +18,7 @@ function PreInput() {
 PreInput.render = function () {
     return _({
         tag: 'pre',
+        class: 'as-preinput',
         attr: {
             contenteditable: 'true'
         },
