@@ -11,6 +11,15 @@
     cursor: copy;
 }
 
+.absol-selectbox.disabled {
+    pointer-events: none;
+    background-color: #ebebe4;
+}
+
+.absol-selectbox.disabled .absol-selectbox-item {
+    opacity: 0.7;
+}
+
 .absol-selectbox {
     white-space: normal;
 }
@@ -18,7 +27,6 @@
 .absol-selectbox .absol-selectbox-item {
     margin: 2px;
 }
-
 
 .absol-selectbox-item {
     display: inline-block;
@@ -52,7 +60,6 @@
     background-color: rgb(255, 227, 174);
     color: black;
 }
-
 
 .absol-selectbox-item-text {
     height: 30px;
@@ -102,7 +109,6 @@
 .absol-selectbox:not(.focus) .absol-selectmenu-dropdown-box {
     display: none;
 }
-
 
 .absol-selectbox .absol-selectlist-item.selected {
     display: none;
