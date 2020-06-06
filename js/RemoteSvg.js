@@ -25,7 +25,7 @@ RemoteSvg.property = {
             return this._name;
         }
     }
-}
+};
 
 
 RemoteSvg.attribute = {
@@ -40,7 +40,7 @@ RemoteSvg.attribute = {
 
         }
     }
-}
+};
 
 RemoteSvg.__cache__ = {};
 
@@ -48,7 +48,7 @@ RemoteSvg.__div_parser__ = document.createElement('div');
 
 RemoteSvg.loadIcon = function (path) {
     if (RemoteSvg.__cache__[path]) {
-        return RemoteSvg.__cache__[path]
+        return RemoteSvg.__cache__[path];
     }
     else {
         RemoteSvg.__cache__[path] = XHR.getRequest(path, 'text').then(function (result) {
@@ -70,7 +70,7 @@ RemoteSvg.loadIcon = function (path) {
         }, function () {
             return {};
         });
-        return RemoteSvg.__cache__[path] ;
+        return RemoteSvg.__cache__[path];
     }
 
 };
