@@ -40,7 +40,7 @@ function SelectMenu() {
     this.$scrollTrackElts = [];
 
     this.itemsByValue = {};
-
+    this._itemsByValue = {};
     this.$searchTextInput.on('stoptyping', this.eventHandler.searchModify);
     this._searchCache = {};
     this.$selectlist.on('change', this.eventHandler.selectlistChange, true);
@@ -198,8 +198,10 @@ SelectMenu.prototype.init = function (props) {
     if (!('value' in props)) {
         if (props.items && props.items.length > 0) props.value = typeof props.items[0] == 'string' ? props.items[0] : props.items[0].value;
     }
-
+    var value = props.value;
+    delete props.value;
     this.super(props);
+    this.value = value;
 };
 
 SelectMenu.property = {};
