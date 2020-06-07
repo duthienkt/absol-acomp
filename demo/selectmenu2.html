@@ -1,0 +1,27 @@
+<htmt>
+    <head>
+        <meta charset="UTF-8">
+        <title>Selectmenu 2</title>
+        <script src="../dist/absol-acomp.js?time=0606729"></script>
+    </head>
+
+    <body>
+        <script src="https://absol.cf/acomp/demo/selectmenu2_data.js"></script>
+        <script>
+            var $ = absol.$;
+            var _ = absol._;
+           
+            var test = function(){
+                // this.remove();
+                var startTime = new Date();
+                var sm = _('selectmenu').addTo(document.body);
+                sm.items = items;
+                sm.value = 9634;
+                sm.enableSearch = true;
+                var endTime = new Date();
+                _(`<p>Init component time:  ${endTime.getTime() - startTime.getTime()}(ms)</p>`).addTo(document.body);
+            }
+            test();
+        </script>
+    </body>
+</htmt>
