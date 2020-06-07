@@ -15,8 +15,8 @@
                 // this.remove();
                 var startTime = new Date();
                 var sm = _('selectmenu').addTo(document.body);
-                sm.items = items;
                 sm.value = 9634;
+                sm.items = items;
                 sm.enableSearch = true;
                 var endTime = new Date();
                 _(`<p>Init component time:  ${endTime.getTime() - startTime.getTime()}(ms)</p>`).addTo(document.body);
