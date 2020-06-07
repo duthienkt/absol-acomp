@@ -45,7 +45,7 @@ function SelectTreeMenu() {
     res.$scrollTrackElts = [];
 
 
-
+    res._itemsByValue = {};
     res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
     res._searchCache = {};
     res.$selectlist.on('change', res.eventHandler.selectlistChange, true);
@@ -80,7 +80,7 @@ SelectTreeMenu.prototype.updateDropdownPostion = SelectMenu.prototype.updateDrop
 SelectTreeMenu.prototype.scrollToSelectedItem = SelectMenu.prototype.scrollToSelectedItem;
 SelectTreeMenu.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
 SelectTreeMenu.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
-
+SelectTreeMenu.prototype._dictByValue = SelectMenu.prototype._dictByValue;
 
 SelectTreeMenu.eventHandler = {};
 SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
@@ -128,11 +128,11 @@ SelectTreeMenu.property.items = {
         value = value || [];
         this._items = value;
         SelectTreeMenu.prepareData(this._items);
-    
+
         this.__searchcache__ = {};
         this.__searchcache__['__EMPTY_QUERY__'] = SelectTreeMenu.treeToList(value);
         this.$selectlist.items = this.__searchcache__['__EMPTY_QUERY__'];
-
+        this._itemsByValue = this._dictByValue(this.__searchcache__['__EMPTY_QUERY__']);
         //same with SelectMenu
         this.selectListBound = this.$selectlist.getBoundingClientRect();
         this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
@@ -177,7 +177,7 @@ SelectTreeMenu.property.isFocus = {
             }
 
             this.updateDropdownPostion();
-
+            this.scrollToSelectedItem();
         }
         else {
             this.$anchor.addClass('absol-disabled');
@@ -279,7 +279,7 @@ SelectTreeMenu.queryTree = function (query, items) {
     var gmaxScore = 0;
     var gminScore = 1000;
     var queryItem = SelectTreeMenu.prepareItem({ text: query });
-    
+
 
     function makeScore(item) {
 

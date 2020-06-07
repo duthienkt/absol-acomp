@@ -39,7 +39,6 @@ function SelectMenu() {
 
     this.$scrollTrackElts = [];
 
-    this.itemsByValue = {};
     this._itemsByValue = {};
     this.$searchTextInput.on('stoptyping', this.eventHandler.searchModify);
     this._searchCache = {};
@@ -171,6 +170,7 @@ SelectMenu.calScore = function (queryItem, item) {
 
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
+    if (!this._itemsByValue) console.trace();
     if (this._itemsByValue[this.value]) {
         var elt = _({ tag: 'selectlistitem', props: { data: this._itemsByValue[this.value] } }).addTo(this.$holderItem);
         elt.$descCtn.addStyle('width', this.$selectlist._descWidth + 'px');
@@ -221,6 +221,7 @@ SelectMenu.property.items = {
 
         this._items = value;
         this._itemsByValue = this._dictByValue(value);
+        
         if (!this._itemsByValue[this.value] && value.length > 0) {
 
             this.value = value[0].value;
@@ -243,7 +244,6 @@ SelectMenu.property.items = {
 
 SelectMenu.property.value = {
     set: function (value) {
-
         this.$selectlist.value = value;
         this.updateItem();
     },
