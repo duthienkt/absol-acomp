@@ -191,8 +191,6 @@ SelectList.prototype.setItemsAsync = function (items) {
 
 
 SelectList.prototype.setItems = function (items) {
-
-
     this._itemSession = Math.random();
     this._items = items;
     var itemCout = items.length;
@@ -247,7 +245,7 @@ SelectList.prototype.setItems = function (items) {
     this._valuevisibility = true;
     this._finished = true;
     return {
-        session: session,
+        session: this._itemSession,
         width: this._descWidth + this._textWidth + 14,
         height: this._height
     }
