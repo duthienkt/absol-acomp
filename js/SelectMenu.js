@@ -613,7 +613,8 @@ SelectMenu.eventHandler.searchModify = function (event) {
 };
 
 SelectMenu.eventHandler.listSizeChangeAsync = function(){
-    // this.updateDropdownPostion();
+    this.selectListBound = this.$selectlist.getBoundingClientRect();
+    this.updateDropdownPostion();
 };
 
 SelectMenu.eventHandler.listValueVisibility = function(event){
