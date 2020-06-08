@@ -501,7 +501,7 @@ SelectMenu.eventHandler.scrollParent = function (event) {
     this._scrollFrameout = this._scrollFrameout || 10;
     function update() {
         self.updateDropdownPostion(false);
-        this.scrollToSelectedItem();
+        self.scrollToSelectedItem();
         self._scrollFrameout--;
         if (self._scrollFrameout > 0) requestAnimationFrame(update);
     }

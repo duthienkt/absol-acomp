@@ -389,6 +389,7 @@ SelectBox.eventHandler.searchModify = function (event) {
             view = this._searchCache[filterText];
         }
         this.$searchList.items = view;
+        this.$searchList.value = "NOTHING BE SELECTED";
     }
 
     this.selectListBound = this.$selectlist.getBoundingClientRect();
