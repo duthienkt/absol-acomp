@@ -1635,10 +1635,11 @@
         });
         var valueText = absol.$('#stm-value');
         valueText.innerHTML = 'value = 2138';
+        var now = new Date();
         absol._({
             tag: 'selecttreemenu',
             props: {
-                items: afItems,
+                items: afItems.concat(afItems),
                 value: 2138,
                 enableSearch: true
             },
@@ -1650,6 +1651,9 @@
         }).addTo(absol.$('#selectmenu-place-holder')).on('change', function (event, sender) {
             valueText.innerHTML = 'value = '+ event.value;
         });
+        console.log(new Date().getTime()- now.getTime());
+        
+
 
     </script>
     
