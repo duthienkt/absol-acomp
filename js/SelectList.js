@@ -85,11 +85,12 @@ SelectList.prototype._measureTextWidth = function (items) {
     var maxEst = 0;
     var est;
     var text;
-    var now = new Date();
+    var item;
     for (var i = 0; i < items.length; ++i) {
-        if (items[i].text) {
-            text = items[i].text;
-            est = estimateWidth14(text);
+        var item = items[i];
+        if (item.text) {
+            text = item.text;
+            est = estimateWidth14(text) + 14 * (item.level || 0);
             if (est > maxEst) {
                 maxEst = est;
                 maxText = text;
@@ -135,10 +136,6 @@ SelectList.prototype.setItemsAsync = function (items) {
             return;
         }
         if (i >= items.length) {
-            if (!thisSL.$itemByValue[thisSL.value] && items.length > 0) {
-                thisSL.value = items[0].value;
-            }
-
             thisSL.value = thisSL.value;//update
             thisSL._finished = false;
             thisSL.emit('finishasync', { session: session, type: 'finishasync' }, this);
@@ -174,7 +171,7 @@ SelectList.prototype.setItemsAsync = function (items) {
             if (thisSL.$items[i].value == thisSL.value) {
                 thisSL.$selectedItem = thisSL.$items[i];
                 thisSL.$selectedItem.addClass('selected')
-                thisSL.emit('valuevisibilityasync', {session: session, type: 'valuevisibilityasync', itemElt: thisSL.$items[i] }, thisSL);
+                thisSL.emit('valuevisibilityasync', { session: session, type: 'valuevisibilityasync', itemElt: thisSL.$items[i] }, thisSL);
             }
             ++i;
         }

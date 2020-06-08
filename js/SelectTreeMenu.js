@@ -10,7 +10,57 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function SelectTreeMenu() {
-    var res = _({
+    var res = this;
+
+    //only event is different with selectmenu
+
+    this.$holderItem = $('.absol-selectmenu-holder-item', res);
+
+    this.$anchorCtn = SelectMenu.getAnchorCtn();
+    this.$anchor = _('.absol-selectmenu-anchor.absol-disabled').addTo(this.$anchorCtn);
+    this.$anchorContentCtn = _('.absol-selectmenu-anchor-content-container').addTo(this.$anchor);
+
+    this.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(this.$anchorContentCtn);
+    this.$searchTextInput = _('searchtextinput').addStyle('display', 'none').addTo(this.$dropdownBox);
+    this.$vscroller = _('bscroller').addTo(this.$dropdownBox);
+    this.$selectlist = _('selectlist', this).addTo(this.$vscroller)
+        .on('sizechangeasync', this.eventHandler.listSizeChangeAsync)
+        .on('valuevisibilityasync', this.eventHandler.listValueVisibility);
+
+    this.$scrollTrackElts = [];
+
+
+    this._itemsByValue = {};
+    this.$searchTextInput.on('stoptyping', this.eventHandler.searchModify);
+    this._searchCache = {};
+    this.$selectlist.on('change', this.eventHandler.selectlistChange, true);
+    this.$selectlist.on('pressitem', function () {
+        res.isFocus = false;
+    }, true);
+
+
+    this.on('mousedown', this.eventHandler.click, true);
+    this.on('blur', this.eventHandler.blur);
+
+    OOP.drillProperty(this, this.$selectlist, 'selectedIndex');
+
+    this.selectListBound = { height: 0, width: 0 };
+    this.$attachhook = $('attachhook', res)
+        .on('error', res.eventHandler.attached);
+
+    this.sync = new Promise(function (rs) {
+        $('attachhook', res).once('error', function () {
+            rs();
+        });
+    });
+    this._selectListScrollSession = null;
+    return res;
+}
+
+SelectTreeMenu.tag = 'SelectTreeMenu'.toLowerCase();
+
+SelectTreeMenu.render = function () {
+    return _({
         class: ['absol-selectmenu'],
         extendEvent: ['change', 'minwidthchange'],
         attr: {
@@ -26,52 +76,7 @@ function SelectTreeMenu() {
             'attachhook',
         ]
     });
-
-    //only event is different with selectmenu
-    res.eventHandler = OOP.bindFunctions(res, SelectTreeMenu.eventHandler);
-
-    res.$holderItem = $('.absol-selectmenu-holder-item', res);
-
-
-    res.$anchorCtn = SelectMenu.getAnchorCtn();
-    res.$anchor = _('.absol-selectmenu-anchor.absol-disabled').addTo(res.$anchorCtn);
-    res.$anchorContentCtn = _('.absol-selectmenu-anchor-content-container').addTo(res.$anchor);
-
-    res.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(res.$anchorContentCtn);
-    res.$searchTextInput = _('searchtextinput').addStyle('display', 'none').addTo(res.$dropdownBox);
-    res.$vscroller = _('bscroller').addTo(res.$dropdownBox);
-    res.$selectlist = _('selectlist', res).addTo(res.$vscroller);
-
-    res.$scrollTrackElts = [];
-
-
-    res._itemsByValue = {};
-    res.$searchTextInput.on('stoptyping', res.eventHandler.searchModify);
-    res._searchCache = {};
-    res.$selectlist.on('change', res.eventHandler.selectlistChange, true);
-    res.$selectlist.on('pressitem', function () {
-        res.isFocus = false;
-    }, true);
-
-
-    res.on('mousedown', res.eventHandler.click, true);
-    res.on('blur', res.eventHandler.blur);
-
-    OOP.drillProperty(res, res.$selectlist, 'selectedIndex');
-
-    res.selectListBound = { height: 0, width: 0 };
-    res.$attachhook = $('attachhook', res)
-        .on('error', res.eventHandler.attached);
-
-    res.sync = new Promise(function (rs) {
-        $('attachhook', res).once('error', function () {
-            rs();
-        });
-    });
-
-
-    return res;
-}
+};
 
 SelectTreeMenu.prototype.updateItem = SelectMenu.prototype.updateItem;
 
@@ -88,6 +93,9 @@ SelectTreeMenu.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
 SelectTreeMenu.eventHandler.click = SelectMenu.eventHandler.click;
 SelectTreeMenu.eventHandler.bodyClick = SelectMenu.eventHandler.bodyClick;
 SelectTreeMenu.eventHandler.selectlistChange = SelectMenu.eventHandler.selectlistChange;
+
+SelectTreeMenu.eventHandler.listSizeChangeAsync = SelectMenu.eventHandler.listSizeChangeAsync;
+SelectTreeMenu.eventHandler.listValueVisibility  = SelectMenu.eventHandler.listValueVisibility;
 
 SelectTreeMenu.property = {};
 SelectTreeMenu.property.disabled = SelectMenu.property.disabled;
@@ -131,10 +139,12 @@ SelectTreeMenu.property.items = {
 
         this.__searchcache__ = {};
         this.__searchcache__['__EMPTY_QUERY__'] = SelectTreeMenu.treeToList(value);
-        this.$selectlist.items = this.__searchcache__['__EMPTY_QUERY__'];
+        this.selectListBound = this.$selectlist.setItemsAsync(this.__searchcache__['__EMPTY_QUERY__']) ;
         this._itemsByValue = this._dictByValue(this.__searchcache__['__EMPTY_QUERY__']);
-        //same with SelectMenu
-        this.selectListBound = this.$selectlist.getBoundingClientRect();
+        if (this._itemsByValue[this.value] === undefined){
+            this.value =  this.__searchcache__['__EMPTY_QUERY__'][0].value;
+        }
+
         this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
         this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
         this.updateItem();
@@ -350,6 +360,7 @@ SelectTreeMenu.prototype.search = function (query) {
         this.$vscroller.scrollTop = 0;
     }
 };
+
 
 
 ACore.creator.selecttreemenu = SelectTreeMenu;
