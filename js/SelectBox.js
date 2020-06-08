@@ -4,6 +4,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 import './SelectBoxItem';
 import { measureText } from "./utils";
+import SelectList from "./SelectList";
 
 var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
 
@@ -27,7 +28,7 @@ function SelectBox() {
     this.$vscroller = _('bscroller').addTo(this.$dropdownBox);
     this.$selectlist = _('.absol-selectlist').addTo(this.$vscroller);//reuse css
     this.$searchList = _('selectlist').addStyle('display', 'none')
-        .on('change', this.eventHandler.searchListChange).addTo(this.$vscroller);//todo: event
+        .on('change', this.eventHandler.searchListChange).addTo(this.$vscroller);
 
     this.$listItems = [];
     this._listItemViewCount = 0;
@@ -61,12 +62,18 @@ SelectBox.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
 SelectBox.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
 SelectBox.prototype.updateDropdownPostion = SelectMenu.prototype.updateDropdownPostion;
 
+SelectBox.prototype._measureDescriptionWidth = SelectList.prototype._measureDescriptionWidth;
+
+
+SelectBox.prototype._measureTextWidth = SelectList.prototype._measureTextWidth;
+
 
 
 SelectBox.eventHandler = {};
 SelectBox.eventHandler.attached = SelectMenu.eventHandler.attached;
 
 SelectBox.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
+SelectBox.eventHandler.listSizeChangeAsync = SelectMenu.eventHandler.listSizeChangeAsync;
 
 SelectBox.property = {};
 SelectBox.property.disabled = SelectMenu.property.disabled;
@@ -172,15 +179,10 @@ SelectBox.property.items = {
         this._searchCache = {};
 
         var itemCount = items.length;
-
-        measureText('', 'italic 14px  sans-serif')//cache font style
-        this._descWidth = 0;
-        for (i = 0; i < itemCount; ++i) {
-            if (items[i].desc) {
-                this._descWidth = Math.max(this._descWidth, measureText(items[i].desc).width);
-            }
-        }
-
+        this._descWidth = this._measureDescriptionWidth(items);
+        this._textWidth = this._measureTextWidth(items);
+        this._height = this.items.length * 20;
+        this.selectListBound = { height: items.length * 20 + 2, width: this._descWidth + this._textWidth + 14 + 2 };
 
         function mousedownItem(event) {
             if (EventEmitter.isMouseRight(event)) return;
@@ -227,7 +229,8 @@ SelectBox.property.items = {
             }
         }
 
-        this.selectListBound = this.$selectlist.getBoundingClientRect();
+
+
         this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
         this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
 
@@ -391,8 +394,6 @@ SelectBox.eventHandler.searchModify = function (event) {
         this.$searchList.items = view;
         this.$searchList.value = "NOTHING BE SELECTED";
     }
-
-    this.selectListBound = this.$selectlist.getBoundingClientRect();
     this.updateDropdownPostion(true);
 };
 

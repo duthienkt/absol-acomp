@@ -246,6 +246,11 @@ SelectList.prototype.setItems = function (items) {
     }
     this._valuevisibility = true;
     this._finished = true;
+    return {
+        session: session,
+        width: this._descWidth + this._textWidth + 14,
+        height: this._height
+    }
 };
 
 
