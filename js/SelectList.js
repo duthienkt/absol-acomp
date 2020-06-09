@@ -48,7 +48,7 @@ function onMousedownItem(event) {
     }
 }
 
-function makeItem() {
+export function makeItem() {
     return _({
         tag: 'selectlistitem',
         on: {
@@ -57,7 +57,7 @@ function makeItem() {
     });
 }
 
-function requireItem($parent) {
+export function requireItem($parent) {
     var item;
     if (itemPool.length > 0) {
         item = itemPool.pop();
@@ -69,14 +69,14 @@ function requireItem($parent) {
     return item;
 }
 
-function releaseItem(item) {
+export function releaseItem(item) {
     item.$selectList = null;
     item.removeClass('selected');
     itemPool.push(item);
 };
 
 
-function measureMaxDescriptionWidth(items) {
+export function measureMaxDescriptionWidth(items) {
     var maxDescWidth = 0;
     var maxText = 0;
     var maxEst = 0;
@@ -96,7 +96,7 @@ function measureMaxDescriptionWidth(items) {
 };
 
 
-function measureMaxTextWidth(items) {
+export function measureMaxTextWidth(items) {
     var maxTextWidth = 0;
     var maxText = 0;
     var maxEst = 0;

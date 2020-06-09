@@ -4,7 +4,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 import './SelectBoxItem';
 import { measureText } from "./utils";
-import SelectList from "./SelectList";
+import SelectList, { measureMaxTextWidth, measureMaxDescriptionWidth } from "./SelectList";
 
 var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
 
@@ -28,7 +28,7 @@ function SelectBox() {
     this.$vscroller = _('bscroller').addTo(this.$dropdownBox);
     this.$selectlist = _('.absol-selectlist').addTo(this.$vscroller);//reuse css
     this.$searchList = _('selectlist').addStyle('display', 'none')
-        .on('change', this.eventHandler.searchListChange).addTo(this.$vscroller);
+        .on('pressitem', this.eventHandler.searchListPressItem).addTo(this.$vscroller);
 
     this.$listItems = [];
     this._listItemViewCount = 0;
@@ -179,8 +179,8 @@ SelectBox.property.items = {
         this._searchCache = {};
 
         var itemCount = items.length;
-        this._descWidth = this._measureDescriptionWidth(items);
-        this._textWidth = this._measureTextWidth(items);
+        this._descWidth = measureMaxTextWidth(items);
+        this._textWidth = measureMaxDescriptionWidth(items);
         this._height = this.items.length * 20;
         this.selectListBound = { height: items.length * 20 + 2, width: this._descWidth + this._textWidth + 14 + 2 };
 
@@ -231,8 +231,8 @@ SelectBox.property.items = {
 
 
 
-        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
-        this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37, type: 'minwidthchange' }, this);
+        this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 14 + 'px');
+        this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37 + 14, type: 'minwidthchange' }, this);
 
         this.values = this.values;
     },
@@ -344,7 +344,7 @@ SelectBox.eventHandler.clickBody = function (event) {
     };
 };
 
-SelectBox.eventHandler.searchListChange = function (event) {
+SelectBox.eventHandler.searchListPressItem = function (event) {
     this.values.push(event.value);
     this.values = this.values;
     this.isFocus = false;
@@ -395,6 +395,7 @@ SelectBox.eventHandler.searchModify = function (event) {
         this.$searchList.value = "NOTHING BE SELECTED";
     }
     this.updateDropdownPostion(true);
+    this.$vscroller.scrollTop = 0;
 };
 
 
