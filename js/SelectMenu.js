@@ -42,10 +42,11 @@ function SelectMenu() {
     this._itemsByValue = {};
     this.$searchTextInput.on('stoptyping', this.eventHandler.searchModify);
     this._searchCache = {};
-    this.$selectlist.on('change', this.eventHandler.selectlistChange, true);
+    this.$selectlist.on('pressitem', this.eventHandler.selectlistPressItem, true);
     this.$selectlist.on('pressitem', function () {
         thisSM.isFocus = false;
     }, true);
+    this._lastValue = "NOTHING_VALUE";
 
 
     this.on('mousedown', this.eventHandler.click, true);
@@ -143,7 +144,6 @@ SelectMenu.prepareItem = function (item) {
  */
 SelectMenu.calScore = function (queryItem, item) {
     var score = 0;
-
     if (item.__text__ == queryItem.__text__)
         score += SelectMenu.EQUAL_MATCH_SCORE * queryItem.__text__.length;
 
@@ -170,7 +170,6 @@ SelectMenu.calScore = function (queryItem, item) {
 
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
-    if (!this._itemsByValue) console.trace();
     if (this._itemsByValue[this.value]) {
         var elt = _({ tag: 'selectlistitem', props: { data: this._itemsByValue[this.value] } }).addTo(this.$holderItem);
         elt.$descCtn.addStyle('width', this.$selectlist._descWidth + 'px');
@@ -223,7 +222,6 @@ SelectMenu.property.items = {
         this._itemsByValue = this._dictByValue(value);
         
         if (!this._itemsByValue[this.value] && value.length > 0) {
-
             this.value = value[0].value;
         }
         else
@@ -245,6 +243,7 @@ SelectMenu.property.items = {
 SelectMenu.property.value = {
     set: function (value) {
         this.$selectlist.value = value;
+        this._lastValue = value;
         this.updateItem();
     },
     get: function () {
@@ -292,15 +291,19 @@ SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
 
         if (this.forceDown || availableBottom >= this.selectListBound.height || availableBottom > availableTop) {
             this.isDropdowUp = false;
-            this.$searchTextInput.selfRemove();
-            this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
+            if ( this.$dropdownBox.firstChild != this.$searchTextInput){
+                this.$searchTextInput.selfRemove();
+                this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
+            }
             this.$vscroller.addStyle('max-height', availableBottom + 'px');
 
         }
         else {
             this.isDropdowUp = true;
-            this.$searchTextInput.selfRemove();
-            this.$dropdownBox.addChild(this.$searchTextInput);
+            if (this.$dropdownBox.lastChild!= this.$searchTextInput){
+                this.$searchTextInput.selfRemove();
+                this.$dropdownBox.addChild(this.$searchTextInput);
+            }
             this.$vscroller.addStyle('max-height', availableTop + 'px');
         }
         this.$dropdownBox.addStyle('min-width', bound.width + 'px');
@@ -510,6 +513,7 @@ SelectMenu.eventHandler.scrollParent = function (event) {
 
 SelectMenu.eventHandler.click = function (event) {
     if (EventEmitter.isMouseRight(event)) return;
+    
     this.isFocus = !this.isFocus;
 };
 
@@ -523,7 +527,7 @@ SelectMenu.eventHandler.bodyClick = function (event) {
     }
 };
 
-SelectMenu.eventHandler.selectlistChange = function (event) {
+SelectMenu.eventHandler.selectlistPressItem = function (event) {
     this.updateItem();
     this.selectMenuValue = this.value;
     if (this._lastValue != this.value) {
@@ -539,6 +543,7 @@ SelectMenu.eventHandler.searchModify = function (event) {
     var filterText = this.$searchTextInput.value.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
     if (filterText.length == 0) {
         this.$selectlist.items = this.items;
+        this.scrollToSelectedItem();
     }
     else {
         var view = [];
@@ -606,14 +611,16 @@ SelectMenu.eventHandler.searchModify = function (event) {
             view = this._searchCache[filterText];
         }
         this.$selectlist.items = view;
+        this.$vscroller.scrollTop = 0;
     }
 
     this.selectListBound = this.$selectlist.getBoundingClientRect();
     this.updateDropdownPostion(true);
+    
+
 };
 
 SelectMenu.eventHandler.listSizeChangeAsync = function(){
-    this.selectListBound = this.$selectlist.getBoundingClientRect();
     this.updateDropdownPostion();
 };
 
