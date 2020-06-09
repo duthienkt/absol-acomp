@@ -230,10 +230,10 @@ SelectMenu.property.items = {
         this.$dropdownBox.removeStyle('min-width');
 
         this.style.setProperty('--select-list-desc-width', this.$selectlist._descWidth + 'px');
-        var listSize = this.$selectlist.setItemsAsync(value || []);
+       this.selectListBound = this.$selectlist.setItemsAsync(value || []);
 
-        this.addStyle('min-width', listSize.width + 2 + 23 + 'px');
-        this.emit('minwidthchange', { target: this, value: listSize.width + 2 + 23, type: 'minwidthchange' }, this);
+        this.addStyle('min-width', this.selectListBound.width + 2 + 23 + 'px');
+        this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 23, type: 'minwidthchange' }, this);
     },
     get: function () {
         return this._items || [];
