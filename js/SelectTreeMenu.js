@@ -92,7 +92,7 @@ SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
 SelectTreeMenu.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
 SelectTreeMenu.eventHandler.click = SelectMenu.eventHandler.click;
 SelectTreeMenu.eventHandler.bodyClick = SelectMenu.eventHandler.bodyClick;
-SelectTreeMenu.eventHandler.selectlistChange = SelectMenu.eventHandler.selectlistChange;
+
 
 SelectTreeMenu.eventHandler.listSizeChangeAsync = SelectMenu.eventHandler.listSizeChangeAsync;
 SelectTreeMenu.eventHandler.listValueVisibility  = SelectMenu.eventHandler.listValueVisibility;

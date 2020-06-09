@@ -296,7 +296,6 @@ SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
                 this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
             }
             this.$vscroller.addStyle('max-height', availableBottom + 'px');
-
         }
         else {
             this.isDropdowUp = true;
