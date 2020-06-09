@@ -1,4 +1,5 @@
-<htmt>
+<html>
+
     <head>
         <meta charset="UTF-8">
         <title>Selectmenu 2</title>
@@ -7,11 +8,13 @@
 
     <body>
         <script src="https://absol.cf/acomp/demo/selectmenu2_data.js"></script>
+        <div style="height: 90vh"></div>
         <script>
             var $ = absol.$;
             var _ = absol._;
-           
-            var test = function(){
+            items.forEach((it, i) => { it.value = i; })
+
+            var test = function () {
                 // this.remove();
                 var startTime = new Date();
                 var sm = _('selectmenu').addTo(document.body);
@@ -20,8 +23,19 @@
                 sm.enableSearch = true;
                 var endTime = new Date();
                 _(`<p>Init component time:  ${endTime.getTime() - startTime.getTime()}(ms)</p>`).addTo(document.body);
+                sm.on('change', function () {
+                    _(`<p>value:  ${this.value}`).addTo(document.body);
+
+                });
+                sm.on('change', function () {
+                    console.log(this.value)
+                })
+                // sm.on('sizechangeasync', function(){
+                //     console.log(this.getBoundingClientRect());
+                // })
             }
             test();
         </script>
+        <div style="height: 90vh"></div>
     </body>
-</htmt>
+</html>
