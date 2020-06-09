@@ -31,35 +31,52 @@ if (isSupportedVar) {
     })();
 }
 
-/*global absol*/
-function SelectList() {
-    var res = this;
-    this.defineEvent(['change', 'pressitem', 'cancelasync', 'valuevisibilityasync', 'finishasync', 'sizechangeasync']);
-    this.$attachhook = _('attachhook').addTo(this);
-    this.sync = new Promise(function (rs) {
-        res.$attachhook.once('error', rs);
+var itemPool = [];
+
+function onMousedownItem(event) {
+    if (EventEmitter.isMouseRight(event)) return;
+    var thisSL = this.$parent;
+    if (thisSL) {
+        thisSL.value = this.value;
+        thisSL.emit('pressitem', {
+            type: 'pressitem',
+            target: thisSL,
+            itemElt: this,
+            value: this.value,
+            data: this.data
+        });
+    }
+}
+
+function makeItem() {
+    return _({
+        tag: 'selectlistitem',
+        on: {
+            mousedown: onMousedownItem
+        }
     });
-    this.$items = [];
-    this.$itemByValue = {};//quick find element
-    this._itemViewCount = 0;//for reuse
-    this.$selectedItem = undefined;
+}
 
-    this._itemSession = 0;
-    this._descWidth = 0;
-    this._textWidth = 0;
+function requireItem($parent) {
+    var item;
+    if (itemPool.length > 0) {
+        item = itemPool.pop();
+    }
+    else {
+        item = makeItem();
+    }
+    item.$parent = $parent;
+    return item;
+}
 
-    this._valuevisibility = true;
-    this._finished = true;
-
+function releaseItem(item) {
+    item.$selectList = null;
+    item.removeClass('selected');
+    itemPool.push(item);
 };
 
-SelectList.tag = "SelectList".toLowerCase();
 
-SelectList.render = function () {
-    return _('.absol-selectlist');
-};
-
-SelectList.prototype._measureDescriptionWidth = function (items) {
+function measureMaxDescriptionWidth(items) {
     var maxDescWidth = 0;
     var maxText = 0;
     var maxEst = 0;
@@ -79,7 +96,7 @@ SelectList.prototype._measureDescriptionWidth = function (items) {
 };
 
 
-SelectList.prototype._measureTextWidth = function (items) {
+function measureMaxTextWidth(items) {
     var maxTextWidth = 0;
     var maxText = 0;
     var maxEst = 0;
@@ -102,33 +119,119 @@ SelectList.prototype._measureTextWidth = function (items) {
     return maxTextWidth;
 };
 
-SelectList.prototype.setItemsAsync = function (items) {
-    this._valuevisibility = false;
-    this._finished = false;
+export function measureListSize(items) {
+    var descWidth = measureMaxDescriptionWidth(items);
+    var textWidth = measureMaxTextWidth(items);
+    var width = descWidth + 14 + textWidth + 12;//padding
+    var height = items.length * 20;
+    return {
+        width: width,
+        height: height,
+        descWidth: descWidth,
+        textWidth: textWidth
+    };
+}
 
-    var thisSL = this;
-    var session = Math.floor(Math.random() * 1000000);
-    this._itemSession = session;
 
-    this._items = items || [];
-    this.$itemByValue = {};
-    var i;
-    this._descWidth = thisSL._measureDescriptionWidth(items);
-    this._textWidth = thisSL._measureTextWidth(items);
-    this._height = this.items.length * 20;
+/*global absol*/
+function SelectList() {
+    var res = this;
+    this.defineEvent(['pressitem', 'cancelasync', 'valuevisibilityasync', 'finishasync', 'sizechangeasync']);
+    this.$attachhook = _('attachhook').addTo(this);
+    this.sync = new Promise(function (rs) {
+        res.$attachhook.once('error', rs);
+    });
+    this.$items = [];
+    this.$itemByValue = {};//quick find element
+    this.$selectedItem = undefined;
+    this.measuredSize = {
+        width: 0,
+        height: 0,
+        descWidth: 0,
+        textWidth: 0
+    };
 
-    this.style.setProperty('--select-list-desc-width', thisSL._descWidth + 'px'); //addStyle notWork because of convert to cameCase 
-    function mousedownItem(event) {
-        if (EventEmitter.isMouseRight(event)) return;
-        var lastValue = thisSL.value;
-        thisSL.value = this.value;
-        thisSL.emit('pressitem', { type: 'pressitem', target: thisSL, itemElt: this, value: this.value, lastValue: lastValue, data: this.data });
-        if (this.value != lastValue) {
-            thisSL.emit('change', { type: 'change', target: thisSL, itemElt: this, value: this.value, lastValue: lastValue, data: this.data });
+    this._itemSession = 0;
+    this._finished = true;
+
+};
+
+SelectList.tag = "SelectList".toLowerCase();
+
+SelectList.render = function () {
+    return _('.absol-selectlist');
+};
+
+SelectList.prototype._updateSelectedItem = function () {
+    var newSelectedItemElt = this.$itemByValue[this._selectValue];
+    if (newSelectedItemElt != this.$selectedItem) {
+        if (this.$selectedItem) {
+            this.$selectedItem.removeClass('selected');
+        }
+        if (newSelectedItemElt) {
+            newSelectedItemElt.addClass('selected');
+            this.$selectedItem = newSelectedItemElt;
         }
     }
+};
 
-    i = 0;
+
+
+SelectList.prototype._requireItems = function (itemCout) {
+    var item;
+    while (this.$items.length < itemCout) {
+        item = requireItem(this);
+        this.$items.push(item);
+        this.addChild(item);
+    }
+
+    while (this.$items.length > itemCout) {
+        item = this.$items.pop();
+        item.remove();
+        releaseItem(item);
+    }
+};
+
+SelectList.prototype._assignItems = function (from, to) {
+    var foundSelected = false;
+    var itemElt;
+    var item;
+    for (var i = from; i < to; ++i) {
+        itemElt = this.$items[i];
+        item = this._items[i];
+        itemElt.data = item;
+        itemElt.__index__ = i;
+        if (this.$itemByValue[item.value]) {
+            console.warn('Value  ' + this.$items[i].value + ' is duplicated!');
+        }
+        else {
+            this.$itemByValue[item.value] = itemElt;
+            if (this._selectValue == item.value) {
+                itemElt.addClass('selected');
+                this.$selectedItem = itemElt;
+                foundSelected = true;
+            }
+            else {
+                itemElt.removeClass('selected');
+            }
+        }
+    }
+    return foundSelected;
+};
+
+
+SelectList.prototype.setItemsAsync = function (items) {
+    //start process
+    this._finished = false;
+    var session = Math.floor(Math.random() * 1000000);
+    this._itemSession = session;
+    this._items = items || [];
+    this.$itemByValue = {};
+    this.measuredSize = measureListSize(items);
+    this.style.setProperty('--select-list-desc-width', this.measuredSize.descWidth + 'px'); //addStyle notWork because of convert to cameCase 
+
+    var thisSL = this;
+    var i = 0;
     var limit = 20;
     function tick() {
         if (thisSL._itemSession != session) {
@@ -136,110 +239,42 @@ SelectList.prototype.setItemsAsync = function (items) {
             return;
         }
         if (i >= items.length) {
-            thisSL.value = thisSL.value;//update
+            thisSL._updateSelectedItem();
             thisSL._finished = false;
             thisSL.emit('finishasync', { session: session, type: 'finishasync' }, this);
             return;
         }
 
         var n = Math.min(items.length - i, limit);
-        limit = Math.floor(limit);
         var itemCout = i + n;
-        while (thisSL.$items.length < itemCout) {
-            thisSL.$items.push(_({
-                tag: 'selectlistitem', on: {
-                    mousedown: mousedownItem
-                }
-            }));
+        thisSL._requireItems(itemCout);
+        i = itemCout;
+
+        var foundSelected = thisSL._assignItems(itemCout - n, itemCout);
+        if (foundSelected) {
+            thisSL.emit('valuevisibilityasync', { session: session, type: 'valuevisibilityasync', itemElt: thisSL.$items[i] }, thisSL);
         }
 
-        while (thisSL._itemViewCount < itemCout) {
-            thisSL.addChild(thisSL.$items[thisSL._itemViewCount++]);
-        }
-
-        while (thisSL._itemViewCount > itemCout) {
-            thisSL.$items[--thisSL._itemViewCount].remove();
-        }
-
-        for (var k = 0; k < n; ++k) {
-            thisSL.$items[i].data = thisSL._items[i];
-            thisSL.$items[i].__index__ = i;
-            if (thisSL.$itemByValue[thisSL.$items[i].value]) {
-                console.warn('Value  ' + thisSL.$items[i].value + ' is duplicated!');
-            }
-            thisSL.$itemByValue[thisSL.$items[i].value] = thisSL.$items[i];
-            if (thisSL.$items[i].value == thisSL.value) {
-                thisSL.$selectedItem = thisSL.$items[i];
-                thisSL.$selectedItem.addClass('selected')
-                thisSL.emit('valuevisibilityasync', { session: session, type: 'valuevisibilityasync', itemElt: thisSL.$items[i] }, thisSL);
-            }
-            ++i;
-        }
         thisSL.emit('sizechangeasync', { session: session, type: 'sizechangeasync' }, this);
         setTimeout(tick, 2);
     }
     setTimeout(tick, 2);
-    return {
-        session: session,
-        width: this._descWidth + this._textWidth + 14,
-        height: this._height
-    }
+    return Object.assign({ session: session }, this.measuredSize);
 };
 
 
 SelectList.prototype.setItems = function (items) {
-    this._itemSession = Math.random();
-    this._items = items;
-    var itemCout = items.length;
-    var i;
-    var self = this;
-
-    function mousedownItem(event) {
-        if (EventEmitter.isMouseRight(event)) return;
-        var lastValue = self.value;
-        self.value = this.value;
-        self.emit('pressitem', { type: 'pressitem', target: self, itemElt: this, value: this.value, lastValue: lastValue, data: this.data });
-        if (this.value != lastValue) {
-            self.emit('change', { type: 'change', target: self, itemElt: this, value: this.value, lastValue: lastValue, data: this.data });
-        }
-    }
-
-    while (this.$items.length < itemCout) {
-        this.$items.push(_({
-            tag: 'selectlistitem', on: {
-                mousedown: mousedownItem
-            }
-        }));
-    }
-
-    while (this._itemViewCount < itemCout) {
-        this.addChild(this.$items[this._itemViewCount++]);
-    }
-
-    while (this._itemViewCount > itemCout) {
-        this.$items[--this._itemViewCount].remove();
-    }
-    measureText('', 'italic 14px  sans-serif')//cache font style
-    this._descWidth = this._measureDescriptionWidth(items);
-    this._textWidth = this._measureTextWidth(items);
-
-    this.style.setProperty('--select-list-desc-width', this._descWidth + 'px');
+    this._finished = false;
+    var session = Math.floor(Math.random() * 1000000);
+    this._itemSession = session;
+    this._items = items || [];
     this.$itemByValue = {};
-    for (i = 0; i < itemCout; ++i) {
-        this.$items[i].data = this._items[i];
-        this.$items[i].__index__ = i;
-        if (this.$itemByValue[this.$items[i].value]) {
-            console.warn('Value  ' + this.$items[i].value + ' is duplicated!');
-        }
-        this.$itemByValue[this.$items[i].value] = this.$items[i];
-    }
-    if (!this.$itemByValue[this.value] && items.length > 0) {
-        this.value = items[0].value;
-    }
-    else {
-        this.value = this.value;
-    }
-    this._valuevisibility = true;
+    this.measuredSize = measureListSize(items);
+    this.style.setProperty('--select-list-desc-width', this.measuredSize.descWidth + 'px'); //addStyle notWork because of convert to cameCase 
+    var itemCount = items.length;
+    this._requireItems(itemCount);
+    this._assignItems(0, itemCount);
+
     this._finished = true;
     return {
         session: this._itemSession,
@@ -268,16 +303,7 @@ SelectList.property.items = {
 SelectList.property.value = {
     set: function (value) {
         this._selectValue = value;
-        var newSelectedItemElt = this.$itemByValue[value];
-        if (newSelectedItemElt != this.$selectedItem) {
-            if (this.$selectedItem) {
-                this.$selectedItem.removeClass('selected');
-            }
-            if (newSelectedItemElt) {
-                newSelectedItemElt.addClass('selected');
-                this.$selectedItem = newSelectedItemElt;
-            }
-        }
+        this._updateSelectedItem();
     },
 
     get: function () {
