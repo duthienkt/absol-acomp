@@ -33,7 +33,7 @@ function SelectTreeMenu() {
     this._itemsByValue = {};
     this.$searchTextInput.on('stoptyping', this.eventHandler.searchModify);
     this._searchCache = {};
-    this.$selectlist.on('change', this.eventHandler.selectlistChange, true);
+    this.$selectlist.on('pressitem', this.eventHandler.selectlistPressItem, true);
     this.$selectlist.on('pressitem', function () {
         res.isFocus = false;
     }, true);
@@ -92,10 +92,11 @@ SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
 SelectTreeMenu.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
 SelectTreeMenu.eventHandler.click = SelectMenu.eventHandler.click;
 SelectTreeMenu.eventHandler.bodyClick = SelectMenu.eventHandler.bodyClick;
+SelectTreeMenu.eventHandler.selectlistPressItem = SelectMenu.eventHandler.selectlistPressItem;
 
 
 SelectTreeMenu.eventHandler.listSizeChangeAsync = SelectMenu.eventHandler.listSizeChangeAsync;
-SelectTreeMenu.eventHandler.listValueVisibility  = SelectMenu.eventHandler.listValueVisibility;
+SelectTreeMenu.eventHandler.listValueVisibility = SelectMenu.eventHandler.listValueVisibility;
 
 SelectTreeMenu.property = {};
 SelectTreeMenu.property.disabled = SelectMenu.property.disabled;
@@ -139,10 +140,10 @@ SelectTreeMenu.property.items = {
 
         this.__searchcache__ = {};
         this.__searchcache__['__EMPTY_QUERY__'] = SelectTreeMenu.treeToList(value);
-        this.selectListBound = this.$selectlist.setItemsAsync(this.__searchcache__['__EMPTY_QUERY__']) ;
+        this.selectListBound = this.$selectlist.setItemsAsync(this.__searchcache__['__EMPTY_QUERY__']);
         this._itemsByValue = this._dictByValue(this.__searchcache__['__EMPTY_QUERY__']);
-        if (this._itemsByValue[this.value] === undefined){
-            this.value =  this.__searchcache__['__EMPTY_QUERY__'][0].value;
+        if (this._itemsByValue[this.value] === undefined) {
+            this.value = this.__searchcache__['__EMPTY_QUERY__'][0].value;
         }
 
         this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 'px');
