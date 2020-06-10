@@ -141,6 +141,7 @@
 .absol-tabview-container>pre {
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
 }
 
 .absol-tabview-container>pre {
