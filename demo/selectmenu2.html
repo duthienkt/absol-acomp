@@ -8,34 +8,52 @@
 
     <body>
         <script src="https://absol.cf/acomp/demo/selectmenu2_data.js"></script>
-        <div style="height: 90vh"></div>
         <script>
             var $ = absol.$;
             var _ = absol._;
-            items.forEach((it, i) => { it.value = i; })
+            items.forEach((it, i) => { it.value = i; });
 
-            var test = function () {
-                // this.remove();
-                var startTime = new Date();
-                var sm = _('selectmenu').addTo(document.body);
+            var tabview = _({
+                tag:'tabview',
+                style: {
+                    width: '80vw',
+                    height: '80vh'
+                }
+            }).addTo(document.body);
+            
+
+            function newTab(){
+                var frame = _({
+                    tag: 'tabframe',
+                    style:{
+                        padding: '10px',
+                        'box-sizing': 'boder-box'
+                    },
+                    attr:{
+                        name: "NoName"
+                    }
+                });
+                tabview.addChild(frame);
+                 // this.remove();
+                 var startTime = new Date();
+                var sm = _('selectmenu').addTo(frame);
                 sm.value = 9634;
                 sm.items = items;
                 sm.enableSearch = true;
                 var endTime = new Date();
-                _(`<p>Init component time:  ${endTime.getTime() - startTime.getTime()}(ms)</p>`).addTo(document.body);
+                _(`<p>Init component time:  ${endTime.getTime() - startTime.getTime()}(ms)</p>`).addTo(frame);
                 sm.on('change', function () {
-                    _(`<p>value:  ${this.value}`).addTo(document.body);
+                    _(`<p>value:  ${this.value}`).addTo(frame);
 
                 });
                 sm.on('change', function () {
                     console.log(this.value)
-                })
-                // sm.on('sizechangeasync', function(){
-                //     console.log(this.getBoundingClientRect());
-                // })
+                });
             }
-            test();
+
+            Array(3).fill(null).forEach(newTab);
         </script>
+        <button onclick="newTab()">NewTab</button>
         <div style="height: 90vh"></div>
     </body>
 </html>
