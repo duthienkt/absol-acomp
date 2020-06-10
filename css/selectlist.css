@@ -2,6 +2,10 @@
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
+.absol-selectlist * {
+    box-sizing: border-box;
+}
+
 .absol-selectlist .absol-selectlist-item:hover {
     background-color: #efefef;
 }
