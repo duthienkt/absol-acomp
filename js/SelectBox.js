@@ -62,6 +62,9 @@ SelectBox.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
 SelectBox.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
 SelectBox.prototype.updateDropdownPostion = SelectMenu.prototype.updateDropdownPostion;
 
+SelectBox.prototype.startListenRemovable = function(){};// do not track, keep attached work
+SelectBox.prototype.stopListenRemovable =  function(){};
+
 SelectBox.prototype._measureDescriptionWidth = SelectList.prototype._measureDescriptionWidth;
 
 
@@ -228,8 +231,6 @@ SelectBox.property.items = {
                 this.$items[i].$descCtn.addStyle('width', this._descWidth + 'px');
             }
         }
-
-
 
         this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 14 + 'px');
         this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37 + 14, type: 'minwidthchange' }, this);

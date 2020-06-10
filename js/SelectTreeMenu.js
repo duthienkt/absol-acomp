@@ -28,7 +28,7 @@ function SelectTreeMenu() {
         .on('valuevisibilityasync', this.eventHandler.listValueVisibility);
 
     this.$scrollTrackElts = [];
-
+    this.$removableTrackElts = [];
 
     this._itemsByValue = {};
     this.$searchTextInput.on('stoptyping', this.eventHandler.searchModify);
@@ -86,6 +86,8 @@ SelectTreeMenu.prototype.scrollToSelectedItem = SelectMenu.prototype.scrollToSel
 SelectTreeMenu.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
 SelectTreeMenu.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
 SelectTreeMenu.prototype._dictByValue = SelectMenu.prototype._dictByValue;
+SelectTreeMenu.prototype.startListenRemovable = SelectMenu.prototype.startListenRemovable;
+SelectTreeMenu.prototype.stopListenRemovable = SelectMenu.prototype.stopListenRemovable;
 
 SelectTreeMenu.eventHandler = {};
 SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
@@ -93,6 +95,7 @@ SelectTreeMenu.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
 SelectTreeMenu.eventHandler.click = SelectMenu.eventHandler.click;
 SelectTreeMenu.eventHandler.bodyClick = SelectMenu.eventHandler.bodyClick;
 SelectTreeMenu.eventHandler.selectlistPressItem = SelectMenu.eventHandler.selectlistPressItem;
+SelectTreeMenu.eventHandler.removeParent = SelectMenu.eventHandler.removeParent;
 
 
 SelectTreeMenu.eventHandler.listSizeChangeAsync = SelectMenu.eventHandler.listSizeChangeAsync;
