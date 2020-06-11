@@ -68,6 +68,10 @@ SelectBox.prototype.stopListenRemovable =  function(){};
 SelectBox.prototype.startListenRemovable =  function(){};;
 SelectBox.prototype.stopListenRemovable =  function(){};
 
+SelectBox.prototype._releaseResource = SelectMenu.prototype._releaseResource;
+SelectBox.prototype._requestResource= SelectMenu.prototype._requestResource;
+
+
 SelectBox.prototype._measureDescriptionWidth = SelectList.prototype._measureDescriptionWidth;
 
 
