@@ -5,7 +5,7 @@ import { beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 //todo: add this to absol
-export var isTouchDevice = BrowserDetector.hasTouch && !BrowserDetector.os.type.match(/windows|X11|Ubuntu|Linux/) ;
+export var isTouchDevice = BrowserDetector.hasTouch && !BrowserDetector.os.type.match(/windows|X11|Ubuntu|Linux/);
 //todo: re select text after click
 var _ = ACore._;
 var $ = ACore.$;
@@ -32,12 +32,14 @@ function TimePicker() {
     this.$hour = $('.ac-time-picker-hour', this)
         .on({
             click: this.eventHandler.clickHour,
-            keydown: this.eventHandler.keydownHour
+            keydown: this.eventHandler.keydownHour,
+            blur: this.eventHandler.blurHour
         });
     this.$minute = $('.ac-time-picker-minute', this)
         .on({
             click: this.eventHandler.clickMinute,
-            keydown: this.eventHandler.keydownMinute
+            keydown: this.eventHandler.keydownMinute,
+            blur: this.eventHandler.blurMinute,
         });
 
     this.$hourInput = $('.ac-time-picker-hour-input', this)
@@ -218,6 +220,7 @@ TimePicker.prototype._drawSelect = function (radius, angle) {
 TimePicker.prototype.notifyChange = function (force) {
     if (this._lastDayOffset != this.dayOffset || force) {
         this.emit('change', { target: this, hour: this.hour, minute: this.minute, dayOffset: this.dayOffset, name: 'change' }, this);
+        this._lastDayOffset = this.dayOffset;
     }
 };
 
@@ -461,7 +464,7 @@ TimePicker.prototype.finishSelect = function () {
 
 TimePicker.prototype.cancelSelect = function () {
     console.log('cancel');
-    
+
     this.emit('cancel', { target: this, name: 'cancel' }, this);
 };
 
@@ -620,6 +623,20 @@ TimePicker.eventHandler.keydownHour = function (event) {
 };
 
 
+
+TimePicker.eventHandler.blurHour = function () {
+    var newText = this.$hour.innerHTML;
+    var hour = parseFloat(newText) || 0;
+    if (hour < 0 || hour >= 24)
+        hour = this._preHour;
+    this.hour = hour;
+    this.$hour.blur();
+    this.editMinute();
+    this._showSelectByHourText();
+    this.notifyChange();
+};
+
+
 TimePicker.eventHandler.keydownMinute = function (event) {
     var thisPicker = this;
     if (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey) {
@@ -657,6 +674,18 @@ TimePicker.eventHandler.keydownMinute = function (event) {
 };
 
 
+
+TimePicker.eventHandler.blurMinute = function () {
+    var newText = this.$minute.innerHTML;
+    var minute = parseFloat(newText) || 0;
+    if (minute < 0 || minute >= 60)
+        minute = this._preMinute;
+    this.minute = minute;
+    this._showSelectByMinuteText();
+    this.notifyChange();
+};
+
+
 TimePicker.eventHandler.keydownHourInput = function (event) {
     var thisPicker = this;
     if ((isTouchDevice && event.key == "Unidentified") || (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey)) {
@@ -676,7 +705,7 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
         this.$hourInput.blur();
         this.editMinuteInput();
     }
-    else if (!event.key && !event.key.toLowerCase().match(/arrow|back/)){
+    else if (!event.key && !event.key.toLowerCase().match(/arrow|back/)) {
         var cText = this.$hourInput.value;
         setTimeout(function () {
             var newText = thisPicker.$hourInput.value;
@@ -692,6 +721,8 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
         }, 1);
     }
 };
+
+
 
 
 TimePicker.eventHandler.keydownMinuteInput = function (event) {
@@ -714,7 +745,7 @@ TimePicker.eventHandler.keydownMinuteInput = function (event) {
         this.minute = minute;
         setTimeout(this.finishSelect.bind(this), 1);
     }
-    else if(event.key != 'Enter') {
+    else if (event.key != 'Enter') {
         var cText = this.$minuteInput.value;
         setTimeout(function () {
             var newText = thisPicker.$minuteInput.value;
@@ -725,12 +756,11 @@ TimePicker.eventHandler.keydownMinuteInput = function (event) {
                 thisPicker.minute = minute;
                 thisPicker.$minuteInput.focus();
                 thisPicker.$minuteInput.select();
-                thisPicker.notifyChange(this);
+                thisPicker.notifyChange();
             }
         }, 1);
     }
 };
-
 
 
 
