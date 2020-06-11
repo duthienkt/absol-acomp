@@ -81,6 +81,7 @@ SelectBox.prototype._measureTextWidth = SelectList.prototype._measureTextWidth;
 
 SelectBox.eventHandler = {};
 SelectBox.eventHandler.attached = SelectMenu.eventHandler.attached;
+SelectTreeMenu.eventHandler.removeParent = function(){};
 
 SelectBox.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
 SelectBox.eventHandler.listSizeChangeAsync = SelectMenu.eventHandler.listSizeChangeAsync;

@@ -115,6 +115,7 @@ SelectTreeMenu.property.value = SelectMenu.property.value;
 SelectTreeMenu.property.enableSearch = SelectMenu.property.enableSearch;
 
 SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
+SelectTreeMenu.eventHandler.removeParent = SelectMenu.eventHandler.removeParent;
 
 SelectTreeMenu.treeToList = function (items) {
     var arr = [];
