@@ -54,6 +54,8 @@ function SelectTreeMenu() {
         });
     });
     this._selectListScrollSession = null;
+
+    this._resourceReady = true;
     return res;
 }
 
@@ -89,8 +91,13 @@ SelectTreeMenu.prototype._dictByValue = SelectMenu.prototype._dictByValue;
 SelectTreeMenu.prototype.startListenRemovable = SelectMenu.prototype.startListenRemovable;
 SelectTreeMenu.prototype.stopListenRemovable = SelectMenu.prototype.stopListenRemovable;
 
+SelectTreeMenu.prototype._releaseResource = SelectMenu.prototype._releaseResource;
+SelectTreeMenu.prototype._requestResource = function () {
+    this.$selectlist.items = this.__searchcache__['__EMPTY_QUERY__'] || {};
+};
+
 SelectTreeMenu.eventHandler = {};
-SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
+
 SelectTreeMenu.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
 SelectTreeMenu.eventHandler.click = SelectMenu.eventHandler.click;
 SelectTreeMenu.eventHandler.bodyClick = SelectMenu.eventHandler.bodyClick;
@@ -107,7 +114,7 @@ SelectTreeMenu.property.hidden = SelectMenu.property.hidden;
 SelectTreeMenu.property.value = SelectMenu.property.value;
 SelectTreeMenu.property.enableSearch = SelectMenu.property.enableSearch;
 
-
+SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
 
 SelectTreeMenu.treeToList = function (items) {
     var arr = [];
@@ -143,7 +150,9 @@ SelectTreeMenu.property.items = {
 
         this.__searchcache__ = {};
         this.__searchcache__['__EMPTY_QUERY__'] = SelectTreeMenu.treeToList(value);
+
         this.selectListBound = this.$selectlist.setItemsAsync(this.__searchcache__['__EMPTY_QUERY__']);
+        this._resourceReady = true;
         this._itemsByValue = this._dictByValue(this.__searchcache__['__EMPTY_QUERY__']);
         if (this._itemsByValue[this.value] === undefined) {
             this.value = this.__searchcache__['__EMPTY_QUERY__'][0].value;
@@ -202,6 +211,7 @@ SelectTreeMenu.property.isFocus = {
                     self.$searchTextInput.value = '';
                     // different with SelectMenu
                     self.$selectlist.items = self.__searchcache__['__EMPTY_QUERY__'];
+                    this._resourceReady = true;
                 }
             }, 100)
             this.updateItem();
@@ -351,6 +361,7 @@ SelectTreeMenu.queryTree = function (query, items) {
 SelectTreeMenu.prototype.search = function (query) {
     if (query.length == 0) {
         this.$selectlist.items = this.__searchcache__['__EMPTY_QUERY__'];
+        this._resourceReady = true;
         this.updateItem();
         this.updateDropdownPostion(true);
         this.scrollToSelectedItem();

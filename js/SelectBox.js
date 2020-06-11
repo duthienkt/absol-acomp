@@ -41,6 +41,7 @@ function SelectBox() {
     this.$searchTextInput.on('stoptyping', this.eventHandler.searchModify);
     this._searchCache = {};
 
+    this._resourceReady = true;// alway true
     return this;
 };
 
@@ -63,6 +64,8 @@ SelectBox.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
 SelectBox.prototype.updateDropdownPostion = SelectMenu.prototype.updateDropdownPostion;
 
 SelectBox.prototype.startListenRemovable = function(){};// do not track, keep attached work
+SelectBox.prototype.stopListenRemovable =  function(){};
+SelectBox.prototype.startListenRemovable =  function(){};;
 SelectBox.prototype.stopListenRemovable =  function(){};
 
 SelectBox.prototype._measureDescriptionWidth = SelectList.prototype._measureDescriptionWidth;

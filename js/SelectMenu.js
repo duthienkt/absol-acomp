@@ -234,6 +234,7 @@ SelectMenu.property.items = {
 
         this.style.setProperty('--select-list-desc-width', this.$selectlist._descWidth + 'px');
         this.selectListBound = this.$selectlist.setItemsAsync(value || []);
+        this._resourceReady = true;
 
         this.addStyle('min-width', this.selectListBound.width + 2 + 23 + 'px');
         this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 23, type: 'minwidthchange' }, this);
@@ -410,6 +411,13 @@ SelectMenu.prototype.stopListenRemovable = function () {
     }
 };
 
+SelectMenu.prototype._releaseResource = function () {
+    this.$selectlist.items = [];
+};
+
+SelectMenu.prototype._requestResource = function () {
+    this.$selectlist.items = this._items || [];
+};
 
 SelectMenu.property.isFocus = {
     set: function (value) {
@@ -505,8 +513,9 @@ SelectMenu.eventHandler.attached = function () {
     Dom.addToResizeSystem(this.$attachhook);
     this.stopListenRemovable();
     this.startListenRemovable();
+    this._requestResource();
     if (!this._resourceReady) {
-        this.$selectlist.items = this._items || [];
+        this._requestResource();
         this._resourceReady = true;
     }
     this._updateInterval = setInterval(function () {
@@ -540,8 +549,8 @@ SelectMenu.eventHandler.scrollParent = function (event) {
 };
 
 SelectMenu.eventHandler.removeParent = function (event) {
+    this._releaseResource();
     this._resourceReady = false;
-    this.$selectlist.items = [];
 };
 
 SelectMenu.eventHandler.click = function (event) {
