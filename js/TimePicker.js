@@ -435,8 +435,6 @@ TimePicker.prototype.editHourInput = function () {
     setTimeout(function () {
         thisPicker.$hourInput.focus();
         thisPicker.$hourInput.select();
-        console.log(thisPicker.$hourInput);
-
     }, 1)
 };
 
@@ -463,8 +461,6 @@ TimePicker.prototype.finishSelect = function () {
 
 
 TimePicker.prototype.cancelSelect = function () {
-    console.log('cancel');
-
     this.emit('cancel', { target: this, name: 'cancel' }, this);
 };
 
