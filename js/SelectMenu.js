@@ -582,6 +582,9 @@ SelectMenu.eventHandler.selectlistPressItem = function (event) {
 
 SelectMenu.eventHandler.searchModify = function (event) {
     var filterText = this.$searchTextInput.value.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
+    var filterLC = filterText.toLowerCase();
+    var filterNA = nonAccentVietnamese(filterText);
+    var filterNALC = filterNA.toLowerCase();
     if (filterText.length == 0) {
         this._resourceReady = true;
         this.$selectlist.items = this.items;
@@ -599,15 +602,16 @@ SelectMenu.eventHandler.searchModify = function (event) {
                 }).map(function (it) {
                     it.score = 0;
                     var text = it.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-                    it.score += text.toLowerCase().indexOf(filterText.toLowerCase()) >= 0 ? 100 : 0;
-                    text = nonAccentVietnamese(text);
-                    it.score += text.toLowerCase().indexOf(filterText.toLowerCase()) >= 0 ? 100 : 0;
+                    it.textNA = it.textNA || nonAccentVietnamese(text);
+                    it.score += text.toLowerCase().indexOf(filterLC) >= 0 ? 100 : 0;
+                    text = it.textNA;
+                    it.score += text.toLowerCase().indexOf(filterLC) >= 0 ? 100 : 0;
                     return it;
                 });
 
                 view.sort(function (a, b) {
                     if (b.score - a.score == 0) {
-                        if (nonAccentVietnamese(b.text) > nonAccentVietnamese(a.text)) return -1;
+                        if (b.textNA > a.textNA) return -1;
                         return 1;
                     }
                     return b.score - a.score;
@@ -620,17 +624,23 @@ SelectMenu.eventHandler.searchModify = function (event) {
                 var its = this.items.map(function (item) {
                     var res = { item: item, text: typeof item === 'string' ? item : item.text };
                     var text = res.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-                    res.score = (phraseMatch(text, filterText)
-                        + phraseMatch(nonAccentVietnamese(text), nonAccentVietnamese(filterText))) / 2;
-                    if (nonAccentVietnamese(text).replace(/s/g, '').toLowerCase().indexOf(nonAccentVietnamese(filterText).toLowerCase().replace(/s/g, '')) > -1)
-                        res.score = 100;
+                    res.score = 0;
+                    var textNA = nonAccentVietnamese(text);
+                    res.textNA = textNA;
+                    res.score += (phraseMatch(text, filterText)
+                        + phraseMatch(textNA, filterNA)) / 2;
+                    if (text == filterText) res.score += 1000;
+                    if (textNA.replace(/s/g, '').toLowerCase() == filterNALC.replace(/s/g, ''))
+                        res.score += 300;
+                    if (textNA.replace(/s/g, '').toLowerCase().indexOf(filterNALC.replace(/s/g, '')) > -1)
+                        res.score += 100;
                     return res;
                 });
                 if (its.length == 0) return;
 
                 its.sort(function (a, b) {
                     if (b.score - a.score == 0) {
-                        if (nonAccentVietnamese(b.text) > nonAccentVietnamese(a.text)) return -1;
+                        if (b.textNA > a.textNA) return -1;
                         return 1;
                     }
                     return b.score - a.score;
