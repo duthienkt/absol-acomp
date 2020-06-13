@@ -82,6 +82,7 @@ SelectListItem.property.data = {
             this.level = 0;
             this.extendClasses = '';
             this.extendStyle = {};
+            this.lastInGroup = false;
         } else {
             this.$textValue.data = value.text || '';
             this.$descValue.data = value.desc || '';
@@ -89,6 +90,7 @@ SelectListItem.property.data = {
 
             this.extendClasses = value.extendClasses;
             this.extendStyle = value.extendStyle;
+            this.lastInGroup = !!(value.lastInGroup);
         }
     },
     get: function () {
@@ -126,6 +128,20 @@ SelectListItem.property.level = {
     }
 };
 
+
+SelectListItem.property.lastInGroup = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-last-in-group');
+        }
+        else {
+            this.removeClass('as-last-in-group');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-last-in-group');
+    }
+};
 
 ACore.install('SelectListItem'.toLowerCase(), SelectListItem);
 

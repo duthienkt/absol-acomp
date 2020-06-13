@@ -586,8 +586,10 @@ SelectMenu.eventHandler.searchModify = function (event) {
         this._resourceReady = true;
         this.$selectlist.items = this.items;
         this.scrollToSelectedItem();
+        this.$selectlist.removeClass('as-searching');
     }
     else {
+        this.$selectlist.addClass('as-searching');
         var view = [];
         if (!this._searchCache[filterText]) {
             if (filterText.length == 1) {

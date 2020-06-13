@@ -119,11 +119,20 @@ export function measureMaxTextWidth(items) {
     return maxTextWidth;
 };
 
+export function measureListHeight(items) {
+    var border = 0;
+    var n = items.length - 1;
+    for (var i = 0; i < n; ++i) {
+        if (items[i].lastInGroup) border++;
+    }
+    return items.length * 20 + border;
+}
+
 export function measureListSize(items) {
     var descWidth = measureMaxDescriptionWidth(items);
     var textWidth = measureMaxTextWidth(items);
     var width = descWidth + 14 + textWidth + 12 + 14;//padding, margin
-    var height = items.length * 20;
+    var height = measureListHeight(items);
     return {
         width: width,
         height: height,
