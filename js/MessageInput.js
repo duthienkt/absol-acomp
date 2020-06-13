@@ -623,7 +623,7 @@ export function parseMessage(text, data) {
     if (res.length == 1 && res[0].class == 'as-emoji') {
         res[0].tag = 'iconsprite',
             res[0].props.fps = 15;
-        res[0].props.src = res[0].props.src.replace('/static/x' + data.staticSize, 'anim/x' + data.animSize);
+        res[0].props.src = res[0].props.src.replace('/static/x' + data.staticSize, '/anim/x' + data.animSize);
     }
     return res;
 }
