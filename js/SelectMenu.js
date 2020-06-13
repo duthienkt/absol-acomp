@@ -461,6 +461,7 @@ SelectMenu.property.isFocus = {
                     self.$searchTextInput.value = '';
                     self.$selectlist.items = self.items;
                     self._resourceReady = true;
+                    self.$selectlist.removeClass('as-searching');
                 }
             }, 100)
             this.updateItem();
