@@ -18,6 +18,9 @@ function MessageInput() {
         iconCatalogCaches[catalogiUrl] = JSON.parse(result);
         return iconCatalogCaches[catalogiUrl];
     });
+    /**
+     * @type {import('./PreInput').default}
+     */
     this.$preInput = $('preinput', this);
     this.$preInput.on('change', this.eventHandler.preInputChange)
         .on('keyup', this.eventHandler.preInputKeyUp)
@@ -324,7 +327,9 @@ MessageInput.prototype.notifySizeChange = function () {
 };
 
 
-
+/**
+ * @type {MessageInput}
+ */
 MessageInput.eventHandler = {};
 
 MessageInput.eventHandler.preInputChange = function (event) {
@@ -333,9 +338,18 @@ MessageInput.eventHandler.preInputChange = function (event) {
 };
 
 MessageInput.eventHandler.preInputKeyDown = function (event) {
-    if (!event.shiftKey && event.key == 'Enter') {
+    if (!(event.shiftKey || event.ctrlKey || event.altKey) && event.key == 'Enter') {
         this.notifySend();
         event.preventDefault();
+    }
+    else if ((event.shiftKey || event.ctrlKey || event.altKey) && event.key == 'Enter') {
+        event.preventDefault();
+        var text = this.$preInput.value;
+        var selectedPos = this.$preInput.getSelectPosition();
+        var newText = text.substr(0, selectedPos.start)
+            + '\n' + text.substr(selectedPos.end);
+        this.$preInput.applyData(newText, selectedPos.start + 1);
+        this.$preInput.commitChange(newText, selectedPos.start + 1);
     }
     else if (event.key == "Escape" && this._mode == 'edit') {
         this.notifyCancel();
