@@ -614,7 +614,7 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
     else if (bBound.bottom > outBound.bottom) {
         vy = bBound.bottom - outBound.bottom;
     }
-    
+
     var dt = 1 / 30;
 
     if (vx != 0 || vy != 0) {
@@ -714,9 +714,9 @@ BoardTable.eventHandler.mousefinish = function (event) {
             var holder = this._childHolders.splice(dragEventData.holderIndex, 1)[0];
             holder.elt.remove();
             ///remove all event
-            changed = 'itemleave';
-            this.emit('itemleave', { name: 'itemleave', item: holder.elt, target: this }, this);
             var other = dragEventData.boardIn;
+            changed = 'itemleave';
+            this.emit('itemleave', { name: 'itemleave', item: holder.elt, from: { index: dragEventData.holderIndex, table: this }, to: { index: dragEventData.boardAt, table: other }, target: this }, this);
             if (other._childHolders.length == 0) {
                 other.appendChild(holder.elt);
                 other._childHolders.push(holder);
@@ -737,7 +737,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
                     other._childHolders.push(holder);
                 }
             }
-            other.emit('itementer', { name: 'itementer', item: holder.elt, target: other }, other);
+            other.emit('itementer', { name: 'itementer', item: holder.elt, target: other, from: { index: dragEventData.holderIndex, table: this }, to: { index: dragEventData.boardAt, table: other } }, other);
         }
         this.emit('dragitemend', { type: 'dragitemend', target: this, changed: changed, boardElt: this._dragEventData.boardElt }, this);
     }
