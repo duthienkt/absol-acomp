@@ -58,10 +58,13 @@ PreInput.prototype.scrollIntoRange = function (range) {
     var elementBound = range.getBoundingClientRect();
 
     var viewportBound = this.getBoundingClientRect();
+    var dBottom = 0;
+    if (range.startContainer && range.startContainer.data && range.startContainer.data.charAt(range.startContainer.data.length - 1) == '\n')
+        dBottom += this.getFontSize() * 1.5;
     var currentScrollTop = this.scrollTop;
     var newScrollTop = currentScrollTop;
-    if (elementBound.bottom > viewportBound.bottom) {
-        newScrollTop = currentScrollTop + (elementBound.bottom - viewportBound.bottom);
+    if (elementBound.bottom + dBottom > viewportBound.bottom) {
+        newScrollTop = currentScrollTop + (elementBound.bottom + dBottom - viewportBound.bottom);
     }
     if (elementBound.top < viewportBound.top) {
         newScrollTop = currentScrollTop - (viewportBound.top - elementBound.top);
