@@ -190,8 +190,8 @@ SelectBox.property.items = {
         this._searchCache = {};
 
         var itemCount = items.length;
-        this._descWidth = measureMaxTextWidth(items);
-        this._textWidth = measureMaxDescriptionWidth(items);
+        this._textWidth = measureMaxTextWidth(items);
+        this._descWidth = measureMaxDescriptionWidth(items);
         this._height = this.items.length * 20;
         this.selectListBound = { height: items.length * 20 + 2, width: this._descWidth + this._textWidth + 14 + 2 };
 
