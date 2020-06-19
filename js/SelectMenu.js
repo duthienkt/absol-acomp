@@ -1,8 +1,8 @@
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { phraseMatch, wordsMatch } from "absol/src/String/stringMatching";
-import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import {phraseMatch, wordsMatch} from "absol/src/String/stringMatching";
+import {nonAccentVietnamese} from "absol/src/String/stringFormat";
 import Dom from "absol/src/HTML5/Dom";
 
 /*global absol*/
@@ -23,6 +23,8 @@ ACore.creator['dropdown-ico'] = function () {
 
 function SelectMenu() {
     var thisSM = this;
+    this._items = [];
+    this._value = null;
     this.$holderItem = $('.absol-selectmenu-holder-item', this);
 
     this.$anchorCtn = SelectMenu.getAnchorCtn();
@@ -54,8 +56,6 @@ function SelectMenu() {
     this.on('mousedown', this.eventHandler.click, true);
     this.on('blur', this.eventHandler.blur);
 
-    OOP.drillProperty(this, this.$selectlist, 'selectedIndex');
-
     this.selectListBound = { height: 0, width: 0 };
     this.$attachhook = $('attachhook', this)
         .on('error', this.eventHandler.attached);
@@ -67,6 +67,7 @@ function SelectMenu() {
     });
 
     this._selectListScrollSession = null;
+    this._itemIdxByValue = null;
     return this;
 };
 
@@ -100,7 +101,7 @@ SelectMenu.getRenderSpace = function () {
     if (!SelectMenu.$renderSpace) {
         SelectMenu.$renderSpace = _('.absol-selectmenu-render-space')
             .addTo(document.body);
-    };
+    }
     return SelectMenu.$renderSpace;
 };
 
@@ -109,7 +110,7 @@ SelectMenu.getAnchorCtn = function () {
     if (!SelectMenu.$anchorCtn) {
         SelectMenu.$anchorCtn = _('.absol-selectmenu-anchor-container')
             .addTo(document.body);
-    };
+    }
     return SelectMenu.$anchorCtn;
 };
 
@@ -190,7 +191,6 @@ SelectMenu.prototype._dictByValue = function (items) {
 };
 
 
-
 SelectMenu.prototype.init = function (props) {
     props = props || {};
     Object.keys(props).forEach(function (key) {
@@ -209,7 +209,8 @@ SelectMenu.prototype.init = function (props) {
 SelectMenu.property = {};
 SelectMenu.property.items = {
     set: function (value) {
-        this._searchCache = {};;
+        this._searchCache = {};
+        this._itemIdxByValue = null;
         /**
          * verity data
          */
@@ -237,7 +238,11 @@ SelectMenu.property.items = {
         this._resourceReady = true;
 
         this.addStyle('min-width', this.selectListBound.width + 2 + 23 + 'px');
-        this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 23, type: 'minwidthchange' }, this);
+        this.emit('minwidthchange', {
+            target: this,
+            value: this.selectListBound.width + 2 + 23,
+            type: 'minwidthchange'
+        }, this);
     },
     get: function () {
         return this._items || [];
@@ -349,7 +354,6 @@ SelectMenu.prototype.scrollToSelectedItem = function () {
         }
     }.bind(this), 3);
 };
-
 
 
 SelectMenu.prototype.startTrackScroll = function () {
@@ -502,6 +506,19 @@ SelectMenu.property.hidden = {
     }
 };
 
+SelectMenu.property.selectedIndex = {
+    get: function () {
+        if (!this._itemIdxByValue) {
+            this._itemIdxByValue = {};
+            for (var i = 0; i < this._items.length; ++i) {
+                this._itemIdxByValue[this._items[i].value] = i;
+            }
+        }
+        var idx = this._itemIdxByValue[this._value];
+        return idx >= 0 ? idx : -1;
+    }
+};
+
 /**
  * @type {SelectMenu}
  */
@@ -531,7 +548,6 @@ SelectMenu.eventHandler.attached = function () {
 };
 
 
-
 SelectMenu.eventHandler.scrollParent = function (event) {
     var self = this;
     if (this._scrollFrameout > 0) {
@@ -539,12 +555,14 @@ SelectMenu.eventHandler.scrollParent = function (event) {
         return;
     }
     this._scrollFrameout = this._scrollFrameout || 10;
+
     function update() {
         self.updateDropdownPostion(false);
         self.scrollToSelectedItem();
         self._scrollFrameout--;
         if (self._scrollFrameout > 0) requestAnimationFrame(update);
     }
+
     update();
 };
 
@@ -557,7 +575,6 @@ SelectMenu.eventHandler.click = function (event) {
     if (EventEmitter.isMouseRight(event)) return;
     this.isFocus = !this.isFocus;
 };
-
 
 
 SelectMenu.eventHandler.bodyClick = function (event) {
