@@ -4,6 +4,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import {phraseMatch, wordsMatch} from "absol/src/String/stringMatching";
 import {nonAccentVietnamese} from "absol/src/String/stringFormat";
 import Dom from "absol/src/HTML5/Dom";
+import {prepareSearchList, searchListByText} from "./list/search";
 
 /*global absol*/
 var _ = ACore._;
@@ -69,7 +70,8 @@ function SelectMenu() {
     this._selectListScrollSession = null;
     this._itemIdxByValue = null;
     return this;
-};
+}
+
 
 SelectMenu.render = function () {
     return _({
@@ -114,63 +116,6 @@ SelectMenu.getAnchorCtn = function () {
     return SelectMenu.$anchorCtn;
 };
 
-
-SelectMenu.EXTRA_MATCH_SCORE = 2;
-SelectMenu.UNCASE_MATCH_SCORE = 1;
-SelectMenu.UVN_MATCH_SCORE = 3;
-SelectMenu.EQUAL_MATCH_SCORE = 4;
-SelectMenu.WORD_MATCH_SCORE = 3;
-
-
-SelectMenu.prepareItem = function (item) {
-    if (typeof item == 'string') item = { text: item, value: item };
-    var spliter = /\s+/;
-
-    item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
-    item.__words__ = item.__text__.split(spliter);
-
-    item.__textNoneCase__ = item.__text__.toLowerCase();
-    item.__wordsNoneCase__ = item.__textNoneCase__.split(spliter);
-
-
-    item.__nvnText__ = nonAccentVietnamese(item.__text__);
-    item.__nvnWords__ = item.__nvnText__.split(spliter);
-
-    item.__nvnTextNoneCase__ = item.__nvnText__.toLowerCase();
-    item.__nvnWordsNoneCase__ = item.__nvnTextNoneCase__.split(spliter);
-    return item;
-};
-
-
-/**
- * @param {SearchItem} queryItem
- * @param {SearchItem} item
- */
-SelectMenu.calScore = function (queryItem, item) {
-    var score = 0;
-    if (item.__text__ == queryItem.__text__)
-        score += SelectMenu.EQUAL_MATCH_SCORE * queryItem.__text__.length;
-
-    var extraIndex = item.__text__.indexOf(queryItem.__text__);
-
-    if (extraIndex >= 0) {
-        score += SelectMenu.EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
-    }
-
-    extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
-    if (extraIndex >= 0) {
-        score += SelectMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
-    }
-
-    extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
-    if (extraIndex >= 0) {
-        score += SelectMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
-    }
-
-    score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * SelectMenu.WORD_MATCH_SCORE;
-    score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * SelectMenu.WORD_MATCH_SCORE;
-    return score;
-};
 
 SelectMenu.prototype.updateItem = function () {
     this.$holderItem.clearChild();
@@ -599,9 +544,6 @@ SelectMenu.eventHandler.selectlistPressItem = function (event) {
 
 SelectMenu.eventHandler.searchModify = function (event) {
     var filterText = this.$searchTextInput.value.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-    var filterLC = filterText.toLowerCase();
-    var filterNA = nonAccentVietnamese(filterText);
-    var filterNALC = filterNA.toLowerCase();
     if (filterText.length == 0) {
         this._resourceReady = true;
         this.$selectlist.items = this.items;
@@ -612,70 +554,11 @@ SelectMenu.eventHandler.searchModify = function (event) {
         this.$selectlist.addClass('as-searching');
         var view = [];
         if (!this._searchCache[filterText]) {
-            if (filterText.length == 1) {
-                view = this.items.map(function (item) {
-                    var res = { item: item, text: typeof item === 'string' ? item : item.text };
-                    return res;
-                }).map(function (it) {
-                    it.score = 0;
-                    var text = it.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-                    it.textNA = it.textNA || nonAccentVietnamese(text);
-                    it.score += text.toLowerCase().indexOf(filterLC) >= 0 ? 100 : 0;
-                    text = it.textNA;
-                    it.score += text.toLowerCase().indexOf(filterLC) >= 0 ? 100 : 0;
-                    return it;
-                });
-
-                view.sort(function (a, b) {
-                    if (b.score - a.score == 0) {
-                        if (b.textNA > a.textNA) return -1;
-                        return 1;
-                    }
-                    return b.score - a.score;
-                });
-                view = view.filter(function (x) {
-                    return x.score > 0;
-                })
+            if (this._items.length > 0 && !this._items[0].__nvnText__) {
+                prepareSearchList(this._items);
             }
-            else {
-                var its = this.items.map(function (item) {
-                    var res = { item: item, text: typeof item === 'string' ? item : item.text };
-                    var text = res.text.replace(/((\&nbsp)|(\s))+/g, ' ').trim();
-                    res.score = 0;
-                    var textNA = nonAccentVietnamese(text);
-                    res.textNA = textNA;
-                    res.score += (phraseMatch(text, filterText)
-                        + phraseMatch(textNA, filterNA)) / 2;
-                    if (text == filterText) res.score += 1000;
-                    if (textNA.replace(/s/g, '').toLowerCase() == filterNALC.replace(/s/g, ''))
-                        res.score += 300;
-                    if (textNA.replace(/s/g, '').toLowerCase().indexOf(filterNALC.replace(/s/g, '')) > -1)
-                        res.score += 100;
-                    return res;
-                });
-                if (its.length == 0) return;
 
-                its.sort(function (a, b) {
-                    if (b.score - a.score == 0) {
-                        if (b.textNA > a.textNA) return -1;
-                        return 1;
-                    }
-                    return b.score - a.score;
-                });
-                var view = its.filter(function (x) {
-                    return x.score > 0.5;
-                });
-                if (view.length == 0) {
-                    var bestScore = its[0].score;
-                    view = its.filter(function (it) {
-                        return it.score + 0.001 >= bestScore;
-                    });
-                }
-                if (view[0].score == 0) view = [];
-            }
-            view = view.map(function (e) {
-                return e.item;
-            });
+            view = searchListByText(filterText, this._items);
             this._searchCache[filterText] = view;
         }
         else {
@@ -688,8 +571,6 @@ SelectMenu.eventHandler.searchModify = function (event) {
 
     this.selectListBound = this.$selectlist.getBoundingClientRect();
     this.updateDropdownPostion(true);
-
-
 };
 
 SelectMenu.eventHandler.listSizeChangeAsync = function () {
