@@ -1,6 +1,6 @@
 import ACore from "../ACore";
-import { isTouchDevice } from "./TimePicker";
-import { MILLIS_PER_HOUR, MILLIS_PER_MINUTE, MILLIS_PER_DAY, beginOfDay } from "absol/src/Time/datetime";
+import {isTouchDevice} from "./TimePicker";
+import {MILLIS_PER_HOUR, MILLIS_PER_MINUTE, MILLIS_PER_DAY, beginOfDay} from "absol/src/Time/datetime";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 
 var _ = ACore._;
@@ -9,8 +9,8 @@ var $ = ACore.$;
 
 function TimeInput() {
     this._isOpenPicker = false;
-    this._hour = 0;
-    this._minute = 0;
+    this._hour = null;
+    this._minute = null;
     this.$hour = $('.ac-time-input-hour', this);
     this.$minute = $('.ac-time-input-minute', this);
     this.$timePicker = TimeInput.getTimePicker();
@@ -53,7 +53,7 @@ TimeInput.render = function () {
             {
                 tag: 'span',
                 class: 'ac-time-input-hour',
-                child: { text: '00' }
+                child: { text: '--' }
             },
             {
                 tag: 'span',
@@ -63,7 +63,7 @@ TimeInput.render = function () {
                 tag: 'span',
                 class: 'ac-time-input-minute',
                 child: {
-                    text: '00'
+                    text: '--'
                 }
             }
         ]
@@ -103,7 +103,7 @@ TimeInput.prototype.closePicker = function () {
     this.$timePicker
         .off('finish', this.eventHandler.pickerFinish)
         .off('cancel', this.eventHandler.pickerCancel);
-    setTimeout(function(){
+    setTimeout(function () {
         $(document.body).off('click', thisTI.eventHandler.clickBody);
     }, 100);
 };
@@ -112,10 +112,16 @@ TimeInput.property = {};
 
 TimeInput.property.hour = {
     set: function (value) {
-        value = (value % 24) || 0;
-        this._hour = value;
-        var text = (value < 10 ? '0' : '') + value + '';
-        this.$hour.clearChild().addChild(_({ text: text }));
+        if (typeof value == "number") {
+            value = (value % 24) || 0;
+            this._hour = value;
+            var text = (value < 10 ? '0' : '') + value + '';
+            this.$hour.firstChild.data = text;
+        }
+        else {
+            this._hour = null;
+            this.$hour.firstChild.data = '--';
+        }
     },
     get: function () {
         return this._hour;
@@ -125,10 +131,16 @@ TimeInput.property.hour = {
 
 TimeInput.property.minute = {
     set: function (value) {
-        value = (value % 60) || 0;
-        this._minute = value;
-        var text = (value < 10 ? '0' : '') + value + '';
-        this.$minute.clearChild().addChild(_({ text: text }));
+        if (typeof value == "number") {
+            value = (value % 60) || 0;
+            this._minute = value;
+            var text = (value < 10 ? '0' : '') + value + '';
+            this.$minute.firstChild.data = text;
+        }
+        else {
+            this._minute = null;
+            this.$minute.firstChild.data = '--';
+        }
     },
     get: function () {
         return this._minute;
@@ -138,17 +150,25 @@ TimeInput.property.minute = {
 
 TimeInput.property.dayOffset = {
     set: function (value) {
-        value = value || 0;
-        if (value.getTime)
-            value = value.getTime() - beginOfDay(value).getTime();
-        else {
-            value = value % MILLIS_PER_DAY;
-        }
 
-        this.hour = Math.floor(value / MILLIS_PER_HOUR);
-        this.minute = Math.floor((value % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE);
+        if (typeof value == "number" || (value && value.getTime)) {
+            value = value || 0;
+            if (value.getTime)
+                value = value.getTime() - beginOfDay(value).getTime();
+            else {
+                value = value % MILLIS_PER_DAY;
+            }
+
+            this.hour = Math.floor(value / MILLIS_PER_HOUR);
+            this.minute = Math.floor((value % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE);
+        }
+        else {
+            this.hour = null;
+            this.minute = null;
+        }
     },
     get: function () {
+        if (this._hour === null || this._minute === null) return null;
         return this._hour * MILLIS_PER_HOUR + this._minute * MILLIS_PER_MINUTE;
     }
 };
@@ -182,7 +202,7 @@ TimeInput.eventHandler.pickerCancel = function (event) {
     this.closePicker();
 };
 
-TimeInput.eventHandler.clickBody = function(event){
+TimeInput.eventHandler.clickBody = function (event) {
     if (EventEmitter.hitElement(this.$timePicker, event) || EventEmitter.hitElement(this, event)) return;
     this.closePicker();
 };
