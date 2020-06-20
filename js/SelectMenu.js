@@ -4,7 +4,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import {phraseMatch, wordsMatch} from "absol/src/String/stringMatching";
 import {nonAccentVietnamese} from "absol/src/String/stringFormat";
 import Dom from "absol/src/HTML5/Dom";
-import {prepareSearchList, searchListByText} from "./list/search";
+import {prepareSearchForList, searchListByText} from "./list/search";
 
 /*global absol*/
 var _ = ACore._;
@@ -555,7 +555,7 @@ SelectMenu.eventHandler.searchModify = function (event) {
         var view = [];
         if (!this._searchCache[filterText]) {
             if (this._items.length > 0 && !this._items[0].__nvnText__) {
-                prepareSearchList(this._items);
+                prepareSearchForList(this._items);
             }
 
             view = searchListByText(filterText, this._items);
