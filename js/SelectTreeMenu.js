@@ -5,6 +5,8 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import { wordsMatch } from "absol/src/String/stringMatching";
+import treeListToList from "./list/treeListToList";
+import {prepareSearchForList, searchTreeListByText} from "./list/search";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -82,6 +84,7 @@ SelectTreeMenu.render = function () {
 
 SelectTreeMenu.prototype.updateItem = SelectMenu.prototype.updateItem;
 
+
 SelectTreeMenu.prototype.init = SelectMenu.prototype.init;
 SelectTreeMenu.prototype.updateDropdownPostion = SelectMenu.prototype.updateDropdownPostion;
 SelectTreeMenu.prototype.scrollToSelectedItem = SelectMenu.prototype.scrollToSelectedItem;
@@ -117,16 +120,7 @@ SelectTreeMenu.property.enableSearch = SelectMenu.property.enableSearch;
 SelectTreeMenu.eventHandler.attached = SelectMenu.eventHandler.attached;
 SelectTreeMenu.eventHandler.removeParent = SelectMenu.eventHandler.removeParent;
 
-SelectTreeMenu.treeToList = function (items) {
-    var arr = [];
-    function visit(level, node) {
-        node.level = level;
-        arr.push(node);
-        if (node.items && node.items.length > 0) node.items.forEach(visit.bind(null, level + 1));
-    }
-    items.forEach(visit.bind(null, 0));
-    return arr;
-};
+SelectTreeMenu.treeToList = treeListToList;
 
 
 SelectTreeMenu.eventHandler.searchModify = function (event) {
@@ -147,8 +141,6 @@ SelectTreeMenu.property.items = {
     set: function (value) {
         value = value || [];
         this._items = value;
-        SelectTreeMenu.prepareData(this._items);
-
         this.__searchcache__ = {};
         this.__searchcache__['__EMPTY_QUERY__'] = SelectTreeMenu.treeToList(value);
 
@@ -223,140 +215,19 @@ SelectTreeMenu.property.isFocus = {
     }
 };
 
-// SelectTreeMenu.property.value = Sele;
 
-
-SelectTreeMenu.EXTRA_MATCH_SCORE = 2;
-SelectTreeMenu.UNCASE_MATCH_SCORE = 1;
-SelectTreeMenu.UVN_MATCH_SCORE = 3;
-SelectTreeMenu.EQUAL_MATCH_SCORE = 4;
-SelectTreeMenu.WORD_MATCH_SCORE = 3;
-
-/**
- * @typedef {{text:String, __words__: Array<String>, __textNoneCase__: String, __wordsNoneCase__: Array<String>, __nvnText__:String, __nvnWords__:Array<String>, __nvnTextNoneCase__: String, __nvnWordsNoneCase__: Array<String>}} SearchItem
- * @param {SearchItem} item
- * @returns {SearchItem}
+/***
+ *
+ * @param {String} query
+ * @param {Array<SelectionItem>} items
+ * @return {Array<SelectionItem>}
  */
-SelectTreeMenu.prepareItem = function (item) {
-    var spliter = /\s+/;
-
-    item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
-    item.__words__ = item.__text__.split(spliter);
-
-    item.__textNoneCase__ = item.__text__.toLowerCase();
-    item.__wordsNoneCase__ = item.__textNoneCase__.split(spliter);
-
-
-    item.__nvnText__ = nonAccentVietnamese(item.__text__);
-    item.__nvnWords__ = item.__nvnText__.split(spliter);
-
-    item.__nvnTextNoneCase__ = item.__nvnText__.toLowerCase();
-    item.__nvnWordsNoneCase__ = item.__nvnTextNoneCase__.split(spliter);
-    return item;
-};
-
-
-SelectTreeMenu.prepareData = function (items) {
-    var item;
-    for (var i = 0; i < items.length; ++i) {
-        if (typeof items[i] == 'string') {
-            items[i] = { text: items[i], value: items[i] };
-        }
-        item = items[i];
-        SelectTreeMenu.prepareItem(item);
-        if (item.items) SelectTreeMenu.prepareData(item.items);
-    }
-    return items;
-}
-
-/**
- * @param {SearchItem} queryItem
- * @param {SearchItem} item
- */
-SelectTreeMenu.calScore = function (queryItem, item) {
-    var score = 0;
-
-    if (item.__text__ == queryItem.__text__)
-        score += SelectTreeMenu.EQUAL_MATCH_SCORE * queryItem.__text__.length;
-
-    var extraIndex = item.__text__.indexOf(queryItem.__text__);
-
-    if (extraIndex >= 0) {
-        score += SelectTreeMenu.EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
-    }
-
-    extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
-    if (extraIndex >= 0) {
-        score += SelectTreeMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
-    }
-
-    extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
-    if (extraIndex >= 0) {
-        score += SelectTreeMenu.UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
-    }
-
-    score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * SelectTreeMenu.WORD_MATCH_SCORE;
-    score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * SelectTreeMenu.WORD_MATCH_SCORE;
-    return score;
-};
-
 SelectTreeMenu.queryTree = function (query, items) {
-    var gmaxScore = 0;
-    var gminScore = 1000;
-    var queryItem = SelectTreeMenu.prepareItem({ text: query });
-
-
-    function makeScore(item) {
-
-        var score = SelectTreeMenu.calScore(queryItem, item);
-        gmaxScore = Math.max(score, gmaxScore);
-        gminScore = Math.min(score, gminScore);
-
-        var children = (item.items || []).map(function (item) {
-            return makeScore(item);
-        });
-
-        var maxScore = children.reduce(function (ac, cr) {
-            return Math.max(ac, cr.maxScore);
-        }, score);
-
-        return {
-            score: score,
-            maxScore: maxScore,
-            item: item,
-            children: children
-        }
-    }
-
-    function sortcmp(a, b) {
-        return b.maxScore - a.maxScore;
-    }
-    function makeItems(nodes, medScore) {
-        nodes.sort(sortcmp);
-        return nodes.filter(function (node) {
-            return node.maxScore >= medScore;
-        }).map(function (node) {
-            var res;
-            if (typeof node.item == 'string') {
-                res = node.item;
-            }
-            else {
-                res = Object.assign({}, node.item);
-                if (node.children && node.children.length > 0) {
-                    res.items = makeItems(node.children, medScore);
-                    if (res.items.length == 0) delete res.items;
-                }
-            }
-            return res;
-        });
-    }
-
-    var scoredItems = items.map(makeScore);
-
-    var medianScore = (gminScore + gmaxScore) / 2;
-    var items = makeItems(scoredItems, medianScore);
-
-    return SelectTreeMenu.treeToList(items);
+    if (query.length == 0 || items.length == 0) return treeListToList(items);
+    if (!items[0].__nvnText__)
+        prepareSearchForList(items);
+    var resultTree = searchTreeListByText(query, items);
+    return treeListToList(resultTree);
 };
 
 SelectTreeMenu.prototype.search = function (query) {
