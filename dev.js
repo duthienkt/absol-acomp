@@ -11,6 +11,7 @@ import EmojiAnims from "./js/EmojiAnims";
 import MessageInput, { parseMessage } from './js/MessageInput';
 import EmojiPicker from './js/EmojiPicker';
 import ContextCaptor from './js/ContextMenu';
+import install from "./js/install";
 
 absol.parseMessage = parseMessage;
 
@@ -23,6 +24,7 @@ absol.EmojiChars = EmojiChars;
 absol.EmojiAnims = EmojiAnims;
 absol.ChromeCalendar = ChromeCalendar;
 absol.coreDom.install(AComp.core);
+install(absol.coreDom);
 Object.assign(absol.string, string);
 absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
