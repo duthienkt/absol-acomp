@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckboxInput(new)</title>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+
+</head>
+<body>
+<h3>Inline</h3>
+<style>
+    p .as-checkbox-input {
+        margin-right: 0.2em;
+    }
+</style>
+<p style="font-size: 10px">
+    <checkboxinput checked></checkboxinput>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+    et dolore magna aliqua.
+    <checkboxinput checked="true" class="class1 class2" disabled></checkboxinput>
+    Ut enim ad minim veniam, quis nostrud exercitation
+    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+    in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+    <checkboxinput></checkboxinput>
+    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+    deserunt mollit anim id est laborum
+    <checkboxinput id="abc" onchange="console.trace()"></checkboxinput>
+</p>
+<p style="font-size: 25px">
+    <checkboxinput checked disabled></checkboxinput>
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+    et dolore magna aliqua.
+    <checkboxinput checked="true" class="class1 class2"></checkboxinput>
+    Ut enim ad minim veniam, quis nostrud exercitation
+    ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
+    in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+    <checkboxinput></checkboxinput>
+    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+    deserunt mollit anim id est laborum
+    <checkboxinput id="abc"></checkboxinput>
+</p>
+<script>
+    absol.require('checkboxinput').autoReplace();
+</script>
+</body>
+</html>
