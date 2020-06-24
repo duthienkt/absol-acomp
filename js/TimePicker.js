@@ -1,8 +1,9 @@
 import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
-import { beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
+import {beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE} from "absol/src/Time/datetime";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import NumberSpanInput from "./NumberSpanInput";
 
 //todo: add this to absol
 export var isTouchDevice = BrowserDetector.hasTouch && !BrowserDetector.os.type.match(/windows|X11|Ubuntu|Linux/);
@@ -29,16 +30,24 @@ function TimePicker() {
         thisPicker.addStyle('font-size', thisPicker.getComputedStyleValue('font-size'));
     });
     this.$attachook.requestUpdateSize = this.updateSize.bind(this);
+    /***
+     *
+     * @type {NumberSpanInput}
+     */
     this.$hour = $('.ac-time-picker-hour', this)
         .on({
-            click: this.eventHandler.clickHour,
+            focus: this.eventHandler.focusHour,
             keydown: this.eventHandler.keydownHour,
             blur: this.eventHandler.blurHour
         });
+    /***
+     *
+     * @type {NumberSpanInput}
+     */
     this.$minute = $('.ac-time-picker-minute', this)
         .on({
-            click: this.eventHandler.clickMinute,
             keydown: this.eventHandler.keydownMinute,
+            focus: this.eventHandler.focusMinute,
             blur: this.eventHandler.blurMinute,
         });
 
@@ -52,12 +61,14 @@ function TimePicker() {
         .on({
             click: this.eventHandler.clickMinuteInput,
             keydown: this.eventHandler.keydownMinuteInput
-        })
+        });
 
     //only support if is none touch device
-    if (!isTouchDevice) {
-        this.$hour.attr('contenteditable', 'true');
-        this.$minute.attr('contenteditable', 'true');
+    if (isTouchDevice) {
+        this.$hour.readOnly = true;
+        this.$hour.on('click', this._editHourState.bind(this));
+        this.$minute.readOnly = true;
+        this.$minute.on('click', this._editMinuteState.bind(this));
     }
 
     this.$clock = $g('.ac-time-picker-clock', this)
@@ -76,8 +87,7 @@ function TimePicker() {
         var h = i;
         if (h == 0)
             h = 12;
-        else
-            if (h == 12) h = '00';
+        else if (h == 12) h = '00';
         return _g({
             tag: 'text',
             attr: {
@@ -219,7 +229,13 @@ TimePicker.prototype._drawSelect = function (radius, angle) {
 
 TimePicker.prototype.notifyChange = function (force) {
     if (this._lastDayOffset != this.dayOffset || force) {
-        this.emit('change', { target: this, hour: this.hour, minute: this.minute, dayOffset: this.dayOffset, name: 'change' }, this);
+        this.emit('change', {
+            target: this,
+            hour: this.hour,
+            minute: this.minute,
+            dayOffset: this.dayOffset,
+            name: 'change'
+        }, this);
         this._lastDayOffset = this.dayOffset;
     }
 };
@@ -246,33 +262,39 @@ TimePicker.render = function () {
                     class: 'ac-time-picker-set-clock-header',
                     child: [
                         {
-                            tag: 'span',
+                            tag: 'numberspaninput',
                             class: 'ac-time-picker-hour',
-                            child: { text: '00' }
+                            props: {
+                                value: 0,
+                                zeroInt: 2
+                            }
                         },
                         {
                             tag: 'span',
                             text: ':'
                         },
                         {
-                            tag: 'span',
+                            tag: 'numberspaninput',
                             class: 'ac-time-picker-minute',
-                            child: { text: '00' }
+                            props: {
+                                value: 0,
+                                zeroInt: 2
+                            }
                         }
                     ]
                 },
-                _g(
-                    {
-                        tag: 'svg',
-                        class: 'ac-time-picker-clock',
-                        child: [
-                            {
-                                class: 'ac-time-picker-clock-content',
-                                child: ['.ac-time-picker-clock-select-ctn', '.ac-time-picker-clock-hour-ctn', '.ac-time-picker-clock-minute-ctn']
-                            }
-                        ]
-                    }
-                )]
+                    _g(
+                        {
+                            tag: 'svg',
+                            class: 'ac-time-picker-clock',
+                            child: [
+                                {
+                                    class: 'ac-time-picker-clock-content',
+                                    child: ['.ac-time-picker-clock-select-ctn', '.ac-time-picker-clock-hour-ctn', '.ac-time-picker-clock-minute-ctn']
+                                }
+                            ]
+                        }
+                    )]
             },
             {
                 class: 'ac-time-picker-set-time',
@@ -366,9 +388,11 @@ TimePicker.prototype.clockMode = function () {
     this._mode = 'CLOCK';
     this.removeClass('ac-time-picker-time-mode')
         .addClass('ac-time-picker-clock-mode');
-    this.editHour();
+    this.$hour.value = this._hour<10? '0'+ this._hour:this._hour;
+    this.$minute.value = this._minute<10? '0'+ this._minute:  this._minute;
+    this._editHourState();
     this.updateSize();
-
+    this._showSelectHour(this._hour);
 };
 
 
@@ -377,27 +401,14 @@ TimePicker.prototype.timeMode = function () {
     this._mode = 'TIME';
     this.addClass('ac-time-picker-time-mode')
         .removeClass('ac-time-picker-clock-mode');
+    this.$hourInput.value = this._hour<10? '0'+ this._hour:this._hour;
+    this.$minuteInput.value = this._minute<10? '0'+ this._minute:  this._minute;
     this.editHourInput();
     this.updateSize();
 };
 
 
-TimePicker.prototype._editContent = function (elt) {
-    var sel, range;
-    elt.focus();
-    if (window.getSelection) {
-        sel = window.getSelection();
-        sel.removeAllRanges();
-        var range = document.createRange();
-        range.selectNode(elt.childNodes[elt.childNodes.length - 1]);
-        sel.addRange(range);
-    } else {
-        console.error("TimePicker: Not support!")
-    }
-};
-
-
-TimePicker.prototype.editHour = function () {
+TimePicker.prototype._editHourState = function () {
     this._state = "EDIT_HOUR";
     this._preHour = this._hour;
     this.removeClass('ac-time-picker-edit-minute')
@@ -405,12 +416,10 @@ TimePicker.prototype.editHour = function () {
         .removeClass('ac-time-picker-edit-hour-input')
         .removeClass('ac-time-picker-edit-minute-input');
     this.updateSize();
-    if (!isTouchDevice)
-        setTimeout(this._editContent.bind(this, this.$hour), 2);
 };
 
 
-TimePicker.prototype.editMinute = function () {
+TimePicker.prototype._editMinuteState = function () {
     this._state = "EDIT_MINUTE";
     this._preMinute = this._minute;
     this.addClass('ac-time-picker-edit-minute')
@@ -418,8 +427,6 @@ TimePicker.prototype.editMinute = function () {
         .removeClass('ac-time-picker-edit-hour-input')
         .removeClass('ac-time-picker-edit-minute-input');
     this.updateSize();
-    if (!isTouchDevice)
-        setTimeout(this._editContent.bind(this, this.$minute), 2);
 };
 
 
@@ -456,7 +463,13 @@ TimePicker.prototype.editMinuteInput = function () {
 
 
 TimePicker.prototype.finishSelect = function () {
-    this.emit('finish', { target: this, hour: this.hour, minute: this.minute, dayOffset: this.dayOffset, name: 'finish' }, this);
+    this.emit('finish', {
+        target: this,
+        hour: this.hour,
+        minute: this.minute,
+        dayOffset: this.dayOffset,
+        name: 'finish'
+    }, this);
 };
 
 
@@ -467,17 +480,40 @@ TimePicker.prototype.cancelSelect = function () {
 
 TimePicker.eventHandler = {};
 
-TimePicker.eventHandler.clickHour = function () {
-    if (this._state != 'EDIT_HOUR') this.editHour();
-    else this._editContent(this.$hour)
+TimePicker.eventHandler.focusHour = function () {
+    this._editHourState();
+    this.$hour.selectAll();
 };
 
 
-TimePicker.eventHandler.clickMinute = function () {
-    if (this._state != 'EDIT_MINUTE') this.editMinute();
-    else this._editContent(this.$minute)
+TimePicker.eventHandler.blurHour = function () {
+    var newText = this.$hour.value;
+    var hour = parseFloat(newText) || 0;
+    if (hour < 0 || hour >= 24)
+        hour = this._preHour;
+    this.$hour.value = hour < 10 ? '0' + hour : hour;
+    this._hour = hour;
+    this._showSelectHour(hour);
+    this.notifyChange();
 };
 
+
+TimePicker.eventHandler.focusMinute = function () {
+    this._editMinuteState();
+    this.$minute.selectAll();
+};
+
+
+TimePicker.eventHandler.blurMinute = function () {
+    var newText = this.$minute.innerHTML;
+    var minute = parseFloat(newText) || 0;
+    if (minute < 0 || minute >= 60)
+        minute = this._preMinute;
+    this.$minute.value = minute < 10 ? '0' + minute : minute;
+    this._minute = minute;
+    this._showSelectByMinuteText();
+    this.notifyChange();
+};
 
 
 TimePicker.eventHandler.clickHourInput = function () {
@@ -485,10 +521,8 @@ TimePicker.eventHandler.clickHourInput = function () {
     else {
         this.$hourInput.focus();
         this.$hourInput.select();
-    };
+    }
 };
-
-
 
 
 TimePicker.eventHandler.clickMinuteInput = function () {
@@ -497,7 +531,7 @@ TimePicker.eventHandler.clickMinuteInput = function () {
         this.$minuteInput.focus();
         this.$minuteInput.select();
 
-    };
+    }
 };
 
 TimePicker.property = {};
@@ -550,10 +584,7 @@ TimePicker.property.dayOffset = {
     }
 };
 
-
-TimePicker.prototype._showSelectByHourText = function () {
-    var hour = parseFloat(this.$hour.innerHTML) || 0;
-    if (hour < 0 || hour >= 24) return;
+TimePicker.prototype._showSelectHour = function (hour) {
     var radius;
     var angle = Math.PI * (hour - 3) / 6;
     if ((hour < 24 && hour > 12) || hour == 0) {
@@ -568,117 +599,78 @@ TimePicker.prototype._showSelectByHourText = function () {
     this._drawSelect(radius, angle);
 };
 
+TimePicker.prototype._showSelectByHourText = function () {
+    var hour = parseFloat(this.$hour.innerHTML) || 0;
+    if (hour < 0 || hour >= 24) return;
+    this._showSelectHour(hour);
+};
+
+
+TimePicker.prototype._showSelectMinute = function (minute) {
+    var angle = Math.PI * (minute - 15) / 30;
+    this._drawSelect(this._clockRadius, angle);
+}
 
 TimePicker.prototype._showSelectByMinuteText = function () {
     var minute = parseFloat(this.$minute.innerHTML) || 0;
     if (minute < 0 || minute >= 60) return;
-    var angle = Math.PI * (minute - 15) / 30;
-    if (minute >= 0 && minute < 60) {
-        this._drawSelect(this._clockRadius, angle);
-    }
+    this._showSelectMinute(minute);
 };
 
-
+/***
+ *
+ * @param {KeyboardEvent} event
+ */
 TimePicker.eventHandler.keydownHour = function (event) {
     var thisPicker = this;
-    if (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey) {
-        if (event.key.match(/[0-9]/)) {
-            setTimeout(this._showSelectByHourText.bind(this), 1);
-            setTimeout(this.notifyChange.bind(this), 2);
-        }
-        else {
-            event.preventDefault();
-        }
-    } else if (event.key == 'Enter') {
+    if (event.key == 'Enter' || event.key == 'Tab') {
         event.preventDefault();
-        var hour = parseFloat(this.$hour.innerHTML) || 0;
-        if (hour < 0 || hour >= 24)
-            hour = this._preHour;
-        this.hour = hour;
         this.$hour.blur();
-        this.editMinute();
-        setTimeout(this._showSelectByHourText.bind(this), 1);
-        setTimeout(this.notifyChange.bind(this), 2);
+        this._editMinuteState();
+        setTimeout(function () {
+            thisPicker.$minute.focus();
+            thisPicker.$minute.selectAll();
+        }, 30);
     }
     else {
-        var cText = this.$hour.innerHTML;
         setTimeout(function () {
-            var newText = thisPicker.$hour.innerHTML;
-            if (cText != newText) {
-                var hour = parseFloat(newText) || 0;
-                if (hour < 0 || hour >= 24)
-                    hour = thisPicker._preHour;
-                thisPicker.hour = hour;
-                thisPicker.$hour.blur();
-                thisPicker.editMinute();
-                thisPicker._showSelectByHourText();
-                thisPicker.notifyChange();
+            var newText = thisPicker.$hour.value;
+            var hour = parseFloat(newText) || 0;
+            if (hour < 0 || hour >= 24)
+                hour = thisPicker._preHour;
+            else {
+                thisPicker._hour = hour;
+                thisPicker._showSelectHour(hour);
             }
-        }, 1);
+        }, 30);
     }
-};
-
-
-
-TimePicker.eventHandler.blurHour = function () {
-    var newText = this.$hour.innerHTML;
-    var hour = parseFloat(newText) || 0;
-    if (hour < 0 || hour >= 24)
-        hour = this._preHour;
-    this.hour = hour;
-    this.$hour.blur();
-    this.editMinute();
-    this._showSelectByHourText();
-    this.notifyChange();
 };
 
 
 TimePicker.eventHandler.keydownMinute = function (event) {
     var thisPicker = this;
-    if (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey) {
-        if (event.key.match(/[0-9]/)) {
-            setTimeout(this._showSelectByMinuteText.bind(this), 1);
-            setTimeout(this.notifyChange.bind(this), 2);
-        }
-        else {
-            event.preventDefault();
-        }
-    }
-    else if (event.key == 'Enter') {
+    if (event.key == 'Enter') {
         this.$minute.blur();
         event.preventDefault();
-        var minute = parseFloat(this.$minute.innerHTML) || 0;
-        if (minute < 0 || minute >= 60)
-            minute = this._preMinute;
-        this.minute = minute;
-        setTimeout(this.finishSelect.bind(this), 1);
+        setTimeout(this.finishSelect.bind(this), 30);
+    }
+    else if (event.key == 'Tab') {
+        this.$minute.selectNone();
+        this.$finishBtn.focus();
+        event.preventDefault();
     }
     else {
-        var cText = this.$minute.innerHTML;
         setTimeout(function () {
-            var newText = thisPicker.$minute.innerHTML;
-            if (cText != newText) {
-                var minute = parseFloat(newText) || 0;
-                if (minute < 0 || minute >= 60)
-                    minute = thisPicker._preMinute;
-                thisPicker.minute = minute;
-                thisPicker._showSelectByMinuteText();
-                thisPicker.notifyChange();
+            var newText = thisPicker.$minute.value;
+            var minute = parseFloat(newText) || 0;
+            if (minute < 0 || minute >= 60)
+                minute = thisPicker._preMinute;
+            else {
+                thisPicker._minute = minute;
+                thisPicker._showSelectMinute(minute);
             }
-        }, 1);
+        }, 30);
     }
-};
-
-
-
-TimePicker.eventHandler.blurMinute = function () {
-    var newText = this.$minute.innerHTML;
-    var minute = parseFloat(newText) || 0;
-    if (minute < 0 || minute >= 60)
-        minute = this._preMinute;
-    this.minute = minute;
-    this._showSelectByMinuteText();
-    this.notifyChange();
 };
 
 
@@ -692,7 +684,8 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
         else {
             event.preventDefault();
         }
-    } else if (event.key == 'Enter') {
+    }
+    else if (event.key == 'Enter') {
         event.preventDefault();
         var hour = parseFloat(this.$hourInput.value) || 0;
         if (hour < 0 || hour >= 24)
@@ -719,8 +712,6 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
 };
 
 
-
-
 TimePicker.eventHandler.keydownMinuteInput = function (event) {
     var thisPicker = this;
     if ((isTouchDevice && event.key == "Unidentified") || event.key.length == 1 && !event.ctrlKey && !event.altKey) {
@@ -741,6 +732,9 @@ TimePicker.eventHandler.keydownMinuteInput = function (event) {
         this.minute = minute;
         setTimeout(this.finishSelect.bind(this), 1);
     }
+    else if (event.key == "Backspace") {
+
+    }
     else if (event.key != 'Enter') {
         var cText = this.$minuteInput.value;
         setTimeout(function () {
@@ -757,7 +751,6 @@ TimePicker.eventHandler.keydownMinuteInput = function (event) {
         }, 1);
     }
 };
-
 
 
 TimePicker.eventHandler.dragOnClock = function (event) {
@@ -781,8 +774,10 @@ TimePicker.eventHandler.dragOnClock = function (event) {
         else {
             if (hour == 0) hour = 12;
         }
-
-        this.hour = hour;
+        this._hour = hour;
+        this._showSelectHour(hour);
+        this.$hour.value = hour < 10 ? '0' + hour : hour;
+        this.$hour.selectEnd();
     }
     else if (this._state == "EDIT_MINUTE") {
         radius = this._clockRadius;
@@ -790,7 +785,10 @@ TimePicker.eventHandler.dragOnClock = function (event) {
         index = Math.round(angle / (Math.PI / 30));
         angle = index * (Math.PI / 30);
         var minute = (index + (60 + 15)) % 60;
-        this.minute = minute;
+        this._minute = minute;
+        this.$minute.value = minute < 10 ? '0' + minute : minute;
+        this._showSelectMinute(minute);
+        this.$minute.selectEnd();
         this.notifyChange();
     }
     else {
@@ -809,7 +807,6 @@ TimePicker.eventHandler.mousedownClock = function (event) {
 };
 
 
-
 TimePicker.eventHandler.mousemoveClock = function (event) {
     event.preventDefault();
     this.eventHandler.dragOnClock(event);
@@ -820,9 +817,17 @@ TimePicker.eventHandler.mousefinishClock = function () {
     document.body.removeEventListener('mousemove', this.eventHandler.mousemoveClock);
     document.body.removeEventListener('mouseup', this.eventHandler.mousefinishClock);
     document.body.removeEventListener('mouseleave', this.eventHandler.mousefinishClock);
-    if (this._state == 'EDIT_HOUR') this.editMinute();
+    if (this._state == 'EDIT_HOUR') {
+        console.log(this.$minute.readOnly)
+        if (this.$minute.readOnly) {
+            this._editMinuteState();
+        }
+        else {
+            this.$minute.focus();
+        }
+    }
     else if (this._state == 'EDIT_MINUTE') {
-        this.$minute.click();// refocus
+        this.$minute.selectAll();// refocus
     }
 };
 

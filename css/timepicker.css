@@ -30,7 +30,6 @@
 .ac-time-picker:not(.ac-time-picker-clock-mode) .ac-time-picker-set-clock,
 .ac-time-picker:not(.ac-time-picker-clock-mode) .ac-time-picker-keyboard-btn,
 .ac-time-picker:not(.ac-time-picker-touch) .ac-time-picker-keyboard-btn,
-
 .ac-time-picker:not(.ac-time-picker-time-mode) .ac-time-picker-set-time,
 .ac-time-picker:not(.ac-time-picker-time-mode) .ac-time-picker-clock-btn {
     display: none;
@@ -44,7 +43,7 @@
 
 }
 
-.ac-time-picker-set-clock-header>span {
+.ac-time-picker-set-clock-header > span {
     font-size: inherit;
 }
 
@@ -135,15 +134,16 @@
     padding-right: 0.3em;
 }
 
-.ac-time-picker-footer button:hover {
+.ac-time-picker-footer button:hover,
+.ac-time-picker-footer button:focus {
     background-color: rgba(170, 170, 170, 0.3);
 }
 
-.ac-time-picker-footer>button {
-    margin-right: 1m;
+.ac-time-picker-footer > button {
+    margin-right: 1em;
 }
 
-.ac-time-picker-footer-right>button {
+.ac-time-picker-footer-right > button {
     margin-left: 1em;
 }
 
@@ -177,7 +177,7 @@
     white-space: nowrap;
 }
 
-.ac-time-picker-set-time-input-hm>input {
+.ac-time-picker-set-time-input-hm > input {
     height: 1.2em;
     line-height: 1.2em;
     width: 2em;
@@ -204,6 +204,6 @@
 }
 
 
-.ac-time-picker-set-time-input-label-hm>span:first-child {
+.ac-time-picker-set-time-input-label-hm > span:first-child {
     width: 2em;
 }
