@@ -1,0 +1,8 @@
+.as-checkbox-button{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-checkbox-button .absol-checkbox-icon{
+    display: block;
+}

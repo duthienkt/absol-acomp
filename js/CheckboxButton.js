@@ -1,3 +1,4 @@
+import '../css/checkboxbutton.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
@@ -18,7 +19,7 @@ function CheckBoxButton() {
     }
 
     var res = _({
-        class: ['absol-checkbox'],
+        class: ['absol-checkbox', 'as-checkbox-button'],
         child: [
             '<input type="checkbox" />',
             svgIcon('left')
@@ -26,8 +27,6 @@ function CheckBoxButton() {
     });
     res.defineEvent('change');
     res.$input = $('input', res);
-    res.$label = $('label', res);
-
     res.on('click', function (event) {
         event.preventDefault();
         if (!this.disabled) {
@@ -131,7 +130,7 @@ CheckBoxButton.initAfterLoad = function () {
             }
 
             var res = _({
-                class: ['absol-checkbox'],
+                class: ['absol-checkbox', 'as-checkbox-button'],
                 child: [
                     svgIcon('left')
                 ]
