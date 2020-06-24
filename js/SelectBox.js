@@ -5,6 +5,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import './SelectBoxItem';
 import { measureText } from "./utils";
 import SelectList, { measureMaxTextWidth, measureMaxDescriptionWidth } from "./SelectList";
+import prepareSearchForItem, {calcItemMatchScore} from "./list/search";
 
 var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
 
@@ -371,7 +372,7 @@ SelectBox.eventHandler.searchModify = function (event) {
     else {
         if (!this._searchCache['__EMPTY_QUERY__']) {
             this._searchCache['__EMPTY_QUERY__'] = this.items.map(function (item) {
-                return SelectMenu.prepareItem(item);
+                return prepareSearchForItem(item);
             }).filter(function (it) {// filter items were added
                 return !self._valueDict[it.value];
             });
@@ -383,9 +384,9 @@ SelectBox.eventHandler.searchModify = function (event) {
         if (!this._searchCache[filterText]) {
             var gmaxScore = 0;
             var gminScore = 1000;
-            var queryItem = SelectMenu.prepareItem({ text: filterText });
+            var queryItem = prepareSearchForItem({ text: filterText });
             view = this._searchCache['__EMPTY_QUERY__'].map(function (it) {
-                var score = SelectMenu.calScore(queryItem, it);
+                var score = calcItemMatchScore(queryItem, it);
                 gmaxScore = Math.max(gmaxScore, score);
                 gminScore = Math.min(gminScore, score);
                 return Object.assign({ score: score }, it);
