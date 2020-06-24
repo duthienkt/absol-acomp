@@ -213,6 +213,16 @@ TimePicker.prototype.updateSelectPosition = function () {
     this._drawSelect(radius, angle);
 };
 
+TimePicker.prototype.editHour = function(){
+    this.clockMode();
+    if (this.$hour.readOnly){
+        this._editHourState();
+    }
+    else{
+        this.$hour.focus();
+    }
+}
+
 
 TimePicker.prototype._drawSelect = function (radius, angle) {
     var x = radius * Math.cos(angle);
@@ -557,7 +567,7 @@ TimePicker.property.minute = {
         value = (value % 60) || 0;
         this._minute = value;
         var text = (value < 10 ? '0' : '') + value + '';
-        this.$minute.clearChild().addChild(_({ text: text }));
+        this.$minute.value = text;
         this.$minuteInput.value = text;
         this.updateSelectPosition();
     },
@@ -818,7 +828,6 @@ TimePicker.eventHandler.mousefinishClock = function () {
     document.body.removeEventListener('mouseup', this.eventHandler.mousefinishClock);
     document.body.removeEventListener('mouseleave', this.eventHandler.mousefinishClock);
     if (this._state == 'EDIT_HOUR') {
-        console.log(this.$minute.readOnly)
         if (this.$minute.readOnly) {
             this._editMinuteState();
         }
