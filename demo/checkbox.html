@@ -11,6 +11,7 @@
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
 
     <style>
+
         body {
             --blue: #122246;
             --indigo: #6610f2;
@@ -49,8 +50,11 @@
 </head>
 
 <body>
+
     <h1>Checkbox</h1>
-    <div class="checkbox-row"></div>
+    <div class="checkbox-row">
+        <span>span </span><label>label </label>
+    </div>
     <script class="viewable">
         var mRadioRow = absol.$('.checkbox-row');
         absol._('checkbox[checked="true"]').addTo(mRadioRow).text = "Chon 1";
@@ -68,6 +72,13 @@
         <label for="c1">Chọn 1</label><input type="checkbox" name="b" class="absol-checkbox" id="c1" />
         <label for="c2">Chọn 2</label><input type="checkbox" name="b" class="absol-checkbox" id="c2" />
         <label for="c3">Chọn 3</label><input type="checkbox" name="b" class="absol-checkbox" checked id="c3" />
+        <table>
+            <tr>
+                <td>Chọn 4</td><td><input type="checkbox" name="b" class="absol-checkbox" id="c4" /></td>
+            </tr>
+            <tr><td>Chọn 5</td><td><input type="checkbox" name="b" class="absol-checkbox" id="c5" /></td> </tr>
+            <tr><td>Chọn 6</td><td><input type="checkbox" name="b" class="absol-checkbox" id="c6" /></td> </tr>
+        </table>
     </div>
 
     <h1>Switch</h1>
