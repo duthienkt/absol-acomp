@@ -75,11 +75,11 @@
                 tag: 'dateinput',
                 props: {
                     value: minValue,
-                    maxLimitDate: maxValue
+                    maxDateLimit: maxValue
                 },
                 on: {
                     change: function (ev) {
-                        maxIp.minLimitDate = ev.value;
+                        maxIp.minDateLimit = ev.value;
                     }
                 }
             }
@@ -89,12 +89,12 @@
                 tag: 'dateinput',
                 props: {
                     value: maxValue,
-                    minLimitDate: minValue,
+                    minDateLimit: minValue,
                     // dateToString: 'mmm-dd-yyyy', only support dd/mm/yyyy now
                 },
                 on: {
                     change: function (ev) {
-                        minIp.maxLimitDate = ev.value;
+                        minIp.maxDateLimit = ev.value;
                     }
                 }
             }
@@ -105,7 +105,7 @@
             tag: 'dateinput',
             props: {
                 // value: maxValue,
-                minLimitDate: minValue,
+                minDateLimit: minValue,
                 disabled: true
             }
         }));
