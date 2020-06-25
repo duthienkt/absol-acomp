@@ -43,12 +43,12 @@ module.exports = {
         ]
     },
     optimization: {
-		minimize: false
-	},
+        minimize: false
+    },
     devServer: {
         compress: true,
         disableHostCheck: true,
-        host:'0.0.0.0'
+        host: '0.0.0.0'
     },
     performance: {
         hints: false
