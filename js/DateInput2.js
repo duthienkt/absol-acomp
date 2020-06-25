@@ -27,7 +27,13 @@ function DateInput2() {
     }, 'auto', this.eventHandler.calendarSelect);
     this._calendarHolder.element = this;
     this._formater = DateInput.formaters[this._format];
-    OOP.drillProperty(this, this._calendarHolder.calendarProps, ['minLimitDate', 'maxLimitDate']);
+    OOP.drillProperty(this, this._calendarHolder.calendarProps, {
+        minLimitDate: 'minLimitDate',
+        maxLimitDate:'maxLimitDate',
+        minDateLimit: 'minLimitDate',
+        maxDateLimit: 'maxLimitDate'
+    });
+
     this.value = null;
 }
 

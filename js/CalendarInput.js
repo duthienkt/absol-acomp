@@ -7,8 +7,6 @@ var _ = ACore._;
 var $ = ACore.$;
 
 
-
-
 function CalendarInput() {
     var res = _({
         extendEvent: ['change'],
@@ -30,7 +28,12 @@ function CalendarInput() {
         res.emit('change', { target: res, value: value }, res);
     });
 
-    OOP.drillProperty(res, res._quickOption.calendarProps, ['minLimitDate', 'maxLimitDate', 'minDateLimit', 'maxDateLimit']);
+    OOP.drillProperty(res, res._quickOption.calendarProps, {
+        minLimitDate: 'minLimitDate',
+        maxLimitDate:'maxLimitDate',
+        minDateLimit: 'minLimitDate',
+        maxDateLimit: 'maxLimitDate'
+    });
 
     return res;
 }
@@ -122,7 +125,6 @@ ACore.install('calendarinput', CalendarInput);
 
 // for older code
 ACore.install('calendar-input', function (data) {
-
     return _({
         tag: 'calendarinput',
         extendEvent: 'changed',
