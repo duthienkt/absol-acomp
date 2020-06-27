@@ -9,7 +9,7 @@ function BScroller(data) {
         return $(data.elt)
     }
     else
-        return _('.absol-bscroller');
+        return _('.as-bscroller');
 }
 
 
