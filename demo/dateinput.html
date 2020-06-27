@@ -72,8 +72,8 @@
         var maxValue = new Date(2020, 0, 1)
         var minIp = absol._(
             {
-                tag: 'dateinput',
-                props: {
+                tag: 'calendar-input',
+                data: {
                     value: minValue,
                     maxDateLimit: maxValue
                 },
@@ -86,8 +86,8 @@
         );
         var maxIp = absol._(
             {
-                tag: 'dateinput',
-                props: {
+                tag: 'calendar-input',
+                data: {
                     value: maxValue,
                     minDateLimit: minValue,
                     // dateToString: 'mmm-dd-yyyy', only support dd/mm/yyyy now
