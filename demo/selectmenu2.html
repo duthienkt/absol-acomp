@@ -36,14 +36,15 @@
             tabview.addChild(frame);
             // this.remove();
             var startTime = new Date();
-            var sm = _('selectmenu').addTo(frame);
+            var sm = _('selectmenu').addTo(frame)
             sm.value = 9634;
             sm.items = items;
             sm.enableSearch = true;
             var endTime = new Date();
             _(`<p>Init component time:  ${endTime.getTime() - startTime.getTime()}(ms)</p>`).addTo(frame);
-            sm.on('change', function () {
-                _(`<p>value:  ${this.value}`).addTo(frame);
+            sm.on('change', function (event) {
+
+                _(`<p>lastValue: ${event.lastValue} value:  ${this.value}`).addTo(frame);
 
             });
             sm.on('change', function () {
