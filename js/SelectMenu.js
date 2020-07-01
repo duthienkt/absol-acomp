@@ -26,6 +26,7 @@ function SelectMenu() {
     var thisSM = this;
     this._items = [];
     this._value = null;
+    this._lastValue = null;
     this.$holderItem = $('.absol-selectmenu-holder-item', this);
 
     this.$anchorCtn = SelectMenu.getAnchorCtn();
@@ -532,8 +533,9 @@ SelectMenu.eventHandler.bodyClick = function (event) {
 
 SelectMenu.eventHandler.selectlistPressItem = function (event) {
     this.updateItem();
-    this.selectMenuValue = this.value;
     if (this._lastValue != this.value) {
+        event.lastValue = this._lastValue;
+        event.value = this.value;
         setTimeout(function () {
             this.emit('change', event, this);
         }.bind(this), 1)
