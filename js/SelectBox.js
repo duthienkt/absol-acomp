@@ -3,8 +3,8 @@ import SelectMenu from "./SelectMenu";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 import './SelectBoxItem';
-import { measureText } from "./utils";
-import SelectList, { measureMaxTextWidth, measureMaxDescriptionWidth } from "./SelectList";
+import {measureText} from "./utils";
+import SelectList, {measureMaxTextWidth, measureMaxDescriptionWidth} from "./SelectList";
 import prepareSearchForItem, {calcItemMatchScore} from "./list/search";
 
 var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
@@ -59,18 +59,22 @@ SelectBox.render = function () {
 };
 
 
-
 SelectBox.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
 SelectBox.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
 SelectBox.prototype.updateDropdownPostion = SelectMenu.prototype.updateDropdownPostion;
 
-SelectBox.prototype.startListenRemovable = function(){};// do not track, keep attached work
-SelectBox.prototype.stopListenRemovable =  function(){};
-SelectBox.prototype.startListenRemovable =  function(){};;
-SelectBox.prototype.stopListenRemovable =  function(){};
+SelectBox.prototype.startListenRemovable = function () {
+};// do not track, keep attached work
+SelectBox.prototype.stopListenRemovable = function () {
+};
+SelectBox.prototype.startListenRemovable = function () {
+};
+;
+SelectBox.prototype.stopListenRemovable = function () {
+};
 
 SelectBox.prototype._releaseResource = SelectMenu.prototype._releaseResource;
-SelectBox.prototype._requestResource= SelectMenu.prototype._requestResource;
+SelectBox.prototype._requestResource = SelectMenu.prototype._requestResource;
 
 
 SelectBox.prototype._measureDescriptionWidth = SelectList.prototype._measureDescriptionWidth;
@@ -79,10 +83,10 @@ SelectBox.prototype._measureDescriptionWidth = SelectList.prototype._measureDesc
 SelectBox.prototype._measureTextWidth = SelectList.prototype._measureTextWidth;
 
 
-
 SelectBox.eventHandler = {};
 SelectBox.eventHandler.attached = SelectMenu.eventHandler.attached;
-SelectBox.eventHandler.removeParent = function(){};
+SelectBox.eventHandler.removeParent = function () {
+};
 
 SelectBox.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
 SelectBox.eventHandler.listSizeChangeAsync = SelectMenu.eventHandler.listSizeChangeAsync;
@@ -127,9 +131,7 @@ SelectBox.prototype.querySelectedItems = function () {
 };
 
 
-
 SelectBox.prototype.init = SelectMenu.prototype.init;
-
 
 
 SelectBox.property.isFocus = {
@@ -180,7 +182,6 @@ SelectBox.property.isFocus = {
 };
 
 
-
 SelectBox.property.items = {
     set: function (items) {
         var i;
@@ -201,7 +202,14 @@ SelectBox.property.items = {
             self.values.push(this.value);
             self.values = self.values;//update
             self.isFocus = false;//close after click item
-            self.emit('add', { type: 'add', itemData: this.data, itemElt: this, value: this.value, values: self.values, target: self }, self);
+            self.emit('add', {
+                type: 'add',
+                itemData: this.data,
+                itemElt: this,
+                value: this.value,
+                values: self.values,
+                target: self
+            }, self);
             self.emit('change', { type: 'change', values: self.values, target: self }, self);
             self.scrollTop = self.scrollHeight;
         }
@@ -242,7 +250,11 @@ SelectBox.property.items = {
         }
 
         this.addStyle('min-width', this.selectListBound.width + 2 + 37 + 14 + 'px');
-        this.emit('minwidthchange', { target: this, value: this.selectListBound.width + 2 + 37 + 14, type: 'minwidthchange' }, this);
+        this.emit('minwidthchange', {
+            target: this,
+            value: this.selectListBound.width + 2 + 37 + 14,
+            type: 'minwidthchange'
+        }, this);
 
         this.values = this.values;
     },
@@ -266,12 +278,24 @@ SelectBox.property.values = {
         function closeBoxItem(event) {
             var itemValue = this.value;
             var index = self.values.indexOf(itemValue);
+            var eltIndex = self.$boxItems.indexOf(this);
             if (index >= 0) {
+                this.remove();
+                self.$boxItems = self.$boxItems.slice(0, eltIndex).concat(self.$boxItems.slice(eltIndex + 1));
+                self._boxItemViewCount--;
                 self.values = self.values.slice(0, index).concat(self.values.slice(index + 1));
-                self.emit('remove', { type: 'remove', values: self.values, target: self, itemElt: this, value: this.value, itemData: this.data }, self);
+                self.emit('remove', {
+                    type: 'remove',
+                    values: self.values,
+                    target: self,
+                    itemElt: this,
+                    value: this.value,
+                    itemData: this.data
+                }, self);
                 self.emit('change', { type: 'change', values: self.values, target: self }, self);
             }
         }
+
         if (this._orderly)
             values.sort(function (a, b) {
                 var itA = self.$listItemByValue[a];
@@ -351,7 +375,8 @@ SelectBox.eventHandler.click = function (event) {
 SelectBox.eventHandler.clickBody = function (event) {
     if (!EventEmitter.hitElement(this.$anchor, event) && event.target != this) {
         this.isFocus = false;
-    };
+    }
+    ;
 };
 
 SelectBox.eventHandler.searchListPressItem = function (event) {
@@ -407,7 +432,6 @@ SelectBox.eventHandler.searchModify = function (event) {
     this.updateDropdownPostion(true);
     this.$vscroller.scrollTop = 0;
 };
-
 
 
 ACore.install('SelectBox'.toLowerCase(), SelectBox);
