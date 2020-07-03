@@ -171,3 +171,17 @@
 .absol-selectmenu-dropdown-box .absol-bscroller {
     overflow-y: auto;
 }
+
+
+.as-select-anchor {
+    position: fixed;
+}
+
+
+.as-select-anchor.as-hidden {
+    left: 0;
+    top: 0;
+    z-index: -1000;
+    visibility: hidden;
+    opacity: 0;
+}

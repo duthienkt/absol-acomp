@@ -1,30 +1,41 @@
 import ACore from "../ACore";
 import SelectMenu from "./SelectMenu";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-
+import PositionTracker from "./PositionTracker";
 import './SelectBoxItem';
 import {measureText} from "./utils";
 import SelectList, {measureMaxTextWidth, measureMaxDescriptionWidth} from "./SelectList";
 import prepareSearchForItem, {calcItemMatchScore} from "./list/search";
+import Dom from "absol/src/HTML5/Dom";
 
 var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/***
+ * @extends PositionTracker
+ * @return {SelectBox}
+ * @constructor
+ */
 function SelectBox() {
+    _({
+        tag: 'positiontracker',
+        elt: this,
+        on: {
+            positionchange: this.eventHandler.postionChange
+        }
+    });
     this.on('click', this.eventHandler.click);
 
-    this.$anchorCtn = SelectMenu.getAnchorCtn();
-    this.$anchor = _('.absol-selectmenu-anchor.absol-disabled').addTo(this.$anchorCtn);
-    this.$anchorContentCtn = _('.absol-selectmenu-anchor-content-container').addTo(this.$anchor);
-    this.$scrollTrackElts = [];
-
+    this.$anchor = _('.as-select-anchor.as-hidden');
+    this._anchor = 0;//not display
+    this.forceDown = false;
+    this.selectListBound = { width: 0, height: 0 };
     this.$attachhook = $('attachhook', this)
         .on('error', this.eventHandler.attached);
 
-    this.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(this.$anchorContentCtn);
+    this.$dropdownBox = _('.absol-selectmenu-dropdown-box').addTo(this.$anchor);
     this.$searchTextInput = _('searchtextinput').addStyle('display', 'none').addTo(this.$dropdownBox);
     this.$vscroller = _('bscroller').addTo(this.$dropdownBox);
     this.$selectlist = _('.absol-selectlist').addTo(this.$vscroller);//reuse css
@@ -59,9 +70,61 @@ SelectBox.render = function () {
 };
 
 
-SelectBox.prototype.startTrackScroll = SelectMenu.prototype.startTrackScroll;
-SelectBox.prototype.stopTrackScroll = SelectMenu.prototype.stopTrackScroll;
-SelectBox.prototype.updateDropdownPostion = SelectMenu.prototype.updateDropdownPostion;
+SelectBox.prototype.updateDropdownPosition = function (keepAnchor) {
+    if (this.isFocus) {
+        var bound = this.getBoundingClientRect();
+        var outBound = Dom.traceOutBoundingClientRect(this);
+        if (!keepAnchor) {
+            if (bound.top > outBound.bottom || bound.bottom < outBound.top) {
+                this.isFocus = false;
+                return;
+            }
+            var screenSize = Dom.getScreenSize();
+            var searchHeight = 0;
+            if (this.enableSearch) {
+                searchHeight = this.$searchTextInput.getBoundingClientRect().height + 10;
+            }
+
+            var availableTop = bound.top - searchHeight - 20;
+            var availableBottom = screenSize.height - bound.bottom - searchHeight - 20;
+            console.log(screenSize.height, bound.bottom, searchHeight)
+            if (this.forceDown || availableBottom > availableTop || availableBottom > this.selectListBound.height) {
+                this._anchor = 1;
+                if (this.$dropdownBox.firstChild !== this.$searchTextInput) {
+                    this.$searchTextInput.selfRemove();
+                    this.$dropdownBox.addChildBefore(this.$searchTextInput, this.$vscroller);
+                }
+                this.$vscroller.addStyle('max-height', availableBottom + 'px');
+            }
+            else {
+                this._anchor = -1;
+                if (this.$dropdownBox.lastChild != this.$searchTextInput) {
+                    this.$searchTextInput.selfRemove();
+                    this.$dropdownBox.addChild(this.$searchTextInput);
+                }
+                this.$vscroller.addStyle('max-height', availableTop + 'px');
+            }
+            this.$dropdownBox.addStyle('min-width', bound.width + 'px');
+        }
+
+        this.$anchor.addStyle('left', bound.left);
+        if (this._anchor === -1) {
+            this.$anchor.addStyle({
+                top: bound.top - this.$dropdownBox.clientHeight - 1 + 'px',
+            });
+        }
+        else if (this._anchor === 1) {
+            this.$anchor.addStyle({
+                top: bound.bottom + 'px'
+            });
+        }
+    }
+    else {
+        if (this.$anchor.parentElement) {
+            this.$anchor.remove();
+        }
+    }
+};
 
 SelectBox.prototype.startListenRemovable = function () {
 };// do not track, keep attached work
@@ -84,9 +147,35 @@ SelectBox.prototype._measureTextWidth = SelectList.prototype._measureTextWidth;
 
 
 SelectBox.eventHandler = {};
-SelectBox.eventHandler.attached = SelectMenu.eventHandler.attached;
+
+SelectBox.eventHandler.attached = function () {
+    if (this._updateInterval) return;
+    this.$attachhook.updateSize = this.$attachhook.updateSize || this.updateDropdownPosition.bind(this);
+    Dom.addToResizeSystem(this.$attachhook);
+    this.stopListenRemovable();
+    this.startListenRemovable();
+    if (!this._resourceReady) {
+        this._requestResource();
+        this._resourceReady = true;
+    }
+    this._updateInterval = setInterval(function () {
+        if (!this.isDescendantOf(document.body)) {
+            clearInterval(this._updateInterval);
+            this._updateInterval = undefined;
+            this.$anchor.selfRemove();
+            this.stopTrackScroll();
+            this.stopListenRemovable();
+            this.eventHandler.removeParent();
+        }
+    }.bind(this), 10000);
+};
+
 SelectBox.eventHandler.removeParent = function () {
 };
+
+SelectBox.eventHandler.postionChange = function () {
+    this.updateDropdownPosition(false);
+}
 
 SelectBox.eventHandler.scrollParent = SelectMenu.eventHandler.scrollParent;
 SelectBox.eventHandler.listSizeChangeAsync = SelectMenu.eventHandler.listSizeChangeAsync;
@@ -141,9 +230,11 @@ SelectBox.property.isFocus = {
         var self = this;
         this._isFocus = value;
         if (value) {
-            this.startTrackScroll();
-            this.$anchor.removeClass('absol-disabled');
+            this.startTrackPosition();
+            this.$anchor.addClass('as-hidden')
+                .addTo(document.body);
             var isAttached = false;
+
             setTimeout(function () {
                 if (isAttached) return;
                 $('body').on('mousedown', self.eventHandler.clickBody);
@@ -162,11 +253,15 @@ SelectBox.property.isFocus = {
                     self.$searchTextInput.focus();
                 }, 50);
             }
-            this.updateDropdownPostion();
+            this.updateDropdownPosition();
+            setTimeout(function () {
+                self.$anchor.removeClass('as-hidden');
+            }, 10);
         }
         else {
-            this.$anchor.addClass('absol-disabled');
-            this.stopTrackScroll();
+            this.stopTrackPosition();
+            this.$anchor.addClass('as-hidden');
+            this.$anchor.remove();
             $('body').off('mousedown', this.eventHandler.clickBody);
             setTimeout(function () {
                 if (self.$searchTextInput.value != 0) {
@@ -429,7 +524,7 @@ SelectBox.eventHandler.searchModify = function (event) {
         this.$searchList.items = view;
         this.$searchList.value = "NOTHING BE SELECTED";
     }
-    this.updateDropdownPostion(true);
+    this.updateDropdownPosition(true);
     this.$vscroller.scrollTop = 0;
 };
 
