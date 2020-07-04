@@ -87,7 +87,6 @@ SelectBox.prototype.updateDropdownPosition = function (keepAnchor) {
 
             var availableTop = bound.top - searchHeight - 20;
             var availableBottom = screenSize.height - bound.bottom - searchHeight - 20;
-            console.log(screenSize.height, bound.bottom, searchHeight)
             if (this.forceDown || availableBottom > availableTop || availableBottom > this.selectListBound.height) {
                 this._anchor = 1;
                 if (this.$dropdownBox.firstChild !== this.$searchTextInput) {
@@ -107,7 +106,7 @@ SelectBox.prototype.updateDropdownPosition = function (keepAnchor) {
             this.$dropdownBox.addStyle('min-width', bound.width + 'px');
         }
 
-        this.$anchor.addStyle('left', bound.left);
+        this.$anchor.addStyle('left', bound.left + 'px');
         if (this._anchor === -1) {
             this.$anchor.addStyle({
                 top: bound.top - this.$dropdownBox.clientHeight - 1 + 'px',
