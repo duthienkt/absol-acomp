@@ -9,6 +9,7 @@
     padding-right: 20px;
     overflow-y: auto;
     cursor: copy;
+    outline: none;
 }
 
 .absol-selectbox.disabled {
