@@ -35,7 +35,8 @@
             display: 'inline-block',
             border: 'solid 1px gray',
             'max-width': '50%',//có thể giới hạn cả chiều rộng và chiều cao, tự động tăng kính thước khi chọn thêm
-            'max-height': '4em'//cũng có thể thêm kích thước cố định vào, nếu tràn sẽ tự scroll
+            'max-height': '4em',//cũng có thể thêm kích thước cố định vào, nếu tràn sẽ tự scroll
+            margin: '40px'
         },
         props: {
             items: Array(30).fill(0).map(function (u, i) {
@@ -69,12 +70,36 @@
         style: {
             display: 'inline-block',
             border: 'solid 1px gray',
-            marginLeft: '40px'
+            margin: '40px'
         },
         props: {
             enableSearch: true,
             items: Array(30).fill(0).map(function (u, i) {
-                return {text: '[' + i + ']'+ absol.string.randomPhrase(30), value: i, desc: absol.string.randomPhrase(30) };
+                return {
+                    text: '[' + i + ']' + absol.string.randomPhrase(30),
+                    value: i,
+                    desc: absol.string.randomPhrase(30)
+                };
+            }),
+            values: [5, 2, 1]
+        }
+    }).addTo(absol.$('#test'));
+
+    absol._({
+        tag: 'selectbox',
+        style: {
+            display: 'inline-block',
+            border: 'solid 1px gray',
+            margin: '40px'
+        },
+        props: {
+            enableSearch: false,
+            items: Array(30).fill(0).map(function (u, i) {
+                return {
+                    text: '[' + i + ']' + absol.string.randomPhrase(30),
+                    value: i,
+                    desc: absol.string.randomPhrase(30)
+                };
             }),
             values: [5, 2, 1]
         }
