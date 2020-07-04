@@ -19,18 +19,16 @@ PositionTracker.tag = 'PositionTracker'.toLowerCase();
  */
 PositionTracker.render = function(){
     return _('div');
-}
+};
 
 
 PositionTracker.prototype.notifyPositionChange = function (event) {
     this.emit('positionchange', { type: 'positionchange', originEvent: event });
-    console.log('.');
 };
 
 PositionTracker.prototype.startTrackPosition = function () {
     if (this.$trackScrollParents.length > 0)
-        this.topTrackPosition();
-
+        this.stopTrackPosition();
     var trackElt = this;
     while (trackElt) {
         if (trackElt.addEventListener)
