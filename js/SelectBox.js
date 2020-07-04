@@ -162,7 +162,7 @@ SelectBox.eventHandler.attached = function () {
             clearInterval(this._updateInterval);
             this._updateInterval = undefined;
             this.$anchor.selfRemove();
-            this.stopTrackScroll();
+            this.stopTrackPosition();
             this.stopListenRemovable();
             this.eventHandler.removeParent();
         }

@@ -175,6 +175,7 @@
 
 .as-select-anchor {
     position: fixed;
+    z-index: 1000001;
 }
 
 
