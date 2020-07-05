@@ -22,7 +22,7 @@
     height: 0;
 }
 
-.absol-context-hinge>.absol-context-menu {
+.absol-context-hinge > .absol-context-menu {
     position: absolute;
     top: -10000px;
     left: -10000px;
@@ -65,14 +65,15 @@
     font-size: 12px;
 }
 
-.absol-context-menu-anchor>textarea {
-    width: 40px;
-    height: 40px;
+.absol-context-menu-anchor > textarea {
+    width: 160px;
+    height: 160px;
     margin: 0;
     resize: none;
     border: none;
-    opacity: 0;
+    /*opacity: 0;*/
     cursor: default;
+    background-color: red;
 }
 
 .absol-context-menu-anchor.absol-active {
@@ -97,6 +98,6 @@
 }
 
 
-.as-system-context-menu{
+.as-system-context-menu {
     /** nothing here, to define use system context menu**/
 }

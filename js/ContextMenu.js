@@ -6,6 +6,8 @@ import Vec2 from 'absol/src/Math/Vec2';
 var _ = ACore._;
 var $ = ACore.$;
 
+var supportContextEvent = false;
+
 export function ContextCaptor() {
     this.attachedElt = null;
     this.$textarea = $('textarea', this)
@@ -13,7 +15,7 @@ export function ContextCaptor() {
     this._ss = 0;
     this._isTouch = false;
     /**
-    this._target = null;
+     this._target = null;
      * @type {Vec2}
      */
     this._posStart = null;
@@ -24,8 +26,10 @@ export function ContextCaptor() {
     this._touchId = -100;
     this._longPressTimeout = -1;
     this._removeTimeout = -1;
-
+    this._fireContextMenuTimeout = -1;
     this.$target = null;
+    this._pointerSession = 0;
+    this._lastContextSession = 0;
 
     this.mousedownEvent = null;
     this.sync = Promise.resolve();
@@ -66,14 +70,15 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems, 
 
         self.off('requestcontextmenu', finish);
         setTimeout(function () {
-            anchor.selfRemove();
+            anchor.selfRemove();//
         }, 10);
     };
     var vmenu = _({
         tag: 'vmenu',
         props: props,
         on: {
-            press: onSelectItems || function () { }
+            press: onSelectItems || function () {
+            }
         }
     }).addTo(anchor);
     setTimeout(function () {
@@ -109,6 +114,46 @@ ContextCaptor.prototype._checkNeedHandle = function (target) {
     return needHandle;
 };
 
+
+ContextCaptor.prototype._fireContextMenuEvent = function () {
+    if (this._lastContextSession >= this._pointerSession) return;// prevent fire multi-times in a pointer session
+    this._lastContextSession = this._pointerSession;
+    var baseEventData = {
+        clientX: this._posCurrent.x,
+        clientY: this._posCurrent.y,
+        target: this.$target
+    };
+    this.emit('requestcontextmenu', baseEventData, this);
+    var self = this;
+
+    var propagation = true;
+    var localEvent = Object.assign({
+        clientX: this._posCurrent.x, clientY: this._posCurrent.y,
+        target: this.$target,
+        showContextMenu: function (props, onSelectItems) {
+            self.sync = self.sync.then(function () {
+                return new Promise(function (rs) {
+                    setTimeout(function () {
+                        self.showContextMenu(self._posCurrent.x, self._posCurrent.y, props, onSelectItems);
+                        rs();
+                    }, 30)
+                });
+            })
+        },
+        stopPropagation: function () {
+            propagation = false;
+        }
+    }, baseEventData);
+
+    var current = this.$target;
+    while (current && propagation) {
+        if (current.isSupportedEvent && current.isSupportedEvent('contextmenu')) {
+            current.emit('contextmenu', localEvent, current, this);
+        }
+        current = current.parentElement;
+    }
+};
+
 /**
  * @type {ContextCaptor}
  */
@@ -116,7 +161,7 @@ ContextCaptor.eventHandler = {};
 
 ContextCaptor.eventHandler.mousedown = function (event) {
     if (this._touchId != -100) return;
-
+    this._pointerSession++;
     var target;
     var isTouch;
     var touchId;
@@ -137,6 +182,7 @@ ContextCaptor.eventHandler.mousedown = function (event) {
     posCurrent = new Vec2(pointer.clientX, pointer.clientY);
 
     if (isTouch) {
+
         var thisCT = this;
         this._longPressTimeout = setTimeout(function () {
             if (!thisCT._checkNeedHandle(target)) return;
@@ -145,11 +191,19 @@ ContextCaptor.eventHandler.mousedown = function (event) {
                 thisCT._removeTimeout = -1;
             }
 
-
             thisCT._ss++;
             thisCT.moveTo(thisCT._posCurrent);
             thisCT.active(true);
             thisCT._longPressTimeout = -1;
+            if (thisCT._fireContextMenuTimeout >= 0) {
+                clearTimeout(thisCT._fireContextMenuTimeout);
+            }
+            // show if device not support contextmenu event (after 700ms)
+            thisCT._fireContextMenuTimeout = setTimeout(function () {
+                if (!supportContextEvent) {
+                    thisCT._fireContextMenuEvent();
+                }
+            }, 300);
         }, 400);
         this.$target = target;
         this._isTouch = isTouch;
@@ -188,8 +242,8 @@ ContextCaptor.eventHandler.mousedown = function (event) {
  */
 ContextCaptor.prototype.moveTo = function (pos) {
     this.addStyle({
-        left: pos.x - 20 + 'px',
-        top: pos.y - 20 + 'px'
+        left: pos.x - 80 + 'px',
+        top: pos.y - 80 + 'px'
     });
 };
 
@@ -200,14 +254,12 @@ ContextCaptor.prototype.active = function (flag) {
         this.removeClass('absol-active');
 };
 
-ContextCaptor.eventHandler.mousemove = function () {
+ContextCaptor.eventHandler.mousemove = function (event) {
     var isTouch = this._isTouch;
-    var isTouch;
     var touchId;
     var pointer;
     var posCurrent;
     if (isTouch) {
-        isTouch = true;
         pointer = event.changedTouches[0];
         touchId = pointer.identifier;
     }
@@ -227,7 +279,7 @@ ContextCaptor.eventHandler.mousemove = function () {
 };
 
 
-ContextCaptor.eventHandler.mousefinish = function () {
+ContextCaptor.eventHandler.mousefinish = function (event) {
 
     var isTouch = this._isTouch;
     var touchId;
@@ -260,45 +312,22 @@ ContextCaptor.eventHandler.mousefinish = function () {
     }
 
     this._touchId = -100;
+    if (this._fireContextMenuTimeout >= 0) {
+        clearTimeout(this._fireContextMenuTimeout);
+    }
     var thisCT = this;
     this._removeTimeout = setTimeout(function () {
         thisCT.active(false);
         thisCT._removeTimeout = -1;
+
     }, 1);
 };
 
 ContextCaptor.eventHandler.contextmenu = function (event) {
-    this.emit('requestcontextmenu', event, this);
-    var self = this;
+    supportContextEvent = true;
     event.preventDefault();
+    this._fireContextMenuEvent();
 
-    var propagation = true;
-    var localEvent = {
-        clientX: event.clientX,
-        clientY: event.clientY,
-        target: this.$target,
-        showContextMenu: function (props, onSelectItems) {
-            self.sync = self.sync.then(function () {
-                return new Promise(function (rs) {
-                    setTimeout(function () {
-                        self.showContextMenu(event.clientX, event.clientY, props, onSelectItems);
-                        rs();
-                    }, 30)
-                });
-            })
-        },
-        stopPropagation: function () {
-            propagation = false;
-        }
-    }
-
-    var current = this.$target;
-    while (current && propagation) {
-        if (current.isSupportedEvent && current.isSupportedEvent('contextmenu')) {
-            current.emit('contextmenu', localEvent, current, this);
-        }
-        current = current.parentElement;
-    }
 };
 
 
