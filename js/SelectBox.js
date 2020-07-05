@@ -23,7 +23,7 @@ function SelectBox() {
         tag: 'positiontracker',
         elt: this,
         on: {
-            positionchange: this.eventHandler.postionChange
+            positionchange: this.eventHandler.positionChange
         }
     });
     this.on('click', this.eventHandler.click);
@@ -172,7 +172,7 @@ SelectBox.eventHandler.attached = function () {
 SelectBox.eventHandler.removeParent = function () {
 };
 
-SelectBox.eventHandler.postionChange = function () {
+SelectBox.eventHandler.positionChange = function () {
     this.updateDropdownPosition(false);
 }
 
