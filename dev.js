@@ -39,7 +39,7 @@ setTimeout(function () {
             tag: 'link',
             attr: {
                 rel: 'stylesheet',
-                href: '//cdn.materialdesignicons.com/4.5.95/css/materialdesignicons.min.css'
+                href: '//cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css'
             }
         }).addTo(document.head);
     }
