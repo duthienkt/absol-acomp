@@ -71,9 +71,8 @@
     margin: 0;
     resize: none;
     border: none;
-    /*opacity: 0;*/
+    opacity: 0;
     cursor: default;
-    background-color: red;
 }
 
 .absol-context-menu-anchor.absol-active {
