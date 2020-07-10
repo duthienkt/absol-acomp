@@ -1,6 +1,7 @@
 import ACore from "../ACore";
 import Vec2 from "absol/src/Math/Vec2";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import {findChangedTouchByIdent} from "absol/src/HTML5/EventEmitter";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -26,7 +27,6 @@ function Hanger() {
         mousemove: this.eventHandler.hangerPointerMove
     };
 }
-
 
 
 Hanger.render = function () {
@@ -79,10 +79,9 @@ Hanger.eventHandler = {};
 
 Hanger.eventHandler.hangerPointerDown = function (event) {
     if (this._hangerPointerData) return;
-
     var bound = this.getBoundingClientRect();
     var startingPoint;
-    var isTouch = event.type == 'touchstart';
+    var isTouch = event.type === 'touchstart';
     var pointerIdent = -1;
     var target;
     if (isTouch) {
@@ -137,15 +136,18 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
 Hanger.eventHandler.hangerPointerMove = function (event) {
     var pointerData = this._hangerPointerData;
     var isTouch = pointerData.isTouch;
-    var pointerIdent = -1;
+    var pointerIdent = -2;
     var currentPoint;
     if (isTouch) {
-        var touch = event.changedTouches[0];
-        pointerIdent = touch.identifier;
-        currentPoint = new Vec2(touch.clientX, touch.clientY);
+        var touch = findChangedTouchByIdent(event, pointerData.pointerIdent);
+        if (touch) {
+            pointerIdent = touch.identifier;
+            currentPoint = new Vec2(touch.clientX, touch.clientY);
+        }
     }
     else {
         currentPoint = new Vec2(event.clientX, event.clientY);
+        pointerIdent = -1;
     }
     if (pointerIdent != pointerData.pointerIdent) return;
     pointerData.currentPoint = currentPoint;
@@ -173,7 +175,7 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
         }
     }
 
-    if (pointerData.state == 1) {
+    if (pointerData.state === 1) {
         var dragEvent = {
             type: 'drag',
             originEvent: event,
@@ -194,22 +196,25 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
     }
 };
 
-Hanger.eventHandler.hangerPointerFinish = function () {
+Hanger.eventHandler.hangerPointerFinish = function (event) {
     var pointerData = this._hangerPointerData;
-    var isTouch = pointerData.isTouch;
-    var pointerIdent = -1;
+    var isTouch = event.type === 'touchend';
+    if (pointerData.isTouch !== isTouch) return;
+    var pointerIdent = -2;
     var currentPoint;
     if (isTouch) {
-        var touch = event.changedTouches[0];
-        pointerIdent = touch.identifier;
-        currentPoint = new Vec2(touch.clientX, touch.clientY);
+        var touch = findChangedTouchByIdent(event, pointerData.pointerIdent);
+        if (touch) {
+            pointerIdent = touch.identifier;
+            currentPoint = new Vec2(touch.clientX, touch.clientY);
+        }
     }
     else {
         currentPoint = new Vec2(event.clientX, event.clientY);
+        pointerIdent = -1;
     }
-    if (pointerIdent != pointerData.pointerIdent) return;
-
-    if (pointerData.state == 1) {
+    if (pointerIdent !== pointerData.pointerIdent) return;
+    if (pointerData.state === 1) {
         var dragEndEvent = {
             type: 'dragend',
             originEvent: event,
