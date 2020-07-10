@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
     <title>ContextMenu</title>
     <script src="../dist/absol-acomp.js?"></script>
     <script>
@@ -57,6 +57,10 @@
 <body>
 <div id="test-zone"> right click to me
     <div id="free-zone" class="as-system-context-menu">Vùng này không chặn chuột phải</div>
+    <select>
+        <option>item1</option>
+        <option>item2</option>
+    </select>
 </div>
 <script>
     absol.ContextCaptor.auto();

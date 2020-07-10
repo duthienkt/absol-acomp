@@ -1,13 +1,11 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
     <meta charset="UTF-8">
     <title>BoardTable</title>
     <script type="text/javascript" src="../dist/absol-acomp.js?"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
-    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
-
 
 </head>
 
@@ -151,10 +149,10 @@
                     },
 
                     dragitemstart: function (event) {
-                        console.log('drag start', event.boardElt);
+                        // console.log('drag start', event.boardElt);
                     },
                     dragitemend: function () {
-                        console.log('drag end');
+                        // console.log('drag end');
                     }
                 }
             });
@@ -480,11 +478,8 @@
 
             mBoardTable.addChild(plusButton);
             updateBoardBox();
-
-
         })();
     </script>
-    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 </body>
 
 </html>
