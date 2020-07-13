@@ -1,5 +1,6 @@
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -43,7 +44,7 @@ TabView.prototype.activeTab = function (id, userActive) {
     var needDeactiveHolder = [];
     var needActiveHolder = [];
     this._frameHolders.forEach(function (holder) {
-        if (holder.containterElt.containsClass('absol-tabview-container-hidden')) {
+        if (holder.containerElt.containsClass('absol-tabview-container-hidden')) {
             if (holder.id == id) {
                 needActiveHolder.push(holder);
             }
@@ -56,7 +57,7 @@ TabView.prototype.activeTab = function (id, userActive) {
     });
 
     needDeactiveHolder.forEach(function (holder) {
-        holder.containterElt.addClass('absol-tabview-container-hidden');
+        holder.containerElt.addClass('absol-tabview-container-hidden');
         holder.tabFrame.emit('deactive', {
             type: 'deactive',
             target: holder.tabFrame,
@@ -69,7 +70,7 @@ TabView.prototype.activeTab = function (id, userActive) {
 
     needActiveHolder.forEach(function (holder) {
         self._history.push(holder.id);
-        holder.containterElt.removeClass('absol-tabview-container-hidden');
+        holder.containerElt.removeClass('absol-tabview-container-hidden');
         self.$tabbar.activeTab(holder.id);
         holder.tabFrame.emit('active', {
             type: 'active',
@@ -123,16 +124,18 @@ TabView.prototype.removeTab = function (id, userActive) {
                         tabButton: holder.tabButton,
                         holder: holder
                     };
-                    if (!holder.containterElt.containsClass('absol-tabview-container-hidden'))
+                    if (!holder.containerElt.containsClass('absol-tabview-container-hidden'))
                         holder.tabFrame.emit('deactive', eventData2, holder.tabFrame);
                     eventData2.type = 'deactivetab';
                     eventData2.target = self;
-                    if (!holder.containterElt.containsClass('absol-tabview-container-hidden'))
+                    if (!holder.containerElt.containsClass('absol-tabview-container-hidden'))
                         self.emit('deactivetab', eventData2, self);
-                    self._frameHolders = self._frameHolders.filter(function (x) { return x.id != id; });
+                    self._frameHolders = self._frameHolders.filter(function (x) {
+                        return x.id != id;
+                    });
                     holder.tabFrame.notifyDetached();
                     self.$tabbar.removeTab(holder.id);
-                    holder.containterElt.remove();
+                    holder.containerElt.remove();
 
                     eventData2.type = 'remove';
                     eventData2.target = holder.tabFrame;
@@ -150,7 +153,6 @@ TabView.prototype.removeTab = function (id, userActive) {
     return Promise.all(resPromise);
 
 };
-
 
 
 TabView.prototype.notifyUpdateDesc = function (elt) {
@@ -189,8 +191,8 @@ TabView.prototype.addChild = function () {
         if (!elt.notifyAttached || !elt.notifyDetached) {
             throw new Error('element is not a tabframe');
         }
-        var containterElt = _('.absol-tabview-container.absol-tabview-container-hidden');
-        self.appendChild(containterElt);//origin function
+        var containerElt = _('.absol-tabview-container.absol-tabview-container-hidden');
+        self.appendChild(containerElt);//origin function
         elt.selfRemove();
         var id = elt.attr('id');
         var desc = elt.attr('desc') || undefined;
@@ -198,7 +200,7 @@ TabView.prototype.addChild = function () {
         var modified = elt.modified;
 
         var tabButton = self.$tabbar.addTab({ name: name, id: id, desc: desc, modified: modified });
-        containterElt.addChild(elt);
+        containerElt.addChild(elt);
         elt.notifyAttached(self);
         var holder = {};
         OOP.drillProperty(holder, elt, 'id');
@@ -213,8 +215,8 @@ TabView.prototype.addChild = function () {
                 value: elt,
                 writable: false
             },
-            containterElt: {
-                value: containterElt,
+            containerElt: {
+                value: containerElt,
                 writable: false
             }
         });
@@ -230,12 +232,12 @@ TabView.prototype.activeLastTab = function () {
     }, {});
 
     while (this._history.length > 0) {
-        var id =  this._history[ this._history.length - 1];
+        var id = this._history[this._history.length - 1];
         if (dict[id]) {
             this.activeTab(id);
             break;
         }
-        else{
+        else {
             this._history.pop();
         }
     }
@@ -251,11 +253,66 @@ TabView.prototype.getAllChild = function () {
     });
 };
 
-
-TabView.prototype.activeFrame = function (elt) {
-    return this.activeTab(elt.attr('id'));
+TabView.prototype.getActiveTabHolder = function () {
+    var holder = null;
+    for (var i = 0; i < this._frameHolders.length; ++i) {
+        holder = this._frameHolders[i];
+        if (!holder.containerElt.containsClass('absol-tabview-container-hidden')) {
+            return holder;
+        }
+    }
+    return null;
 };
 
+TabView.prototype.getActiveTab = function () {
+    var holder = this.getActiveTabHolder();
+    return holder && holder.tabFrame;
+};
+
+TabView.prototype.getActiveTabId = function () {
+    var holder = this.getActiveTabHolder();
+    return holder && holder.id;
+};
+
+TabView.prototype.getTabById = function (id) {
+    var holder = this.getTabHolderById(id);
+    return  holder && holder.tabFrame;
+};
+
+TabView.prototype.getTabHolderById = function(id){
+    var holder = null;
+    for (var i = 0; i < this._frameHolders.length; ++i) {
+        holder = this._frameHolders[i];
+        if (holder.id === id) {
+            return holder;
+        }
+    }
+    return null;
+}
+
+
+
+
+TabView.prototype.activeFrame = function (elt) {
+    if (typeof elt == "string") {
+        return this.activeTab(elt);
+    }
+    else if (elt && elt.attr) {
+        return this.activeTab(elt.attr('id'));
+    }
+    else{
+        throw new Error("Invalid param, must be id or elt!");
+    }
+};
+
+
+TabView.property = {};
+
+TabView.property.historyOfTab = {
+    get: function () {
+        return this._history.slice();
+    }
+};
 
 ACore.install('tabview', TabView);
 
