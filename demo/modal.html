@@ -6,25 +6,40 @@
     <script src="../dist/absol-acomp.js?"></script>
 </head>
 <body>
-    <script>
-        var myModal = absol._({
-            tag:'modal',
+<script>
+    var myModal = absol._({
+            tag: 'modal',
             child: [
                 {
-                    tag: 'img',
                     style:{
-                        'max-width':'100%',
-                        'max-height': '100%',
-                        width: '500px',
-                        height:'auto'
+                        height: '100%'
                     },
-                    props:{
-                        src:"https://absol.cf/share/IMG_5466.JPG"
-                    }
+                    child: [
+                        {
+                        tag: 'img',
+                        style: {
+                            'max-width': '100%',
+                            'max-height': 'calc(100% - 30px)',
+                            width: '500px',
+                            height: 'auto'
+                        },
+                        props: {
+                            src: "https://absol.cf/share/IMG_5466.JPG"
+                        }
+                    },
+                        {
+                            style: {
+                                height: '30px',
+                                'padding-left': '30px'
+                            },
+                            child: { text: "Đây là tiêu đề" }
+                        }]
                 }
+
             ]
-        });
-        document.body.appendChild(myModal);
-    </script>
+        })
+    ;
+    document.body.appendChild(myModal);
+</script>
 </body>
 </html>
