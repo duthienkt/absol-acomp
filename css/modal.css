@@ -17,9 +17,6 @@
     text-align: center;
 }
 
-.as-modal-content {
-    display: inline-block;
-}
 
 .as-modal.as-middle::before {
     content: "";
@@ -27,6 +24,11 @@
     vertical-align: middle;
     height: 100%;
     width: 0;
+}
+
+.as-modal > * {
+    display: inline-block;
+    text-align: initial;
 }
 
 /*for content*/
