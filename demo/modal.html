@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Modal</title>
+    <script src="../dist/absol-acomp.js?"></script>
+</head>
+<body>
+    <script>
+        var myModal = absol._({
+            tag:'modal',
+            child: [
+                {
+                    tag: 'img',
+                    style:{
+                        'max-width':'100%',
+                        'max-height': '100%',
+                        width: '500px',
+                        height:'auto'
+                    },
+                    props:{
+                        src:"https://absol.cf/share/IMG_5466.JPG"
+                    }
+                }
+            ]
+        });
+        document.body.appendChild(myModal);
+    </script>
+</body>
+</html>
