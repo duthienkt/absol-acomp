@@ -1,47 +1,62 @@
+import '../css/modal.css';
 import ACore from "../ACore";
 
+var $ = ACore.$;
+var _ = ACore._;
+
 function Modal() {
-    var $ = ACore.$;
-    var _ = ACore._;
-
-    var res = _({
-        class: 'absol-modal',
-        child: {
-            class: 'absol-modal-hcenter',
-            child: {
-                class: 'absol-modal-vcenter',
-                child: '.absol-modal-container'
-
-            }
-        }
-    });
-
-    res.$container = $('.absol-modal-container', res);
-
-    return res;
-};
+    this._contentAlign = [];
+    this.contentAlign = 'middle center';
+}
 
 
-Modal.prototype.addChild = function (child) {
-    this.$container.addChild.apply(this.$container, arguments);
-    return this;
-};
+Modal.tag = 'modal';
+Modal.render = function () {
+    return _('.as-modal');
+}
 
 
 Modal.property = {};
 Modal.property.show = {
     set: function (value) {
         if (value)
-            this.removeClass('absol-modal-hidden');
+            this.removeClass('as-hidden');
         else
-            this.addClass('absol-modal-hidden');
+            this.addClass('as-hidden');
     },
     get: function () {
-        return !this.containsClass('absol-modal-hidden');
+        return !this.containsClass('as-hidden');
     }
 };
 
+Modal.property.contentAlign = {
+    set: function (value) {
+        var thisM = this;
+        this._contentAlign.forEach(function (name) {
+            thisM.removeClass('as-' + name);
+        })
+        value = value || '';
+        if (typeof value === 'string') {
+            this._contentAlign = value.split(/\s+/);
+        }
+        else if (value instanceof Array) {
+            this._contentAlign = value;
+        }
+        else {
+            throw new Error("Invalid contentAlign!");
+        }
+        var thisM = this;
+        console.log(this._contentAlign)
+        this._contentAlign.forEach(function (name) {
+            thisM.addClass('as-' + name);
+        })
+    },
+    get: function () {
+        return this._contentAlign.join(' ');
+    }
+}
 
-ACore.creator.modal = Modal;
+
+ACore.install(Modal);
 
 export default Modal;
