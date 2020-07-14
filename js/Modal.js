@@ -7,13 +7,21 @@ var _ = ACore._;
 function Modal() {
     this._contentAlign = [];
     this.contentAlign = 'middle center';
+    this.$content = $('.as-modal-content', this);
+    console.log(this)
 }
 
 
 Modal.tag = 'modal';
 Modal.render = function () {
-    return _('.as-modal');
-}
+    return _({ class: 'as-modal', child: '.as-modal-content' });
+};
+
+['findChildBefore', 'findChildAfter', 'removeChild', 'clearChild', 'addChild'].forEach(function (key) {
+    Modal.prototype[key] = function () {
+        this.$content[key].apply(this.$content, arguments);
+    }
+});
 
 
 Modal.property = {};

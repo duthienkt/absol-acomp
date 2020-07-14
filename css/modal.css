@@ -26,12 +26,12 @@
     width: 0;
 }
 
-.as-modal > * {
+.as-modal > .as-modal-content {
     display: inline-block;
     text-align: initial;
 }
 
 /*for content*/
-.as-modal.as-middle > * {
+.as-modal.as-middle > .as-modal-content {
     vertical-align: middle;
 }
