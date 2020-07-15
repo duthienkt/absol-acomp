@@ -8,7 +8,6 @@ function Modal() {
     this._contentAlign = [];
     this.contentAlign = 'middle center';
     this.$content = $('.as-modal-content', this);
-    console.log(this)
 }
 
 
