@@ -11,7 +11,7 @@ function Modal() {
 }
 
 
-Modal.tag = 'modal';console.log(this._contentAlign)
+Modal.tag = 'modal';
 Modal.render = function () {
     return _({ class: 'as-modal', child: '.as-modal-content' });
 };
