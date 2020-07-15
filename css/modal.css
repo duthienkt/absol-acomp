@@ -5,6 +5,7 @@
     top: 0;
     bottom: 0;
     z-index: 1000;
+    white-space: nowrap;
 }
 
 .as-modal.as-hidden{
@@ -29,6 +30,7 @@
 .as-modal > .as-modal-content {
     display: inline-block;
     text-align: initial;
+    white-space: initial;
 }
 
 /*for content*/
