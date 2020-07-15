@@ -11,7 +11,7 @@ function Modal() {
 }
 
 
-Modal.tag = 'modal';
+Modal.tag = 'modal';console.log(this._contentAlign)
 Modal.render = function () {
     return _({ class: 'as-modal', child: '.as-modal-content' });
 };
@@ -53,7 +53,6 @@ Modal.property.contentAlign = {
             throw new Error("Invalid contentAlign!");
         }
         var thisM = this;
-        console.log(this._contentAlign)
         this._contentAlign.forEach(function (name) {
             thisM.addClass('as-' + name);
         })
