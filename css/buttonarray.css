@@ -24,6 +24,7 @@
 
 .as-button-array-item:not(:first-child) {
     border-left: 1px solid #006ce5;
+    border-right: none;
 }
 
 
