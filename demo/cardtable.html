@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>BoardTable</title>
-    <script type="text/javascript" src="../dist/absol-acomp.js?"></script>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
@@ -159,6 +159,7 @@
             height: 1.4em;
             background-color: rgba(0, 0, 0, 0.175);
             padding-left: 5px;
+            cursor: move;
         }
 
         .task-board-name {

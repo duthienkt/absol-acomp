@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
-    <script src="../dist/absol-acomp.js?"></script>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
 
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <style>
@@ -110,11 +110,9 @@
             }
         }));
 
-
-
     </script>
 
-    <script src="./autohightlighting.js?"></script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
 

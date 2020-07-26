@@ -8,7 +8,7 @@
 
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    <script src="../dist/absol-acomp.js?"></script>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
     <style>
 
     </style>
@@ -193,22 +193,7 @@
         var selectedWord = absol._('<div style="height:30px">Selected: <span id="selected-word"></span></div>').addTo(document.body);
 
     </script>
-    
 
-    <h4>wordfinder.js</h4>
-    <pre style='color:#000000;background:#ffffff;'><span style='color:#7f0055; font-weight:bold; '>
-        import</span> IFrameBridge from <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>./Network/IFrameBridge</span><span style='color:#2a00ff; '>"</span>;
-        <span style='color:#7f0055; font-weight:bold; '>import</span> EnglishWord from <span style='color:#2a00ff; '>"</span><span style='color:#2a00ff; '>./String/EnglishWords</span><span style='color:#2a00ff; '>"</span>;
-        
-        <span style='color:#7f0055; font-weight:bold; '>var</span> bridge = IFrameBridge.getInstance();
-        
-        bridge.find = <span style='color:#7f0055; font-weight:bold; '>function</span> (query) {
-            <span style='color:#7f0055; font-weight:bold; '>return</span> EnglishWord.<span style='color:#7f0055; font-weight:bold; '>filter</span>(<span style='color:#7f0055; font-weight:bold; '>function</span> (s) {
-                <span style='color:#7f0055; font-weight:bold; '>return</span> s.<span style='color:#7f0055; font-weight:bold; '>indexOf</span>(query) >= 0;
-            })
-        };
-    </pre>
-    <!--Created using ToHtml.com on 2019-05-24 08:05:17 UTC -->
 
     <h2>Build-in adapter</h2>
     <script  class="viewable">
@@ -313,7 +298,7 @@
         }).addTo(document.body);
     </script>
     
-    <script src="./autohightlighting.js?"></script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 
 
 
