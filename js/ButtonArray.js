@@ -1,4 +1,3 @@
-
 import ACore from "../ACore";
 
 var _ = ACore._;
@@ -53,7 +52,7 @@ ButtonArray.prototype._releaseButton = function (button) {
 
 ButtonArray.prototype._getFullFormat = function (item) {
     var res = {};
-    if ((typeof item == 'string') || (typeof item == 'number') || (typeof item == 'boolean')) {
+    if ((typeof item == 'string') || (typeof item == 'number') || (typeof item == 'boolean') || (item === null) || (item === undefined)) {
         res.ident = item;
         res.value = item;
         res.text = item + '';
