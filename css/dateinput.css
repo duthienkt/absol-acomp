@@ -17,6 +17,8 @@
     border: none;
     background-color: transparent;
     display: block;
+    padding: 0 0 0 0.5em;
+
 }
 
 .as-date-input-icon-ctn {
@@ -42,7 +44,7 @@
 }
 
 
-.as-date-input-icon-ctn>span {
+.as-date-input-icon-ctn > span {
     line-height: 28px;
     font-size: 16px;
 }
