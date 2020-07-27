@@ -44,10 +44,10 @@ DraggableVStack.eventHandler.dragstart = function (event) {
     element.classList.add('dragging');
     this.$draggingElt = element;
 
-    this._dragginEltIndex = 0;
+    this._draggingEltIndex = 0;
     this._childrentInfo = Array.prototype.map.call(this.childNodes, function (child, index) {
         var childBound = child.getBoundingClientRect();
-        if (child == element) self._dragginEltIndex = index;
+        if (child == element) self._draggingEltIndex = index;
         return {
             index: index,
             elt: child,
@@ -121,8 +121,8 @@ DraggableVStack.eventHandler.dragend = function (event) {
             e.dettachEvent('onscroll', self.eventHandler.scroll, false);
     });
 
-    if ((this._dragginEltIndex == this._childrentInfo.length - 1 && !this._destRecord)
-        || (this._destRecord && (this._destRecord.index == this._dragginEltIndex || this._destRecord.index == this._dragginEltIndex + 1))) {
+    if ((this._draggingEltIndex == this._childrentInfo.length - 1 && !this._destRecord)
+        || (this._destRecord && (this._destRecord.index == this._draggingEltIndex || this._destRecord.index == this._draggingEltIndex + 1))) {
         //nothing to change, view animation
         this.$cloneContainer.addClass('home-going');
         setTimeout(function () {
@@ -146,7 +146,7 @@ DraggableVStack.eventHandler.dragend = function (event) {
             this.addChildBefore(this.$draggingElt, this._destRecord.elt);
             this.emit('change', {
                 type: 'change', target: this, action: "BEFORE", at: this._destRecord.elt,
-                sourceIndex: this._dragginEltIndex, destIndex: this._destIndex, elt: this.$draggingElt
+                sourceIndex: this._draggingEltIndex, destIndex: this._destIndex, elt: this.$draggingElt
             }, this);
         }
         else {
@@ -156,7 +156,7 @@ DraggableVStack.eventHandler.dragend = function (event) {
                 target: this,
                 action: "END",
                 elt: this.$draggingElt,
-                sourceIndex: this._dragginEltIndex
+                sourceIndex: this._draggingEltIndex
             }, this);
         }
     }
@@ -192,7 +192,7 @@ DraggableVStack.prototype._updateDraggingPosition = function () {
     else {
         this.$destLine.addStyle('top', bound.height + 'px');
     }
-    if (nearestIndex == this._dragginEltIndex || nearestIndex == this._dragginEltIndex + 1) {
+    if (nearestIndex == this._draggingEltIndex || nearestIndex == this._draggingEltIndex + 1) {
         this.$destLine.addStyle('visibility', 'hidden');
     }
     else {
