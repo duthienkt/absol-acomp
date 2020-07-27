@@ -54,13 +54,15 @@ function TimePicker() {
     this.$hourInput = $('.ac-time-picker-hour-input', this)
         .on({
             click: this.eventHandler.clickHourInput,
-            keydown: this.eventHandler.keydownHourInput
+            keydown: this.eventHandler.keydownHourInput,
+            blur: this.eventHandler.blurHourInput
         });
 
     this.$minuteInput = $('.ac-time-picker-minute-input', this)
         .on({
             click: this.eventHandler.clickMinuteInput,
-            keydown: this.eventHandler.keydownMinuteInput
+            keydown: this.eventHandler.keydownMinuteInput,
+            blur: this.eventHandler.blurMinuteInput
         });
 
     //only support if is none touch device
@@ -98,7 +100,6 @@ function TimePicker() {
         }).addTo(thisPicker.$clockHourCtn);
     });
     this.$minuteNumbers = Array(12).fill(0).map(function (u, i) {
-
         return _g({
             tag: 'text',
             attr: {
@@ -544,6 +545,21 @@ TimePicker.eventHandler.clickMinuteInput = function () {
     }
 };
 
+TimePicker.eventHandler.blurHourInput = function(){
+    var hour = parseFloat(this.$hourInput.value) || 0;
+    if (hour < 0 || hour >= 24)
+        hour = this._preHour;
+    this.hour = hour;
+};
+
+TimePicker.eventHandler.blurMinuteInput = function(){
+    var minute = parseFloat(this.$minuteInput.value) || 0;
+    if (minute < 0 || minute >= 60)
+        minute = this._preMinute;
+    this.minute = minute;
+};
+
+
 TimePicker.property = {};
 
 
@@ -697,10 +713,7 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
     }
     else if (event.key == 'Enter') {
         event.preventDefault();
-        var hour = parseFloat(this.$hourInput.value) || 0;
-        if (hour < 0 || hour >= 24)
-            hour = this._preHour;
-        this.hour = hour;
+
         this.$hourInput.blur();
         this.editMinuteInput();
     }
@@ -712,6 +725,7 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
                 var hour = parseFloat(newText) || 0;
                 if (hour < 0 || hour >= 24)
                     hour = thisPicker._preHour;
+                console.log(hour);
                 thisPicker.hour = hour;
                 thisPicker.$hourInput.blur();
                 thisPicker.editMinuteInput();
@@ -736,11 +750,8 @@ TimePicker.eventHandler.keydownMinuteInput = function (event) {
     else if (event.key == 'Enter') {
         this.$minute.blur();
         event.preventDefault();
-        var minute = parseFloat(this.$minuteInput.value) || 0;
-        if (minute < 0 || minute >= 60)
-            minute = this._preMinute;
-        this.minute = minute;
-        setTimeout(this.finishSelect.bind(this), 1);
+
+        setTimeout(this.finishSelect.bind(this), 100);
     }
     else if (event.key == "Backspace") {
 
