@@ -9,6 +9,11 @@ function FlexiconInput() {
     this.$iconCtn = $('.as-flexicon-input-icon-ctn', this);
     this.$unitCtn = $('.as-flexicon-input-unit-ctn', this);
     OOP.drillProperty(this, this.$input, ['value', 'readonly']);
+    console.log(this)
+    this.on('click', function (event) {
+        if (event.target != this.$input)
+            this.$input.focus();
+    }.bind(this));
 }
 
 FlexiconInput.prototype.on = function () {
