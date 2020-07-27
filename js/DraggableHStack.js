@@ -7,18 +7,14 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function DraggableHStack() {
-    var res = _({
-        extendEvent: 'change',
-        class: ['absol-draggable-stack', 'absol-draggable-hstack']
-    });
-
-    res.eventHandler = OOP.bindFunctions(res, DraggableHStack.eventHandler);
-    res.$cloneContainer = _('.absol-draggable-stack-clone-container');
-    res.$destLine = _('.absol-draggable-stack-dest-line');
-    res.on('predrag', res.eventHandler.predrag);
-
-    return res;
+    this.$cloneContainer = _('.absol-draggable-stack-clone-container');
+    this.$destLine = _('.absol-draggable-stack-dest-line');
+    this.on('predrag', this.eventHandler.predrag)
+        .on('dragstart', this.eventHandler.dragstart)
+        .on('drag', this.eventHandler.drag)
+        .on('dragend', this.eventHandler.dragend);
 }
+
 
 
 DraggableHStack.tag = "DraggableHStack".toLowerCase();
@@ -33,80 +29,73 @@ DraggableHStack.render = function(){
 
 DraggableHStack.eventHandler = {};
 
-DraggableHStack.eventHandler.mouseDown = function (event) {
-    var self = this;
-    var dragzone = this._findDragzone(event.target);
-    if (dragzone) {
-        this._mouseClientX = event.clientX;
-        this._mouseClientY = event.clientY;
+DraggableHStack.eventHandler.predrag = DraggableVStack.eventHandler.predrag;
 
-        var bound = this.getBoundingClientRect();
-        var element = this._findDirectChild(event.target);
-        element.classList.add('dragging');
-        this.$draggingElt = element;
+DraggableHStack.eventHandler.dragstart = function(event){
+    this._mouseClientX = event.clientX;
+    this._mouseClientY = event.clientY;
 
-        this._dragginEltIndex = 0;
-        this._childrentInfo = Array.prototype.map.call(this.childNodes, function (child, index) {
-            var childBound = child.getBoundingClientRect();
-            if (child == element) self._dragginEltIndex = index;
-            return {
-                index: index,
-                elt: child,
-                bound: childBound,
-                left: childBound.left - bound.left,
-            }
-        });
+    var bound = this.getBoundingClientRect();
+    var element = this._findDirectChild(event.target);
+    element.classList.add('dragging');
+    this.$draggingElt = element;
 
-        this.$cloneContainer.addTo(this);
-        this.$destLine.addTo(this);
-
-        var containerBound = element.getBoundingClientRect();
-        this._initBound = bound;
-        this._currentBound = bound;
-
-        this._initTop = containerBound.top - bound.top;
-        this._initLeft = containerBound.left - bound.left;
-        this._crLeft = this._initLeft;
-        this._initWidth = containerBound.width;
-        this._pressX = event.clientX - containerBound.left;
-        this._pressY = event.clientY - containerBound.top;
-        this.$cloneContainer.addStyle({
-            top: this._initTop + 'px',
-            left: this._initLeft + 'px',
-            width: this._initWidth + 'px'
-        }).addChild($(element.cloneNode(true)).addStyle({'width': '100%', 'box-sizing':'border-box'}));
-
-        this.$destLine.addStyle('left', this._initLeft + 'px');
-
-        $(document.body).on('mousemove', this.eventHandler.mouseMove);
-        $(document.body).on('mouseleave', this.eventHandler.mouseFinish);
-        $(document.body).on('mouseup', this.eventHandler.mouseFinish);
-
-
-        this.$scrollTrackElements = [];
-        var trackElt = this.parentElement;
-        while (trackElt) {
-            if (trackElt.addEventListener)
-                trackElt.addEventListener('scroll', this.eventHandler.scroll, false);
-            else
-                trackElt.attachEvent('onscroll', this.eventHandler.scroll, false);
-
-            this.$scrollTrackElements.push(trackElt);
-            trackElt = trackElt.parentElement;
+    this._dragginEltIndex = 0;
+    this._childrentInfo = Array.prototype.map.call(this.childNodes, function (child, index) {
+        var childBound = child.getBoundingClientRect();
+        if (child == element) self._dragginEltIndex = index;
+        return {
+            index: index,
+            elt: child,
+            bound: childBound,
+            left: childBound.left - bound.left,
         }
-        if (document.addEventListener) {
-            document.addEventListener('scroll', this.eventHandler.scroll, false);
-        }
-        else {
-            document.attachEvent('onscroll', this.eventHandler.scroll, false);
-        }
-        this.$scrollTrackElements.push(document);
-        this._updateDragginPosition();
+    });
+
+    this.$cloneContainer.addTo(this);
+    this.$destLine.addTo(this);
+
+    var containerBound = element.getBoundingClientRect();
+    this._initBound = bound;
+    this._currentBound = bound;
+
+    this._initTop = containerBound.top - bound.top;
+    this._initLeft = containerBound.left - bound.left;
+    this._crLeft = this._initLeft;
+    this._initWidth = containerBound.width;
+    this._pressX = event.clientX - containerBound.left;
+    this._pressY = event.clientY - containerBound.top;
+    this.$cloneContainer.addStyle({
+        top: this._initTop + 'px',
+        left: this._initLeft + 'px',
+        width: this._initWidth + 'px'
+    }).addChild($(element.cloneNode(true)).addStyle({'width': '100%', 'box-sizing':'border-box'}));
+
+    this.$destLine.addStyle('left', this._initLeft + 'px');
+
+    this.$scrollTrackElements = [];
+    var trackElt = this.parentElement;
+    while (trackElt) {
+        if (trackElt.addEventListener)
+            trackElt.addEventListener('scroll', this.eventHandler.scroll, false);
+        else
+            trackElt.attachEvent('onscroll', this.eventHandler.scroll, false);
+
+        this.$scrollTrackElements.push(trackElt);
+        trackElt = trackElt.parentElement;
     }
+    if (document.addEventListener) {
+        document.addEventListener('scroll', this.eventHandler.scroll, false);
+    }
+    else {
+        document.attachEvent('onscroll', this.eventHandler.scroll, false);
+    }
+    this.$scrollTrackElements.push(document);
+    this._updateDragginPosition();
 };
 
 
-DraggableHStack.eventHandler.mouseMove = function (event) {
+DraggableHStack.eventHandler.drag = function (event) {
     event.preventDefault();
     //save mouse position 
     this._mouseClientX = event.clientX;
@@ -115,12 +104,8 @@ DraggableHStack.eventHandler.mouseMove = function (event) {
 };
 
 
-
-DraggableHStack.eventHandler.mouseFinish = function (event) {
+DraggableHStack.eventHandler.dragend = function (event) {
     var self = this;
-    $(document.body).off('mouseleave', this.eventHandler.mouseFinish);
-    $(document.body).off('mouseup', this.eventHandler.mouseFinish);
-    $(document.body).off('mousemove', this.eventHandler.mouseMove);
 
     this.$scrollTrackElements.forEach(function (e) {
         if (e.removeEventListener)
