@@ -32,6 +32,7 @@ DraggableHStack.eventHandler = {};
 DraggableHStack.eventHandler.predrag = DraggableVStack.eventHandler.predrag;
 
 DraggableHStack.eventHandler.dragstart = function(event){
+    var self = this;
     this._mouseClientX = event.clientX;
     this._mouseClientY = event.clientY;
 
@@ -39,11 +40,10 @@ DraggableHStack.eventHandler.dragstart = function(event){
     var element = this._findDirectChild(event.target);
     element.classList.add('dragging');
     this.$draggingElt = element;
-
-    this._dragginEltIndex = 0;
+    this._draggingEltIndex = 0;
     this._childrentInfo = Array.prototype.map.call(this.childNodes, function (child, index) {
         var childBound = child.getBoundingClientRect();
-        if (child == element) self._dragginEltIndex = index;
+        if (child == element) self._draggingEltIndex = index;
         return {
             index: index,
             elt: child,
@@ -91,7 +91,7 @@ DraggableHStack.eventHandler.dragstart = function(event){
         document.attachEvent('onscroll', this.eventHandler.scroll, false);
     }
     this.$scrollTrackElements.push(document);
-    this._updateDragginPosition();
+    this._updateDraggingPosition();
 };
 
 
@@ -100,7 +100,7 @@ DraggableHStack.eventHandler.drag = function (event) {
     //save mouse position 
     this._mouseClientX = event.clientX;
     this._mouseClientY = event.clientY;
-    this._updateDragginPosition();
+    this._updateDraggingPosition();
 };
 
 
@@ -113,10 +113,8 @@ DraggableHStack.eventHandler.dragend = function (event) {
         else
             e.dettachEvent('onscroll', self.eventHandler.scroll, false);
     });
-
-
-    if ((this._dragginEltIndex == this._childrentInfo.length - 1 && !this._destRecord)
-        || (this._destRecord && (this._destRecord.index == this._dragginEltIndex || this._destRecord.index == this._dragginEltIndex + 1))) {
+    if ((this._draggingEltIndex == this._childrentInfo.length - 1 && !this._destRecord)
+        || (this._destRecord && (this._destRecord.index == this._draggingEltIndex || this._destRecord.index == this._draggingEltIndex + 1))) {
         //nothing to change, view animation
         this.$cloneContainer.addClass('home-going');
         setTimeout(function () {
@@ -140,12 +138,12 @@ DraggableHStack.eventHandler.dragend = function (event) {
             this.addChildBefore(this.$draggingElt, this._destRecord.elt);
             this.emit('change', {
                 type: 'change', target: this, action: "BEFORE", at: this._destRecord.elt,
-                sourceIndex: this._dragginEltIndex, destIndex: this._destIndex, elt: this.$draggingElt
+                sourceIndex: this._draggingEltIndex, destIndex: this._destIndex, elt: this.$draggingElt
             }, this);
         }
         else {
             this.addChild(this.$draggingElt);
-            this.emit('change', { type: 'change', target: this, action: "END", elt: this.$draggingElt, sourceIndex: this._dragginEltIndex }, this);
+            this.emit('change', { type: 'change', target: this, action: "END", elt: this.$draggingElt, sourceIndex: this._draggingEltIndex }, this);
         }
     }
 };
@@ -155,10 +153,11 @@ DraggableHStack.prototype._findDragzone = DraggableVStack.prototype._findDragzon
 DraggableHStack.prototype._findDirectChild = DraggableVStack.prototype._findDirectChild;
 
 DraggableHStack.eventHandler.scroll = function (event) {
-    this._updateDragginPosition();
+    this._updateDraggingPosition();
 };
-
-DraggableHStack.prototype._updateDragginPosition = function () {
+var count = 0;
+DraggableHStack.prototype._updateDraggingPosition = function () {
+    // console.log(count++);
     //update cloneContainer
     var bound = this.getBoundingClientRect();
     //style top of cloneContainer
@@ -181,6 +180,8 @@ DraggableHStack.prototype._updateDragginPosition = function () {
             nearestIndex = i;
         }
     }
+
+
     if (nearestRecord) {
         this.$destLine.addStyle('left', nearestRecord.left + 'px');
     }
@@ -188,7 +189,8 @@ DraggableHStack.prototype._updateDragginPosition = function () {
         var lastRecord = this._childrentInfo[this._childrentInfo.length - 1];
         this.$destLine.addStyle('left', lastRecord.left + lastRecord.bound.width + 'px');
     }
-    if (nearestIndex == this._dragginEltIndex || nearestIndex == this._dragginEltIndex + 1) {
+
+    if (nearestIndex == this._draggingEltIndex || nearestIndex == this._draggingEltIndex + 1) {
         this.$destLine.addStyle('visibility', 'hidden');
     }
     else {
