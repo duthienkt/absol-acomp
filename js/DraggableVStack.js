@@ -94,7 +94,7 @@ DraggableVStack.eventHandler.dragstart = function (event) {
         document.attachEvent('onscroll', this.eventHandler.scroll, false);
     }
     this.$scrollTrackElements.push(document);
-    this._updateDragginPosition();
+    this._updateDraggingPosition();
 };
 
 
@@ -103,12 +103,12 @@ DraggableVStack.eventHandler.drag = function (event) {
     //save mouse position 
     this._mouseClientX = event.clientX;
     this._mouseClientY = event.clientY;
-    this._updateDragginPosition();
+    this._updateDraggingPosition();
 };
 
 
 DraggableVStack.eventHandler.scroll = function (event) {
-    this._updateDragginPosition();
+    this._updateDraggingPosition();
 };
 
 DraggableVStack.eventHandler.dragend = function (event) {
@@ -163,7 +163,7 @@ DraggableVStack.eventHandler.dragend = function (event) {
 };
 
 
-DraggableVStack.prototype._updateDragginPosition = function () {
+DraggableVStack.prototype._updateDraggingPosition = function () {
     //update cloneContainer
     var bound = this.getBoundingClientRect();
     //style top of cloneContainer
