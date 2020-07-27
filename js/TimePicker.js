@@ -214,12 +214,12 @@ TimePicker.prototype.updateSelectPosition = function () {
     this._drawSelect(radius, angle);
 };
 
-TimePicker.prototype.editHour = function(){
+TimePicker.prototype.editHour = function () {
     this.clockMode();
-    if (this.$hour.readOnly){
+    if (this.$hour.readOnly) {
         this._editHourState();
     }
-    else{
+    else {
         this.$hour.focus();
     }
 }
@@ -329,7 +329,8 @@ TimePicker.render = function () {
                                         class: 'ac-time-picker-hour-input',
                                         attr: {
                                             type: 'number',
-                                            placeHolder: '00'
+                                            placeHolder: '00',
+                                            tabindex: '2',
                                         }
                                     },
                                     {
@@ -341,7 +342,8 @@ TimePicker.render = function () {
                                         class: 'ac-time-picker-minute-input',
                                         attr: {
                                             type: 'number',
-                                            placeHolder: '00'
+                                            placeHolder: '00',
+                                            tabindex: '3'
                                         }
                                     }
                                 ]
@@ -378,10 +380,12 @@ TimePicker.render = function () {
                             {
                                 tag: 'button',
                                 class: 'ac-time-picker-cancel-btn',
+                                attr: { tabindex: '4' },
                                 child: { text: 'CANCEL' }
                             },
                             {
                                 tag: 'button',
+                                attr: { tabindex: '4' },
                                 class: 'ac-time-picker-finish-btn',
                                 child: { text: 'OK' }
                             }
@@ -399,8 +403,8 @@ TimePicker.prototype.clockMode = function () {
     this._mode = 'CLOCK';
     this.removeClass('ac-time-picker-time-mode')
         .addClass('ac-time-picker-clock-mode');
-    this.$hour.value = this._hour<10? '0'+ this._hour:this._hour;
-    this.$minute.value = this._minute<10? '0'+ this._minute:  this._minute;
+    this.$hour.value = this._hour < 10 ? '0' + this._hour : this._hour;
+    this.$minute.value = this._minute < 10 ? '0' + this._minute : this._minute;
     this._editHourState();
     this.updateSize();
     this._showSelectHour(this._hour);
@@ -412,8 +416,8 @@ TimePicker.prototype.timeMode = function () {
     this._mode = 'TIME';
     this.addClass('ac-time-picker-time-mode')
         .removeClass('ac-time-picker-clock-mode');
-    this.$hourInput.value = this._hour<10? '0'+ this._hour:this._hour;
-    this.$minuteInput.value = this._minute<10? '0'+ this._minute:  this._minute;
+    this.$hourInput.value = this._hour < 10 ? '0' + this._hour : this._hour;
+    this.$minuteInput.value = this._minute < 10 ? '0' + this._minute : this._minute;
     this.editHourInput();
     this.updateSize();
 };
@@ -453,7 +457,7 @@ TimePicker.prototype.editHourInput = function () {
     setTimeout(function () {
         thisPicker.$hourInput.focus();
         thisPicker.$hourInput.select();
-    }, 1)
+    }, 10);
 };
 
 
@@ -545,14 +549,14 @@ TimePicker.eventHandler.clickMinuteInput = function () {
     }
 };
 
-TimePicker.eventHandler.blurHourInput = function(){
+TimePicker.eventHandler.blurHourInput = function () {
     var hour = parseFloat(this.$hourInput.value) || 0;
     if (hour < 0 || hour >= 24)
         hour = this._preHour;
     this.hour = hour;
 };
 
-TimePicker.eventHandler.blurMinuteInput = function(){
+TimePicker.eventHandler.blurMinuteInput = function () {
     var minute = parseFloat(this.$minuteInput.value) || 0;
     if (minute < 0 || minute >= 60)
         minute = this._preMinute;
