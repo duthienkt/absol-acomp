@@ -10,6 +10,13 @@
 
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <style>
+        html, body{
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         .dark.bg {
             background-color: rgba(30, 30, 32, 1);
             /* background-color: white; */
@@ -28,16 +35,18 @@
 <body>
     <h1>Draggable VStack</h1>
 
-    <div class="absol-bscroller" style="height: 700px">
+    <div class="absol-bscroller" style="height: 80vh;width: 80vw">
     </div>
 
     <script class="viewable">
-        var range = absol._('div').addTo(document.body);
+        var range = absol._('div').addTo(document.body).addStyle({
+            width: '80vw',
+        });
         function updateRange() {
             range.clearChild();
             Array.prototype.forEach.call(mStack.childNodes, function (e) {
                 var data = e.__data__;
-                range.addChild(absol._('<span style="margin: 2em 3em">' + data.value + '</span>'));
+                range.addChild(absol._('<span> ' + data.value + '</span>'));
             });
         }
 
