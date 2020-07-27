@@ -1,7 +1,7 @@
-.as-flexicon-input-icon-ctn>span,
-.as-flexicon-input-icon-ctn>i,
-.as-flexicon-input-icon-ctn>svg,
-.as-flexicon-input-icon-ctn>img {
+.as-flexicon-input-icon-ctn > span,
+.as-flexicon-input-icon-ctn > i,
+.as-flexicon-input-icon-ctn > svg,
+.as-flexicon-input-icon-ctn > img {
     font-size: 1em;
     line-height: 1;
 }
@@ -10,53 +10,46 @@
     position: relative;
     border: 1px solid #dddddd;
     display: inline-block;
-    vertical-align: center;
+    vertical-align: middle;
     height: 2em;
     font-size: 14px;
     box-sizing: border-box;
     border-radius: 3px;
+    text-align: left;
+    white-space: nowrap;
 }
 
-
-.as-flexicon-input.as-flexicon-input-has-icon {
-    padding-left: 1.2em;
+.as-flexicon-input::before {
+    content: "";
+    width: 0;
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
 }
+
 
 .as-flexicon-input-icon-ctn:empty {
     display: none;
 }
 
-
-
 .as-flexicon-input-icon-ctn {
-    width: 1em;
-    height: 1em;
-    position: absolute;
-    left: 0.1em;
-    top: calc(50% - 0.5em);
-    height: 1em;
-    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    /*text-align: center;*/
     font-size: 1.2em;
+    width: 1.25em;
+    text-align: center;
 }
 
 .as-flexicon-input-unit-ctn {
-    width: 1em;
-    height: 1em;
-    position: absolute;
-    right: 0.25em;
-    top: calc(50% - 0.5em);
-    height: 1em;
+    width: 1.5em;
+    display: inline-block;
+    vertical-align: middle;
     text-align: center;
-    line-height: 1;
 }
 
 .as-flexicon-input-unit-ctn:empty {
     display: none;
-}
-
-.as-flexicon-input.as-flexicon-input-has-unit {
-    padding-right: 1.1em;
-    text-align: right;
 }
 
 
@@ -68,8 +61,24 @@
     background-color: transparent;
     box-sizing: border-box;
     width: 100%;
-    font: inherit;
-    text-align: inherit;
+    font-family: inherit;
     padding-left: 0;
     padding-right: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+.as-flexicon-input.as-flexicon-input-has-icon input,
+.as-flexicon-input.as-flexicon-input-has-unit input {
+    width: calc(100% - 1.5em);
+}
+
+.as-flexicon-input.as-flexicon-input-has-unit input{
+    text-align: right;
+}
+
+
+.as-flexicon-input.as-flexicon-input-has-icon.as-flexicon-input-has-unit input {
+    width: calc(100% - 3em);
 }
