@@ -2,7 +2,9 @@
     position: relative;
 }
 
-.absol-draggable-stack .drag-zone {}
+.absol-draggable-stack .drag-zone {
+    touch-action: none;
+}
 
 .absol-draggable-stack>.dragging {
     opacity: 0.2 !important;
