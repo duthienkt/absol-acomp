@@ -15,10 +15,21 @@ function DraggableHStack() {
     res.eventHandler = OOP.bindFunctions(res, DraggableHStack.eventHandler);
     res.$cloneContainer = _('.absol-draggable-stack-clone-container');
     res.$destLine = _('.absol-draggable-stack-dest-line');
-    res.on('mousedown', res.eventHandler.mouseDown);
+    res.on('predrag', res.eventHandler.predrag);
 
     return res;
 }
+
+
+DraggableHStack.tag = "DraggableHStack".toLowerCase();
+DraggableHStack.render = function(){
+    return _({
+        tag:'hanger',
+        extendEvent: 'change',
+        class: ['absol-draggable-stack', 'absol-draggable-hstack']
+    });
+};
+
 
 DraggableHStack.eventHandler = {};
 

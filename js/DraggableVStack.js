@@ -19,7 +19,14 @@ function DraggableVStack() {
     return res;
 }
 
+DraggableVStack.tag = 'DraggableVStack'.toLowerCase();
 
+DraggableVStack.render = function(){
+  return _({
+      tag: 'hanger',
+      git
+  });
+};
 
 DraggableVStack.eventHandler = {};
 DraggableVStack.eventHandler.mouseDown = function (event) {
