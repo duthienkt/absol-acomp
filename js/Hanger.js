@@ -117,7 +117,6 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
         canceled: false,
         cancel: function () {
             this.canceled = true;
-            console.log(this)
         },
         clientX: startingPoint.x,
         clientY: startingPoint.y,
@@ -127,7 +126,10 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
         }
     };
     this.emit('predrag', preDragEvent, this);
-    if (preDragEvent.canceled) return;
+    if (preDragEvent.canceled) {
+        this._hangerPointerData = null;
+        return;
+    };
     if (isTouch)
         this.on2.call(document.body, this._touchEvents)
     else
