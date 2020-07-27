@@ -705,7 +705,6 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
     if ((isTouchDevice && event.key == "Unidentified") || (event.key && event.key.length == 1 && !event.ctrlKey && !event.altKey)) {
         if (event.key.match(/[0-9]/)) {
             setTimeout(this.notifyChange.bind(this), 2);
-
         }
         else {
             event.preventDefault();
@@ -713,7 +712,6 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
     }
     else if (event.key == 'Enter') {
         event.preventDefault();
-
         this.$hourInput.blur();
         this.editMinuteInput();
     }
@@ -725,7 +723,6 @@ TimePicker.eventHandler.keydownHourInput = function (event) {
                 var hour = parseFloat(newText) || 0;
                 if (hour < 0 || hour >= 24)
                     hour = thisPicker._preHour;
-                console.log(hour);
                 thisPicker.hour = hour;
                 thisPicker.$hourInput.blur();
                 thisPicker.editMinuteInput();
@@ -749,6 +746,7 @@ TimePicker.eventHandler.keydownMinuteInput = function (event) {
     }
     else if (event.key == 'Enter') {
         this.$minute.blur();
+        this.eventHandler.blurMinuteInput();
         event.preventDefault();
 
         setTimeout(this.finishSelect.bind(this), 100);
