@@ -477,7 +477,7 @@ VMenu.prototype._childFromItems = function (items) {
 };
 
 
-function HMenuItem() {
+export function HMenuItem() {
     this.$vmenu = $('vmenu', this);
     this.$dropDown = this;
     this.$button = $('button.absol-hmenu-button', this);
