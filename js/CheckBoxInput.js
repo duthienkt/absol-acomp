@@ -2,6 +2,8 @@ import '../css/checkboxinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
+//new tech, not working version
+
 var _ = ACore._;
 var $ = ACore.$;
 

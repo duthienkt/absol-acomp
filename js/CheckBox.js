@@ -1,22 +1,39 @@
+import '../css/checkbox.css';
 import ACore from "../ACore";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+var svgIcon = function (pos) {
+    return _([
+        '<svg class="absol-checkbox-icon absol-checkbox-icon-' + pos + '" width="18mm" height="18mm" version="1.1" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" >',
+        ' <g transform="translate(0 -279)">',
+        '  <path class="bound" d="m3 279.69h12c1.3434 0.0111 2.3298 1.5259 2.3131 2.4775v11.836c0.05005 0.89373-1.1834 2.2964-2.3131 2.3131h-12c-0.82692 0.0166-2.3131-1.1834-2.3131-2.3131v-12.237c0.0022374-1.171 0.3775-2.0759 2.3131-2.0759z" style="stroke-linejoin:round;"/>',
+        '  <path class="tick" d="m3.1656 288.66c-0.10159 0.0612-0.11743 0.12506-0.12993 0.18899l3.7473 4.3467c0.066638 0.0459 0.11813 0.0263 0.16832 1e-3 0 0 1.7699-4.2166 4.7251-7.4568 1.4783-1.6208 3.2406-3.3659 3.2406-3.3659 0.0054-0.14125-0.10946-0.15807-0.1754-0.22551 0 0-2.5832 1.6364-4.7524 3.8336-1.8697 1.8939-3.6666 4.4016-3.6666 4.4016z"/>',
+        ' </g>',
+        '</svg>'].join(''));
+};
 
 function CheckBox() {
+    var thisCB = this;
+    this.defineEvent('change');
+    this.$input = $('input', this);
+    this.$label = $('label', this);
 
-    var svgIcon = function (pos) {
-        return _([
-            '<svg class="absol-checkbox-icon absol-checkbox-icon-' + pos + '" width="18mm" height="18mm" version="1.1" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" >',
-            ' <g transform="translate(0 -279)">',
-            '  <path class="bound" d="m3 279.69h12c1.3434 0.0111 2.3298 1.5259 2.3131 2.4775v11.836c0.05005 0.89373-1.1834 2.2964-2.3131 2.3131h-12c-0.82692 0.0166-2.3131-1.1834-2.3131-2.3131v-12.237c0.0022374-1.171 0.3775-2.0759 2.3131-2.0759z" style="stroke-linejoin:round;"/>',
-            '  <path class="tick" d="m3.1656 288.66c-0.10159 0.0612-0.11743 0.12506-0.12993 0.18899l3.7473 4.3467c0.066638 0.0459 0.11813 0.0263 0.16832 1e-3 0 0 1.7699-4.2166 4.7251-7.4568 1.4783-1.6208 3.2406-3.3659 3.2406-3.3659 0.0054-0.14125-0.10946-0.15807-0.1754-0.22551 0 0-2.5832 1.6364-4.7524 3.8336-1.8697 1.8939-3.6666 4.4016-3.6666 4.4016z"/>',
-            ' </g>',
-            '</svg>'].join(''));
-    }
+    this.on('click', function (event) {
+        event.preventDefault();
+        if (!this.disabled) {
+            thisCB.checked = !thisCB.checked;
+            thisCB.emit('change', event, thisCB);
+        }
 
-    var res = _({
+    });
+}
+
+CheckBox.tag = 'checkbox';
+
+CheckBox.render = function () {
+    return _({
         class: ['absol-checkbox'],
         child: [
             '<input type="checkbox" />',
@@ -25,19 +42,6 @@ function CheckBox() {
             svgIcon('right')
         ]
     });
-    res.defineEvent('change');
-    res.$input = $('input', res);
-    res.$label = $('label', res);
-
-    res.on('click', function (event) {
-        event.preventDefault();
-        if (!this.disabled) {
-            res.checked = !res.checked;
-            res.emit('change', event, res);
-        }
-
-    });
-    return res;
 };
 
 //v, labelText, checked
@@ -122,5 +126,5 @@ CheckBox.property = {
     }
 };
 
-ACore.creator.checkbox = CheckBox;
+ACore.install(CheckBox);
 export default CheckBox;
