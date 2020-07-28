@@ -1,5 +1,5 @@
 import ACore from "../ACore";
-
+import '../css/boardtable.css';
 import './Board';
 import Vec2 from "absol/src/Math/Vec2";
 import Element from "absol/src/HTML5/Element";
@@ -21,6 +21,7 @@ function BoardTable() {
     this._friends = [];
 }
 
+BoardTable.tag = 'boardtable';
 BoardTable.render = function () {
     return _({
         class: 'as-board-table',
@@ -806,5 +807,5 @@ BoardTable.property.friends = {
     }
 };
 
-ACore.install('boardtable', BoardTable);
+ACore.install(BoardTable);
 export default BoardTable;

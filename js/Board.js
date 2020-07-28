@@ -1,4 +1,4 @@
-
+import '../css/boardtable.css';
 import ACore from "../ACore";
 
 var _ = ACore._;
@@ -8,6 +8,7 @@ function Board() {
 }
 
 
+Board.tag = "board";
 Board.render = function () {
     return _({
         class: 'as-board',
@@ -26,6 +27,6 @@ Board.prototype.getParent = function () {
 };
 
 
-ACore.install('board', Board);
+ACore.install(Board);
 
 export default Board;
