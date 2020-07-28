@@ -1,63 +1,69 @@
+import '../css/scroller.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import Element from "absol/src/HTML5/Element";
-import { map } from 'absol/src/Math/int';
+import {map} from 'absol/src/Math/int';
 
 var _ = ACore._;
 var $ = ACore.$;
 
 ACore.$scrollStyle = (function () {
-    var element = _('style#vscroller-style');
-    element.innerHTML = [
-        '.absol-vscroller-viewport{ margin-right: ' + (-17) + 'px;  min-width: calc(100% + ' + (17) + 'px);}',
-        '.absol-hscroller-viewport{ margin-bottom: ' + (-17) + 'px;  min-height: calc(100% + ' + (17) + 'px);}'
-    ].join('\n');
-    document.head.appendChild(element);
-
-    Dom.getScrollSize().then(function (size) {
+        var element = _('style#vscroller-style');
         element.innerHTML = [
-            '.absol-vscroller-viewport{ margin-right: ' + (-size.width) + 'px; min-width: calc(100% + ' + (size.width) + 'px);}',
-            '.absol-hscroller-viewport{ margin-bottom: ' + (-size.height) + 'px; min-height: calc(100% + ' + (size.height) + 'px);}'
+            '.absol-vscroller-viewport{ margin-right: ' + (-17) + 'px;  min-width: calc(100% + ' + (17) + 'px);}',
+            '.absol-hscroller-viewport{ margin-bottom: ' + (-17) + 'px;  min-height: calc(100% + ' + (17) + 'px);}'
         ].join('\n');
-    });
-    return element;
-}
+        document.head.appendChild(element);
+
+        Dom.getScrollSize().then(function (size) {
+            element.innerHTML = [
+                '.absol-vscroller-viewport{ margin-right: ' + (-size.width) + 'px; min-width: calc(100% + ' + (size.width) + 'px);}',
+                '.absol-hscroller-viewport{ margin-bottom: ' + (-size.height) + 'px; min-height: calc(100% + ' + (size.height) + 'px);}'
+            ].join('\n');
+        });
+        return element;
+    }
 )();
 
 export function VScroller() {
-    var res = _({
+    var thisVS = this;
+    this.$attachHook = $('attachhook', this);
+    this.sync = new Promise(function (rs) {
+        thisVS.$attachHook.once('error', function () {
+            rs();
+        });
+    });
+
+    this.$attachHook.on('error', function () {
+        thisVS.requestUpdateSize();
+    });
+    this.$vscrollbar = $('vscrollbar', this).on('scroll', this.eventHandler.scrollScrollbar);
+    this.$viewport = $('.absol-vscroller-viewport', this)
+        .on('scroll', this.eventHandler.scrollViewport);
+    OOP.extends(thisVS.$viewport, {
+        removeChild: function () {
+            this.super.apply(this, arguments);
+            thisVS.requestUpdateSize();
+            return thisVS;
+        }
+    })
+}
+
+VScroller.tag = 'vscroller';
+VScroller.render = function () {
+    return _({
         class: 'absol-vscroller',
         child: ['.absol-vscroller-viewport',
             {
                 class: ['absol-scrollbar-container', 'vertical'],
                 child: 'vscrollbar'
-            }
+            },
+            'attachhook'
         ]
     });
-    res.eventHandler = OOP.bindFunctions(res, VScroller.eventHandler);
-    res.$attachHook = _('attachhook').addTo(res);
-    res.sync = new Promise(function (rs) {
-        res.$attachHook.once('error', function () {
-            rs();
-        });
-    });
-
-    res.$attachHook.on('error', function () {
-        res.requestUpdateSize();
-    });
-    res.$vscrollbar = $('vscrollbar', res).on('scroll', res.eventHandler.scrollScrollbar);
-    res.$viewport = $('.absol-vscroller-viewport', res)
-        .on('scroll', res.eventHandler.scrollViewport);
-    OOP.extends(res.$viewport, {
-        removeChild: function () {
-            this.super.apply(this, arguments);
-            res.requestUpdateSize();
-            return res;
-        }
-    })
-    return res;
 };
+
 
 VScroller.prototype.requestUpdateSize = function () {
     // return;
@@ -129,6 +135,7 @@ VScroller.prototype.scrollInto = function (element, padding, scrollTime, beforFr
     scrollTime = scrollTime || 0;
     var frameCount = Math.ceil(scrollTime / 15 + 1);
     var self = this;
+
     function onFrame() {
         beforFrame && beforFrame();
         var elementBound = element.getBoundingClientRect();
@@ -164,12 +171,14 @@ VScroller.prototype.scrollBy = function (dy, duration) {
     var self = this;
     var start = self.$viewport.scrollTop;
     var end = start + dy;
+
     function onFrame() {
         self.$viewport.scrollTop = Math.max(map(i, 0, frameCount, start, end), 0);
         ++i;
         if (i <= frameCount)
             setTimeout(onFrame, timeOut);
     }
+
     onFrame();
 };
 
@@ -187,42 +196,43 @@ VScroller.eventHandler.scrollScrollbar = function (event) {
 };
 
 
-
-
-
-
-
 export function HScroller() {
-    var res = _({
+    var thisHS = this;
+    this.$attachHook = $('attachhook')
+        .on('error', function () {
+            this.requestUpdateSize = this.requestUpdateSize || thisHS.requestUpdateSize.bind(thisHS);
+            Dom.addToResizeSystem(this);
+        });
+
+    this.sync = new Promise(function (rs, rj) {
+        thisHS.$attachHook.once('error', rs);
+    });
+    this.$hscrollbar = $('hscrollbar', this).on('scroll', this.eventHandler.scrollScrollbar);
+    this.$viewport = $('.absol-hscroller-viewport', this)
+        .on('scroll', this.eventHandler.scrollViewport);
+    OOP.extends(this.$viewport, {
+        removeChild: function () {
+            this.super.apply(this, arguments);
+            thisHS.requestUpdateSize();
+            return thisHS;
+        }
+    });
+}
+
+
+HScroller.tag = 'hscroller';
+
+HScroller.render = function () {
+    return _({
         class: 'absol-hscroller',
         child: ['.absol-hscroller-viewport',
             {
                 class: ['absol-scrollbar-container', 'horizontal'],
                 child: 'hscrollbar'
-            }
+            },
+            'attachhook'
         ]
     });
-    res.eventHandler = OOP.bindFunctions(res, HScroller.eventHandler);
-    res.$attachHook = _('attachhook').addTo(res)
-        .on('error', function(){
-            this.requestUpdateSize =this.requestUpdateSize || res.requestUpdateSize.bind(res); 
-            Dom.addToResizeSystem(this);
-        });
-
-    res.sync = new Promise(function(rs, rj){
-        res.$attachHook.once('error', rs);
-    });
-    res.$hscrollbar = $('hscrollbar', res).on('scroll', res.eventHandler.scrollScrollbar);
-    res.$viewport = $('.absol-hscroller-viewport', res)
-        .on('scroll', res.eventHandler.scrollViewport);
-    OOP.extends(res.$viewport, {
-        removeChild: function () {
-            this.super.apply(this, arguments);
-            res.requestUpdateSize();
-            return res;
-        }
-    });
-    return res;
 };
 
 HScroller.eventHandler = {};
@@ -246,7 +256,7 @@ HScroller.prototype.requestUpdateSize = function () {
     this._isRequestingUpdateSize = true;
     this.sync = this.sync.then(function () {
         this.$hscrollbar.outerWidth = this.$viewport.clientWidth;
-        this.$hscrollbar.innerWidth = this.$viewport.scrollWidth ;
+        this.$hscrollbar.innerWidth = this.$viewport.scrollWidth;
         this.$hscrollbar.innerOffset = this.$viewport.scrollLeft;
         if (this.$hscrollbar.innerWidth <= this.$hscrollbar.outerWidth) {
             this.$hscrollbar.hidden = true;
@@ -282,22 +292,26 @@ HScroller.prototype.scrollInto = function (element) {
 
 
 export function Scrollbar() {
-    var res = _({
+    var thisSB = this;
+    this.$button = $('.absol-scrollbar-button', this);
+    this.on('active', function () {
+        if (!thisSB.$forceModal) thisSB.$forceModal = _('.absol-scrollbar-force-modal');
+        thisSB.$forceModal.addTo(document.body);
+    }).on('deactive', function () {
+        setTimeout(function () {
+            thisSB.$forceModal.remove();
+        }, 30);
+    });
+}
+
+Scrollbar.tag = 'scrollbar';
+
+Scrollbar.render = function () {
+    return _({
         class: ['absol-scrollbar'],
         extendEvent: ['scroll', 'active', 'deactive'],
         child: '.absol-scrollbar-button'
     });
-
-    res.$button = $('.absol-scrollbar-button', res);
-    res.on('active', function () {
-        if (!res.$forceModal) res.$forceModal = _('.absol-scrollbar-force-modal');
-        res.$forceModal.addTo(document.body);
-    }).on('deactive', function () {
-        setTimeout(function () {
-            res.$forceModal.remove();
-        }, 30);
-    });
-    return res;
 };
 
 Scrollbar.property = {};
@@ -318,69 +332,67 @@ Scrollbar.property.hidden = {
 };
 
 
-
 export function VScrollbar() {
-
-    var res = _({
-        tag: 'scrollbar',
-        class: 'absol-vscrollbar'
-    }, true);
-
-
+    var thisVS = this;
     var top0, innerOffset0;
     var pointerMoveEventHandler = function (event) {
         event.preventDefault();
         var dy = event.clientY - top0;
-        var newInnerOffset = innerOffset0 + dy * (res.innerHeight / res.outerHeight) * (res.outerHeight / res.getBoundingClientRect().height);
-        if (newInnerOffset + res.outerHeight > res.innerHeight)
-            newInnerOffset = res.innerHeight - res.outerHeight;
+        var newInnerOffset = innerOffset0 + dy * (thisVS.innerHeight / thisVS.outerHeight) * (thisVS.outerHeight / thisVS.getBoundingClientRect().height);
+        if (newInnerOffset + thisVS.outerHeight > thisVS.innerHeight)
+            newInnerOffset = thisVS.innerHeight - thisVS.outerHeight;
         if (newInnerOffset < 0) newInnerOffset = 0;
-        res.innerOffset = newInnerOffset;
+        thisVS.innerOffset = newInnerOffset;
         //todo
         event.innerOffset = newInnerOffset;
-        res.emit('scroll', event);
+        thisVS.emit('scroll', event);
     };
 
     var finishEventHandler = function (event) {
-    var body = $(document.body);
+        var body = $(document.body);
         body.off('pointerleave', finishEventHandler);
         body.off('pointerup', finishEventHandler);
         body.off('pointermove', pointerMoveEventHandler);
-        res.removeClass('absol-active');
-        res.emit('deactive', { type: 'deactive', originEvent: event, tagert: res });
+        thisVS.removeClass('absol-active');
+        thisVS.emit('deactive', { type: 'deactive', originEvent: event, tagert: thisVS });
     };
 
     var pointerDownEventHandler = function (event) {
-        var boundRes = res.getBoundingClientRect();
-        var boundButton = res.$button.getBoundingClientRect();
+        var boundRes = thisVS.getBoundingClientRect();
+        var boundButton = thisVS.$button.getBoundingClientRect();
         top0 = event.clientY;
-        if (event.target == res.$button) {
-            innerOffset0 = res.innerOffset;
+        if (event.target == thisVS.$button) {
+            innerOffset0 = thisVS.innerOffset;
         }
         else {
-            var newInnerOffset = map(top0 - boundButton.height / 2 - boundRes.top, 0, boundRes.height, 0, res.innerHeight);
-            if (newInnerOffset + res.outerHeight > res.innerHeight)
-                newInnerOffset = res.innerHeight - res.outerHeight;
+            var newInnerOffset = map(top0 - boundButton.height / 2 - boundRes.top, 0, boundRes.height, 0, thisVS.innerHeight);
+            if (newInnerOffset + thisVS.outerHeight > thisVS.innerHeight)
+                newInnerOffset = thisVS.innerHeight - thisVS.outerHeight;
             if (newInnerOffset < 0) newInnerOffset = 0;
-            res.innerOffset = newInnerOffset;
+            thisVS.innerOffset = newInnerOffset;
             //todo
             event.innerOffset = newInnerOffset;
             innerOffset0 = newInnerOffset;
-            res.emit('scroll', event);
+            thisVS.emit('scroll', event);
         }
         var body = $(document.body);
         body.on('pointerleave', finishEventHandler);
         body.on('pointerup', finishEventHandler);
         body.on('pointermove', pointerMoveEventHandler);
-        res.addClass('absol-active');
-        res.emit('active', { type: 'active', originEvent: event, tagert: res });
+        thisVS.addClass('absol-active');
+        thisVS.emit('active', { type: 'active', originEvent: event, tagert: thisVS });
     };
 
-    res.on('pointerdown', pointerDownEventHandler, true);
+    this.on('pointerdown', pointerDownEventHandler, true);
+}
 
-    return res;
+VScrollbar.tag = 'vscrollbar';
+VScrollbar.render = function () {
+    return _({
+        tag: 'scrollbar',
+        class: 'absol-vscrollbar'
+    }, true);
 };
-
 
 
 VScrollbar.prototype.updateValue = function () {
@@ -432,28 +444,21 @@ VScrollbar.property = {
 };
 
 
-
-
-
 export function HScrollbar() {
-
-    var res = _({
-        tag: 'scrollbar',
-        class: 'absol-hscrollbar'
-    }, true);
+    var thisHS = this;
 
     var left0, innerOffset0;
     var pointerMoveEventHandler = function (event) {
         event.preventDefault();
         var dy = event.clientX - left0;
-        var newInnerOffset = innerOffset0 + dy * (res.innerWidth / res.outerWidth) * (res.outerWidth / res.getBoundingClientRect().width);
-        if (newInnerOffset + res.outerWidth > res.innerWidth)
-            newInnerOffset = res.innerWidth - res.outerWidth;
+        var newInnerOffset = innerOffset0 + dy * (thisHS.innerWidth / thisHS.outerWidth) * (thisHS.outerWidth / thisHS.getBoundingClientRect().width);
+        if (newInnerOffset + thisHS.outerWidth > thisHS.innerWidth)
+            newInnerOffset = thisHS.innerWidth - thisHS.outerWidth;
         if (newInnerOffset < 0) newInnerOffset = 0;
-        res.innerOffset = newInnerOffset;
+        thisHS.innerOffset = newInnerOffset;
         //todo
         event.innerOffset = newInnerOffset;
-        res.emit('scroll', event);
+        thisHS.emit('scroll', event);
     };
 
     var finishEventHandler = function (event) {
@@ -461,43 +466,47 @@ export function HScrollbar() {
         body.off('pointerleave', finishEventHandler);
         body.off('pointerup', finishEventHandler);
         body.off('pointermove', pointerMoveEventHandler);
-        res.removeClass('absol-active');
-        res.emit('deactive', { type: 'deactive', originEvent: event, tagert: res });
+        thisHS.removeClass('absol-active');
+        thisHS.emit('deactive', { type: 'deactive', originEvent: event, tagert: thisHS });
     };
 
     var pointerDownEventHandler = function (event) {
-        var boundRes = res.getBoundingClientRect();
-        var boundButton = res.$button.getBoundingClientRect();
+        var boundRes = thisHS.getBoundingClientRect();
+        var boundButton = thisHS.$button.getBoundingClientRect();
         left0 = event.clientX;
-        if (event.target == res.$button) {
-            innerOffset0 = res.innerOffset;
+        if (event.target == thisHS.$button) {
+            innerOffset0 = thisHS.innerOffset;
         }
         else {
-            var newInnerOffset = map(left0 - boundButton.width / 2 - boundRes.left, 0, boundRes.width, 0, res.innerWidth);
-            if (newInnerOffset + res.outerWidth > res.innerWidth)
-                newInnerOffset = res.innerWidth - res.outerWidth;
+            var newInnerOffset = map(left0 - boundButton.width / 2 - boundRes.left, 0, boundRes.width, 0, thisHS.innerWidth);
+            if (newInnerOffset + thisHS.outerWidth > thisHS.innerWidth)
+                newInnerOffset = thisHS.innerWidth - thisHS.outerWidth;
             if (newInnerOffset < 0) newInnerOffset = 0;
-            res.innerOffset = newInnerOffset;
+            thisHS.innerOffset = newInnerOffset;
             //todo
             event.innerOffset = newInnerOffset;
             innerOffset0 = newInnerOffset;
-            res.emit('scroll', event);
+            thisHS.emit('scroll', event);
         }
         var body = $(document.body);
         body.on('pointerleave', finishEventHandler);
         body.on('pointerup', finishEventHandler);
         body.on('pointermove', pointerMoveEventHandler);
-        res.addClass('absol-active');
-        res.emit('active', { type: 'deactive', originEvent: event, tagert: res });
+        thisHS.addClass('absol-active');
+        thisHS.emit('active', { type: 'deactive', originEvent: event, tagert: thisHS });
     };
 
-    res.on('pointerdown', pointerDownEventHandler, true);
-
-
-    return res;
+    this.on('pointerdown', pointerDownEventHandler, true);
 }
 
+HScrollbar.tag = 'hscrollbar';
 
+HScrollbar.render = function () {
+    return _({
+        tag: 'scrollbar',
+        class: 'absol-hscrollbar'
+    }, true);
+}
 
 HScrollbar.prototype.updateValue = function () {
     this.$button.addStyle('width', Math.min(this.outerWidth / this.innerWidth, 1) * 100 + '%');
@@ -547,10 +556,4 @@ HScrollbar.property = {
     }
 };
 
-
-
-ACore.creator.vscrollbar = VScrollbar;
-ACore.creator.hscrollbar = HScrollbar;
-ACore.creator.scrollbar = Scrollbar;
-ACore.creator.vscroller = VScroller;
-ACore.creator.hscroller = HScroller;
+ACore.install([VScrollbar, HScrollbar, Scrollbar, VScroller, HScroller]);
