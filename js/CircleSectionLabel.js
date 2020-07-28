@@ -1,3 +1,4 @@
+import '../css/circlesectionlabel.css';
 import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
@@ -14,12 +15,12 @@ var Design = {
     borderWidth: 36,
     textBoxHeight: 146,
     textHeight: 48,
-    indextHeight: 54,
+    indexHeight: 54,
     textBoxPaddingLeft: 80,
     indexArrowRadius: (172 - 18) / 2,
     indexArrowStrokeWidth: 18,
-    indexArrowStartAngle: - Math.PI / 6,
-    indexArrowEndAngle: - 7 * Math.PI / 12
+    indexArrowStartAngle: -Math.PI / 6,
+    indexArrowEndAngle: -7 * Math.PI / 12
 };
 
 var StyleSheet = {
@@ -29,10 +30,10 @@ var StyleSheet = {
         'line-height': Design.textBoxHeight / Design.textHeight + 'em'
     },
     '.as-circle-section-label-index': {
-        'font-size': Design.indextHeight / Design.textHeight + 'em',
-        height: (Design.circleHeight + Design.borderWidth) / Design.indextHeight + 'em',
-        'line-height': (Design.circleHeight + Design.borderWidth) / Design.indextHeight + 'em',
-        width: (Design.circleHeight + Design.borderWidth) / Design.indextHeight + 'em'
+        'font-size': Design.indexHeight / Design.textHeight + 'em',
+        height: (Design.circleHeight + Design.borderWidth) / Design.indexHeight + 'em',
+        'line-height': (Design.circleHeight + Design.borderWidth) / Design.indexHeight + 'em',
+        width: (Design.circleHeight + Design.borderWidth) / Design.indexHeight + 'em'
     },
 
 };
@@ -83,12 +84,12 @@ function CircleSectionLabel() {
                             refY: "1",
                             orient: "auto",
                             markerUnits: "strokeWidth",
-                            viewBox:"0 0 4 4"
+                            viewBox: "0 0 4 4"
                         },
                         child: {
                             tag: 'path',
                             class: 'as-circle-section-label-arrow-marker-path',
-                            attr:{
+                            attr: {
                                 d: 'M0,0 L0,2 L2,1 z'
                             }
                         }
@@ -155,6 +156,7 @@ CircleSectionLabel.prototype.redrawBackground = function () {
     }).addStyle('stroke-width', cHeight * Design.indexArrowStrokeWidth / (Design.circleHeight + Design.borderWidth))
 };
 
+CircleSectionLabel.tag = 'CircleSectionLabel'.toLowerCase();
 CircleSectionLabel.render = function () {
     return _({
         class: 'as-circle-section-label',
@@ -190,5 +192,5 @@ CircleSectionLabel.property.text = {
 }
 
 
-ACore.install('circlesectionlabel', CircleSectionLabel);
+ACore.install(CircleSectionLabel);
 export default CircleSectionLabel;
