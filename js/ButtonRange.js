@@ -1,14 +1,22 @@
+import ACore from "../ACore";
+
+var _ = ACore._;
+var $ = ACore.$;
+
 function ButtonRange() {
-   
-    var res = _({
+    this.on('click', this.eventHandler.click, true);
+    this._activeIndex = -1;
+}
+
+ButtonRange.tag = 'buttonrange';
+
+ButtonRange.render = function () {
+    return _({
         extendEvent: 'change',
         class: 'absol-button-range'
     });
-    res.eventHandler = absol.OOP.bindFunctions(res, ButtonRange.eventHandler);
-    res.on('click', res.eventHandler.click, true);
-    res._activeIndex = -1;
-    return res;
 };
+
 
 ButtonRange.property = {};
 
@@ -37,8 +45,6 @@ ButtonRange.property.activeElement = {
 };
 
 
-
-
 ButtonRange.prototype.activeChild = function (child) {
     var res = -1;
     for (var i = 0; i < this.children.length; ++i) {
@@ -46,7 +52,8 @@ ButtonRange.prototype.activeChild = function (child) {
         if (e == child) {
             res = i;
             e.addClass('active');
-        } else {
+        }
+        else {
             e.removeClass('active');
         }
     }

@@ -1,3 +1,4 @@
+import '../css/buttonarray.css';
 import ACore from "../ACore";
 
 var _ = ACore._;
@@ -13,6 +14,7 @@ function ButtonArray() {
     this._lastValue = this._value;
 }
 
+ButtonArray.tag = 'buttonarray';
 ButtonArray.render = function () {
     return _({
         extendEvent: ['change'],
@@ -136,6 +138,6 @@ ButtonArray.eventHandler.clickItem = function (item, event) {
 };
 
 
-ACore.install('buttonarray', ButtonArray);
+ACore.install(ButtonArray);
 
 export default ButtonArray;
