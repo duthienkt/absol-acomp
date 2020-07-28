@@ -1,3 +1,4 @@
+import '../css/chromecalendar.css';
 import ACore from "../ACore";
 
 import * as datetime from 'absol/src/Time/datetime';
@@ -6,7 +7,6 @@ import Dom from "absol/src/HTML5/Dom";
 
 var _ = ACore._;
 var $ = ACore.$;
-
 
 
 function ChromeCalendar() {
@@ -84,7 +84,7 @@ function ChromeCalendar() {
 }
 
 
-
+ChromeCalendar.tag = 'ChromeCalendar'.toLowerCase();
 ChromeCalendar.render = function () {
     return _({
         class: 'absol-chrome-calendar',
@@ -647,7 +647,7 @@ ChromeCalendar.property.multiSelect = {
     }
 };
 
-ACore.install('chromecalendar', ChromeCalendar);
+ACore.install(ChromeCalendar);
 
 
 
