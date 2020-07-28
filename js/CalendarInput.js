@@ -1,5 +1,6 @@
+import '../css/calendarinput.css';
 import ACore from "../ACore";
-import { beginOfDay, formartDateString } from "absol/src/Time/datetime";
+import {formartDateString} from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
 
@@ -8,35 +9,39 @@ var $ = ACore.$;
 
 
 function CalendarInput() {
-    var res = _({
-        extendEvent: ['change'],
-        class: 'absol-calendar-input',
-        child: 'input[type="text"][readonly="true"][value="dd/mm/yyyy"]'
-    });
+    var thisCI = this;
+    this.$input = $('input', this);
+    this._value = null;
 
-    res.$input = $('input', res);
-    res._value = null;
-
-    res._quickOption = ChromeCalendar.showWhenClick(res, {
-        minLimitDate: res.minLimitDate || res.minDateLimit,
-        maxLimitDate: res.maxLimitDate || res.maxDateLimit,
-        selectedDates: [res._value]
+    this._quickOption = ChromeCalendar.showWhenClick(this, {
+        minLimitDate: this.minLimitDate || this.minDateLimit,
+        maxLimitDate: this.maxLimitDate || this.maxDateLimit,
+        selectedDates: [this._value]
     }, 'auto', function (value) {
-        res._value = value;
-        res.$input.value = res.formartDateString(value);
-        res._quickOption.calendarProps.selectedDates = [value];//change new option
-        res.emit('change', { target: res, value: value }, res);
+        thisCI._value = value;
+        thisCI.$input.value = thisCI.formartDateString(value);
+        thisCI._quickOption.calendarProps.selectedDates = [value];//change new option
+        thisCI.emit('change', { target: thisCI, value: value }, thisCI);
     });
 
-    OOP.drillProperty(res, res._quickOption.calendarProps, {
+    OOP.drillProperty(this, this._quickOption.calendarProps, {
         minLimitDate: 'minLimitDate',
-        maxLimitDate:'maxLimitDate',
+        maxLimitDate: 'maxLimitDate',
         minDateLimit: 'minLimitDate',
         maxDateLimit: 'maxLimitDate'
     });
 
-    return res;
 }
+
+CalendarInput.tag = 'CalendarInput'.toLowerCase();
+
+CalendarInput.render = function () {
+    return _({
+        extendEvent: ['change'],
+        class: 'absol-calendar-input',
+        child: 'input[type="text"][readonly="true"][value="dd/mm/yyyy"]'
+    });
+};
 
 CalendarInput.property = {};
 
@@ -58,7 +63,6 @@ CalendarInput.property.value = {
         return this._value;
     }
 };
-
 
 
 CalendarInput.property.disabled = {
@@ -94,7 +98,6 @@ CalendarInput.attribute = {
 };
 
 
-
 CalendarInput.property.dateToString = {
     set: function (value) {
         this._dateToString = value;
@@ -107,7 +110,12 @@ CalendarInput.property.dateToString = {
 
 CalendarInput.prototype.formartDateString = function (date) {
     if (!date) {
-        return { 'undefined': 'dd/mm/yyyy', 'function': '--/--/--', 'object': 'dd/mm/yyyy', 'string': typeof this.dateToString }[typeof this.dateToString] || '--/--/--';
+        return {
+            'undefined': 'dd/mm/yyyy',
+            'function': '--/--/--',
+            'object': 'dd/mm/yyyy',
+            'string': typeof this.dateToString
+        }[typeof this.dateToString] || '--/--/--';
     }
     if (!this.dateToString) {
         return formartDateString(date);
@@ -120,11 +128,14 @@ CalendarInput.prototype.formartDateString = function (date) {
     }
 };
 
-ACore.install('calendarinput', CalendarInput);
+ACore.install(CalendarInput);
 
+export function OldCalendarInput(){
 
-// for older code
-ACore.install('calendar-input', function (data) {
+}
+OldCalendarInput.tag = 'calendar-input';
+
+OldCalendarInput.render = function(data){
     return _({
         tag: 'calendarinput',
         extendEvent: 'changed',
@@ -135,7 +146,6 @@ ACore.install('calendar-input', function (data) {
             }
         }
     });
-});
-
+};
 
 export default CalendarInput;
