@@ -1,3 +1,4 @@
+import  '../css/hruler.css';
 import Dom from "absol/src/HTML5/Dom";
 import ACore from "../ACore";
 
@@ -23,12 +24,13 @@ function HRuler() {
     this._valueFloat = 'left';
 }
 
+HRuler.tag = 'hruler';
+
 HRuler.render = function () {
     return _({
         class: 'as-hruler'
     });
 };
-
 
 
 HRuler.prototype.measureElement = function (elt) {
@@ -129,8 +131,6 @@ HRuler.prototype.update = function () {
 };
 
 
-
-
 HRuler.property = {};
 HRuler.property.major = {
     set: function (value) {
@@ -166,6 +166,6 @@ HRuler.property.inverse = {
     }
 };
 
-ACore.install('hruler', HRuler);
+ACore.install(HRuler);
 
 export default HRuler;

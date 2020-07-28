@@ -1,3 +1,4 @@
+import  '../css/vruler.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
@@ -24,6 +25,7 @@ function VRuler() {
     this._valueFloat = 'top';
 }
 
+VRuler.tag = 'vruler';
 
 VRuler.render = function () {
     return _({
@@ -122,8 +124,6 @@ VRuler.prototype.update = function () {
         this.$numbers[--this._viewingNumberCount].remove();
     }
 };
-
-
 
 
 VRuler.property = {};
