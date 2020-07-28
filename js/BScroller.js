@@ -1,3 +1,4 @@
+import '../css/bscroller.css';
 import ACore from "../ACore";
 import Element from "absol/src/HTML5/Element";
 
