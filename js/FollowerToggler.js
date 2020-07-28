@@ -1,5 +1,6 @@
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import ACore from '../ACore';
+
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -11,9 +12,11 @@ function FollowerToggler() {
     this._opened = false;
 }
 
+FollowerToggler.tag = 'FollowerToggler'.toLowerCase();
+
 FollowerToggler.render = function () {
     return _('div');
-}
+};
 
 FollowerToggler.prototype.toggle = function () {
     if (this._opened) this.close();
@@ -48,7 +51,7 @@ FollowerToggler.prototype.close = function () {
 
 
 FollowerToggler.prototype.bindFollower = function (elt) {
-    if (this.$follower){
+    if (this.$follower) {
         this.$follower.followTarget = null;
     }
     if (elt && elt.refollow) {
@@ -77,6 +80,6 @@ FollowerToggler.eventHandler.click = function () {
     this.toggle();
 };
 
-ACore.install('FollowerToggler'.toLowerCase(), FollowerToggler);
+ACore.install(FollowerToggler);
 
 export default FollowerToggler;

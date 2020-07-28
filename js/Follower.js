@@ -1,7 +1,7 @@
+import '../css/follower.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
-
 
 
 var _ = ACore._;
@@ -21,9 +21,10 @@ function Follower() {
     this.$scrollTrackElts = [];
     this._scrollTrackEventHandler = undefined;
     this._anchor = Follower.ANCHOR_PRIORITY;
-    this.defineEvent(['updateposition',  'preupdateposition']);
+    this.defineEvent(['updateposition', 'preupdateposition']);
 }
 
+Follower.tag = 'Follower'.toLowerCase();
 Follower.render = function () {
     return _('.absol-follower');
 };
@@ -41,8 +42,8 @@ Follower.prototype.clearChild = function () {
 //Todo: remove child, find child....
 
 /**
- * X = $target.x + F[anchor_index][0] * $target.width + F[anchor_index][1] * $content.width 
- * Y = $target.y + F[anchor_index][2] * $target.height + F[anchor_index][3] * $content.height 
+ * X = $target.x + F[anchor_index][0] * $target.width + F[anchor_index][1] * $content.width
+ * Y = $target.y + F[anchor_index][2] * $target.height + F[anchor_index][3] * $content.height
  */
 Follower.ANCHOR_FACTORS = [
     [1, 0, 0, 0],//0
@@ -105,7 +106,6 @@ Follower.prototype.updatePosition = function () {
     });
     this.emit('updateposition', { target: this }, this);
 };
-
 
 
 Follower.prototype.refollow = function () {
@@ -202,6 +202,6 @@ Follower.property.anchor = {
 }
 
 
-ACore.install('follower', Follower);
+ACore.install(Follower);
 
 export default Follower;
