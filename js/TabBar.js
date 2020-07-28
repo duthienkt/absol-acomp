@@ -1,14 +1,14 @@
+import '../css/tabview.css';
 import ACore from "../ACore";
-
+import TabButton from "./TabButton";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
 function TabBar() {
-    var res = _('hscroller.absol-tabbar');
-    res.defineEvent(['active', 'close']);
-    res.on('wheel', function (event) {
+    this.defineEvent(['active', 'close']);
+    this.on('wheel', function (event) {
         var lastLeft = this.$viewport.scrollLeft;
         if (event.deltaY > 1) {
             this.$viewport.scrollLeft += 50;
@@ -19,10 +19,14 @@ function TabBar() {
         if (lastLeft != this.$viewport.scrollLeft)
             event.preventDefault();
     });
-    res._tabs = [];
-    return res;
-};
+    this._tabs = [];
+}
 
+TabBar.tag = 'tabbar';
+
+TabBar.render = function (){
+    return _('hscroller.absol-tabbar');
+};
 
 TabBar.prototype.getAllTabButtons = function () {
     var buttons = [];
@@ -32,7 +36,11 @@ TabBar.prototype.getAllTabButtons = function () {
     return buttons;
 };
 
-
+/***
+ *
+ * @param {string} ident
+ * @return {TabButton}
+ */
 TabBar.prototype.getButtonByIdent = function (ident) {
     return $('tabbutton#tab-' + ident, this);
 };
@@ -156,6 +164,6 @@ TabBar.prototype.setModified = function (ident, flag) {
 };
 
 
-ACore.creator.tabbar = TabBar;
+ACore.install(TabBar);
 
 export default TabBar;

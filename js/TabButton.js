@@ -1,12 +1,40 @@
+import '../css/tabview.css';
 import ACore from "../ACore";
-import { randomIdent } from "absol/src/String/stringGenerate";
+import {randomIdent} from "absol/src/String/stringGenerate";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
 function TabButton() {
-    var res = _({
+    var thisTB = this;
+    this.$close = $('.absol-tabbar-button-close', this)
+        .on('click', function (event) {
+            event.tabButtonEventName = 'delete';
+            thisTB.emit('close', event);
+        });
+
+    this.$modifiedFlag = $('.absol-tabbar-button-modified-flag', this)
+        .on('click', function (event) {
+            event.tabButtonEventName = 'delete';
+            thisTB.emit('close', event);
+        });
+
+    this.$textView = $('.absol-tabbar-button-text', this);
+    this.on({
+        click: function (event) {
+            if (event.tabButtonEventName) return;
+            event.tabButtonEventName = 'active';
+            thisTB.emit('active', event);
+        }
+    });
+}
+
+
+TabButton.tag = 'TabButton';
+
+TabButton.render = function () {
+    return _({
         tag: 'button',
         class: 'absol-tabbar-button',
         extendEvent: ['close', 'active'],
@@ -14,46 +42,23 @@ function TabButton() {
         child: [{
             class: 'absol-tabbar-button-text',
         },
-        {
-            class: 'absol-tabbar-button-icon-container',
-            child: [
-                {
-                    tag: 'span',
-                    class: ['absol-tabbar-button-close', 'mdi-close', 'mdi'],
-                
-                    attr: { title: 'Close (Ctrl+F4)' },
-                    on: {
-                        click: function (event) {
-                            event.tabButtonEventName = 'delete';
-                            res.emit('close', event);
-                        }
-                    }
-                },
-                {
-                    tag: 'span',
-                    class: ['absol-tabbar-button-modified-flag', 'mdi', 'mdi-checkbox-blank-circle'],
-                    
-                    on: {
-                        click: function (event) {
-                            event.tabButtonEventName = 'delete';
-                            res.emit('close', event);
-                        }
-                    }
-                }
-            ]
-        }
-    ],
-        on: {
-            click: function (event) {
-                if (event.tabButtonEventName) return;
-                event.tabButtonEventName = 'active';
-                res.emit('active', event);
-            }
-        }
-    });
+            {
+                class: 'absol-tabbar-button-icon-container',
+                child: [
+                    {
+                        tag: 'span',
+                        class: ['absol-tabbar-button-close', 'mdi-close', 'mdi'],
 
-    res.$textView = $('.absol-tabbar-button-text', res);
-    return res;
+                        attr: { title: 'Close (Ctrl+F4)' }
+                    },
+                    {
+                        tag: 'span',
+                        class: ['absol-tabbar-button-modified-flag', 'mdi', 'mdi-checkbox-blank-circle']
+                    }
+                ]
+            }
+        ]
+    });
 };
 
 
@@ -85,14 +90,13 @@ TabButton.property.name = {
 
 
 TabButton.property.desc = {
-    set:function(value){
+    set: function (value) {
         this.attr('title', value);
     },
-    get:function(){
+    get: function () {
         return this.attr('title');
     }
 };
-
 
 
 TabButton.property.modified = {
@@ -109,6 +113,6 @@ TabButton.property.modified = {
     }
 };
 
-ACore.creator.tabbutton = TabButton;
+ACore.install(TabButton);
 
 export default TabButton;

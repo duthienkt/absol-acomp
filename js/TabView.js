@@ -1,28 +1,39 @@
+import '../css/tabview.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import TabBar from "./TabBar";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
 function TabView() {
-    var res = _({
+    var thisTV = this;
+    /***
+     *
+     * @type {TabBar}
+     */
+    this.$tabbar = $('tabbar', this);
+    this.$tabbar.on({
+        close: TabView.eventHandler.closeTab.bind(thisTV),
+        active: TabView.eventHandler.activeTab.bind(thisTV)
+    });
+    this._frameHolders = [];
+    this._history = [];
+}
+
+TabView.tag = 'TabView'.toLowerCase();
+
+TabView.render = function () {
+    return _({
         class: 'absol-tabview',
         extendEvent: ['activetab', 'deactivetab', 'removetab', 'requestremovetab'],
         child: [
-            'tabbar',
-
+            'tabbar'
         ]
     });
-    res.$tabbar = $('tabbar', res);
-    res.$tabbar.on({
-        close: TabView.eventHandler.closeTab.bind(res),
-        active: TabView.eventHandler.activeTab.bind(res)
-    });
-    res._frameHolders = [];
-    res._history = [];
-    return res;
 };
+
 
 TabView.eventHandler = {};
 
@@ -276,10 +287,10 @@ TabView.prototype.getActiveTabId = function () {
 
 TabView.prototype.getTabById = function (id) {
     var holder = this.getTabHolderById(id);
-    return  holder && holder.tabFrame;
+    return holder && holder.tabFrame;
 };
 
-TabView.prototype.getTabHolderById = function(id){
+TabView.prototype.getTabHolderById = function (id) {
     var holder = null;
     for (var i = 0; i < this._frameHolders.length; ++i) {
         holder = this._frameHolders[i];
@@ -291,8 +302,6 @@ TabView.prototype.getTabHolderById = function(id){
 }
 
 
-
-
 TabView.prototype.activeFrame = function (elt) {
     if (typeof elt == "string") {
         return this.activeTab(elt);
@@ -300,7 +309,7 @@ TabView.prototype.activeFrame = function (elt) {
     else if (elt && elt.attr) {
         return this.activeTab(elt.attr('id'));
     }
-    else{
+    else {
         throw new Error("Invalid param, must be id or elt!");
     }
 };

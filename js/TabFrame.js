@@ -1,14 +1,19 @@
 import ACore from "../ACore";
+
 var $ = ACore.$;
 var _ = ACore._;
 
 function TabFrame() {
-    var res = _({
+
+}
+
+TabFrame.tab = 'tabframe';
+TabFrame.render = function () {
+    return _({
         tag: 'frame',
         class: 'absol-tab-frame',
         extendEvent: ['requestremove', 'remove']
     }, true);
-    return res;
 }
 
 TabFrame.property = {};
@@ -81,7 +86,6 @@ TabFrame.attribute.name = {
 };
 
 
-
 TabFrame.attribute.desc = {
     set: function (value) {
         this.desc = value;
@@ -116,5 +120,5 @@ TabFrame.property.requestRemove = function () {
     }
 };
 
-ACore.install('tabframe', TabFrame);
+ACore.install(TabFrame);
 export default TabFrame;

@@ -1,20 +1,25 @@
+import '../css/frame.css';
 import ACore from "../ACore"
-import { randomIdent } from "absol/src/String/stringGenerate";
+import {randomIdent} from "absol/src/String/stringGenerate";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 function Frame() {
-    var res = _({
+    this.$parent = null;// FrameView or TabView
+}
+
+Frame.tag = 'frame';
+
+Frame.render = function () {
+    return _({
         class: 'absol-frame',
         attr: {
             id: randomIdent(12),
         },
         extendEvent: ['attached', 'detached', 'deactive', 'active']// deactive and active event will be send by parent
     });
-    res.$parent = null;// FrameView or TabView
-    return res;
-}
+};
 
 
 Frame.prototype.notifyAttached = function (parentElt) {
@@ -40,12 +45,12 @@ Frame.prototype.getParent = function () {
 };
 
 
-Frame.prototype.requestActive = function(){
-    if (this.$parent){
+Frame.prototype.requestActive = function () {
+    if (this.$parent) {
         this.$parent.activeFrame(this);
     }
 };
 
-ACore.install('frame', Frame);
+ACore.install(Frame);
 
 export default Frame;

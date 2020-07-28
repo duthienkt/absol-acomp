@@ -1,19 +1,24 @@
+import '../css/frameview.css';
+import Frame from "./Frame";
+
 import ACore from "../ACore";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 function FrameView() {
-    var res = _({
+    this.$containers = [];
+}
+
+FrameView.tag = 'frameview';
+
+FrameView.render = function () {
+    return _({
         class: 'absol-frame-view',
         extendEvent: ['activeframe', 'deactiveframe']
 
     });
-
-    res.$containers = [];
-    return res;
-
-}
+};
 
 FrameView.prototype.addChild = function (elt) {
     if (elt.containsClass && elt.containsClass('absol-frame')) {
@@ -158,7 +163,6 @@ FrameView.prototype.findChildAfter = function (elt) {
 };
 
 
-
 FrameView.prototype.clearChild = function () {
     while (this.$containers.length > 0) {
         this.removeChild(this.$containers[0].__elt__);
@@ -212,7 +216,12 @@ FrameView.prototype.notifyActiveFrame = function (frameElt, originEvent) {
 };
 
 FrameView.prototype.notifyDeactiveFrame = function (frameElt, originEvent) {
-    this.emit('deactiveframe', { type: 'deactiveframe', target: this, frameElt: frameElt, originEvent: originEvent }, this);
+    this.emit('deactiveframe', {
+        type: 'deactiveframe',
+        target: this,
+        frameElt: frameElt,
+        originEvent: originEvent
+    }, this);
 };
 
 FrameView.prototype.activeFrameById = function (id) {

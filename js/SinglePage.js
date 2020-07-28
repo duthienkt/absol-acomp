@@ -5,27 +5,33 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function SinglePage() {
-    var res = _({
-        tag: 'tabframe',
-        class: 'absol-single-page',
-        child: {
-            class: 'absol-single-page-scroller',
-            child: { class: 'absol-single-page-scroller-viewport' }
-        }
-    });
-    res.$attachhook = _('attachhook').addTo(res)
+    var thisSP = this;
+    this.$attachhook = $('attachhook', this)
         .on('error', function () {
-            this.updateSize = this.updateSize || res.updateSize.bind(res);
             this.updateSize();
             setTimeout(this.updateSize, 20);
             Dom.addToResizeSystem(this);
         });
-    res.$header = null;
-    res.$footer = null;
-    res.$viewport = $('.absol-single-page-scroller-viewport', res);
-    res.$scroller = $('.absol-single-page-scroller', res);
-    return res;
+    this.$attachhook.updateSize = this.updateSize.bind(this);
+    this.$header = null;
+    this.$footer = null;
+    this.$viewport = $('.absol-single-page-scroller-viewport', this);
+    this.$scroller = $('.absol-single-page-scroller', this);
 }
+
+SinglePage.tag = 'SinglePage'.toLowerCase();
+
+SinglePage.render = function () {
+    return _({
+        tag: 'tabframe',
+        class: 'absol-single-page',
+        child: [{
+            class: 'absol-single-page-scroller',
+            child: { class: 'absol-single-page-scroller-viewport' }
+        },
+            'attachhook']
+    });
+};
 
 
 SinglePage.prototype.updateSize = function () {
@@ -78,8 +84,6 @@ SinglePage.prototype.removeChild = function (elt) {
 };
 
 
-
-
-ACore.install('singlepage', SinglePage);
+ACore.install(SinglePage);
 
 export default SinglePage;
