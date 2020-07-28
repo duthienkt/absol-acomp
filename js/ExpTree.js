@@ -1,12 +1,12 @@
+import '../css/exptree.css';
 import ACore from "../ACore";
-import { contenteditableTextOnly } from "./utils";
+import {contenteditableTextOnly} from "./utils";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 
 var _ = ACore._;
 var $ = ACore.$;
-
 
 
 ACore.install('toggler-ico', function () {
@@ -31,9 +31,37 @@ ACore.install('remove-ico', function () {
 });
 
 
-
 export function ExpNode() {
-    var res = _({
+    var thisEN = this;
+    this.$level = $('.absol-exp-node-level', this);
+    this.$removeIcon = $('remove-ico', this)
+        .on('click', function (event) {
+            this.emit('pressremove', { target: thisEN, type: 'pressremove' }, this);
+        });
+
+    this.on('click', function (event) {
+        if (!EventEmitter.hitElement(thisEN.$removeIcon, event))
+            thisEN.emit('press', { target: thisEN, type: 'press' }, this);
+    })
+
+    this.$iconCtn = $('div.absol-exp-node-ext-icon', this);
+    this.$extIcon = $('img.absol-exp-node-ext-icon', this);
+    this.$name = $('span.absol-exp-node-name', this);
+    this.$desc = $('span.absol-exp-node-desc', this);
+    contenteditableTextOnly(this.$name, function (text) {
+        return text.replace(/[\\\/\|\?\:\<\>\*\r\n]/, '').trim();
+    });
+    OOP.drillProperty(thisEN, thisEN.$extIcon, 'extSrc', 'src');
+    this._level = 0;
+    this.__isExpNode__ = true;
+    return thisEN;
+}
+
+
+ExpNode.tag = 'expnode';
+
+ExpNode.render = function () {
+    return _({
         tag: 'button',
         extendEvent: ['pressremove', 'press'],
         class: 'absol-exp-node',
@@ -47,31 +75,7 @@ export function ExpNode() {
             'span.absol-exp-node-desc'
         ]
     });
-
-    res.$level = $('.absol-exp-node-level', res);
-    res.$removeIcon = $('remove-ico', res)
-        .on('click', function (event) {
-            this.emit('pressremove', { target: res, type: 'pressremove' }, this);
-        });
-
-    res.on('click', function (event) {
-        if (!EventEmitter.hitElement(res.$removeIcon, event))
-            res.emit('press', { target: res, type: 'press' }, this);
-    })
-
-    res.$iconCtn = $('div.absol-exp-node-ext-icon', res);
-    res.$extIcon = $('img.absol-exp-node-ext-icon', res);
-    res.$name = $('span.absol-exp-node-name', res);
-    res.$desc = $('span.absol-exp-node-desc', res);
-    contenteditableTextOnly(res.$name, function (text) {
-        return text.replace(/[\\\/\|\?\:\<\>\*\r\n]/, '').trim();
-    });
-    OOP.drillProperty(res, res.$extIcon, 'extSrc', 'src');
-    res._level = 0;
-    res.__isExpNode__ = true;
-    return res;
 };
-
 
 ExpNode.property = {};
 
@@ -112,8 +116,6 @@ ExpNode.property.level = {
         return this._level || 0;
     }
 };
-
-
 
 
 ExpNode.property.name = {
@@ -199,13 +201,14 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
             span.blur();
             span.attr('contenteditable', undefined);
         }
-        else if(key == "ESC"){
+        else if (key == "ESC") {
             event.preventDefault();
             span.innerHTML = lastName;
             span.blur();
             span.attr('contenteditable', undefined);
         }
     }
+
     function blurEventHandle(event) {
         finish();
         var curentName = span.innerHTML.replace(/[\\\/\|\?\:\<\>\*\r\n]/, '').trim();
@@ -236,7 +239,8 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
                         span.innerHTML = lastName;
 
                     })
-                } else {
+                }
+                else {
                     //success
                 }
             }
@@ -253,13 +257,32 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
         });
 
     }
+
     span.on('keydown', keydowEventHandle);
     span.on('blur', blurEventHandle);
 }
 
 
 export function ExpTree() {
-    var res = _({
+    var thisET = this;
+    this.$node = $('expnode', this)
+        .on('press', function (event) {
+            this.emit('press', { target: thisET, node: this, type: 'press' }, this)
+        });
+    // console.log(res.$node);
+
+    this.$itemsContainer = $('.absol-exp-items', thisET);
+    OOP.drillProperty(this, this.$node, ['desc', 'name', 'title', 'extSrc', 'active', 'icon']);
+    this.__isExpTree__ = true;
+    this._level = 0;
+    return thisET;
+}
+
+
+ExpTree.tag = 'ExpTree';
+
+ExpTree.render = function () {
+    return _({
         class: 'absol-exp-tree',
         extendEvent: 'press',
         child: [
@@ -267,18 +290,7 @@ export function ExpTree() {
             '.absol-exp-items'
         ]
     });
-    res.$node = $('expnode', res)
-        .on('press', function (event) {
-            res.emit('press', { target: res, node: this, type: 'press' }, res)
-        });
-    // console.log(res.$node);
-
-    res.$itemsContainer = $('.absol-exp-items', res);
-    OOP.drillProperty(res, res.$node, ['desc', 'name', 'title', 'extSrc', 'active', 'icon']);
-    res.__isExpTree__ = true;
-    res._level = 0;
-    return res;
-}
+};
 
 ExpTree.property = {};
 
@@ -383,9 +395,8 @@ ExpTree.prototype.accessByPath = function (path) {
 };
 
 
-
-ACore.install('expnode', ExpNode);
-ACore.install('exptree', ExpTree);
+ACore.install(ExpNode);
+ACore.install(ExpTree);
 
 
 export default ExpTree;
