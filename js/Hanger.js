@@ -1,3 +1,4 @@
+import '../css/hanger.css';
 import ACore from "../ACore";
 import Vec2 from "absol/src/Math/Vec2";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
@@ -28,6 +29,7 @@ function Hanger() {
     };
 }
 
+Hanger.tag = 'hanger';
 
 Hanger.render = function () {
     return _('div');
@@ -129,7 +131,8 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
     if (preDragEvent.canceled) {
         this._hangerPointerData = null;
         return;
-    };
+    }
+    ;
     if (isTouch)
         this.on2.call(document.body, this._touchEvents)
     else
@@ -245,6 +248,6 @@ Hanger.eventHandler.hangerPointerFinish = function (event) {
         this.off2.call(document.body, this._mouseEvents);
 };
 
-ACore.install('hanger', Hanger);
+ACore.install(Hanger);
 
 export default Hanger;
