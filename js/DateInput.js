@@ -1,12 +1,12 @@
+import '../css/dateinput.css';
+
 import ACore from "../ACore";
-import { daysInMonth, beginOfDay, compareDate, formartDateString } from "absol/src/Time/datetime";
+import {daysInMonth, beginOfDay, compareDate, formartDateString} from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
 
 var _ = ACore._;
 var $ = ACore.$;
-
-
 
 function DateInput() {
     this._lastValue = null;
@@ -68,7 +68,7 @@ DateInput.formaters = {
         dayIdx: 2,
         monthIdx: 1,
         yearIdx: 0
-    }, 
+    },
     'mm/dd/yyyy': {
         separator: '/',
         nan: ['mm', 'dd', 'yyyy'],
@@ -77,6 +77,9 @@ DateInput.formaters = {
         yearIdx: 2
     },
 };
+
+
+DateInput.tag = 'dateinput';
 
 DateInput.render = function () {
     //only support dd/mm/yyyy
@@ -89,10 +92,10 @@ DateInput.render = function () {
                 value: '__/__/____'
             }
         },
-        {
-            class: 'as-date-input-icon-ctn',
-            child: 'span.mdi.mdi-calendar'
-        }
+            {
+                class: 'as-date-input-icon-ctn',
+                child: 'span.mdi.mdi-calendar'
+            }
         ]
     });
 };
@@ -105,6 +108,7 @@ DateInput.prototype._autoSelect = function () {
         ac.push(ac[ac.length - 1] + cr.length + 1);
         return ac;
     }, [0]);
+
     function indexOf(offset) {
         var l;
         for (var i = 0; i < lTexts.length; ++i) {
@@ -275,6 +279,7 @@ DateInput.eventHandler.keydown = function (event) {
         ac.push(ac[ac.length - 1] + cr.length + 1);
         return ac;
     }, [0]);
+
     function indexOf(offset) {
         var l;
         for (var i = 0; i < lTexts.length; ++i) {
@@ -283,6 +288,7 @@ DateInput.eventHandler.keydown = function (event) {
         }
         return texts.length;
     }
+
     var i0 = indexOf(slStart);
     var i1 = indexOf(slEnd);
     if (event.key == 'Enter') {
@@ -407,17 +413,17 @@ DateInput.property.format = {
 };
 
 DateInput.property.disabled = {
-    set: function(value){
+    set: function (value) {
         value = !!value;
         this.$input.disabled = value;
         if (value) this.addClass('as-disabled');
-        else this.removeClass('as-disabled'); 
+        else this.removeClass('as-disabled');
     },
-    get: function(){
+    get: function () {
         return this.$input.disabled;
     }
-}
+};
 
-ACore.install('dateinput', DateInput);
+ACore.install(DateInput);
 
 export default DateInput;

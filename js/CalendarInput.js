@@ -133,6 +133,7 @@ ACore.install(CalendarInput);
 export function OldCalendarInput(){
 
 }
+
 OldCalendarInput.tag = 'calendar-input';
 
 OldCalendarInput.render = function(data){
@@ -147,5 +148,7 @@ OldCalendarInput.render = function(data){
         }
     });
 };
+
+ACore.install(OldCalendarInput);
 
 export default CalendarInput;

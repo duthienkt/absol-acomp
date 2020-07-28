@@ -1,12 +1,12 @@
+import '../css/dateinput.css';
 import ACore from "../ACore";
-import { daysInMonth, beginOfDay, compareDate, formartDateString, parseDateString } from "absol/src/Time/datetime";
+import {daysInMonth, beginOfDay, compareDate, formartDateString, parseDateString} from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
 import DateInput from "./DateInput";
 
 var _ = ACore._;
 var $ = ACore.$;
-
 
 
 function DateInput2() {
@@ -29,7 +29,7 @@ function DateInput2() {
     this._formater = DateInput.formaters[this._format];
     OOP.drillProperty(this, this._calendarHolder.calendarProps, {
         minLimitDate: 'minLimitDate',
-        maxLimitDate:'maxLimitDate',
+        maxLimitDate: 'maxLimitDate',
         minDateLimit: 'minLimitDate',
         maxDateLimit: 'maxLimitDate'
     });
@@ -37,6 +37,7 @@ function DateInput2() {
     this.value = null;
 }
 
+DateInput2.tag = 'dateinput';
 DateInput2.render = DateInput.render;
 
 
@@ -48,6 +49,7 @@ DateInput2.prototype._autoSelect = function () {
         ac.push(ac[ac.length - 1] + cr.length + 1);
         return ac;
     }, [0]);
+
     function indexOf(offset) {
         var l;
         for (var i = 0; i < lTexts.length; ++i) {
@@ -114,8 +116,7 @@ DateInput2.eventHandler.blur = function () {
             this.value = newVal;
             this.notifyChange();
         }
-    }
-    catch (error) {
+    } catch (error) {
         this.value = this._value;
     }
     this.$input.off('blur', this.eventHandler.blur);
@@ -188,6 +189,6 @@ DateInput2.property.disabled = {
     }
 }
 
-ACore.install('dateinput', DateInput2);
+ACore.install(DateInput2);
 
 export default DateInput2;
