@@ -1,3 +1,4 @@
+import '../css/hexasectionlabel.css';
 import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
@@ -106,12 +107,12 @@ HexaSectionLabel.prototype.redrawBackground = function () {
         [cWidth - 1, (cHeight - textBoxHeight) / 2],
         [cWidth - 1 - textBoxHeight * skewX, (cHeight - textBoxHeight) / 2 + textBoxHeight],
         [x0, (cHeight - textBoxHeight) / 2 + textBoxHeight],
-    ].map(function (point, i) { return (i == 0 ? 'M' : 'L') + point.join(' ') }).join(' ') + 'Z')
-
-
-
-
+    ].map(function (point, i) {
+        return (i == 0 ? 'M' : 'L') + point.join(' ')
+    }).join(' ') + 'Z')
 };
+
+HexaSectionLabel.tag = 'HexaSectionLabel'.toLowerCase();
 
 HexaSectionLabel.render = function () {
     return _({
@@ -148,5 +149,5 @@ HexaSectionLabel.property.text = {
 }
 
 
-ACore.install('hexasectionlabel', HexaSectionLabel);
+ACore.install(HexaSectionLabel);
 export default HexaSectionLabel;
