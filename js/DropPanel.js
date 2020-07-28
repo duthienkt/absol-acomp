@@ -1,15 +1,27 @@
+import '../css/droppanel.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
-import Element from "absol/src/HTML5/Element";
 
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
-
 function DropPanel() {
-    var res = _({
+    var thisDP = this;
+    this.$body = $('.absol-drop-panel-body', this);
+    this.$head = $('.absol-drop-panel-head', this)
+        .on('click', thisDP.eventHandler.clickHead);
+
+    this.$name = $('.absol-drop-panel-name', thisDP);
+    OOP.drillProperty(this, this.$name, 'name', 'innerHTML');
+    return thisDP;
+}
+
+DropPanel.tag = 'DropPanel'.toLowerCase();
+
+DropPanel.render = function () {
+    return _({
         class: 'absol-drop-panel',
         extendEvent: ['toggle'],
         child: [
@@ -29,16 +41,7 @@ function DropPanel() {
             }
         ]
     });
-
-    res.eventHandler = OOP.bindFunctions(res, DropPanel.eventHandler);
-    res.$body = $('.absol-drop-panel-body', res);
-    res.$head = $('.absol-drop-panel-head', res)
-        .on('click', res.eventHandler.clickHead);
-
-    res.$name = $('.absol-drop-panel-name', res);
-    OOP.drillProperty(res, res.$name, 'name', 'innerHTML');
-    return res;
-}
+};
 
 
 DropPanel.eventHandler = {};
@@ -113,6 +116,6 @@ DropPanel.property.show = {
 };
 
 
-ACore.install('DropPanel'.toLowerCase(), DropPanel);
+ACore.install(DropPanel);
 
 export default DropPanel;

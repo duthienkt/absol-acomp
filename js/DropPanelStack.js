@@ -1,26 +1,34 @@
+import '../css/droppanel.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
 var _ = ACore._;
 var $ = ACore.$;
-function DropPannelStack() {
-    var res = _({
-        class: 'absol-drop-pannel-stack'
-    });
-    res.$attachHook = _('attachhook').addTo(res).on('error', function () {
+
+function DropPanelStack() {
+    var res = this;
+    this.$attachHook = _('attachhook').on('error', function () {
         Dom.addToResizeSystem(this);
         this.updateSize = res.updateSize.bind(res);
     });
-    res.sync = new Promise(function (rs) {
+    this.sync = new Promise(function (rs) {
         res.$attachHook.once('error', rs);
     });
-    return res;
 }
 
-DropPannelStack.prototype.updateSize = function () {
+DropPanelStack.tag = 'DropPanelStack'.toLowerCase();
+
+DropPanelStack.render = function () {
+    return _({
+        class: 'absol-drop-panel-stack',
+        child: ['attachhook']
+    });
 };
 
-DropPannelStack.prototype.getFreeHeight = function () {
+DropPanelStack.prototype.updateSize = function () {
+};
+
+DropPanelStack.prototype.getFreeHeight = function () {
     var childNodes = this.childNodes;
     var sumHeight = 0;
     var bound = this.getBoundingClientRect();
@@ -36,7 +44,7 @@ DropPannelStack.prototype.getFreeHeight = function () {
 };
 
 
-DropPannelStack.prototype.addChild = function (child) {
+DropPanelStack.prototype.addChild = function (child) {
     var self = this;
     if (child.containsClass('absol-drop-panel')) {
         //remove last event listener off other parent
@@ -74,6 +82,6 @@ DropPannelStack.prototype.addChild = function (child) {
     }
 };
 
-ACore.install('droppanelstack', DropPannelStack);
+ACore.install('droppanelstack', DropPanelStack);
 
-export default DropPannelStack;
+export default DropPanelStack;
