@@ -1,5 +1,8 @@
+import '../css/emojipicker.css';
 import ACore from "../ACore";
 import EmojiAnims from "./EmojiAnims";
+import Sprite from "./Sprite";
+
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -7,6 +10,10 @@ function EmojiPicker() {
     var thisPicker = this;
     this._aliveTimeout = 90;
     this._assetRoot = this.attr('data-asset-root');
+    /***
+     *
+     * @type {Sprite}
+     */
     this.$previewAnim = $('sprite.as-emoji-picker-preview-anim', this)
         .on('ready', this.eventHandler.previewAnimReady)
         .on('frame', this.eventHandler.previewAnimFrame);
@@ -35,6 +42,7 @@ function EmojiPicker() {
 }
 
 EmojiPicker.assetRoot = 'https://absol.cf/emoji';
+EmojiPicker.tag = 'EmojiPicker'.toLowerCase();
 
 EmojiPicker.render = function (data) {
     data = data || {};
@@ -112,5 +120,5 @@ EmojiPicker.eventHandler.clickItem = function (itemData, event) {
     this.emit('pick', { name: 'pick', key: itemData[0], target: this }, this);
 };
 
-ACore.install('emojipicker', EmojiPicker);
+ACore.install(EmojiPicker);
 export default EmojiPicker;

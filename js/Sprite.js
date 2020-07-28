@@ -136,12 +136,14 @@ Sprite.prototype.play = function () {
 Sprite.prototype.afterReady = function () {
     var thisSprite = this;
     if (this._state != NOT_READY && this._state != ERROR)
-       return Promise.resolve();
+        return Promise.resolve();
     else return new Promise(function (rs, rj) {
         thisSprite.once('ready', rs);
         thisSprite.once('srcerror', rj);
     });
 };
+
+Sprite.tag = 'sprite';
 
 Sprite.render = function () {
     return _('canvas.as-sprite');
@@ -214,15 +216,15 @@ Sprite.property.src = {
             var thisSprite = this;
             this._textureLoaded = false;
             Dom.waitImageLoaded(this.texture, this.loadTextureTimeout).then(function (rs) {
-                if (thisSprite.texture == cImage) {
-                    thisSprite._textureLoaded = true;
-                    if (thisSprite._frames) {
-                        thisSprite._lastDrawFrame = -1;
-                        thisSprite._state = READY;
-                        thisSprite.emit('ready', { target: thisSprite, name: 'ready' }, thisSprite);
+                    if (thisSprite.texture == cImage) {
+                        thisSprite._textureLoaded = true;
+                        if (thisSprite._frames) {
+                            thisSprite._lastDrawFrame = -1;
+                            thisSprite._state = READY;
+                            thisSprite.emit('ready', { target: thisSprite, name: 'ready' }, thisSprite);
+                        }
                     }
-                }
-            },
+                },
                 function () {
                     if (thisSprite.texture == cImage) {
                         thisSprite._state = ERROR;
@@ -277,6 +279,6 @@ Sprite.property.loop = {
     }
 }
 
-ACore.install('sprite', Sprite);
+ACore.install(Sprite);
 
 export default Sprite;
