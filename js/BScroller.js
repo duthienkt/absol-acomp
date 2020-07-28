@@ -5,13 +5,19 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function BScroller(data) {
+    this.addClass('as-bscroller');
+}
+
+
+BScroller.tag = "bscroller";
+
+BScroller.render = function (data) {
     if (data && data.elt) {
         return $(data.elt)
     }
     else
-        return _('.as-bscroller');
-}
-
+        return _('div');
+};
 
 BScroller.prototype.scrollInto = function (element) {
     if (Element.prototype.isDescendantOf.call(element, this)) {
@@ -46,6 +52,6 @@ BScroller.prototype.scrollInto = function (element) {
 }
 
 
-ACore.install('bscroller', BScroller);
+ACore.install(BScroller);
 
 export default BScroller;
