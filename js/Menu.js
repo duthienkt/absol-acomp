@@ -1,3 +1,4 @@
+import '../css/menu.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
@@ -6,10 +7,22 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 var _ = ACore._;
 var $ = ACore.$;
 
-
-
 export function MenuButton() {
-    var res = _({
+    this.$text = $('.absol-vmenu-button-text', this);
+    this.$key = $('.absol-vmenu-button-key', this);
+
+
+    this.$arrow = $('.absol-vmenu-arrow', this);
+    this.$iconCtn = $('.absol-vmenu-button-ext-icon-container', this);
+
+    OOP.drillProperty(this, this.$text, 'text', 'innerHTML');
+    OOP.drillProperty(this, this.$key, 'key', 'innerHTML');
+}
+
+MenuButton.tag = 'menubutton';
+
+MenuButton.render = function () {
+    return _({
         tag: 'button',
         class: 'absol-vmenu-button',
         child: [
@@ -25,19 +38,6 @@ export function MenuButton() {
             }
         ]
     });
-
-    res.$text = $('.absol-vmenu-button-text', res);
-    res.$key = $('.absol-vmenu-button-key', res);
-
-
-    res.$arrow = $('.absol-vmenu-arrow', res);
-    res.$iconCtn = $('.absol-vmenu-button-ext-icon-container', res);
-
-    OOP.drillProperty(res, res.$text, 'text', 'innerHTML');
-    OOP.drillProperty(res, res.$key, 'key', 'innerHTML');
-
-
-    return res;
 };
 
 MenuButton.property = {};
@@ -51,7 +51,9 @@ MenuButton.property.extendClasses = {
         this._extendClass = [];
         if (!value) return;
         if (typeof value == 'string') {
-            value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
+            value = value.split(/\s+/).filter(function (c) {
+                return c.length > 0
+            });
         }
 
         if (value instanceof Array) {
@@ -68,7 +70,6 @@ MenuButton.property.extendClasses = {
         return this._extendClass || [];
     }
 };
-
 
 
 MenuButton.property.icon = {
@@ -108,21 +109,20 @@ MenuButton.property.extendStyle = {
     }
 };
 
-ACore.install('menubutton', MenuButton);
+ACore.install(MenuButton);
 
 
 export function Dropdown(data) {
-    data = data || {};
+    this.$container = $('.absol-dropdown-content', this);
+}
 
-    var res = _({
+Dropdown.tag = 'dropdown';
+
+Dropdown.render = function () {
+    return _({
         class: ['absol-drop-hidden', 'absol-dropdown'], child: '.absol-dropdown-content'
     });
-
-    res.$container = $('.absol-dropdown-content', res);
-
-    return res;
 };
-
 
 
 Dropdown.property = {};
@@ -198,19 +198,19 @@ Dropdown.prototype.init = function (props) {
 };
 
 
-
 export function Dropright(data) {
-    data = data || {};
-    //default : hidden
-    var res = _({
-        class: ['absol-drop-hidden', 'absol-dropright'], child: '.absol-dropright-content', data: { $trigger: undefined, $content: undefined, _isShow: false }
+    this.$container = $('.absol-dropright-content', this);
+}
+
+Dropright.tag = 'dropright';
+
+Dropright.render = function () {
+    return _({
+        class: ['absol-drop-hidden', 'absol-dropright'],
+        child: '.absol-dropright-content',
+        data: { $trigger: undefined, $content: undefined, _isShow: false }
     });
-
-    res.$container = $('.absol-dropright-content', res);
-
-    return res;
-};
-
+}
 
 Object.assign(Dropright.prototype, Dropdown.prototype);
 
@@ -225,9 +225,43 @@ export function VMenuLine() {
     return _('<div class="absol-vmenu-line"><div></div></div>');
 }
 
-export function VMenuItem() {
+VMenuLine.tag = 'VMenuLine'.toLowerCase();
 
-    var res = _({
+export function VMenuItem() {
+    var thisVM = this;
+
+    this.sync = new Promise(function (rs) {
+        _('attachhook').addTo(thisVM).on('error', function () {
+            this.remove();
+            rs();
+        })
+    });
+    this.$dropper = $('dropright', this);
+    this.$vmenu = $('vmenu', this);
+    this.$button = $('menubutton', this);
+
+    this.$text = thisVM.$button.$text;
+
+    this.$key = thisVM.$button.$key;
+    this.$arrow = thisVM.$button.$arrow;
+    this.$iconCtn = thisVM.$button.$iconCtn;
+
+
+    OOP.drillProperty(this, this.$button, ['text', 'extendClasses', 'extendStyle', 'key', 'icon', 'iconSrc']);
+    OOP.drillProperty(this, this.$vmenu, ['activeTab']);
+
+    this.eventHandler = OOP.bindFunctions(this, VMenuItem.eventHandler);
+    this.$vmenu.on('press', this.eventHandler.pressItem, true);
+
+    this.$button.on('click', this.eventHandler.clickButton, true);
+    this.$button.on('mouseenter', this.eventHandler.enterButton, true);
+}
+
+
+VMenuItem.tag = 'VMenuItem'.toLowerCase();
+
+VMenuItem.render = function () {
+    return _({
         tag: 'dropright',
         extendEvent: ['press', 'enter'],
         child: ['menubutton',
@@ -235,34 +269,6 @@ export function VMenuItem() {
                 tag: 'vmenu',
             }]
     });
-
-    res.sync = new Promise(function (rs) {
-        _('attachhook').addTo(res).on('error', function () {
-            this.remove();
-            rs();
-        })
-    });
-    res.$dropper = $('dropright', res);
-    res.$vmenu = $('vmenu', res);
-    res.$button = $('menubutton', res);
-
-    res.$text = res.$button.$text;
-
-    res.$key = res.$button.$key;
-    res.$arrow = res.$button.$arrow;
-    res.$iconCtn = res.$button.$iconCtn;
-
-
-    OOP.drillProperty(res, res.$button, ['text', 'extendClasses', 'extendStyle', 'key', 'icon', 'iconSrc']);
-    OOP.drillProperty(res, res.$vmenu, ['activeTab']);
-
-    res.eventHandler = OOP.bindFunctions(res, VMenuItem.eventHandler);
-    res.$vmenu.on('press', res.eventHandler.pressItem, true);
-
-    res.$button.on('click', res.eventHandler.clickButton, true);
-    res.$button.on('mouseenter', res.eventHandler.enterButton, true);
-
-    return res;
 };
 
 VMenuItem.prototype.init = function (props) {
@@ -302,7 +308,6 @@ VMenuItem.eventHandler.clickButton = function (event) {
 };
 
 
-
 VMenuItem.property = {};
 VMenuItem.property.items = {
     set: function (items) {
@@ -335,22 +340,24 @@ VMenuItem.property.disable = {
 };
 
 
-
-
 export function VMenu() {
-    var res = _({
-        class: 'absol-vmenu',
-        extendEvent: 'press'
-    });
+    var thisVM = this;
 
-    res.sync = new Promise(function (rs) {
-        _('attachhook').addTo(res).on('error', function () {
+    this.sync = new Promise(function (rs) {
+        _('attachhook').addTo(thisVM).on('error', function () {
             this.remove();
             rs();
         })
     });
-    res.eventHandler = OOP.bindFunctions(res, VMenu.eventHandler);
-    return res;
+}
+
+VMenu.tag = 'vmenu';
+
+VMenu.render = function () {
+    return _({
+        class: 'absol-vmenu',
+        extendEvent: 'press'
+    });
 };
 
 
@@ -399,7 +406,9 @@ VMenu.property.extendClasses = {
         this._extendClass = [];
         if (!value) return;
         if (typeof value == 'string') {
-            value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
+            value = value.split(/\s+/).filter(function (c) {
+                return c.length > 0
+            });
         }
         if (value instanceof Array) {
             this._extendClass = value;
@@ -417,7 +426,6 @@ VMenu.property.extendClasses = {
 };
 
 
-
 VMenu.eventHandler = {};
 VMenu.eventHandler.enterItem = function (event) {
     var tabIndex = event.menuItem._tabIndex;
@@ -428,7 +436,6 @@ VMenu.eventHandler.enterItem = function (event) {
 VMenu.eventHandler.pressItem = function (event) {
     this.emit('press', EventEmitter.copyEvent(event, { target: this }), this);
 };
-
 
 
 VMenu.property.items = {
@@ -446,11 +453,7 @@ VMenu.prototype.init = function (props) {
 };
 
 
-
-
 VMenu.prototype._childFromItems = function (items) {
-
-
     this.clearChild();
     this.$items = items.map(function (item, index) {
         var res;
@@ -475,30 +478,31 @@ VMenu.prototype._childFromItems = function (items) {
 
 
 function HMenuItem() {
+    this.$vmenu = $('vmenu', this);
+    this.$dropDown = this;
+    this.$button = $('button.absol-hmenu-button', this);
+    OOP.drillProperty(this, this.$button, 'text', 'innerHTML');
+    OOP.drillProperty(this, this.$vmenu, 'items');
+    OOP.drillProperty(this, this.$vmenu, 'activeTab');
 
-    var res = _({
+    this.$button.on('click', this.eventHandler.clickButton);
+    this.$button.on('mouseenter', this.eventHandler.enterButton, true);
+    this.$vmenu.on('press', this.eventHandler.pressItem, true);
+
+    //property show not need because dropdown is itself
+    return this;
+}
+
+HMenuItem.tag = 'HMenuItem'.toLowerCase();
+
+HMenuItem.render = function () {
+    return _({
         tag: 'dropdown',
         extendEvent: ['press', 'enter'],
         child: ['button.absol-hmenu-button',
             'vmenu'
         ]
     });
-
-    res.$vmenu = $('vmenu', res);
-    res.$dropDown = res;
-    res.$button = $('button.absol-hmenu-button', res);
-    OOP.drillProperty(res, res.$button, 'text', 'innerHTML');
-    OOP.drillProperty(res, res.$vmenu, 'items');
-    OOP.drillProperty(res, res.$vmenu, 'activeTab');
-
-    res.eventHandler = OOP.bindFunctions(res, HMenuItem.eventHandler);
-
-    res.$button.on('click', res.eventHandler.clickButton);
-    res.$button.on('mouseenter', res.eventHandler.enterButton, true);
-    res.$vmenu.on('press', res.eventHandler.pressItem, true);
-
-    //property show not need because dropdown is itself
-    return res;
 };
 
 
@@ -524,37 +528,33 @@ HMenuItem.prototype = {};
 HMenuItem.prototype.disable = VMenuItem.prototype.disable;
 
 
-
-
-
 HMenuItem.prototype.init = function (props) {
     props = props || {};
     Object.assign(this, props);
 };
 
 
-
 export function HMenu() {
+    this.eventHandler = OOP.bindFunctions(this, HMenu.eventHandler);
+}
 
+HMenu.tag = 'hmenu';
 
-    var res = _({
+HMenu.render = function () {
+    return _({
         class: 'absol-hmenu',
         extendEvent: ['press', 'enter']
     });
-
-    res.eventHandler = OOP.bindFunctions(res, HMenu.eventHandler);
-
-    return res;
 };
 
 
 HMenu.eventHandler = {};
 HMenu.eventHandler.pressItem = function (event) {
-    /** 
+    /**
      * this.activeTab can be undefined
      * undefine >= 0 => false
      * undefine < 0 => false
-    */
+     */
 
     if (event.menuItem.items && event.menuItem.items.length > 0 && !(this.activeTab >= 0)) {
         this.activeTab = event.menuItem._tabIndex;
@@ -642,12 +642,4 @@ HMenu.property.activeTab = {
 };
 
 
-
-ACore.creator.hmenu = HMenu;
-ACore.creator.vmenuitem = VMenuItem;
-ACore.creator.vmenu = VMenu;
-ACore.creator.dropright = Dropright;
-ACore.creator.vmenuline = VMenuLine;
-
-ACore.creator.dropdown = Dropdown;
-ACore.creator.hmenuitem = HMenuItem;
+ACore.install([HMenu, VMenuItem, VMenu, Dropright, VMenuLine, Dropdown, HMenuItem]);
