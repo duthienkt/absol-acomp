@@ -1,7 +1,9 @@
+import '../css/contextmenu.css';
 import ACore from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 import Vec2 from 'absol/src/Math/Vec2';
+import './Menu';
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -49,6 +51,7 @@ ContextCaptor.prototype.attachTo = function (elt) {
     return this;
 };
 
+ContextCaptor.tag = 'ContextCaptor'.toLowerCase();
 
 ContextCaptor.render = function () {
     return _({
@@ -58,7 +61,7 @@ ContextCaptor.render = function () {
             'textarea'
         ]
     });
-}
+};
 
 ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems, onCancel) {
     var self = this;
@@ -340,6 +343,6 @@ ContextCaptor.auto = function () {
     });
 };
 
-ACore.install('contextcaptor', ContextCaptor);
+ACore.install(ContextCaptor);
 
 export default ContextCaptor;
