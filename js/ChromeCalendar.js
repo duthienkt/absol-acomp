@@ -4,6 +4,7 @@ import ACore from "../ACore";
 import * as datetime from 'absol/src/Time/datetime';
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import Dom from "absol/src/HTML5/Dom";
+import {VScroller} from "./Scroller";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -63,6 +64,10 @@ function ChromeCalendar() {
             thisCal.viewNexMounth();
         });
 
+    /***
+     *
+     * @type {VScroller}
+     */
     this.$yearScroller = $('vscroller.absol-chrome-calendar-years', this);
     this.$yearItems = [];
 
@@ -168,9 +173,7 @@ ChromeCalendar.render = function () {
                     {
                         tag: 'vscroller',
                         class: 'absol-chrome-calendar-years',
-                        child: {
-
-                        }
+                        child: {}
                     }
                 ]
             }
@@ -178,7 +181,6 @@ ChromeCalendar.render = function () {
     });
 
 }
-
 
 
 /**
@@ -560,7 +562,6 @@ ChromeCalendar.prototype._createMonths = function (year) {
 };
 
 
-
 ChromeCalendar.prototype.init = function (props) {
     props = props || {};
     this.super(props);
@@ -650,8 +651,6 @@ ChromeCalendar.property.multiSelect = {
 ACore.install(ChromeCalendar);
 
 
-
-
 ChromeCalendar._session = Math.random() * 10000000000 >> 0;
 ChromeCalendar._listener = undefined;
 
@@ -669,7 +668,8 @@ ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calenda
                 ChromeCalendar.$calendar.selectedDates = [value];
             }
         },
-        cancel: function () { }
+        cancel: function () {
+        }
     };
 
     var clickHandler = function () {
@@ -685,7 +685,8 @@ ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calenda
             ChromeCalendar.$calendar.off('pick', finish);
 
             res.currentSession = undefined;
-            res.cancel = function () { };
+            res.cancel = function () {
+            };
         };
 
         setTimeout(function () {
@@ -706,6 +707,7 @@ ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calenda
 
 ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickListener, darkTheme) {
     ChromeCalendar._session = Math.random() * 10000000000 >> 0;
+
     function exec() {
         if (!ChromeCalendar.$ctn) {
             ChromeCalendar.$ctn = _('.absol-context-hinge-fixed-container');
@@ -736,6 +738,7 @@ ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickList
             ChromeCalendar.$calendar.removeStyle('visibility');
         }, 2);
     }
+
     if (document.body)
         exec();
     else
@@ -747,6 +750,7 @@ ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickList
 
 ChromeCalendar.close = function (session) {
     if (session !== true && session != ChromeCalendar._session) return;
+
     function exec() {
         ChromeCalendar.followTarget = undefined;
         ChromeCalendar._listener = undefined;
@@ -756,7 +760,6 @@ ChromeCalendar.close = function (session) {
     else Dom.documentReady.then(exec);
 
 };
-
 
 
 export default ChromeCalendar;
