@@ -1,11 +1,14 @@
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
-import Dom from "absol/src/HTML5/Dom";
+import '../css/draggablestack.css';
 import DraggableVStack from "./DraggableVStack";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends DraggableVStack
+ * @constructor
+ */
 function DraggableHStack() {
     this.$cloneContainer = _('.absol-draggable-stack-clone-container');
     this.$destLine = _('.absol-draggable-stack-dest-line');
@@ -203,5 +206,5 @@ DraggableHStack.prototype._updateDraggingPosition = function () {
 };
 
 
-ACore.install('DraggableHStack'.toLowerCase(), DraggableHStack);
+ACore.install(DraggableHStack);
 export default DraggableHStack;

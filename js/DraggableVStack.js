@@ -1,10 +1,15 @@
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
+import '../css/draggablestack.css';
 import Dom from "absol/src/HTML5/Dom";
+import Hanger from "./Hanger";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends Hanger
+ * @constructor
+ */
 function DraggableVStack() {
     this.$cloneContainer = _('.absol-draggable-stack-clone-container');
     this.$destLine = _('.absol-draggable-stack-dest-line');
