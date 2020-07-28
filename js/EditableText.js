@@ -1,3 +1,4 @@
+import '../css/editabletext.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 
@@ -6,7 +7,28 @@ var $ = ACore.$;
 
 
 function EditableText() {
-    var res = _({
+    var thisET = this;
+    this.$span = $('span', this);
+    this.$text = document.createTextNode('');
+    this.$span.addChild(this.$text);
+
+    this.$higne = $('.absol-editabe-text-higne', this);
+    this.$input = $('input', this);
+
+    OOP.drillProperty(this, this.$input, ['selectionStart', 'selectionEnd']);
+    this.sync = new Promise(function (rs) {
+        _('attachhook').addTo(thisET).once('error', rs);
+    });
+
+    this.$input.on('keydown', this.eventHanler.inputKeyDown, true);
+    this.$input.on('change', this.eventHanler.inputChange);
+    this.$input.on('blur', this.eventHanler.inputBlur);
+};
+
+EditableText.tag = 'EditableText'.toLowerCase();
+
+EditableText.render = function () {
+    return _({
         class: 'absol-editabe-text',
         extendEvent: ['blur', 'focus', 'change', 'modify'],
         child: [
@@ -17,23 +39,6 @@ function EditableText() {
             'span'
         ]
     });
-    res.$span = $('span', res);
-    res.$text = document.createTextNode('');
-    res.$span.addChild(res.$text);
-
-    res.$higne = $('.absol-editabe-text-higne', res);
-    res.$input = $('input', res);
-
-    OOP.drillProperty(res, res.$input, ['selectionStart', 'selectionEnd']);
-    res.eventHanler = OOP.bindFunctions(res, EditableText.eventHanler);
-    res.sync = new Promise(function (rs) {
-        _('attachhook').addTo(res).once('error', rs);
-    });
-
-    res.$input.on('keydown', res.eventHanler.inputKeyDown, true);
-    res.$input.on('change', res.eventHanler.inputChange);
-    res.$input.on('blur', res.eventHanler.inputBlur);
-    return res;
 };
 
 
@@ -139,6 +144,6 @@ EditableText.eventHanler.inputBlur = function (event) {
     this.emit('blur', event);
 };
 
-ACore.creator.editabletext = EditableText;
+ACore.install(EditableText);
 
 export default EditableText;
