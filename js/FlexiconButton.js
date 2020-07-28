@@ -1,3 +1,4 @@
+import '../css/flexiconbutton.css';
 import ACore from "../ACore";
 
 var _ = ACore._;
@@ -11,6 +12,7 @@ function FlexiconButton() {
     this.$textCtn = $('.as-flexicon-button-text-container', this);
 }
 
+FlexiconButton.tag = 'FlexiconButton'.toLowerCase();
 
 FlexiconButton.render = function () {
     return _({
@@ -60,7 +62,7 @@ FlexiconButton.property.text = {
 };
 
 
-ACore.install('flexiconbutton', FlexiconButton);
+ACore.install(FlexiconButton);
 
 
 export default FlexiconButton;

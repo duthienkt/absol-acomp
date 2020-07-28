@@ -1,3 +1,4 @@
+import '../css/flexiconinput.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 
@@ -27,6 +28,7 @@ FlexiconInput.prototype.off = function () {
     return this.$input.off.apply(this.$input, arguments);
 };
 
+FlexiconInput.tag = 'FlexiconInput'.toLowerCase();
 FlexiconInput.render = function () {
     return _({
         class: 'as-flexicon-input',
@@ -101,6 +103,6 @@ FlexiconInput.property.disabled = {
     }
 };
 
-ACore.install('flexiconinput', FlexiconInput);
+ACore.install(FlexiconInput);
 
 export default FlexiconInput;
