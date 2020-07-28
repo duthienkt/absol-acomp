@@ -1,3 +1,4 @@
+import '../css/autocompleteinput.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
@@ -10,7 +11,29 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function AutoCompleteInput() {
-    var res = _({
+    this.$input = $('input', this)
+        .on('keyup', this.eventHandler.keyup)
+        .on('keydown', this.eventHandler.keydown)
+        .on('focus', this.eventHandler.focus)
+        .on('blur', this.eventHandler.blur);
+
+
+    this.$dropdown = $('.absol-autocomplete-input-dropdown', this);
+    this.$vscroller = $('bscroller', this).on('click', this.eventHandler.vscrollerClick);
+    this.$poolItems = [];
+    this._currentData = [];
+    this._sessionIndex = 0;
+    this._updatedSession = -1;
+    this._cache = {};
+    OOP.drillProperty(this, this.$input, 'value');
+
+    return this;
+}
+
+AutoCompleteInput.tag = 'AutoCompleteInput';
+
+AutoCompleteInput.render = function () {
+    return _({
         extendEvent: 'change',
         class: 'absol-autocomplete-input',
         child: [
@@ -29,28 +52,7 @@ function AutoCompleteInput() {
             }
         ]
     });
-
-    res.eventHandler = OOP.bindFunctions(res, AutoCompleteInput.eventHandler);
-
-    res.$input = $('input', res)
-        .on('keyup', res.eventHandler.keyup)
-        .on('keydown', res.eventHandler.keydown)
-        .on('focus', res.eventHandler.focus)
-        .on('blur', res.eventHandler.blur)
-        ;
-
-
-    res.$dropdown = $('.absol-autocomplete-input-dropdown', res);
-    res.$vscroller = $('bscroller', res).on('click', res.eventHandler.vscrollerClick);
-    res.$poolItems = [];
-    res._currentData = [];
-    res._sessionIndex = 0;
-    res._updatedSession = -1;
-    res._cache = {};
-    OOP.drillProperty(res, res.$input, 'value');
-
-    return res;
-}
+};
 
 
 AutoCompleteInput.eventHandler = {};
@@ -79,7 +81,6 @@ AutoCompleteInput.eventHandler.keyup = function (event) {
     this._cacheTimeout = cacheTimeout;
     this._keyTimeout = cTimeout;
 };
-
 
 
 AutoCompleteInput.eventHandler.blur = function () {
@@ -308,7 +309,8 @@ AutoCompleteInput.prototype.getItemText = function (item) {
     }
     else if (typeof item == 'string') {
         return item;
-    } else {
+    }
+    else {
         throw Error('You need adapter.getItemText(item, mAutoCompleteInput) to handle your item text!');
     }
 
@@ -334,7 +336,6 @@ AutoCompleteInput.prototype.getItemView = function (item, index, _, $, query, re
         });
     }
 };
-
 
 
 /**
