@@ -1,3 +1,4 @@
+import '../css/onscreenwindow.css'
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
@@ -9,13 +10,63 @@ var $ = ACore.$;
 
 
 function OnScreenWindow() {
-    var res = _({
+    var res = this;
+    res.$headerbar = $('.absol-onscreen-window-head-bar', res)
+        .on('dragstart', res.eventHandler.beginDragHeaderbar);
+
+    res.$bottomResizer = $('.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom', res)
+        .on('dragstart', res.eventHandler.beginDragBottom);
+
+    res.$rightResizer = $('.absol-onscreen-window-resizer.absol-onscreen-window-resize-right', res)
+        .on('dragstart', res.eventHandler.beginDragRight);
+
+    res.$topResizer = $('.absol-onscreen-window-resizer.absol-onscreen-window-resize-top', res)
+        .on('dragstart', res.eventHandler.beginDragTop);
+
+    res.$leftResizer = $('.absol-onscreen-window-resizer.absol-onscreen-window-resize-left', res)
+        .on('dragstart', res.eventHandler.beginDragLeft);
+
+    res.$bottomRightResizer = $('.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-right', res)
+        .on('dragstart', res.eventHandler.beginDragButtonRight);
+
+    res.$bottomLeftResizer = $('.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-left', res)
+        .on('dragstart', res.eventHandler.beginDragBottomLeft);
+
+    res.$topLeftResizer = $('.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-left', res)
+        .on('dragstart', res.eventHandler.beginDragTopLeft);
+
+    res.$topRightResizer = $('.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-right', res)
+        .on('dragstart', res.eventHandler.beginDragTopRight);
+
+
+    res.$headerButtonCtn = $('.absol-onscreen-window-head-bar-buttons', res.$headerbar);
+    res.$windowIcon = $('span.absol-onscreen-window-head-bar-icon.mdi.mdi-settings', res);
+    res.$windowTitle = $('.absol-onscreen-window-head-bar-title', res);
+    res._windowIcon = 'span.absol-onscreen-window-head-bar-icon.mdi.mdi-settings';
+    res._windowTitle = '';
+    res.$bodyContainer = $('.absol-onscreen-window-body-container', res);
+    res.$attachhook = _('attachhook').addTo(res)
+        .on('error', function () {
+            this.updateSize = this.updateSize || res.relocation.bind(res);
+            Dom.addToResizeSystem(this);
+        });
+
+    res.$minimizeBtn = $('button.absol-onscreen-window-head-bar-button-minimize', res);
+    res.$closeBtn = $('button.absol-onscreen-window-head-bar-button-close', res);
+    res.$dockBtn = $('button.absol-onscreen-window-head-bar-button-dock', res);
+}
+
+OnScreenWindow.tag = 'OnScreenWindow'.toLowerCase();
+
+OnScreenWindow.render = function () {
+    return _({
         extendEvent: ['sizechange', 'drag', 'relocation'],
         class: 'absol-onscreen-window',
         child: {
             class: 'absol-onscreen-window-content',
             child: [
                 {
+                    tag: 'hanger',
                     class: 'absol-onscreen-window-head-bar',
                     child: [
                         'span.absol-onscreen-window-head-bar-icon.mdi.mdi-settings',
@@ -49,71 +100,26 @@ function OnScreenWindow() {
                 {
                     class: 'absol-onscreen-window-body-container'
                 },
-                '.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom',
-                '.absol-onscreen-window-resizer.absol-onscreen-window-resize-top',
-                '.absol-onscreen-window-resizer.absol-onscreen-window-resize-left',
-                '.absol-onscreen-window-resizer.absol-onscreen-window-resize-right',
-                '.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-right',
-                '.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-left',
-                '.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-left',
-                '.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-right'
+                'hanger.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom',
+                'hanger.absol-onscreen-window-resizer.absol-onscreen-window-resize-top',
+                'hanger.absol-onscreen-window-resizer.absol-onscreen-window-resize-left',
+                'hanger.absol-onscreen-window-resizer.absol-onscreen-window-resize-right',
+                'hanger.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-right',
+                'hanger.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-left',
+                'hanger.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-left',
+                'hanger.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-right'
 
             ]
         }
     });
-
-    res.eventHandler = OOP.bindFunctions(res, OnScreenWindow.eventHandler);
-    res.$headerbar = Draggable($('.absol-onscreen-window-head-bar', res))
-        .on('begindrag', res.eventHandler.beginDragHeaderbar);
-    res.$bottomResizer = Draggable($('.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom', res))
-        .on('begindrag', res.eventHandler.beginDragBottom);
-
-    res.$rightResizer = Draggable($('.absol-onscreen-window-resizer.absol-onscreen-window-resize-right', res))
-        .on('begindrag', res.eventHandler.beginDragRight);
-
-    res.$topResizer = Draggable($('.absol-onscreen-window-resizer.absol-onscreen-window-resize-top', res))
-        .on('begindrag', res.eventHandler.beginDragTop);
-
-    res.$leftResizer = Draggable($('.absol-onscreen-window-resizer.absol-onscreen-window-resize-left', res))
-        .on('begindrag', res.eventHandler.beginDragLeft);
-
-    res.$bottomRightResizer = Draggable($('.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-right', res))
-        .on('begindrag', res.eventHandler.beginDragButtonRight);
-
-    res.$bottomLeftResizer = Draggable($('.absol-onscreen-window-resizer.absol-onscreen-window-resize-bottom-left', res))
-        .on('begindrag', res.eventHandler.beginDragBottomLeft);
-
-    res.$topLeftResizer = Draggable($('.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-left', res))
-        .on('begindrag', res.eventHandler.beginDragTopLeft);
-
-    res.$topRightResizer = Draggable($('.absol-onscreen-window-resizer.absol-onscreen-window-resize-top-right', res))
-        .on('begindrag', res.eventHandler.beginDragTopRight);
-
-
-    res.$headerButtonCtn = $('.absol-onscreen-window-head-bar-buttons', res.$headerbar);
-    res.$windowIcon = $('span.absol-onscreen-window-head-bar-icon.mdi.mdi-settings', res);
-    res.$windowTitle = $('.absol-onscreen-window-head-bar-title', res);
-    res._windowIcon = 'span.absol-onscreen-window-head-bar-icon.mdi.mdi-settings';
-    res._windowTitle = '';
-    res.$bodyContainer = $('.absol-onscreen-window-body-container', res);
-    res.$attachhook = _('attachhook').addTo(res)
-        .on('error', function () {
-            this.updateSize = this.updateSize || res.relocation.bind(res);
-            Dom.addToResizeSystem(this);
-        });
-
-    res.$minimizeBtn = $('button.absol-onscreen-window-head-bar-button-minimize', res);
-    res.$closeBtn = $('button.absol-onscreen-window-head-bar-button-close', res);
-    res.$dockBtn = $('button.absol-onscreen-window-head-bar-button-dock', res);
-    return res;
-}
+};
 
 OnScreenWindow.eventHandler = {};
 
 OnScreenWindow.eventHandler.beginDragHeaderbar = function (event) {
     if (!EventEmitter.hitElement(this.$headerButtonCtn, event)) {
         this.$headerbar.on('drag', this.eventHandler.dragHeaderbar);
-        this.$headerbar.on('enddrag', this.eventHandler.endDragHeaderbar);
+        this.$headerbar.on('dragend', this.eventHandler.endDragHeaderbar);
         var screenSize = Dom.getScreenSize();
         var bound = this.getBoundingClientRect();
         this.__moveData__ = {
@@ -127,8 +133,9 @@ OnScreenWindow.eventHandler.beginDragHeaderbar = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragHeaderbar = function (event) {
-    var dx = event.moveDX;
-    var dy = event.moveDY;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dx = d.x;
+    var dy = d.y;
     var newX = Math.max(0, Math.min(this.__moveData__.maxLeft, this.__moveData__.bound.left + dx));
     var newY = Math.max(0, Math.min(this.__moveData__.maxY, this.__moveData__.bound.top + dy));
     this.addStyle({
@@ -140,17 +147,16 @@ OnScreenWindow.eventHandler.dragHeaderbar = function (event) {
 
 OnScreenWindow.eventHandler.endDragHeaderbar = function (event) {
     this.$headerbar.off('drag', this.eventHandler.dragHeaderbar);
-    this.$headerbar.off('enddrag', this.eventHandler.endDragHeaderbar);
+    this.$headerbar.off('dragend', this.eventHandler.endDragHeaderbar);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 };
 
 
-
 OnScreenWindow.eventHandler.beginDragBottom = function (event) {
     if (event.target != this.$bottomResizer) return;
     this.$bottomResizer.on('drag', this.eventHandler.dragBottom);
-    this.$bottomResizer.on('enddrag', this.eventHandler.endDragBottom);
+    this.$bottomResizer.on('dragend', this.eventHandler.endDragBottom);
     var screenSize = Dom.getScreenSize();
     var bound = this.getBoundingClientRect();
     this.__moveData__ = {
@@ -162,7 +168,8 @@ OnScreenWindow.eventHandler.beginDragBottom = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragBottom = function (event) {
-    var dy = event.moveDY;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dy = d.y;
     var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));
     this.addStyle('height', newHeight + 'px');
     this.emit('sizechange', event, this);
@@ -171,7 +178,7 @@ OnScreenWindow.eventHandler.dragBottom = function (event) {
 
 OnScreenWindow.eventHandler.endDragBottom = function (event) {
     this.$bottomResizer.off('drag', this.eventHandler.dragBottom);
-    this.$bottomResizer.off('enddrag', this.eventHandler.endDragBottom);
+    this.$bottomResizer.off('dragend', this.eventHandler.endDragBottom);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 };
@@ -180,7 +187,7 @@ OnScreenWindow.eventHandler.endDragBottom = function (event) {
 OnScreenWindow.eventHandler.beginDragRight = function (event) {
     if (event.target != this.$rightResizer) return;
     this.$rightResizer.on('drag', this.eventHandler.dragRight);
-    this.$rightResizer.on('enddrag', this.eventHandler.endDragRight);
+    this.$rightResizer.on('dragend', this.eventHandler.endDragRight);
     var screenSize = Dom.getScreenSize();
     var bound = this.getBoundingClientRect();
     var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;
@@ -193,7 +200,8 @@ OnScreenWindow.eventHandler.beginDragRight = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragRight = function (event) {
-    var dx = event.moveDX;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dx = d.x;
     var newWidth = Math.max(this.__moveData__.minWidth, Math.min(this.__moveData__.maxWidth, this.__moveData__.bound.width + dx));
     this.addStyle('width', newWidth + 'px');
     this.emit('sizechange', event, this);
@@ -202,18 +210,16 @@ OnScreenWindow.eventHandler.dragRight = function (event) {
 
 OnScreenWindow.eventHandler.endDragRight = function (event) {
     this.$rightResizer.off('drag', this.eventHandler.dragRight);
-    this.$rightResizer.off('enddrag', this.eventHandler.endDragRight);
+    this.$rightResizer.off('dragend', this.eventHandler.endDragRight);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 };
 
 
-
-
 OnScreenWindow.eventHandler.beginDragTop = function (event) {
     if (event.target != this.$topResizer) return;
     this.$topResizer.on('drag', this.eventHandler.dragTop);
-    this.$topResizer.on('enddrag', this.eventHandler.endDragTop);
+    this.$topResizer.on('dragend', this.eventHandler.endDragTop);
     // var screenSize = Dom.getScreenSize();
     var bound = this.getBoundingClientRect();
     var fontSize = this.getFontSize();
@@ -226,7 +232,8 @@ OnScreenWindow.eventHandler.beginDragTop = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragTop = function (event) {
-    var dy = event.moveDY;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dy = d.y;
     var newTop = Math.max(0, Math.min(this.__moveData__.maxTop, this.__moveData__.bound.top + dy));
     var newHeight = this.__moveData__.bound.bottom - newTop;
     this.addStyle({
@@ -239,7 +246,7 @@ OnScreenWindow.eventHandler.dragTop = function (event) {
 
 OnScreenWindow.eventHandler.endDragTop = function (event) {
     this.$topResizer.off('drag', this.eventHandler.dragTop);
-    this.$topResizer.off('enddrag', this.eventHandler.endDragTop);
+    this.$topResizer.off('dragend', this.eventHandler.endDragTop);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 
@@ -249,7 +256,7 @@ OnScreenWindow.eventHandler.endDragTop = function (event) {
 OnScreenWindow.eventHandler.beginDragLeft = function (event) {
     if (event.target != this.$leftResizer) return;
     this.$leftResizer.on('drag', this.eventHandler.dragLeft);
-    this.$leftResizer.on('enddrag', this.eventHandler.endDragLeft);
+    this.$leftResizer.on('dragend', this.eventHandler.endDragLeft);
     var bound = this.getBoundingClientRect();
     var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;
     this.__moveData__ = {
@@ -260,7 +267,8 @@ OnScreenWindow.eventHandler.beginDragLeft = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragLeft = function (event) {
-    var dx = event.moveDX;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dx = d.x;
     var newLeft = Math.max(0, Math.min(this.__moveData__.maxLeft, this.__moveData__.bound.left + dx));
     var newWidth = this.__moveData__.bound.right - newLeft;
     this.addStyle({
@@ -273,7 +281,7 @@ OnScreenWindow.eventHandler.dragLeft = function (event) {
 
 OnScreenWindow.eventHandler.endDragLeft = function (event) {
     this.$leftResizer.off('drag', this.eventHandler.dragLeft);
-    this.$leftResizer.off('enddrag', this.eventHandler.endDragLeft);
+    this.$leftResizer.off('dragend', this.eventHandler.endDragLeft);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 };
@@ -283,7 +291,7 @@ OnScreenWindow.eventHandler.endDragLeft = function (event) {
 OnScreenWindow.eventHandler.beginDragButtonRight = function (event) {
     if (event.target != this.$bottomRightResizer) return;
     this.$bottomRightResizer.on('drag', this.eventHandler.dragButtonRight);
-    this.$bottomRightResizer.on('enddrag', this.eventHandler.endDragButtonRight);
+    this.$bottomRightResizer.on('dragend', this.eventHandler.endDragButtonRight);
     var screenSize = Dom.getScreenSize();
     var bound = this.getBoundingClientRect();
     var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;
@@ -298,8 +306,9 @@ OnScreenWindow.eventHandler.beginDragButtonRight = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragButtonRight = function (event) {
-    var dx = event.moveDX;
-    var dy = event.moveDY;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dx = d.x;
+    var dy = d.y;
     var newWidth = Math.max(this.__moveData__.minWidth, Math.min(this.__moveData__.maxWidth, this.__moveData__.bound.width + dx));
     var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));
     this.addStyle('width', newWidth + 'px');
@@ -310,17 +319,16 @@ OnScreenWindow.eventHandler.dragButtonRight = function (event) {
 
 OnScreenWindow.eventHandler.endDragButtonRight = function (event) {
     this.$bottomRightResizer.off('drag', this.eventHandler.dragButtonRight);
-    this.$bottomRightResizer.off('enddrag', this.eventHandler.endDragButtonRight);
+    this.$bottomRightResizer.off('dragend', this.eventHandler.endDragButtonRight);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 };
 
 
-
 OnScreenWindow.eventHandler.beginDragBottomLeft = function (event) {
     if (event.target != this.$bottomLeftResizer) return;
     this.$bottomLeftResizer.on('drag', this.eventHandler.dragBottomLeft);
-    this.$bottomLeftResizer.on('enddrag', this.eventHandler.endDragBottomLeft);
+    this.$bottomLeftResizer.on('dragend', this.eventHandler.endDragBottomLeft);
     var bound = this.getBoundingClientRect();
     var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;
     var screenSize = Dom.getScreenSize();
@@ -334,8 +342,9 @@ OnScreenWindow.eventHandler.beginDragBottomLeft = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragBottomLeft = function (event) {
-    var dx = event.moveDX;
-    var dy = event.moveDY;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dx = d.x;
+    var dy = d.y;
     var newLeft = Math.max(0, Math.min(this.__moveData__.maxLeft, this.__moveData__.bound.left + dx));
     var newWidth = this.__moveData__.bound.right - newLeft;
     var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));
@@ -350,18 +359,16 @@ OnScreenWindow.eventHandler.dragBottomLeft = function (event) {
 
 OnScreenWindow.eventHandler.endDragBottomLeft = function (event) {
     this.$bottomLeftResizer.off('drag', this.eventHandler.dragLeft);
-    this.$bottomLeftResizer.off('enddrag', this.eventHandler.endDragLeft);
+    this.$bottomLeftResizer.off('dragend', this.eventHandler.endDragLeft);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 };
 
 
-
-
 OnScreenWindow.eventHandler.beginDragTopLeft = function (event) {
     if (event.target != this.$topLeftResizer) return;
     this.$topLeftResizer.on('drag', this.eventHandler.dragTopLeft);
-    this.$topLeftResizer.on('enddrag', this.eventHandler.endDragTopLeft);
+    this.$topLeftResizer.on('dragend', this.eventHandler.endDragTopLeft);
     var bound = this.getBoundingClientRect();
     var fontSize = this.getFontSize();
     var minWidth = this.$windowTitle.getBoundingClientRect().right - bound.left + this.$headerButtonCtn.getBoundingClientRect().width;
@@ -375,8 +382,9 @@ OnScreenWindow.eventHandler.beginDragTopLeft = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragTopLeft = function (event) {
-    var dy = event.moveDY;
-    var dx = event.moveDX;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dx = d.x;
+    var dy = d.y;
     var newTop = Math.max(0, Math.min(this.__moveData__.maxTop, this.__moveData__.bound.top + dy));
     var newHeight = this.__moveData__.bound.bottom - newTop;
     var newLeft = Math.max(0, Math.min(this.__moveData__.maxLeft, this.__moveData__.bound.left + dx));
@@ -393,18 +401,17 @@ OnScreenWindow.eventHandler.dragTopLeft = function (event) {
 
 OnScreenWindow.eventHandler.endDragTopLeft = function (event) {
     this.$topLeftResizer.off('drag', this.eventHandler.dragTopLeft);
-    this.$topLeftResizer.off('enddrag', this.eventHandler.endDragTopLeft);
+    this.$topLeftResizer.off('dragend', this.eventHandler.endDragTopLeft);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 
 };
 
 
-
 OnScreenWindow.eventHandler.beginDragTopRight = function (event) {
     if (event.target != this.$topRightResizer) return;
     this.$topRightResizer.on('drag', this.eventHandler.dragTopRight);
-    this.$topRightResizer.on('enddrag', this.eventHandler.endDragTopRight);
+    this.$topRightResizer.on('dragend', this.eventHandler.endDragTopRight);
     var screenSize = Dom.getScreenSize();
     var bound = this.getBoundingClientRect();
     var fontSize = this.getFontSize();
@@ -420,8 +427,9 @@ OnScreenWindow.eventHandler.beginDragTopRight = function (event) {
 };
 
 OnScreenWindow.eventHandler.dragTopRight = function (event) {
-    var dy = event.moveDY;
-    var dx = event.moveDX;
+    var d = event.currentPoint.sub(event.startingPoint);
+    var dx = d.x;
+    var dy = d.y;
     var newWidth = Math.max(this.__moveData__.minWidth, Math.min(this.__moveData__.maxWidth, this.__moveData__.bound.width + dx));
     var newTop = Math.max(0, Math.min(this.__moveData__.maxTop, this.__moveData__.bound.top + dy));
     var newHeight = this.__moveData__.bound.bottom - newTop;
@@ -436,7 +444,7 @@ OnScreenWindow.eventHandler.dragTopRight = function (event) {
 
 OnScreenWindow.eventHandler.endDragTopRight = function (event) {
     this.$topRightResizer.off('drag', this.eventHandler.dragTopRight);
-    this.$topRightResizer.off('enddrag', this.eventHandler.endDragTopRight);
+    this.$topRightResizer.off('dragend', this.eventHandler.endDragTopRight);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
 
@@ -504,6 +512,6 @@ OnScreenWindow.prototype.relocation = function () {
 };
 
 
-ACore.install('OnScreenWindow'.toLowerCase(), OnScreenWindow);
+ACore.install(OnScreenWindow);
 
 export default OnScreenWindow;
