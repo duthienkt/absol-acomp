@@ -1,3 +1,4 @@
+import '../css/textarea2.css';
 import ACore from "../ACore";
 import SelectMenu from "./SelectMenu";
 import OOP from "absol/src/HTML5/OOP";
@@ -7,18 +8,25 @@ var $ = ACore.$;
 
 
 function TextArea2() {
-    var res = _('textarea.absol-textarea2');
-    res.eventHandler = OOP.bindFunctions(res, TextArea2.eventHandler);
-    res.on('keydown', res.eventHandler.keydown);
-    res.on('paste', res.eventHandler.paste);
-    res.on('cut', res.eventHandler.paste);
-
-    return res;
+    this.on('keydown', this.eventHandler.keydown);
+    this.on('paste', this.eventHandler.paste);
+    this.on('cut', this.eventHandler.paste);
 }
+
+TextArea2.tag = 'TextArea2'.toLowerCase();
+
+TextArea2.render = function () {
+    return _('textarea.absol-textarea2');
+};
+
 
 TextArea2.getRenderPre = function () {
     if (!TextArea2.$preSpace) {
-        TextArea2.$preSpace = _('textarea').addStyle({'overflow': 'hidden', 'height':'12px', 'resize':'none'}).addTo(SelectMenu.getRenderSpace());
+        TextArea2.$preSpace = _('textarea').addStyle({
+            'overflow': 'hidden',
+            'height': '12px',
+            'resize': 'none'
+        }).addTo(SelectMenu.getRenderSpace());
     }
     return TextArea2.$preSpace;
 };
@@ -43,11 +51,10 @@ TextArea2.eventHandler.keydown = function (event) {
         }
     }
     else if (key == 'Delete') {
-        if (selectPost.start < selectPost.end){
+        if (selectPost.start < selectPost.end) {
             middText = '';
         }
-        else
-        if (rightText.length > 0) {
+        else if (rightText.length > 0) {
             rightText = rightText.substring(1);
         }
     }
@@ -99,12 +106,12 @@ TextArea2.prototype._measureHeight = function (text) {
     pre.addStyle('padding-top', this.getComputedStyleValue('padding-top'))
     pre.addStyle('padding-bottom', this.getComputedStyleValue('padding-bottom'));
     pre.addStyle('width', this.getComputedStyleValue('width'));
-    pre.addStyle('height', this.getFontSize()+'px');
+    pre.addStyle('height', this.getFontSize() + 'px');
     pre.addStyle('boder', this.getComputedStyleValue('boder'));
     pre.addStyle('font-size', this.getComputedStyleValue('font-size'));
     pre.addStyle('font-family', this.getComputedStyleValue('font-family'));
     pre.value = text;
-    var result = pre.scrollHeight+'px';
+    var result = pre.scrollHeight + 'px';
     return result;
 };
 
@@ -119,7 +126,8 @@ TextArea2.prototype.getInputSelection = function () {
     if (typeof this.selectionStart == "number" && typeof this.selectionEnd == "number") {
         start = this.selectionStart;
         end = this.selectionEnd;
-    } else {
+    }
+    else {
         range = document.selection.createRange();
 
         if (range && range.parentElement() == this) {
@@ -138,13 +146,15 @@ TextArea2.prototype.getInputSelection = function () {
 
             if (textInputRange.compareEndPoints("StartToEnd", endRange) > -1) {
                 start = end = len;
-            } else {
+            }
+            else {
                 start = -textInputRange.moveStart("character", -len);
                 start += normalizedValue.slice(0, start).split("\n").length - 1;
 
                 if (textInputRange.compareEndPoints("EndToEnd", endRange) > -1) {
                     end = len;
-                } else {
+                }
+                else {
                     end = -textInputRange.moveEnd("character", -len);
                     end += normalizedValue.slice(0, end).split("\n").length - 1;
                 }
@@ -158,5 +168,5 @@ TextArea2.prototype.getInputSelection = function () {
     };
 }
 
-ACore.install('textarea2', TextArea2);
+ACore.install(TextArea2);
 export default TextArea2;
