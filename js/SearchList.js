@@ -1,44 +1,47 @@
+import '../css/searchlist.css';
 import ACore from "../ACore";
 import SearchListAdapter from "./adapter/SearchListAdapter";
-import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 function SearchList() {
-    var res = _({
-        class: 'absol-search-list',
-        style: {
-            // height:'300px',
-        },
-        child: [
-            {
-                class: 'absol-search-list-search-input-container',
-                child: 'input[type="text"]'
-            },
-            {
-                tag: 'bscroller',
-                class: 'absol-search-list-contents',
-            }
-        ]
-    });
-    res._pool = [];
-    res.eventHandler = OOP.bindFunctions(res, SearchList.eventHandler);
-    res.$dropdown = $('.absol-search-list-contents', res).on('click', res.eventHandler.clickContent);
-    res.$dropdown.addStyle('display', 'none');
-    res.$vscroller = $('bscroller', res).on('click', res.eventHandler.vscrollerClick);
-    res.$input = $('.absol-search-list-search-input-container input[type="text"]', res)
-        .on('keydown', res.eventHandler.keydown)
-        .on('keyup', res.eventHandler.keyup);
-    res._cache = {};
-    res.$poolItems = [];
-    res._currentData = [];
-    res._sessionIndex = 0;
-    res._updatedSession = -1;
-    return res;
+    this._pool = [];
+    this.$dropdown = $('.absol-search-list-contents', this).on('click', this.eventHandler.clickContent);
+    this.$dropdown.addStyle('display', 'none');
+    this.$vscroller = $('bscroller', this).on('click', this.eventHandler.vscrollerClick);
+    this.$input = $('.absol-search-list-search-input-container input[type="text"]', this)
+        .on('keydown', this.eventHandler.keydown)
+        .on('keyup', this.eventHandler.keyup);
+    this._cache = {};
+    this.$poolItems = [];
+    this._currentData = [];
+    this._sessionIndex = 0;
+    this._updatedSession = -1;
+    return this;
 }
 
+SearchList.tag = 'SearchList'.toLowerCase();
+
+SearchList.render = function (){
+  return   _({
+      class: 'absol-search-list',
+      style: {
+          // height:'300px',
+      },
+      child: [
+          {
+              class: 'absol-search-list-search-input-container',
+              child: 'input[type="text"]'
+          },
+          {
+              tag: 'bscroller',
+              class: 'absol-search-list-contents',
+          }
+      ]
+  });
+};
 
 SearchList.eventHandler = {};
 
