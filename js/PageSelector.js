@@ -1,3 +1,4 @@
+import  '../css/pageselector.css';
 import ACore from "../ACore";
 
 
@@ -5,7 +6,29 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function PageSelector() {
-    var res = _({
+    this.$pageInput = $('.page-number-input input', this);
+    this.$pageInput.on('keyup', PageSelector.eventHandler.pressEnterKey);
+    this.$prevBtn = $('li.page-previous', this);
+    this.$nextBtn = $('li.page-next', this);
+    this.$firstBtn = $('li.page-first', this);
+    this.$lastBtn = $('li.page-last', this);
+    this.$nextBtn.on('click', PageSelector.eventHandler.clickNext);
+    this.$prevBtn.on('click', PageSelector.eventHandler.clickPrev);
+    this.$firstBtn.on('click', PageSelector.eventHandler.clickFirst);
+    this.$lastBtn.on('click', PageSelector.eventHandler.clickLast);
+    this.$buttonContainer = $('.page-number-buttons', this);
+    this._buttons = [];
+    this._pageOffset = 1;
+    this._selectedIndex = 1;
+    this._pageCount = 1;
+    this._pageRange = 1;
+    this.$pageInput.value = this._selectedIndex;
+}
+
+PageSelector.tag = 'PageSelector'.toLowerCase();
+
+PageSelector.render = function (){
+    return _({
         class: ['absol-page-selector'],
         extendEvent: ['change'],
         child:
@@ -16,12 +39,12 @@ function PageSelector() {
                         tag: 'label',
                         child: { text: "Page" }
                     },
-                    {
-                        tag:'input',
-                        attr:{
-                            type:'text'
-                        }
-                    }]
+                        {
+                            tag:'input',
+                            attr:{
+                                type:'text'
+                            }
+                        }]
                 },
 
                 {
@@ -45,29 +68,7 @@ function PageSelector() {
                 }
             ]
     });
-
-
-
-    res.$pageInput = $('.page-number-input input', res);
-    res.$pageInput.on('keyup', PageSelector.eventHandler.pressEnterKey.bind(res));
-    res.$prevBtn = $('li.page-previous', res);
-    res.$nextBtn = $('li.page-next', res);
-    res.$firstBtn = $('li.page-first', res);
-    res.$lastBtn = $('li.page-last', res);
-    res.$nextBtn.on('click', PageSelector.eventHandler.clickNext.bind(res));
-    res.$prevBtn.on('click', PageSelector.eventHandler.clickPrev.bind(res));
-    res.$firstBtn.on('click', PageSelector.eventHandler.clickFirst.bind(res));
-    res.$lastBtn.on('click', PageSelector.eventHandler.clickLast.bind(res));
-    res.$buttonContainer = $('.page-number-buttons', res);
-    res._buttons = [];
-    res._pageOffset = 1;
-    res._selectedIndex = 1;
-    res._pageCount = 1;
-    res._pageRange = 1;
-    res.$pageInput.value = res._selectedIndex;
-
-    return res;
-};
+}
 
 
 PageSelector.eventHandler = {};
@@ -189,6 +190,6 @@ PageSelector.prototype.init = function (props) {
 };
 
 
-ACore.install('pageselector', PageSelector);
+ACore.install(PageSelector);
 
 export default PageSelector;
