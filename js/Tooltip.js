@@ -1,3 +1,4 @@
+import '../css/tooltip.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
@@ -6,19 +7,21 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function ToolTip() {
-    var res = _({
+    this.$content = $('.absol-tooltip-content', this);
+    this.$arrow = $('.absol-tooltip-arrow', this);
+}
+
+ToolTip.tag = 'ToolTip'.toLowerCase();
+
+ToolTip.render = function () {
+    return _({
         class: 'absol-tooltip',
         child: [
             { class: 'absol-tooltip-content', child: '<span>No</span>' },
-
             '.absol-tooltip-arrow'
         ]
     });
-
-    res.$content = $('.absol-tooltip-content', res);
-    res.$arrow = $('.absol-tooltip-arrow', res);
-    return res;
-}
+};
 
 ['addChild', 'addChildBefore', 'addChildAfter', 'clearChild'].forEach(function (key) {
     ToolTip.prototype[key] = function () {
@@ -26,7 +29,7 @@ function ToolTip() {
     }
 });
 
-ACore.install('tooltip', ToolTip);
+ACore.install(ToolTip);
 
 
 ToolTip.$root = _('.absol-tooltip-root').addStyle('visibility', 'hidden');
@@ -93,10 +96,11 @@ ToolTip.show = function (element, content, orientation) {
         });
     }
 
-   
+
     $('', content, function (elt) {
         if (elt.tagName == "IMG" && elt.src) {
-            Dom.waitImageLoaded(elt).then(ToolTip.updatePosition.bind(ToolTip));;
+            Dom.waitImageLoaded(elt).then(ToolTip.updatePosition.bind(ToolTip));
+            ;
         }
         else if (elt.sync) {
             elt.sync.then(ToolTip.updatePosition.bind(ToolTip));
