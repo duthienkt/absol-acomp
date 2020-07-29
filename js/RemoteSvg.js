@@ -5,10 +5,15 @@ var _ = ACore._;
 var $ = ACore.$;
 
 
-
 function RemoteSvg() {
-    return _('svg').defineEvent('load');
+
 }
+
+RemoteSvg.tag = 'RemoteSvg'.toLowerCase();
+
+RemoteSvg.render = function () {
+    return _('svg').defineEvent('load');
+};
 
 RemoteSvg.property = {
     src: {
@@ -76,7 +81,7 @@ RemoteSvg.loadIcon = function (path) {
 };
 
 
-ACore.install('remotesvg', RemoteSvg);
+ACore.install(RemoteSvg);
 
 
 export default RemoteSvg;
