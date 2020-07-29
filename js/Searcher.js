@@ -1,3 +1,4 @@
+import '../css/searcher.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 
@@ -29,9 +30,31 @@ ACore.creator['times-circle-ico'] = function () {
 };
 
 
-
 function SearchTextInput() {
-    var res = _(
+    var thisSTI = this;
+    this.defineEvent(['change', 'modify', 'stoptyping']);
+
+    this.eventHandler = OOP.bindFunctions(this, SearchTextInput.eventHandler);
+    this.$button = $('button', this);
+    this.$input = $('input', this);
+
+    this.$input.on('change', this.eventHandler.inputChange);
+    this.$input.on('keyup', this.eventHandler.inputKeyUp);
+
+    this.$button.on('click', function (event) {
+        thisSTI.$input.value = '';
+        thisSTI.eventHandler.inputKeyUp(event);
+        setTimeout(function () {
+            thisSTI.focus();
+        }, 50);
+    });
+    return this;
+}
+
+SearchTextInput.tag = 'SearchTextInput'.toLowerCase();
+
+SearchTextInput.render = function () {
+    return _(
         {
             class: 'absol-search-text-input',
             child: [
@@ -53,27 +76,8 @@ function SearchTextInput() {
             ]
         }
     );
-
-
-
-    res.defineEvent(['change', 'modify', 'stoptyping']);
-
-    res.eventHandler = OOP.bindFunctions(res, SearchTextInput.eventHandler);
-    res.$button = $('button', res);
-    res.$input = $('input', res);
-
-    res.$input.on('change', res.eventHandler.inputChange);
-    res.$input.on('keyup', res.eventHandler.inputKeyUp);
-
-    res.$button.on('click', function (event) {
-        res.$input.value = '';
-        res.eventHandler.inputKeyUp(event);
-        setTimeout(function () {
-            res.focus();
-        }, 50);
-    });
-    return res;
 };
+
 
 SearchTextInput.property = {
     value: {
@@ -143,7 +147,6 @@ SearchTextInput.eventHandler.inputKeyUp = function (event) {
         this._lastTextModified = this.value;
     }
 };
-
 
 
 ACore.creator.searchcrosstextinput = function () {
