@@ -1,7 +1,8 @@
+import '../css/linearcolorbar.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Svg from "absol/src/HTML5/Svg";
-import { buildCss } from "./utils";
+import {buildCss} from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -134,7 +135,7 @@ LinearColorBar.prototype.redraw = function () {
     for (var i = 0; i < splitCounts.length; ++i) {
         splitDist = (maxValueX - minValueX) / splitCounts[i];
         if (splitDist >= splitDistMin) {
-            splitCount =  splitCounts[i];
+            splitCount = splitCounts[i];
             break;
         }
     }
@@ -200,7 +201,7 @@ LinearColorBar.prototype.BUILDIN_COLORS_RANGE = {
     ]
 }
 
-
+LinearColorBar.tag = 'LinearColorBar'.toLowerCase();
 LinearColorBar.render = function () {
     return _({
         class: 'as-linear-color-bar',
@@ -282,5 +283,5 @@ LinearColorBar.property.colorMapping = {
     }
 };
 
-ACore.install('linearcolorbar', LinearColorBar);
+ACore.install(LinearColorBar);
 export default LinearColorBar;
