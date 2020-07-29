@@ -1,3 +1,4 @@
+import '../css/iconbutton.css';
 import ACore from "../ACore";
 
 var _ = ACore._;
@@ -5,15 +6,22 @@ var $ = ACore.$;
 
 
 function IconButton() {
-    var res = _({
+    this.$iconContainer = $('.absol-icon-button-icon-container', this);
+    this.$textContainer = $('.absol-icon-button-text-container', this);
+    this.$attachhook = _('attachhook').addTo(this);
+    this.sync = new Promise(function (rs) {
+        this.$attachhook.on('error', rs);
+    }.bind(this))
+}
+
+IconButton.tag = IconButton;
+
+IconButton.render = function () {
+    return _({
         tag: "button",
         class: ['absol-icon-button'],
         child: ['.absol-icon-button-icon-container', '.absol-icon-button-text-container']
     });
-    res.$iconContainer = $('.absol-icon-button-icon-container', res);
-    res.$textContainer = $('.absol-icon-button-text-container', res);
-    res.sync = res.afterAttached();
-    return res;
 };
 
 IconButton.prototype.addChild = function (child) {
@@ -66,10 +74,9 @@ IconButton.prototype.clearChild = function () {
     res.$textContainer.clearChild();
     this.$textContainerChild = undefined;
     this.$iconContainerChild = undefined;
-
     return this;
 };
 
-ACore.creator.iconbutton = IconButton;
+ACore.install(IconButton);
 
 export default IconButton;
