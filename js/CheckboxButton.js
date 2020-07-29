@@ -16,28 +16,29 @@ var svgIcon = function (pos) {
 }
 
 function CheckBoxButton() {
+    var thisCB = this;
+    this.defineEvent('change');
+    this.$input = $('input', this);
+    this.on('click', function (event) {
+        event.preventDefault();
+        if (!this.disabled) {
+            thisCB.checked = !thisCB.checked;
+            thisCB.emit('change', event, thisCB);
+        }
+    });
+};
 
+CheckBoxButton.tag = 'CheckBoxButton'.toLowerCase();
 
-
-    var res = _({
+CheckBoxButton.render = function () {
+    return _({
         class: ['absol-checkbox', 'as-checkbox-button'],
         child: [
             '<input type="checkbox" />',
             svgIcon('left')
         ]
     });
-    res.defineEvent('change');
-    res.$input = $('input', res);
-    res.on('click', function (event) {
-        event.preventDefault();
-        if (!this.disabled) {
-            res.checked = !res.checked;
-            res.emit('change', event, res);
-        }
-    });
-    return res;
-};
-
+}
 
 CheckBoxButton.attribute = {
     checked: {
@@ -108,8 +109,6 @@ CheckBoxButton.property = {
 };
 
 
-
-
 CheckBoxButton.initAfterLoad = function () {
     return Dom.documentReady.then(function () {
         Array.apply(null, document.getElementsByTagName('input')).filter(function (e) {
@@ -136,8 +135,8 @@ CheckBoxButton.initAfterLoad = function () {
                     svgIcon('left')
                 ]
             });
-         
-         
+
+
             checkbox.selfReplace(res);
             res.addChild(checkbox);
             for (var i = 0; i < classes.length; ++i) {
@@ -149,10 +148,10 @@ CheckBoxButton.initAfterLoad = function () {
             res.$label = $('label', res);
 
             res.$input = checkbox;
-            
+
 
             res.on('click', function (event) {
-                if (event.target == checkbox){
+                if (event.target == checkbox) {
                     if (checkbox.checked) {
                         this.addClass('checked');
                     }
@@ -161,7 +160,7 @@ CheckBoxButton.initAfterLoad = function () {
                     }
                     res.emit('change', event, res);
                 }
-                else{
+                else {
                     event.preventDefault();
                     if (!this.disabled) {
                         res.checked = !res.checked;
@@ -179,5 +178,5 @@ CheckBoxButton.initAfterLoad = function () {
     });
 }
 
-ACore.install('CheckBoxButton'.toLowerCase(), CheckBoxButton);
+ACore.install(CheckBoxButton);
 export default CheckBoxButton;
