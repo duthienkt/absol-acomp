@@ -1,6 +1,7 @@
+import '../css/spaninput.css';
 import ACore from "../ACore";
-import { insertTextAtCursor } from "./utils";
-import { getTextIn } from "absol/src/HTML5/Text";
+import {insertTextAtCursor} from "./utils";
+import {getTextIn} from "absol/src/HTML5/Text";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -46,7 +47,7 @@ SpanInput.eventHandler.keydown = function (event) {
 };
 
 
-SpanInput.eventHandler.numberBlur = function () {
+SpanInput.eventHandler.numberBlur = function (value) {
     this.notifyValueChange(event);
 };
 
@@ -100,7 +101,8 @@ SpanInput.eventHandler.paste = function (event) {
                 this.value = NaN;
             }
         }
-    } else if (window.clipboardData && window.clipboardData.getData) {
+    }
+    else if (window.clipboardData && window.clipboardData.getData) {
         var text = window.clipboardData.getData("Text");
         if (this._inputType == 1) text = text.replace(/[^0-9.\-+]/g, '');
         insertTextAtCursor(text);
@@ -155,11 +157,13 @@ SpanInput.property.text = {
     }
 }
 
+SpanInput.tag = 'spaninput';
+
 SpanInput.render = function () {
     return _('span.absol-span-input[contenteditable="true"]');
 };
 
 
-ACore.install('spaninput', SpanInput);
+ACore.install(SpanInput);
 
 export default SpanInput;
