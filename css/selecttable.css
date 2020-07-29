@@ -79,6 +79,7 @@
     display: inline-block;
     box-sizing: border-box;
     vertical-align: top;
+    overflow-y: auto;
 }
 
 .absol-select-table-items-scroller .absol-scroll-button {
