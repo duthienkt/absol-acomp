@@ -1,3 +1,4 @@
+import '../css/quickpath.css';
 import ACore from "../ACore";
 import QuickMenu from "./QuickMenu";
 
@@ -17,6 +18,8 @@ QuickPath.eventHandler.click = function (event) {
     var button = this._fileButton(event.target)
     if (button) this.pressButton(button);
 };
+
+QuickPath.tag = 'QuickPath'.toLowerCase();
 
 /**
  * @returns {QuickPath}
@@ -84,7 +87,11 @@ QuickPath.prototype._createButton = function (pathItem, index) {
                 },
                 onOpen: function () {
                     buttom.status = 'open';
-                    thisQuickpath.emit('press', { target: thisQuickpath, pathItem: pathItem, index: index }, thisQuickpath);
+                    thisQuickpath.emit('press', {
+                        target: thisQuickpath,
+                        pathItem: pathItem,
+                        index: index
+                    }, thisQuickpath);
 
                 },
                 onClose: function () {
@@ -92,7 +99,12 @@ QuickPath.prototype._createButton = function (pathItem, index) {
                 },
                 onSelect: function (item) {
                     var dataItem = pathItem.items[item.menuIndex];
-                    thisQuickpath.emit('change', { target: thisQuickpath, pathItem: pathItem, item: dataItem, index: index }, thisQuickpath);
+                    thisQuickpath.emit('change', {
+                        target: thisQuickpath,
+                        pathItem: pathItem,
+                        item: dataItem,
+                        index: index
+                    }, thisQuickpath);
                     thisQuickpath.status = 'close';
 
                 }
@@ -120,7 +132,6 @@ QuickPath.prototype.clear = function () {
 }
 
 
-
 QuickPath.prototype.pop = function () {
     //todo
     var res = this.path.pop();
@@ -130,20 +141,19 @@ QuickPath.prototype.pop = function () {
 };
 
 
-
 QuickPath.property = {};
 
 /**
- * @typedef PathElement 
+ * @typedef PathElement
  * @property {String} name
  * @property {String} icon
  * @property {Array<String>} items
- *  
+ *
  */
 
 QuickPath.property.path = {
     /**
-     * @param {Array<PathElement>} value 
+     * @param {Array<PathElement>} value
      */
     set: function (value) {
         this._path = value || [];
