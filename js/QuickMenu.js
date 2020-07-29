@@ -2,7 +2,7 @@ import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-
+import './Menu';
 
 
 var _ = ACore._;
@@ -10,7 +10,15 @@ var $ = ACore.$;
 
 function QuickMenu() {
     //like context menu without right-click
-    var res = _({
+
+    this.$contextMenu = $('vmenu.absol-context-menu', this);
+    this._contextMenuSync = Promise.resolve();
+}
+
+QuickMenu.tag = 'QuickMenu'.toLowerCase();
+
+QuickMenu.render = function () {
+    return _({
         extendEvent: 'requestcontextmenu',
         class: ['absol-context-hinge'],
         child: {
@@ -24,20 +32,13 @@ function QuickMenu() {
             }
         }
     });
-
-    res.$contextMenu = $('vmenu.absol-context-menu', res);
-
-    res._contextMenuSync = Promise.resolve();
-
-    return res;
 };
-
 // QuickMenu.prototype.show = function(element, menuProps, anchor){
 //     var elementBound = element.getBoundingClientRect();
 
 // };
 
-ACore.install('quickmenu', QuickMenu);
+ACore.install(QuickMenu);
 QuickMenu.PRIORITY_ANCHORS = [0, 3, 7, 4, 1, 2, 6, 5];
 QuickMenu.DEFAULT_ANCHOR = 0;
 
@@ -52,7 +53,6 @@ QuickMenu._menuListener = undefined;
 QuickMenu.$elt.$contextMenu.on('press', function (event) {
     if (QuickMenu._menuListener) QuickMenu._menuListener(event.menuItem);
 });
-
 
 
 QuickMenu.updatePosition = function () {
@@ -283,7 +283,7 @@ QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, da
 
 
 /**
- * @typedef {Object} QuickMenuAdaptor 
+ * @typedef {Object} QuickMenuAdaptor
  * @property {Function} getFlowedElement default is trigger
  * @property {Function} getMenuProps define menuProps if un-change
  * @property {Function} getAnchor default is 'auto', define anchor if un-change
@@ -291,11 +291,11 @@ QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, da
  * @property {Function} onOpen callback
  * @property {Function} onSelect calback
  * @property {Function} isDarkTheme default is false, define darkThem if un-change
- * 
- * 
+ *
+ *
  * @typedef {Object} QuickMenuDataHolder
  * @property {Function} remove
- * 
+ *
  * @param {Element} trigger
  * @param {QuickMenuAdaptor} adaptor
  * @returns {QuickMenuDataHolder}
