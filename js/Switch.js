@@ -1,3 +1,4 @@
+import '../css/switch.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 
@@ -6,7 +7,20 @@ var $ = ACore.$;
 
 
 function Switch() {
-    var res = _({
+    var thisS = this;
+    this.$input = $('input', this);
+    this.on('click', function (event) {
+        thisS.emit('change', event, thisS);
+    });
+    OOP.drillProperty(this, this.$input, 'checked');
+    OOP.drillProperty(this, this.$input, 'isOn', 'checked');
+}
+
+
+Switch.tag = 'switch';
+
+Switch.render = function () {
+    return _({
         tag: 'label',
         class: 'absol-switch',
         extendEvent: 'change',
@@ -15,17 +29,7 @@ function Switch() {
             'span.absol-switch-slider'
         ]
     });
-    res.$input = $('input', res);
-    res.on('click', function (event) {
-        res.emit('change', event, res);
-    });
-    OOP.drillProperty(res, res.$input, 'checked');
-    OOP.drillProperty(res, res.$input, 'isOn', 'checked');
-    return res;
-}
-
-
-
+};
 
 Switch.attribute = {
     checked: {
