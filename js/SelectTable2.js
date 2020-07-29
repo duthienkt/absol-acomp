@@ -1,9 +1,9 @@
+import '../css/selecttable.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { phraseMatch } from "absol/src/String/stringMatching";
-import { nonAccentVietnamese } from "absol/src/String/stringFormat";
-import Svg from "absol/src/HTML5/Svg";
+import {phraseMatch} from "absol/src/String/stringMatching";
+import {nonAccentVietnamese} from "absol/src/String/stringFormat";
 import OOP from "absol/src/HTML5/OOP";
 import SelectTable from "./SelectTable";
 
@@ -14,7 +14,32 @@ var _ = privateDom._;
 
 
 function SelectTable2() {
-    var res = _({
+    var thisST = this;
+    this.$attachhook = _('attachhook').addTo(this);
+    this.sync = new Promise(function (rs) {
+        thisST.$attachhook.on('error', rs);
+    });
+    this.$buttonsContainer = $('.absol-select-table-buttons-container', this);
+    this.$searchContainer = $('.absol-select-table-searchtextinput-container', this);
+    this.$nonselectedItemsContainer = $('.absol-select-table-nonselected-items-container', this);
+    this.$selectedItemsContainer = $('.absol-select-table-selected-items-container', this);
+
+    this.$nonselectedSearchItemsContainer = $('.absol-select-table-nonselected-search-items-container', this);
+    this.$selectedSearchItemsContainer = $('.absol-select-table-selected-search-items-container', this);
+
+    this.$removeAllBtn = $('button.remove-all', this).on('click', this.eventHandler.removeAllBtnClick);
+    this.$addAllBtn = $('button.add-all', this).on('click', this.eventHandler.addAllBtnClick);
+    this.$vscrollerSelected = $('vscroller#selected', this)
+    this.$vscrollerNonselected = $('vscroller#nonselected', this);
+    this.$body = $('.absol-select-table-body', this);
+    this.$searchTextInput = $('searchtextinput', this).on('stoptyping', this.eventHandler.searchTextInputModify);
+};
+
+
+SelectTable2.tag = 'SelectTable2'.toLowerCase();
+
+SelectTable2.render = function () {
+    return _({
         class: ['absol-select-table', 'exclude'],
         extendEvent: ['change', 'addall', 'removeall', 'add', 'remove'],
         child: [
@@ -73,26 +98,7 @@ function SelectTable2() {
             }
         ]
     });
-
-    res.sync = res.afterAttached();
-    res.eventHandler = OOP.bindFunctions(res, SelectTable2.eventHandler);
-    res.$buttonsContainer = $('.absol-select-table-buttons-container', res);
-    res.$searchContainer = $('.absol-select-table-searchtextinput-container', res);
-    res.$nonselectedItemsContainer = $('.absol-select-table-nonselected-items-container', res);
-    res.$selectedItemsContainer = $('.absol-select-table-selected-items-container', res);
-
-    res.$nonselectedSearchItemsContainer = $('.absol-select-table-nonselected-search-items-container', res);
-    res.$selectedSearchItemsContainer = $('.absol-select-table-selected-search-items-container', res);
-
-    res.$removeAllBtn = $('button.remove-all', res).on('click', res.eventHandler.removeAllBtnClick);
-    res.$addAllBtn = $('button.add-all', res).on('click', res.eventHandler.addAllBtnClick);
-    res.$vscrollerSelected = $('vscroller#selected', res)
-    res.$vscrollerNonselected = $('vscroller#nonselected', res);
-    res.$body = $('.absol-select-table-body', res);
-    res.$searchTextInput = $('searchtextinput', res).on('stoptyping', res.eventHandler.searchTextInputModify);
-    return res;
 };
-
 
 
 SelectTable2.prototype.updateButtonsContainerSize = function () {
@@ -269,7 +275,7 @@ SelectTable2.prototype._applySort = function (items, sortFlag) {
     }
     else if (sortFlag == -1) {
         res.sort(function (a, b) {
-            return - this._stringcmp(this._getString(a), this._getString(b))
+            return -this._stringcmp(this._getString(a), this._getString(b))
         }.bind(this))
     }
     else if (typeof sortFlag == 'function') {
@@ -311,8 +317,6 @@ SelectTable2.eventHandler.searchTextInputModify = function (event) {
     this.searching = filterText.length > 0;
 
 };
-
-
 
 
 SelectTable2.property = {};
@@ -376,8 +380,6 @@ SelectTable2.property.searching = {
         return this.containsClass('searching');
     }
 };
-
-
 
 
 SelectTable2.property.sorted = {
@@ -614,24 +616,25 @@ function Item() {
                         class: 'absol-select-table-item-right-container-row',
                         child: [
                             {
-                                attr:{
-                                    title:'Add'
+                                attr: {
+                                    title: 'Add'
                                 },
                                 class: ['absol-select-table-item-right-container-cell', 'add'],
                                 child: 'addicon'
 
                             },
                             {
-                                attr:{
-                                    title:'Remove'
+                                attr: {
+                                    title: 'Remove'
                                 },
                                 class: ['absol-select-table-item-right-container-cell', 'remove'],
                                 child: 'subicon'
 
                             },
-                            { attr:{
-                                title:'Exclude'
-                            },
+                            {
+                                attr: {
+                                    title: 'Exclude'
+                                },
                                 class: ['absol-select-table-item-right-container-cell', 'exclude'],
                                 child: 'excludeico'
                             },
@@ -702,7 +705,6 @@ Item.property.text = {
         return this._data ? (typeof this._data == 'string' ? this._data : this._data.text) : '';
     }
 };
-
 
 
 function ExcludeIco() {

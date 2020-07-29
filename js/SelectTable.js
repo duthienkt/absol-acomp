@@ -20,7 +20,6 @@ function SelectTable() {
     this.sync = new Promise(function (rs) {
         thisST.$attachhook.on('error', rs);
     });
-    this.eventHandler = OOP.bindFunctions(this, SelectTable.eventHandler);
     this.$buttonsContainer = $('.absol-select-table-buttons-container', this);
     this.$searchContainer = $('.absol-select-table-searchtextinput-container', this);
     this.$nonselectedItemsContainer = $('.absol-select-table-nonselected-items-container', this);
@@ -41,7 +40,7 @@ function SelectTable() {
      */
     this.$searchTextInput = $('searchtextinput', this).on('stoptyping', this.eventHandler.searchTextInputModify);
     this.$addAllBtn.updateSize = function () {
-        this.updateScroller && this.updateScroller();
+        thisST.updateScroller && thisST.updateScroller();
     };
     Dom.addToResizeSystem(this.$addAllBtn);
     return this;
