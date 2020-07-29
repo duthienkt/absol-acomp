@@ -1,6 +1,6 @@
 import '../css/selectlist.css';
 import ACore from "../ACore";
-import { measureText, estimateWidth14 } from "./utils";
+import {measureText, estimateWidth14} from "./utils";
 
 import './SelectListItem';
 import EventEmitter from "absol/src/HTML5/EventEmitter";
@@ -145,11 +145,11 @@ export function measureListSize(items) {
 
 /*global absol*/
 function SelectList() {
-    var res = this;
+    var thisSL = this;
     this.defineEvent(['pressitem', 'cancelasync', 'valuevisibilityasync', 'finishasync', 'sizechangeasync']);
     this.$attachhook = _('attachhook').addTo(this);
     this.sync = new Promise(function (rs) {
-        res.$attachhook.once('error', rs);
+        thisSL.$attachhook.once('error', rs);
     });
     this.$items = [];
     this.$itemByValue = {};//quick find element
@@ -184,7 +184,6 @@ SelectList.prototype._updateSelectedItem = function () {
         }
     }
 };
-
 
 
 SelectList.prototype._requireItems = function (itemCout) {
@@ -243,6 +242,7 @@ SelectList.prototype.setItemsAsync = function (items) {
     var thisSL = this;
     var i = 0;
     var limit = 20;
+
     function tick() {
         if (thisSL._itemSession != session) {
             thisSL.emit('cancelasync', { session: session, type: 'cancelasync' }, this);
@@ -262,12 +262,17 @@ SelectList.prototype.setItemsAsync = function (items) {
 
         var foundSelected = thisSL._assignItems(itemCout - n, itemCout);
         if (foundSelected) {
-            thisSL.emit('valuevisibilityasync', { session: session, type: 'valuevisibilityasync', itemElt: thisSL.$items[i] }, thisSL);
+            thisSL.emit('valuevisibilityasync', {
+                session: session,
+                type: 'valuevisibilityasync',
+                itemElt: thisSL.$items[i]
+            }, thisSL);
         }
 
         thisSL.emit('sizechangeasync', { session: session, type: 'sizechangeasync' }, this);
         setTimeout(tick, 2);
     }
+
     setTimeout(tick, 2);
     return Object.assign({ session: session }, this.measuredSize);
 };
@@ -348,7 +353,6 @@ SelectList.prototype.init = function (props) {
 SelectList.eventHandler = {};
 
 ACore.install(SelectList);
-
 
 
 export default SelectList;
