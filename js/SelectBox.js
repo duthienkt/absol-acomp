@@ -1,3 +1,4 @@
+import '../css/selectbox.css';
 import ACore from "../ACore";
 import SelectMenu from "./SelectMenu";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
@@ -7,6 +8,7 @@ import {measureText} from "./utils";
 import SelectList, {measureMaxTextWidth, measureMaxDescriptionWidth} from "./SelectList";
 import prepareSearchForItem, {calcItemMatchScore} from "./list/search";
 import Dom from "absol/src/HTML5/Dom";
+import SearchTextInput from "./Searcher";
 
 var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
 
@@ -55,8 +57,9 @@ function SelectBox() {
 
     this._resourceReady = true;// alway true
     return this;
-};
+}
 
+SelectBox.tag = 'selectbox';
 SelectBox.render = function () {
     return _({
         tag: 'bscroller',
@@ -528,6 +531,6 @@ SelectBox.eventHandler.searchModify = function (event) {
 };
 
 
-ACore.install('SelectBox'.toLowerCase(), SelectBox);
+ACore.install(SelectBox);
 
 export default SelectBox;
