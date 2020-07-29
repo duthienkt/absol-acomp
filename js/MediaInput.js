@@ -1,14 +1,17 @@
+import  '../css/mediainput.css';
 import Dom from "absol/src/HTML5/Dom";
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
-import { blobToFile, blobToArrayBuffer, dataURItoBlob } from "absol/src/Converter/file";
-import Element from "absol/src/HTML5/Element";
+import {blobToFile, blobToArrayBuffer, dataURItoBlob} from "absol/src/Converter/file";
 import Svg from "absol/src/HTML5/Svg";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
-import { getTextIn, setSelectionRange } from 'absol/src/HTML5/Text';
+import {getTextIn, setSelectionRange} from 'absol/src/HTML5/Text';
+import BScroller from "./BScroller";
 
-var MediACore = new Dom({ creator: Object.assign({}, ACore.creator) });
+var MediACore = new Dom();
+MediACore.install(ACore);
+
 
 var _ = MediACore._;
 var $ = MediACore.$;
@@ -67,88 +70,6 @@ function openFileDialog(props) {
 }
 
 function MediaInput() {
-    var res = _({
-        class: 'vmedia-media-input',
-        extendEvent: ['send', 'update', 'releaseplugin'],
-        child: {
-            class: 'vmedia-media-input-text-container',
-            child: [{
-                class: 'vmedia-media-input-imagepreview-container',
-                child: {
-                    class: 'vmedia-media-input-dropover',
-                    child: 'download-ico'
-                }
-            },
-            {
-                class: 'vmedia-media-input-text-container-editor',
-                attr: {
-                    contenteditable: 'true'
-                },
-                on: {
-
-                }
-            },
-            {
-                class: 'vmedia-media-input-text-container-buttons',
-                attr: {
-                    title: 'Send'
-                }
-
-            },
-            {
-                class: 'vmedia-media-input-tool-container',
-                child: [
-                    {
-                        class: 'vmedia-media-input-tool-container-left',
-                        child: [
-
-                            {
-                                tag: 'button',
-                                attr: {
-                                    id: 'add-image-btn',
-                                    title: 'Add image'
-                                },
-                                child: 'add-image-ico'
-
-                            },
-                            {
-                                tag: 'button',
-                                attr: {
-                                    id: 'add-file-btn',
-                                    title: 'Add file'
-                                },
-                                child: 'add-file-ico'
-                            },
-
-                        ]
-                    },
-                    {
-                        class: 'vmedia-media-input-tool-container-right',
-                        child: [{
-                            tag: 'button',
-                            id: 'send-btn',
-                            attr: {
-                                title: 'Send'
-                            },
-                            child: 'send-ico'
-                        }]
-
-                    }
-                ],
-
-
-            },
-                '.vmedia-media-input-plugin-content-container.blur',
-            ]
-        }
-    });
-
-
-    return res;
-}
-
-MediaInput.prototype.preInit = function () {
-    this.eventHandler = OOP.bindFunctions(this, MediaInput.eventHandler);
     this.$editor = $('.vmedia-media-input-text-container-editor', this);
     this.$editor.on('paste', this.eventHandler.paste);
     this.$editor.on('keydown', this.eventHandler.keydown, true);
@@ -167,14 +88,83 @@ MediaInput.prototype.preInit = function () {
     this.snapDataHead = 0;
     this.sync = this.afterAttached();
     this.snapText();
-};
-
-
-MediaInput.prototype.init = function (props) {
-    this.preInit();
-    this.super(props);
 }
 
+MediaInput.tag = 'MediaInput'.toLowerCase();
+
+MediaInput.render = function () {
+    return _({
+        class: 'vmedia-media-input',
+        extendEvent: ['send', 'update', 'releaseplugin'],
+        child: {
+            class: 'vmedia-media-input-text-container',
+            child: [{
+                class: 'vmedia-media-input-imagepreview-container',
+                child: {
+                    class: 'vmedia-media-input-dropover',
+                    child: 'download-ico'
+                }
+            },
+                {
+                    class: 'vmedia-media-input-text-container-editor',
+                    attr: {
+                        contenteditable: 'true'
+                    },
+                    on: {}
+                },
+                {
+                    class: 'vmedia-media-input-text-container-buttons',
+                    attr: {
+                        title: 'Send'
+                    }
+
+                },
+                {
+                    class: 'vmedia-media-input-tool-container',
+                    child: [
+                        {
+                            class: 'vmedia-media-input-tool-container-left',
+                            child: [
+
+                                {
+                                    tag: 'button',
+                                    attr: {
+                                        id: 'add-image-btn',
+                                        title: 'Add image'
+                                    },
+                                    child: 'add-image-ico'
+
+                                },
+                                {
+                                    tag: 'button',
+                                    attr: {
+                                        id: 'add-file-btn',
+                                        title: 'Add file'
+                                    },
+                                    child: 'add-file-ico'
+                                },
+
+                            ]
+                        },
+                        {
+                            class: 'vmedia-media-input-tool-container-right',
+                            child: [{
+                                tag: 'button',
+                                id: 'send-btn',
+                                attr: {
+                                    title: 'Send'
+                                },
+                                child: 'send-ico'
+                            }]
+
+                        }
+                    ],
+                },
+                '.vmedia-media-input-plugin-content-container.blur',
+            ]
+        }
+    });
+};
 
 
 
@@ -279,7 +269,6 @@ MediaInput.property.plugins = {
 }
 
 
-
 MediaInput.prototype.appendText = function (text) {
     var lastBr = null;
     if (this.$editor.childNodes && this.$editor.childNodes.length > 0
@@ -306,7 +295,6 @@ MediaInput.prototype.appendText = function (text) {
 
     setSelectionRange(this.$editor, Infinity);
 };
-
 
 
 MediaInput.prototype._attachPlugins = function (plugins) {
@@ -482,8 +470,6 @@ MediaInput.prototype.getElementsFromText = function (text) {
 };
 
 
-
-
 // MediaInput.prototype.textOnly = function(e) {
 //     if (e.nodeType == Node.TEXT_NODE) return e.textContent;
 //     if (!e.tagName) return '';
@@ -589,7 +575,6 @@ MediaInput.eventHandler.clickAddFile = function (event) {
 };
 
 
-
 MediaInput.eventHandler.dragOver = function (event) {
     event.preventDefault();
     this._lastDragOver = new Date().getTime();
@@ -659,6 +644,7 @@ MediaInput.eventHandler.paste = function (event) {
     var pasteData = (event.clipboardData || window.clipboardData);
     var beforePasteElement = [];
     var self = this;
+
     function visit(e, ac) {
         ac.push(e);
         if (e.childNodes) {
@@ -667,6 +653,7 @@ MediaInput.eventHandler.paste = function (event) {
             }
         }
     }
+
     visit(this.$editor, beforePasteElement);
 
 
@@ -703,7 +690,13 @@ MediaInput.eventHandler.paste = function (event) {
                 var source = URLObj.createObjectURL(blob);
                 var file = blobToFile(blob);
                 var buffer = blobToArrayBuffer(blob).then(function (arrayBuffer) {
-                    this.addImage(source, 'Clipboard', { file: blob, name: null, url: source, blob: blob, arrayBuffer: arrayBuffer });
+                    this.addImage(source, 'Clipboard', {
+                        file: blob,
+                        name: null,
+                        url: source,
+                        blob: blob,
+                        arrayBuffer: arrayBuffer
+                    });
                     this.emit('update', event, this);
                 }.bind(this));
 
@@ -730,11 +723,20 @@ MediaInput.eventHandler.paste = function (event) {
                         var blob = dataURItoBlob(dataURI);
                         var file = blobToFile(blob);
                         var buffer = blobToArrayBuffer(blob).then(function (arrayBuffer) {
-                            this.addImage(source, 'Clipboard', { dataURI: dataURI, file: blob, name: null, url: source, blob: blob, arrayBuffer: arrayBuffer });
+                            this.addImage(source, 'Clipboard', {
+                                dataURI: dataURI,
+                                file: blob,
+                                name: null,
+                                url: source,
+                                blob: blob,
+                                arrayBuffer: arrayBuffer
+                            });
                             this.emit('update', event, this);
                         }.bind(this));
 
-                    }.bind(this), function (e) { }).catch(function (e) { });
+                    }.bind(this), function (e) {
+                    }).catch(function (e) {
+                    });
 
                 }
             }.bind(this));
@@ -743,7 +745,6 @@ MediaInput.eventHandler.paste = function (event) {
         }.bind(this));
     }
 };
-
 
 
 MediaInput.prototype.undoText = function () {
@@ -792,8 +793,6 @@ function ImagePreview() {
 };
 
 
-
-
 function FilePreview() {
     var res = _({
         extendEvent: 'pressremove',
@@ -809,9 +808,6 @@ function FilePreview() {
     });
     return res;
 };
-
-
-
 
 
 MediACore.creator.mediainput = MediaInput;
@@ -889,7 +885,6 @@ MediACore.creator['attachment-ico'].property = {
 };
 
 
-
 MediACore.creator['times-ico'] = function () {
     return _(
         [
@@ -917,14 +912,12 @@ MediACore.creator['download-ico'] = function () {
 
 MediACore.creator['plus-ico'] = function () {
     return _(
-
         '<svg class="_7oal" height="24" width="24" viewBox="0 0 24 24"><g fill="none" fill-rule="evenodd"><polygon points="-6,30 30,30 30,-6 -6,-6 "></polygon><path d="m18,11l-5,0l0,-5c0,-0.552 -0.448,-1 -1,-1c-0.5525,0 -1,0.448 -1,1l0,5l-5,0c-0.5525,0 -1,0.448 -1,1c0,0.552 0.4475,1 1,1l5,0l0,5c0,0.552 0.4475,1 1,1c0.552,0 1,-0.448 1,-1l0,-5l5,0c0.552,0 1,-0.448 1,-1c0,-0.552 -0.448,-1 -1,-1m-6,13c-6.6275,0 -12,-5.3725 -12,-12c0,-6.6275 5.3725,-12 12,-12c6.627,0 12,5.3725 12,12c0,6.6275 -5.373,12 -12,12" ></path></g></svg>'
     );
 };
 
 
-ACore.creator.mediainput = MediaInput;
-
+ACore.install(MediaInput);
 
 
 export default MediaInput;
