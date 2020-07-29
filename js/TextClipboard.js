@@ -1,11 +1,18 @@
+import '../css/textclipboard.css';
 import ACore from "../ACore";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 function TextClipboard() {
-    
-    var res = _({
+    this.$textarea = _('<textarea class="absol-text-clipboard" wrap="off" autocorrect="off"' +
+        ' autocapitalize="off" spellcheck="false"></textarea>').addTo(this);
+}
+
+TextClipboard.tag = 'TextClipboard'.toLowerCase();
+
+TextClipboard.render = function () {
+    return _({
         style: {
             positon: 'fixed',
             opacity: 0,
@@ -15,10 +22,6 @@ function TextClipboard() {
             left: 0
         }
     });
-
-    res.$textarea = _('<textarea class="absol-text-clipboard" wrap="off" autocorrect="off"' +
-        ' autocapitalize="off" spellcheck="false"></textarea>').addTo(res);
-    return res;
 };
 
 TextClipboard.prototype.copy = function (text) {
@@ -32,6 +35,6 @@ TextClipboard.prototype.paste = function () {
     document.execCommand('paste');
 };
 
-ACore.creator.textclipboard = TextClipboard;
+ACore.install(TextClipboard);
 
 export default TextClipboard;
