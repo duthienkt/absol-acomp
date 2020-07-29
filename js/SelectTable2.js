@@ -723,3 +723,4 @@ privateDom.install({
 // not completed yet
 
 ACore.install('selecttable2', SelectTable2);
+export  default SelectTable2;
