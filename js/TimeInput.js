@@ -1,8 +1,8 @@
+import '../css/timeinput.css';
 import ACore from "../ACore";
-import {isTouchDevice} from "./TimePicker";
+import TimePicker, {isTouchDevice} from "./TimePicker";
 import {MILLIS_PER_HOUR, MILLIS_PER_MINUTE, MILLIS_PER_DAY, beginOfDay} from "absol/src/Time/datetime";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
-
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -13,6 +13,10 @@ function TimeInput() {
     this._minute = null;
     this.$hour = $('.ac-time-input-hour', this);
     this.$minute = $('.ac-time-input-minute', this);
+    /***
+     *
+     * @type {TimePicker}
+     */
     this.$timePicker = TimeInput.getTimePicker();
     this.$timePickerCtn = TimeInput.getTimePickerContainer();
     this.on('click', this.togglePicker.bind(this));
@@ -44,6 +48,8 @@ TimeInput.getTimePickerContainer = function () {
     TimeInput.getTimePicker();
     return TimeInput.$timePickerCtn;
 }
+
+TimeInput.tag = 'timeinput';
 
 TimeInput.render = function () {
     return _({
@@ -207,4 +213,6 @@ TimeInput.eventHandler.clickBody = function (event) {
     this.closePicker();
 };
 
-ACore.install('timeinput', TimeInput);
+ACore.install(TimeInput);
+
+export default TimeInput;

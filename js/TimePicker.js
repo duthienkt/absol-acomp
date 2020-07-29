@@ -1,3 +1,4 @@
+import '../css/timepicker.css';
 import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
@@ -261,6 +262,7 @@ TimePicker.prototype.notifySizeChange = function () {
     }
 };
 
+TimePicker.tag = 'TimePicker';
 
 TimePicker.render = function () {
     return _({
@@ -855,3 +857,4 @@ TimePicker.eventHandler.mousefinishClock = function () {
 
 
 ACore.install('timepicker', TimePicker);
+export  default TimePicker;
