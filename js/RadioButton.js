@@ -1,3 +1,4 @@
+import '../css/radio.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
@@ -6,7 +7,33 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function RadioButton() {
-    var res = _(
+    var thisRB = this;
+    this.$attachHook = _('attachhook').addTo(this);
+    this.defineEvent('change');
+    this.defineEvent('uncheck');
+    this.defineEvent('check');
+    this.$input = $('input', this);
+    OOP.drillProperty(this, this.$input, 'value');
+
+    this.on('click', function (event) {
+        if (!thisRB.checked) {
+            if (!thisRB.disabled) {
+                thisRB.checked = true;
+                thisRB.emit('check', { target: thisRB }, thisRB);
+                thisRB.emit('change', { target: thisRB, checked: true }, thisRB);
+            }
+        }
+    });
+
+    this.$attachHook.on('error', function () {
+        thisRB.checked = thisRB.checked;
+    });
+}
+
+RadioButton.tag = 'radiobutton';
+
+RadioButton.render = function () {
+    return _(
         '<div class="absol-radio">\
             <input type="radio" />\
             <svg class="absol-radio-icon absol-radio-icon-left" width="20" height="20" version="1.1" viewBox="0 0 5.2917 5.2917" \
@@ -18,29 +45,7 @@ function RadioButton() {
             </svg>\
         </div>'
     );
-
-    res.$attachHook = _('attachhook').addTo(res);
-    res.defineEvent('change');
-    res.defineEvent('uncheck');
-    res.defineEvent('check');
-    res.$input = $('input', res);
-    OOP.drillProperty(res, res.$input, 'value');
-
-    res.on('click', function (event) {
-        if (!res.checked) {
-            if (!this.disabled) {
-                res.checked = true;
-                res.emit('check', { target: res }, res);
-                res.emit('change', { target: res, checked: true }, res);
-            }
-        }
-    });
-
-    res.$attachHook.on('error', function () {
-        res.checked = res.checked;
-    });
-    return res;
-}
+};
 
 RadioButton.prototype.getAllFriend = function () {
     return Radio.getAllByName(this.name);
@@ -112,6 +117,7 @@ RadioButton.property = {
 
                         }
                     }
+
                     document.body.addEventListener('click', finish, false);
                 }, 100);
             }
@@ -168,7 +174,6 @@ RadioButton.getValueByName = function (name) {
     }
     return res;
 };
-
 
 
 RadioButton.initAfterLoad = function () {
