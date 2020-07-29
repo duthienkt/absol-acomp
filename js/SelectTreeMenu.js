@@ -1,10 +1,7 @@
+import '../css/selecttreemenu.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu";
-import EventEmitter from "absol/src/HTML5/EventEmitter";
-import Dom from "absol/src/HTML5/Dom";
-import { nonAccentVietnamese } from "absol/src/String/stringFormat";
-import { wordsMatch } from "absol/src/String/stringMatching";
 import treeListToList from "./list/treeListToList";
 import {prepareSearchForList, searchTreeListByText} from "./list/search";
 
