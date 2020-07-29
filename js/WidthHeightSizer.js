@@ -1,8 +1,8 @@
+import '../css/widthheightresizer.css';
 import ACore from "../ACore";
 import Draggable from "./Draggable";
 import OOP from "absol/src/HTML5/OOP";
-import Element from "absol/src/HTML5/Element";
-
+//can replace with other module
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -41,6 +41,7 @@ function WidthHeightResizer() {
     }
 });
 
+WidthHeightResizer.tag = 'WidthHeightResizer'.toLowerCase();
 
 WidthHeightResizer.eventHandler = {};
 WidthHeightResizer.eventHandler.preDrag = function (event) {
