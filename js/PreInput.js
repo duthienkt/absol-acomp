@@ -1,6 +1,7 @@
+import '../css/preinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
-import { dataURItoBlob, blobToFile, blobToArrayBuffer } from "absol/src/Converter/file";
+import {dataURItoBlob, blobToFile, blobToArrayBuffer} from "absol/src/Converter/file";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -15,6 +16,7 @@ function PreInput() {
 }
 
 
+PreInput.tag = 'preinput';
 PreInput.render = function () {
     return _({
         tag: 'pre',
@@ -106,7 +108,6 @@ PreInput.prototype.redo = function () {
 };
 
 
-
 PreInput.prototype.commitChange = function (text, offset) {
     while (this.historyIndex < this.history.length - 1) {
         this.history.pop();
@@ -123,7 +124,13 @@ PreInput.prototype.commitChange = function (text, offset) {
             offset: offset
         };
         this.history.push(record);
-        this.emit('change', { target: this, value: record.text, action: 'commit', record: record, type: 'change' }, this);
+        this.emit('change', {
+            target: this,
+            value: record.text,
+            action: 'commit',
+            record: record,
+            type: 'change'
+        }, this);
     }
 };
 
@@ -166,7 +173,8 @@ PreInput.prototype.getSelectPosition = function () {
                 start: startOffset, end: endOffset
             }
         }
-    } else if (document.selection) {
+    }
+    else if (document.selection) {
         console.error('May not support!');
     }
 };
@@ -206,7 +214,8 @@ PreInput.prototype._pasteText = function (text) {
             this.scrollIntoRange(range);
             this.commitChange(this.stringOf(this), this.getPosition(textNode, text.length));
         }
-    } else if (document.selection && document.selection.createRange) {
+    }
+    else if (document.selection && document.selection.createRange) {
         document.selection.createRange().text = text;
         console.error('May not support!');
     }
@@ -215,10 +224,8 @@ PreInput.prototype._pasteText = function (text) {
 
 /**
  * @type {PreInput}
-*/
+ */
 PreInput.eventHandler = {};
-
-
 
 
 PreInput.eventHandler.paste = function (event) {
@@ -240,7 +247,12 @@ PreInput.eventHandler.paste = function (event) {
                 var imgFiles = imgItems.map(function (it) {
                     return it.getAsFile();
                 });
-                this.emit('pasteimg', { target: this, imageFile: imgFiles[0], imageFiles: imgFiles, orginEvent: event }, this);
+                this.emit('pasteimg', {
+                    target: this,
+                    imageFile: imgFiles[0],
+                    imageFiles: imgFiles,
+                    orginEvent: event
+                }, this);
             }
             else if (plainTextItems.length > 0) {
                 var plainTextItem = plainTextItems[0];//only one item
@@ -278,13 +290,30 @@ PreInput.eventHandler.paste = function (event) {
                             return {
                                 file: file, blob: blob, url: dataURI
                             }
-                        }, function (error) { console.error(error) }).catch(function (error) { console.error(error) });
+                        }, function (error) {
+                            console.error(error)
+                        }).catch(function (error) {
+                            console.error(error)
+                        });
                     })).then(function (results) {
-                        results = results.filter(function (it) { return !!it; });
+                        results = results.filter(function (it) {
+                            return !!it;
+                        });
                         if (results.length > 0) {
-                            var imgFiles = results.map(function (it) { return it.file });
-                            var urls = results.map(function (it) { return it.url });
-                            thisIp.emit('pasteimg', { target: this, imageFile: imgFiles[0], imageFiles: imgFiles, urls: urls, url: urls[0], orginEvent: event }, thisIp);
+                            var imgFiles = results.map(function (it) {
+                                return it.file
+                            });
+                            var urls = results.map(function (it) {
+                                return it.url
+                            });
+                            thisIp.emit('pasteimg', {
+                                target: this,
+                                imageFile: imgFiles[0],
+                                imageFiles: imgFiles,
+                                urls: urls,
+                                url: urls[0],
+                                orginEvent: event
+                            }, thisIp);
                         }
                     });
                     thisIp.applyData(currentText, currentSelection);
@@ -325,7 +354,8 @@ PreInput.eventHandler.keydown = function (event) {
                     var offset = this.getPosition(range.startContainer, range.startOffset);
                     this.waitToCommit(text, offset);
                 }
-            } else if (document.selection) {
+            }
+            else if (document.selection) {
                 console.error('May not support!');
             }
         }.bind(this), 1);
@@ -346,6 +376,6 @@ PreInput.property.value = {
 };
 
 
-ACore.install('preinput', PreInput);
+ACore.install(PreInput);
 
 export default PreInput;
