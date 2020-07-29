@@ -1,16 +1,42 @@
+import '../css/numberinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import OOP from "absol/src/HTML5/OOP";
-import { getCaretPosition } from "absol/src/HTML5/Text";
-import { numberToString } from "absol/src/Math/int";
+import {getCaretPosition} from "absol/src/HTML5/Text";
+import {numberToString} from "absol/src/Math/int";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
 function NumberInput() {
-    var res = _({
+    this.eventHandler = OOP.bindFunctions(this, NumberInput.eventHandler);
+    this.$input = $('input', this)
+        .on('keydown', this.eventHandler.keydown)
+        .on('keyup', this.eventHandler.keyup)
+        .on('paste', this.eventHandler.paste)
+        .on('change', this.eventHandler.change);
+    this.$input.value = 0;
+    this._previusValue = 0;//to kwnow whenever the value changed
+    this._value = 0;
+    this._max = Infinity;
+    this._min = -Infinity;
+    this.$upBtn = $('.absol-number-input-button-up-container button', this)
+        .on('mousedown', this.eventHandler.mouseDownUpBtn);
+    this.$downBtn = $('.absol-number-input-button-down-container button', this)
+        .on('mousedown', this.eventHandler.mouseDownDownBtn);
+
+    this._decimalSeparator = '.';
+    this._thousandsSeparator = '';
+    this._floatFixed = -1;// unset
+    this._decimalPadding = -1;//unset
+}
+
+NumberInput.tag = 'NumberInput'.toLowerCase();
+
+NumberInput.render = function () {
+    return _({
         class: 'absol-number-input',
         extendEvent: ['change'],
         child: [
@@ -35,30 +61,7 @@ function NumberInput() {
 
         ]
     });
-
-    res.eventHandler = OOP.bindFunctions(res, NumberInput.eventHandler);
-    res.$input = $('input', res)
-        .on('keydown', res.eventHandler.keydown)
-        .on('keyup', res.eventHandler.keyup)
-        .on('paste', res.eventHandler.paste)
-        .on('change', res.eventHandler.change);
-    res.$input.value = 0;
-    res._previusValue = 0;//to kwnow whenever the value changed
-    res._value = 0;
-    res._max = Infinity;
-    res._min = -Infinity;
-    res.$upBtn = $('.absol-number-input-button-up-container button', res)
-        .on('mousedown', res.eventHandler.mouseDownUpBtn);
-    res.$downBtn = $('.absol-number-input-button-down-container button', res)
-        .on('mousedown', res.eventHandler.mouseDownDownBtn);
-
-    res._decimalSeparator = '.';
-    res._thousandsSeparator = '';
-    res._floatFixed = -1;// unset
-    res._decimalPadding = -1;//unset
-
-    return res;
-}
+};
 
 
 NumberInput.eventHandler = {};
@@ -141,7 +144,6 @@ NumberInput.eventHandler.mouseDownDownBtn = function (event) {
 };
 
 
-
 NumberInput.eventHandler.keyup = function (event) {
     var cValue = parseFloat(this.$input.value);
     if (!isNaN(cValue)) {
@@ -174,7 +176,8 @@ NumberInput.eventHandler.paste = function (e) {
     if (e.clipboardData && e.clipboardData.getData) {
         text = e.clipboardData.getData("text/plain");
 
-    } else if (window.clipboardData && window.clipboardData.getData) {
+    }
+    else if (window.clipboardData && window.clipboardData.getData) {
         text = window.clipboardData.getData("Text");
     }
 
@@ -214,7 +217,8 @@ NumberInput.prototype.stringToNumber = function (string) {
         if (matchedInf[1] == '-')
             return Infinity;
         return -Infinity;
-    } else if (this._thousandsSeparator == '.') {
+    }
+    else if (this._thousandsSeparator == '.') {
         string = string.replace(/\./g, '').replace(/\,/, '.');
     }
     else if (this._thousandsSeparator == ',') {
@@ -223,7 +227,6 @@ NumberInput.prototype.stringToNumber = function (string) {
 
     return parseFloat(string);
 };
-
 
 
 NumberInput.property = {};
@@ -372,7 +375,6 @@ NumberInput.property.disabled = {
         return this.$input.disabled;
     }
 };
-
 
 
 ACore.install('NumberInput'.toLowerCase(), NumberInput);
