@@ -1,15 +1,14 @@
+import '../css/selectmenu.css';
+
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import {phraseMatch, wordsMatch} from "absol/src/String/stringMatching";
-import {nonAccentVietnamese} from "absol/src/String/stringFormat";
 import Dom from "absol/src/HTML5/Dom";
 import {prepareSearchForList, searchListByText} from "./list/search";
+import SelectList from "./SelectList";
 
 /*global absol*/
 var _ = ACore._;
 var $ = ACore.$;
-
 
 ACore.creator['dropdown-ico'] = function () {
     return _([
@@ -73,7 +72,7 @@ function SelectMenu() {
     return this;
 }
 
-
+SelectMenu.tag = 'selectmenu';
 SelectMenu.render = function () {
     return _({
         class: ['absol-selectmenu'],
@@ -588,6 +587,6 @@ SelectMenu.eventHandler.listValueVisibility = function (event) {
 };
 
 
-ACore.creator.selectmenu = SelectMenu;
+ACore.install(SelectMenu);
 
 export default SelectMenu;
