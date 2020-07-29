@@ -1,9 +1,14 @@
+import '../css/quicklistbutton.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
-
-var _ = ACore._;
+import FollowerToggler from "./FollowerToggler";
+ var _ = ACore._;
 var $ = ACore.$;
 
+/****
+ * @extends FollowerToggler
+ * @constructor
+ */
 function QuickListButton() {
     this.$shareFollower = QuickListButton.getFollower();
     _({
@@ -33,6 +38,8 @@ QuickListButton.getFollower = function () {
     return QuickListButton.$follower;
 };
 
+QuickListButton.tag = 'QuickListButton'.toLowerCase();
+
 QuickListButton.render = function () {
     return _({
         tag: 'flexiconbutton',
@@ -44,7 +51,6 @@ QuickListButton.render = function () {
         }
     });
 };
-
 
 
 QuickListButton.property = {};
@@ -71,7 +77,7 @@ QuickListButton.eventHandler.preopen = function () {
     this.$shareFollower.anchor = this.anchor;
     if (this.$list == null) {
         this.$list = _('selectlist.absol-bscroller')
-        .on('pressitem', this.eventHandler.pressitem);
+            .on('pressitem', this.eventHandler.pressitem);
     }
     if (!this._listUpdated) {
         this._listUpdated = true;
@@ -91,18 +97,18 @@ QuickListButton.eventHandler.preUpdatePosition = function () {
     this.$list.addStyle('max-height', maxHeight + 'px');
 };
 
-QuickListButton.eventHandler.closeFollower = function(){
+QuickListButton.eventHandler.closeFollower = function () {
     this.$shareFollower.off({
         preupdateposition: this.eventHandler.preUpdatePosition
     });
 };
 
-QuickListButton.eventHandler.pressitem = function(event){
+QuickListButton.eventHandler.pressitem = function (event) {
     this.close();
-    this.emit('select', Object.assign({}, event, {type:'select', target: this}));
+    this.emit('select', Object.assign({}, event, { type: 'select', target: this }));
 };
 
 
-ACore.install('QuickListButton'.toLowerCase(), QuickListButton);
+ACore.install(QuickListButton);
 
 export default QuickListButton;
