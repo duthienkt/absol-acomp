@@ -1,11 +1,13 @@
+import '../css/selecttable.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { phraseMatch } from "absol/src/String/stringMatching";
-import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import {phraseMatch} from "absol/src/String/stringMatching";
+import {nonAccentVietnamese} from "absol/src/String/stringFormat";
 import Svg from "absol/src/HTML5/Svg";
 import OOP from "absol/src/HTML5/OOP";
 import "./BScroller";
+import SearchTextInput from "./Searcher";
 
 var privateDom = new Dom().install(ACore);
 var $ = privateDom.$;
@@ -13,7 +15,42 @@ var _ = privateDom._;
 
 
 function SelectTable() {
-    var res = _({
+    var thisST = this;
+    this.$attachhook = _('attachhook').addTo(this);
+    this.sync = new Promise(function (rs) {
+        thisST.$attachhook.on('error', rs);
+    });
+    this.eventHandler = OOP.bindFunctions(this, SelectTable.eventHandler);
+    this.$buttonsContainer = $('.absol-select-table-buttons-container', this);
+    this.$searchContainer = $('.absol-select-table-searchtextinput-container', this);
+    this.$nonselectedItemsContainer = $('.absol-select-table-nonselected-items-container', this);
+    this.$selectedItemsContainer = $('.absol-select-table-selected-items-container', this);
+
+    this.$nonselectedSearchItemsContainer = $('.absol-select-table-nonselected-search-items-container', this);
+    this.$selectedSearchItemsContainer = $('.absol-select-table-selected-search-items-container', this);
+
+    this.$removeAllBtn = $('button.remove-all', this).on('click', this.eventHandler.removeAllBtnClick);
+    this.$addAllBtn = $('button.add-all', this).on('click', this.eventHandler.addAllBtnClick);
+    this.$vscrollerSelected = $('bscroller#selected', this)
+    this.$vscrollerNonselected = $('bscroller#nonselected', this);
+    this.$body = $('.absol-select-table-body', this);
+    this.$header = $('.absol-select-table-header', this);
+    /***
+     *
+     * @type {SearchTextInput}
+     */
+    this.$searchTextInput = $('searchtextinput', this).on('stoptyping', this.eventHandler.searchTextInputModify);
+    this.$addAllBtn.updateSize = function () {
+        this.updateScroller && this.updateScroller();
+    };
+    Dom.addToResizeSystem(this.$addAllBtn);
+    return this;
+}
+
+SelectTable.tag = 'SelectTable'.toLowerCase();
+
+SelectTable.render = function () {
+    return _({
         class: 'absol-select-table',
         extendEvent: ['change', 'addall', 'removeall', 'add', 'remove'],
         child: [
@@ -72,31 +109,7 @@ function SelectTable() {
             }
         ]
     });
-
-    res.sync = res.afterAttached();
-    res.eventHandler = OOP.bindFunctions(res, SelectTable.eventHandler);
-    res.$buttonsContainer = $('.absol-select-table-buttons-container', res);
-    res.$searchContainer = $('.absol-select-table-searchtextinput-container', res);
-    res.$nonselectedItemsContainer = $('.absol-select-table-nonselected-items-container', res);
-    res.$selectedItemsContainer = $('.absol-select-table-selected-items-container', res);
-
-    res.$nonselectedSearchItemsContainer = $('.absol-select-table-nonselected-search-items-container', res);
-    res.$selectedSearchItemsContainer = $('.absol-select-table-selected-search-items-container', res);
-
-    res.$removeAllBtn = $('button.remove-all', res).on('click', res.eventHandler.removeAllBtnClick);
-    res.$addAllBtn = $('button.add-all', res).on('click', res.eventHandler.addAllBtnClick);
-    res.$vscrollerSelected = $('bscroller#selected', res)
-    res.$vscrollerNonselected = $('bscroller#nonselected', res);
-    res.$body = $('.absol-select-table-body', res);
-    res.$header = $('.absol-select-table-header', res);
-    res.$searchTextInput = $('searchtextinput', res).on('stoptyping', res.eventHandler.searchTextInputModify);
-    res.$addAllBtn.updateSize = function () {
-        res.updateScroller && res.updateScroller();
-    };
-    Dom.addToResizeSystem(res.$addAllBtn);
-    return res;
-};
-
+}
 
 
 SelectTable.prototype.updateButtonsContainerSize = function () {
@@ -259,7 +272,7 @@ SelectTable.prototype._applySort = function (items, sortFlag) {
     }
     else if (sortFlag == -1) {
         res.sort(function (a, b) {
-            return - this._stringcmp(this._getString(a), this._getString(b))
+            return -this._stringcmp(this._getString(a), this._getString(b))
         }.bind(this))
     }
     else if (typeof sortFlag == 'function') {
@@ -301,8 +314,6 @@ SelectTable.eventHandler.searchTextInputModify = function (event) {
     this.searching = filterText.length > 0;
 
 };
-
-
 
 
 SelectTable.property = {};
@@ -366,8 +377,6 @@ SelectTable.property.searching = {
         return this.containsClass('searching');
     }
 };
-
-
 
 
 SelectTable.property.sorted = {
@@ -657,12 +666,12 @@ Item.property.text = {
 };
 
 /**
- * 
+ *
  * <svg width="100mm" height="100mm" version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
  <g transform="translate(0,-197)">
-  <path d="m39.873 198.21v38.668h-38.668v20.252h38.668v38.668h20.253v-38.668h38.668v-20.252h-38.668v-38.668z" style="fill-rule:evenodd;fill:#5fbbc2;stroke-linejoin:round;stroke-width:2.4109;stroke:#002eea"/>
+ <path d="m39.873 198.21v38.668h-38.668v20.252h38.668v38.668h20.253v-38.668h38.668v-20.252h-38.668v-38.668z" style="fill-rule:evenodd;fill:#5fbbc2;stroke-linejoin:round;stroke-width:2.4109;stroke:#002eea"/>
  </g>
-</svg>
+ </svg>
  */
 
 function AddIcon() {
@@ -694,6 +703,6 @@ privateDom.install({
 SelectTable.privateDom = privateDom;
 
 
-ACore.creator.selecttable = SelectTable;
+ACore.install(SelectTable);
 
 export default SelectTable;
