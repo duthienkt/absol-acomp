@@ -1,3 +1,4 @@
+import '../css/texteditor.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import { getTextNodesIn, getTextIn, measureText } from "absol/src/HTML5/Text";
@@ -55,6 +56,7 @@ function TextEditor() {
     return res;
 }
 
+TextEditor.tag = 'texteditor';//in-complete module
 
 TextEditor.eventHandler = {};
 
