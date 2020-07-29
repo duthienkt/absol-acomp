@@ -1,5 +1,6 @@
+import '../css/statictabbar.css';
 import ACore from "../ACore";
-import { randomIdent } from 'absol/src/String/stringGenerate';
+import {randomIdent} from 'absol/src/String/stringGenerate';
 
 
 var $ = ACore.$;
@@ -7,30 +8,35 @@ var _ = ACore._;
 
 
 function StaticTabbar() {
-    var res = _({
+    var thisST = this;
+    this.$activeBox = $('.absol-static-tabbar-active-box', this)
+    this.$hline = $('.absol-static-tabbar-hline', this);
+    this.$buttons = [];
+    this._btDict = {};
+    this._activedButton = undefined;
+    this.sync = new Promise(function (resolve) {
+        _('attachhook').on('error', function () {
+            this.remove();
+            resolve();
+        }).addTo(thisST);
+    });
+    return this;
+}
+
+StaticTabbar.tag = 'StaticTabbar'.toLowerCase();
+
+StaticTabbar.render = function () {
+    return _({
         class: 'absol-static-tabbar',
         extendEvent: 'change',
         child: [
             {
                 class: 'absol-static-tabbar-active-box',
                 child: '.absol-static-tabbar-hline'
-            },
+            }
         ]
     });
-
-    res.$activeBox = $('.absol-static-tabbar-active-box', res)
-    res.$hline = $('.absol-static-tabbar-hline', res);
-    res.$buttons = [];
-    res._btDict = {};
-    res._activedButton = undefined;
-    res.sync = new Promise(function (resolve) {
-        _('attachhook').on('error', function () {
-            this.remove();
-            resolve();
-        })
-    });
-    return res;
-}
+};
 
 StaticTabbar.prototype.fireChange = function (data) {
     this.emit('change', { target: this, data, value: this.value }, self);
@@ -40,7 +46,9 @@ StaticTabbar.property = {};
 
 StaticTabbar.property.items = {
     set: function (value) {
-        this.$buttons.forEach(function (e) { e.remove() });
+        this.$buttons.forEach(function (e) {
+            e.remove()
+        });
         this._items = value;
         var self = this;
         this.$buttons = this.items.map(function (tab) {
@@ -108,7 +116,6 @@ StaticTabbar.prototype.activeTab = function (ident) {
             width: '0'
         });
     }
-
 };
 
 ACore.install('statictabbar', StaticTabbar);
