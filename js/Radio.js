@@ -1,3 +1,4 @@
+import '../css/radio.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import RadioButton from "./RadioButton";
@@ -7,7 +8,31 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function Radio() {
-    var res = _(
+    var thisR = this;
+    this.defineEvent('change');
+    this.$input = $('input', this);
+    this.$label = $('label', this);
+
+    OOP.drillProperty(this, this.$input, 'value');
+
+    this.on('click', function (event) {
+        if (!thisR.checked) {
+            if (!thisR.disabled) {
+                thisR.checked = true;
+                thisR.emit('change', event, thisR);
+            }
+        }
+    });
+
+    this.sync = this.afterAttached().then(function () {
+        thisR.checked = thisR.checked;
+    });
+}
+
+Radio.tag = 'radio';
+
+Radio.render = function () {
+    return _(
         '<div class="absol-radio">' +
         '    <input type="radio" />' +
         '    <svg class="absol-radio-icon absol-radio-icon-left" width="20" height="20" version="1.1" viewBox="0 0 5.2917 5.2917"' +
@@ -27,27 +52,8 @@ function Radio() {
         '    </svg>' +
         '</div>'
     );
-    res.defineEvent('change');
-    res.$input = $('input', res);
-    res.$label = $('label', res);
-
-    OOP.drillProperty(res, res.$input, 'value');
-
-    res.on('click', function (event) {
-        if (!res.checked) {
-            if (!this.disabled) {
-                res.checked = true;
-                res.emit('change', event, res);
-            }
-        }
-    });
-
-    res.sync = res.afterAttached().then(function () {
-        res.checked = res.checked;
-    });
-
-    return res;
 };
+
 
 Radio.prototype.getAllFriend = function () {
     return Radio.getAllByName(this.name);
@@ -70,6 +76,7 @@ Radio.property = {
                             document.body.removeEventListener('click', finish, false);
                         }
                     }
+
                     document.body.addEventListener('click', finish, false);
                 }, 100);
             }
@@ -137,6 +144,6 @@ Radio.getValueByName = function (name) {
 };
 
 
-ACore.creator.radio = Radio;
+ACore.install(Radio);
 
 export default Radio;
