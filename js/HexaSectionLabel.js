@@ -14,7 +14,7 @@ var Design = {
     hexaHeight: 425,
     textBoxHeight: 286,
     textHeight: 96,
-    indextHeight: 110,
+    indexHeight: 110,
     textBoxPaddingLeft: 127,
     borderWidth: 38
 };
@@ -26,10 +26,10 @@ var StyleSheet = {
         'line-height': Design.textBoxHeight / Design.textHeight + 'em'
     },
     '.as-hexa-section-label-index': {
-        'font-size': Design.indextHeight / Design.textHeight + 'em',
-        height: Design.hexaHeight / Design.indextHeight + 'em',
-        'line-height': Design.hexaHeight / Design.indextHeight + 'em',
-        width: ((Design.hexaHeight + Design.borderWidth) / Math.cos(Math.PI / 6)) / Design.indextHeight + 'em'
+        'font-size': Design.indexHeight / Design.textHeight + 'em',
+        height: Design.hexaHeight / Design.indexHeight + 'em',
+        'line-height': Design.hexaHeight / Design.indexHeight + 'em',
+        width: ((Design.hexaHeight + Design.borderWidth) / Math.cos(Math.PI / 6)) / Design.indexHeight + 'em'
     },
 
 };
@@ -72,7 +72,7 @@ function HexaSectionLabel() {
     }).addTo(this.$background);
     this.$indexBox = $g('path.as-hexa-section-label-index-box', this.$svg);
     this.$textBox = $g('path.as-hexa-section-label-text-box', this.$svg);
-};
+}
 
 HexaSectionLabel.prototype.redrawBackground = function () {
     var indexBound = this.$index.getBoundingClientRect();
@@ -146,7 +146,7 @@ HexaSectionLabel.property.text = {
     get: function () {
         return this._text;
     }
-}
+};
 
 
 ACore.install(HexaSectionLabel);
