@@ -1,3 +1,4 @@
+import '../css/resizebox.css';
 import ACore from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
@@ -12,6 +13,8 @@ function ResizeBox() {
     this._mousemoveEventData = undefined;
     this._lastClickTime = 0;
 }
+
+ResizeBox.tag = 'ResizeBox'.toLowerCase();
 
 ResizeBox.render = function () {
     return _({
@@ -184,7 +187,7 @@ ResizeBox.property.canClick = {
     }
 };
 
-ACore.install('resizebox', ResizeBox);
+ACore.install(ResizeBox);
 
 
 export default ResizeBox;
