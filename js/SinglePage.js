@@ -1,3 +1,4 @@
+import '../css/singlepage.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
