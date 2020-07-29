@@ -1,7 +1,6 @@
+import '../css/tablescroller.css';
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
-import Element from "absol/src/HTML5/Element";
 import BScroller from "./BScroller";
 
 var $ = ACore.$;
@@ -10,7 +9,58 @@ var _ = ACore._;
 
 
 function TableScroller() {
-    var res = _({
+    var thisTS = this;
+    this.$content = undefined;
+    this.$fixedViewport = $('.absol-table-scroller-fixed-viewport', this);
+
+    this.$leftScroller = $('.absol-table-scroller-left-vscroller', this);
+    this.$leftViewport = $('.absol-table-scroller-left-vscroller-viewport', this)
+        .on('scroll', thisTS.eventHandler.scrollLeftScrollerViewport);;
+
+    this.$headScroller = $('.absol-table-scroller-header-hscroller', this);
+    this.$headScrollerViewport = $('.absol-table-scroller-header-hscroller-viewport', this)
+        .on('scroll', this.eventHandler.scrollHeadScrollerViewport);
+
+    this.$attachHook = $('attachhook', this);
+    this.$attachHook.on('error', function () {
+        Dom.addToResizeSystem(this.$attachHook);
+        thisTS.$attachHook.updateSize = thisTS.$attachHook.updateSize||thisTS._updateContentSize.bind(this);
+    });
+
+    this.sync = new Promise(function (rs) {
+        thisTS.$attachHook.once('error', rs)
+    });
+
+    this.$viewport = $('.absol-table-scroller-viewport', this)
+        .on('scroll', this.eventHandler.scrollViewport);
+
+    this.$viewport.scrollInto = BScroller.prototype.scrollInto;
+
+    this.$leftLine = $('.absol-table-scroller-left-line', this);
+    this.$headLine = $('.absol-table-scroller-head-line', this);
+
+    this.$vscrollbarCtn = $('.absol-table-scroller-vscrollbar-container', this);
+    this.$vscrollbar = $('.absol-table-scroller-vscrollbar-container vscrollbar', this)
+        .on('scroll', function () {
+            thisTS.$viewport.scrollTop = this.innerOffset;
+        });
+
+
+    this.$hscrollbarCtn = $('.absol-table-scroller-hscrollbar-container', this);
+    this.$hscrollbar = $('.absol-table-scroller-hscrollbar-container hscrollbar', this)
+        .on('scroll', function () {
+            thisTS.$viewport.scrollLeft = this.innerOffset;
+        });
+
+    this.$vscrollbar.hidden = false;
+    this.$hscrollbar.hidden = false;
+    return this;
+}
+
+TableScroller.tag = 'TableScroller'.toLowerCase();
+
+TableScroller.render = function (){
+    return _({
         class: 'absol-table-scroller',
         child: [
             '.absol-table-scroller-viewport',
@@ -36,58 +86,12 @@ function TableScroller() {
                 child: {
                     tag: 'hscrollbar'
                 }
-            }
+            },
+            'attachhook'
         ]
     });
+};
 
-    res.eventHandler = OOP.bindFunctions(res, TableScroller.eventHandler);
-
-    res.$content = undefined;
-    res.$fixedViewport = $('.absol-table-scroller-fixed-viewport', res);
-
-    res.$leftScroller = $('.absol-table-scroller-left-vscroller', res);
-    res.$leftViewport = $('.absol-table-scroller-left-vscroller-viewport', res)
-        .on('scroll', res.eventHandler.scrollLeftScrollerViewport);;
-
-    res.$headScroller = $('.absol-table-scroller-header-hscroller', res);
-    res.$headScrollerViewport = $('.absol-table-scroller-header-hscroller-viewport', res)
-        .on('scroll', res.eventHandler.scrollHeadScrollerViewport);
-
-    res.$attachHook = _('attachhook').addTo(res);
-    res.$attachHook.on('error', function () {
-        Dom.addToResizeSystem(res.$attachHook);
-        res.$attachHook.updateSize = res.$attachHook.updateSize||res._updateContentSize.bind(res);
-    });
-
-    res.sync = new Promise(function (rs) {
-        res.$attachHook.once('error', rs)
-    });
-
-    res.$viewport = $('.absol-table-scroller-viewport', res)
-        .on('scroll', res.eventHandler.scrollViewport);
-
-    res.$viewport.scrollInto = BScroller.prototype.scrollInto;
-
-    res.$leftLine = $('.absol-table-scroller-left-line', res);
-    res.$headLine = $('.absol-table-scroller-head-line', res);
-
-    res.$vscrollbarCtn = $('.absol-table-scroller-vscrollbar-container', res);
-    res.$vscrollbar = $('.absol-table-scroller-vscrollbar-container vscrollbar', res)
-        .on('scroll', function () {
-            res.$viewport.scrollTop = this.innerOffset;
-        });
-
-
-    res.$hscrollbarCtn = $('.absol-table-scroller-hscrollbar-container', res);
-    res.$hscrollbar = $('.absol-table-scroller-hscrollbar-container hscrollbar', res)
-        .on('scroll', function () {
-            res.$viewport.scrollLeft = this.innerOffset;
-        });
-
-    res.$vscrollbar.hidden = false;
-    res.$hscrollbar.hidden = false;
-    return res;
-}
 
 TableScroller.scrollSize = 17;//default 
 

@@ -1,3 +1,4 @@
+import '../css/tablevscroller.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
@@ -5,30 +6,36 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function TableVScroller() {
-    var res = _(
+    var thisTS = this;
+    this.$attachHook = $('attachhook', this);
+
+    this.sync = new Promise(function (rs) {
+        thisTS.$attachHook.on('error', rs)
+    });
+    this.$viewport = $('bscroller.absol-table-vscroller-viewport', this);
+
+    this.$attachHook.on('error', function () {
+        Dom.addToResizeSystem(thisTS.$attachHook);
+    });
+    this.$topTable = $('.absol-table-vscroller-head', this);
+    this.$headLine = $('.absol-table-vscroller-head-line', this);
+}
+
+TableVScroller.tag = 'TableVScroller'.toLowerCase();
+
+TableVScroller.render = function () {
+    return _(
         {
             class: 'absol-table-vscroller',
             child: [
                 'bscroller.absol-table-vscroller-viewport',
                 'table.absol-table-vscroller-head',
                 '.absol-table-vscroller-head-line',
+                'attachhook'
             ]
         }
     );
-    res.$attachHook = _('attachhook').addTo(res);
-
-    res.sync = new Promise(function (rs) {
-        res.$attachHook.on('error', rs)
-    });
-    res.$viewport = $('bscroller.absol-table-vscroller-viewport', res);
-
-    res.$attachHook.on('error', function () {
-        Dom.addToResizeSystem(res.$attachHook);
-    });
-    res.$topTable = $('.absol-table-vscroller-head', res);
-    res.$headLine = $('.absol-table-vscroller-head-line', res);
-    return res;
-}
+};
 
 TableVScroller.prototype.clearChild = function () {
     this.$viewport.clearChild();
@@ -92,11 +99,11 @@ TableVScroller.prototype.updateSize = function () {
         top: theadBound.height + 'px',
         maxWidth: tableBound.width + 'px'
     });
-    
-    if (this.$viewport.clientHeight < this.$viewport.scrollHeight ){
+
+    if (this.$viewport.clientHeight < this.$viewport.scrollHeight) {
         this.addClass('scroll-v');
     }
-    else{
+    else {
         this.removeClass('scroll-v');
     }
     var realNodes = this.$tr.childNodes;
@@ -124,6 +131,6 @@ TableVScroller.prototype.init = function (props) {
     this.$attachHook.updateSize = this.update.bind(this);
 };
 
-ACore.install('tablevscroller', TableVScroller);
+ACore.install(TableVScroller);
 
 export default TableVScroller;

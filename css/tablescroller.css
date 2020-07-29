@@ -9,7 +9,7 @@
     left: 0;
     top: 0;
     max-width: calc(99vw - 30px);
-    max-height: calc(99vh -30px);
+    max-height: calc(99vh - 30px);
     opacity: 0;
     z-index: -1000;
     visibility: hidden;
