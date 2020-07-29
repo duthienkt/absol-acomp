@@ -12,7 +12,7 @@ function SelectBoxItem() {
     this.$close.on('click', this.eventHandler.clickClose);
 };
 
-
+SelectBoxItem.tag = 'SelectBoxItem'.toLowerCase();
 SelectBoxItem.render = function () {
     return _({
         class: ['absol-selectbox-item'],
@@ -75,6 +75,6 @@ SelectBoxItem.property.theme = {
 }
 
 
-ACore.install('SelectBoxItem'.toLowerCase(), SelectBoxItem);
+ACore.install(SelectBoxItem);
 
 export default SelectBoxItem;
