@@ -1,9 +1,11 @@
+import '../css/messageinput.css';
 import ACore from "../ACore";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
-import { openFileDialog } from "./utils";
+import {openFileDialog} from "./utils";
 import XHR from "absol/src/Network/XHR";
 import EmojiAnims from "./EmojiAnims";
 import EmojiPicker from "./EmojiPicker";
+
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -56,6 +58,8 @@ function MessageInput() {
 
 
 MessageInput.iconAssetRoot = 'https://absol.cf/exticons/vivid';
+
+MessageInput.tag = 'MessageInput'.toLowerCase();
 
 MessageInput.render = function (data) {
     data = data || {};
@@ -114,8 +118,6 @@ MessageInput.render = function (data) {
         ]
     });
 };
-
-
 
 
 MessageInput.prototype.toggleEmoji = function () {
@@ -504,13 +506,13 @@ MessageInput.property.mode = {
 };
 
 
-ACore.install('messageinput', MessageInput);
+ACore.install(MessageInput);
 
 export default MessageInput;
 
 
-
 var urlRex = /^(firefox|opera|chrome|https|http|wss|ws):\/\/[^\s]+$/;
+
 export function parseMessage(text, data) {
     data = data || {};
     data.emojiAssetRoot = data.emojiAssetRoot || EmojiPicker.assetRoot;
@@ -554,7 +556,8 @@ export function parseMessage(text, data) {
                                 type: 'text',
                                 value: leftToken
                             });
-                        };
+                        }
+                        ;
                         tokens.push({
                             type: 'emoji',
                             value: emoji
@@ -589,15 +592,15 @@ export function parseMessage(text, data) {
         }
 
         return tokens.reduce(function (ac, token) {
-            if (token.type == 'text' && ac.last.type == 'text') {
-                ac.last.value += token.value;
-            }
-            else {
-                ac.last = token;
-                ac.result.push(token);
-            }
-            return ac;
-        },
+                if (token.type == 'text' && ac.last.type == 'text') {
+                    ac.last.value += token.value;
+                }
+                else {
+                    ac.last = token;
+                    ac.result.push(token);
+                }
+                return ac;
+            },
             { result: [], last: { type: 'null' } })
             .result;
     });
@@ -641,3 +644,5 @@ export function parseMessage(text, data) {
     }
     return res;
 }
+
+MessageInput.parseMessage = parseMessage;
