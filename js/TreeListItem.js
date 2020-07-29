@@ -1,10 +1,29 @@
+import '../css/treelist.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+
 var _ = ACore._;
 var $ = ACore.$;
 
 function TreeListItem() {
-    var res = _({
+    var thisTI = this;
+    this.$list = $('treelist', this).on('press', function (event, sender) {
+        thisTI.emit('press', event, this);
+    });
+
+    this.$parent = $('.absol-tree-list-item-parent', this).on('mousedown', this.eventHandler.clickParent);
+    this.$text = $('span.absol-tree-list-item-text', this);
+    this.$desc = $('span.absol-tree-list-item-desc', this);
+    this.$descCtn = $('.absol-tree-list-item-desc-container', this);
+    this.$list.level = 1;
+    OOP.drillProperty(this, this.$list, 'items');
+
+    return this;
+}
+
+TreeListItem.tag = 'TreeListItem'.toLowerCase();
+TreeListItem.render = function () {
+    return _({
         extendEvent: ['press', 'clickparent'],
         class: 'absol-tree-list-item',
         child: [
@@ -20,21 +39,6 @@ function TreeListItem() {
             'treelist'
         ]
     });
-
-    res.eventHandler = OOP.bindFunctions(res, TreeListItem.eventHandler);
-
-    res.$list = $('treelist', res).on('press', function (event, sender) {
-        res.emit('press', event, this);
-    });
-
-    res.$parent = $('.absol-tree-list-item-parent', res).on('mousedown', res.eventHandler.clickParent);
-    res.$text = $('span.absol-tree-list-item-text', res);
-    res.$desc = $('span.absol-tree-list-item-desc', res);
-    res.$descCtn = $('.absol-tree-list-item-desc-container', res);
-    res.$list.level = 1;
-    OOP.drillProperty(res, res.$list, 'items');
-
-    return res;
 };
 
 
@@ -72,8 +76,6 @@ TreeListItem.prototype.getTopLevelElt = function () {
     }
     return current;
 };
-
-
 
 
 TreeListItem.property = {
@@ -143,7 +145,6 @@ TreeListItem.property = {
 };
 
 
-
 TreeListItem.property.extendClasses = {
     set: function (value) {
         var self = this;
@@ -153,7 +154,9 @@ TreeListItem.property.extendClasses = {
         this._extendClass = [];
         if (!value) return;
         if (typeof value == 'string') {
-            value = value.split(/\s+/).filter(function (c) { return c.length > 0 });
+            value = value.split(/\s+/).filter(function (c) {
+                return c.length > 0
+            });
         }
 
         if (value instanceof Array) {
@@ -184,6 +187,6 @@ TreeListItem.property.extendStyle = {
 };
 
 
-ACore.creator.treelistitem = TreeListItem;
+ACore.install(TreeListItem);
 
 export default TreeListItem;

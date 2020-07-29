@@ -1,15 +1,19 @@
+import '../css/treelist.css';
 import ACore from "../ACore";
+import TreeListItem from "./TreeListItem";
 var _ = ACore._;
 var $ = ACore.$;
 
 function TreeList() {
-    var res = _({
+}
+
+TreeList.tag = 'treelist';
+TreeList.render = function () {
+    return _({
         class: 'absol-tree-list',
         extendEvent: 'press'
     });
-
-    return res;
-}
+};
 
 
 TreeList.prototype.realignDescription = function (extMarginLeft) {
@@ -50,7 +54,7 @@ TreeList.prototype.getAllItemElement = function () {
 TreeList.prototype.addItem = function (item) {
     var self = this;
     var props = { level: this.level, data: item };
-    
+
     if (typeof item == 'string') {
         props.text = item;
     }
@@ -59,13 +63,13 @@ TreeList.prototype.addItem = function (item) {
         if (item.items) {
             props.items = item.items;
         }
-        if (item.desc){
+        if (item.desc) {
             props.desc = item.desc;
         }
-        if (item.extendClasses){
+        if (item.extendClasses) {
             props.extendClasses = item.extendClasses;
         }
-        if (item.extendStyle){
+        if (item.extendStyle) {
             props.extendStyle = item.extendStyle;
         }
     }
@@ -86,19 +90,17 @@ TreeList.prototype.addItem = function (item) {
 };
 
 
-
 TreeList.property = {};
 TreeList.property.items = {
     set: function (value) {
         this.clearItems();
-        
+
         (value || []).forEach(this.addItem.bind(this));
     },
     get: function () {
         return this.getAllItem();
     }
 };
-
 
 
 TreeList.property.level = {
@@ -115,6 +117,6 @@ TreeList.property.level = {
     }
 };
 
-ACore.creator.treelist = TreeList;
+ACore.install(TreeList);
 
 export default TreeList;
