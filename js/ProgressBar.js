@@ -1,3 +1,4 @@
+import '../css/progressbar.css';
 import ACore from "../ACore";
 
 var _ = ACore._;
@@ -12,7 +13,7 @@ function ProgressBar() {
     this._animated = false;
 }
 
-
+ProgressBar.tag = 'ProgressBar'.toLowerCase();
 ProgressBar.render = function () {
     return _({
         class: 'as-progress-bar',
@@ -97,7 +98,7 @@ ProgressBar.property.striped = {
 }
 
 
-ACore.install('progressbar', ProgressBar);
+ACore.install(ProgressBar);
 
 
 export default ProgressBar;
