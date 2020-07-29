@@ -17,7 +17,7 @@ PositionTracker.tag = 'PositionTracker'.toLowerCase();
  *
  * @return {Element}
  */
-PositionTracker.render = function(){
+PositionTracker.render = function () {
     return _('div');
 };
 
