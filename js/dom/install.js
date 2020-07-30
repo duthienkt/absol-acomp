@@ -73,6 +73,8 @@ import TreeListItem from "../TreeListItem";
 import SelectTreeMenu from "../SelectTreeMenu";
 import WidthHeightResizer from "../WidthHeightSizer";
 import Modal from "../Modal";
+import TrackBar from "../TrackBar";
+import TrackBarInput from "../TrackBarInput";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -162,7 +164,9 @@ export var publicCreators = [
     ToolTip,
     TreeList,
     TreeListItem,
-    WidthHeightResizer
+    WidthHeightResizer,
+    TrackBar,
+    TrackBarInput
 ];
 
 /***

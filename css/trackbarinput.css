@@ -1,0 +1,36 @@
+.absol-trackbar-input {
+    box-sizing: border-box;
+    display: inline-block;
+    white-space: nowrap;
+    position: relative;
+    min-width: 13.5em;
+    height: 2em;
+}
+
+.absol-trackbar-input-trackbar-container {
+    position: absolute;
+    left: 0;
+    right: 3.5em;
+    top: 0.4em;
+    bottom: 0.4em;
+}
+
+.absol-trackbar-input-trackbar-container .absol-trackbar {
+    width: 100%;
+}
+
+.absol-trackbar-input-unit-input-container {
+    position: absolute;
+    width: 3em;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+
+.absol-trackbar-input-unit-input-container .as-flexicon-input {
+    width: 100%;
+    vertical-align: middle;
+    height: 2em;
+}
+
