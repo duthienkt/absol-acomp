@@ -17,8 +17,6 @@ function TreeListItem() {
     this.$descCtn = $('.absol-tree-list-item-desc-container', this);
     this.$list.level = 1;
     OOP.drillProperty(this, this.$list, 'items');
-
-    return this;
 }
 
 TreeListItem.tag = 'TreeListItem'.toLowerCase();
