@@ -29,7 +29,7 @@
     top: 0;
     z-index: 10;
     overflow: hidden;
-    pointer-events: none;
+    /*pointer-events: none;*/
 }
 
 .absol-table-scroller-fixed-viewport>table>thead,
@@ -51,7 +51,7 @@
     right: 0;
     z-index: 9;
     overflow: hidden;
-    pointer-events: none;
+    /*pointer-events: none;*/
 }
 
 .absol-table-scroller-header-hscroller-viewport {
@@ -73,7 +73,7 @@
     z-index: 7;
     /* width: 200px; */
     overflow-x: hidden;
-    pointer-events: none;
+    /*pointer-events: none;*/
 }
 
 .absol-table-scroller-left-vscroller-viewport {
@@ -87,7 +87,7 @@
 .absol-table-scroller-head-line,
 .absol-table-scroller-left-line {
     z-index: 30;
-    pointer-events: none;
+    /*pointer-events: none;*/
     position: absolute;
 }
 
@@ -177,4 +177,15 @@
 
 .absol-table-scroller.scroll-v .absol-table-scroller-hscrollbar-container {
     right: 8px;
+}
+
+.absol-table-scroller-fixed-table{
+    table-layout: fixed;
+    box-sizing: border-box;
+
+}
+
+.absol-table-scroller-fixed-table *,
+.absol-table-scroller-header-hscroller *{
+    box-sizing: border-box;
 }

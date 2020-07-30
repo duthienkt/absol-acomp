@@ -7,7 +7,6 @@ var $ = ACore.$;
 var _ = ACore._;
 
 
-
 function TableScroller() {
     var thisTS = this;
     this.$content = undefined;
@@ -15,16 +14,17 @@ function TableScroller() {
 
     this.$leftScroller = $('.absol-table-scroller-left-vscroller', this);
     this.$leftViewport = $('.absol-table-scroller-left-vscroller-viewport', this)
-        .on('scroll', thisTS.eventHandler.scrollLeftScrollerViewport);;
+        .on('scroll', thisTS.eventHandler.scrollLeftScrollerViewport);
+    ;
 
     this.$headScroller = $('.absol-table-scroller-header-hscroller', this);
     this.$headScrollerViewport = $('.absol-table-scroller-header-hscroller-viewport', this)
         .on('scroll', this.eventHandler.scrollHeadScrollerViewport);
 
     this.$attachHook = $('attachhook', this);
+    this.$attachHook.requestUpdateSize = this._updateContentSize.bind(this);
     this.$attachHook.on('error', function () {
-        Dom.addToResizeSystem(this.$attachHook);
-        thisTS.$attachHook.updateSize = thisTS.$attachHook.updateSize||thisTS._updateContentSize.bind(this);
+        Dom.addToResizeSystem(this);
     });
 
     this.sync = new Promise(function (rs) {
@@ -54,12 +54,11 @@ function TableScroller() {
 
     this.$vscrollbar.hidden = false;
     this.$hscrollbar.hidden = false;
-    return this;
 }
 
 TableScroller.tag = 'TableScroller'.toLowerCase();
 
-TableScroller.render = function (){
+TableScroller.render = function () {
     return _({
         class: 'absol-table-scroller',
         child: [
@@ -172,7 +171,7 @@ TableScroller.prototype.clearChild = function () {
 TableScroller.prototype.addChild = function (elt) {
     if (this.$viewport.childNodes.length == 0) {
         if (elt.tagName && elt.tagName.toLowerCase() == 'table') {
-
+            elt.classList.add('absol-table-scroller-origin');
             this.$viewport.addChild(elt);
             this.$content = elt;
             this._updateContent();
@@ -193,7 +192,8 @@ TableScroller.prototype.addChild = function (elt) {
 TableScroller.prototype._updateFixedTable = function () {
     var fixedCol = this.fixedCol;
     this.$fixedViewport.clearChild();
-    this.$fixedTable = $(this.$content.cloneNode(false)).addClass('absol-table-scroller-fixed-table').addTo(this.$fixedViewport);
+    this.$fixedTable = $(this.$content.cloneNode(false)).addClass('absol-table-scroller-fixed-table')
+        .removeClass('absol-table-scroller-origin').addTo(this.$fixedViewport);
     this.$fixedTableThead = $(this.$contentThead.cloneNode(false)).addTo(this.$fixedTable);
 
     this.$fixedTableThead.clearChild();
@@ -238,6 +238,7 @@ TableScroller.prototype._updateHeaderScroller = function () {
     var self = this;
     this.$headScrollerViewport.clearChild();
     this.$headScrollerTable = $(this.$content.cloneNode(false))
+        .removeClass('absol-table-scroller-origin')
         .addTo(this.$headScrollerViewport);
     this.$headScrollerThead = $(this.$contentThead.cloneNode(false))
         .addTo(this.$headScrollerTable);
@@ -301,7 +302,6 @@ TableScroller.prototype._updateFixedTableSize = function () {
             var styleWidth = elt.__originElement__.getBoundingClientRect().width + 'px';
             elt.addStyle('width', styleWidth);
         });
-
     });
 
     this.$fixedTable.addStyle({
@@ -415,8 +415,6 @@ TableScroller.property.fixedCol = {
 };
 
 
-
-
-ACore.install('TableScroller'.toLowerCase(), TableScroller);
+ACore.install(TableScroller);
 
 export default TableScroller;
