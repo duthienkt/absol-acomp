@@ -1,6 +1,6 @@
 {
     "name": "absol-acomp",
-    "version": "0.9.25",
+    "version": "0.9.26",
     "description": "HTML5 components base on absol.js",
     "main": "AComp.js",
     "directories": {
@@ -27,7 +27,7 @@
     },
     "homepage": "https://github.com/duthienkt/absol-acomp",
     "dependencies": {
-        "absol": "^1.13.6"
+        "absol": "^1.13.8"
     },
     "devDependencies": {
         "@babel/core": "^7.10.4",
@@ -42,5 +42,7 @@
         "webpack-cli": "^3.3.12",
         "webpack-dev-server": "^3.11.0"
     },
-    "publishConfig": { "registry": "https://npm.pkg.github.com/" }
+    "publishConfig": {
+        "registry": "https://npm.pkg.github.com/"
+    }
 }
