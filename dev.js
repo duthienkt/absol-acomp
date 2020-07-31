@@ -12,6 +12,7 @@ import MessageInput, { parseMessage } from './js/MessageInput';
 import EmojiPicker from './js/EmojiPicker';
 import ContextCaptor from './js/ContextMenu';
 import install from "./js/dom/install";
+import SearchTextInput from "./js/Searcher";
 
 absol.parseMessage = parseMessage;
 
@@ -24,6 +25,9 @@ absol.EmojiChars = EmojiChars;
 absol.EmojiAnims = EmojiAnims;
 absol.ChromeCalendar = ChromeCalendar;
 install(absol.coreDom);
+//old module
+absol.coreDom.install('searchcrosstextinput', SearchTextInput);
+
 Object.assign(absol.string, string);
 absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
