@@ -177,9 +177,8 @@ SelectMenu.property.items = {
             this.updateItem();
 
         this.$dropdownBox.removeStyle('min-width');
-
-        this.style.setProperty('--select-list-desc-width', this.$selectlist._descWidth + 'px');
         this.selectListBound = this.$selectlist.setItemsAsync(value || []);
+        this.style.setProperty('--select-list-desc-width', this.$selectlist.measuredSize.descWidth + 'px');
         this._resourceReady = true;
 
         this.addStyle('min-width', this.selectListBound.width + 2 + 23 + 'px');
