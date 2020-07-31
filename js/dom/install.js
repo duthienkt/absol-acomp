@@ -75,6 +75,7 @@ import WidthHeightResizer from "../WidthHeightSizer";
 import Modal from "../Modal";
 import TrackBar from "../TrackBar";
 import TrackBarInput from "../TrackBarInput";
+import SelectMenu from "../SelectMenu";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -147,6 +148,7 @@ export var publicCreators = [
     RemoteSvg,
     ResizeBox,
     SearchTextInput,
+    SelectMenu,
     SelectBox,
     SelectBoxItem,
     SelectTable,
