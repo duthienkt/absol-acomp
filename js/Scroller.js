@@ -198,7 +198,7 @@ VScroller.eventHandler.scrollScrollbar = function (event) {
 
 export function HScroller() {
     var thisHS = this;
-    this.$attachHook = $('attachhook')
+    this.$attachHook = $('attachhook', this)
         .on('error', function () {
             this.requestUpdateSize = this.requestUpdateSize || thisHS.requestUpdateSize.bind(thisHS);
             Dom.addToResizeSystem(this);
