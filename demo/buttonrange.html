@@ -50,16 +50,19 @@
     ];
 
     var ba0 = _({
-        tag: 'buttonrange',
-        style: {
-            'font-size': '30px'
-        },
-        props: {
-            items: buttonItems
-        },
-        on: {
-            change: function (event) {
-                console.log(event.value, this.value);
+        class: 'as-button-range-wrapper',
+        child: {
+            tag: 'buttonrange',
+            style: {
+                'font-size': '30px'
+            },
+            props: {
+                items: buttonItems
+            },
+            on: {
+                change: function (event) {
+                    console.log(event.value, this.value);
+                }
             }
         }
     });
