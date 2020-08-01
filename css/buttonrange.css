@@ -1,0 +1,101 @@
+.as-button-range {
+    position: relative;
+    overflow-y: hidden;
+    height: 1.5em;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.as-button-range-scroller {
+    font-size: inherit;
+    height: calc(2em + 17px);
+    box-sizing: border-box;
+    overflow-x: scroll;
+    position: absolute;
+    top: 0;
+    left: 1em;
+    right: 1em;
+    white-space: nowrap;
+}
+
+.as-button-range-left-ctn,
+.as-button-range-right-ctn {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+}
+
+.as-button-range-right-ctn::after,
+.as-button-range-left-ctn::before {
+    content: "";
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-button-range-left-ctn {
+    left: 0;
+}
+
+.as-button-range-right-ctn {
+    right: 0;
+}
+
+.as-button-range-right-btn,
+.as-button-range-left-btn {
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
+    border: none;
+    outline: none;
+    color: rgb(0, 106, 266);
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 0.5em;
+}
+
+.as-button-range-left-btn {
+    -webkit-box-shadow: 1em 2px 1.5em -1em rgba(255, 255, 255, 0.62);
+    -moz-box-shadow: 1em 2px 1.5em -1em rgba(255, 255, 255, 0.62);
+    box-shadow: 1em 2px 1.5em -1em rgba(255, 255, 255, 0.62);
+}
+
+.as-button-range-right-btn {
+    -webkit-box-shadow: -1em 2px 1.5em -1em rgba(255, 255, 255, 0.62);
+    -moz-box-shadow: -1em 2px 1.5em -1em rgba(255, 255, 255, 0.62);
+    box-shadow: -1em 2px 1.5em -1em rgba(255, 255, 255, 0.62);
+}
+
+.as-button-range-right-btn polygon,
+.as-button-range-left-btn polygon {
+    fill: #2488FF;
+}
+
+.as-button-range-right-btn:disabled polygon,
+.as-button-range-left-btn:disabled polygon {
+    fill: #bfbfbf;
+}
+
+.as-button-range-left-btn > svg,
+.as-button-range-right-btn > svg {
+    width: 1.25em;
+    height: 1.25em;
+    vertical-align: middle;
+}
+
+
+.as-button-range-item {
+    outline: none;
+    font-size: inherit;
+    padding: 0 0.75em;
+    margin: 0;
+    height: 1.5em;
+    border: none;
+    background-color: transparent;
+    color: black;
+}
+
+.as-button-range-item.as-active {
+    color: rgb(87, 157, 255);
+}

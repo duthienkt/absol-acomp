@@ -76,6 +76,7 @@ import Modal from "../Modal";
 import TrackBar from "../TrackBar";
 import TrackBarInput from "../TrackBarInput";
 import SelectMenu from "../SelectMenu";
+import ButtonRange from "../ButtonRange";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -83,6 +84,7 @@ export var publicCreators = [
     Board,
     BScroller,
     ButtonArray,
+    ButtonRange,
     CalendarInput,
     OldCalendarInput,
     CheckboxInput,
