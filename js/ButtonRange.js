@@ -24,6 +24,7 @@ function ButtonRange() {
     this._value = undefined;
     this._lastValue = this._value;
     this.$scroller = $('.as-button-range-scroller', this)
+        .on('wheel', this.eventHandler.wheel);
     this.$prevBtn = $('.as-button-range-left-btn', this)
         .on('click', this.prevValue.bind(this));
     this.$nextBtn = $('.as-button-range-right-btn', this)
@@ -72,7 +73,7 @@ ButtonRange.prototype.updateSize = function () {
             var right = this.$scroller.lastChild.getBoundingClientRect().right;
             if (left < right) {
                 var fontSize = this.getFontSize() || 14;
-                this.addStyle('width', (right - left + 2)/fontSize + 2 +'em')
+                this.addStyle('width', (right - left + 2) / fontSize + 2 + 'em')
             }
         }
     }
@@ -291,7 +292,20 @@ ButtonRange.eventHandler.attached = function () {
     if (this.style.width === 'auto') this.autoWidth = true;
     Dom.addToResizeSystem(this.$attachHook);
     this.updateSize();
-}
+};
+
+
+ButtonRange.eventHandler.wheel = function (event) {
+    var prevLeft = this.$scroller.scrollLeft;
+    if (event.deltaY < 0) {
+        this.$scroller.scrollLeft -= 100;
+    }
+    else if (event.deltaY > 0) {
+        this.$scroller.scrollLeft += 100;
+    }
+    if (prevLeft !== this.$scroller.scrollLeft)
+        event.preventDefault();
+};
 
 
 ACore.install(ButtonRange);
