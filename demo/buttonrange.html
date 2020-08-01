@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ButtonRange</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+<div id="demo0"></div>
+<script>
+    var _ = absol._;
+    var $ = absol.$;
+</script>
+<script class="viewable">
+    var buttonItems = [
+        {
+            text: 'Họ tên',
+            value: 0
+        },
+        {
+            text: 'Số điện thoại',
+            value: 1
+        },
+        {
+            text: 'Địa chỉ',
+            value: 2
+        },
+        {
+            text: 'Trình độ học vấn',
+            value: 3
+        },
+        {
+            text: 'Nghề nghiệp',
+            value: 6
+        },
+        {
+            text: 'Thu nhập',
+            value: 4
+        },
+        {
+            text: 'Tình trạng hôn nhân',
+            value: 5
+        }
+    ];
+
+    var ba0 = _({
+        tag: 'buttonrange',
+        style: {
+            'font-size': '30px'
+        },
+        props: {
+            items: buttonItems
+        },
+        on: {
+            change: function (event) {
+                console.log(event.value, this.value);
+            }
+        }
+    });
+
+    var ba1 = _({
+        tag: 'buttonrange',
+        style: {
+            'font-size': 'inherit',
+            width: '50vw'
+        },
+        props: {
+            items: buttonItems
+        },
+        on: {
+            change: function (event) {
+                console.log(event.value, this.value);
+            }
+        }
+    });
+
+    var ba2 = _({
+        tag: 'buttonrange',
+        style: {
+            'font-size': 'inherit',
+            width: 'auto'
+        },
+        props: {
+            items: buttonItems
+        },
+        on: {
+            change: function (event) {
+                console.log(event.value, this.value);
+            }
+        }
+    });
+
+
+    $('#demo0').addChild(ba0);
+    $('#demo0').addChild(ba1);
+    $('#demo0').addChild(ba2);
+</script>
+<script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
+
+</body>
+
+</html>
