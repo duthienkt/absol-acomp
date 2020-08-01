@@ -65,6 +65,17 @@ ButtonRange.render = function () {
     });
 };
 
+ButtonRange.prototype._updateUnderlinePosition = function () {
+    if (!this.$lastActiveBtn) return;
+    var scrollerFirstBound = this.$scroller.firstChild.getBoundingClientRect();
+    if (scrollerFirstBound.width === 0) return;
+    var activeBound = this.$lastActiveBtn.getBoundingClientRect();
+    this.addStyle({
+        '--underline-left': activeBound.left - scrollerFirstBound.left + 'px',
+        '--underline-width': activeBound.width + 'px'
+    });
+
+};
 
 ButtonRange.prototype.updateSize = function () {
     if (this.autoWidth) {
@@ -77,6 +88,7 @@ ButtonRange.prototype.updateSize = function () {
             }
         }
     }
+    this._updateUnderlinePosition();
     this._scrollToSelected();
 };
 
@@ -271,6 +283,7 @@ ButtonRange.property.value = {
         var activeIndex = this._findActiveIndex();
         this.$prevBtn.disabled = activeIndex === 0;
         this.$nextBtn.disabled = activeIndex === this._items.length - 1;
+        this._updateUnderlinePosition();
         this._scrollToSelected();
     },
     get: function () {
