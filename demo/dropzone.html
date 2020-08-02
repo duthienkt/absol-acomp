@@ -40,19 +40,14 @@
         tag: 'dropzone',
         elt: $('#my-dropzone'),
         on: {
-            drag: function (event) {
-                var newPos = event.currentPoint.sub(event.offsetVec);
-                this.addStyle({
-                    left: newPos.x + 'px',
-                    top: newPos.y + 'px'
-                })
+            fileenter: function (event) {
+                console.log('fileenter');
             },
-            dragstart: function () {
-                this.addClass('moving');
+            filedrop: function () {
+                console.log('filedrop');
             },
-            dragend: function () {
-                this.removeClass('moving');
-
+            fileleave: function () {
+                console.log('fileleave');
             }
         }
     });
