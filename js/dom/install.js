@@ -77,6 +77,7 @@ import TrackBar from "../TrackBar";
 import TrackBarInput from "../TrackBarInput";
 import SelectMenu from "../SelectMenu";
 import ButtonRange from "../ButtonRange";
+import DropZone from "../DropZone";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -92,6 +93,7 @@ export var publicCreators = [
     CheckBoxButton,
     ChromeCalendar,
     CircleSectionLabel,
+    DropZone,
     Scrollbar,
     VScrollbar,
     HScrollbar,
