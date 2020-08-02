@@ -50,7 +50,6 @@ DropZone.eventHandler.dragZoneFileOverEnd = function () {
     this._fileOverTimeout = -1;
     this.removeClass('as-drag-over');
     this.emit('fileleave', { type: 'fileleave' }, this);
-    console.log('end')
 };
 
 ACore.install(DropZone);
