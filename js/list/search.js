@@ -93,6 +93,7 @@ export function searchListByText(query, items) {
         return b.score - a.score;
     });
     var midValue = (its[0].score + its[its.length - 1].score) / 2;
+    if (midValue === 0) midValue += 0.1;
     return its.filter(function (it) {
         return it.score >= midValue;
     }).map(function (it) {
@@ -161,6 +162,6 @@ export function searchTreeListByText(query, items) {
     var scoredItems = items.map(makeScoreRecursive);
     var medianScore = (gminScore + gmaxScore) / 2;
     var items = filterItems(scoredItems, medianScore);
-    return  items;
+    return items;
 }
 
