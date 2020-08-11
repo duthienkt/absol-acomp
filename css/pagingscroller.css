@@ -1,0 +1,15 @@
+.as-paging-scroller {
+    --content-width: 0;
+    --content-estimate-height: 0;
+    background: gray;
+    overflow-y: auto;
+    position: relative;
+}
+
+.as-paging-scroller::before {
+    display: block;
+    content: "";
+    width: var(--content-width);
+    height: var(--content-estimate-height);
+}
+
