@@ -327,8 +327,6 @@ BoardTable.eventHandler.readyDrag = function (event) {
         bodyEvents.mouseleave = this.eventHandler.mousefinish;
     }
     $(document.body).on(bodyEvents);
-    if (dragEventData.isTouch)
-        $(document.body).addClass('as-has-board-table-drag');
 };
 
 BoardTable.eventHandler.mousemovePredrag = function (event) {
@@ -377,7 +375,6 @@ BoardTable.eventHandler.mousemovePredrag = function (event) {
         this.insertBefore(dragEventData.placeHolderElt, dragEventData.boardElt);
         dragEventData.state = "DRAG";
         $(document.body).addClass('as-has-board-table-drag');
-
         dragEventData.boardElt.addClass('as-board-moving');
         dragEventData.boardAt = dragEventData.holderIndex;
         dragEventData.boardIn = thisBT;
