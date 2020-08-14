@@ -10,6 +10,16 @@ function ColorPickerButton() {
     this.on('click', this.eventHandler.click);
 }
 
+
+ColorPickerButton.prototype._isClickMenu = function (event){
+  var c = event.target;
+  while (c){
+      if (c.classList.contains('as-solid-color-picker-swatches-name-menu')) return true;
+      c = c.parentElement;
+  }
+  return false;
+};
+
 ColorPickerButton.eventHandler = {};
 
 ColorPickerButton.eventHandler.click = function (event) {
@@ -20,10 +30,14 @@ ColorPickerButton.eventHandler.changeColor = function (event) {
     this.$innerValue.addStyle("background-color", event.value.toString());
     this._value = event.value;
     this.emit('change', event, this);
-}
+};
+
+
+
+
 
 ColorPickerButton.eventHandler.clickBody = function (event) {
-    if (EventEmitter.hitElement(this, event) || EventEmitter.hitElement(this.$ColorPicker, event)) return;
+    if (EventEmitter.hitElement(this, event) || EventEmitter.hitElement(this.$ColorPicker, event)|| this._isClickMenu(event)) return;
     this.closePicker();
 };
 
