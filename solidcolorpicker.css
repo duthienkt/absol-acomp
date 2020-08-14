@@ -119,18 +119,20 @@
 .as-solid-color-picker-color-hex,
 .as-solid-color-picker-color-opacity {
     font-size: inherit;
+    width: 6em;
+}
+
+.as-flexicon-input.as-solid-color-picker-color-opacity.as-flexicon-input-has-icon.as-flexicon-input-has-unit input{
+    width: calc(100% - 4em);
 }
 
 
-
-.as-solid-color-picker-color-hex input {
-    width: 4em;
-    padding-left: 0;
-    padding-right: 0;
-}
+/*.as-solid-color-picker-color-hex input {*/
+/*    padding-left: 0;*/
+/*    padding-right: 0;*/
+/*}*/
 
 .as-solid-color-picker-color-opacity input {
-    width: 3em;
     padding-left: 0;
     padding-right: 0;
 }
