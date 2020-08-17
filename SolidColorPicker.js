@@ -1,5 +1,5 @@
 import CPCore from "./CPCore";
-import { MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches } from "./SwatchesTable";
+import {MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches} from "./SwatchesTable";
 import QuickMenu from "absol-acomp/js/QuickMenu";
 import Color from "absol/src/Color/Color";
 var _ = CPCore._;
@@ -68,18 +68,19 @@ function SolidColorPicker() {
         .on('keyup', this.eventHandler.opacityKeyUp);
     this.$selected = $('.as-solid-color-picker-selected', this);
 
-    this.$spectrum = _({ tag:'hanger',elt:$('.as-solid-color-picker-spectrum', this)
-})
+    this.$spectrum = _({
+        tag: 'hanger', elt: $('.as-solid-color-picker-spectrum', this)
+    })
         .on('predrag', this.eventHandler.spectrumDrag)
         .on('drag', this.eventHandler.spectrumDrag);
     this.$spectrumDot = $('.as-solid-color-picker-spectrum-dot', this);
 
-    this.$alpha = _({ tag:'hanger',elt:$('.as-solid-color-picker-alpha', this)})
+    this.$alpha = _({ tag: 'hanger', elt: $('.as-solid-color-picker-alpha', this) })
         .on('predrag', this.eventHandler.alphaDrag)
         .on('drag', this.eventHandler.alphaDrag);
     this.$alphaDot = $('.as-solid-color-picker-alpha-dot', this);
 
-    this.$hue = _({ tag:'hanger',elt:$('.as-solid-color-picker-hue', this)})
+    this.$hue = _({ tag: 'hanger', elt: $('.as-solid-color-picker-hue', this) })
         .on('predrag', this.eventHandler.hueDrag)
         .on('drag', this.eventHandler.hueDrag);
     this.$hueDot = $('.as-solid-color-picker-hue-dot', this);
@@ -236,8 +237,7 @@ SolidColorPicker._loadSetting = function () {
     var setting = localStorage.getItem(SolidColorPicker._settingKey);
     try {
         setting = JSON.parse(setting);
-    }
-    catch (e) {
+    } catch (e) {
         setting = {};
     }
     if (setting) {
@@ -261,7 +261,8 @@ SolidColorPicker.pushInstances = function (elt) {
         instance = instances.pop();
         if (instance.isDescendantOf(document.body)) {
             aliveInstance.push(instance);
-        };
+        }
+        ;
         if (instance == elt) found = true;
     }
     while (aliveInstance.length > 0) {
@@ -280,7 +281,8 @@ SolidColorPicker.updateInstancesSetting = function () {
         instance = instances.pop();
         if (instance.isDescendantOf(document.body)) {
             aliveInstance.push(instance);
-        };
+        }
+        ;
     }
     while (aliveInstance.length > 0) {
         instance = aliveInstance.pop();
@@ -463,8 +465,8 @@ SolidColorPicker.property = {};
  */
 SolidColorPicker.property.value = {
     /**
-     * 
-     * @param {Color} value 
+     *
+     * @param {Color} value
      */
     set: function (value) {
         value = value || 'transparent';
@@ -513,7 +515,7 @@ SolidColorPicker.property.swatches = {
 
 SolidColorPicker.property.mode = {
     set: function (value) {
-        if (value == this._mode) return;
+        if (value === this._mode) return;
         this.removeClass('as-solid-color-picker-mode-' + this._mode);
         this._mode = value + '';
         this.addClass('as-solid-color-picker-mode-' + this._mode);
@@ -524,8 +526,6 @@ SolidColorPicker.property.mode = {
         return this._mode;
     }
 };
-
-
 
 
 /**
@@ -560,8 +560,7 @@ SolidColorPicker.eventHandler.swatchesPressCell = function (event) {
         var hsba = Color.rgbaToHSBA(value.rgba);
         this._setHue(hsba[0] * 360);
         this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
-    }
-    catch (e) {
+    } catch (e) {
         this.$selectedDot.removeStyle('box-shadow');
         this.$hex.value = 'ffffff';
     }
@@ -578,8 +577,7 @@ SolidColorPicker.eventHandler.nearPressCell = function (event) {
         var hsba = Color.rgbaToHSBA(value.rgba);
         this._setHue(hsba[0] * 360);
         this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
-    }
-    catch (e) {
+    } catch (e) {
         this.$selectedDot.removeStyle('box-shadow');
         this.$hex.value = 'ffffff';
     }
@@ -600,8 +598,7 @@ SolidColorPicker.eventHandler.hexKeyup = function () {
             this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
             this.notifyCanBeChanged();
         }
-    }
-    catch (e) {
+    } catch (e) {
     }
 };
 
