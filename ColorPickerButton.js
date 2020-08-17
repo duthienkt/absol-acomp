@@ -1,8 +1,12 @@
 import './ColorPicker';
 import CPCore from "./CPCore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
+
 var _ = CPCore._;
 var $ = CPCore.$;
+
+var isMobile = BrowserDetector.isMobile;
 
 function ColorPickerButton() {
     this.$innerValue = $('.as-color-picker-button-inner-value', this);
@@ -11,13 +15,13 @@ function ColorPickerButton() {
 }
 
 
-ColorPickerButton.prototype._isClickMenu = function (event){
-  var c = event.target;
-  while (c){
-      if (c.classList.contains('as-solid-color-picker-swatches-name-menu')) return true;
-      c = c.parentElement;
-  }
-  return false;
+ColorPickerButton.prototype._isClickMenu = function (event) {
+    var c = event.target;
+    while (c) {
+        if (c.classList.contains('as-solid-color-picker-swatches-name-menu')) return true;
+        c = c.parentElement;
+    }
+    return false;
 };
 
 ColorPickerButton.eventHandler = {};
@@ -33,11 +37,8 @@ ColorPickerButton.eventHandler.changeColor = function (event) {
 };
 
 
-
-
-
 ColorPickerButton.eventHandler.clickBody = function (event) {
-    if (EventEmitter.hitElement(this, event) || EventEmitter.hitElement(this.$ColorPicker, event)|| this._isClickMenu(event)) return;
+    if (EventEmitter.hitElement(this, event) || EventEmitter.hitElement(this.$ColorPicker, event) || this._isClickMenu(event)) return;
     this.closePicker();
 };
 
@@ -92,7 +93,13 @@ ColorPickerButton.prototype.closePicker = function () {
 
 ColorPickerButton.prototype.prepare = function () {
     if (!ColorPickerButton.$ColorPicker) {
-        ColorPickerButton.$follower = _('follower.as-color-picker-button-follower');
+        if (isMobile) {
+            ColorPickerButton.$follower = _('modal');
+        }
+        else {
+            ColorPickerButton.$follower = _('follower.as-color-picker-button-follower');
+        }
+
         ColorPickerButton.$ColorPicker = _({
             tag: 'solidcolorpicker'
         }).addTo(ColorPickerButton.$follower);

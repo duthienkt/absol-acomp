@@ -2,7 +2,6 @@ import CPCore from "./CPCore";
 import { MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches } from "./SwatchesTable";
 import QuickMenu from "absol-acomp/js/QuickMenu";
 import Color from "absol/src/Color/Color";
-import Draggable from "absol-acomp/js/Draggable";
 var _ = CPCore._;
 var $ = CPCore.$;
 
@@ -69,17 +68,18 @@ function SolidColorPicker() {
         .on('keyup', this.eventHandler.opacityKeyUp);
     this.$selected = $('.as-solid-color-picker-selected', this);
 
-    this.$spectrum = Draggable($('.as-solid-color-picker-spectrum', this))
+    this.$spectrum = _({ tag:'hanger',elt:$('.as-solid-color-picker-spectrum', this)
+})
         .on('predrag', this.eventHandler.spectrumDrag)
         .on('drag', this.eventHandler.spectrumDrag);
     this.$spectrumDot = $('.as-solid-color-picker-spectrum-dot', this);
 
-    this.$alpha = Draggable($('.as-solid-color-picker-alpha', this))
+    this.$alpha = _({ tag:'hanger',elt:$('.as-solid-color-picker-alpha', this)})
         .on('predrag', this.eventHandler.alphaDrag)
         .on('drag', this.eventHandler.alphaDrag);
     this.$alphaDot = $('.as-solid-color-picker-alpha-dot', this);
 
-    this.$hue = Draggable($('.as-solid-color-picker-hue', this))
+    this.$hue = _({ tag:'hanger',elt:$('.as-solid-color-picker-hue', this)})
         .on('predrag', this.eventHandler.hueDrag)
         .on('drag', this.eventHandler.hueDrag);
     this.$hueDot = $('.as-solid-color-picker-hue-dot', this);
