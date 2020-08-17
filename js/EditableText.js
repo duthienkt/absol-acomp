@@ -1,11 +1,16 @@
 import '../css/editabletext.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import AElement from "absol/src/HTML5/AElement";
+
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/***
+ * @extends AElement
+ * @constructor
+ */
 function EditableText() {
     var thisET = this;
     this.$span = $('span', this);
@@ -20,9 +25,9 @@ function EditableText() {
         _('attachhook').addTo(thisET).once('error', rs);
     });
 
-    this.$input.on('keydown', this.eventHanler.inputKeyDown, true);
-    this.$input.on('change', this.eventHanler.inputChange);
-    this.$input.on('blur', this.eventHanler.inputBlur);
+    this.$input.on('keydown', this.eventHandler.inputKeyDown, true);
+    this.$input.on('change', this.eventHandler.inputChange);
+    this.$input.on('blur', this.eventHandler.inputBlur);
 };
 
 EditableText.tag = 'EditableText'.toLowerCase();
@@ -122,9 +127,9 @@ EditableText.property.editing = {
 };
 
 
-EditableText.eventHanler = {};
+EditableText.eventHandler = {};
 
-EditableText.eventHanler.inputKeyDown = function (event) {
+EditableText.eventHandler.inputKeyDown = function (event) {
     requestAnimationFrame(function () {
         this.text = this.$input.value;
         this._update();
@@ -134,12 +139,12 @@ EditableText.eventHanler.inputKeyDown = function (event) {
 };
 
 
-EditableText.eventHanler.inputChange = function (event) {
+EditableText.eventHandler.inputChange = function (event) {
     this.editing = false;
     this.emit('change', event);
 };
 
-EditableText.eventHanler.inputBlur = function (event) {
+EditableText.eventHandler.inputBlur = function (event) {
     this.editing = false;
     this.emit('blur', event);
 };
