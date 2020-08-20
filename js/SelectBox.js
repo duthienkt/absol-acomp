@@ -4,7 +4,6 @@ import SelectMenu from "./SelectMenu";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import PositionTracker from "./PositionTracker";
 import './SelectBoxItem';
-import {measureText} from "./utils";
 import SelectList, {measureMaxTextWidth, measureMaxDescriptionWidth} from "./SelectList";
 import prepareSearchForItem, {calcItemMatchScore} from "./list/search";
 import Dom from "absol/src/HTML5/Dom";
@@ -464,10 +463,10 @@ SelectBox.property.orderly = {
 
 SelectBox.property.disableClickToFocus = {
     set: function (value) {
-        if (value){
+        if (value) {
             this.addClass('as-disable-click-to-focus');
         }
-        else{
+        else {
             this.removeClass('as-disable-click-to-focus');
         }
     },
