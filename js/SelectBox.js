@@ -56,6 +56,7 @@ function SelectBox() {
     this._searchCache = {};
 
     this._resourceReady = true;// alway true
+    this.disableClickToFocus = false;
     return this;
 }
 
@@ -459,11 +460,24 @@ SelectBox.property.orderly = {
     get: function () {
         return !!this._orderly;
     }
+};
 
-}
+SelectBox.property.disableClickToFocus = {
+    set: function (value) {
+        if (value){
+            this.addClass('as-disable-click-to-focus');
+        }
+        else{
+            this.removeClass('as-disable-click-to-focus');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-disable-click-to-focus');
+    }
+};
 
 SelectBox.eventHandler.click = function (event) {
-    if (event.target == this) {
+    if (event.target === this && !this.disableClickToFocus) {
         this.isFocus = !this.isFocus;
     }
 };
@@ -473,7 +487,6 @@ SelectBox.eventHandler.clickBody = function (event) {
     if (!EventEmitter.hitElement(this.$anchor, event) && event.target != this) {
         this.isFocus = false;
     }
-    ;
 };
 
 SelectBox.eventHandler.searchListPressItem = function (event) {

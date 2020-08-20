@@ -7,8 +7,11 @@
     box-sizing: border-box;
     padding-right: 20px;
     overflow-y: auto;
-    cursor: copy;
     outline: none;
+}
+
+.absol-selectbox:not(.as-disable-click-to-focus){
+    cursor: copy;
 }
 
 .absol-selectbox.disabled {
