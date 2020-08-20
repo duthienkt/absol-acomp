@@ -39,6 +39,7 @@
             margin: '40px'
         },
         props: {
+            disableClickToFocus: true,
             items: Array(30).fill(0).map(function (u, i) {
                 return {
                     text: '[' + i + ']' + absol.string.randomPhrase(30),
