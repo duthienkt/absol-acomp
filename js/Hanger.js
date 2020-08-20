@@ -3,10 +3,15 @@ import ACore from "../ACore";
 import Vec2 from "absol/src/Math/Vec2";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import {findChangedTouchByIdent} from "absol/src/HTML5/EventEmitter";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/****
+ * @extends AElement
+ * @constructor
+ */
 function Hanger() {
     this.addClass('as-hanger');
     this.defineEvent(['predrag', 'dragstart', 'drag', 'dragend']);
