@@ -2,6 +2,7 @@ import ACore from "../ACore";
 import '../css/draggablestack.css';
 import Dom from "absol/src/HTML5/Dom";
 import Hanger from "./Hanger";
+import {absCeil} from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -17,6 +18,7 @@ function DraggableVStack() {
         .on('dragstart', this.eventHandler.dragstart)
         .on('drag', this.eventHandler.drag)
         .on('dragend', this.eventHandler.dragend);
+    this._state = 0;
 }
 
 DraggableVStack.tag = 'DraggableVStack'.toLowerCase();
@@ -39,6 +41,7 @@ DraggableVStack.eventHandler.predrag = function (event) {
 
 DraggableVStack.eventHandler.dragstart = function (event) {
     event.preventDefault();
+    this._state = 1;
     var self = this;
     //save mouse position, use it for other event
     this._mouseClientX = event.clientX;
@@ -109,6 +112,86 @@ DraggableVStack.eventHandler.drag = function (event) {
     this._mouseClientX = event.clientX;
     this._mouseClientY = event.clientY;
     this._updateDraggingPosition();
+    this.eventHandler.dragOverflow(event);
+};
+
+DraggableVStack.prototype.getClientY = function () {
+    var top = 1000000;
+    var bottom = -10000000;
+    var child;
+    var childBound;
+    for (var i = 0; i < this.childNodes.length; ++i) {
+        child = this.childNodes[i];
+        if (child === this.$cloneContainer || child === this.$destLine) continue;
+        if (child.getBoundingClientRect) {
+            childBound = child.getBoundingClientRect();
+            top = Math.min(top, childBound.top);
+            bottom = Math.max(bottom, childBound.bottom);
+        }
+    }
+    return { top: top, bottom: bottom };
+};
+
+DraggableVStack.eventHandler.dragOverflow = function (event) {
+    var scroller = this;
+    while (scroller) {
+        var overlowStyle = window.getComputedStyle(scroller)['overflow'];
+        if ((overlowStyle === 'auto' || overlowStyle === 'scroll' || scroller.tagName === 'HTML') && (scroller.clientHeight < scroller.scrollHeight)) break;
+        scroller = scroller.parentElement;
+    }
+    if (!scroller) return;
+    var outBound = scroller.getBoundingClientRect();
+    var bBound = this.$cloneContainer.getBoundingClientRect();
+    var clientY = this.getClientY();
+    bBound = {
+        top: Math.max(clientY.top, bBound.top),
+        bottom: Math.min(clientY.bottom, bBound.bottom)
+    }
+    var screenSize = Dom.getScreenSize();
+    if (scroller.tagName !== "HTML") {
+        outBound = {
+            top: Math.max(outBound.top, 0),
+            bottom: Math.min(outBound.bottom, screenSize.height)
+        }
+    }
+    else {
+        outBound = {
+            top: 0,
+            bottom: screenSize.height
+        }
+    }
+    var vy = 0;
+    if (bBound.top < outBound.top) {
+        vy = bBound.top - outBound.top;
+    }
+    else if (bBound.bottom > outBound.bottom) {
+        vy = bBound.bottom - outBound.bottom;
+    }
+
+    var dt = 1 / 30;
+    if (vy !== 0) {
+        var copyEvent = {
+            type: event.type,
+            preventDefault: function () {/* noop */
+            },
+            target: event.target
+        };
+
+        copyEvent.clientX = event.clientX;
+        copyEvent.clientY = event.clientY
+
+        var thisBT = this;
+
+        setTimeout(function () {
+            if (scroller.scrollHeight > scroller.clientHeight) {
+                scroller.scrollTop += absCeil(vy * dt);
+            }
+
+            if (thisBT._state === 1) {
+                thisBT.eventHandler.dragOverflow(copyEvent);
+            }
+        }, dt * 1000);
+    }
 };
 
 
@@ -165,6 +248,7 @@ DraggableVStack.eventHandler.dragend = function (event) {
             }, this);
         }
     }
+    this._state = 0;
 };
 
 

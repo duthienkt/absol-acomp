@@ -9,7 +9,8 @@ export function insertTextAtCursor(text) {
             range.deleteContents();
             range.insertNode(document.createTextNode(text));
         }
-    } else if (document.selection && document.selection.createRange) {
+    }
+    else if (document.selection && document.selection.createRange) {
         document.selection.createRange().text = text;
     }
 }
@@ -18,13 +19,14 @@ export function insertTextAtCursor(text) {
 export function contenteditableTextOnly(element, processText) {
     if (element.__contenteditableTextOnly__) return;
     element.__contenteditableTextOnly__ = true;
-    element.addEventListener("paste", function(e) {
+    element.addEventListener("paste", function (e) {
         e.preventDefault();
         if (e.clipboardData && e.clipboardData.getData) {
             var text = e.clipboardData.getData("text/plain");
             if (processText) text = processText(text)
             document.execCommand("insertHTML", false, text);
-        } else if (window.clipboardData && window.clipboardData.getData) {
+        }
+        else if (window.clipboardData && window.clipboardData.getData) {
             var text = window.clipboardData.getData("Text");
             if (processText) text = processText(text)
             insertTextAtCursor(text);
@@ -44,7 +46,6 @@ export function measureText(text, font) {
 }
 
 
-
 export function getCaretPosition(oField) {
     var iCaretPos = 0;
     if (document.selection) {
@@ -52,14 +53,15 @@ export function getCaretPosition(oField) {
         var oSel = document.selection.createRange();
         oSel.moveStart('character', -oField.value.length);
         iCaretPos = oSel.text.length;
-    } else if (oField.selectionStart || oField.selectionStart == '0')
+    }
+    else if (oField.selectionStart || oField.selectionStart == '0')
         iCaretPos = oField.selectionDirection == 'backward' ? oField.selectionStart : oField.selectionEnd;
     return iCaretPos;
 }
 
 
 export function preventNotNumberInput(elt) {
-    elt.addEventListener('keyup', function() {
+    elt.addEventListener('keyup', function () {
         var lastValue = (elt.tagname == "DIV" || elt.tagname == "SPAN") ? elt.innerHTML : elt.attributes.value;
         var cValue = parseFloat(this.value);
         if (this.value != lastValue) {
@@ -67,13 +69,14 @@ export function preventNotNumberInput(elt) {
             elt.emit('change', cValue, elt);
         }
     });
-    elt.addEventListener("paste", function(e) {
+    elt.addEventListener("paste", function (e) {
         e.preventDefault();
         var text = "";
         if (e.clipboardData && e.clipboardData.getData) {
             text = e.clipboardData.getData("text/plain");
 
-        } else if (window.clipboardData && window.clipboardData.getData) {
+        }
+        else if (window.clipboardData && window.clipboardData.getData) {
             text = window.clipboardData.getData("Text");
         }
         var matched = text.match(/[+-]?([0-9]*[.])?[0-9]+/);
@@ -81,13 +84,14 @@ export function preventNotNumberInput(elt) {
             this.value = matched[0];
         }
     });
-    elt.addEventListener('keydown', function(event) {
+    elt.addEventListener('keydown', function (event) {
         var key = event.key;
         if (key && key.length == 1 && !event.ctrlKey && !event.altKey) {
             if (key.match(/[0-9.\-\+]/)) {
                 if (key == '.' && this.value.indexOf('.') >= 0) event.preventDefault();
                 if ((key == '+' || key == '-') && (this.value.indexOf('+') >= 0 || this.value.indexOf('-') >= 0 || getCaretPosition(this) > 0)) event.preventDefault();
-            } else event.preventDefault();
+            }
+            else event.preventDefault();
         }
     });
 }
@@ -97,10 +101,10 @@ export function buildCss(StyleSheet) {
     ACore._({
         tag: 'style',
         props: {
-            innerHTML: Object.keys(StyleSheet).map(function(key) {
+            innerHTML: Object.keys(StyleSheet).map(function (key) {
                 var style = StyleSheet[key];
                 return key + ' {\n' +
-                    Object.keys(style).map(function(propName) {
+                    Object.keys(style).map(function (propName) {
                         return propName + ': ' + style[propName] + ';';
                     }).join('\n') +
                     '}';
@@ -110,9 +114,8 @@ export function buildCss(StyleSheet) {
 }
 
 
-
 export function openFileDialog(props) {
-    return new Promise(function(resolve) {
+    return new Promise(function (resolve) {
         var input = ACore._({
             tag: 'input',
             style: {
@@ -128,7 +131,8 @@ export function openFileDialog(props) {
                 accept: 'image/*',
                 capture: 'camera'
             }
-        } else if (props == 'microphone') {
+        }
+        else if (props == 'microphone') {
             props = {
                 accept: 'audio/',
                 capture: "microphone"
@@ -140,7 +144,8 @@ export function openFileDialog(props) {
                 input.attr('accept', props.accept.join(','));
             else
                 input.attr('accept', props.accept);
-        } else {
+        }
+        else {
             input.attr('accept', null);
         }
 
@@ -149,14 +154,15 @@ export function openFileDialog(props) {
         }
         if (props.multiple) {
             input.attr('multiple', 'true');
-        } else {
+        }
+        else {
             input.attr('multiple');
         }
         input.value = null;
         input.click();
         var finished = false;
-        setTimeout(function() {
-            ACore.$(document.body).once('click', function() {
+        setTimeout(function () {
+            ACore.$(document.body).once('click', function () {
                 finished = true;
             })
         }, 100)
@@ -164,7 +170,8 @@ export function openFileDialog(props) {
         function waitFinish() {
             if (input.files.length > 0) {
                 resolve(input.files);
-            } else {
+            }
+            else {
                 if (finished)
                     resolve([]);
                 else {
@@ -172,6 +179,7 @@ export function openFileDialog(props) {
                 }
             }
         }
+
         setTimeout(waitFinish, 300);
     });
 
@@ -248,4 +256,14 @@ export function estimateWidth14(text) {
         l += (charWidth[text.charAt(j)]) || 9.337890625;
     }
     return l;
+}
+
+/***
+ *
+ * @param {number} v
+ * @returns {number}
+ */
+export function absCeil(v) {
+    var a = Math.ceil(Math.abs(v));
+    return v < 0 ? -a : a;
 }
