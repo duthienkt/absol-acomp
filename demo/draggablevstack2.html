@@ -4,12 +4,14 @@
 <head>
     <title>Draggable VStack</title>
     <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
     <style>
         .item {
-            height: 50px;
+            height: 70px;
             position: relative;
             box-sizing: border-box;
             border: 1px solid gray;
@@ -32,7 +34,7 @@
         .stack {
             margin-bottom: 1.5em;
             border: 1px solid black;
-            width: 45vw;
+            width: 80vw;
         }
 
     </style>
@@ -63,7 +65,8 @@
                         class: 'drag-zone',
                         style: {
                             background: color
-                        }
+                        },
+                        child: { text: 'Drag zone' }
                     }
                 ]
             })),
