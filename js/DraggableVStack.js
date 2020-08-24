@@ -493,9 +493,7 @@ DraggableVStack.property.friends = {
     get: function () {
         return this._friends;
     }
-}
-;
-
+};
 
 ACore.install(DraggableVStack);
 
