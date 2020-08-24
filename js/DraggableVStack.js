@@ -130,7 +130,6 @@ DraggableVStack.eventHandler.dragstart = function (event) {
     this.$cloneContainer.addStyle({
         left: this._dragData.eltBound.left + 'px',
         top: this._dragData.eltBound.top + 'px',
-        backgroundColor: 'red'
     });
     this._dragData.elt.addClass('dragging');
 };
