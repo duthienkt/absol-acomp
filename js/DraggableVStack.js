@@ -3,34 +3,95 @@ import '../css/draggablestack.css';
 import Dom from "absol/src/HTML5/Dom";
 import Hanger from "./Hanger";
 import {absCeil} from "./utils";
+import {randomIdent} from "absol/src/String/stringGenerate";
+import Vec2 from "absol/src/Math/Vec2";
+import PositionTracker from "./PositionTracker";
+import Rectangle from "absol/src/Math/Rectangle";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+
 /***
- * @extends Hanger
+ * @augments Hanger
+ * @augments PositionTracker
  * @constructor
  */
 function DraggableVStack() {
+    _({ tag: 'PositionTracker'.toLowerCase(), elt: this });
     this.$cloneContainer = _('.absol-draggable-stack-clone-container');
-    this.$destLine = _('.absol-draggable-stack-dest-line');
     this.on('predrag', this.eventHandler.predrag)
         .on('dragstart', this.eventHandler.dragstart)
         .on('drag', this.eventHandler.drag)
         .on('dragend', this.eventHandler.dragend);
     this._state = 0;
+    this.friends = [];
+    this.$friends = [];
+    this._privateDraggableVStackIdent = randomIdent(35);
+    this._dragData = null;
+    this.on('positionchange', this.eventHandler.scroll);
 }
+
 
 DraggableVStack.tag = 'DraggableVStack'.toLowerCase();
 
 DraggableVStack.render = function () {
     return _({
         tag: 'hanger',
-        extendEvent: 'change',
+        extendEvent: ['change', 'orderchange', 'itemleave', 'itementer'],
         class: ['absol-draggable-stack', 'absol-draggable-vstack']
     });
 };
 
+DraggableVStack.prototype._updateFriends = function () {
+    var dict = {};
+    dict[this._privateDraggableVStackIdent] = this;
+    this.$friends = this.friends.reduce(function (ac, cr) {
+        if (Dom.isDomNode(cr)) {
+            if (cr._privateDraggableVStackIdent) {
+                ac.result.push(cr);
+                ac.dict[cr._privateDraggableVStackIdent] = cr;
+            }
+        }
+        else if (typeof cr === 'string') {
+            $(cr, false, function (elt) {
+                if (elt._privateDraggableVStackIdent) {
+                    if (!ac.dict[elt._privateDraggableVStackIdent]) {
+                        ac.result.push(elt);
+                        ac.dict[elt._privateDraggableVStackIdent] = elt;
+                    }
+                }
+            })
+        }
+        return ac;
+    }, { dict: dict, result: [] }).result;
+};
+
+DraggableVStack.prototype._findIndex = function (clientY) {
+    var childBounds = Array.prototype.map.call(this.childNodes, function (elt) {
+        return elt.getBoundingClientRect()
+    });
+    var childTops = childBounds.map(function (b) {
+        return b.top;
+    });
+    childTops.push(childBounds[childBounds.length - 1].bottom);
+    var nearestIdx = 0;
+    var nearestVal = 10000000;
+    var val;
+    for (var i = 0; i < childTops.length; ++i) {
+        val = Math.abs(clientY - childTops[i]);
+        if (val < nearestVal) {
+            nearestVal = val;
+            nearestIdx = i;
+        }
+    }
+    return nearestIdx;
+};
+
+/***
+ *
+ * @type {DraggableVStack|{}}
+ */
 DraggableVStack.eventHandler = {};
 DraggableVStack.eventHandler.predrag = function (event) {
     var dragzone = this._findDragzone(event.target);
@@ -40,79 +101,52 @@ DraggableVStack.eventHandler.predrag = function (event) {
 };
 
 DraggableVStack.eventHandler.dragstart = function (event) {
+    this.startTrackPosition();
     event.preventDefault();
+    this._updateFriends();
     this._state = 1;
-    var self = this;
-    //save mouse position, use it for other event
-    this._mouseClientX = event.clientX;
-    this._mouseClientY = event.clientY;
+    this.addClass('as-state-drag');
 
-    var bound = this.getBoundingClientRect();
-    var element = this._findDirectChild(event.target);
-    element.classList.add('dragging');
-    this.$draggingElt = element;
+    this._dragData = {
+        mouseStartPos: new Vec2(event.clientX, event.clientY),
+        elt: this._findDirectChild(event.target),
+        rootBound: this.getBoundingClientRect(),
+        dest: this
+    };
+    this._dragData.mouseCurrentPos = this._dragData.mouseStartPos;
+    this._updateDestChildrenBound();
+    this._dragData.idx = Array.prototype.indexOf.call(this.childNodes, this._dragData.elt);
 
-    this._draggingEltIndex = 0;
-    this._childrentInfo = Array.prototype.map.call(this.childNodes, function (child, index) {
-        var childBound = child.getBoundingClientRect();
-        if (child == element) self._draggingEltIndex = index;
-        return {
-            index: index,
-            elt: child,
-            bound: childBound,
-            top: childBound.top - bound.top
-        }
-    });
+    this._dragData.eltBound = this._dragData.destChildBounds[this._dragData.idx];
+    this._dragData.offsetPos = this._dragData.mouseStartPos.sub(new Vec2(this._dragData.eltBound.left, this._dragData.eltBound.top));
+    this._dragData.eltRelative = new Vec2(this._dragData.eltBound.left, this._dragData.eltBound.top).sub(new Vec2(this._dragData.rootBound.left, this._dragData.rootBound.top));
 
-
-    this.$cloneContainer.addTo(this);
-    this.$destLine.addTo(this);
-
-    var containerBound = element.getBoundingClientRect();
-    this._initBound = bound;
-    this._currentBound = bound;
-
-    this._initTop = containerBound.top - bound.top;
-    this._crTop = this._initTop;
-    this._initHeight = containerBound.height;
-    this._pressX = event.clientX - containerBound.left;
-    this._pressY = event.clientY - containerBound.top;
+    this.$cloneContainer.addTo(document.body);
+    this.$cloneContainer.clearChild().addChild($(this._dragData.elt.cloneNode(true)).addStyle({
+        boxSizing: 'border-box',
+        width: this._dragData.eltBound.width + 'px',
+        height: this._dragData.eltBound.height + 'px'
+    }));
     this.$cloneContainer.addStyle({
-        top: this._initTop + 'px',
-        height: this._initHeight + 'px'
-    }).addChild(element.cloneNode(true));
-
-    this.$destLine.addStyle('top', this._initTop + 'px');
-
-    this.$scrollTrackElements = [];
-    var trackElt = this.parentElement;
-    while (trackElt) {
-        if (trackElt.addEventListener)
-            trackElt.addEventListener('scroll', this.eventHandler.scroll, false);
-        else
-            trackElt.attachEvent('onscroll', this.eventHandler.scroll, false);
-
-        this.$scrollTrackElements.push(trackElt);
-        trackElt = trackElt.parentElement;
-    }
-    if (document.addEventListener) {
-        document.addEventListener('scroll', this.eventHandler.scroll, false);
-    }
-    else {
-        document.attachEvent('onscroll', this.eventHandler.scroll, false);
-    }
-    this.$scrollTrackElements.push(document);
-    this._updateDraggingPosition();
+        left: this._dragData.eltBound.left + 'px',
+        top: this._dragData.eltBound.top + 'px',
+        backgroundColor: 'red'
+    });
+    this._dragData.elt.addClass('dragging');
 };
 
 
 DraggableVStack.eventHandler.drag = function (event) {
     event.preventDefault();
-    //save mouse position 
-    this._mouseClientX = event.clientX;
-    this._mouseClientY = event.clientY;
+    this._dragData.mouseCurrentPos = new Vec2(event.clientX, event.clientY);
+    this._updateHoverDest();
     this._updateDraggingPosition();
-    this.eventHandler.dragOverflow(event);
+
+    // //save mouse position
+    // this._mouseClientX = event.clientX;
+    // this._mouseClientY = event.clientY;
+    // this._updateDraggingPosition();
+    // this.eventHandler.dragOverflow(event);
 };
 
 DraggableVStack.prototype.getClientY = function () {
@@ -122,7 +156,7 @@ DraggableVStack.prototype.getClientY = function () {
     var childBound;
     for (var i = 0; i < this.childNodes.length; ++i) {
         child = this.childNodes[i];
-        if (child === this.$cloneContainer || child === this.$destLine) continue;
+        if (child === this.$cloneContainer) continue;
         if (child.getBoundingClientRect) {
             childBound = child.getBoundingClientRect();
             top = Math.min(top, childBound.top);
@@ -135,8 +169,8 @@ DraggableVStack.prototype.getClientY = function () {
 DraggableVStack.eventHandler.dragOverflow = function (event) {
     var scroller = this;
     while (scroller) {
-        var overlowStyle = window.getComputedStyle(scroller)['overflow'];
-        if ((overlowStyle === 'auto' || overlowStyle === 'scroll' || scroller.tagName === 'HTML') && (scroller.clientHeight < scroller.scrollHeight)) break;
+        var overflowStyle = window.getComputedStyle(scroller)['overflow'];
+        if ((overflowStyle === 'auto' || overflowStyle === 'scroll' || scroller.tagName === 'HTML') && (scroller.clientHeight < scroller.scrollHeight)) break;
         scroller = scroller.parentElement;
     }
     if (!scroller) return;
@@ -200,97 +234,201 @@ DraggableVStack.eventHandler.scroll = function (event) {
 };
 
 DraggableVStack.eventHandler.dragend = function (event) {
+    this.stopTrackPosition();
     event.preventDefault();
-    var self = this;
-    this.$scrollTrackElements.forEach(function (e) {
-        if (e.removeEventListener)
-            e.removeEventListener('scroll', self.eventHandler.scroll, false);
-        else
-            e.dettachEvent('onscroll', self.eventHandler.scroll, false);
-    });
-
-    if ((this._draggingEltIndex == this._childrentInfo.length - 1 && !this._destRecord)
-        || (this._destRecord && (this._destRecord.index == this._draggingEltIndex || this._destRecord.index == this._draggingEltIndex + 1))) {
-        //nothing to change, view animation
-        this.$cloneContainer.addClass('home-going');
-        setTimeout(function () {
-            self.$cloneContainer.addStyle({
-                top: self._initTop + 'px'
-            });
-        }, 0);
-        setTimeout(function () {
-            self.$cloneContainer.clearChild().removeClass('home-going').remove();
-            self.$destLine.removeStyle({ top: '' }).remove();
-            self.$draggingElt.classList.remove('dragging');
-            self.$draggingElt = undefined;
-        }, 200);
-    }
-    else {
-        this.$draggingElt.remove();
-        this.$destLine.removeStyle({ top: '' }).remove();
-        this.$cloneContainer.clearChild().remove();
-        this.$draggingElt.classList.remove('dragging');
-        if (this._destRecord) {
-            this.addChildBefore(this.$draggingElt, this._destRecord.elt);
-            this.emit('change', {
-                type: 'change', target: this, action: "BEFORE", at: this._destRecord.elt,
-                sourceIndex: this._draggingEltIndex, destIndex: this._destIndex, elt: this.$draggingElt
-            }, this);
+    this._dragData.dest.removeClass('as-state-drag');
+    this.$cloneContainer.remove();
+    this._dragData.elt.removeClass('dragging');
+    this._state = 0;
+    var beforeElt;
+    if (this._dragData.dest === this) {
+        if (this._dragData.idx === this._dragData.destIdx || (this._dragData.idx + 1 === this._dragData.destIdx)) {
+            //todo
         }
         else {
-            this.addChild(this.$draggingElt);
+            if (this._dragData.destIdx === this.childNodes.length) {
+                this._dragData.elt.remove();
+                this.addChild(this._dragData.elt);
+                this.emit('change', {
+                    type: 'change',
+                    fromStack: this,
+                    toStack: this,
+                    elt: this._dragData.elt,
+                    sourceIndex: this._dragData.idx,
+                    destIndex: this.childNodes.length,
+                    oldIdx: this._dragData.idx,
+                    newIdx: this.childNodes.length - 1,
+                    desc: "Move element to end of stack."
+                }, this);
+                this.emit('orderchange', {
+                    type: 'orderchange',
+                    fromStack: this,
+                    toStack: this,
+                    elt: this._dragData.elt,
+                    oldIdx: this._dragData.idx,
+                    newIdx: this.childNodes.length - 1,
+                    desc: "Move element to end of stack."
+                }, this);
+            }
+            else {
+                beforeElt = this.childNodes[this._dragData.destIdx];
+                this._dragData.elt.remove();
+                this.addChildBefore(this._dragData.elt, beforeElt);
+                this.emit('change', {
+                    type: 'change',
+                    fromStack: this,
+                    toStack: this,
+                    elt: this._dragData.elt,
+                    sourceIndex: this._dragData.idx,
+                    destIndex: this._dragData.destIdx,
+                    oldIdx: this._dragData.idx,
+                    newIdx: this._dragData.destIdx > this._dragData.idx ? this._dragData.destIdx - 1 : this._dragData.destIdx,
+                    desc: "Move element to before  this.childNodes[" + this._dragData.destIdx + "]"
+                }, this);
+                this.emit('orderchange', {
+                    type: 'orderchange',
+                    fromStack: this,
+                    toStack: this,
+                    elt: this._dragData.elt,
+                    oldIdx: this._dragData.idx,
+                    newIdx: this._dragData.destIdx > this._dragData.idx ? this._dragData.destIdx - 1 : this._dragData.destIdx,
+                    desc: "Move element to before  this.childNodes[" + this._dragData.destIdx + "]"
+                }, this);
+            }
+        }
+    }
+    else {
+        if (this._dragData.destIdx === this._dragData.dest.childNodes.length) {
+            this.emit('orderchange', {
+                type: 'itemleave',
+                fromStack: this,
+                toStack: this._dragData.dest,
+                oldIdx: this._dragData.idx,
+                newIdx: this.childNodes.length - 1,
+                desc: "Move element to end of friend stack."
+            }, this);
+            this._dragData.elt.remove();
+            this._dragData.dest.addChild(this._dragData.elt);
+            this._dragData.dest.emit('orderchange', {
+                type: 'itementer',
+                fromStack: this,
+                toStack: this._dragData.dest,
+                oldIdx: this._dragData.idx,
+                newIdx: this.childNodes.length - 1,
+                desc: "Move element to end of friend stack."
+            }, this._dragData.dest);
             this.emit('change', {
                 type: 'change',
-                target: this,
-                action: "END",
-                elt: this.$draggingElt,
-                sourceIndex: this._draggingEltIndex
+                fromStack: this,
+                toStack: this._dragData.dest,
+                elt: this._dragData.elt,
+                sourceIndex: this._dragData.idx,
+                destIndex: this.childNodes.length,
+                oldIdx: this._dragData.idx,
+                newIdx: this.childNodes.length - 1,
+                desc: "Move element to end of friend stack."
+            });
+        }
+        else {
+            beforeElt = this._dragData.dest.childNodes[this._dragData.destIdx];
+            this._dragData.elt.remove();
+            this.emit('itemleave', {
+                type: 'itemleave',
+                fromStack: this,
+                toStack: this._dragData.dest,
+                elt: this._dragData.elt,
+                oldIdx: this._dragData.idx,
+                newIdx: this._dragData.destIdx,
+                desc: "Move element to before friend.childNodes[" + this._dragData.destIdx + "]"
+            }, this);
+            this._dragData.dest.addChildBefore(this._dragData.elt, beforeElt);
+            this._dragData.dest.emit('itementer', {
+                type: 'itementer',
+                fromStack: this,
+                toStack: this._dragData.dest,
+                elt: this._dragData.elt,
+                oldIdx: this._dragData.idx,
+                newIdx: this._dragData.destIdx,
+                desc: "Move element to before friend.childNodes[" + this._dragData.destIdx + "]"
+            }, this._dragData.dest);
+            this.emit('change', {
+                type: 'change',
+                fromStack: this,
+                toStack: this._dragData.dest,
+                elt: this._dragData.elt,
+                sourceIndex: this._dragData.idx,
+                destIndex: this._dragData.destIdx,
+                oldIdx: this._dragData.idx,
+                newIdx: this._dragData.destIdx,
+                desc: "Move element to before friend.childNodes[" + this._dragData.destIdx + "]"
             }, this);
         }
     }
-    this._state = 0;
 };
 
 
-DraggableVStack.prototype._updateDraggingPosition = function () {
-    //update cloneContainer
-    var bound = this.getBoundingClientRect();
-    //style top of cloneContainer
-    this._crTop = this._mouseClientY - bound.top - this._pressY;
-    this.$cloneContainer.addStyle({
-        top: this._crTop + 'px'
+DraggableVStack.prototype._updateDestChildrenBound = function () {
+    var top0 = this._dragData.dest.getBoundingClientRect().top;
+    this._dragData.destChildBounds = Array.prototype.map.call(this._dragData.dest.childNodes, function (elt) {
+        return elt.getBoundingClientRect()
     });
+    this._dragData.destChildTops = this._dragData.destChildBounds.map(function (bound) {
+        return bound.top - top0;
+    }).concat([this._dragData.destChildBounds[this._dragData.destChildBounds.length - 1].bottom - top0]);
+}
 
-    //update destLine
-    var centerY = this._crTop + this._initHeight / 2;
-    var nearestRecord;
-    var nearestDistance = Math.abs(centerY - bound.height);//end of stack
-    var cDist;
-    var nearestIndex = this._childrentInfo.length;
-    for (var i = 0; i < this._childrentInfo.length; ++i) {
-        cDist = Math.abs(centerY - this._childrentInfo[i].top);
-        if (cDist < nearestDistance) {
-            nearestRecord = this._childrentInfo[i];
-            nearestDistance = cDist;
-            nearestIndex = i;
+
+DraggableVStack.eventHandler.friendDragStart = function (event) {
+
+};
+
+DraggableVStack.eventHandler.friendDragEnd = function () {
+
+};
+
+DraggableVStack.prototype._updateHoverDest = function () {
+    var bound;
+    var newDest;
+    var friendElt;
+    var friendList = this.$friends.concat([this]);
+    var top0;
+    for (var i = 0; i < friendList.length; ++i) {
+        friendElt = friendList[i];
+        bound = Rectangle.fromClientRect(friendElt.getBoundingClientRect());
+        if (bound.containsPoint(this._dragData.mouseCurrentPos)) {
+            top0 = bound.y;
+            newDest = friendElt;
+            break;
         }
     }
-    if (nearestRecord) {
-        this.$destLine.addStyle('top', nearestRecord.top + 'px');
-    }
-    else {
-        this.$destLine.addStyle('top', bound.height + 'px');
-    }
-    if (nearestIndex == this._draggingEltIndex || nearestIndex == this._draggingEltIndex + 1) {
-        this.$destLine.addStyle('visibility', 'hidden');
-    }
-    else {
-        this.$destLine.removeStyle('visibility', 'hidden');
 
+    if (newDest && this._dragData.dest !== newDest) {
+        this._dragData.dest.removeClass('as-state-drag');
+        this._dragData.dest = newDest;
+        this._dragData.dest.addClass('as-state-drag');
+        this._updateDestChildrenBound();
     }
-    this._destRecord = nearestRecord;
-    this._destIndex = nearestIndex;
-    // setTimeout(this._autoScrollParentIfNeed.bind(this, 10), 33);
+};
+
+DraggableVStack.prototype._updateDraggingPosition = function () {
+    var bound = this.getBoundingClientRect();
+    var clonePos = this._dragData.mouseCurrentPos.sub(this._dragData.offsetPos);
+
+    this.$cloneContainer.addStyle({
+        top: clonePos.y + 'px',
+        left: bound.left + 'px'
+    });
+
+    this._dragData.destIdx = this._dragData.dest._findIndex(clonePos.y + this._dragData.eltBound.height / 2);
+    this._dragData.dest.addStyle('--dest-y', this._dragData.destChildTops[this._dragData.destIdx] + 'px');
+    if (this._dragData.dest === this) {
+        if (this._dragData.idx === this._dragData.destIdx || (this._dragData.idx + 1 === this._dragData.destIdx)) {
+            this.addClass('as-state-no-change');
+        }
+        else {
+            this.removeClass('as-state-no-change');
+        }
+    }
 };
 
 
@@ -348,6 +486,19 @@ DraggableVStack.prototype._findDirectChild = function (elt) {
     }
     return undefined;
 };
+
+DraggableVStack.property = {};
+
+DraggableVStack.property.friends = {
+    set: function (value) {
+        if (!(value instanceof Array)) value = [value];
+        this._friends = value;
+    },
+    get: function () {
+        return this._friends;
+    }
+}
+;
 
 
 ACore.install(DraggableVStack);

@@ -1,8 +1,10 @@
 import ACore from "../ACore";
 import Element from "absol/src/HTML5/Element";
+import AElement from "absol/src/HTML5/Element";
+
 
 /***
- * extends {Element}
+ * @extends {AElement}
  * @constructor
  */
 function PositionTracker() {
@@ -15,7 +17,7 @@ PositionTracker.tag = 'PositionTracker'.toLowerCase();
 
 /***
  *
- * @return {Element}
+ * @return {AElement}
  */
 PositionTracker.render = function () {
     return _('div');
