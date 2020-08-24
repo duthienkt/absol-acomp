@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Draggable VStack</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <style>
+        .item {
+            height: 50px;
+            position: relative;
+            box-sizing: border-box;
+            border: 1px solid gray;
+        }
+
+        .item > .drag-zone {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 30%;
+            bottom: 0;
+            background-color: #8cc6af;
+        }
+
+        .item > span {
+            line-height: 1.5;
+            font-size: 2em;
+        }
+
+        .stack {
+            margin-bottom: 1.5em;
+            border: 1px solid black;
+            width: 45vw;
+        }
+
+    </style>
+</head>
+
+<body>
+<h1>Draggable VStack</h1>
+
+<div class="absol-bscroller" style="width: 80vw">
+</div>
+
+<script class="viewable">
+    var _ = absol._;
+    var $ = absol.$;
+    var aobj = {
+        tag: 'draggablevstack',
+        class: 'stack',
+        props: {
+            friends: '.stack'
+        },
+
+        child: Array(10).fill('').map((u, i) => ({
+            class: 'item',
+            child: [`<span>${i}</span>`, '.drag-zone']
+        })),
+        on: {
+            itemleave: function (event) {
+                console.log(event);
+            },
+            itementer: function (event) {
+                console.log(event);
+            },
+            orderchange: function (event) {
+                console.log(event);
+            },
+            change: function (event) {
+                console.log(event);
+            }
+        }
+
+    };
+    var stack0 = _(aobj).addTo(document.body);
+    var stack1 = _(aobj).addTo(document.body);
+
+</script>
+</body>
+
+</html>
