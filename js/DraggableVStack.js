@@ -74,7 +74,7 @@ DraggableVStack.prototype._findIndex = function (clientY) {
     var childTops = childBounds.map(function (b) {
         return b.top;
     });
-    childTops.push(childBounds[childBounds.length - 1].bottom);
+    childTops.push((childBounds[childBounds.length - 1] || this.getBoundingClientRect()).bottom);
     var nearestIdx = 0;
     var nearestVal = 10000000;
     var val;
@@ -141,12 +141,6 @@ DraggableVStack.eventHandler.drag = function (event) {
     this._dragData.mouseCurrentPos = new Vec2(event.clientX, event.clientY);
     this._updateHoverDest();
     this._updateDraggingPosition();
-
-    // //save mouse position
-    // this._mouseClientX = event.clientX;
-    // this._mouseClientY = event.clientY;
-    // this._updateDraggingPosition();
-    // this.eventHandler.dragOverflow(event);
 };
 
 DraggableVStack.prototype.getClientY = function () {
@@ -239,6 +233,7 @@ DraggableVStack.eventHandler.dragend = function (event) {
     this._dragData.dest.removeClass('as-state-drag');
     this.$cloneContainer.remove();
     this._dragData.elt.removeClass('dragging');
+    this.removeClass('as-state-no-change');
     this._state = 0;
     var beforeElt;
     if (this._dragData.dest === this) {
@@ -368,13 +363,14 @@ DraggableVStack.eventHandler.dragend = function (event) {
 
 
 DraggableVStack.prototype._updateDestChildrenBound = function () {
+
     var top0 = this._dragData.dest.getBoundingClientRect().top;
     this._dragData.destChildBounds = Array.prototype.map.call(this._dragData.dest.childNodes, function (elt) {
         return elt.getBoundingClientRect()
     });
     this._dragData.destChildTops = this._dragData.destChildBounds.map(function (bound) {
         return bound.top - top0;
-    }).concat([this._dragData.destChildBounds[this._dragData.destChildBounds.length - 1].bottom - top0]);
+    }).concat([(this._dragData.destChildBounds[this._dragData.destChildBounds.length - 1] || this.getBoundingClientRect()).bottom - top0]);
 }
 
 
@@ -406,6 +402,7 @@ DraggableVStack.prototype._updateHoverDest = function () {
         this._dragData.dest.removeClass('as-state-drag');
         this._dragData.dest = newDest;
         this._dragData.dest.addClass('as-state-drag');
+        this._dragData.dest.addStyle('--dest-y', 'unset');
         this._updateDestChildrenBound();
     }
 };

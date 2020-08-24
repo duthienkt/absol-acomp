@@ -70,7 +70,7 @@
 }
 
 .absol-draggable-vstack {
-    --dest-y: 0;
+    --dest-y: unset;
 }
 
 /**.as-state-drag*/
