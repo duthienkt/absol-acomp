@@ -21,7 +21,7 @@
             top: 0;
             width: 30%;
             bottom: 0;
-            background-color: #8cc6af;
+            /*background-color: #8cc6af;*/
         }
 
         .item > span {
@@ -47,35 +47,46 @@
 <script class="viewable">
     var _ = absol._;
     var $ = absol.$;
-    var aobj = {
-        tag: 'draggablevstack',
-        class: 'stack',
-        props: {
-            friends: '.stack'
-        },
 
-        child: Array(10).fill('').map((u, i) => ({
-            class: 'item',
-            child: [`<span>${i}</span>`, '.drag-zone']
-        })),
-        on: {
-            itemleave: function (event) {
-                console.log(event);
+    function createOab(color) {
+        return {
+            tag: 'draggablevstack',
+            class: 'stack',
+            props: {
+                friends: '.stack'
             },
-            itementer: function (event) {
-                console.log(event);
-            },
-            orderchange: function (event) {
-                console.log(event);
-            },
-            change: function (event) {
-                console.log(event);
+
+            child: Array(10).fill('').map((u, i) => ({
+                class: 'item',
+                child: [`<span>${i}</span>`,
+                    {
+                        class: 'drag-zone',
+                        style: {
+                            background: color
+                        }
+                    }
+                ]
+            })),
+            on: {
+                itemleave: function (event) {
+                    console.log(event);
+                },
+                itementer: function (event) {
+                    console.log(event);
+                },
+                orderchange: function (event) {
+                    console.log(event);
+                },
+                change: function (event) {
+                    console.log(event);
+                }
             }
-        }
 
-    };
-    var stack0 = _(aobj).addTo(document.body);
-    var stack1 = _(aobj).addTo(document.body);
+        };
+    }
+
+    var stack0 = _(createOab('rgba(255, 100, 100,0.5)')).addTo(document.body);
+    var stack1 = _(createOab('rgba(100, 100, 250,0.5)')).addTo(document.body);
 
 </script>
 </body>
