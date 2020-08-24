@@ -140,6 +140,7 @@ DraggableVStack.eventHandler.drag = function (event) {
     this._dragData.mouseCurrentPos = new Vec2(event.clientX, event.clientY);
     this._updateHoverDest();
     this._updateDraggingPosition();
+    this.eventHandler.dragOverflow(event);
 };
 
 DraggableVStack.prototype.getClientY = function () {
@@ -169,11 +170,6 @@ DraggableVStack.eventHandler.dragOverflow = function (event) {
     if (!scroller) return;
     var outBound = scroller.getBoundingClientRect();
     var bBound = this.$cloneContainer.getBoundingClientRect();
-    var clientY = this.getClientY();
-    bBound = {
-        top: Math.max(clientY.top, bBound.top),
-        bottom: Math.min(clientY.bottom, bBound.bottom)
-    }
     var screenSize = Dom.getScreenSize();
     if (scroller.tagName !== "HTML") {
         outBound = {
@@ -373,13 +369,6 @@ DraggableVStack.prototype._updateDestChildrenBound = function () {
 }
 
 
-DraggableVStack.eventHandler.friendDragStart = function (event) {
-
-};
-
-DraggableVStack.eventHandler.friendDragEnd = function () {
-
-};
 
 DraggableVStack.prototype._updateHoverDest = function () {
     var bound;
