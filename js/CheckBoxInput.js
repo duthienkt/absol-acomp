@@ -7,13 +7,6 @@ import Dom from "absol/src/HTML5/Dom";
 var _ = ACore._;
 var $ = ACore.$;
 
-var tickIcon = [
-    '<svg class="as-checkbox-input-check-icon" width="18mm" height="18mm" version="1.1" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg" >',
-    ' <g transform="translate(0 -279)">',
-    '  <path class="tick" d="m3.1656 288.66c-0.10159 0.0612-0.11743 0.12506-0.12993 0.18899l3.7473 4.3467c0.066638 0.0459 0.11813 0.0263 0.16832 1e-3 0 0 1.7699-4.2166 4.7251-7.4568 1.4783-1.6208 3.2406-3.3659 3.2406-3.3659 0.0054-0.14125-0.10946-0.15807-0.1754-0.22551 0 0-2.5832 1.6364-4.7524 3.8336-1.8697 1.8939-3.6666 4.4016-3.6666 4.4016z"/>',
-    ' </g>',
-    '</svg>'].join('')
-
 /***
  * @extends Element
  * @constructor

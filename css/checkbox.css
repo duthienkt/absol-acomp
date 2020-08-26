@@ -12,7 +12,7 @@
     padding-left: 0.3em;
 }
 
-.absol-checkbox-label:first-child {
+.absol-checkbox-label:not(:last-child) {
     padding-right: 0.3em;
 }
 
