@@ -1,3 +1,9 @@
+:root {
+    --candy-border-color: #929292;
+    --candy-hover-background-color: #eeeee9;
+    --candy-disabled-background-color: #ebebe4;
+}
+
 label.as-checkbox-input {
     display: inline-block;
     position: relative;
@@ -10,13 +16,18 @@ label.as-checkbox-input {
     overflow: hidden;
     vertical-align: baseline;
     border-radius: 0.25em;
-    border: 1px solid #929292;
+    border: 1px solid var(--candy-border-color);
     text-align: center;
+}
+
+label.as-checkbox-input:hover {
+    background-color: var(--candy-hover-background-color);
 }
 
 .as-checkbox-input span.as-checkbox-input-check-mark {
     font-size: inherit;
     line-height: 1em;
+    color: #606060;
 }
 
 .as-checkbox-input input.as-checkbox-input-value {
@@ -29,4 +40,11 @@ label.as-checkbox-input {
 
 input.as-checkbox-input-value:not(:checked) ~ span.as-checkbox-input-check-mark {
     display: none;
+}
+
+
+label.as-checkbox-input.as-disabled,
+label.as-checkbox-input.as-disabled:hover {
+    border-color: #929292;
+    background-color: #ebebe4;
 }
