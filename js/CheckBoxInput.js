@@ -19,7 +19,8 @@ var tickIcon = [
  * @constructor
  */
 function CheckboxInput() {
-    this.$input = $('input', this);
+    this.$input = $('input', this)
+        .on('change', this.notifyChange.bind(this));
     this.checked = false;
     this.disabled = false;
     this.on('click', this.eventHandler.click);
@@ -31,20 +32,19 @@ CheckboxInput.tag = "CheckboxInput".toLowerCase();
 CheckboxInput.render = function () {
     return _({
             tag: 'label',
-            // extendEvent: 'change',
+            extendEvent: 'change',
             class: 'as-checkbox-input',
             child: [
                 {
-                    class: 'as-checkbox-input-box',
-                    child: [
-                        {
-                            tag: 'input',
-                            attr: {
-                                type: 'checkbox'
-                            }
-                        },
-                        tickIcon
-                    ]
+                    tag: 'input',
+                    class: 'as-checkbox-input-value',
+                    attr: {
+                        type: 'checkbox'
+                    }
+                },
+                {
+                    tag: 'span',
+                    class: ['as-checkbox-input-check-mark', 'mdi', 'mdi-check']
                 }
             ]
         }
@@ -55,7 +55,7 @@ CheckboxInput.render = function () {
  * as normal, change event will be fired when checkbox change by system
  */
 CheckboxInput.prototype.notifyChange = function () {
-    var event = {checked: this.checked };
+    var event = { checked: this.checked };
     this.emit('change', event, this);
 };
 
@@ -194,7 +194,7 @@ CheckboxInput.autoReplace = function () {
             attr: attrs,
             class: classList,
             style: style,
-            props:props
+            props: props
         });
         $(ph).selfReplace(newElt);
     }

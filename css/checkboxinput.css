@@ -1,61 +1,32 @@
-.as-checkbox-input {
-    display: inline;
+label.as-checkbox-input {
+    display: inline-block;
     position: relative;
-    margin-right: 0.1em;
-    margin-left: 0.1em;
+    top: 0.25em;
+    width: calc(1em + 2px);
+    height: calc(1em + 2px);
     cursor: pointer;
     font-size: inherit;
     box-sizing: border-box;
-}
-
-.as-checkbox-input.as-disabled,
-.as-checkbox-input.as-disabled:hover {
-    pointer-events: none;
-    cursor: default;
-}
-
-.as-checkbox-input.as-disabled .as-checkbox-input-box {
-    border-color: #929292;
-    background-color: #ebebe4;
-}
-
-.as-checkbox-input:after {
-    display: inline-block;
-    height: 1em;
-    width: 1em;
-    content: " ";
-    vertical-align: unset;
-    font-size: inherit;
-}
-
-.as-checkbox-input-box {
-    position: absolute;
-    left: -0.1em;
-    top: -0.1em;
-    right: -0.1em;
-    bottom: -0.1em;
-    box-sizing: border-box;
+    overflow: hidden;
+    vertical-align: baseline;
     border-radius: 0.25em;
     border: 1px solid #929292;
+    text-align: center;
 }
 
-.as-checkbox-input:hover:not(.as-disabled) .as-checkbox-input-box{
-    background-color: #d9d9d9;
-    border-color: black;
+.as-checkbox-input span.as-checkbox-input-check-mark {
+    font-size: inherit;
+    line-height: 1em;
 }
 
-.as-checkbox-input-box svg.as-checkbox-input-check-icon {
-    display: block;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 0.2s;
+.as-checkbox-input input.as-checkbox-input-value {
+    font-size: inherit;
+    position: absolute;
+    right: 100%;
+    top: 0;
+    opacity: 0.0;
 }
 
-.as-checkbox-input input {
+input.as-checkbox-input-value:not(:checked) ~ span.as-checkbox-input-check-mark {
     display: none;
-}
-
-input:checked + svg.as-checkbox-input-check-icon {
-    opacity: 1;
 }
