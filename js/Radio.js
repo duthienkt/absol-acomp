@@ -78,6 +78,14 @@ Radio.property = {
             value = (value || '').trim();
             this.$labels[0].firstChild.data = value;
             this.$labels[1].firstChild.data = value;
+            if (!value) {
+                this.$labels[0].addStyle('display', 'none');
+                this.$labels[1].addStyle('display', 'none');
+            }
+            else {
+                this.$labels[0].addStyle('display', 'none');
+                this.$labels[1].addStyle('display', 'none');
+            }
         },
         get: function () {
             return this.$labels[0].firstChild.data;
