@@ -29,13 +29,14 @@ function CheckboxInput() {
 
 CheckboxInput.tag = "CheckboxInput".toLowerCase();
 
-CheckboxInput.render = function () {
+CheckboxInput.render = function (data) {
     return _({
             tag: 'label',
             extendEvent: 'change',
             class: 'as-checkbox-input',
             child: [
                 {
+                    elt: data && data.$input,
                     tag: 'input',
                     class: 'as-checkbox-input-value',
                     attr: {
@@ -198,7 +199,12 @@ CheckboxInput.autoReplace = function () {
         });
         $(ph).selfReplace(newElt);
     }
+};
 
+CheckboxInput.initAfterLoad = function (){
+  Dom.documentReady.then(function (){
+      CheckboxInput.autoReplace();
+  })
 };
 
 
