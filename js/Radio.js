@@ -83,8 +83,8 @@ Radio.property = {
                 this.$labels[1].addStyle('display', 'none');
             }
             else {
-                this.$labels[0].addStyle('display', 'none');
-                this.$labels[1].addStyle('display', 'none');
+                this.$labels[0].removeStyle('display');
+                this.$labels[1].removeStyle('display');
             }
         },
         get: function () {
