@@ -7,18 +7,19 @@
     display: none;
 }
 
-.absol-radio label {
+.absol-radio span {
     white-space: pre;
     cursor: inherit;
     vertical-align: middle;
     margin: 0;
+    font-size: inherit;
 }
 
 .absol-radio>svg {
     display: inline-block;
     vertical-align: middle;
-    width: 18px;
-    height: 18px;
+    width: calc(1em + 4px);
+    height: calc(1em + 4px);
 }
 
 .absol-radio>svg .bound {
@@ -55,21 +56,15 @@
     transition: opacity 0.1s;
 }
 
-.absol-radio:not(.right) .absol-radio-icon-right {
+.absol-radio:not(.right) span:first-child {
     display: none;
 }
 
-.absol-radio:not(.right) label {
-    padding-left: 5px;
-}
 
-.absol-radio.right label {
-    padding-right: 5px;
-}
-
-.absol-radio.right .absol-radio-icon-left {
+.absol-radio span:last-child {
     display: none;
 }
+
 
 .absol-radio.disabled {
     cursor: default;
@@ -89,4 +84,16 @@
 
 .absol-radio .standar-alone {
     display: inline-block;
+}
+
+.absol-radio span:not(:last-child){
+    padding-right: 0.3em;
+}
+
+.absol-radio span:last-child{
+    padding-left: 0.3em;
+}
+
+input:checked ~ .absol-radio-icon .dot {
+    opacity: 1;
 }
