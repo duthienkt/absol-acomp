@@ -56,7 +56,7 @@
 
     setTimeout(function () {
         var startTime = new Date().getTime();
-        var checkboxes = Array(4000).fill(null).map((u) => {
+        var checkboxes = Array(6700).fill(null).map((u) => {
             return absol._({
                 tag: 'checkboxinput',
                 attr: {
@@ -75,6 +75,7 @@
                     }
                 }
             })
+            return res;
         });
         var createTime = new Date().getTime();
         var ctn = absol._({
@@ -87,9 +88,8 @@
         var addTime = new Date().getTime();
         console.log('create', createTime - startTime)
         console.log('add', addTime - createTime)
-
-    }, 3000);
+    }, 1000);
 </script>
-<script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
+<!--<script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>-->
 </body>
 </html>
