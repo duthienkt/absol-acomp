@@ -1,61 +1,57 @@
-.as-radio-input {
-    display: inline;
-    position: relative;
-    margin-right: 0.1em;
-    margin-left: 0.1em;
-    cursor: pointer;
-    width: 1em;
-    height: 1em;
-}
-
-.as-radio-input.as-disabled,
-.as-radio-input.as-disabled:hover {
-    pointer-events: none;
-    cursor: default;
-}
-
-.as-radio-input.as-disabled .as-radio-input-box {
-    border-color: #929292;
-    background-color: #ebebe4;
-}
-
-.as-radio-input:after {
+label.as-radio-input {
     display: inline-block;
-    height: 1em;
-    width: 1.08em;
-    content: "";
-    vertical-align: unset;
+    position: relative;
+    width: calc(1em + 2px);
+    height: calc(1em + 2px);
+    cursor: pointer;
+    font-size: inherit;
+    box-sizing: border-box;
+    overflow: hidden;
+    vertical-align: middle;
+    border-radius: 50%;
+    border: 1px solid var(--candy-border-color);
+    text-align: center;
+    background-color: white;
+    text-align: center;
+    white-space: nowrap;
 }
 
-.as-radio-input-box {
-    position: absolute;
-    left: -0.1em;
-    top: -0.1em;
-    right: -0.1em;
-    bottom: -0.1em;
-    box-sizing: border-box;
-    border-radius: 0.25em;
-    border: 1px solid #929292;
+label.as-radio-input:hover {
+    background-color: var(--candy-hover-background-color);
+}
+
+label.as-radio-input::after{
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.as-radio-input .as-radio-input-check-mark {
+    display: inline-block;
+    vertical-align: middle;
+    width: 0.5em;
+    height: 0.5em;
+    background-color: #606060;
+    font-size: inherit;
     border-radius: 50%;
 }
 
-.as-radio-input:hover:not(.as-disabled) .as-radio-input-box{
-    background-color: #d9d9d9;
-    border-color: black;
+.as-radio-input input.as-radio-input-value {
+    font-size: inherit;
+    position: absolute;
+    right: 100%;
+    top: 0;
+    opacity: 0.0;
 }
 
-.as-radio-input-box svg.as-radio-input-circle-icon {
-    display: block;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.as-radio-input input {
+input.as-radio-input-value:not(:checked) ~ .as-radio-input-check-mark {
     display: none;
 }
 
-input:checked + svg.as-radio-input-circle-icon {
-    opacity: 1;
+
+label.as-radio-input.as-disabled,
+label.as-radio-input.as-disabled:hover {
+    border-color: #929292;
+    background-color: #ebebe4;
 }

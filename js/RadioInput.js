@@ -2,22 +2,18 @@ import '../css/radioinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 
+//new tech, not working version
+
 var _ = ACore._;
 var $ = ACore.$;
-
-var circleIcon = [
-    '<svg class="as-radio-input-circle-icon"width="20" height="20" version="1.1" viewBox="0 0 5.2917 5.2917" xmlns="http://www.w3.org/2000/svg" >',
-    ' <g transform="translate(0 -291.71)">',
-    ' <circle class="dot" cx="2.6458" cy="294.35" r="0.92604" style="fill-rule:evenodd;" />',
-    ' </g>',
-    '</svg>'].join('')
 
 /***
  * @extends Element
  * @constructor
  */
 function RadioInput() {
-    this.$input = $('input', this);
+    this.$input = $('input', this)
+        .on('change', this.notifyChange.bind(this));
     this.checked = false;
     this.disabled = false;
     this.on('click', this.eventHandler.click);
@@ -26,23 +22,22 @@ function RadioInput() {
 
 RadioInput.tag = "RadioInput".toLowerCase();
 
-RadioInput.render = function () {
+RadioInput.render = function (data) {
     return _({
             tag: 'label',
-            // extendEvent: 'change',
+            extendEvent: 'change',
             class: 'as-radio-input',
             child: [
                 {
-                    class: 'as-radio-input-box',
-                    child: [
-                        {
-                            tag: 'input',
-                            attr: {
-                                type: 'radio'
-                            }
-                        },
-                        circleIcon
-                    ]
+                    elt: data && data.$input,
+                    tag: 'input',
+                    class: 'as-radio-input-value',
+                    attr: {
+                        type: 'radio'
+                    }
+                },
+                {
+                    class: ['as-radio-input-check-mark']
                 }
             ]
         }
@@ -53,7 +48,7 @@ RadioInput.render = function () {
  * as normal, change event will be fired when radio change by system
  */
 RadioInput.prototype.notifyChange = function () {
-    var event = {checked: this.checked };
+    var event = { checked: this.checked };
     this.emit('change', event, this);
 };
 
@@ -192,11 +187,16 @@ RadioInput.autoReplace = function () {
             attr: attrs,
             class: classList,
             style: style,
-            props:props
+            props: props
         });
         $(ph).selfReplace(newElt);
     }
+};
 
+RadioInput.initAfterLoad = function (){
+    Dom.documentReady.then(function (){
+        RadioInput.autoReplace();
+    })
 };
 
 
