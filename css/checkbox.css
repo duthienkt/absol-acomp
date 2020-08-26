@@ -20,7 +20,7 @@
     display: none;
 }
 
-
-.absol-checkbox .as-checkbox-input{
-    top: 0.25em;
+.absol-checkbox-label{
+    vertical-align: middle;
+    display: inline-block;
 }
