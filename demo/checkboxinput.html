@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>CheckboxInput(new)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
@@ -46,10 +47,47 @@
 </div>
 <span style="font-size: 25px; display: inline-block; vertical-align: middle">  Ut enim ad minim veniam, quis nostrud exercitation
     ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-    in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.<div style="background-color: red;width: 1em; height: 1em;font-size: inherit; display: inline-block; vertical-align: middle"></div><checkboxinput id="abcd"></checkboxinput></span>
+    in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.<div
+            style="background-color: red;width: 1em; height: 1em;font-size: inherit; display: inline-block; vertical-align: middle"></div><checkboxinput
+            id="abcd"></checkboxinput></span>
 <script class="viewable">
     //áp dụng cho nhanh cho html
     absol.require('checkboxinput').autoReplace();
+
+    setTimeout(function () {
+        var startTime = new Date().getTime();
+        var checkboxes = Array(4000).fill(null).map((u) => {
+            return absol._({
+                tag: 'checkboxinput',
+                attr:{
+                    type:'checkbox'
+                },
+                style: {
+                    display:'block'
+                },
+                props: {
+                    checked: Math.random() > 0.5
+                },
+                on:{
+                    change: function(){
+                        console.log(this, this.checked);
+                    }
+                }
+            })
+        });
+        var createTime = new Date().getTime();
+        var ctn =absol._({
+            style:{
+                border:'1px solid red',
+                fontSize:'14px',
+            } ,
+            child: checkboxes
+        }).addTo(document.body);
+        var addTime = new Date().getTime();
+        console.log('create',createTime - startTime)
+        console.log('add',addTime - createTime)
+
+    }, 3000);
 </script>
 <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 </body>
