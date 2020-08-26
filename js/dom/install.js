@@ -78,6 +78,7 @@ import TrackBarInput from "../TrackBarInput";
 import SelectMenu from "../SelectMenu";
 import ButtonRange from "../ButtonRange";
 import DropZone from "../DropZone";
+import RadioInput from "../RadioInput";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -148,6 +149,7 @@ export var publicCreators = [
     QuickPath,
     Radio,
     RadioButton,
+    RadioInput,
     SelectList,
     RemoteSvg,
     ResizeBox,
