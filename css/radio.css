@@ -1,6 +1,7 @@
 .absol-radio {
     display: inline;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .absol-radio input {
