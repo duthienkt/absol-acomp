@@ -10,7 +10,10 @@
 
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <style>
-
+        label{
+            vertical-align: middle;
+            padding-right: 0.2em;
+        }
     </style>
 </head>
 
@@ -24,12 +27,13 @@
     </script>
     <script class="viewable">
         absol.require('radiobutton').initAfterLoad();
+
     </script>
 
     <div>
-        <label for="r0">Chọn 1</label><input type="radio" name="b" class="absol-radio" id="r0" />
-        <label for="r1">Chọn 2</label><input type="radio" name="b" class="absol-radio" id="r1" />
-        <label for="r2">Chọn 3</label><input type="radio" name="b" class="absol-radio" checked id="r2" />
+        <label for="r0">Chọn 1</label><radiobutton  name="b" class="absol-radio" id="r0"></radiobutton>
+        <label for="r1">Chọn 2</label><radiobutton  name="b" class="absol-radio" id="r1"></radiobutton>
+        <label for="r2">Chọn 3</label><radiobutton  name="b" class="absol-radio" checked id="r2"></radiobutton>
     </div>
 
     <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
