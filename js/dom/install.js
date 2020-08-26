@@ -181,6 +181,7 @@ export var publicCreators = [
  */
 function install(core) {
     core.install(publicCreators);
+    core.install('checkboxbutton', CheckboxInput);
 }
 
 export default install;
