@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CheckboxInput(new)</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=1.0, minimum-scale=1.0, maximum-scale=1.0">
+    <title>RadioInput(new)</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=1.0, minimum-scale=1.0, maximum-scale=1.0">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
@@ -46,10 +47,43 @@
 </div>
 <span style="font-size: 25px; display: inline-block; vertical-align: middle">  Ut enim ad minim veniam, quis nostrud exercitation
     ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-    in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.<div style="background-color: red;width: 1em; height: 1em;font-size: inherit; display: inline-block; vertical-align: middle"></div><radioinput id="abcd"></radioinput></span>
+    in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.<div
+            style="background-color: red;width: 1em; height: 1em;font-size: inherit; display: inline-block; vertical-align: middle"></div><radioinput
+            id="abcd"></radioinput></span>
 <script class="viewable">
     //áp dụng cho nhanh cho html
     absol.require('radioinput').autoReplace();
+    var startTime = new Date().getTime();
+    var radioList = Array(6000).fill('').map((u, i) => {
+        return absol._({
+            tag: 'radio',
+            style: {
+                marginLeft: '2em'
+            },
+            props: {
+                text: "radio " + i,
+                name: 'g0'
+            },
+            on: {
+                change: function (event) {
+                    console.log(this, this.checked);
+                }
+            }
+        });
+    });
+    var createTime = new Date().getTime();
+
+    var ctn = absol._({
+        style: {
+            border: '1px solid red',
+            fontSize: '54px',
+        },
+        child: radioList
+    }).addTo(document.body);
+    var addTime = new Date().getTime();
+    console.log('create', createTime - startTime)
+    console.log('add', addTime - createTime)
+
 </script>
 <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 </body>
