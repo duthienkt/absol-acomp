@@ -46,6 +46,9 @@
             --color-input-color: #d6d6d6;
             --control-height: 30px;
         }
+        .checkbox-row >*{
+            margin-right: 2em;
+        }
     </style>
 </head>
 
@@ -59,7 +62,7 @@
         var mRadioRow = absol.$('.checkbox-row');
         absol._('checkbox[checked="true"]').addTo(mRadioRow).text = "Chon 1";
         absol._('checkbox[checked="false"]').addTo(mRadioRow);
-        absol._('checkbox[checked="true"]').addTo(mRadioRow);
+        absol._('checkbox.right[checked="true"][disabled="true"]').addTo(mRadioRow).text = "Chon 2";
         absol._('checkboxbutton[checked="true"]').addTo(mRadioRow);
         absol._('checkboxbutton[checked="false"]').addTo(mRadioRow);
         absol._('checkboxbutton[checked="true"]').addTo(mRadioRow);

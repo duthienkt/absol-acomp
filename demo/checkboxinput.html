@@ -59,33 +59,34 @@
         var checkboxes = Array(4000).fill(null).map((u) => {
             return absol._({
                 tag: 'checkboxinput',
-                attr:{
-                    type:'checkbox'
+                attr: {
+                    type: 'checkbox'
                 },
                 style: {
-                    display:'block'
+                    // display:'block'
                 },
                 props: {
-                    checked: Math.random() > 0.5
+                    checked: Math.random() > 0.5,
+                    disabled: Math.random() > 0.8
                 },
-                on:{
-                    change: function(){
+                on: {
+                    change: function () {
                         console.log(this, this.checked);
                     }
                 }
             })
         });
         var createTime = new Date().getTime();
-        var ctn =absol._({
-            style:{
-                border:'1px solid red',
-                fontSize:'14px',
-            } ,
+        var ctn = absol._({
+            style: {
+                border: '1px solid red',
+                fontSize: '54px',
+            },
             child: checkboxes
         }).addTo(document.body);
         var addTime = new Date().getTime();
-        console.log('create',createTime - startTime)
-        console.log('add',addTime - createTime)
+        console.log('create', createTime - startTime)
+        console.log('add', addTime - createTime)
 
     }, 3000);
 </script>
