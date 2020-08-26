@@ -7,7 +7,7 @@
     display: none;
 }
 
-.absol-radio span {
+.absol-radio > span {
     white-space: pre;
     cursor: inherit;
     vertical-align: middle;
@@ -15,19 +15,19 @@
     font-size: inherit;
 }
 
-.absol-radio>svg {
+.absol-radio > svg {
     display: inline-block;
     vertical-align: middle;
     width: calc(1em + 4px);
     height: calc(1em + 4px);
 }
 
-.absol-radio>svg .bound {
+.absol-radio > svg .bound {
     stroke: #929292;
     fill: white;
 }
 
-.absol-radio:hover>svg .bound {
+.absol-radio:hover > svg .bound {
     fill: #d6d6d6;
     stroke: black;
 }
@@ -37,7 +37,8 @@
     fill: none;
 } */
 
-.absol-radio-icon .border {}
+.absol-radio-icon .border {
+}
 
 .absol-radio .dot {
     transition: opacity 0.07s;
@@ -56,12 +57,12 @@
     transition: opacity 0.1s;
 }
 
-.absol-radio:not(.right) span:first-child {
+.absol-radio:not(.right) > span:first-child {
     display: none;
 }
 
 
-.absol-radio span:last-child {
+.absol-radio > span:last-child {
     display: none;
 }
 
@@ -86,11 +87,11 @@
     display: inline-block;
 }
 
-.absol-radio span:not(:last-child){
+.absol-radio > span:not(:last-child) {
     padding-right: 0.3em;
 }
 
-.absol-radio span:last-child{
+.absol-radio span:last-child {
     padding-left: 0.3em;
 }
 
