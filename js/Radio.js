@@ -43,9 +43,9 @@ Radio.render = function () {
         class: 'absol-radio',
         child: [
             { tag: 'input', attr: { type: 'radio' } },
-            { tag: 'span', child: { text: '' } },
+            { tag: 'span' },
             Radio.radioProto.cloneNode(true),
-            { tag: 'span', child: { text: '' } }
+            { tag: 'span'}
         ]
     });
 };
@@ -76,16 +76,14 @@ Radio.property = {
     text: {
         set: function (value) {
             value = (value || '').trim();
-            this.$labels[0].firstChild.data = value;
-            this.$labels[1].firstChild.data = value;
-            if (!value) {
-                this.$labels[0].addStyle('display', 'none');
-                this.$labels[1].addStyle('display', 'none');
+            this.$labels[0].clearChild();
+            this.$labels[1].clearChild();
+
+            if (value) {
+                this.$labels[0].addChild(_({text: value}));
+                this.$labels[1].addChild(_({text: value}));
             }
-            else {
-                this.$labels[0].removeStyle('display');
-                this.$labels[1].removeStyle('display');
-            }
+
         },
         get: function () {
             return this.$labels[0].firstChild.data;

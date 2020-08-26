@@ -15,6 +15,10 @@
     font-size: inherit;
 }
 
+.absol-radio > span:empty {
+    display: none;
+}
+
 .absol-radio > svg {
     display: inline-block;
     vertical-align: middle;
