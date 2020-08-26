@@ -1,0 +1,86 @@
+.absol-radio-button {
+    display: inline;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.absol-radio-button input {
+    display: none;
+}
+
+
+.absol-radio-button > svg {
+    display: inline-block;
+    vertical-align: middle;
+    width: calc(1em + 4px);
+    height: calc(1em + 4px);
+}
+
+.absol-radio-button > svg .bound {
+    stroke: #929292;
+    fill: white;
+}
+
+.absol-radio-button:hover > svg .bound {
+    fill: #d6d6d6;
+    stroke: black;
+}
+
+.absol-radio-icon .border {
+}
+
+.absol-radio-button .dot {
+    transition: opacity 0.07s;
+    opacity: 0;
+    fill: #606060;
+}
+
+.absol-radio-button:hover .dot {
+    transition: opacity 0.07s;
+    opacity: 0;
+    fill: black;
+}
+
+.absol-radio-button.checked .dot {
+    opacity: 1;
+    transition: opacity 0.1s;
+}
+
+
+
+.absol-radio-button > span:last-child {
+    display: none;
+}
+
+
+.absol-radio-button.disabled {
+    cursor: default;
+}
+
+.absol-radio-button.disabled:hover .dot,
+.absol-radio-button.disabled .dot {
+    fill: #929292;
+}
+
+.absol-radio-button.disabled .bound,
+.absol-radio-button.disabled:hover .bound {
+    stroke: #929292;
+    fill: #ebebe4;
+}
+
+
+.absol-radio .standar-alone {
+    display: inline-block;
+}
+
+.absol-radio > span:not(:last-child) {
+    padding-right: 0.3em;
+}
+
+.absol-radio span:last-child {
+    padding-left: 0.3em;
+}
+
+input:checked ~ .absol-radio-icon .dot {
+    opacity: 1;
+}
