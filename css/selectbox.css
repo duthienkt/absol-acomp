@@ -1,6 +1,10 @@
+:root {
+    --select-box-item-height: 30px;
+}
+
 .absol-selectbox {
     position: relative;
-    min-height: 30px;
+    min-height: calc(var(--select-box-item-height) + 2px);
     min-width: 40px;
     border: solid 1px #d6d6d6;
     border-radius: 3px;
@@ -10,7 +14,7 @@
     outline: none;
 }
 
-.absol-selectbox:not(.as-disable-click-to-focus){
+.absol-selectbox:not(.as-disable-click-to-focus) {
     cursor: copy;
 }
 
@@ -34,7 +38,7 @@
 .absol-selectbox-item {
     display: inline-block;
     position: relative;
-    height: 30px;
+    height: var(--select-box-item-height);
     box-sizing: border-box;
     border-radius: 2px;
     overflow: hidden;
@@ -65,10 +69,10 @@
 }
 
 .absol-selectbox-item-text {
-    height: 30px;
-    padding-right: 35px;
+    height: var(--select-box-item-height);
+    padding-right: calc(var(--select-box-item-height) + 5px);
     padding-left: 5px;
-    font-size: 14px;
+    font-size: inherit;
 }
 
 .absol-selectbox-item-text:hover {
@@ -76,7 +80,7 @@
 }
 
 .absol-selectbox-item-text span {
-    line-height: 30px;
+    line-height: var(--select-box-item-height);
     white-space: nowrap;
 }
 
@@ -85,7 +89,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    width: 30px;
+    width: var(--select-box-item-height);
     text-align: center;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -97,7 +101,7 @@
 
 .absol-selectbox-item-close span {
     font-size: 15px;
-    line-height: 30px;
+    line-height: var(--select-box-item-height);
 }
 
 .absol-selectbox {
