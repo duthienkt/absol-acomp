@@ -117,13 +117,28 @@ html {
     border-radius: 4px 4px 0 0;
     border: none;
     background-color: var(--color-primary-dark);
-    color: var(--color-primary);
+    color: var(--color-primary-light);
 }
 
-.bsc-main-tab > .absol-tabbar .absol-tabbar-button:hover{
+.bsc-main-tab > .absol-tabbar .absol-tabbar-button:hover {
     background-color: var(--color-primary-hover);
 }
 
-.bsc-main-tab > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active{
+.bsc-main-tab > .absol-tabbar .absol-tabbar-button:hover:not(.absol-tabbar-button-active) {
+    color: white;
+}
+
+.bsc-main-tab > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active {
     background-color: white;
+    color: var(--color-primary);
+}
+
+.bsc-main-tab > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active .absol-tabbar-button-text {
+    text-shadow: 1px 0 0 currentColor;
+}
+
+.bsc-main-tab > .absol-tabbar .absol-tabbar-button-close {
+    border-radius: 50%;
+    width: 1em;
+    height: 1em;
 }
