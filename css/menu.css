@@ -105,7 +105,8 @@
 .absol-vmenu {}
 
 .absol-hmenu .absol-dropdown-content,
-.absol-hmenu .absol-dropright-content {
+.absol-hmenu .absol-dropright-content,
+.as-v-root-menu .absol-dropright-content{
     padding-top: 0.4em;
     padding-bottom: 0.4em;
     background-color: rgb(252, 252, 255);
@@ -175,10 +176,19 @@ img.absol-vmenu-button-icon[src] {
     bottom: 0.3em;
 }
 
+
+.absol-vmenu-arrow-container::after{
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+
 .absol-vmenu-arrow {
-    display: block;
-    font-size: 1em;
-    line-height: 1.2em;
+    display: inline-block;
+    font-size: inherit;
+    vertical-align: middle;
 }
 
 .absol-menu-item-disable .absol-vmenu-arrow {
@@ -252,4 +262,9 @@ img.absol-vmenu-button-icon[src] {
     border-radius: 0.3em;
     border: solid rgb(169, 169, 170) 1px;
     outline: none;
+}
+
+.as-v-root-menu {
+    display: inline-block;
+    box-sizing: border-box;
 }

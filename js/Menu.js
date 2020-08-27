@@ -1,8 +1,9 @@
 import '../css/menu.css';
 import ACore from "../ACore";
-import Dom from "absol/src/HTML5/Dom";
+import Dom, {isDomNode} from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -588,7 +589,6 @@ HMenu.eventHandler.clickSomewhere = function (event) {
 
 
 HMenu.prototype._childFromItems = function (items) {
-
     this.clearChild();
     this.$items = items.map(function (item, index) {
         var res = _({
@@ -602,7 +602,6 @@ HMenu.prototype._childFromItems = function (items) {
         this.addChild(res);
         return res;
     }.bind(this));
-
 };
 
 HMenu.prototype.init = function (props) {
@@ -641,5 +640,59 @@ HMenu.property.activeTab = {
     }
 };
 
+/***
+ * @extends AElement
+ * @constructor
+ */
+export function VRootMenu() {
+    this._items = [];
+    this.items = [];
+}
 
-ACore.install([HMenu, VMenuItem, VMenu, Dropright, VMenuLine, Dropdown, HMenuItem]);
+VRootMenu.tag = 'VRootMenu'.toLowerCase();
+
+VRootMenu.render = function () {
+    return _({
+        class: 'as-v-root-menu',
+        extendEvent: ['press', 'enter']
+    });
+};
+
+
+VRootMenu.prototype._childFromItems = function (items) {
+    var thisM = this;
+    this.clearChild();
+    this.$items = items.map(function (item, i) {
+        var itemElt;
+        if (typeof item === 'string' && (item.substr(0, 1) === '-' || item.substr(0, 1) === '=')) {
+            itemElt = _('vmenuline');
+        }
+        else if (isDomNode(item)) {
+            itemElt = item;
+        }
+        else if (item.child || item.class || item.tag || item.style || typeof item === 'string') {
+            itemElt = _(item);
+        }
+        else {
+            console.log(thisM.eventHandler)
+            itemElt = _({
+                tag: 'vmenuitem',
+                props: item,
+                on: {
+                    enter: thisM.eventHandler.enterItem,
+                    press: thisM.eventHandler.pressItem
+                }
+            });
+        }
+        itemElt._tabIndex = i;
+        thisM.addChild(itemElt);
+        return itemElt;
+    });
+};
+
+VRootMenu.property = Object.assign({}, HMenu.property);
+
+VRootMenu.eventHandler = Object.assign({}, HMenu.eventHandler);
+
+
+ACore.install([HMenu, VMenuItem, VMenu, Dropright, VMenuLine, Dropdown, HMenuItem, VRootMenu]);
