@@ -40,6 +40,7 @@ OnScreenWidget.eventHandler.widgetStartDrag = function (event) {
 };
 
 OnScreenWidget.eventHandler.widgetDrag = function (event) {
+    event.preventDefault();
     var screenSize = getScreenSize();
     var p0 = new Vec2(this._widgetBound.left, this._widgetBound.top);
     var dv = event.currentPoint.sub(event.startingPoint);
