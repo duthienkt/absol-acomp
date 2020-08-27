@@ -184,6 +184,9 @@
     color: red;
 }
 
+.absol-tabview  .absol-tabbar-button-close:hover::before {
+    content: "\F0159";
+}
 
 
 
