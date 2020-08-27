@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VRootMenu</title>
+    <script src="../dist/absol-acomp.js?time=<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <script src="vrootmenu_data.js?time=<?php  echo stat('./vrootmenu_data.js')['mtime'];?>"></script>
+    <style>
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --main-menu-width: unset;
+            --main-header-height: 60px;
+            --color-primary-darker: rgb(18, 25, 41);
+            --color-primary-dark: rgb(35, 49, 81);
+            --color-primary-light: rgb(92, 209, 246);
+            --main-menu-item-height: 40px;
+        }
+
+        .bsc-main {
+            width: 100%;
+            height: 100%;
+            position: relative;
+
+        }
+
+        .bsc-main-menu-ctn {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background-color: var(--color-primary-dark);
+        }
+
+        .bsc-main-menu-ctn .absol-hmenu-button,
+        .bsc-main-menu-ctn .absol-vmenu-button {
+            color: var(--color-primary-light);
+        }
+
+        .bsc-main-menu-ctn .absol-vmenu-button:hover, .bsc-main-menu-ctn .absol-vmenu .absol-vmenu-button-hover {
+            background-color: var(--color-primary-darker);
+        }
+
+        .bsc-main-menu-ctn .absol-dropright-content{
+            background-color: var(--color-primary-dark);
+        }
+
+        .bsc-main-menu-ctn  .absol-vmenu-button{
+            height: var(--main-menu-item-height);
+        }
+
+        .bsc-main-body {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            left: var(--main-menu-width);
+        }
+
+        .bsc-logo-ctn {
+            height: var(--main-header-height);
+            text-align: center;
+            background-color: var(--color-primary-darker);
+        }
+
+        .bsc-logo-ctn::before {
+            content: '';
+            height: 100%;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .bsc-logo-ctn img {
+            max-height: calc(var(--main-header-height) - 10px);
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+
+    </style>
+
+</head>
+<body>
+<script>
+    var _ = absol._;
+    var $ = absol.$;
+
+    var mVRootMenu = _({
+        tag: 'vrootmenu',
+        props: BSCMenuConfig
+    })
+    var pageElt = _({
+        class: 'bsc-main',
+        child: [
+            {
+                class: 'bsc-main-menu-ctn',
+                child: mVRootMenu
+            },
+            {
+                class: 'bsc-main-body'
+            },
+            {
+                tag: 'attachhook',
+                props: {
+                    requestUpdateSize: function () {
+                        var menuBound = mVRootMenu.getBoundingClientRect();
+                        pageElt.addStyle('--main-menu-width', menuBound.width + 'px')
+                    }
+                },
+                on: {
+                    attached: function () {
+                        absol.Dom.addToResizeSystem(this);
+                        this.requestUpdateSize();
+                    }
+                }
+            }
+        ],
+    }).addTo(document.body);
+
+
+</script>
+</body>
+</html>
