@@ -11,7 +11,7 @@ import ChromeCalendar from "../ChromeCalendar";
 import CircleSectionLabel from "../CircleSectionLabel";
 import {HScrollbar, HScroller, Scrollbar, VScrollbar, VScroller} from "../Scroller";
 import ContextCaptor from "../ContextMenu";
-import {Dropdown, Dropright, HMenu, HMenuItem, MenuButton, VMenu, VMenuItem, VMenuLine} from "../Menu";
+import {Dropdown, Dropright, HMenu, HMenuItem, MenuButton, VMenu, VMenuItem, VMenuLine, VRootMenu} from "../Menu";
 import DateInput2 from "../DateInput2";
 import DraggableHStack from "../DraggableHStack";
 import DraggableVStack from "../DraggableVStack";
@@ -109,6 +109,7 @@ export var publicCreators = [
     Dropdown,
     HMenuItem,
     VMenu,
+    VRootMenu,
     MenuButton,
     DateInput2,
     Hanger,
