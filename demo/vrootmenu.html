@@ -28,7 +28,7 @@
     var mainTabView = _({
         tag: 'tabview',
         class: 'bsc-main-tab',
-        child: ['timeinput.html', 'timeinput.html', 'trackbar.html', 'cardtable.html'].map((name) => ({
+        child: ['checkbox.html', 'timeinput.html', 'trackbar.html', 'cardtable.html'].map((name) => ({
             tag: 'tabframe',
             attr:{
               name: name
@@ -38,7 +38,8 @@
                 style: {
                     width: '100%',
                     height: '100%',
-                    border: 'none'
+                    border: 'none',
+                    backgroundColor:'white'
                 },
                 props:{
                     src:name
