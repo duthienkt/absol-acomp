@@ -79,6 +79,7 @@ import SelectMenu from "../SelectMenu";
 import ButtonRange from "../ButtonRange";
 import DropZone from "../DropZone";
 import RadioInput from "../RadioInput";
+import OnScreenWidget from "../OnScreenWidget";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -142,6 +143,7 @@ export var publicCreators = [
     NumberInput,
     NumberSpanInput,
     OnScreenWindow,
+    OnScreenWidget,
     PageSelector,
     PreInput,
     ProgressBar,
