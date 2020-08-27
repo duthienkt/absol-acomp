@@ -8,6 +8,10 @@ import AElement from "absol/src/HTML5/AElement";
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 export function MenuButton() {
     this.$text = $('.absol-vmenu-button-text', this);
     this.$key = $('.absol-vmenu-button-key', this);
@@ -112,8 +116,12 @@ MenuButton.property.extendStyle = {
 
 ACore.install(MenuButton);
 
-
-export function Dropdown(data) {
+/***
+ *
+ * @extends AElement
+ * @constructor
+ */
+export function Dropdown() {
     this.$container = $('.absol-dropdown-content', this);
 }
 
@@ -121,7 +129,7 @@ Dropdown.tag = 'dropdown';
 
 Dropdown.render = function () {
     return _({
-        class: ['absol-drop-hidden', 'absol-dropdown'], child: '.absol-dropdown-content'
+        class: ['absol-drop-hidden', 'absol-dropdown'], child: '.absol-dropdown-content.as-bscroller'
     });
 };
 
@@ -137,6 +145,27 @@ Dropdown.property.show = {
             }
             else if (aPst.overlapLeft) {
                 this.addClass('overlap-left');
+            }
+
+            if (aPst.overlapBottom) {
+                this.removeClass('overlap-top');
+                this.$container.removeStyle('max-height')
+                    .removeStyle('top');
+            }
+            else if (aPst.overlapTop) {
+                this.addClass('overlap-top');
+                this.$container.removeStyle('max-height')
+                    .removeStyle('top');
+            }
+            else if (aPst.crampedHeight) {
+                this.removeClass('overlap-top');
+                this.$container.addStyle({
+                    'max-height': aPst.maxHeight + 'px',
+                    top: aPst.posTop + 'px'
+                });
+            }
+            else {
+                console.warn('Can not handle menu with cramped space');
             }
         }
         else {
@@ -155,15 +184,23 @@ Dropdown.prototype.findAvailablePosition = function () {
     var distTop = bound.top - outBound.top;
     var distLeft = bound.left - outBound.left;
     var distRight = -bound.right + outBound.right;
-    var distBottom = -bound.right + outBound.right;
+    var distBottom = -bound.bottom + outBound.bottom;
     var result = {};
-    if (distTop >= containerBound.height) result.top = true;
-    if (distBottom >= containerBound.height) result.bottom = true;
+
     if (distLeft >= containerBound.width) result.left = true;
+    if (distTop >= containerBound.height) result.top = true;
     if (distRight >= containerBound.width) result.right = true;
+    if (distBottom >= containerBound.height) result.bottom = true;
     if (distRight + bound.width >= containerBound.width) result.overlapRight = true;
     if (distLeft + bound.width >= containerBound.width) result.overlapLeft = true;
-    //todo: more
+    if (distBottom + bound.height >= containerBound.height) result.overlapBottom = true;
+    if (distTop + bound.height >= containerBound.height) result.overlapTop = true;
+    if (!result.overlapTop && !result.overlapBottom) {
+        result.crampedHeight = true;
+        result.maxHeight = outBound.height - 20;
+        result.posTop = distBottom - Math.min(containerBound.height, result.maxHeight) + bound.height - 10;
+    }
+
     return result;
 };
 
@@ -199,7 +236,7 @@ Dropdown.prototype.init = function (props) {
 };
 
 
-export function Dropright(data) {
+export function Dropright() {
     this.$container = $('.absol-dropright-content', this);
 }
 
@@ -208,7 +245,7 @@ Dropright.tag = 'dropright';
 Dropright.render = function () {
     return _({
         class: ['absol-drop-hidden', 'absol-dropright'],
-        child: '.absol-dropright-content',
+        child: '.absol-dropright-content.as-bscroller',
         data: { $trigger: undefined, $content: undefined, _isShow: false }
     });
 }
@@ -457,12 +494,18 @@ VMenu.prototype.init = function (props) {
 VMenu.prototype._childFromItems = function (items) {
     this.clearChild();
     this.$items = items.map(function (item, index) {
-        var res;
-        if (typeof (item) == 'string') {
-            res = _('vmenuline');
+        var itemElt;
+        if (typeof item === 'string' && (item.substr(0, 1) === '-' || item.substr(0, 1) === '=')) {
+            itemElt = _('vmenuline');
+        }
+        else if (isDomNode(item)) {
+            itemElt = item;
+        }
+        else if (item.child || item.class || item.tag || item.style || typeof item === 'string') {
+            itemElt = _(item);
         }
         else {
-            res = _({
+            itemElt = _({
                 tag: 'vmenuitem',
                 props: Object.assign({ _tabIndex: index }, item),
                 on: {
@@ -471,8 +514,8 @@ VMenu.prototype._childFromItems = function (items) {
                 }
             });
         }
-        this.addChild(res);
-        return res;
+        this.addChild(itemElt);
+        return itemElt;
     }.bind(this));
     //todo
 };
@@ -559,9 +602,6 @@ HMenu.eventHandler.pressItem = function (event) {
 
     if (event.menuItem.items && event.menuItem.items.length > 0 && !(this.activeTab >= 0)) {
         this.activeTab = event.menuItem._tabIndex;
-        setTimeout(function () {
-            $(document.body).once('click', this.eventHandler.clickSomewhere, false);
-        }.bind(this), 100);
     }
     else {
         this.emit('press', event, this);
@@ -576,15 +616,8 @@ HMenu.eventHandler.enterItem = function (event) {
 
 
 HMenu.eventHandler.clickSomewhere = function (event) {
-    if (event.menuItem) {
-        //  wait for next time
-        setTimeout(function () {
-            $(document.body).once('click', this.eventHandler.clickSomewhere, false);
-        }.bind(this), 100);
-    }
-    else {
-        this.activeTab = -1;
-    }
+    if (EventEmitter.hitElement(this, event)) return;
+    this.activeTab = -1;
 };
 
 
@@ -622,6 +655,7 @@ HMenu.property.items = {
 
 HMenu.property.activeTab = {
     set: function (tabIndex) {
+        var lastValue = this._activeTab;
         this._activeTab = tabIndex;
         for (var i = 0; i < this.$items.length; ++i) {
             var item = this.$items[i];
@@ -633,6 +667,14 @@ HMenu.property.activeTab = {
             else {
                 item.$button && item.$button.removeClass('absol-hmenu-button-hover');
             }
+        }
+        if (!(lastValue >= 0) && (this._activeTab >= 0)) {
+            setTimeout(function () {
+                $(document.body).on('click', this.eventHandler.clickSomewhere, false);
+            }.bind(this), 100);
+        }
+        else if ((lastValue >= 0) && !(this._activeTab >= 0)) {
+            $(document.body).off('click', this.eventHandler.clickSomewhere, false);
         }
     },
     get: function () {
@@ -674,7 +716,6 @@ VRootMenu.prototype._childFromItems = function (items) {
             itemElt = _(item);
         }
         else {
-            console.log(thisM.eventHandler)
             itemElt = _({
                 tag: 'vmenuitem',
                 props: item,
