@@ -52,12 +52,17 @@
             background-color: var(--color-primary-darker);
         }
 
-        .bsc-main-menu-ctn .absol-dropright-content{
+        .bsc-main-menu-ctn .absol-dropright-content {
             background-color: var(--color-primary-dark);
         }
 
-        .bsc-main-menu-ctn  .absol-vmenu-button{
+        .bsc-main-menu-ctn .absol-vmenu-button {
             height: var(--main-menu-item-height);
+        }
+
+        .absol-dropright:not(.absol-drop-hidden) > .absol-vmenu-button .absol-vmenu-button-text {
+            color: white;
+            text-shadow: 0.5px 0 0 currentColor;
         }
 
         .bsc-main-body {
@@ -98,14 +103,23 @@
 
     var mVRootMenu = _({
         tag: 'vrootmenu',
-        props: BSCMenuConfig
+        props: BSCMenuConfig,
+        on: {
+            press: function (event) {
+                var menuItem = event.menuItem;
+                if (!menuItem.items || !menuItem.items.length) {
+                    mVRootMenu.activeTab = -1;
+                }
+            }
+        }
     })
     var pageElt = _({
         class: 'bsc-main',
         child: [
             {
                 class: 'bsc-main-menu-ctn',
-                child: mVRootMenu
+                child: mVRootMenu,
+
             },
             {
                 class: 'bsc-main-body'

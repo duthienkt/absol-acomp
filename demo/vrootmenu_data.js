@@ -145,13 +145,18 @@ var BSCMenuConfig = {
         },
         {
             "text": "BSC",
-            "items": [{ "text": "Scorecard" }, { "text": "Bản đồ chiến lược" }, { "text": "Ma trận chức năng" }]
+            "items": [{ "text": "Scorecard" }, { icon:'span.mdi.mdi-map-marker-check-outline',"text": "Bản đồ chiến lược" }, { "text": "Ma trận chức năng" }]
         },
         { "text": "Đề xuất", "items": [{ "text": "Đề xuất mục tiêu" }, { "text": "Đề xuất KQ" }] }, {
             "text": "Duyệt",
             "items": [{ "text": "Duyệt mục tiêu" }, { "text": "Duyệt kế hoạch thực hiện" }, { "text": "Duyệt kết quả" }, { "text": "Duyệt kế hoạch báo cáo" }]
         },
-        { "text": "Cảnh báo" }, {
+        {
+            icon:'span.mdi.mdi-alert',
+            "text": "Cảnh báo"
+        },
+        {
+            icon:'span.mdi.mdi-file-chart',
             "text": "Báo cáo",
             "items": [{ "text": "Tổng quan" }, { "text": "Báo cáo KPI" }, { "text": "Báo cáo bộ phận, nhân viên" }, { "text": "Báo cáo so sánh mục tiêu theo bộ phận, nhân viên" }, { "text": "Báo cáo so sánh mục tiêu theo KPI" }, { "text": "Hiệu suất" }, { "text": "Báo cáo hiệu suất 12 tháng" }, { "text": "Ma trận bộ phận và KPI" }, { "text": "Báo cáo hiệu suất và năng lực nhân viên" }, { "text": "Báo cáo định vị tăng lương" }, { "text": "Map profile" }, { "text": "Báo cáo cập nhật KPI" }]
         },
@@ -161,5 +166,33 @@ var BSCMenuConfig = {
         }, {
             "text": "Hệ thống",
             "items": [{ "text": "Người dùng" }, { "text": "Nhóm người dùng" }, "======", { "text": "Tùy chọn" }, { "text": "Mở khóa kế hoạch thực hiện" }, { "text": "Sao lưu và phục hồi" }, "=====", { "text": "Undo" }, "=====", { "text": "Thư viện chỉ số" }, "=====", { "text": "Hồ sơ cá nhân" }, { "text": "Đăng xuất" }]
-        }]
+        },
+        {
+            text: 'Admin',
+            items: [
+                {
+                    tag: 'div',
+                    style: {
+                        'text-align': 'center',
+                        padding: '5px'
+                    },
+                    on: {
+                        click: function () {
+                            alert("Bạn có thể thêm hàm ở đây");
+                        }
+                    },
+                    child: {
+                        tag: 'img',
+                        props: {
+                            src: 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPgo8c3ZnIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNjAgNjAiPjxkZWZzPjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIGZpbGw9InRyYW5zcGFyZW50IiBjbGFzcz0ic3RlbmNpbF9fc2VsZWN0aW9uLWhlbHBlciI+PC9yZWN0PjxwYXRoIGQ9Ik0zMCAwQzEzLjQ0MDAwMDAwMDAwMDAwMSAwIDAgMTMuNDQwMDAwMDAwMDAwMDAxIDAgMzAgMCA0Ni41NiAxMy40NDAwMDAwMDAwMDAwMDEgNjAgMzAgNjAgNDYuNTYgNjAgNjAgNDYuNTYgNjAgMzAgNjAgMTMuNDQwMDAwMDAwMDAwMDAxIDQ2LjU2IDAgMzAgMCAzMCAwIDMwIDAgMzAgME0zMCA5QzM0Ljk4MDAwMDAwMDAwMDAwNCA5IDM5IDEzLjAyIDM5IDE4IDM5IDIyLjk4IDM0Ljk4MDAwMDAwMDAwMDAwNCAyNyAzMCAyNyAyNS4wMiAyNyAyMSAyMi45OCAyMSAxOCAyMSAxMy4wMiAyNS4wMiA5IDMwIDkgMzAgOSAzMCA5IDMwIDlNMzAgNTEuNTk5OTk5OTk5OTk5OTk0QzIyLjc2MDMwMDc3Nzk5ODI5IDUxLjU5OTk5OTk5OTk5OTk5NCAxNi4wMDE5NDQ4NDkzMjY0NCA0Ny45NzMwNDkxNjY3MTUxIDEyIDQxLjk0IDEyLjA5IDM1Ljk3IDI0IDMyLjcgMzAgMzIuNyAzNS45NyAzMi43IDQ3LjkxIDM1Ljk3IDQ4IDQxLjk0IDQzLjk5ODA1NTE1MDY3MzU2NSA0Ny45NzMwNDkxNjY3MTUxIDM3LjIzOTY5OTIyMjAwMTcxIDUxLjU5OTk5OTk5OTk5OTk5NCAzMCA1MS41OTk5OTk5OTk5OTk5OTQgMzAgNTEuNTk5OTk5OTk5OTk5OTk0IDMwIDUxLjU5OTk5OTk5OTk5OTk5NCAzMCA1MS41OTk5OTk5OTk5OTk5OTQiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSJub25lIiBzdHJva2UtZGFzaGFycmF5PSJub25lIiBmaWxsPSJyZ2IoMjU1LCAyNTUsIDI1NSkiIGZpbGwtcnVsZT0iZXZlbk9kZCI+PC9wYXRoPjwvc3ZnPg=='
+                        }
+                    }
+                },
+                { text: 'Hồ sơ cá nhân' },
+                {
+                    text: 'Đăng xuất'
+                }
+            ]
+        }
+    ]
 };
