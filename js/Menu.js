@@ -139,6 +139,13 @@ Dropdown.property.show = {
     set: function (value) {
         if (value) {
             this.removeClass('absol-drop-hidden');
+            if (this.$container.firstChild && this.$container.firstChild.$items) {
+                this.$container.firstChild.$items.forEach(function (itemElt) {
+                    if (itemElt.autoFixParrentSize) {
+                        itemElt.autoFixParrentSize();
+                    }
+                });
+            }
             var aPst = this.findAvailablePosition();
             if (aPst.overlapRight) {
                 this.removeClass('overlap-left');
@@ -293,6 +300,7 @@ export function VMenuItem() {
 
     this.$button.on('click', this.eventHandler.clickButton, true);
     this.$button.on('mouseenter', this.eventHandler.enterButton, true);
+    this._textMarginRight = 0;
 }
 
 
@@ -317,9 +325,11 @@ VMenuItem.prototype.init = function (props) {
 
 VMenuItem.prototype.autoFixParrentSize = function () {
     var parentWidth = this.$dropper.getBoundingClientRect().width;// dropper is fixed parent content size
+    if (!parentWidth) return;
     var buttonWidth = this.$button.getBoundingClientRect().width;
     var fontSize = this.$text.getFontSize();
-    this.$text.addStyle('margin-right', (parentWidth - buttonWidth) / fontSize + 'em');
+    this._textMarginRight = parentWidth - buttonWidth + this._textMarginRight;
+    this.$text.addStyle('margin-right', this._textMarginRight / fontSize + 'em');
 };
 
 VMenuItem.eventHandler = {};
@@ -577,9 +587,11 @@ HMenuItem.prototype.init = function (props) {
     Object.assign(this, props);
 };
 
-
+/***
+ * @extends AElement
+ * @constructor
+ */
 export function HMenu() {
-    this.eventHandler = OOP.bindFunctions(this, HMenu.eventHandler);
 }
 
 HMenu.tag = 'hmenu';
@@ -618,6 +630,7 @@ HMenu.eventHandler.enterItem = function (event) {
 HMenu.eventHandler.clickSomewhere = function (event) {
     if (EventEmitter.hitElement(this, event)) return;
     this.activeTab = -1;
+    window.removeEventListener('blur', this.eventHandler.clickSomewhere);
 };
 
 
@@ -671,6 +684,7 @@ HMenu.property.activeTab = {
         if (!(lastValue >= 0) && (this._activeTab >= 0)) {
             setTimeout(function () {
                 $(document.body).on('click', this.eventHandler.clickSomewhere, false);
+                window.addEventListener('blur', this.eventHandler.clickSomewhere);
             }.bind(this), 100);
         }
         else if ((lastValue >= 0) && !(this._activeTab >= 0)) {
