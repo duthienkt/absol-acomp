@@ -21,6 +21,7 @@
                 var menuItem = event.menuItem;
                 if (!menuItem.items || !menuItem.items.length) {
                     mVRootMenu.activeTab = -1;
+                    console.log(menuItem.text)
                 }
             }
         }
@@ -87,7 +88,6 @@
             }
         }
     }).addTo(document.body);
-
 
 </script>
 </body>
