@@ -73,7 +73,6 @@ CheckBox.attribute = {
     },
     disabled: {
         set: function (value) {
-            console.log(value)
             if (value === 'false' || value === null) {
                 this.disabled = false;
             }
