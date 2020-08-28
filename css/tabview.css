@@ -184,11 +184,6 @@
     color: red;
 }
 
-.absol-tabview  .absol-tabbar-button-close:hover::before {
-    content: "\F0159";
-}
-
-
 
 /************** Mini version - like window form ***********************/
 

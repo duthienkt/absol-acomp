@@ -1,6 +1,7 @@
 import '../css/tabview.css';
 import ACore from "../ACore";
 import {randomIdent} from "absol/src/String/stringGenerate";
+import Dom from "absol/src/HTML5/Dom";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -116,3 +117,25 @@ TabButton.property.modified = {
 ACore.install(TabButton);
 
 export default TabButton;
+
+
+Dom.documentReady.then(function () {
+    var a = _({
+        tag: 'span',
+        class: ['mdi', 'mdi-close-circle'],
+        style: {
+            display: 'none'
+        }
+    }).addTo(document.body);
+    var content = getComputedStyle(a, '::before').content;
+    var code = content.charCodeAt(1).toString(16).toUpperCase();
+    a.remove();
+    _({
+        tag: 'style',
+        props: {
+            innerHTML: '.absol-tabview  .absol-tabbar-button-close:hover::before {\n' +
+                '    content: ' + content + ';\n' +
+                '}'
+        }
+    }).addTo(document.head);
+});
