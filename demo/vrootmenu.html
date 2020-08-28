@@ -18,11 +18,9 @@
         props: BSCMenuConfig,
         on: {
             press: function (event) {
+                if (event.isLeaf) mVRootMenu.activeTab = -1;
                 var menuItem = event.menuItem;
-                if (!menuItem.items || !menuItem.items.length) {
-                    mVRootMenu.activeTab = -1;
-                    console.log(menuItem.text)
-                }
+                console.log(menuItem.text)
             }
         }
     });
@@ -31,8 +29,8 @@
         class: 'bsc-main-tab',
         child: ['checkbox.html', 'timeinput.html', 'trackbar.html', 'cardtable.html'].map((name) => ({
             tag: 'tabframe',
-            attr:{
-              name: name
+            attr: {
+                name: name
             },
             child: {
                 tag: 'iframe',
@@ -40,10 +38,10 @@
                     width: '100%',
                     height: '100%',
                     border: 'none',
-                    backgroundColor:'white'
+                    backgroundColor: 'white'
                 },
-                props:{
-                    src:name
+                props: {
+                    src: name
                 }
             }
         }))
