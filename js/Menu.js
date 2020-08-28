@@ -119,7 +119,7 @@ ACore.install(MenuButton);
 
 /***
  *
- * @extends AElement
+ * @extends Follower
  * @constructor
  */
 export function Dropdown() {
@@ -613,6 +613,7 @@ HMenu.eventHandler.pressItem = function (event) {
         this.activeTab = event.menuItem._tabIndex;
     }
     else {
+        event.isLeaf = (!event.menuItem.items || !event.menuItem.items.length);
         this.emit('press', event, this);
     }
 };

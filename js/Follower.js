@@ -2,12 +2,17 @@ import '../css/follower.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
+import AElement from "absol/src/HTML5/AElement";
 
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function Follower() {
     this.$attachHook = _('attachhook', this)
         .addTo(this)
