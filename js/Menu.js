@@ -681,7 +681,7 @@ HMenu.property.activeTab = {
         if (!(lastValue >= 0) && (this._activeTab >= 0)) {
             setTimeout(function () {
                 $(document.body).on('click', this.eventHandler.clickSomewhere, false);
-                // window.addEventListener('blur', this.eventHandler.clickSomewhere);
+                window.addEventListener('blur', this.eventHandler.clickSomewhere);
             }.bind(this), 100);
         }
         else if ((lastValue >= 0) && !(this._activeTab >= 0)) {
