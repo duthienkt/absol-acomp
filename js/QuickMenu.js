@@ -226,7 +226,8 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
 };
 
 QuickMenu.close = function (session) {
-    if (session !== true && session != QuickMenu._session) return;
+    if (session !== true && session !== QuickMenu._session) return;
+    QuickMenu._session =  Math.random() * 10000000000 >> 0;
     QuickMenu.$element = undefined;
     QuickMenu._menuListener = undefined;
     QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
