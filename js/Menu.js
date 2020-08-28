@@ -4,6 +4,7 @@ import Dom, {isDomNode} from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
+import Follower from "./Follower";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -123,13 +124,16 @@ ACore.install(MenuButton);
  */
 export function Dropdown() {
     this.$container = $('.absol-dropdown-content', this);
+    this.$container.followTarget = this;
+    this.$container.anchor = [1, 2, 6, 5];
+
 }
 
 Dropdown.tag = 'dropdown';
 
 Dropdown.render = function () {
     return _({
-        class: ['absol-drop-hidden', 'absol-dropdown'], child: '.absol-dropdown-content.as-bscroller'
+        class: ['absol-drop-hidden', 'absol-dropdown'], child: 'follower.absol-dropdown-content.as-bscroller'
     });
 };
 
@@ -139,40 +143,31 @@ Dropdown.property.show = {
     set: function (value) {
         if (value) {
             this.removeClass('absol-drop-hidden');
-            if (this.$container.firstChild && this.$container.firstChild.$items) {
-                this.$container.firstChild.$items.forEach(function (itemElt) {
+            if (this.$container.lastChild && this.$container.lastChild.$items) {
+                this.$container.lastChild.$items.forEach(function (itemElt) {
                     if (itemElt.autoFixParrentSize) {
                         itemElt.autoFixParrentSize();
                     }
                 });
             }
             var aPst = this.findAvailablePosition();
-            if (aPst.overlapRight) {
-                this.removeClass('overlap-left');
-            }
-            else if (aPst.overlapLeft) {
-                this.addClass('overlap-left');
-            }
-
-            if (aPst.overlapBottom) {
+            if (aPst.crampedHeight) {
                 this.removeClass('overlap-top');
-                this.$container.removeStyle('max-height')
-                    .removeStyle('top');
-            }
-            else if (aPst.overlapTop) {
-                this.addClass('overlap-top');
-                this.$container.removeStyle('max-height')
-                    .removeStyle('top');
-            }
-            else if (aPst.crampedHeight) {
-                this.removeClass('overlap-top');
+                this.$container.followTarget = null;
                 this.$container.addStyle({
-                    'max-height': aPst.maxHeight + 'px',
-                    top: aPst.posTop + 'px'
+                    'max-height': aPst.maxHeight + 'px'
                 });
+                this.$container.refollow();
+                this.$container.updatePosition();
+                this.$container.addStyle('top', this.getBoundingClientRect().top + aPst.posTop + 'px');
+
+
             }
             else {
-                console.warn('Can not handle menu with cramped space');
+                this.$container.removeStyle('max-height')
+                    .removeStyle('top');
+                this.$container.refollow();
+                this.$container.updatePosition();
             }
         }
         else {
@@ -185,7 +180,7 @@ Dropdown.property.show = {
 };
 
 Dropdown.prototype.findAvailablePosition = function () {
-    var outBound = Dom.traceOutBoundingClientRect(this);
+    var outBound = Dom.traceOutBoundingClientRect(document.body);
     var containerBound = this.$container.getBoundingClientRect();
     var bound = this.getBoundingClientRect();
     var distTop = bound.top - outBound.top;
@@ -245,6 +240,8 @@ Dropdown.prototype.init = function (props) {
 
 export function Dropright() {
     this.$container = $('.absol-dropright-content', this);
+    this.$container.followTarget = this;
+    this.$container.anchor = [0, 3, 7, 4];
 }
 
 Dropright.tag = 'dropright';
@@ -252,7 +249,7 @@ Dropright.tag = 'dropright';
 Dropright.render = function () {
     return _({
         class: ['absol-drop-hidden', 'absol-dropright'],
-        child: '.absol-dropright-content.as-bscroller',
+        child: 'follower.absol-dropright-content.as-bscroller',
         data: { $trigger: undefined, $content: undefined, _isShow: false }
     });
 }
@@ -684,7 +681,7 @@ HMenu.property.activeTab = {
         if (!(lastValue >= 0) && (this._activeTab >= 0)) {
             setTimeout(function () {
                 $(document.body).on('click', this.eventHandler.clickSomewhere, false);
-                window.addEventListener('blur', this.eventHandler.clickSomewhere);
+                // window.addEventListener('blur', this.eventHandler.clickSomewhere);
             }.bind(this), 100);
         }
         else if ((lastValue >= 0) && !(this._activeTab >= 0)) {
