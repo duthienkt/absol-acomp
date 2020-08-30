@@ -1,8 +1,8 @@
 import {nonAccentVietnamese} from "absol/src/String/stringFormat";
 import {wordsMatch} from "absol/src/String/stringMatching";
 
-var EXTRA_MATCH_SCORE = 2;
-var UNCASE_MATCH_SCORE = 1;
+var EXTRA_MATCH_SCORE = 7;
+var UNCASE_MATCH_SCORE = 4;
 var UVN_MATCH_SCORE = 3;
 var EQUAL_MATCH_SCORE = 4;
 var WORD_MATCH_SCORE = 3;
@@ -13,7 +13,6 @@ var WORD_MATCH_SCORE = 3;
  * @returns {*}
  */
 export default function prepareSearchForItem(item) {
-    if (!item.text) console.log(item)
     var spliter = /\s+/;
     item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
     item.__words__ = item.__text__.split(spliter);
@@ -94,6 +93,7 @@ export function searchListByText(query, items) {
     });
     var midValue = (its[0].score + its[its.length - 1].score) / 2;
     if (midValue === 0) midValue += 0.1;
+    if (midValue <3) midValue = 3;
     return its.filter(function (it) {
         return it.score >= midValue;
     }).map(function (it) {
