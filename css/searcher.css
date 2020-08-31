@@ -60,3 +60,7 @@
 .absol-search-text-input.searching svg.find{
     display: none;
 }
+
+.absol-search-text-input-container input::-webkit-search-cancel-button{
+    display: none;
+}
