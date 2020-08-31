@@ -6,6 +6,8 @@ import Element from "absol/src/HTML5/Element";
 import Rectangle from "absol/src/Math/Rectangle";
 import Dom from "absol/src/HTML5/Dom";
 import {findChangedTouchByIdent} from "absol/src/HTML5/EventEmitter";
+import {absCeil} from "./utils";
+
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -29,9 +31,9 @@ BoardTable.render = function () {
     });
 };
 
-export var EFFECT_ZONE_CLASS_NAME =  'as-board-table-effect-zone';
-export var DRAG_ZONE_CLASS_NAME =  'DRAG_ZONE_CLASS_NAME';
-export var FREE_ZONE_CLASS_NAME =  'as-board-free-zone';
+export var EFFECT_ZONE_CLASS_NAME = 'as-board-table-effect-zone';
+export var DRAG_ZONE_CLASS_NAME = 'DRAG_ZONE_CLASS_NAME';
+export var FREE_ZONE_CLASS_NAME = 'as-board-free-zone';
 
 BoardTable.EFFECT_ZONE_CLASS_NAME = EFFECT_ZONE_CLASS_NAME;
 BoardTable.DRAG_ZONE_CLASS_NAME = DRAG_ZONE_CLASS_NAME;
@@ -612,11 +614,11 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
         var thisBT = this;
         setTimeout(function () {
             if (scroller.scrollHeight > scroller.clientHeight) {
-                scroller.scrollTop += vy * dt;
+                scroller.scrollTop += absCeil(vy * dt);
             }
 
             if (scroller.scrollWidth > scroller.clientWidth) {
-                scroller.scrollLeft += vx * dt;
+                scroller.scrollLeft += absCeil(vx * dt);
             }
             if (thisBT._dragEventData && thisBT._dragEventData.state == "DRAG") {
                 thisBT.eventHandler.mousemoveOverflow(copyEvent);
