@@ -43,9 +43,9 @@ Radio.render = function () {
         class: 'absol-radio',
         child: [
             { tag: 'input', attr: { type: 'radio' } },
-            { tag: 'span' },
+            { tag: 'span', class: 'absol-radio-left-label' },
             Radio.radioProto.cloneNode(true),
-            { tag: 'span'}
+            { tag: 'span', class: 'absol-radio-right-label' }
         ]
     });
 };
@@ -61,7 +61,8 @@ Radio.prototype.getAllFriend = function () {
 };
 
 
-Radio.prototype.attribute = RadioButton;
+console.log(RadioButton)
+Radio.attribute = RadioButton.attribute;
 
 Radio.property = {
     name: {
@@ -80,8 +81,8 @@ Radio.property = {
             this.$labels[1].clearChild();
 
             if (value) {
-                this.$labels[0].addChild(_({text: value}));
-                this.$labels[1].addChild(_({text: value}));
+                this.$labels[0].addChild(_({ text: value }));
+                this.$labels[1].addChild(_({ text: value }));
             }
 
         },
