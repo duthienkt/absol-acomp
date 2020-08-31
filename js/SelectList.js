@@ -4,6 +4,7 @@ import {measureText, estimateWidth14} from "./utils";
 
 import './SelectListItem';
 import EventEmitter from "absol/src/HTML5/EventEmitter";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -142,8 +143,11 @@ export function measureListSize(items) {
     };
 }
 
-
 /*global absol*/
+/***
+ * @extends AElement
+ * @constructor
+ */
 function SelectList() {
     var thisSL = this;
     this.defineEvent(['pressitem', 'cancelasync', 'valuevisibilityasync', 'finishasync', 'sizechangeasync']);
