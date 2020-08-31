@@ -29,6 +29,14 @@ BoardTable.render = function () {
     });
 };
 
+export var EFFECT_ZONE_CLASS_NAME =  'as-board-table-effect-zone';
+export var DRAG_ZONE_CLASS_NAME =  'DRAG_ZONE_CLASS_NAME';
+export var FREE_ZONE_CLASS_NAME =  'as-board-free-zone';
+
+BoardTable.EFFECT_ZONE_CLASS_NAME = EFFECT_ZONE_CLASS_NAME;
+BoardTable.DRAG_ZONE_CLASS_NAME = DRAG_ZONE_CLASS_NAME;
+BoardTable.FREE_ZONE_CLASS_NAME = FREE_ZONE_CLASS_NAME;
+
 
 BoardTable.prototype.findDomChildBefore = function (elt) {
     var nodes = this.childNodes;
@@ -200,7 +208,7 @@ BoardTable.prototype.findChildHolderIndex = function (elt) {
 BoardTable.prototype.getEffectZone = function () {
     var ez = this;
     while (ez) {
-        if (ez.classList.contains('as-board-table-effect-zone')) {
+        if (ez.classList.contains(EFFECT_ZONE_CLASS_NAME)) {
             return ez;
         }
         ez = ez.parentElement;
@@ -212,10 +220,10 @@ BoardTable.prototype._findDragZone = function (elt) {
     var res = null;
     while (elt != this && elt) {
         if (elt.classList.contains('as-board-table')) return null;//maybe in other
-        if (!res && elt.classList.contains('as-board-drag-zone')) {
+        if (!res && elt.classList.contains(DRAG_ZONE_CLASS_NAME)) {
             res = elt;
         }
-        if (!res && elt.classList.contains('as-board-free-zone')) return null;// do not drag
+        if (!res && elt.classList.contains(FREE_ZONE_CLASS_NAME)) return null;// do not drag
         elt = elt.parentElement;
     }
     return res;
