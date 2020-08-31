@@ -61,7 +61,9 @@ SearchTextInput.render = function () {
                 {
                     class: 'absol-search-text-input-container',
                     child: {
-                        tag: 'input', attr: {
+                        tag: 'input',
+                        attr: {
+                            type: 'search',
                             placeholder: 'search...'
                         }
                     }
