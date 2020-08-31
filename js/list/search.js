@@ -93,7 +93,7 @@ export function searchListByText(query, items) {
     });
     var midValue = (its[0].score + its[its.length - 1].score) / 2;
     if (midValue === 0) midValue += 0.1;
-    if (midValue <3) midValue = 3;
+    if (midValue < 1) midValue = 1;
     return its.filter(function (it) {
         return it.score >= midValue;
     }).map(function (it) {
