@@ -32,7 +32,7 @@ BoardTable.render = function () {
 };
 
 export var EFFECT_ZONE_CLASS_NAME = 'as-board-table-effect-zone';
-export var DRAG_ZONE_CLASS_NAME = 'DRAG_ZONE_CLASS_NAME';
+export var DRAG_ZONE_CLASS_NAME = 'as-board-drag-zone';
 export var FREE_ZONE_CLASS_NAME = 'as-board-free-zone';
 
 BoardTable.EFFECT_ZONE_CLASS_NAME = EFFECT_ZONE_CLASS_NAME;
