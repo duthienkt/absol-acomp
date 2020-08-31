@@ -559,8 +559,8 @@ BoardTable.eventHandler.dragOnEffectZone = function (event) {
 BoardTable.eventHandler.mousemoveOverflow = function (event) {
     var scroller = this;
     while (scroller) {
-        var overlowStyle = window.getComputedStyle(scroller)['overflow'];
-        if (overlowStyle == 'auto' || overlowStyle == 'scroll' || scroller.tagName == 'BODY') break;
+        var overflowStyle = window.getComputedStyle(scroller)['overflow'];
+        if ((overflowStyle === 'auto' || overflowStyle === 'scroll' || scroller.tagName === 'HTML') && (scroller.clientHeight < scroller.scrollHeight||scroller.clientWidth < scroller.scrollWidth)) break;
         scroller = scroller.parentElement;
     }
     if (!scroller) return;
