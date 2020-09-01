@@ -61,7 +61,6 @@ Radio.prototype.getAllFriend = function () {
 };
 
 
-console.log(RadioButton)
 Radio.attribute = RadioButton.attribute;
 
 Radio.property = {
