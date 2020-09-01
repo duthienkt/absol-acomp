@@ -1,10 +1,17 @@
 import '../css/singlepage.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+var warned = false;
+
+/***
+ * @extends AElement
+ * @constructor
+ */
 function SinglePage() {
     var thisSP = this;
     this.$attachhook = $('attachhook', this)
@@ -37,14 +44,8 @@ SinglePage.render = function () {
 
 SinglePage.prototype.updateSize = function () {
     if (this.$header) {
-        if (this.$scroller.scrollHeight > this.$scroller.clientHeight) {
-            this.$header.addStyle('right', '17px');
-        }
-        else {
-            this.$header.removeStyle('right');
-        }
         var headerBound = this.$header.getBoundingClientRect();
-        this.$viewport.addStyle('padding-top', headerBound.height + 'px');
+        this.$scroller.addStyle('top', headerBound.height + 'px');
     }
     if (this.$footer) {
         var footerBound = this.$footer.getBoundingClientRect();
@@ -54,7 +55,12 @@ SinglePage.prototype.updateSize = function () {
 
 SinglePage.prototype.addChild = function (elt) {
     if (elt.classList.contains('absol-single-page-header')) {
-        this.appendChild(elt);
+        if (this.firstChild) {
+            this.addChildBefore(elt, this.firstChild);
+        }
+        else {
+            this.appendChild(elt);
+        }
         this.$header = elt;
         this.updateSize();
     }

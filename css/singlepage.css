@@ -5,12 +5,9 @@
 
 
 .absol-single-page-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     box-sizing: border-box;
     z-index: 2;
+    display: block;
 }
 
 .absol-single-page-footer {
@@ -30,7 +27,10 @@
 }
 
 .absol-single-page-scroller {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     overflow-y: auto;
 }
