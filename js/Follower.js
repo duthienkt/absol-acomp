@@ -14,13 +14,13 @@ var $ = ACore.$;
  * @constructor
  */
 function Follower() {
-    this.$attachHook = _('attachhook', this)
+    this.$attachhook = _('attachhook', this)
         .addTo(this)
-        .on('error', function () {
+        .on('attached', function () {
             this.requestUpdateSize();
             Dom.addToResizeSystem(this);
         });
-    this.$attachHook.requestUpdateSize = this.updatePosition.bind(this);
+    this.$attachhook.requestUpdateSize = this.updatePosition.bind(this);
 
     this.$followTarget = undefined;
     this.$scrollTrackElts = [];
@@ -37,7 +37,7 @@ Follower.render = function () {
 
 Follower.prototype.clearChild = function () {
     var children = Array.prototype.slice.call(this.children);
-    var attachhookElt = this.$attachHook;
+    var attachhookElt = this.$attachhook;
     children.forEach(function (elt) {
         if (elt != attachhookElt)
             elt.remove();
