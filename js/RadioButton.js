@@ -152,7 +152,6 @@ RadioButton.getValueByName = function (name) {
 
 
 RadioButton.autoReplace = function () {
-    console.log(this.tag)
     var placeHolders = Array.prototype.slice.call(document.getElementsByTagName(this.tag));
     var ph;
     var attOfPH;
