@@ -38,6 +38,7 @@
 
 .absol-selectlist-item {
     position: relative;
+    box-sizing: border-box;
 }
 
 .absol-selectlist-item-desc-container {
@@ -57,3 +58,5 @@
 .absol-selectlist-item-desc:empty {
     display: none;
 }
+
+

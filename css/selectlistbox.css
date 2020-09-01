@@ -1,0 +1,56 @@
+.as-select-list-box {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    --max-height: calc(100vh - 80px);
+    font-size: 14px;
+
+    border: solid 1px rgb(100, 100, 255);
+    box-sizing: border-box;
+    background-color: white;
+    display: inline-block;
+    vertical-align: top;
+    -webkit-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+    -moz-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+    box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+}
+
+.as-select-list-box-scroller {
+    max-height: calc(var(--max-height) - 2px);
+    overflow: auto;
+}
+
+.as-select-list-box-content {
+    position: relative;
+}
+
+.as-select-list-box-page {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+
+.as-select-list-box-search-ctn {
+    display: none;
+    padding: 5px;
+}
+
+
+.as-select-list-box.as-enable-search .as-select-list-box-search-ctn {
+    display: block;
+}
+
+.as-select-list-box:not(.as-searching) .as-last-in-group {
+    border-bottom: 1px solid #dddddd;
+}
+
+.as-select-list-box .as-last-in-group span {
+    line-height: 19px;
+}
+
+
+.as-select-list-box .absol-selectlist-item:hover {
+    background-color: #efefef;
+}

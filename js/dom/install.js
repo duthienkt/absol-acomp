@@ -80,6 +80,7 @@ import ButtonRange from "../ButtonRange";
 import DropZone from "../DropZone";
 import RadioInput from "../RadioInput";
 import OnScreenWidget from "../OnScreenWidget";
+import SelectListBox from "../SelectListBox";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -157,6 +158,7 @@ export var publicCreators = [
     RemoteSvg,
     ResizeBox,
     SearchTextInput,
+    SelectListBox,
     SelectMenu,
     SelectBox,
     SelectBoxItem,

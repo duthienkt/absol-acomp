@@ -124,9 +124,6 @@ export function measureMaxTextWidth(items) {
 export function measureListHeight(items) {
     var border = 0;
     var n = items.length - 1;
-    for (var i = 0; i < n; ++i) {
-        if (items[i].lastInGroup) border++;
-    }
     return items.length * 20 + border;
 }
 
