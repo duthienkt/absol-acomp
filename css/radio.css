@@ -62,12 +62,12 @@
     transition: opacity 0.1s;
 }
 
-.absol-radio:not(.right) > span:first-child {
+.absol-radio:not(.right) > span.absol-radio-left-label {
     display: none;
 }
 
 
-.absol-radio > span:last-child {
+.absol-radio > span.absol-radio-right-label {
     display: none;
 }
 

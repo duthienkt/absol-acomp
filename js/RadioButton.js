@@ -3,8 +3,6 @@ import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import Dom from "absol/src/HTML5/Dom";
 import AElement from "absol/src/HTML5/AElement";
-import Radio from "./Radio";
-import CheckboxInput from "./CheckBoxInput";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -24,13 +22,23 @@ function RadioButton() {
 
 RadioButton.tag = 'radiobutton';
 
+RadioButton.radioProto = _(
+    '<svg class="absol-radio-icon" width="20" height="20" version="1.1" viewBox="0 0 5.2917 5.2917"' +
+    '   xmlns="http://www.w3.org/2000/svg">' +
+    '    <g transform="translate(0 -291.71)">' +
+    '        <circle class="bound" cx="2.6458" cy="294.35" r="2.4626" style="stroke-opacity:.99497;stroke-width:.26458;" />' +
+    '        <circle class="dot" cx="2.6458" cy="294.35"  r= "0.92604" style="fill-rule:evenodd;" />' +
+    '    </g>' +
+    '</svg>'
+)
+
 RadioButton.render = function () {
     return _({
         tag:'label',
         class: 'absol-radio-button',
         child: [
             { tag: 'input', attr: { type: 'radio' } },
-            Radio.radioProto.cloneNode(true)
+            RadioButton.radioProto.cloneNode(true)
         ]
     });
 };
@@ -129,7 +137,7 @@ RadioButton.getAllByName = function (name) {
 };
 
 RadioButton.getValueByName = function (name) {
-    var inputs = Radio.getAllByName(name);
+    var inputs = RadioButton.getAllByName(name);
     var res = null;
     var input;
     for (var i = 0; i < inputs.length; ++i) {
@@ -204,4 +212,5 @@ RadioButton.initAfterLoad = function (){
 
 ACore.install('RadioButton'.toLowerCase(), RadioButton);
 
+console.log(RadioButton)
 export default RadioButton;
