@@ -212,5 +212,4 @@ RadioButton.initAfterLoad = function (){
 
 ACore.install('RadioButton'.toLowerCase(), RadioButton);
 
-console.log(RadioButton)
 export default RadioButton;
