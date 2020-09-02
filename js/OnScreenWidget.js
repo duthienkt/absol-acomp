@@ -15,9 +15,14 @@ var $ = ACore.$;
 function OnScreenWidget() {
     this.on({
         dragstart: this.eventHandler.widgetStartDrag,
-        drag: this.eventHandler.widgetDrag
-    })
+        drag: this.eventHandler.widgetDrag,
+        dragend: this.eventHandler.widgetDragEnd
+    });
 
+    this.addEventListener('click', function (event) {
+        if (!this._preventClick)
+            this.emit('click', event, this);
+    });
 }
 
 OnScreenWidget.tag = 'OnScreenWidget'.toLowerCase();
@@ -25,6 +30,7 @@ OnScreenWidget.tag = 'OnScreenWidget'.toLowerCase();
 OnScreenWidget.render = function () {
     return _({
         tag: 'hanger',
+        extendEvent: 'click',
         class: 'as-onscreen-widget'
     });
 };
@@ -37,6 +43,7 @@ OnScreenWidget.eventHandler = {};
 
 OnScreenWidget.eventHandler.widgetStartDrag = function (event) {
     this._widgetBound = this.getBoundingClientRect();
+    this._preventClick = true;
 };
 
 OnScreenWidget.eventHandler.widgetDrag = function (event) {
@@ -51,6 +58,13 @@ OnScreenWidget.eventHandler.widgetDrag = function (event) {
         top: p1.y + 'px',
         left: p1.x + 'px'
     });
+};
+
+OnScreenWidget.eventHandler.widgetDragEnd = function () {
+    var thisWG = this;
+    setTimeout(function () {
+        thisWG._preventClick = false;
+    }, 100);
 };
 
 ACore.install(OnScreenWidget);
