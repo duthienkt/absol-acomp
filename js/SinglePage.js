@@ -43,9 +43,13 @@ SinglePage.render = function () {
 
 
 SinglePage.prototype.updateSize = function () {
+    var paddingTop = parseFloat(this.getComputedStyleValue('padding-top').replace('px', '')) || 0;
+
     if (this.$header) {
         var headerBound = this.$header.getBoundingClientRect();
-        this.$scroller.addStyle('top', headerBound.height + 'px');
+        var headerMarginTop = parseFloat(this.$header.getComputedStyleValue('margin-top').replace('px', '')) || 0;
+        var headerMarginBottom = parseFloat(this.$header.getComputedStyleValue('margin-bottom').replace('px', '')) || 0;
+        this.$scroller.addStyle('top', (headerBound.height + headerMarginTop + headerMarginBottom + paddingTop) + 'px');
     }
     if (this.$footer) {
         var footerBound = this.$footer.getBoundingClientRect();
@@ -61,12 +65,12 @@ SinglePage.prototype.addChild = function (elt) {
         else {
             this.appendChild(elt);
         }
-        this.$header = elt;
+        this.$header = $(elt);
         this.updateSize();
     }
     else if (elt.classList.contains('absol-single-page-footer')) {
         this.$viewport.addChild(elt);
-        this.$footer = elt;
+        this.$footer = $(elt);
         this.updateSize();
     }
     else {
