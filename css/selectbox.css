@@ -2,6 +2,7 @@
     --select-box-item-height: 22px;
     --select-box-item-font-size: 12px;
     --select-box-item-border-radius: 10px;
+    --select-box-item-close-opacity: 0;
 }
 
 .absol-selectbox {
@@ -98,7 +99,7 @@
     -ms-user-select: none;
     user-select: none;
     cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.0893617021);
+    background-color: rgba(0, 0, 0, var(--select-box-item-close-opacity));
 }
 
 .absol-selectbox-item-close span {
