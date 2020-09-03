@@ -1,5 +1,7 @@
 :root {
-    --select-box-item-height: 30px;
+    --select-box-item-height: 22px;
+    --select-box-item-font-size: 12px;
+    --select-box-item-border-radius: 10px;
 }
 
 .absol-selectbox {
@@ -38,13 +40,13 @@
 .absol-selectbox-item {
     display: inline-block;
     position: relative;
+    font-size: var(--select-box-item-font-size);
     height: var(--select-box-item-height);
     box-sizing: border-box;
-    border-radius: 2px;
+    border-radius: var(--select-box-item-border-radius);
     overflow: hidden;
     background-color: #5bc0de;
     border-color: #46b8da;
-    font-size: 14px;
     vertical-align: top;
     white-space: normal;
     -webkit-user-select: none;
@@ -100,7 +102,7 @@
 }
 
 .absol-selectbox-item-close span {
-    font-size: 15px;
+    font-size: 1.25em;
     line-height: var(--select-box-item-height);
 }
 
