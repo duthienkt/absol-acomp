@@ -7,55 +7,46 @@
 </head>
 
 <body>
-    <script src="https://absol.cf/acomp/demo/selectmenu2_data.js"></script>
-    <script>
-        var $ = absol.$;
-        var _ = absol._;
-        items.forEach((it, i) => { it.value = i; it.lastInGroup = Math.random() < 1 / 10 });
-
-        var tabview = _({
-            tag: 'tabview',
-            style: {
-                width: '80vw',
-                height: '80vh'
-            }
-        }).addTo(document.body);
-
-
-        function newTab() {
-            var frame = _({
-                tag: 'tabframe',
-                style: {
-                    padding: '10px',
-                    'box-sizing': 'boder-box'
-                },
-                attr: {
-                    name: "NoName"
-                }
-            });
-            tabview.addChild(frame);
-            // this.remove();
-            var startTime = new Date();
-            var sm = _('selectmenu').addTo(frame)
-            sm.value = 9634;
-            sm.items = items;
-            sm.enableSearch = true;
-            var endTime = new Date();
-            _(`<p>Init component time:  ${endTime.getTime() - startTime.getTime()}(ms)</p>`).addTo(frame);
-            sm.on('change', function (event) {
-
-                _(`<p>lastValue: ${event.lastValue} value:  ${this.value}`).addTo(frame);
-
-            });
-            sm.on('change', function () {
-                console.log(this.value)
-            });
+<script src="https://absol.cf/acomp/demo/selectmenu2_data.1.js"></script>
+<script>
+    var $ = absol.$;
+    var _ = absol._;
+    items.forEach((it, i) => {
+        it.value = i;
+        // it.desc = absol.string.randomPhrase(56);
+        it.lastInGroup = Math.random() < 1 / 10
+    });
+    _({
+        style:{
+            height: '500px',
         }
-
-        Array(2).fill(null).forEach(newTab);
-    </script>
-    <button onclick="newTab()">NewTab</button>
-    <div style="height: 90vh"></div>
+    }).addTo(document.body);
+    _({
+        tag: 'selectmenu',
+        props: {
+            items: items,
+            enableSearch: true
+        }
+    }).addTo(document.body);
+    items.forEach((it, i) => {
+        it.value = i;
+        it.desc = absol.string.randomPhrase(56);
+    });
+    _({
+        tag: 'selectmenu',
+        props: {
+            items: items,
+            enableSearch: true
+        }
+    }).addTo(document.body);
+    _({
+        style:{
+            height: '500px',
+        }
+    }).addTo(document.body);
+</script>
+<button onclick="newTab()">NewTab</button>
+<div style="height: 90vh"></div>
 </body>
 
 </html>
