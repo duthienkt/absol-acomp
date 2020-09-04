@@ -1,7 +1,7 @@
 :root {
-    --select-box-item-height: 22px;
-    --select-box-item-font-size: 12px;
-    --select-box-item-border-radius: 10px;
+    --select-box-item-height: 18px;
+    --select-box-item-font-size: 10px;
+    --select-box-item-border-radius: 9px;
     --select-box-item-close-opacity: 0;
 }
 
