@@ -34,13 +34,13 @@ CheckBox.render = function () {
         child: [
             {
                 tag: 'span',
-                class: 'absol-checkbox-label',
+                class: ['absol-checkbox-label', 'as-left'],
                 child: { text: '' }
             },
             'checkboxinput',
             {
                 tag: 'span',
-                class: 'absol-checkbox-label',
+                class: ['absol-checkbox-label', 'as-right'],
                 child: { text: '' }
             }
         ]

@@ -4,23 +4,26 @@
     vertical-align: middle;
 }
 
-.absol-checkbox.right > .absol-checkbox-label:last-child {
+.absol-checkbox.right > .absol-checkbox-label.as-right {
     display: none;
 }
 
-.absol-checkbox-label:last-child {
-    padding-left: 0.3em;
-}
 
-.absol-checkbox-label:not(:last-child) {
-    padding-right: 0.3em;
-}
-
-.absol-checkbox:not(.right) > .absol-checkbox-label:first-child {
+.absol-checkbox:not(.right) > .absol-checkbox-label.as-left {
     display: none;
 }
 
 .absol-checkbox-label {
     vertical-align: middle;
     display: inline-block;
+}
+
+
+.absol-checkbox-label.as-left{
+    padding-right: 0.3em;
+}
+
+
+.absol-checkbox-label.as-right{
+    padding-left: 0.3em;
 }
