@@ -130,7 +130,7 @@ export function measureListHeight(items) {
 export function measureListSize(items) {
     var descWidth = measureMaxDescriptionWidth(items);
     var textWidth = measureMaxTextWidth(items);
-    var width = 8 + textWidth + 30 + 16 + 2;//padding, margin
+    var width = 8 + textWidth + 34 + 16 + 2;//padding, margin
     if (descWidth > 0) {
         width += +descWidth + 14 + 12 + 20;
     }
