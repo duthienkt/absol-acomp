@@ -15,9 +15,48 @@
     box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
 }
 
+.as-select-list-box .as-select-list-box {
+    min-width: 100%;
+}
+
+.as-select-list-box-search-ctn {
+    position: absolute;
+    left: 0;
+    right: 0;
+
+}
+
+.as-select-list-box.as-enable-search.as-anchor-6 .as-select-list-box-search-ctn,
+.as-select-list-box.as-enable-search.as-anchor-5 .as-select-list-box-search-ctn {
+    bottom: 0;
+}
+
+.as-select-list-box.as-enable-search.as-anchor-6,
+.as-select-list-box.as-enable-search.as-anchor-5 {
+    padding-bottom: 48px;
+}
+
+.as-select-list-box.as-enable-search.as-anchor-1,
+.as-select-list-box.as-enable-search.as-anchor-2 {
+    padding-top: 48px;
+}
+
+.as-select-list-box.as-enable-search.as-anchor-1 .as-select-list-box-search-ctn,
+.as-select-list-box.as-enable-search.as-anchor-2 .as-select-list-box-search-ctn {
+    top: 0;
+}
+
 .as-select-list-box-scroller {
-    max-height: calc(var(--max-height) - 2px);
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: visible;
+}
+
+.as-select-list-box .as-select-list-box-scroller {
+    max-height: var(--max-height);
+}
+
+.as-select-list-box.as-enable-search .as-select-list-box-scroller {
+    max-height: calc(var(--max-height) - 48px);
 }
 
 .as-select-list-box-content {

@@ -56,7 +56,7 @@ SelectListBox.prototype.preLoadN = 3;
 
 
 SelectListBox.prototype._initDomHook = function () {
-    this.$domSignal = $('attachhook.as-dom-signal');
+    this.$domSignal = $('attachhook.as-dom-signal', this);
     this.domSignal = new DomSignal(this.$domSignal);
     this.domSignal.on('viewListAt', this.viewListAt.bind(this));
     this.domSignal.on('viewListAtFirstSelected', this.viewListAtFirstSelected.bind(this));
@@ -243,8 +243,7 @@ SelectListBox.prototype.searchItemByText = function (text) {
 SelectListBox.prototype.resetSearchState = function () {
     this.$searchInput.value = '';
     this._preDisplayItems = this._listToDisplay(this._items);
-    this._displayItems = this._filterValue(this._preDisplayItems);
-    this._updateItemIndex();
+    this._updateDisplayItem();
     this.domSignal.emit('viewListAt', 0);
     this.$listScroller.scrollTop = 0;
 };
@@ -290,22 +289,32 @@ SelectListBox.prototype._updateItemIndex = function () {
 SelectListBox.prototype._updateDisplayItem = function () {
     this._displayItems = this._filterValue(this._preDisplayItems);
     this._updateItemIndex();
-    this._searchCache = {};
-    var estimateSize = measureListSize(this._preDisplayItems);
-    this._estimateSize = estimateSize;
-    this._estimateHeight = this._displayItems.length * 20;
-    this._estimateWidth = estimateSize.width;
     this.$content.addStyle({
-        'height': this._estimateHeight + 'px'
+        'height': this._displayItems.length * 20 + 'px'
     });
 
-    this.addStyle('width', this._estimateWidth + 'px');
 };
 
 
 SelectListBox.prototype._updateItems = function () {
     this._preDisplayItems = this._listToDisplay(this._items);
+    this._searchCache = {};
+    var estimateSize = measureListSize(this._items);
+    this._estimateSize = estimateSize;
+    this._estimateHeight = this._items.length * 20;
+    this._estimateWidth = estimateSize.width;
+
+    this.addStyle('width', this._estimateWidth + 'px');
     this._updateDisplayItem();
+};
+
+/***
+ *
+ * @param value
+ * @returns {{idx: number, item:{text:string, value:number|string}}[]}
+ */
+SelectListBox.prototype.findItemsByValue = function (value) {
+    return (this._itemHolderByValue[value] || []).slice();
 };
 
 SelectListBox.property = {};
@@ -366,9 +375,10 @@ SelectListBox.property.displayValue = {
 SelectListBox.property.enableSearch = {
     set: function (value) {
         if (value) this.addClass('as-enable-search');
+        else this.removeClass('as-enable-search');
     },
     get: function () {
-        return this.removeClass('as-enable-search');
+        return this.containsClass('as-enable-search');
     }
 };
 
@@ -393,9 +403,14 @@ SelectListBox.eventHandler.searchModify = function () {
     var searchedItems = this.searchItemByText(text);
     this._preDisplayItems = this._listToDisplay(searchedItems);
     this._displayItems = this._filterValue(this._preDisplayItems);
+    this.$content.addStyle({
+        'height': this._displayItems.length * 20 + 'px'
+    });
     this._updateItemIndex();
     this.viewListAt(0);
     this.$listScroller.scrollTop = 0;
+    this.updatePosition();
+
 };
 
 
