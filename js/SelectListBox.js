@@ -326,6 +326,7 @@ SelectListBox.property = {};
 SelectListBox.property.items = {
     set: function (items) {
         items = items || [];
+        prepareSearchForList(items);
         this._items = items;
         this._updateItems();
         this.viewListAt(0);
