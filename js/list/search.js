@@ -13,6 +13,7 @@ var WORD_MATCH_SCORE = 3;
  * @returns {*}
  */
 export default function prepareSearchForItem(item) {
+    if (!item.text || !item.text.charAt) item.text = item.text + '';
     var spliter = /\s+/;
     item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
     item.__words__ = item.__text__.split(spliter);
