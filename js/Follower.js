@@ -103,7 +103,13 @@ Follower.prototype.updatePosition = function () {
         }
     }
 
-    this._lastAnchor = bestAnchor;
+    if (this._lastAnchor !==bestAnchor){
+        this.removeClass('as-anchor-'+ this._lastAnchor);
+        this._lastAnchor = bestAnchor;
+        this.addClass('as-anchor-'+ this._lastAnchor);
+    }
+
+
 
     this.addStyle({
         left: bestX + 'px',
