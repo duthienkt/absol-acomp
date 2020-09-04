@@ -24,6 +24,23 @@
         absol._('radiobutton[checked="true"][name="b"]').addTo(mRadioRow);
         absol._('radiobutton[checked="false"][name="b"]').addTo(mRadioRow);
         absol._('radiobutton[name="b"][checked="true"]').addTo(mRadioRow);
+
+        absol._({
+            tag:'radio',
+            props:{
+                text:'abc'
+            }
+        }).addTo(mRadioRow)
+        absol._({
+            tag:'radio',
+            class:'right',
+            style:{
+              color:'red'
+            },
+            props:{
+                text:'abc'
+            }
+        }).addTo(mRadioRow)
     </script>
     <script class="viewable">
         absol.require('radiobutton').initAfterLoad();

@@ -66,6 +66,14 @@
         absol._('checkboxbutton[checked="true"]').addTo(mRadioRow);
         absol._('checkboxbutton[checked="false"]').addTo(mRadioRow);
         absol._('checkboxbutton[checked="true"]').addTo(mRadioRow);
+
+        absol._({
+            tag:'checkbox',
+            class:'right',
+            props:{
+                text:'abc'
+            }
+        }).addTo(mRadioRow)
     </script>
     <script class="viewable">
         absol.require('checkboxbutton').initAfterLoad();
