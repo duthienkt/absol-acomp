@@ -159,6 +159,8 @@ SelectMenu.property.isFocus = {
         this._isFocus = !!value;
         if (this._isFocus) {
             this.addChild(this.$selectlistBox);
+            var bound = this.getBoundingClientRect();
+            this.$selectlistBox.addStyle('min-width', bound.width + 'px');
             this.$selectlistBox.refollow();
             this.$selectlistBox.updatePosition();
             setTimeout(function () {
