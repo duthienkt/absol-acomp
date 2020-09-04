@@ -66,10 +66,19 @@
     display: none;
 }
 
-
-.absol-radio > span.absol-radio-right-label {
+.absol-radio.right > span.absol-radio-right-label {
     display: none;
 }
+
+span.absol-radio-left-label {
+    padding-right: 0.3em;
+}
+
+span.absol-radio-right-label {
+    padding-left: 0.3em;
+}
+
+
 
 
 .absol-radio.disabled {
@@ -90,14 +99,6 @@
 
 .absol-radio .standar-alone {
     display: inline-block;
-}
-
-.absol-radio > span:not(:last-child) {
-    padding-right: 0.3em;
-}
-
-.absol-radio span:last-child {
-    padding-left: 0.3em;
 }
 
 input:checked ~ .absol-radio-icon .dot {
