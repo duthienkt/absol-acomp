@@ -76,6 +76,7 @@ import Modal from "../Modal";
 import TrackBar from "../TrackBar";
 import TrackBarInput from "../TrackBarInput";
 import SelectMenu from "../SelectMenu";
+import SelectMenu2 from "../SelectMenu2";
 import ButtonRange from "../ButtonRange";
 import DropZone from "../DropZone";
 import RadioInput from "../RadioInput";
@@ -160,6 +161,7 @@ export var publicCreators = [
     SearchTextInput,
     SelectListBox,
     SelectMenu,
+    SelectMenu2,
     SelectBox,
     SelectBoxItem,
     SelectTable,

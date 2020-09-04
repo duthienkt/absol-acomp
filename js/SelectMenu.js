@@ -72,7 +72,7 @@ function SelectMenu() {
     return this;
 }
 
-SelectMenu.tag = 'selectmenu';
+SelectMenu.tag = 'selectmenu-old';
 SelectMenu.render = function () {
     return _({
         class: ['absol-selectmenu'],

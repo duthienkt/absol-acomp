@@ -186,3 +186,9 @@
     visibility: hidden;
     opacity: 0;
 }
+
+
+.as-select-menu {
+    --list-min-width: unset;
+    width: var(--list-min-width);
+}

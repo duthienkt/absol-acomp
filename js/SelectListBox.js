@@ -301,10 +301,10 @@ SelectListBox.prototype._updateItems = function () {
     this._searchCache = {};
     var estimateSize = measureListSize(this._items);
     this._estimateSize = estimateSize;
-    this._estimateHeight = this._items.length * 20;
     this._estimateWidth = estimateSize.width;
 
     this.addStyle('width', this._estimateWidth + 'px');
+    this.addStyle('--select-list-desc-width', estimateSize.descWidth + 'px')
     this._updateDisplayItem();
 };
 
