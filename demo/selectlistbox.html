@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SelectListBox</title>
+    <script src="../dist/absol-acomp.js?time=<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script src="https://absol.cf/acomp/demo/selectmenu2_data.1.js"></script>
+<script>
+    var $ = absol.$;
+    var _ = absol._;
+    items = items.concat(items);
+    items = items.concat(items);
+    items = items.concat(items);
+    items = items.concat(items);
+    items = items.concat(items);
+    items = items.concat(items);
+    items = items.concat(items);
+    items = items.map((it) => Object.assign({}, it)).map((it, i) => {
+        it.text = `[${i}] ${it.text}`;
+        it.value = i;
+        it.lastInGroup = Math.random() < 1 / 10;
+        return it;
+    });
+    var now = new Date().getTime();
+    var listBox = _({
+        tag: 'selectlistbox',
+        props: {
+            items: items,
+            enableSearch: true,
+            displayValue: -1
+        },
+        on: {
+            pressitem: function (event) {
+                var value = event.value;
+                var values = this.values.slice();
+                var valueIndex = values.indexOf(value);
+                if (valueIndex >= 0) {
+                    values.splice(valueIndex, 1);
+                }
+                else {
+                    values.push(value);
+                }
+                this.values = values;
+            }
+        }
+    })
+    var cTime = new Date().getTime();
+    listBox.addTo(document.body);
+
+
+</script>
+</body>
+</html>
