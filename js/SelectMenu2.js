@@ -2,9 +2,7 @@ import '../css/selectmenu.css';
 
 import ACore from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import Dom, {getScreenSize} from "absol/src/HTML5/Dom";
-import {prepareSearchForList, searchListByText} from "./list/search";
-import SelectList from "./SelectList";
+import {getScreenSize} from "absol/src/HTML5/Dom";
 import SelectListBox from "./SelectListBox";
 import AElement from "absol/src/HTML5/AElement";
 import OOP from "absol/src/HTML5/OOP";
@@ -158,7 +156,7 @@ SelectMenu.property.isFocus = {
         if (this._isFocus === value) return;
         this._isFocus = !!value;
         if (this._isFocus) {
-            this.addChild(this.$selectlistBox);
+            document.body.appendChild(this.$selectlistBox);
             var bound = this.getBoundingClientRect();
             this.$selectlistBox.addStyle('min-width', bound.width + 'px');
             this.$selectlistBox.refollow();
