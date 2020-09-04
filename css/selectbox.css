@@ -7,7 +7,7 @@
 
 .absol-selectbox {
     position: relative;
-    min-height: calc(var(--select-box-item-height) + 2px);
+    min-height: calc(var(--select-box-item-height) + 5px);
     min-width: 40px;
     border: solid 1px #d6d6d6;
     border-radius: 3px;
@@ -35,7 +35,7 @@
 }
 
 .absol-selectbox .absol-selectbox-item {
-    margin: 2px;
+    margin: 5px 2px;
 }
 
 .absol-selectbox-item {
