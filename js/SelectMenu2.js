@@ -117,38 +117,17 @@ SelectMenu.property.items = {
         this.$selectlistBox.items = items || [];
         this.addStyle('--list-min-width', this.$selectlistBox._estimateWidth + 'px');
 
-        console.log(this.$selectlistBox.findItemsByValue(this._value));
         if (items.length == 0) return;//todo
         var selectedItems = this.$selectlistBox.findItemsByValue(this._value);
         if (selectedItems.length === 0) {
             this.value = items[0].value;
         }
         else if (selectedItems.length > 1) {
-            console.log(this, 'has duplicate item value');
+            console.warn(this, 'has duplicate item value');
         }
         else {
-            this.updateSelectedItem();
+            this.updateItem();
         }
-        return;
-        // /**
-        //  * verity data
-        //  */
-        // if (value) {
-        //     value.forEach(function (it) {
-        //         if (it && it.text) {
-        //             it.text = it.text + '';
-        //         }
-        //     });
-        // }
-        //
-        // this._items = value;
-        // this._itemsByValue = this._dictByValue(value);
-        //
-        // if (!this._itemsByValue[this.value] && value.length > 0) {
-        //     this.value = value[0].value;
-        // }
-        // else
-        //     this.updateItem();
 
     },
     get: function () {
