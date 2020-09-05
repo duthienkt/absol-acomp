@@ -75,9 +75,7 @@ SelectMenu.render = function () {
                 tag: 'button',
                 class: 'absol-selectmenu-btn',
                 child: ['dropdown-ico']
-            },
-            'attachhook',
-
+            }
         ]
     });
 };
@@ -100,7 +98,7 @@ SelectMenu.prototype.init = function (props) {
 
 
 SelectMenu.prototype.updateItem = function () {
-    var selectedItems = this.$selectlistBox.findItemsByValue(this._value);
+    var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
     if (selectedItems.length >= 1) {
         this.$viewItem.data = selectedItems[0].item;
     }
@@ -115,8 +113,8 @@ SelectMenu.property.items = {
         this.$selectlistBox.items = items || [];
         this.addStyle('--list-min-width', this.$selectlistBox._estimateWidth + 'px');
 
-        if (items.length == 0) return;//todo
-        var selectedItems = this.$selectlistBox.findItemsByValue(this._value);
+        if (items.length == 0) return;
+        var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
         if (selectedItems.length === 0) {
             this.value = items[0].value;
         }
@@ -213,7 +211,7 @@ SelectMenu.property.hidden = {
 
 SelectMenu.property.selectedIndex = {
     get: function () {
-        var selectedItems = this.$selectlistBox.findItemsByValue(this._value);
+        var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
         if (selectedItems.length > 0) {
             return selectedItems[0].idx;
         }
