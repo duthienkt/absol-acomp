@@ -72,7 +72,7 @@ export function requireItem($parent) {
 }
 
 export function releaseItem(item) {
-    item.$selectList = null;
+    item.$parent = null;
     item.removeClass('selected');
     itemPool.push(item);
 };

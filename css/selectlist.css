@@ -16,7 +16,7 @@
     cursor: pointer;
 }
 
-.absol-selectlist-item.selected {
+.absol-selectlist-item.as-selected {
     background-color: #dfdfdf;
 }
 
