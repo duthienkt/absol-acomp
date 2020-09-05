@@ -191,4 +191,5 @@
 .as-select-menu {
     --list-min-width: unset;
     width: var(--list-min-width);
+    min-width: var(--list-min-width);
 }
