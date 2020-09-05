@@ -6,9 +6,10 @@
 }
 
 .absol-selectbox {
+    --list-min-width: 40px;
     position: relative;
     min-height: calc(var(--select-box-item-height) + 5px);
-    min-width: 40px;
+    min-width: var(--list-min-width);
     border: solid 1px #d6d6d6;
     border-radius: 3px;
     box-sizing: border-box;
@@ -120,6 +121,6 @@
     display: none;
 }
 
-.absol-selectbox .absol-selectlist-item.selected {
+.absol-selectbox .absol-selectlist-item.as-selected {
     display: none;
 }
