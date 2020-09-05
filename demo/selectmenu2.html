@@ -17,7 +17,7 @@
         it.lastInGroup = Math.random() < 1 / 10
     });
     _({
-        style:{
+        style: {
             height: '500px',
         }
     }).addTo(document.body);
@@ -28,19 +28,21 @@
             enableSearch: true
         }
     }).addTo(document.body);
-    items.forEach((it, i) => {
+    var item2 = items.map((it, i) => {
+        it = Object.assign({}, it);
         it.value = i;
         it.desc = absol.string.randomPhrase(56);
+        return it;
     });
     _({
         tag: 'selectmenu',
         props: {
-            items: items,
+            items: item2,
             enableSearch: true
         }
     }).addTo(document.body);
     _({
-        style:{
+        style: {
             height: '500px',
         }
     }).addTo(document.body);
