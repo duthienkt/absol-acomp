@@ -1,10 +1,16 @@
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import AElement from "absol/src/HTML5/AElement";
 
 
 var _ = ACore._;
 var $ = ACore.$;
 
+
+/***
+ * @extends AElement
+ * @constructor
+ */
 function SelectBoxItem() {
     this._themeClassName = null;
     this.$text = $('.absol-selectbox-item-text', this);
@@ -72,7 +78,7 @@ SelectBoxItem.property.theme = {
     get: function () {
         return this._data.theme || null;
     }
-}
+};
 
 
 ACore.install(SelectBoxItem);
