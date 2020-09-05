@@ -53,6 +53,7 @@ function SelectMenu() {
 
     this._lastValue = "NOTHING_VALUE";
     this._isFocus = false;
+    this.isFocus = false;
 
     this.on('mousedown', this.eventHandler.click, true);
 

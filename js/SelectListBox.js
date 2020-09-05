@@ -214,7 +214,7 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
             this.domSignal.once('scrollIntoSelected', function () {
                 var holder = itemHolders[0];
                 this.viewListAt(holder.idx);
-                var itemElt = $('.selected', this.$listScroller);
+                var itemElt = $('.as-selected', this.$listScroller);
                 if (itemElt) {
                     var scrollBound = this.$listScroller.getBoundingClientRect();
                     var itemBound = itemElt.getBoundingClientRect();
