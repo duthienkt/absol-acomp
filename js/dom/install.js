@@ -82,6 +82,7 @@ import DropZone from "../DropZone";
 import RadioInput from "../RadioInput";
 import OnScreenWidget from "../OnScreenWidget";
 import SelectListBox from "../SelectListBox";
+import SelectTreeBox from "../SelectTreeBox";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -160,6 +161,7 @@ export var publicCreators = [
     ResizeBox,
     SearchTextInput,
     SelectListBox,
+    SelectTreeBox,
     SelectMenu,
     SelectMenu2,
     SelectBox,

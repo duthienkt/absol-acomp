@@ -89,9 +89,10 @@ SelectListBox.prototype._initProperty = function () {
      */
 
     this._items = [];
+    this._itemNodeList = [];// use for tree
     this._values = [];
     this._valueDict = {};
-    this._itemHolderByValue = {};
+    this._itemNodeHolderByValue = {};
     // this._filteredItems = [];// not need , only use when search
     this._preDisplayItems = [];
     this._displayItems = [];
@@ -127,7 +128,7 @@ SelectListBox.prototype._assignItems = function (pageElt, offset) {
 };
 
 
-SelectListBox.prototype._listToDisplay = function (items) {
+SelectListBox.prototype._itemsToNodeList = function (items) {
     return items;
 };
 
@@ -248,7 +249,7 @@ SelectListBox.prototype.searchItemByText = function (text) {
 
 SelectListBox.prototype.resetSearchState = function () {
     this.$searchInput.value = '';
-    this._preDisplayItems = this._listToDisplay(this._items);
+    this._preDisplayItems = this._itemsToNodeList(this._items);
     this._updateDisplayItem();
     this.domSignal.emit('viewListAt', 0);
     this.$listScroller.scrollTop = 0;
@@ -296,8 +297,8 @@ SelectListBox.prototype._updateDisplayItemIndex = function () {
     this._displayItemHolderByValue = this._indexingByValue(this._displayItems);
 };
 
-SelectListBox.prototype._updateItemIndex = function () {
-    this._itemHolderByValue = this._indexingByValue(this._items)
+SelectListBox.prototype._updateItemNodeIndex = function () {
+    this._itemNodeHolderByValue = this._indexingByValue(this._items)
 };
 
 SelectListBox.prototype._updateDisplayItem = function () {
@@ -311,9 +312,9 @@ SelectListBox.prototype._updateDisplayItem = function () {
 
 
 SelectListBox.prototype._updateItems = function () {
-    this._preDisplayItems = this._listToDisplay(this._items);
+    this._preDisplayItems = this._itemsToNodeList(this._items);
     this._searchCache = {};
-    var estimateSize = measureListSize(this._items);
+    var estimateSize = measureListSize(this._itemNodeList);
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
 
@@ -337,7 +338,7 @@ SelectListBox.prototype.findDisplayItemsByValue = function (value) {
  * @returns {{idx: number, item:{text:string, value:number|string}}[]}
  */
 SelectListBox.prototype.findItemsByValue = function (value) {
-    return (this._itemHolderByValue[value] || []).slice();
+    return (this._itemNodeHolderByValue[value] || []).slice();
 };
 
 SelectListBox.property = {};
@@ -351,7 +352,8 @@ SelectListBox.property.items = {
         items = items || [];
         prepareSearchForList(items);
         this._items = items;
-        this._updateItemIndex();
+        this._itemNodeList = this._itemsToNodeList(this._items);
+        this._updateItemNodeIndex();
         this._updateItems();
         this.viewListAt(0);
     },
@@ -383,7 +385,7 @@ SelectListBox.property.displayValue = {
     set: function (value) {
         this._displayValue = value;
         this._displayItems = this._filterDisplayItems(this._preDisplayItems);
-        this._updateItemIndex();
+        this._updateItemNodeIndex();
         if (value === VALUE_HIDDEN) {
             this.addClass('as-value-hidden');
         }
@@ -425,12 +427,12 @@ SelectListBox.eventHandler.click = function (event) {
 SelectListBox.eventHandler.searchModify = function () {
     var text = this.$searchInput.value;
     var searchedItems = this.searchItemByText(text);
-    this._preDisplayItems = this._listToDisplay(searchedItems);
+    this._preDisplayItems = this._itemsToNodeList(searchedItems);
     this._displayItems = this._filterDisplayItems(this._preDisplayItems);
     this.$content.addStyle({
         'height': this._displayItems.length * 20 + 'px'
     });
-    this._updateItemIndex();
+    this._updateItemNodeIndex();
     this.viewListAt(0);
     this.$listScroller.scrollTop = 0;
     this.updatePosition();
