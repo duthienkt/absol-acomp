@@ -23,7 +23,6 @@
     position: absolute;
     left: 0;
     right: 0;
-
 }
 
 .as-select-list-box.as-enable-search.as-anchor-6 .as-select-list-box-search-ctn,
@@ -92,4 +91,12 @@
 
 .as-select-list-box .absol-selectlist-item:hover {
     background-color: #efefef;
+}
+
+.as-select-list-box.as-value-hidden .absol-selectlist-item.as-selected{
+    color: #aaaaaa;
+}
+
+.as-select-list-box.as-value-hidden .absol-selectlist-item.as-selected.as-is-leaft{
+    display: none;
 }

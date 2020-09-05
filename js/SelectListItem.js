@@ -73,7 +73,6 @@ SelectListItem.property.extendStyle = {
 };
 
 
-
 SelectListItem.property.data = {
     set: function (value) {
         this._data = value;
@@ -84,7 +83,10 @@ SelectListItem.property.data = {
             this.extendClasses = '';
             this.extendStyle = {};
             this.lastInGroup = false;
-        } else {
+            this.isLeaf = false;
+            this.selected = false;
+        }
+        else {
             this.$textValue.data = value.text || '';
             this.$descValue.data = value.desc || '';
             this.level = value.level || 0;
@@ -92,6 +94,8 @@ SelectListItem.property.data = {
             this.extendClasses = value.extendClasses;
             this.extendStyle = value.extendStyle;
             this.lastInGroup = !!(value.lastInGroup);
+            this.isLeaf = !!(value.isLeaf);
+            this.selected = !!(value.selected);
         }
     },
     get: function () {
@@ -141,6 +145,34 @@ SelectListItem.property.lastInGroup = {
     },
     get: function () {
         return this.containsClass('as-last-in-group');
+    }
+};
+
+SelectListItem.property.isLeaf = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-is-leaf');
+        }
+        else {
+            this.removeClass('as-is-leaf');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-is-leaf');
+    }
+};
+
+SelectListItem.property.selected = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-selected');
+        }
+        else {
+            this.removeClass('as-selected');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-selected');
     }
 };
 
