@@ -30,7 +30,7 @@ function pressCloseEventHandler(event) {
         target: parentElt,
         data: this.data,
         value: this.value,
-        itemData: data
+        itemData: this.data
     }), parentElt);
     parentElt.emit('change', Object.assign({}, event, {
         type: 'change',
