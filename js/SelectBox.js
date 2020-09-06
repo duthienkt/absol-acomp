@@ -12,13 +12,30 @@ var _ = ACore._;
 var $ = ACore.$;
 
 
+function pressCloseEventHandler(event){
+    var parentElt = this.$parent;
+    if (!parentElt) return ;
+    var value = this.value;
+    var currentValues = parentElt.$selectlistBox.values;
+    var index = currentValues.indexOf(value);
+    if (index >=0){
+        currentValues.splice(index,1 );
+    }
+    parentElt.$selectlistBox.values = currentValues;
+    parentElt.$selectlistBox.updatePosition();
+    parentElt._updateItems();
+}
+
 /***
  *
  * @returns {SelectBoxItem}
  */
 function makeItem() {
     return _({
-        tag: 'selectboxitem'
+        tag: 'selectboxitem',
+        on: {
+            close:pressCloseEventHandler
+        }
     });
 }
 
@@ -67,7 +84,7 @@ function SelectBox() {
     this.values = [];
     this.$selectlistBox.followTarget = this;
     this.disableClickToFocus = false;
-
+    this.orderly = true;
     return this;
 }
 
