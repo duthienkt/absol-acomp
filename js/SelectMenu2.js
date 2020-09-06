@@ -245,17 +245,18 @@ SelectMenu.eventHandler.selectListBoxPressItem = function (event) {
     this._value = event.data.value;
     this.$selectlistBox.values = [this._value];
     this.updateItem();
-    if (this._lastValue != this.value) {
+    if (this._lastValue !== this.value) {
         event.lastValue = this._lastValue;
         event.value = this.value;
         setTimeout(function () {
             this.emit('change', event, this);
         }.bind(this), 1)
         this._lastValue = this.value;
-        setTimeout(function () {
-            this.isFocus = false;
-        }.bind(this), 50)
+
     }
+    setTimeout(function () {
+        this.isFocus = false;
+    }.bind(this), 50)
 };
 
 SelectMenu.eventHandler.preUpdateListPosition = function () {
