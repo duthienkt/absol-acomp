@@ -234,7 +234,7 @@ SelectMenu.eventHandler.click = function (event) {
 
 
 SelectMenu.eventHandler.bodyClick = function (event) {
-    if (!EventEmitter.hitElement(this, event)) {
+    if (!EventEmitter.hitElement(this, event) && !EventEmitter.hitElement(this.$selectlistBox, event)) {
         setTimeout(function () {
             this.isFocus = false;
         }.bind(this), 5)
