@@ -16,7 +16,7 @@
 
 }
 .as-select-list-box.as-follower{
-    z-index: 10000;
+    z-index: 1000000;
 }
 
 .as-select-list-box .as-select-list-box {
