@@ -114,7 +114,7 @@ export function measureMaxTextWidth(items) {
             if (est > maxEst) {
                 maxEst = est;
                 maxText = text;
-                maxLv = item.level;
+                maxLv = item.level||0;
             }
         }
     }
