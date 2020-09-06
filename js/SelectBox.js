@@ -12,18 +12,34 @@ var _ = ACore._;
 var $ = ACore.$;
 
 
-function pressCloseEventHandler(event){
+function pressCloseEventHandler(event) {
     var parentElt = this.$parent;
-    if (!parentElt) return ;
+    if (!parentElt) return;
     var value = this.value;
     var currentValues = parentElt.$selectlistBox.values;
     var index = currentValues.indexOf(value);
-    if (index >=0){
-        currentValues.splice(index,1 );
+    if (index >= 0) {
+        currentValues.splice(index, 1);
     }
+
     parentElt.$selectlistBox.values = currentValues;
     parentElt.$selectlistBox.updatePosition();
     parentElt._updateItems();
+    parentElt.emit('remove', Object.assign({}, event, {
+        type: 'change',
+        target: parentElt,
+        data: this.data,
+        value: this.value,
+        itemData: data
+    }), parentElt);
+    parentElt.emit('change', Object.assign({}, event, {
+        type: 'change',
+        action:'remove',
+        target: parentElt,
+        data: this.data,
+        value: this.value,
+        values: parentElt.values
+    }), parentElt);
 }
 
 /***
@@ -34,7 +50,7 @@ function makeItem() {
     return _({
         tag: 'selectboxitem',
         on: {
-            close:pressCloseEventHandler
+            close: pressCloseEventHandler
         }
     });
 }
@@ -93,7 +109,7 @@ SelectBox.render = function () {
     return _({
         tag: 'bscroller',
         class: ['absol-selectbox', 'absol-bscroller'],
-        extendEvent: ['change', 'add', 'remove', 'minwidthchange'],
+        extendEvent: ['change', 'add', 'remove'],
         attr: {
             tabindex: '1'
         }
@@ -249,6 +265,21 @@ SelectBox.eventHandler.selectListBoxPressItem = function (event) {
     this.$selectlistBox.updatePosition();
     this._updateItems();
     this.isFocus = false;
+    this.emit('add', Object.assign({}, event, {
+        type: 'add',
+        target: this,
+        value: data.value,
+        data: data,
+        itemData: data
+    }), this);
+    this.emit('change', Object.assign({}, event, {
+        type: 'change',
+        action: 'add',
+        target: this,
+        value: data.value,
+        data: data,
+        values: this.values
+    }), this);
 };
 
 
