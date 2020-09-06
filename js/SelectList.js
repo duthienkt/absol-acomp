@@ -102,22 +102,24 @@ export function measureMaxTextWidth(items) {
     var maxTextWidth = 0;
     var maxText = 0;
     var maxEst = 0;
+    var maxLv = 0;
     var est;
     var text;
     var item;
     for (var i = 0; i < items.length; ++i) {
-        var item = items[i];
+        item = items[i];
         if (item.text) {
             text = item.text;
-            est = estimateWidth14(text) + 14 * (item.level || 0);
+            est = estimateWidth14(text) + 14 * 0.9 * (item.level || 0);
             if (est > maxEst) {
                 maxEst = est;
                 maxText = text;
+                maxLv = item.level;
             }
         }
     }
     if (maxText)
-        maxTextWidth = measureText(maxText, '14px  sans-serif').width;
+        maxTextWidth = 14 * 0.9 * maxLv + measureText(maxText, '14px  sans-serif').width;
     return maxTextWidth;
 };
 

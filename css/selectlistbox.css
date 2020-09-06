@@ -4,7 +4,7 @@
     left: 10px;
     --max-height: calc(100vh - 80px);
     font-size: 14px;
-
+    font-family: Arial, Helvetica, sans-serif;
     border: solid 1px rgb(100, 100, 255);
     box-sizing: border-box;
     background-color: white;
