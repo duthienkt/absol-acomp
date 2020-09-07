@@ -28,18 +28,23 @@
             marginLeft: '20px'
         },
         props: {
-            text: 'Dictate',
-            icon: 'span.mdi.mdi-microphone-outline',
+            text: 'Upload Picture',
+            icon: 'span.mdi.mdi-file-image-outline',
             items: [
-                { text: "Dicate", icon: 'span.mdi.mdi-microphone-outline' },
+                {
+                    style: {
+                        fontWeight: 'bold',
+                        paddingLeft: '10px'
+                    },
+                    child: { tag: 'span', child: { text: 'Upload Picture From' } }
+                },
+                { text: "Dropbox", icon: 'span.mdi.mdi-dropbox' },
+                { text: "Microsoft Onedrive", icon: 'span.mdi.mdi-microsoft-onedrive' },
+                { text: "Google Drive", icon: 'span.mdi.mdi-google-drive' },
                 '-------',
                 {
-                    icon: 'span.mdi.mdi-google-translate',
-                    text: 'Google Translator'
-                },
-                {
-                    icon: 'span.mdi.mdi-translate',
-                    text: 'Bing Translator'
+                    icon: 'span.mdi.mdi-desktop-classic',
+                    text: 'Your computer'
                 }
             ]
         },
