@@ -1,5 +1,6 @@
 import 'absol/src/polyfill';
 import "absol/src/absol";
+import './js/adapter/MaterialDesignIconsAdapter';
 import AComp from "./AComp";
 import * as string from 'absol/src/String/stringMatching';
 
@@ -13,6 +14,7 @@ import EmojiPicker from './js/EmojiPicker';
 import ContextCaptor from './js/ContextMenu';
 import install from "./js/dom/install";
 import SearchTextInput from "./js/Searcher";
+import {MaterialDesignIconsNameMap} from "./js/adapter/MaterialDesignIconsAdapter";
 
 absol.parseMessage = parseMessage;
 
@@ -47,3 +49,5 @@ setTimeout(function () {
         }).addTo(document.head);
     }
 }, 100);
+
+absol.MaterialDesignIconsNameMap = MaterialDesignIconsNameMap;

@@ -128,7 +128,6 @@ Dom.documentReady.then(function () {
         }
     }).addTo(document.body);
     var content = getComputedStyle(a, '::before').content;
-    var code = content.charCodeAt(1).toString(16).toUpperCase();
     a.remove();
     _({
         tag: 'style',
