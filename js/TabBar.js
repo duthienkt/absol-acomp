@@ -47,9 +47,6 @@ TabBar.prototype.getButtonByIdent = function (ident) {
 
 
 
-TabBar.eventHander = {};
-
-
 
 TabBar.property = {};
 
