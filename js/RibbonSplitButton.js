@@ -108,7 +108,7 @@ RibbonSplitButton.property.icon = {
     set: function (icon) {
         icon = icon || null;
         this._icon = icon;
-        if (this.$icon) this.removeChild(this.$icon);
+        if (this.$icon) this.$primaryBtn.removeChild(this.$icon);
         if (icon) {
             this.$icon = _(icon);
             this.$primaryBtn.addChildBefore(this.$icon, this.$text);
