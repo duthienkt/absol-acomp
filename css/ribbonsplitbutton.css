@@ -8,7 +8,6 @@
 }
 
 .as-ribbon-split-button-content {
-    display: flex;
     height: 100%;
 }
 
@@ -22,6 +21,7 @@
     box-sizing: border-box;
     border-style: solid;
     border-color: transparent;
+    vertical-align: middle;
 }
 
 
