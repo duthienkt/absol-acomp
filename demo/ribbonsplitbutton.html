@@ -9,11 +9,51 @@
 </head>
 
 <body>
-<h2>Ribbon Split Button</h2>
-<div id="demo1"></div>
+<h2>Ribbon Button</h2>
+<div id="demo0"></div>
+
 <script class="viewable">
     var $ = absol.$;
     var _ = absol._;
+    var button0 = _({
+        tag: 'ribbonbutton',
+        style: {
+            marginLeft: '20px'
+        },
+        props: {
+            text: 'Upload Picture',
+            icon: 'span.mdi.mdi-file-image-outline',
+            items: [
+                {
+                    style: {
+                        fontWeight: 'bold',
+                        paddingLeft: '10px'
+                    },
+                    child: { tag: 'span', child: { text: 'Upload Picture From' } }
+                },
+                { text: "Dropbox", icon: 'span.mdi.mdi-dropbox' },
+                { text: "Microsoft Onedrive", icon: 'span.mdi.mdi-microsoft-onedrive' },
+                { text: "Google Drive", icon: 'span.mdi.mdi-google-drive' },
+                '-------',
+                {
+                    icon: 'span.mdi.mdi-desktop-classic',
+                    text: 'Your computer'
+                }
+            ]
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+            }
+        }
+    }).addTo($('#demo0'));
+</script>
+
+
+<h2>Ribbon Split Button</h2>
+<div id="demo1"></div>
+<script class="viewable">
     var button1 = _({
         tag: 'ribbonsplitbutton',
         props: {
