@@ -2,24 +2,28 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Selectmenu 2</title>
+    <title>RibbonSplitButton</title>
     <script src="../dist/absol-acomp.js?time=<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
 </head>
 
 <body>
-<script>
+<h2>Ribbon Split Button</h2>
+<div id="demo1"></div>
+<script class="viewable">
     var $ = absol.$;
     var _ = absol._;
-    _({
-        tag: 'RibbonSplitButton'.toLowerCase(),
+    var button1 = _({
+        tag: 'ribbonsplitbutton',
         props: {
             text: 'Dictate',
             icon: 'span.mdi.mdi-microphone-outline'
         }
-    }).addTo(document.body);
+    });
 
-    _({
-        tag: 'RibbonSplitButton'.toLowerCase(),
+    var button2 = _({
+        tag: 'ribbonsplitbutton',
         style: {
             marginLeft: '20px'
         },
@@ -49,9 +53,49 @@
                 console.log(event.item);
             }
         }
-    }).addTo(document.body);
+    });
+    var button3 = _({
+        tag: 'ribbonsplitbutton',
+        style: {
+            marginLeft: '20px',
+            width: '200px'
+        },
+        props: {
+            text: 'Dictate',
+            icon: 'span.mdi.mdi-microphone-outline',
+            items: [
+                { text: "Dicate", icon: 'span.mdi.mdi-microphone-outline' },
+                '-------',
+                {
+                    icon: 'span.mdi.mdi-google-translate',
+                    text: 'Google Translator'
+                },
+                {
+                    icon: 'span.mdi.mdi-translate',
+                    text: 'Bing Translator'
+                }
+            ]
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+                var item = event.item;
+                this.text = item.text;
+                this.icon = item.icon;
+            },
+            press: function (event) {
+                //click on primary button
+                console.log(event.item);
+            }
+        }
+    });
+    var demo1Div = $('#demo1');
+    demo1Div.addChild(button1)
+        .addChild(button2)
+        .addChild(button3);
 </script>
-
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 </body>
 
 </html>
