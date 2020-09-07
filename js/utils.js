@@ -267,3 +267,46 @@ export function absCeil(v) {
     var a = Math.ceil(Math.abs(v));
     return v < 0 ? -a : a;
 }
+
+var propertyFilter =
+    ["$trigger",
+        "$content", "_isShow", "defineEvent", "isSupportedEvent",
+        "emit", "fire", "eventEmittorOnWithTime", "on", "once",
+        "off", "init", "eventHandler", "super", "defineAttribute",
+        "defineAttributes", "attr", "addStyle", "removeStyle", "addChild", "addTo", "selfRemove",
+        "selfReplace", "clearChild", "containsClass", "addClass", "removeClass", "getComputedStyleValue",
+        "getFontSize", "findChildAfter", "findChildBefore", "addChildBefore", "addChildAfter",
+        "getBoundingRecursiveRect", "isDescendantOf", "getCSSRules", "afterAttached", "afterDisplayed",
+        "_azar_extendEvents", "__azar_force", "_azar_extendAttributes", "_azar_extendTags",
+        "findAvailablePosition", "$container", "autoFixParrentSize", "sync", "$dropper", "$vmenu",
+        "$button", "$text", "$key", "$arrow", "$iconCtn", "_textMarginRight", "_tabIndex",
+        '$icon', '_icon', '$textNode', '$primaryBtn', '$extendBtn', '_menuHolder', '_items'].reduce(function (ac, cr) {
+        ac[cr] = true;
+        return ac;
+    }, {});
+
+/**
+ * This is a solution for menu, before a better one.
+ * @param obj
+ * @returns {{}}
+ */
+export function cleanMenuItemProperty(obj) {
+    var res = {};
+    var keys = Object.keys(obj);
+    var key;
+    for (var i = 0; i < keys.length; ++i) {
+        key = keys[i];
+        if (!propertyFilter[key]) {
+            res[key] = obj[key];
+        }
+    }
+    res.text = obj.text;
+    if (obj.icon) {
+        res.icon = obj.icon;
+    }
+    if (obj.items) {
+        res.items = obj.items;
+    }
+
+    return res;
+}

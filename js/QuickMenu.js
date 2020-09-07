@@ -227,7 +227,7 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
 
 QuickMenu.close = function (session) {
     if (session !== true && session !== QuickMenu._session) return;
-    QuickMenu._session =  Math.random() * 10000000000 >> 0;
+    QuickMenu._session = Math.random() * 10000000000 >> 0;
     QuickMenu.$element = undefined;
     QuickMenu._menuListener = undefined;
     QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
@@ -259,10 +259,8 @@ QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, da
     };
 
     var clickHandler = function () {
-        if (QuickMenu._session == res.currentSession) return;
-
+        if (QuickMenu._session === res.currentSession) return;
         res.currentSession = QuickMenu.show(res.element, res.menuProps, res.anchor, res.menuListener, res.darkTheme);
-
         var finish = function () {
             document.body.removeEventListener('click', finish, false);
             QuickMenu.close(res.currentSession);
@@ -309,7 +307,7 @@ QuickMenu.toggleWhenClick = function (trigger, adaptor) {
     };
 
     var clickHandler = function () {
-        if (QuickMenu._session == res.currentSession) return;
+        if (QuickMenu._session === res.currentSession) return;
 
         res.currentSession = QuickMenu.show(res.adaptor.getFlowedElement ? res.adaptor.getFlowedElement() : trigger,
             res.adaptor.getMenuProps ? res.adaptor.getMenuProps() : (adaptor.menuProps || []),

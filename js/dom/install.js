@@ -83,6 +83,7 @@ import RadioInput from "../RadioInput";
 import OnScreenWidget from "../OnScreenWidget";
 import SelectListBox from "../SelectListBox";
 import SelectTreeBox from "../SelectTreeBox";
+import RibbonSplitButton from "../RibbonSplitButton";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -156,6 +157,7 @@ export var publicCreators = [
     Radio,
     RadioButton,
     RadioInput,
+    RibbonSplitButton,
     SelectList,
     RemoteSvg,
     ResizeBox,
