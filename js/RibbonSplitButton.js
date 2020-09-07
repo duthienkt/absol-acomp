@@ -65,7 +65,7 @@ RibbonSplitButton.property.items = {
         if (this._items && this._items.length > 0) {
             if (!this._menuHolder) {
                 this.removeClass('as-no-dropdown');
-                this._menuHolder = QuickMenu.toggleWhenClick(this.$extendBtn, {
+                this._menuHolder = QuickMenu.toggleWhenClick(this.$extendBtn || this, {
                     getMenuProps: function () {
                         return {
                             items: thisB._items

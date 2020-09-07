@@ -1,0 +1,64 @@
+.as-ribbon-button {
+    display: inline-block;
+    vertical-align: middle;
+    height: 30px;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    border-radius: 0;
+    outline: none;
+    border-style: solid;
+    border-color: transparent;
+    border-width: 1px 1px 1px 1px;
+    background-color: transparent;
+}
+
+
+.as-ribbon-button:hover {
+    background-color: rgba(169, 168, 169, 0.15);
+}
+
+.as-ribbon-button:active {
+    background-color: rgba(169, 168, 169, 0.3);
+}
+
+
+.as-ribbon-split-button-primary {
+    font-size: inherit;
+    padding-right: 0;
+
+}
+
+
+.as-ribbon-split-button:active:hover .as-ribbon-split-button-content > button,
+.as-ribbon-split-button:active .as-ribbon-split-button-content > button {
+    border-color: rgba(169, 168, 169, 0.3);
+}
+
+.as-ribbon-split-button:hover .as-ribbon-split-button-content > button {
+    border-color: rgba(169, 168, 169, 0.15);
+}
+
+.as-ribbon-button-icon {
+    font-size: 1.2em;
+    margin-right: 5px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+img.as-ribbon-button-icon,
+svg.as-ribbon-button-icon {
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.as-ribbon-button-text {
+    vertical-align: middle;
+    font-size: inherit;
+}
+
+.as-ribbon-button.as-no-dropdown .mdi.mdi-chevron-down {
+    display: none;
+}
