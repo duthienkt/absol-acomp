@@ -2,6 +2,7 @@
  * Old name to new name
  */
 import Dom from "absol/src/HTML5/Dom";
+import ACore from "../../ACore";
 
 export var MaterialDesignIconsNameMap = {
     'settings-outline': 'cog-outline',
@@ -11,6 +12,7 @@ export var MaterialDesignIconsNameMap = {
 export var MaterialDesignIconsCode = {};
 
 Dom.documentReady.then(function () {
+    var _ = ACore._;
     var a = _({
         tag: 'span',
         class: ['mdi'],
@@ -36,6 +38,4 @@ Dom.documentReady.then(function () {
             innerHTML: cssCodeLines.join('\n')
         }
     }).addTo(document.head);
-    console.log(styleElt)
-
 });
