@@ -1,0 +1,55 @@
+<html>
+<head>
+    <title>Icon Adapter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=0">
+    <link href="https://cdn.materialdesignicons.com/5.3.45/css/materialdesignicons.min.css" media="all" rel="stylesheet"
+          type="text/css"/>
+<!--    <link href="https://cdn.materialdesignicons.com/4.5.95/css/materialdesignicons.min.css" media="all" rel="stylesheet"-->
+<!--          type="text/css"/>-->
+    <script src="../dist/absol-acomp.js?time=<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<style>
+    #demo{
+        border-collapse: collapse;
+    }
+    #demo td{
+        border: 1px solid black;
+        padding: 5px 10px;
+    }
+    #demo thead{
+        font-weight: bold;
+    }
+    #demo .mdi{
+        font-size: 2em;
+    }
+</style>
+<table id="demo">
+    <thead>
+    <tr>
+        <td>Old name</td>
+        <td>New name</td>
+        <td>Preview</td>
+    </tr>
+    </thead>
+    <tbody id="demo-body">
+    </tbody>
+</table>
+<script>
+    var _ = absol._;
+    var $ = absol.$;
+    var demoBody = $('#demo-body');
+    var nameMap = absol.MaterialDesignIconsNameMap;
+    for (var oldName in nameMap) {
+        demoBody.addChild(_({
+            tag: 'tr',
+            child: [
+                { tag: 'td', child: { text: oldName } },
+                { tag: 'td', child: { text: nameMap[oldName] } },
+                { tag: 'td', child: 'span.mdi.mdi-' + oldName },
+            ]
+        }))
+    }
+</script>
+</body>
+</html>
