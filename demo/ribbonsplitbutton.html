@@ -1,0 +1,57 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Selectmenu 2</title>
+    <script src="../dist/absol-acomp.js?time=<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+
+<body>
+<script>
+    var $ = absol.$;
+    var _ = absol._;
+    _({
+        tag: 'RibbonSplitButton'.toLowerCase(),
+        props: {
+            text: 'Dictate',
+            icon: 'span.mdi.mdi-microphone-outline'
+        }
+    }).addTo(document.body);
+
+    _({
+        tag: 'RibbonSplitButton'.toLowerCase(),
+        style: {
+            marginLeft: '20px'
+        },
+        props: {
+            text: 'Dictate',
+            icon: 'span.mdi.mdi-microphone-outline',
+            items: [
+                { text: "Dicate", icon: 'span.mdi.mdi-microphone-outline' },
+                '-------',
+                {
+                    icon: 'span.mdi.mdi-google-translate',
+                    text: 'Google Translator'
+                },
+                {
+                    icon: 'span.mdi.mdi-translate',
+                    text: 'Bing Translator'
+                }
+            ]
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+            },
+            press: function (event) {
+                //click on primary button
+                console.log(event.item);
+            }
+        }
+    }).addTo(document.body);
+</script>
+
+</body>
+
+</html>
