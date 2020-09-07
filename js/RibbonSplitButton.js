@@ -84,7 +84,8 @@ RibbonSplitButton.property.items = {
         else {
             if (this._menuHolder) {
                 this.addClass('as-no-dropdown');
-
+                this._menuHolder.remove();
+                this._menuHolder = null;
             }
         }
     },
