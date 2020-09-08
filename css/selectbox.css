@@ -22,12 +22,12 @@
     cursor: copy;
 }
 
-.absol-selectbox.disabled {
+.absol-selectbox.as-disabled {
     pointer-events: none;
     background-color: #ebebe4;
 }
 
-.absol-selectbox.disabled .absol-selectbox-item {
+.absol-selectbox.as-disabled .absol-selectbox-item {
     opacity: 0.7;
 }
 
