@@ -1,7 +1,6 @@
 .as-has-board-table-drag,
 .as-has-board-table-drag * {
     cursor: grabbing;
-    touch-action: none;
     -webkit-user-select: none !important;
     -moz-user-select: none !important;
     -ms-user-select: none !important;
@@ -15,7 +14,6 @@
 }
 
 .as-board-drag-zone {
-    touch-action: none;
     -webkit-user-select: none !important;
     -moz-user-select: none !important;
     -ms-user-select: none !important;
@@ -44,4 +42,17 @@
 
 .as-board-place-holder {
     opacity: 0.3;
+}
+
+.as-board-table-prevent-context {
+    position: fixed;
+    --x: -10000px;
+    --y: -10000px;
+    left: calc(var(--x) - 100px);
+    top: calc(var(--y) - 100px);
+    opacity: 0;
+    z-index: 100000000;
+    width: 200px;
+    height: 200px;
+
 }
