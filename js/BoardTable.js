@@ -654,7 +654,7 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
     }
     var scrollerY = this;
     while (scrollerY) {
-        overflowStyle = window.getComputedStyle(scrollerX)['overflow'];
+        overflowStyle = window.getComputedStyle(scrollerY)['overflow'];
         if ((overflowStyle === 'auto' || overflowStyle === 'scroll' || scrollerY.tagName === 'HTML') && (scrollerY.clientHeight < scrollerY.scrollHeight)) break;
         scrollerY = scrollerY.parentElement;
     }
