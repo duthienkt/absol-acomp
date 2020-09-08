@@ -645,49 +645,71 @@ BoardTable.eventHandler.dragOnEffectZone = function (event) {
 };
 
 BoardTable.eventHandler.mousemoveOverflow = function (event) {
-    var scroller = this;
-    while (scroller) {
-        var overflowStyle = window.getComputedStyle(scroller)['overflow'];
-        if ((overflowStyle === 'auto' || overflowStyle === 'scroll' || scroller.tagName === 'HTML') && (scroller.clientHeight < scroller.scrollHeight || scroller.clientWidth < scroller.scrollWidth)) break;
-        scroller = scroller.parentElement;
+    var scrollerX = this;
+    var overflowStyle;
+    while (scrollerX) {
+        overflowStyle = window.getComputedStyle(scrollerX)['overflow'];
+        if ((overflowStyle === 'auto' || overflowStyle === 'scroll' || scrollerX.tagName === 'HTML') && (scrollerX.clientWidth < scrollerX.scrollWidth)) break;
+        scrollerX = scrollerX.parentElement;
     }
-    if (!scroller) return;
+    var scrollerY = this;
+    while (scrollerY) {
+        overflowStyle = window.getComputedStyle(scrollerX)['overflow'];
+        if ((overflowStyle === 'auto' || overflowStyle === 'scroll' || scrollerY.tagName === 'HTML') && (scrollerY.clientHeight < scrollerY.scrollHeight)) break;
+        scrollerY = scrollerY.parentElement;
+    }
 
-    var outBound = scroller.getBoundingClientRect();
-    var bBound = this._dragEventData.boardElt.getBoundingClientRect();
+    var outBound;
+    var bBound;
     var screenSize = Dom.getScreenSize();
-    outBound = {
-        left: Math.max(outBound.left, 0),
-        top: Math.max(outBound.top, 0),
-        bottom: Math.min(outBound.bottom, screenSize.height),
-        right: Math.min(outBound.right, screenSize.width)
-    }
+    var needContinue = false;
     var vx = 0;
     var vy = 0;
-    if (bBound.left < outBound.left) {
-        vx = bBound.left - outBound.left;
-    }
-    else if (bBound.right > outBound.right) {
-        vx = bBound.right - outBound.right;
+
+    bBound = this._dragEventData.boardElt.getBoundingClientRect();
+    if (scrollerX) {
+        outBound = scrollerX.getBoundingClientRect();
+        outBound = {
+            left: Math.max(outBound.left, 0),
+            top: Math.max(outBound.top, 0),
+            bottom: Math.min(outBound.bottom, screenSize.height),
+            right: Math.min(outBound.right, screenSize.width)
+        }
+        if (bBound.left < outBound.left) {
+            vx = bBound.left - outBound.left;
+        }
+        else if (bBound.right > outBound.right) {
+            vx = bBound.right - outBound.right;
+        }
     }
 
-    if (bBound.top < outBound.top) {
-        vy = bBound.top - outBound.top;
+    if (scrollerY) {
+        outBound = scrollerY.getBoundingClientRect();
+        outBound = {
+            left: Math.max(outBound.left, 0),
+            top: Math.max(outBound.top, 0),
+            bottom: Math.min(outBound.bottom, screenSize.height),
+            right: Math.min(outBound.right, screenSize.width)
+        }
+        if (bBound.top < outBound.top) {
+            vy = bBound.top - outBound.top;
+        }
+        else if (bBound.bottom > outBound.bottom) {
+            vy = bBound.bottom - outBound.bottom;
+        }
     }
-    else if (bBound.bottom > outBound.bottom) {
-        vy = bBound.bottom - outBound.bottom;
-    }
+
 
     var dt = 1 / 30;
 
-    if (vx != 0 || vy != 0) {
+    if (vx !== 0 || vy !== 0) {
         var copyEvent = {
             type: event.type,
             preventDefault: function () {/* noop */
             },
             target: event.target
         };
-        if (event.type == 'touchmove') {
+        if (event.type === 'touchmove') {
             copyEvent.changedTouches = Array.prototype.map.call(event.changedTouches, function (it) {
                 return { identifier: it.identifier, clientX: it.clientX, clientY: it.clientY, target: it.target }
             });
@@ -701,14 +723,14 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
         }
         var thisBT = this;
         setTimeout(function () {
-            if (scroller.scrollHeight > scroller.clientHeight) {
-                scroller.scrollTop += absCeil(vy * dt);
+            if (scrollerY && scrollerY.scrollHeight > scrollerY.clientHeight) {
+                scrollerY.scrollTop += absCeil(vy * dt);
             }
 
-            if (scroller.scrollWidth > scroller.clientWidth) {
-                scroller.scrollLeft += absCeil(vx * dt);
+            if (scrollerX && scrollerX.scrollWidth > scrollerX.clientWidth) {
+                scrollerX.scrollLeft += absCeil(vx * dt);
             }
-            if (thisBT._dragEventData && thisBT._dragEventData.state == "DRAG") {
+            if (thisBT._dragEventData && thisBT._dragEventData.state === "DRAG") {
                 thisBT.eventHandler.mousemoveOverflow(copyEvent);
             }
         }, dt * 1000);
