@@ -373,9 +373,10 @@ BoardTable.eventHandler.touchFinishBeforeReadyDrag = function (event) {
     }
     else {
         setTimeout(function () {
+            // console.log(thisBT.eventHandler.contextMenu)
             thisBT.$preventContext.off('contextmenu', thisBT.eventHandler.contextMenu);
             thisBT.$preventContext.remove();
-        }, 100);
+        }, 15);
     }
 
 
@@ -383,6 +384,8 @@ BoardTable.eventHandler.touchFinishBeforeReadyDrag = function (event) {
 
 BoardTable.eventHandler.contextMenu = function (event) {
     event.preventDefault();
+    this.$preventContext.off('contextmenu', this.eventHandler.contextMenu);
+    this.$preventContext.remove();
     this.eventHandler.touchFinishBeforeReadyDrag(event);
 }
 
