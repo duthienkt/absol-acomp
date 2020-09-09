@@ -7,16 +7,6 @@ import SelectListBox from "./SelectListBox";
 import AElement from "absol/src/HTML5/AElement";
 import OOP from "absol/src/HTML5/OOP";
 
-var canWaitAttached = false;
-Dom.documentReady.then(function () {
-    var testHook = _('attachhook').on('attached', function () {
-        this.remove();
-        canWaitAttached = true;
-    });
-    setTimeout(function () {
-        testHook.remove();
-    }, 100);
-});
 
 /*global absol*/
 var _ = ACore._;
@@ -167,7 +157,7 @@ SelectMenu.property.isFocus = {
         this._isFocus = !!value;
         if (this._isFocus) {
             document.body.appendChild(this.$selectlistBox);
-            if (!canWaitAttached) this.$selectlistBox.domSignal.$attachhook.emit('attached');
+            this.$selectlistBox.domSignal.$attachhook.emit('attached');
             var bound = this.getBoundingClientRect();
             this.$selectlistBox.addStyle('min-width', bound.width + 'px');
             this.$selectlistBox.refollow();
