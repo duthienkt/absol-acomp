@@ -436,7 +436,6 @@ SelectListBox.eventHandler.searchModify = function () {
     this.viewListAt(0);
     this.$listScroller.scrollTop = 0;
     this.updatePosition();
-
 };
 
 
