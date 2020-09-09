@@ -3,7 +3,6 @@
 }
 
 
-
 .absol-single-page-header {
     box-sizing: border-box;
     z-index: 2;
@@ -33,4 +32,9 @@
     top: 0;
     bottom: 0;
     overflow-y: auto;
+}
+
+.absol-single-page.as-viewport-full > .absol-single-page-scroller > .absol-single-page-scroller-viewport {
+    height: 100%;
+    width: 100%;
 }
