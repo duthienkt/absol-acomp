@@ -2,7 +2,7 @@ import '../css/selectmenu.css';
 
 import ACore from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import Dom, {getScreenSize} from "absol/src/HTML5/Dom";
+import Dom, {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import SelectListBox from "./SelectListBox";
 import AElement from "absol/src/HTML5/AElement";
 import OOP from "absol/src/HTML5/OOP";
@@ -267,6 +267,10 @@ SelectMenu.eventHandler.preUpdateListPosition = function () {
     var availableTop = bound.top - 5;
     var availableBot = screenSize.height - 5 - bound.bottom;
     this.$selectlistBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
+    var outBound = traceOutBoundingClientRect(this);
+    if (bound.top < outBound.top || bound.bottom > outBound.bottom || bound.left < outBound.left || bound.right > outBound.right) {
+        this.isFocus = false;
+    }
 };
 
 
