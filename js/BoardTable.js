@@ -337,6 +337,7 @@ BoardTable.eventHandler.mousedown = function (event) {
                 touchcancel: this.eventHandler.touchFinishBeforeReadyDrag,
                 touchmove: this.eventHandler.touchMoveBeforeReadyDrag
             });
+            this.$preventContext.off('contextmenu', this.eventHandler.contextMenu);//event maybe not remove because of double click
             this.$preventContext.on('contextmenu', this.eventHandler.contextMenu);
             var thisBT = this;
 
@@ -373,10 +374,9 @@ BoardTable.eventHandler.touchFinishBeforeReadyDrag = function (event) {
     }
     else {
         setTimeout(function () {
-            // console.log(thisBT.eventHandler.contextMenu)
             thisBT.$preventContext.off('contextmenu', thisBT.eventHandler.contextMenu);
             thisBT.$preventContext.remove();
-        }, 15);
+        }, 60);
     }
 
 
