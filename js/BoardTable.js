@@ -47,9 +47,8 @@ BoardTable.prototype.$preventContext = _({
     props: { readOnly: true }
 });
 
-// BoardTable.prototype.$preventContext.addEventListener('contextmenu', function (event) {
-//     event.preventDefault();
-// }, true);
+BoardTable.prototype.maxScrollSpeed = 30;
+
 
 BoardTable.prototype.findDomChildBefore = function (elt) {
     var nodes = this.childNodes;
@@ -337,6 +336,7 @@ BoardTable.eventHandler.mousedown = function (event) {
                 touchcancel: this.eventHandler.touchFinishBeforeReadyDrag,
                 touchmove: this.eventHandler.touchMoveBeforeReadyDrag
             });
+            this.$preventContext.off('contextmenu', this.eventHandler.contextMenu);//event maybe not remove because of double click
             this.$preventContext.on('contextmenu', this.eventHandler.contextMenu);
             var thisBT = this;
 
@@ -375,7 +375,7 @@ BoardTable.eventHandler.touchFinishBeforeReadyDrag = function (event) {
         setTimeout(function () {
             thisBT.$preventContext.off('contextmenu', thisBT.eventHandler.contextMenu);
             thisBT.$preventContext.remove();
-        }, 100);
+        }, 60);
     }
 
 
@@ -383,6 +383,8 @@ BoardTable.eventHandler.touchFinishBeforeReadyDrag = function (event) {
 
 BoardTable.eventHandler.contextMenu = function (event) {
     event.preventDefault();
+    this.$preventContext.off('contextmenu', this.eventHandler.contextMenu);
+    this.$preventContext.remove();
     this.eventHandler.touchFinishBeforeReadyDrag(event);
 }
 
@@ -662,7 +664,6 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
     var outBound;
     var bBound;
     var screenSize = Dom.getScreenSize();
-    var needContinue = false;
     var vx = 0;
     var vy = 0;
 
@@ -700,9 +701,11 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
     }
 
 
-    var dt = 1 / 30;
+    vx = Math.max(-this.maxScrollSpeed, Math.min(this.maxScrollSpeed, vx));
+    vy = Math.max(-this.maxScrollSpeed, Math.min(this.maxScrollSpeed, vy));
 
     if (vx !== 0 || vy !== 0) {
+        console.log(vx, vy);
         var copyEvent = {
             type: event.type,
             preventDefault: function () {/* noop */
@@ -722,7 +725,9 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
             copyEvent.clientY = event.clientY
         }
         var thisBT = this;
-        setTimeout(function () {
+        var now = new Date().getTime();
+        requestAnimationFrame(function () {
+            var dt = (new Date().getTime() - now) / 1000;
             if (scrollerY && scrollerY.scrollHeight > scrollerY.clientHeight) {
                 scrollerY.scrollTop += absCeil(vy * dt);
             }
@@ -733,7 +738,7 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
             if (thisBT._dragEventData && thisBT._dragEventData.state === "DRAG") {
                 thisBT.eventHandler.mousemoveOverflow(copyEvent);
             }
-        }, dt * 1000);
+        });
     }
 };
 
