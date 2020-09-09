@@ -705,7 +705,6 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
     vy = Math.max(-this.maxScrollSpeed, Math.min(this.maxScrollSpeed, vy));
 
     if (vx !== 0 || vy !== 0) {
-        console.log(vx, vy);
         var copyEvent = {
             type: event.type,
             preventDefault: function () {/* noop */
