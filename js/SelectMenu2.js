@@ -105,7 +105,7 @@ SelectMenu.prototype.updateItem = function () {
         this.$viewItem.data = selectedItems[0].item;
     }
     else {
-
+        this.$viewItem.data = { text: '', value: null }
     }
 };
 
@@ -153,6 +153,7 @@ SelectMenu.property.value = {
 SelectMenu.property.isFocus = {
     set: function (value) {
         var thisSM = this;
+        if (!this.items || this.items.length === 0) value = false;//prevent focus
         if (this._isFocus === value) return;
         this._isFocus = !!value;
         if (this._isFocus) {

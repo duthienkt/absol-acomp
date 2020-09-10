@@ -28,14 +28,16 @@
     vertical-align: middle;
 }
 
-
+/**
+Bug note: don't put fixed position element to a element which has transform
+ */
 .as-board-moving {
     transform-origin: 30% 55%;
     transform: rotate(5deg);
     transition: transform 0.05s;
     user-select: none;
     pointer-events: none;
-    position: fixed;
+    position: fixed !important;
     z-index: 2000;
 }
 

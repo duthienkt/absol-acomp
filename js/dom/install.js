@@ -75,7 +75,6 @@ import WidthHeightResizer from "../WidthHeightSizer";
 import Modal from "../Modal";
 import TrackBar from "../TrackBar";
 import TrackBarInput from "../TrackBarInput";
-import SelectMenu from "../SelectMenu";
 import SelectMenu2 from "../SelectMenu2";
 import ButtonRange from "../ButtonRange";
 import DropZone from "../DropZone";
@@ -166,7 +165,6 @@ export var publicCreators = [
     SearchTextInput,
     SelectListBox,
     SelectTreeBox,
-    SelectMenu,
     SelectMenu2,
     SelectBox,
     SelectBoxItem,
