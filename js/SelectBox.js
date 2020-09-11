@@ -196,7 +196,7 @@ SelectBox.property.items = {
         this._updateItems();
     },
     get: function () {
-        return this._items;
+        return this.$selectlistBox.items
     }
 };
 
