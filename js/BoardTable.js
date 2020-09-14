@@ -498,7 +498,7 @@ BoardTable.eventHandler.mousemoveDragInSelf = function (event) {
     if (this._childHolders.length < 2) {
         if (dragEventData.boardIn != this) {
             this.insertBefore(dragEventData.placeHolderElt, this._childHolders[0].elt);
-            this.boardIn = this;
+            dragEventData.boardIn = this;
             dragEventData.boardAt = 0;
         }
     }
@@ -507,8 +507,7 @@ BoardTable.eventHandler.mousemoveDragInSelf = function (event) {
         var i = this._findHoverBoardIndex(mousePos.x, mousePos.y, [dragEventData.boardElt]);
         if (i >= 0) {
             if (dragEventData.boardIn != this) {
-                this.boardIn = this;
-                //todo something
+                dragEventData.boardIn = this;
             }
             var viewIndex;
             if ((i < dragEventData.holderIndex && i < dragEventData.boardAt)
@@ -652,14 +651,15 @@ BoardTable.eventHandler.dragOnEffectZone = function (event) {
 };
 
 BoardTable.eventHandler.mousemoveOverflow = function (event) {
-    var scrollerX = this;
+    if (!this._dragEventData) return;
+    var scrollerX = this._dragEventData.boardIn;
     var overflowStyle;
     while (scrollerX) {
         overflowStyle = window.getComputedStyle(scrollerX)['overflow'];
         if ((overflowStyle === 'auto'|| overflowStyle === 'auto hidden' || overflowStyle === 'scroll' || scrollerX.tagName === 'HTML') && (scrollerX.clientWidth < scrollerX.scrollWidth)) break;
         scrollerX = scrollerX.parentElement;
     }
-    var scrollerY = this;
+    var scrollerY = this._dragEventData.boardIn;
     while (scrollerY) {
         overflowStyle = window.getComputedStyle(scrollerY)['overflow'];
         if ((overflowStyle === 'auto' || overflowStyle === 'hidden auto' ||overflowStyle === 'scroll' || scrollerY.tagName === 'HTML') && (scrollerY.clientHeight < scrollerY.scrollHeight)) break;
