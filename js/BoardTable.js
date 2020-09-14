@@ -656,13 +656,13 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
     var overflowStyle;
     while (scrollerX) {
         overflowStyle = window.getComputedStyle(scrollerX)['overflow'];
-        if ((overflowStyle === 'auto' || overflowStyle === 'scroll' || scrollerX.tagName === 'HTML') && (scrollerX.clientWidth < scrollerX.scrollWidth)) break;
+        if ((overflowStyle === 'auto'|| overflowStyle === 'auto hidden' || overflowStyle === 'scroll' || scrollerX.tagName === 'HTML') && (scrollerX.clientWidth < scrollerX.scrollWidth)) break;
         scrollerX = scrollerX.parentElement;
     }
     var scrollerY = this;
     while (scrollerY) {
         overflowStyle = window.getComputedStyle(scrollerY)['overflow'];
-        if ((overflowStyle === 'auto' || overflowStyle === 'scroll' || scrollerY.tagName === 'HTML') && (scrollerY.clientHeight < scrollerY.scrollHeight)) break;
+        if ((overflowStyle === 'auto' || overflowStyle === 'hidden auto' ||overflowStyle === 'scroll' || scrollerY.tagName === 'HTML') && (scrollerY.clientHeight < scrollerY.scrollHeight)) break;
         scrollerY = scrollerY.parentElement;
     }
 
