@@ -835,7 +835,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
                 this._childHolders.splice(dragEventData.boardAt, 0, holder);
                 changed = 'orderchange';
                 this.emit('orderchange', {
-                    name: 'orderchange',
+                    type: 'orderchange',
                     boardElt: holder.elt,
                     action: 'move',
                     from: dragEventData.holderIndex,
@@ -851,7 +851,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
             var other = dragEventData.boardIn;
             changed = 'itemleave';
             this.emit('itemleave', {
-                name: 'itemleave',
+                type: 'itemleave',
                 item: holder.elt,
                 from: { index: dragEventData.holderIndex, table: this },
                 to: { index: dragEventData.boardAt, table: other },
@@ -878,7 +878,7 @@ BoardTable.eventHandler.mousefinish = function (event) {
                 }
             }
             other.emit('itementer', {
-                name: 'itementer',
+                type: 'itementer',
                 item: holder.elt,
                 target: other,
                 from: { index: dragEventData.holderIndex, table: this },
