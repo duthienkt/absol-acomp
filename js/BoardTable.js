@@ -48,7 +48,7 @@ BoardTable.prototype.$preventContext = _({
     props: { readOnly: true }
 });
 
-BoardTable.prototype.maxScrollSpeed = 30;
+BoardTable.prototype.maxScrollSpeed = 300;
 
 
 BoardTable.prototype.findDomChildBefore = function (elt) {
@@ -652,17 +652,18 @@ BoardTable.eventHandler.dragOnEffectZone = function (event) {
 
 BoardTable.eventHandler.mousemoveOverflow = function (event) {
     if (!this._dragEventData) return;
+    var dragEventData = this._dragEventData;
     var scrollerX = this._dragEventData.boardIn;
     var overflowStyle;
     while (scrollerX) {
         overflowStyle = window.getComputedStyle(scrollerX)['overflow'];
-        if ((overflowStyle === 'auto'|| overflowStyle === 'auto hidden' || overflowStyle === 'scroll' || scrollerX.tagName === 'HTML') && (scrollerX.clientWidth < scrollerX.scrollWidth)) break;
+        if ((overflowStyle === 'auto' || overflowStyle === 'auto hidden' || overflowStyle === 'scroll' || scrollerX.tagName === 'HTML') && (scrollerX.clientWidth < scrollerX.scrollWidth)) break;
         scrollerX = scrollerX.parentElement;
     }
     var scrollerY = this._dragEventData.boardIn;
     while (scrollerY) {
         overflowStyle = window.getComputedStyle(scrollerY)['overflow'];
-        if ((overflowStyle === 'auto' || overflowStyle === 'hidden auto' ||overflowStyle === 'scroll' || scrollerY.tagName === 'HTML') && (scrollerY.clientHeight < scrollerY.scrollHeight)) break;
+        if ((overflowStyle === 'auto' || overflowStyle === 'hidden auto' || overflowStyle === 'scroll' || scrollerY.tagName === 'HTML') && (scrollerY.clientHeight < scrollerY.scrollHeight)) break;
         scrollerY = scrollerY.parentElement;
     }
 
@@ -671,9 +672,12 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
     var screenSize = Dom.getScreenSize();
     var vx = 0;
     var vy = 0;
-
     bBound = this._dragEventData.boardElt.getBoundingClientRect();
     if (scrollerX) {
+        if (dragEventData.$scrollerX !== scrollerX) {
+            dragEventData.scrollerXValue = scrollerX.scrollLeft;
+            dragEventData.$scrollerX = scrollerX;
+        }
         outBound = scrollerX.getBoundingClientRect();
         outBound = {
             left: Math.max(outBound.left, 0),
@@ -688,8 +692,15 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
             vx = bBound.right - outBound.right;
         }
     }
+    else {
+        dragEventData.$scrollerX = null;
+    }
 
     if (scrollerY) {
+        if (dragEventData.$scrollerY !== scrollerY) {
+            dragEventData.scrollerYValue = scrollerY.scrollTop;
+            dragEventData.$scrollerY = scrollerY;
+        }
         outBound = scrollerY.getBoundingClientRect();
         outBound = {
             left: Math.max(outBound.left, 0),
@@ -704,11 +715,13 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
             vy = bBound.bottom - outBound.bottom;
         }
     }
+    else {
+        dragEventData.$scrollerY = null;
+    }
 
 
-    vx = Math.max(-this.maxScrollSpeed, Math.min(this.maxScrollSpeed, vx));
-    vy = Math.max(-this.maxScrollSpeed, Math.min(this.maxScrollSpeed, vy));
-
+    vx = Math.max(-this.maxScrollSpeed, Math.min(this.maxScrollSpeed, vx * Math.sqrt(Math.abs(vx))));
+    vy = Math.max(-this.maxScrollSpeed, Math.min(this.maxScrollSpeed, vy * Math.sqrt(Math.abs(vy))));
     if (vx !== 0 || vy !== 0) {
         var copyEvent = {
             type: event.type,
@@ -730,15 +743,24 @@ BoardTable.eventHandler.mousemoveOverflow = function (event) {
         }
         var thisBT = this;
         var now = new Date().getTime();
-        requestAnimationFrame(function () {
+        if (dragEventData.requestAnimationFrameId >= 0) {
+            cancelAnimationFrame(dragEventData.requestAnimationFrameId);
+        }
+        dragEventData.requestAnimationFrameId = requestAnimationFrame(function () {
+            dragEventData.requestAnimationFrameId = -1;
             var dt = (new Date().getTime() - now) / 1000;
-            if (scrollerY && scrollerY.scrollHeight > scrollerY.clientHeight) {
-                scrollerY.scrollTop += absCeil(vy * dt);
+            if (dragEventData.$scrollerY) {
+                dragEventData.scrollerYValue += vy * dt;
+                dragEventData.scrollerYValue = Math.max(0, Math.min(dragEventData.$scrollerY.scrollHeight - dragEventData.$scrollerY.clientHeight, dragEventData.scrollerYValue))
+                dragEventData.$scrollerY.scrollTop = dragEventData.scrollerYValue;
             }
 
-            if (scrollerX && scrollerX.scrollWidth > scrollerX.clientWidth) {
-                scrollerX.scrollLeft += absCeil(vx * dt);
+            if (dragEventData.$scrollerX) {
+                dragEventData.scrollerXValue += vx * dt;
+                dragEventData.scrollerXValue = Math.max(0, Math.min(dragEventData.$scrollerX.scrollWidth - dragEventData.$scrollerX.clientWidth, dragEventData.scrollerXValue))
+                dragEventData.$scrollerX.scrollLeft = dragEventData.scrollerXValue;
             }
+
             if (thisBT._dragEventData && thisBT._dragEventData.state === "DRAG") {
                 thisBT.eventHandler.mousemoveOverflow(copyEvent);
             }
