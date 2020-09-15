@@ -48,6 +48,38 @@
             }
         }
     }).addTo($('#demo0'));
+    var button01 = _({
+        tag: 'ribbonbutton',
+        style: {
+            marginLeft: '20px'
+        },
+        props: {
+            text: 'Upload Picture',
+            items: [
+                {
+                    style: {
+                        fontWeight: 'bold',
+                        paddingLeft: '10px'
+                    },
+                    child: { tag: 'span', child: { text: 'Upload Picture From' } }
+                },
+                { text: "Dropbox", icon: 'span.mdi.mdi-dropbox' },
+                { text: "Microsoft Onedrive", icon: 'span.mdi.mdi-microsoft-onedrive' },
+                { text: "Google Drive", icon: 'span.mdi.mdi-google-drive' },
+                '-------',
+                {
+                    icon: 'span.mdi.mdi-desktop-classic',
+                    text: 'Your computer'
+                }
+            ]
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+            }
+        }
+    }).addTo($('#demo0'));
 </script>
 
 
