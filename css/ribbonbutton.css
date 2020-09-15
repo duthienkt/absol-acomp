@@ -15,7 +15,6 @@
     background-color: transparent;
 }
 
-
 .as-ribbon-button:hover {
     background-color: rgba(169, 168, 169, 0.15);
 }
@@ -24,12 +23,6 @@
     background-color: rgba(169, 168, 169, 0.3);
 }
 
-
-.as-ribbon-split-button-primary {
-    font-size: inherit;
-    padding-right: 0;
-
-}
 
 
 .as-ribbon-split-button:active:hover .as-ribbon-split-button-content > button,
@@ -55,6 +48,7 @@ svg.as-ribbon-button-icon {
 }
 
 .as-ribbon-button-text {
+    display: inline-block;
     vertical-align: middle;
     font-size: inherit;
 }

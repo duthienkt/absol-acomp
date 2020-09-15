@@ -6,6 +6,8 @@
     outline: none;
     padding: 0;
     overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .as-icon-button-table-box {
@@ -15,7 +17,7 @@
 }
 
 .as-flexicon-button:hover .as-flexicon-button-content {
-    background-color: rgb(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .as-flexicon-button:active {
