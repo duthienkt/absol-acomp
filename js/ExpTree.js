@@ -267,9 +267,8 @@ export function ExpTree() {
     var thisET = this;
     this.$node = $('expnode', this)
         .on('press', function (event) {
-            this.emit('press', { target: thisET, node: this, type: 'press' }, this)
+            thisET.emit('press', { target: thisET, node: this, type: 'press' }, this)
         });
-    // console.log(res.$node);
 
     this.$itemsContainer = $('.absol-exp-items', thisET);
     OOP.drillProperty(this, this.$node, ['desc', 'name', 'title', 'extSrc', 'active', 'icon']);
