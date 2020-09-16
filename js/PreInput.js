@@ -2,10 +2,16 @@ import '../css/preinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import {dataURItoBlob, blobToFile, blobToArrayBuffer} from "absol/src/Converter/file";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+
+/***
+ * @extends AElement
+ * @constructor
+ */
 function PreInput() {
     this.defineEvent(['pasteimg', 'pastetext', 'change']);
     this.on('paste', this.eventHandler.paste);
