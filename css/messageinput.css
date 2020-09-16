@@ -1,47 +1,31 @@
-.as-message-input-text-input {
-    min-height: 2em;
-    font-size: 14px;
-    outline: none;
-    max-height: 6em;
-    line-height: 1.5em;
-    overflow-y: auto;
-    outline: none;
-}
-
 .as-message-input {
-    border-top: 1px solid #d4d4d7;
-    border-bottom: 1px solid #d4d4d7;
-    background-color: white;
-    outline: none;
-}
-
-.as-message-input-extenal-tools-popup {
-    position: absolute;
-    left: 10px;
-    bottom: 100%;
-    right: 10px;
-    background: white;
-}
-
-
-.as-message-input-extenal-tools {
     position: relative;
+    box-sizing: border-box;
+    padding-top: 0.3125em;
+    padding-bottom: 0.3125em;
 }
+
+.as-message-input:not(.as-state-text) .as-message-input-plugin-send,
+.as-message-input.as-state-text .as-message-input-plugin-camera,
+.as-message-input:not(.as-mode-edit) .as-message-input-plugin-cancel,
+.as-message-input.as-edited .as-message-input-plugin-cancel {
+    display: none;
+}
+
 
 .as-message-input-plugin-btn {
-    border: none;
+    font-size: inherit;
+    width: 2.5em;
     height: 2.5em;
     padding: 0;
-    width: 2.5em;
-    font-size: inherit;
+    border: none;
+    color: rgb(122, 122, 122);
     background-color: transparent;
-    color: #767676;
     outline: none;
 }
 
-.as-message-input-plugin-btn:hover,
-.as-message-input-plugin-btn-active {
-    color: #0068ff;
+.as-message-input-plugin-btn:active {
+    background-color: rgba(169, 169, 169, 0.2);
 }
 
 
@@ -49,96 +33,72 @@
     font-size: 1.5em;
 }
 
-.as-message-input-body {
-    border-top: 1px solid #d4d4d7;
-    padding-right: 40px;
-    position: relative;
-}
 
-.as-message-input-send-btn,
-.as-message-input-cancel-btn {
+.as-message-input-right {
     position: absolute;
-    right: 5px;
-    height: 30px;
-    top: calc(50% - 15px);
-    width: 30px;
-    text-align: center;
-    padding: 0;
-    border: 0;
-    background-color: transparent;
-    outline: none;
+    bottom: 0.3125em;
+    right: 0;
+    z-index: 0;
 }
 
-.as-message-input-send-btn span,
-.as-message-input-cancel-btn span {
-    font-size: 20px;
-}
-
-/* .as-message-input-cancel-btn {
-    color: white;
-    border-radius: 50%;
-    background-color: rgba(169, 169, 169);
-
-} */
-
-.as-message-input-img-list:empty {
-    display: none;
-}
-
-.as-message-input-show-emoji {}
-
-.as-message-input-file-list {
-    display: block;
-}
-
-
-.as-message-input-attach-preview {
+.as-message-input-left,
+.as-message-input-pre-ctn {
+    position: relative;
     display: inline-block;
+    vertical-align: bottom;
+    z-index: 2;
+}
+
+.as-message-input-pre-ctn {
+    width: calc(100% - 7.5em);
+    border-radius: 1.25em;
+    box-sizing: border-box;
+    /*background-color: rgb(235, 235, 235);*/
+    transition: width 0.1s;
+    padding: 0.5em 1em;
+    background-color: #00ff5b;
+}
+
+.as-message-input.as-state-text .as-message-input-pre-ctn,
+.as-message-input.as-mode-edit .as-message-input-pre-ctn {
+    width: calc(100% - 5em);
+}
+
+
+.as-message-input-pre-ctn::before {
+    display: inline-block;
+    content: "";
+    height: 1.5em;
     vertical-align: middle;
-    position: relative;
-    margin: 5px;
-}
-
-.as-message-input-attach-preview-image {
-    height: 40px;
-    width: auto;
-    min-width: 20px;
-    image-orientation: from-image;
 }
 
 
-.as-message-input-attach-preview-close-btn {
-    position: absolute;
-    right: 2px;
-    top: 2px;
-    width: 14px;
-    height: 14px;
-    border-radius: 7px;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.3);
-    border: none;
+.as-message-input-pre {
+    display: inline-block;
+    width: calc(100% - 2px);
+    box-sizing: border-box;
+    font-size: inherit;
     outline: none;
-    padding: 0;
-    color: rgb(169, 169, 169);
+    vertical-align: middle;
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-x: hidden;
+    background-color: #1e7b34;
+    overflow-y: auto;
+    max-height: 6.5em;
 }
 
-.as-message-input-attach-preview-close-btn span {
-    font-size: 14px;
-}
-
-.as-message-input-attach-preview-close-btn:hover {
-    background-color: rgba(255, 255, 255, 0.5);
-    color: rgb(200, 200, 200);
-}
-
-.as-message-input-attach-preview-close-btn:active {
-    background-color: rgba(255, 255, 255, 0.7);
-    color: rgb(255, 255, 255);
-}
-
-.as-message-input.as-mode-edit .as-message-input-plugin-image,
-.as-message-input.as-mode-edit .as-message-input-plugin-file,
-.as-message-input:not(.as-mode-edit) .as-message-input-cancel-btn,
-.as-message-input.as-mode-edit .as-message-input-send-btn {
+.as-message-input-camera-caller,
+.as-message-input-camera-microphone {
     display: none;
+}
+
+.as-message-input-emoji-picker-ctn {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    background-color: white;
 }

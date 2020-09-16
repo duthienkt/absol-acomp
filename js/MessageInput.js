@@ -13,48 +13,48 @@ var $ = ACore.$;
 var iconCatalogCaches = {};
 
 function MessageInput() {
-    this._mode = "new";//edit
-    this._iconAssetRoot = this.attr('data-icon-asset-root');
-    var catalogiUrl = this._iconAssetRoot + '/catalog.json';
-    this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
-        iconCatalogCaches[catalogiUrl] = JSON.parse(result);
-        return iconCatalogCaches[catalogiUrl];
-    });
-    /**
-     * @type {import('./PreInput').default}
-     */
-    this.$preInput = $('preinput', this);
-    this.$preInput.on('change', this.eventHandler.preInputChange)
-        .on('keyup', this.eventHandler.preInputKeyUp)
-        .on('keydown', this.eventHandler.preInputKeyDown)
-        .on('pasteimg', this.eventHandler.preInputPasteImg);
-    //every can make size change
-    this._imageFiles = [];
-    this._files = [];
-    this._latBound = {};
-
-    this.$fileList = $('.as-message-input-file-list', this);
-    this.$emojiBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-emoji', this)
-        .on('click', this.eventHandler.clickEmojiBtn);
-    this.$fileBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-file', this)
-        .on('click', this.openFileDialog.bind(this));
-    this.$imageBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-image', this)
-        .on('click', this.openImageFileDialog.bind(this));
-
-    this.$sendBtn = $('.as-message-input-send-btn', this)
-        .on('click', this.notifySend.bind(this));
-
-    this.$cancelBtn = $('.as-message-input-cancel-btn', this)
-        .on('click', this.notifyCancel.bind(this));
-
-    this.$extenalTool = $('.as-message-input-extenal-tools', this);
-    this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
-    this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
-        .on('pick', this.eventHandler.pickEmoji);
-    this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
-    this.on('drop', this.eventHandler.drop)
-        .on('dragover', this.eventHandler.dragover);
-};
+    // this._mode = "new";//edit
+    // this._iconAssetRoot = this.attr('data-icon-asset-root');
+    // var catalogiUrl = this._iconAssetRoot + '/catalog.json';
+    // this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
+    //     iconCatalogCaches[catalogiUrl] = JSON.parse(result);
+    //     return iconCatalogCaches[catalogiUrl];
+    // });
+    // /**
+    //  * @type {import('./PreInput').default}
+    //  */
+    // this.$preInput = $('preinput', this);
+    // this.$preInput.on('change', this.eventHandler.preInputChange)
+    //     .on('keyup', this.eventHandler.preInputKeyUp)
+    //     .on('keydown', this.eventHandler.preInputKeyDown)
+    //     .on('pasteimg', this.eventHandler.preInputPasteImg);
+    // //every can make size change
+    // this._imageFiles = [];
+    // this._files = [];
+    // this._latBound = {};
+    //
+    // this.$fileList = $('.as-message-input-file-list', this);
+    // this.$emojiBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-emoji', this)
+    //     .on('click', this.eventHandler.clickEmojiBtn);
+    // this.$fileBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-file', this)
+    //     .on('click', this.openFileDialog.bind(this));
+    // this.$imageBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-image', this)
+    //     .on('click', this.openImageFileDialog.bind(this));
+    //
+    // this.$sendBtn = $('.as-message-input-send-btn', this)
+    //     .on('click', this.notifySend.bind(this));
+    //
+    // this.$cancelBtn = $('.as-message-input-cancel-btn', this)
+    //     .on('click', this.notifyCancel.bind(this));
+    //
+    // this.$extenalTool = $('.as-message-input-extenal-tools', this);
+    // this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
+    // this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
+    //     .on('pick', this.eventHandler.pickEmoji);
+    // this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
+    // this.on('drop', this.eventHandler.drop)
+    //     .on('dragover', this.eventHandler.dragover);
+}
 
 
 MessageInput.iconAssetRoot = 'https://absol.cf/exticons/vivid';
@@ -63,57 +63,47 @@ MessageInput.tag = 'MessageInput'.toLowerCase();
 
 MessageInput.render = function (data) {
     data = data || {};
-    data.iconAssetRoot = data.iconAssetRoot || MessageInput.iconAssetRoot;
+    data.iconAssetRoot = data.iconAssetRoot ||MessageInput.iconAssetRoot;
     return _({
         class: 'as-message-input',
-        attr: {
-            'data-icon-asset-root': data.iconAssetRoot,
-            tabindex: '1' //tabindex to prevent open new tab after drop 
-        },
-        extendEvent: ['sizechange', 'change', 'send', 'cancel'],
+        extendEvent: ['sendtext', 'sendimage', 'sendfile', 'cancel', 'change', 'sizechange', 'send'],
         child: [
             {
-                class: 'as-message-input-extenal-tools',
+                class: 'as-message-input-right',
                 child: [
-
                     {
                         tag: 'button',
-                        class: ['as-message-input-plugin-btn', 'as-message-input-plugin-emoji'],
-                        child: 'span.mdi.mdi-sticker-emoji'
+                        class: ['as-message-input-plugin-btn', 'as-message-input-plugin-file'],
+                        child: 'span.mdi.mdi-attachment.mdi-rotate-90'
                     },
                     {
                         tag: 'button',
                         class: ['as-message-input-plugin-btn', 'as-message-input-plugin-image'],
-                        child: 'span.mdi.mdi-image'
+                        child: 'span.mdi.mdi-file-image-outline'
                     },
-
                     {
                         tag: 'button',
-                        class: ['as-message-input-plugin-btn', 'as-message-input-plugin-file'],
-
-                        child: 'span.mdi.mdi-paperclip'
-                    }
-
-                ]
-            },
-            {
-                class: 'as-message-input-body',
-                child: [
-                    'preinput.as-message-input-text-input.absol-bscroller',
-                    {
-                        tag: 'button',
-                        class: 'as-message-input-send-btn',
+                        class: ['as-message-input-plugin-btn', 'as-message-input-plugin-send'],
                         child: 'span.mdi.mdi-send'
                     },
                     {
                         tag: 'button',
-                        class: 'as-message-input-cancel-btn',
+                        class: ['as-message-input-plugin-btn', 'as-message-input-plugin-cancel'],
                         child: 'span.mdi.mdi-close'
                     }
                 ]
             },
             {
-                class: 'as-message-input-file-list'
+                class: 'as-message-input-left',
+                child: {
+                    tag: 'button',
+                    class: ['as-message-input-plugin-btn', 'as-message-input-plugin-emoji'],
+                    child: 'span.mdi.mdi-emoticon-happy-outline'
+                }
+            },
+            {
+                class: 'as-message-input-pre-ctn',
+                child: 'preinput.as-message-input-pre.absol-bscroller'
             }
         ]
     });
