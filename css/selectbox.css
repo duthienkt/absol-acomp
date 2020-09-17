@@ -3,12 +3,13 @@
     --select-box-item-font-size: 10px;
     --select-box-item-border-radius: 9px;
     --select-box-item-close-opacity: 0;
+    --select-box-min-height: 30px;
 }
 
 .absol-selectbox {
     --list-min-width: 40px;
     position: relative;
-    min-height: calc(var(--select-box-item-height) + 5px);
+    min-height: var(--select-box-min-height);
     min-width: var(--list-min-width);
     border: solid 1px #d6d6d6;
     border-radius: 3px;
@@ -36,7 +37,7 @@
 }
 
 .absol-selectbox .absol-selectbox-item {
-    margin: 5px 2px;
+    margin: calc((var(--select-box-min-height) - 2px -  var(--select-box-item-height)) / 2) 2px;
 }
 
 .absol-selectbox-item {
