@@ -5,6 +5,7 @@ import {openFileDialog} from "./utils";
 import XHR from "absol/src/Network/XHR";
 import EmojiAnims from "./EmojiAnims";
 import EmojiPicker from "./EmojiPicker";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -12,32 +13,44 @@ var $ = ACore.$;
 
 var iconCatalogCaches = {};
 
+export var MODE_NEW = 0;
+export var MODE_EDIT = 1;
+
+
+/***
+ * @extends AElement
+ * @constructor
+ */
 function MessageInput() {
-    // this._mode = "new";//edit
-    // this._iconAssetRoot = this.attr('data-icon-asset-root');
-    // var catalogiUrl = this._iconAssetRoot + '/catalog.json';
-    // this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
-    //     iconCatalogCaches[catalogiUrl] = JSON.parse(result);
-    //     return iconCatalogCaches[catalogiUrl];
-    // });
-    // /**
-    //  * @type {import('./PreInput').default}
-    //  */
-    // this.$preInput = $('preinput', this);
-    // this.$preInput.on('change', this.eventHandler.preInputChange)
+    this._mode = MODE_NEW;//edit
+    this._editingText = "";
+    this._iconAssetRoot = this.attr('data-icon-asset-root');
+    var catalogiUrl = this._iconAssetRoot + '/catalog.json';
+    this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
+        iconCatalogCaches[catalogiUrl] = JSON.parse(result);
+        return iconCatalogCaches[catalogiUrl];
+    });
+    /**
+     * @type {import('./PreInput').default}
+     */
+    this.$preInput = $('preinput', this);
+
+    this.$preInput.on('change', this.eventHandler.preInputChange)
     //     .on('keyup', this.eventHandler.preInputKeyUp)
     //     .on('keydown', this.eventHandler.preInputKeyDown)
     //     .on('pasteimg', this.eventHandler.preInputPasteImg);
     // //every can make size change
-    // this._imageFiles = [];
-    // this._files = [];
+    this._imageFiles = [];
+    this._files = [];
+
+
     // this._latBound = {};
     //
-    // this.$fileList = $('.as-message-input-file-list', this);
+    this.$attachmentCtn = $('.as-message-input-attachment-ctn', this);
     // this.$emojiBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-emoji', this)
     //     .on('click', this.eventHandler.clickEmojiBtn);
-    // this.$fileBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-file', this)
-    //     .on('click', this.openFileDialog.bind(this));
+    this.$fileBtn = $('.as-message-input-plugin-file', this)
+        .on('click', this.openFileDialog.bind(this));
     // this.$imageBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-image', this)
     //     .on('click', this.openImageFileDialog.bind(this));
     //
@@ -56,6 +69,8 @@ function MessageInput() {
     //     .on('dragover', this.eventHandler.dragover);
 }
 
+MessageInput.MODE_EDIT = MODE_EDIT;
+MessageInput.MODE_NEW = MODE_NEW;
 
 MessageInput.iconAssetRoot = 'https://absol.cf/exticons/vivid';
 
@@ -63,8 +78,11 @@ MessageInput.tag = 'MessageInput'.toLowerCase();
 
 MessageInput.render = function (data) {
     data = data || {};
-    data.iconAssetRoot = data.iconAssetRoot ||MessageInput.iconAssetRoot;
+    data.iconAssetRoot = data.iconAssetRoot || MessageInput.iconAssetRoot;
     return _({
+        attr: {
+            'data-icon-asset-root': MessageInput.iconAssetRoot
+        },
         class: 'as-message-input',
         extendEvent: ['sendtext', 'sendimage', 'sendfile', 'cancel', 'change', 'sizechange', 'send'],
         child: [
@@ -75,11 +93,6 @@ MessageInput.render = function (data) {
                         tag: 'button',
                         class: ['as-message-input-plugin-btn', 'as-message-input-plugin-file'],
                         child: 'span.mdi.mdi-attachment.mdi-rotate-90'
-                    },
-                    {
-                        tag: 'button',
-                        class: ['as-message-input-plugin-btn', 'as-message-input-plugin-image'],
-                        child: 'span.mdi.mdi-file-image-outline'
                     },
                     {
                         tag: 'button',
@@ -94,16 +107,23 @@ MessageInput.render = function (data) {
                 ]
             },
             {
-                class: 'as-message-input-left',
-                child: {
-                    tag: 'button',
-                    class: ['as-message-input-plugin-btn', 'as-message-input-plugin-emoji'],
-                    child: 'span.mdi.mdi-emoticon-happy-outline'
-                }
-            },
-            {
                 class: 'as-message-input-pre-ctn',
-                child: 'preinput.as-message-input-pre.absol-bscroller'
+                child: [
+
+                    {
+                        class: 'as-message-input-left',
+                        child: {
+                            tag: 'button',
+                            class: ['as-message-input-plugin-btn', 'as-message-input-plugin-emoji'],
+                            child: 'span.mdi.mdi-emoticon-happy-outline'
+                        }
+                    },
+                    {
+                        class: 'as-message-input-attachment-ctn',
+                        child: []
+                    },
+                    'preinput.as-message-input-pre.absol-bscroller'
+                ]
             }
         ]
     });
@@ -166,6 +186,16 @@ MessageInput.prototype.blur = function () {
     this.$preInput.blur();
 };
 
+
+MessageInput.prototype._updateAttachmentClass = function (){
+    if (this._imageFiles.length + this._files.length) {
+        this.addClass("as-has-attachment");
+    }
+    else {
+        this.removeClass("as-has-attachment");
+    }
+};
+
 MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
     var thisMi = this;
     Array.prototype.forEach.call(imageFiles, function (file, index) {
@@ -184,10 +214,9 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
             },
             child: [
                 {
-                    tag: 'img',
                     class: 'as-message-input-attach-preview-image',
-                    props: {
-                        src: src
+                    style:{
+                      backgroundImage: 'url('+src+')'
                     }
                 },
                 {
@@ -200,16 +229,18 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
                     on: {
                         click: function () {
                             thisMi._imageFiles = thisMi._imageFiles.filter(function (it) {
-                                return it != file;
+                                return it !== file;
                             });
                             itemElt.remove();
+                            thisMi._updateAttachmentClass();
                             thisMi.notifyChange();
                         }
                     }
                 }
             ]
-        }).addTo(thisMi.$fileList);
+        }).addTo(thisMi.$attachmentCtn);
     });
+   this._updateAttachmentClass();
     this.notifySizeChange();
     this.$preInput.focus();
 };
@@ -251,7 +282,7 @@ MessageInput.prototype.addFiles = function (files) {
                         on: {
                             click: function () {
                                 thisMi._files = thisMi._files.filter(function (it) {
-                                    return it != file;
+                                    return it !== file;
                                 });
                                 itemElt.remove();
                                 thisMi.notifyChange();
@@ -259,7 +290,7 @@ MessageInput.prototype.addFiles = function (files) {
                         }
                     }
                 ]
-            }).addTo(thisMi.$fileList);
+            }).addTo(thisMi.$attachmentCtn);
         });
         thisMi.notifySizeChange();
     });
@@ -290,9 +321,10 @@ MessageInput.prototype.openFileDialog = function () {
                     otherFiles.push(file);
                 }
             }
+            console.log(imageFiles, otherFiles);
             thisMi.addImageFiles(imageFiles);
-            thisMi.addFiles(otherFiles);
-            thisMi.notifyChange();
+            // thisMi.addFiles(otherFiles);
+            // thisMi.notifyChange();
         }
     });
 };
@@ -325,6 +357,21 @@ MessageInput.prototype.notifySizeChange = function () {
 MessageInput.eventHandler = {};
 
 MessageInput.eventHandler.preInputChange = function (event) {
+    var text = this.$preInput.value;
+    if (text.length > 0) {
+        this.addClass('as-has-text');
+    }
+    else {
+        this.removeClass('as-has-text');
+    }
+
+    if (text === this._editingText) {
+        this.removeClass('as-text-changed');
+    }
+    else {
+        this.addClass('as-text-changed');
+
+    }
     this.notifySizeChange();
     this.notifyChange();
 };
@@ -440,7 +487,7 @@ MessageInput.property = {};
 
 MessageInput.property.files = {
     set: function (value) {
-        $('.as-message-input-attach-file', this.$fileList, function (elt) {
+        $('.as-message-input-attach-file', this.$attachmentCtn, function (elt) {
             elt.remove();
         });
         value = value || [];
@@ -454,7 +501,7 @@ MessageInput.property.files = {
 
 MessageInput.property.images = {
     set: function (value) {
-        $('.as-message-input-attach-image', this.$fileList, function (elt) {
+        $('.as-message-input-attach-image', this.$attachmentCtn, function (elt) {
             elt.remove();
         });
         value = value || [];
@@ -467,8 +514,18 @@ MessageInput.property.images = {
 };
 
 MessageInput.property.text = {
-    set: function (value) {
-        this.$preInput.value = '' + value;
+    set: function (text) {
+        this.$preInput.value = '' + text;
+        if (text.length > 0) {
+            this.addClass('as-has-text');
+        }
+        else {
+            this.removeClass('as-has-text');
+        }
+        if (this._mode === MODE_EDIT) {
+            this._editingText = text;
+        }
+        this.removeClass('as-text-changed');
     },
     get: function () {
         return this.$preInput.value;
@@ -481,13 +538,18 @@ MessageInput.property.text = {
  */
 MessageInput.property.mode = {
     set: function (value) {
-        if (value == 'edit') {
+        value = value || MODE_NEW;
+        if (value === MODE_EDIT || (value.toLowerCase && value.toLowerCase() === 'edit')) {
             this.addClass('as-mode-edit');
+            value = MODE_EDIT;
+            this._editingText = this.$preInput.value;
         }
         else {
-            value = 'new';
+            value = MODE_NEW;
+            this._editingText = '';
             this.removeClass('as-mode-edit');
         }
+        this.removeClass('as-text-changed');
         this._mode = value;
     },
     get: function () {
@@ -547,7 +609,6 @@ export function parseMessage(text, data) {
                                 value: leftToken
                             });
                         }
-                        ;
                         tokens.push({
                             type: 'emoji',
                             value: emoji
