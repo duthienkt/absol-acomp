@@ -18,83 +18,151 @@
 </head>
 
 <body>
-    <script>
-        // runDebugTask();
-    </script>
-    <style>
-        html,
-        body {
-            padding: 0;
-            margin: 0;
-            width: 100%;
-            height: 100%;
-        }
+<script>
+    // runDebugTask();
+</script>
+<style>
+    html,
+    body {
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
 
-        .message-box {
-            box-sizing: border-box;
-            width: 100%;
-            height: 100%;
-            position: relative;
-            border: solid 1px #ddd;
-            overflow-y: auto;
-            font-size: 14px;
-        }
+    .message-box {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        border: solid 1px #ddd;
+        overflow-y: auto;
+        font-size: 14px;
+    }
 
-        .input-ctn {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background-color: aliceblue;
-        }
+    .input-ctn {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        border-top: solid 1px #ddd;
+    }
 
-        .message-ctn {}
+    .message-ctn {
+        padding: 10px;
+    }
 
-        .message {
-            width: 50%;
-            padding: 10px;
-            background-color: deepskyblue;
-        }
-    </style>
-    <div class="message-box">
-        <div class="message-ctn absol-bscroller"></div>
-        <div class="input-ctn"></div>
-    </div>
+    .message {
+        max-width: 50%;
+        padding: 10px;
+        background-color: #a8c7d6;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        display: inline-block;
+    }
 
-    <script>
-        (function () {
-            var _ = absol._;
-            var $ = absol.$;
-            var messBox = $('.message-box');
-            var focusButton = _('<button>Focus</button>').on('click', function () {
-                messInput.focus();
-            });
+    .message .as-sprite {
+        width: 60px;
+        height: 60px;
+    }
+</style>
+<div class="message-box">
+    <div class="message-ctn absol-bscroller"></div>
+    <div class="input-ctn"></div>
+</div>
 
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var messBox = $('.message-box');
+        absol.require('contextcaptor').auto();
+        var inputCtn = $('.input-ctn');
+        var messageCtn = $('.message-ctn');
+        var messInput = _({
+            tag: 'messageinput',
+            on: {
+                change: function () {
+                    // console.log(this.text, this.files, this.images);// files, images : Array<Files> text: String
 
-            var inputCtn = $('.input-ctn');
-            var messageCtn = $('.message-ctn');
-            messageCtn.addChild(focusButton);
-            var messInput = _({
-                tag: 'messageinput',
-                on: {
-                    change: function () {
-                        // console.log(this.text, this.files, this.images);// files, images : Array<Files> text: String
+                },
+                sizechange: function (event) {
+                    messageCtn.addStyle('height', 'calc(100% - ' + (event.bound.height) + 'px)')
+                },
+                send: function () {
+                    if(this.mode == 'edit') return ;
+                    console.log('send', this.text, this.files, this.images)
+                    var text = this.text;
+                    if (text) {
+                        var message = absol.parseMessage(text);
+                        var messElt = _({
+                            extendEvent: 'contextmenu',
+                            class: 'message',
+                            child: message,
+                            on: {
+                                contextmenu: function (event) {
+                                    event.showContextMenu({
+                                        items: [
+                                            {
+                                                text: 'Sửa',
+                                                icon: 'span.mdi.mdi-pencil-outline',
+                                                cmd: 'edit'
+                                            },
+                                            {
+                                                text: 'Xóa',
+                                                icon: 'span.mdi.mdi-delete',
+                                                cmd: 'delete'
+                                            }
+                                        ]
+                                    }, function (event) {
+                                        var item = event.menuItem;
+                                        if (item.cmd === 'delete') {
+                                            this.remove();
+                                        }
+                                        else if (item.cmd === 'edit') {
+                                            function onSend(){
+                                                messInput.off({
+                                                    cancel: onCancel,
+                                                    send: onSend
+                                                });
+                                                text = messInput.text;
+                                                messInput.clearAllContent();
+                                                messElt.clearChild();
+                                                _ ({elt:messElt, child: absol.parseMessage(text)})
+                                                messInput.mode = 'new';
+                                            }
+                                            function onCancel(){
+                                                messInput.off({
+                                                    cancel: onCancel,
+                                                    send: onSend
+                                                });
+                                                messInput.clearAllContent();
+                                                messInput.mode = 'new';
+                                            }
+                                            messInput.on({
+                                                cancel: onCancel,
+                                                send: onSend
+                                            });
+                                            messInput.mode = 'edit';
+                                            messInput.clearAllContent();
+                                            messInput.text = text;
+                                        }
+                                    });
 
-                    },
-                    sizechange: function (event) {
-                        messageCtn.addStyle('height', 'calc(100% - ' + (event.bound.height) + 'px)')
-                    },
-                    send: function () {
-                        console.log('send', this.text, this.files, this.images)
-                        this.clearAllContent()
-                        this.blur();
+                                }
+                            }
+                        }).addTo(messageCtn);
+                        _('br').addTo(messageCtn);
                     }
+                    this.clearAllContent();
+                    // this.blur();// call blur if need
                 }
-            });
-            inputCtn.addChild(messInput);
+            }
+        });
+        inputCtn.addChild(messInput);
 
-        })()
-    </script>
+    })()
+</script>
 </body>
 
 </html>
