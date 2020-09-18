@@ -4,7 +4,7 @@
 <head>
     <title>Media Input</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://absol.cf/absol/dist/polyfill.js"></script>
     <!-- <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css"> -->
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
@@ -31,13 +31,16 @@
     }
 
     .message-box {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
         box-sizing: border-box;
-        width: 100%;
-        height: 100%;
-        position: relative;
         border: solid 1px #ddd;
         overflow-y: auto;
         font-size: 14px;
+
     }
 
     .input-ctn {
@@ -50,6 +53,18 @@
 
     .message-ctn {
         padding: 10px;
+        box-sizing: border-box;
+    }
+
+    .message-ctn{
+        border-bottom: solid 2px red;
+    }
+
+    .sync{
+        position: fixed;
+        bottom: 60px;
+        left: 5px;
+        z-index: 1000;
     }
 
     .message {
@@ -75,6 +90,7 @@
     (function () {
         var _ = absol._;
         var $ = absol.$;
+        var syncElt = _('.sync').addTo(document.body)
         var messBox = $('.message-box');
         absol.require('contextcaptor').auto();
         var inputCtn = $('.input-ctn');
@@ -83,6 +99,7 @@
             tag: 'messageinput',
             on: {
                 change: function () {
+                    syncElt.innerHTML = this.text;
                     // console.log(this.text, this.files, this.images);// files, images : Array<Files> text: String
 
                 },
@@ -91,7 +108,6 @@
                 },
                 send: function () {
                     if(this.mode == 'edit') return ;
-                    console.log('send', this.text, this.files, this.images)
                     var text = this.text;
                     if (text) {
                         var message = absol.parseMessage(text);
@@ -153,6 +169,7 @@
                             }
                         }).addTo(messageCtn);
                         _('br').addTo(messageCtn);
+                        messageCtn.scrollTop = messageCtn.scrollHeight;
                     }
                     this.clearAllContent();
                     // this.blur();// call blur if need
