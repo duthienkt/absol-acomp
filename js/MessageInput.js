@@ -62,7 +62,7 @@ function MessageInput() {
     this.$cancelBtn = $('.as-message-input-plugin-cancel', this)
         .on('click', this.notifyCancel.bind(this));
 
-    this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
+    this.$emojiPickerCtn = _('.as-message-input-external-tools-popup');
     this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
         .on('pick', this.eventHandler.pickEmoji);
     this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
@@ -124,9 +124,17 @@ MessageInput.render = function (data) {
                         child: [{
                             tag: 'button',
                             class: 'as-message-input-attachment-add-btn',
-                            child: {
-                                text: "+"
-                            }
+                            child: [
+                                'span.mdi.mdi-arrow-down-bold.as-message-input-attachment-add-btn-drop',
+                                {
+                                    tag: 'span',
+                                    class:'as-message-input-attachment-add-btn-plus',
+                                    child: {
+                                        text: "+"
+                                    }
+                                }
+
+                            ]
                         }]
                     },
                     'preinput.as-message-input-pre.absol-bscroller'
@@ -453,6 +461,16 @@ MessageInput.eventHandler.pickEmoji = function (event) {
 
 MessageInput.eventHandler.dragover = function (event) {
     event.preventDefault();
+    this.addClass('as-drag-hover');
+    this.notifySizeChange();
+    if (this._hoverTimeout > 0)
+        clearTimeout(this._hoverTimeout);
+    var thisMi = this;
+    this._hoverTimeout = setTimeout(function () {
+        thisMi._hoverTimeout = -1;
+        thisMi.removeClass('as-drag-hover');
+        thisMi.notifySizeChange();
+    }, 200);
     //todo:
 };
 

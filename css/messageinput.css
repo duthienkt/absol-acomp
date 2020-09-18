@@ -131,7 +131,7 @@
 .as-message-input:not(.as-has-text):not(.as-has-attachment) .as-message-input-plugin-send,
 .as-message-input:not(.as-mode-edit) .as-message-input-plugin-cancel,
 .as-message-input.as-mode-edit.as-text-changed.as-has-text .as-message-input-plugin-cancel,
-.as-message-input:not(.as-has-attachment) .as-message-input-attachment-ctn,
+.as-message-input:not(.as-has-attachment):not(.as-drag-hover) .as-message-input-attachment-ctn,
 .as-message-input.as-mode-edit .as-message-input-plugin-file,
 .as-message-input.as-has-text .as-message-input-plugin-file
 {
@@ -143,6 +143,7 @@
     max-height: 170px;
     overflow-y: auto;
 }
+
 
 
 .as-message-input-attach-preview {
@@ -208,6 +209,13 @@
     color: rgb(255, 255, 255);
 }
 
+
+.as-message-input:not(.as-drag-hover) .as-message-input-attachment-add-btn-drop,
+.as-message-input.as-drag-hover .as-message-input-attachment-add-btn-plus
+{
+    display: none;
+}
+
 .as-message-input-attach-preview-name {
     position: absolute;
     left: 10px;
@@ -233,6 +241,7 @@
     color: white;
     font-size: 50px;
     outline: none;
+    margin-bottom: 10px;
 }
 
 .as-message-input-attachment-add-btn:hover{
@@ -241,10 +250,9 @@
 }
 .as-message-input-attachment-add-btn:active{
     background-color: rgb(138, 141, 145)
-
 }
 
-.as-message-input-extenal-tools-popup{
+.as-message-input-external-tools-popup{
     position: absolute;
     left: 0;
     max-width: 100%;
