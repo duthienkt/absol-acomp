@@ -6,9 +6,11 @@ import XHR from "absol/src/Network/XHR";
 import EmojiAnims from "./EmojiAnims";
 import EmojiPicker from "./EmojiPicker";
 import AElement from "absol/src/HTML5/AElement";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
 var $ = ACore.$;
+var $$ = ACore.$$;
 
 
 var iconCatalogCaches = {};
@@ -16,6 +18,7 @@ var iconCatalogCaches = {};
 export var MODE_NEW = 0;
 export var MODE_EDIT = 1;
 
+var isMobile = BrowserDetector.isMobile;
 
 /***
  * @extends AElement
@@ -36,37 +39,35 @@ function MessageInput() {
     this.$preInput = $('preinput', this);
 
     this.$preInput.on('change', this.eventHandler.preInputChange)
-    //     .on('keyup', this.eventHandler.preInputKeyUp)
-    //     .on('keydown', this.eventHandler.preInputKeyDown)
-    //     .on('pasteimg', this.eventHandler.preInputPasteImg);
+        .on('keyup', this.eventHandler.preInputKeyUp)
+        .on('keydown', this.eventHandler.preInputKeyDown)
+        .on('pasteimg', this.eventHandler.preInputPasteImg);
     // //every can make size change
     this._imageFiles = [];
     this._files = [];
 
 
-    // this._latBound = {};
+    this._latBound = {};
     //
     this.$attachmentCtn = $('.as-message-input-attachment-ctn', this);
-    // this.$emojiBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-emoji', this)
-    //     .on('click', this.eventHandler.clickEmojiBtn);
+    this.$emojiBtn = $('.as-message-input-plugin-emoji', this)
+        .on('click', this.eventHandler.clickEmojiBtn);
     this.$fileBtn = $('.as-message-input-plugin-file', this)
         .on('click', this.openFileDialog.bind(this));
-    // this.$imageBtn = $('.as-message-input-plugin-btn.as-message-input-plugin-image', this)
-    //     .on('click', this.openImageFileDialog.bind(this));
-    //
-    // this.$sendBtn = $('.as-message-input-send-btn', this)
-    //     .on('click', this.notifySend.bind(this));
-    //
-    // this.$cancelBtn = $('.as-message-input-cancel-btn', this)
-    //     .on('click', this.notifyCancel.bind(this));
-    //
-    // this.$extenalTool = $('.as-message-input-extenal-tools', this);
-    // this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
-    // this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
-    //     .on('pick', this.eventHandler.pickEmoji);
-    // this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
-    // this.on('drop', this.eventHandler.drop)
-    //     .on('dragover', this.eventHandler.dragover);
+    this.$attachmentAddBtn = $('.as-message-input-attachment-add-btn', this)
+        .on('click', this.openFileDialog.bind(this));
+    this.$sendBtn = $('.as-message-input-plugin-send', this)
+        .on('click', this.notifySend.bind(this));
+
+    this.$cancelBtn = $('.as-message-input-plugin-cancel', this)
+        .on('click', this.notifyCancel.bind(this));
+
+    this.$emojiPickerCtn = _('.as-message-input-extenal-tools-popup');
+    this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
+        .on('pick', this.eventHandler.pickEmoji);
+    this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
+    this.on('drop', this.eventHandler.drop)
+        .on('dragover', this.eventHandler.dragover);
 }
 
 MessageInput.MODE_EDIT = MODE_EDIT;
@@ -119,8 +120,14 @@ MessageInput.render = function (data) {
                         }
                     },
                     {
-                        class: 'as-message-input-attachment-ctn',
-                        child: []
+                        class: ['as-message-input-attachment-ctn', 'as-bscroller'],
+                        child: [{
+                            tag: 'button',
+                            class: 'as-message-input-attachment-add-btn',
+                            child: {
+                                text: "+"
+                            }
+                        }]
                     },
                     'preinput.as-message-input-pre.absol-bscroller'
                 ]
@@ -143,7 +150,7 @@ MessageInput.prototype.showEmoji = function () {
     var value = this.$preInput.value;
     this._lastInputSelectPosion = this.$preInput.getSelectPosition() || { start: value.length, end: value.length };
     this.addClass('as-message-input-show-emoji');
-    this.$extenalTool.addChild(this.$emojiPickerCtn);
+    this.addChild(this.$emojiPickerCtn);
     var thisMi = this;
     setTimeout(function () {
         $(document.body).on('mousedown', thisMi.eventHandler.mousedownOutEmoji);
@@ -187,7 +194,7 @@ MessageInput.prototype.blur = function () {
 };
 
 
-MessageInput.prototype._updateAttachmentClass = function (){
+MessageInput.prototype._updateAttachmentClass = function () {
     if (this._imageFiles.length + this._files.length) {
         this.addClass("as-has-attachment");
     }
@@ -208,15 +215,15 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
             src = URL.createObjectURL(file);
         }
         var itemElt = _({
-            class: ['as-message-input-attach-preview', 'as-message-input-attach-image'],
+            class: ['as-message-input-attach-preview', 'as-image'],
             attr: {
                 title: file.name
             },
             child: [
                 {
                     class: 'as-message-input-attach-preview-image',
-                    style:{
-                      backgroundImage: 'url('+src+')'
+                    style: {
+                        backgroundImage: 'url(' + src + ')'
                     }
                 },
                 {
@@ -236,11 +243,16 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
                             thisMi.notifyChange();
                         }
                     }
+                }, {
+                    class: ['as-message-input-attach-preview-name'],
+                    child: { text: file.name }
                 }
             ]
         }).addTo(thisMi.$attachmentCtn);
+        thisMi.$attachmentCtn.addChildBefore(itemElt, thisMi.$attachmentAddBtn);
+
     });
-   this._updateAttachmentClass();
+    this._updateAttachmentClass();
     this.notifySizeChange();
     this.$preInput.focus();
 };
@@ -260,14 +272,14 @@ MessageInput.prototype.addFiles = function (files) {
 
             }
             var itemElt = _({
-                class: ['as-message-input-attach-preview', 'as-message-input-attach-file'],
+                class: ['as-message-input-attach-preview', 'as-file'],
                 attr: {
                     title: file.name
                 },
                 child: [
                     {
                         tag: 'img',
-                        class: 'as-message-input-attach-preview-image',
+                        class: 'as-message-input-attach-preview-file',
                         props: {
                             src: src
                         }
@@ -285,15 +297,22 @@ MessageInput.prototype.addFiles = function (files) {
                                     return it !== file;
                                 });
                                 itemElt.remove();
+                                thisMi._updateAttachmentClass();
                                 thisMi.notifyChange();
                             }
                         }
+                    },
+                    {
+                        class: 'as-message-input-attach-preview-name',
+                        child: { text: file.name }
                     }
                 ]
-            }).addTo(thisMi.$attachmentCtn);
+            });
+            thisMi.$attachmentCtn.addChildBefore(itemElt, thisMi.$attachmentAddBtn);
         });
         thisMi.notifySizeChange();
     });
+    this._updateAttachmentClass();
     thisMi.$preInput.focus();
 };
 
@@ -301,9 +320,10 @@ MessageInput.prototype.addFiles = function (files) {
 MessageInput.prototype.closeEmoji = function () {
     if (!this.containsClass('as-message-input-show-emoji')) return;
     this.removeClass('as-message-input-show-emoji');
-    this.$extenalTool.removeChild(this.$emojiPickerCtn);
+    this.removeChild(this.$emojiPickerCtn);
     $(document.body).off('mousedown', this.eventHandler.mousedownOutEmoji);
 };
+
 
 MessageInput.prototype.openFileDialog = function () {
     var thisMi = this;
@@ -321,9 +341,8 @@ MessageInput.prototype.openFileDialog = function () {
                     otherFiles.push(file);
                 }
             }
-            console.log(imageFiles, otherFiles);
             thisMi.addImageFiles(imageFiles);
-            // thisMi.addFiles(otherFiles);
+            thisMi.addFiles(otherFiles);
             // thisMi.notifyChange();
         }
     });
@@ -377,11 +396,11 @@ MessageInput.eventHandler.preInputChange = function (event) {
 };
 
 MessageInput.eventHandler.preInputKeyDown = function (event) {
-    if (!(event.shiftKey || event.ctrlKey || event.altKey) && event.key == 'Enter') {
+    if (!(event.shiftKey || event.ctrlKey || event.altKey) && event.key === 'Enter') {
         this.notifySend();
         event.preventDefault();
     }
-    else if ((event.shiftKey || event.ctrlKey || event.altKey) && event.key == 'Enter') {
+    else if ((event.shiftKey || event.ctrlKey || event.altKey) && event.key === 'Enter') {
         event.preventDefault();
         var text = this.$preInput.value;
         var selectedPos = this.$preInput.getSelectPosition();
@@ -390,7 +409,7 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
         this.$preInput.applyData(newText, selectedPos.start + 1);
         this.$preInput.commitChange(newText, selectedPos.start + 1);
     }
-    else if (event.key == "Escape" && this._mode == 'edit') {
+    else if (event.key === "Escape" && this._mode === MODE_EDIT) {
         this.notifyCancel();
         event.preventDefault();
     }
@@ -487,7 +506,7 @@ MessageInput.property = {};
 
 MessageInput.property.files = {
     set: function (value) {
-        $('.as-message-input-attach-file', this.$attachmentCtn, function (elt) {
+        $$('.as-file', this.$attachmentCtn).forEach(function (elt) {
             elt.remove();
         });
         value = value || [];
@@ -501,7 +520,7 @@ MessageInput.property.files = {
 
 MessageInput.property.images = {
     set: function (value) {
-        $('.as-message-input-attach-image', this.$attachmentCtn, function (elt) {
+        $$('.as-image', this.$attachmentCtn).forEach(function (elt) {
             elt.remove();
         });
         value = value || [];
@@ -553,7 +572,7 @@ MessageInput.property.mode = {
         this._mode = value;
     },
     get: function () {
-        return this._mode;
+        return this._mode === MODE_EDIT ? 'edit' : 'new';
     }
 };
 
