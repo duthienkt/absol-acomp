@@ -207,22 +207,36 @@ PreInput.prototype._pasteText = function (text) {
     var sel = window.getSelection();
     var range;
     if (window.getSelection) {
+
         sel = window.getSelection();
         if (sel.getRangeAt && sel.rangeCount) {
+            try{
+
             range = sel.getRangeAt(0);
             range.deleteContents();
+
             var textNode = _({ text: text });
             range.insertNode(textNode);
-            sel.removeRange(range);
+            if (sel.removeRange){
+                sel.removeRange(range);
+            }
+            else{
+                sel.removeAllRanges();
+            }
             range = document.createRange();
             range.setStart(textNode, text.length);
             sel.addRange(range);
             this.scrollIntoRange(range);
             this.commitChange(this.stringOf(this), this.getPosition(textNode, text.length));
+            }
+            catch (error){
+                alert(error.message)
+            }
         }
     }
     else if (document.selection && document.selection.createRange) {
         document.selection.createRange().text = text;
+        this.commitChange(this.stringOf(this), this.getPosition(textNode, text.length));
         console.error('May not support!');
     }
 };
@@ -261,6 +275,7 @@ PreInput.eventHandler.paste = function (event) {
                 }, this);
             }
             else if (plainTextItems.length > 0) {
+
                 var plainTextItem = plainTextItems[0];//only one item
                 plainTextItem.getAsString(function (text) {
                     thisIp._pasteText(text);
@@ -323,13 +338,26 @@ PreInput.eventHandler.paste = function (event) {
                         }
                     });
                     thisIp.applyData(currentText, currentSelection);
-                }, 1);
+                }, 3);
 
             }
         }
     }
     else {
-        console.error("Not support browser!");
+        setTimeout(function () {
+            if (window.getSelection) {
+                var sel = window.getSelection();
+                if (sel.getRangeAt && sel.rangeCount) {
+                    var range = sel.getRangeAt(0);
+                    var text = this.stringOf(this);
+                    var offset = this.getPosition(range.startContainer, range.startOffset);
+                    this.waitToCommit(text, offset);
+                }
+            }
+            else if (document.selection) {
+                console.error('May not support!');
+            }
+        }.bind(this), 3);
     }
 };
 
@@ -364,7 +392,7 @@ PreInput.eventHandler.keydown = function (event) {
             else if (document.selection) {
                 console.error('May not support!');
             }
-        }.bind(this), 1);
+        }.bind(this), 3);
     }
 };
 
