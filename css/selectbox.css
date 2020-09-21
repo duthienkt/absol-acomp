@@ -1,6 +1,6 @@
 :root {
-    --select-box-item-height: 18px;
-    --select-box-item-font-size: 10px;
+    --select-box-item-height: 20px;
+    --select-box-item-font-size: 14px;
     --select-box-item-border-radius: 9px;
     --select-box-item-close-opacity: 0;
     --select-box-min-height: 30px;
@@ -41,6 +41,7 @@
 }
 
 .absol-selectbox-item {
+    font-family:Arial, Helvetica, sans-serif;
     display: inline-block;
     position: relative;
     font-size: var(--select-box-item-font-size);
@@ -56,9 +57,15 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    color: white;
+    color: black;
     cursor: pointer;
 }
+
+/*.absol-selectbox-item:nth-child(2n){*/
+/*    !*font-family: Arial, Helvetica, sans-serif;*!*/
+/*    !*font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;*!*/
+/*    font-family: Verdana;*/
+/*}*/
 
 .absol-selectbox-item.as-theme-confirmed {
     background-color: rgb(145, 228, 251);
