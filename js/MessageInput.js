@@ -13,6 +13,7 @@ var $ = ACore.$;
 var $$ = ACore.$$;
 
 
+
 var iconCatalogCaches = {};
 
 export var MODE_NEW = 0;
@@ -427,6 +428,7 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
 MessageInput.eventHandler.preInputKeyUp = function (event) {
     var value = this.$preInput.value;
     this._lastInputSelectPosion = this.$preInput.getSelectPosition() || { start: value.length, end: value.length };
+    this.notifySizeChange();
 };
 
 MessageInput.eventHandler.preInputPasteImg = function (event) {

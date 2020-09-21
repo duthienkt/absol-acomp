@@ -3,9 +3,11 @@ import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import {dataURItoBlob, blobToFile, blobToArrayBuffer} from "absol/src/Converter/file";
 import AElement from "absol/src/HTML5/AElement";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
 var $ = ACore.$;
+var textDelay = BrowserDetector.isSafari? 100: 1;
 
 
 /***
@@ -146,7 +148,7 @@ PreInput.prototype.waitToCommit = function (text, offset) {
         clearTimeout(this._commitTimeout);
     this._commitTimeout = setTimeout(function () {
         thisInput.commitChange(text, offset);
-    }, 50);
+    }, textDelay);
 };
 
 PreInput.prototype.getPosition = function (node, offset) {
@@ -295,7 +297,6 @@ PreInput.eventHandler.paste = function (event) {
             else {
                 var currentText = this.stringOf(this);
                 var currentSelection = this.getSelectPosition();
-                console.log(currentSelection);
 
                 setTimeout(function () {
                     var images = [];
@@ -338,7 +339,7 @@ PreInput.eventHandler.paste = function (event) {
                         }
                     });
                     thisIp.applyData(currentText, currentSelection);
-                }, 3);
+                }, textDelay);
 
             }
         }
@@ -357,7 +358,7 @@ PreInput.eventHandler.paste = function (event) {
             else if (document.selection) {
                 console.error('May not support!');
             }
-        }.bind(this), 3);
+        }.bind(this), textDelay);
     }
 };
 
@@ -392,7 +393,7 @@ PreInput.eventHandler.keydown = function (event) {
             else if (document.selection) {
                 console.error('May not support!');
             }
-        }.bind(this), 3);
+        }.bind(this), textDelay);
     }
 };
 
