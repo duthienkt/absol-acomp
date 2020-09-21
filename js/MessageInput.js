@@ -172,7 +172,6 @@ MessageInput.prototype.showEmoji = function () {
 
 MessageInput.prototype.notifyChange = function () {
     this.emit('change', { name: 'change', target: this }, this);
-    console.log(this.autoSend);
     if (this.autoSend) {
         if (this.files.length > 0 || this.images.length > 0)
             this.notifySend();
