@@ -113,7 +113,7 @@ MessageInput.render = function (data) {
                 child: [
 
                     {
-                        class: 'as-message-input-left',
+                        class: 'as-message-input-emoji-btn-ctn',
                         child: {
                             tag: 'button',
                             class: ['as-message-input-plugin-btn', 'as-message-input-plugin-emoji'],
