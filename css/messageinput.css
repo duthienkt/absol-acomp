@@ -132,6 +132,7 @@
 .as-message-input:not(.as-mode-edit) .as-message-input-plugin-cancel,
 .as-message-input.as-mode-edit.as-text-changed.as-has-text .as-message-input-plugin-cancel,
 .as-message-input:not(.as-has-attachment):not(.as-drag-hover) .as-message-input-attachment-ctn,
+.as-message-input.as-auto-send .as-message-input-attachment-ctn,
 .as-message-input.as-mode-edit .as-message-input-plugin-file,
 .as-message-input.as-has-text .as-message-input-plugin-file {
     display: none;

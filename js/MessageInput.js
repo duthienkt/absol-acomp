@@ -13,7 +13,6 @@ var $ = ACore.$;
 var $$ = ACore.$$;
 
 
-
 var iconCatalogCaches = {};
 
 export var MODE_NEW = 0;
@@ -69,6 +68,7 @@ function MessageInput() {
     this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
     this.on('drop', this.eventHandler.drop)
         .on('dragover', this.eventHandler.dragover);
+    this.autoSend = false;
 }
 
 MessageInput.MODE_EDIT = MODE_EDIT;
@@ -129,7 +129,7 @@ MessageInput.render = function (data) {
                                 'span.mdi.mdi-arrow-down-bold.as-message-input-attachment-add-btn-drop',
                                 {
                                     tag: 'span',
-                                    class:'as-message-input-attachment-add-btn-plus',
+                                    class: 'as-message-input-attachment-add-btn-plus',
                                     child: {
                                         text: "+"
                                     }
@@ -170,12 +170,52 @@ MessageInput.prototype.showEmoji = function () {
 
 MessageInput.prototype.notifyChange = function () {
     this.emit('change', { name: 'change', target: this }, this);
+    console.log(this.autoSend);
+    if (this.autoSend) {
+        if (this.files.length > 0 || this.images.length > 0)
+            this.notifySend();
+    }
 };
 
 MessageInput.prototype.notifySend = function () {
-    this.emit('send', {
-        name: 'send', target: this, clearAllContent: this.clearAllContent.bind(this)
-    }, this);
+    var eventData = {
+        imageRemovePrevented: false,
+        fileRemovePrevented: false,
+        textRemovePrevented: false,
+        target: this,
+        files: this.files,
+        images: this.images,
+        text: this.text
+    };
+    if (eventData.files.length > 0) {
+        this.emit('sendfile', Object.assign(eventData, {
+            type: 'sendfile', preventDefault: function () {
+                this.fileRemovePrevented = true;
+            }
+        }), this);
+    }
+
+    if (eventData.images.length > 0) {
+        this.emit('sendimage', Object.assign(eventData, {
+            type: 'sendimage', preventDefault: function () {
+                this.imageRemovePrevented = true;
+            }
+        }), this);
+    }
+
+    if (this.files.length > 0 || eventData.images.length > 0 || eventData.text) {
+        this.emit('send', Object.assign(eventData, {
+            type: 'send', preventDefault: function () {
+                this.imageRemovePrevented = true;
+                this.fileRemovePrevented = true;
+                this.imageRemovePrevented = true;
+            }
+        }), this);
+    }
+    if (!eventData.fileRemovePrevented) this.files = [];
+    if (!eventData.imageRemovePrevented) this.images = [];
+    if (!eventData.textRemovePrevented) this.text = '';
+
 };
 
 MessageInput.prototype.notifyCancel = function () {
@@ -354,17 +394,6 @@ MessageInput.prototype.openFileDialog = function () {
             }
             thisMi.addImageFiles(imageFiles);
             thisMi.addFiles(otherFiles);
-            // thisMi.notifyChange();
-        }
-    });
-};
-
-
-MessageInput.prototype.openImageFileDialog = function () {
-    var thisMi = this;
-    openFileDialog({ multiple: true, accept: "image/*" }).then(function (files) {
-        if (files.length > 0) {
-            thisMi.addImageFiles(files);
             thisMi.notifyChange();
         }
     });
@@ -598,6 +627,20 @@ MessageInput.property.mode = {
         return this._mode === MODE_EDIT ? 'edit' : 'new';
     }
 };
+
+MessageInput.property.autoSend = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-auto-send');
+        }
+        else {
+            this.removeClass('as-auto-send');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-auto-send');
+    }
+}
 
 
 ACore.install(MessageInput);
