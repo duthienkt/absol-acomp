@@ -249,6 +249,7 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
                             });
                             itemElt.remove();
                             thisMi._updateAttachmentClass();
+                            thisMi.notifySizeChange();
                             thisMi.notifyChange();
                         }
                     }
@@ -307,6 +308,7 @@ MessageInput.prototype.addFiles = function (files) {
                                 });
                                 itemElt.remove();
                                 thisMi._updateAttachmentClass();
+                                thisMi.notifySizeChange();
                                 thisMi.notifyChange();
                             }
                         }
@@ -416,6 +418,7 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
         var newText = text.substr(0, selectedPos.start)
             + '\n' + text.substr(selectedPos.end);
         this.$preInput.applyData(newText, selectedPos.start + 1);
+        this.notifySizeChange();
         this.$preInput.commitChange(newText, selectedPos.start + 1);
     }
     else if (event.key === "Escape" && this._mode === MODE_EDIT) {
