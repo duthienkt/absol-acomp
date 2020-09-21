@@ -56,11 +56,11 @@
         box-sizing: border-box;
     }
 
-    .message-ctn{
+    .message-ctn {
         border-bottom: solid 2px red;
     }
 
-    .sync{
+    .sync {
         position: fixed;
         bottom: 60px;
         left: 5px;
@@ -97,6 +97,9 @@
         var messageCtn = $('.message-ctn');
         var messInput = _({
             tag: 'messageinput',
+            props: {
+                // autoSend: true
+            },
             on: {
                 change: function () {
                     syncElt.innerHTML = this.text;
@@ -107,7 +110,7 @@
                     messageCtn.addStyle('height', 'calc(100% - ' + (event.bound.height) + 'px)')
                 },
                 send: function () {
-                    if(this.mode == 'edit') return ;
+                    if (this.mode == 'edit') return;
                     var text = this.text;
                     if (text) {
                         var message = absol.parseMessage(text);
@@ -136,7 +139,7 @@
                                             this.remove();
                                         }
                                         else if (item.cmd === 'edit') {
-                                            function onSend(){
+                                            function onSend() {
                                                 messInput.off({
                                                     cancel: onCancel,
                                                     send: onSend
@@ -144,10 +147,11 @@
                                                 text = messInput.text;
                                                 messInput.clearAllContent();
                                                 messElt.clearChild();
-                                                _ ({elt:messElt, child: absol.parseMessage(text)})
+                                                _({ elt: messElt, child: absol.parseMessage(text) })
                                                 messInput.mode = 'new';
                                             }
-                                            function onCancel(){
+
+                                            function onCancel() {
                                                 messInput.off({
                                                     cancel: onCancel,
                                                     send: onSend
@@ -155,6 +159,7 @@
                                                 messInput.clearAllContent();
                                                 messInput.mode = 'new';
                                             }
+
                                             messInput.on({
                                                 cancel: onCancel,
                                                 send: onSend
@@ -171,6 +176,7 @@
                         _('br').addTo(messageCtn);
                         messageCtn.scrollTop = messageCtn.scrollHeight;
                     }
+                    console.log(this.files, this.images);
                     this.clearAllContent();
                     // this.blur();// call blur if need
                 }
