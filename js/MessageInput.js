@@ -41,7 +41,9 @@ function MessageInput() {
     this.$preInput.on('change', this.eventHandler.preInputChange)
         .on('keyup', this.eventHandler.preInputKeyUp)
         .on('keydown', this.eventHandler.preInputKeyDown)
-        .on('pasteimg', this.eventHandler.preInputPasteImg);
+        .on('pasteimg', this.eventHandler.preInputPasteImg)
+        .on('focus', this.eventHandler.preInputFocus)
+        .on('blur', this.eventHandler.preInputBlur);
     // //every can make size change
     this._imageFiles = [];
     this._files = [];
@@ -470,6 +472,15 @@ MessageInput.eventHandler.preInputPasteImg = function (event) {
 };
 
 
+MessageInput.eventHandler.preInputFocus = function (){
+    this.addClass('as-focus');
+};
+
+MessageInput.eventHandler.preInputBlur = function (){
+    this.removeClass('as-focus');
+};
+
+
 MessageInput.eventHandler.clickEmojiBtn = function () {
     this.toggleEmoji();
 };
@@ -552,6 +563,7 @@ MessageInput.eventHandler.drop = function (event) {
     this.addFiles(otherFiles);
     this.notifyChange();
 };
+
 
 
 MessageInput.property = {};
