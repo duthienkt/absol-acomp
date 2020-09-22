@@ -78,6 +78,7 @@
 
     var supportWidget = _({
         tag: 'onscreenwidget',
+        id: 'chat-widget',
         child: {
             tag: 'img',
             class: 'bsc-widget-support-img',
@@ -85,8 +86,13 @@
                 src: 'https://storage.moqups.com/repo/SdL0ybkYC5/4jHprQqLk6.png'
             }
         },
-        on:{
-            click: function(){
+        props:{
+            config:{
+                cx: 95, cy: 95
+            }
+        },
+        on: {
+            click: function () {
                 console.log('click');
             }
         }
