@@ -17,6 +17,7 @@
     padding-right: 20px;
     overflow-y: auto;
     outline: none;
+    background-color: white;
 }
 
 .absol-selectbox:not(.as-disable-click-to-focus) {
