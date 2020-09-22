@@ -1,10 +1,15 @@
 import '../css/buttonarray.css';
 import ACore from "../ACore";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function ButtonArray() {
     this._dict = {};
     this._pool = [];

@@ -1,10 +1,14 @@
 import '../css/flexiconbutton.css';
 import ACore from "../ACore";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/**
+ * @extends AElement
+ * @constructor
+ */
 function FlexiconButton() {
     this._icon = null;
     this.$content = $('.as-flexicon-button-content', this);

@@ -5,11 +5,15 @@ import * as datetime from 'absol/src/Time/datetime';
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import Dom from "absol/src/HTML5/Dom";
 import {VScroller} from "./Scroller";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/**
+ * @extends AElement
+ * @constructor
+ */
 function ChromeCalendar() {
     var thisCal = this;
     this.$years = $('.absol-chrome-calendar-years', this);

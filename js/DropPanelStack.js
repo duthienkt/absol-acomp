@@ -1,10 +1,15 @@
 import '../css/droppanel.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/**
+ * @extends AElement
+ * @constructor
+ */
 function DropPanelStack() {
     var res = this;
     this.$attachHook = _('attachhook').on('error', function () {

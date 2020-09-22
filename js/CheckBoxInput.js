@@ -1,6 +1,7 @@
 import '../css/checkboxinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
 
 
 var _ = ACore._;
@@ -17,7 +18,7 @@ var tickIcon = _(['<svg class="as-checkbox-input-check-icon" width="18px" height
 
 
 /***
- * @extends Element
+ * @extends AElement
  * @constructor
  */
 function CheckboxInput() {

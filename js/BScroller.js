@@ -1,11 +1,18 @@
 import '../css/bscroller.css';
 import ACore from "../ACore";
 import Element from "absol/src/HTML5/Element";
+import AElement from "absol/src/HTML5/Element";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-function BScroller(data) {
+
+
+/***
+ * @extends AElement
+ * @constructor
+ */
+function BScroller() {
     this.addClass('as-bscroller');
 }
 

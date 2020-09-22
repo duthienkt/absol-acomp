@@ -2,6 +2,7 @@ import '../css/hexasectionlabel.css';
 import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -49,6 +50,10 @@ _({
     }
 }).addTo(document.head);
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function HexaSectionLabel() {
     this.$background = $('.as-hexa-section-label-background', this);
     this.$index = $('.as-hexa-section-label-index', this);

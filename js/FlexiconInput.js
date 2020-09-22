@@ -1,10 +1,16 @@
 import '../css/flexiconinput.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+
+/***
+ * @extends AElement
+ * @constructor
+ */
 function FlexiconInput() {
     this.$input = $('.as-flexicon-input-text-input', this);
     this.$iconCtn = $('.as-flexicon-input-icon-ctn', this);

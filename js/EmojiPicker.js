@@ -2,10 +2,15 @@ import '../css/emojipicker.css';
 import ACore from "../ACore";
 import EmojiAnims from "./EmojiAnims";
 import Sprite from "./Sprite";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function EmojiPicker() {
     var thisPicker = this;
     this._aliveTimeout = 90;

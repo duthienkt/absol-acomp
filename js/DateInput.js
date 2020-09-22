@@ -4,10 +4,15 @@ import ACore from "../ACore";
 import {daysInMonth, beginOfDay, compareDate, formartDateString} from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/**
+ * @extends AElement
+ * @constructor
+ */
 function DateInput() {
     this._lastValue = null;
     this._value = null;

@@ -1,10 +1,15 @@
 import '../css/dropzone.css';
 import ACore from "../ACore";
+import AElement from "absol/src/HTML5/AElement";
 
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function DropZone() {
     this.defineEvent(['fileenter', 'fileleave', 'filedrop']);
     this.addClass('as-drop-zone');

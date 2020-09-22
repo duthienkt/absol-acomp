@@ -1,9 +1,14 @@
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import ACore from '../ACore';
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function FollowerToggler() {
     this.defineEvent(['close', 'open', 'preopen']);
     this.on('click', this.eventHandler.click);

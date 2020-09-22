@@ -14,6 +14,10 @@ var _ = ACore._;
 var $ = ACore.$;
 
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function BoardTable() {
     var events = {
         touchstart: this.eventHandler.mousedown,

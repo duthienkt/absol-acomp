@@ -1,5 +1,6 @@
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -13,6 +14,12 @@ export var STOP = 5;
 export var ERROR = 6;
 export var STATE_TO_STRING = ['NOT_READY', 'READY', 'START', 'RUNNING', 'PAUSE', 'STOP', 'ERROR'];
 
+
+
+/**
+ * @extends AElement
+ * @constructor
+ */
 function Sprite() {
     this.loadTextureTimeout = 5000;
     this._textureLoaded = false;

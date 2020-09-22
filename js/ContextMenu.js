@@ -4,12 +4,17 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 import Vec2 from 'absol/src/Math/Vec2';
 import './Menu';
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 var supportContextEvent = false;
 
+/**
+ * @extends AElement
+ * @constructor
+ */
 export function ContextCaptor() {
     this.attachedElt = null;
     this.$textarea = $('textarea', this)

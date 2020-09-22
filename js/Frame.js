@@ -1,10 +1,15 @@
 import '../css/frame.css';
 import ACore from "../ACore"
 import {randomIdent} from "absol/src/String/stringGenerate";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function Frame() {
     this.$parent = null;// FrameView or TabView
 }

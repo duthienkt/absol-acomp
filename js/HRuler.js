@@ -1,11 +1,15 @@
 import  '../css/hruler.css';
 import Dom from "absol/src/HTML5/Dom";
 import ACore from "../ACore";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/***
+ * @extends AElement
+ * @constructor
+ */
 function HRuler() {
     var self = this;
     this.$attachHook = _('attachhook').on('error', function () {

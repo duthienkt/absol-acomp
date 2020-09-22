@@ -2,6 +2,7 @@ import '../css/circlesectionlabel.css';
 import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
 import Dom from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -53,6 +54,11 @@ _({
     }
 }).addTo(document.head);
 
+
+/**
+ * @extends AElement
+ * @constructor
+ */
 function CircleSectionLabel() {
     this._ident = (Math.random() + '').replace(/[^0-9]/g, '_');
     this.$background = $('.as-circle-section-label-background', this);

@@ -3,11 +3,17 @@ import ACore from "../ACore";
 import {formartDateString} from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
+
+/**
+ * @extends AElement
+ * @constructor
+ */
 function CalendarInput() {
     var thisCI = this;
     this.$input = $('input', this);

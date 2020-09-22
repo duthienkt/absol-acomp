@@ -1,11 +1,16 @@
 import ACore from "../ACore";
 import Svg from "absol/src/HTML5/Svg";
-import '../css/candyboxbutton.css'; 
+import '../css/candyboxbutton.css';
+import AElement from "absol/src/HTML5/AElement";
 
 
 var _ = Svg.ShareInstance._;
 var $ = Svg.ShareInstance.$;
 
+/**
+ * @extends AElement
+ * @constructor
+ */
 function CandyBoxButton() {
     var res = _({
         tag: 'svg',

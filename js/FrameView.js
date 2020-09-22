@@ -2,10 +2,16 @@ import '../css/frameview.css';
 import Frame from "./Frame";
 
 import ACore from "../ACore";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+
+/***
+ * @extends AElement
+ * @constructor
+ */
 function FrameView() {
     this.$containers = [];
 }

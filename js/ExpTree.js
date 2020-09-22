@@ -4,6 +4,7 @@ import {contenteditableTextOnly} from "./utils";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -30,7 +31,10 @@ ACore.install('remove-ico', function () {
             </svg>');
 });
 
-
+/***
+ * @extends AElement
+ * @constructor
+ */
 export function ExpNode() {
     var thisEN = this;
     this.$level = $('.absol-exp-node-level', this);
@@ -262,7 +266,10 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
     span.on('blur', blurEventHandle);
 }
 
-
+/***
+ * @extends AElement
+ * @constructor
+ */
 export function ExpTree() {
     var thisET = this;
     this.$node = $('expnode', this)

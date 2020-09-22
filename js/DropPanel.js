@@ -1,12 +1,16 @@
 import '../css/droppanel.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import AElement from "absol/src/HTML5/AElement";
 
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/**
+ * @extends AElement
+ * @constructor
+ */
 function DropPanel() {
     var thisDP = this;
     this.$body = $('.absol-drop-panel-body', this);

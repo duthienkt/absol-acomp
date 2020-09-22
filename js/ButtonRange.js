@@ -2,6 +2,7 @@ import '../css/buttonrange.css';
 import ACore from "../ACore";
 import ButtonArray from "./ButtonArray";
 import Dom from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -16,6 +17,10 @@ var ChevronRight = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/200
     '<polygon points="144.206,0 112.206,24 248.052,205.129 112.206,386.258 144.206,410.258 298.052,205.129 "/>\n' +
     '</svg>'
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function ButtonRange() {
     this._dict = {};
     this._pool = [];
