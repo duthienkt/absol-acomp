@@ -78,8 +78,8 @@ OnScreenWidget.prototype._loadConfig = function () {
     var cx = config.cx || 0;
     var cy = config.cy || 0;
     this.addStyle({
-        '--cx': cx + '%',
-        '--cy': cy + '%'
+        '--cx': cx + 'vw',
+        '--cy': cy + 'vh'
     });
     this.config = config;
 };
@@ -127,8 +127,8 @@ OnScreenWidget.eventHandler.widgetDrag = function (event) {
     p1.x = Math.max(0, Math.min(screenSize.width - this._widgetBound.width, p1.x)) + this._widgetBound.width / 2;
     p1.y = Math.max(0, Math.min(screenSize.height - this._widgetBound.height, p1.y)) + this._widgetBound.height / 2;
     this.addStyle({
-        '--cx': (p1.x * 100 / screenSize.width) + '%',
-        '--cy': (p1.y * 100 / screenSize.height) + '%'
+        '--cx': (p1.x * 100 / screenSize.width) + 'vw',
+        '--cy': (p1.y * 100 / screenSize.height) + 'vh'
     });
     if (this.config) {
         this.config.cx = (p1.x * 100 / screenSize.width);
