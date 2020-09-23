@@ -113,7 +113,11 @@ export function buildCss(StyleSheet) {
     }).addTo(document.head);
 }
 
-
+/***
+ *
+ * @param {"camera"|"microphone"|"camcorder"|{accept:("image/*"|"audio/*"|"video/*"), capture:boolean, multiple:boolean}} props
+ * @return {Promise<File[]>}
+ */
 export function openFileDialog(props) {
     return new Promise(function (resolve) {
         var input = ACore._({
@@ -138,7 +142,7 @@ export function openFileDialog(props) {
                 capture: "microphone"
             }
         }
-        else if (props === 'camcorder'){
+        else if (props === 'camcorder') {
             props = {
                 accept: 'video/*',
                 capture: 'camcorder'
