@@ -269,7 +269,7 @@ SelectMenu.eventHandler.preUpdateListPosition = function () {
     var availableBot = screenSize.height - 5 - bound.bottom;
     this.$selectlistBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
     var outBound = traceOutBoundingClientRect(this);
-    if (bound.top < outBound.top || bound.bottom > outBound.bottom || bound.left < outBound.left || bound.right > outBound.right) {
+    if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
         this.isFocus = false;
     }
 };
