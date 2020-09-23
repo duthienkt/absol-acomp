@@ -1,4 +1,5 @@
 import ACore from "../ACore";
+import AElement from "absol/src/HTML5/AElement";
 
 export function insertTextAtCursor(text) {
     var sel, range;
@@ -60,9 +61,13 @@ export function getCaretPosition(oField) {
 }
 
 
+/**
+ *
+ * @param {AElement} elt
+ */
 export function preventNotNumberInput(elt) {
     elt.addEventListener('keyup', function () {
-        var lastValue = (elt.tagname == "DIV" || elt.tagname == "SPAN") ? elt.innerHTML : elt.attributes.value;
+        var lastValue = (elt.tagName === "DIV" || elt.tagName === "SPAN") ? elt.innerHTML : elt.attributes.value;
         var cValue = parseFloat(this.value);
         if (this.value != lastValue) {
             elt.attributes.value = cValue;
