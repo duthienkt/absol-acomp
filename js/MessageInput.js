@@ -378,26 +378,27 @@ MessageInput.prototype.closeEmoji = function () {
 
 
 MessageInput.prototype.openFileDialog = function () {
-    var thisMi = this;
-    openFileDialog({ multiple: true }).then(function (files) {
-        if (files.length > 0) {
-            var imageFiles = [];
-            var otherFiles = [];
-            var file;
-            for (var i = 0; i < files.length; ++i) {
-                file = files[i];
-                if (!!file.type && file.type.match && file.type.match(/^image\//)) {
-                    imageFiles.push(file);
-                }
-                else {
-                    otherFiles.push(file);
-                }
+    openFileDialog({ multiple: true }).then(this.handleAddingFileByType.bind(this));
+};
+
+MessageInput.prototype.handleAddingFileByType = function (files){
+    if (files.length > 0) {
+        var imageFiles = [];
+        var otherFiles = [];
+        var file;
+        for (var i = 0; i < files.length; ++i) {
+            file = files[i];
+            if (!!file.type && file.type.match && file.type.match(/^image\//)) {
+                imageFiles.push(file);
             }
-            thisMi.addImageFiles(imageFiles);
-            thisMi.addFiles(otherFiles);
-            thisMi.notifyChange();
+            else {
+                otherFiles.push(file);
+            }
         }
-    });
+        this.addImageFiles(imageFiles);
+        this.addFiles(otherFiles);
+        this.notifyChange();
+    }
 };
 
 
