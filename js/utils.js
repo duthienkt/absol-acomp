@@ -120,7 +120,7 @@ export function buildCss(StyleSheet) {
 
 /***
  *
- * @param {"camera"|"microphone"|"camcorder"|{accept:("image/*"|"audio/*"|"video/*"), capture:boolean, multiple:boolean}|{}} props
+ * @param {"camera"|"microphone"|"camcorder"|{accept:("image/*"|"audio/*"|"video/*"|undefined), capture:boolean|undefined, multiple:boolean|undefined}|{}} props
  * @return {Promise<File[]>}
  */
 export function openFileDialog(props) {
