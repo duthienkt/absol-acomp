@@ -1,6 +1,7 @@
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
+import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 
 var _ = ACore._;
@@ -16,13 +17,14 @@ function SelectBoxItem() {
     this.$text = $('.absol-selectbox-item-text', this);
     this.$close = $('.absol-selectbox-item-close', this);
     this.$close.on('click', this.eventHandler.clickClose);
+    this.on('click', this.eventHandler.click);
 };
 
 SelectBoxItem.tag = 'SelectBoxItem'.toLowerCase();
 SelectBoxItem.render = function () {
     return _({
         class: ['absol-selectbox-item'],
-        extendEvent: 'close',
+        extendEvent: ['close', 'press'],
         child: [
             '.absol-selectbox-item-text',
             {
@@ -37,6 +39,12 @@ SelectBoxItem.render = function () {
 SelectBoxItem.eventHandler = {};
 SelectBoxItem.eventHandler.clickClose = function (event) {
     this.emit('close', event);
+};
+
+SelectBoxItem.eventHandler.click = function (event){
+    if (!EventEmitter.hitElement(this.$close, event)){
+        this.emit('press', event, this);
+    }
 };
 
 SelectBoxItem.property = {};
@@ -77,6 +85,20 @@ SelectBoxItem.property.value = {
 SelectBoxItem.property.theme = {
     get: function () {
         return this._data.theme || null;
+    }
+};
+
+SelectBoxItem.property.active = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-active');
+        }
+        else {
+            this.removeClass('as-active');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-active');
     }
 };
 

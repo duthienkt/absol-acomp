@@ -34,12 +34,21 @@ function pressCloseEventHandler(event) {
     }), parentElt);
     parentElt.emit('change', Object.assign({}, event, {
         type: 'change',
-        action:'remove',
+        action: 'remove',
         target: parentElt,
         data: this.data,
         value: this.value,
         values: parentElt.values
     }), parentElt);
+}
+
+function pressHandler(event){
+    var parentElt = this.$parent;
+    if (!parentElt) return;
+    var value = this.value;
+    if (parentElt.itemFocusable){
+        parentElt.activeValue = value;
+    }
 }
 
 /***
@@ -50,7 +59,8 @@ function makeItem() {
     return _({
         tag: 'selectboxitem',
         on: {
-            close: pressCloseEventHandler
+            close: pressCloseEventHandler,
+            press: pressHandler
         }
     });
 }
@@ -101,6 +111,8 @@ function SelectBox() {
     this.$selectlistBox.followTarget = this;
     this.disableClickToFocus = false;
     this.orderly = true;
+    this.itemFocusable = false;
+    this._activeValue = undefined;
     return this;
 }
 
@@ -184,6 +196,12 @@ SelectBox.prototype.init = function (props) {
     this.super(props);
 };
 
+SelectBox.prototype._updateFocusItem = function () {
+    for (var i = 0; i < this.$items.length; ++i) {
+        this.$items[i].active = this.$items[i].value == this._activeValue;
+    }
+};
+
 
 SelectBox.prototype.init = SelectMenu.prototype.init;
 
@@ -239,6 +257,34 @@ SelectBox.property.disableClickToFocus = {
     }
 };
 
+SelectBox.property.itemFocusable = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-item-focusable');
+        }
+        else {
+            this.removeClass('as-item-focusable');
+        }
+        this._updateFocusItem();
+    },
+    get: function () {
+        return this.containsClass('as-item-focusable');
+    }
+};
+
+SelectBox.property.activeValue = {
+    set: function (value) {
+        this._activeValue = value;
+        if (this.itemFocusable) {
+            this._updateFocusItem();
+            //todo
+        }
+    },
+    get: function () {
+        return this._activeValue;
+    }
+};
+
 
 SelectBox.eventHandler = Object.assign({}, SelectMenu.eventHandler);
 
@@ -264,6 +310,9 @@ SelectBox.eventHandler.selectListBoxPressItem = function (event) {
     this.$selectlistBox.values = currentValues;
     this.$selectlistBox.updatePosition();
     this._updateItems();
+    if (this.itemFocusable){
+        this.activeValue = data.value;
+    }
     this.isFocus = false;
     this.emit('add', Object.assign({}, event, {
         type: 'add',
