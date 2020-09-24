@@ -305,7 +305,6 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
     });
     this._updateAttachmentClass();
     this.notifySizeChange();
-    this.$preInput.focus();
 };
 
 MessageInput.prototype.addFiles = function (files) {
@@ -365,7 +364,6 @@ MessageInput.prototype.addFiles = function (files) {
         thisMi.notifySizeChange();
     });
     this._updateAttachmentClass();
-    thisMi.$preInput.focus();
 };
 
 
@@ -378,10 +376,14 @@ MessageInput.prototype.closeEmoji = function () {
 
 
 MessageInput.prototype.openFileDialog = function () {
-    openFileDialog({ multiple: true }).then(this.handleAddingFileByType.bind(this));
+    var thisMi = this;
+    openFileDialog({ multiple: true }).then(function (file) {
+        if (!thisMi.autoSend) thisMi.$preInput.focus();
+        thisMi.handleAddingFileByType(file);
+    });
 };
 
-MessageInput.prototype.handleAddingFileByType = function (files){
+MessageInput.prototype.handleAddingFileByType = function (files) {
     if (files.length > 0) {
         var imageFiles = [];
         var otherFiles = [];
@@ -472,11 +474,11 @@ MessageInput.eventHandler.preInputPasteImg = function (event) {
 };
 
 
-MessageInput.eventHandler.preInputFocus = function (){
+MessageInput.eventHandler.preInputFocus = function () {
     this.addClass('as-focus');
 };
 
-MessageInput.eventHandler.preInputBlur = function (){
+MessageInput.eventHandler.preInputBlur = function () {
     this.removeClass('as-focus');
 };
 
@@ -496,6 +498,7 @@ MessageInput.eventHandler.pickEmoji = function (event) {
     var selected = this._lastInputSelectPosion;
     var newOffset = selected.start + event.key.length;
     this._lastInputSelectPosion = { start: newOffset, end: newOffset };
+    this.$preInput.focus();
     this.$preInput.applyData(newText, newOffset);
     this.$preInput.commitChange(newText, newOffset);
     this.notifySizeChange();
@@ -563,7 +566,6 @@ MessageInput.eventHandler.drop = function (event) {
     this.addFiles(otherFiles);
     this.notifyChange();
 };
-
 
 
 MessageInput.property = {};
