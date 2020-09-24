@@ -312,6 +312,7 @@ SelectBox.eventHandler.selectListBoxPressItem = function (event) {
     currentValues.push(data.value);
     this.$selectlistBox.values = currentValues;
     this.$selectlistBox.updatePosition();
+    this._activeValue = data.value;
     this._updateItems();
     this.isFocus = false;
     this.emit('add', Object.assign({}, event, {
