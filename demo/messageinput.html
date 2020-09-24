@@ -175,10 +175,14 @@
                         }).addTo(messageCtn);
                         _('br').addTo(messageCtn);
                         messageCtn.scrollTop = messageCtn.scrollHeight;
+                        this.clearAllContent();
+                        this.focus();
                     }
-                    console.log(this.files, this.images);
-                    this.clearAllContent();
-                    // this.blur();// call blur if need
+                    else{
+                        this.images = [];
+                        this.files = [];
+
+                    }
                 }
             }
         });
