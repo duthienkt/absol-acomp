@@ -205,6 +205,7 @@ MessageInput.prototype.notifySend = function () {
     }
 
     if (this.files.length > 0 || eventData.images.length > 0 || eventData.text) {
+        if (eventData.text) this.$preInput.focus();
         this.emit('send', Object.assign(eventData, {
             type: 'send', preventDefault: function () {
                 this.imageRemovePrevented = true;
