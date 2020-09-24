@@ -179,6 +179,9 @@ SelectBox.prototype._updateItems = function () {
     var items = this._getItemsByValues(this._values);
     this._requireItem(items.length);
     this._assignItems(items);
+    if (this.itemFocusable){
+        this._updateFocusItem();
+    }
 };
 
 
