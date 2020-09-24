@@ -45,13 +45,13 @@
 }
 
 .absol-autocomplete-input-item:hover {
-    background-color: rgb(169, 169, 169, 0.18605);
+    background-color: rgba(169, 169, 169, 0.18605);
     cursor: pointer;
 }
 
 .absol-autocomplete-input-item.active,
 .absol-autocomplete-input-item.active:hover {
-    background-color: rgb(169, 169, 169, 0.37209);
+    background-color: rgba(169, 169, 169, 0.37209);
 }
 
 .absol-autocomplete-input-item-text {
