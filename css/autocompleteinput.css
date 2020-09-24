@@ -31,6 +31,10 @@
     background-color: white;
 }
 
+.absol-autocomplete-input-dropdown .as-bscroller{
+    overflow-y: auto;
+}
+
 .absol-autocomplete-input-dropdown.top {
     top: auto;
     bottom: 100%;
