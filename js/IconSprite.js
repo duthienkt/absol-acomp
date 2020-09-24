@@ -26,8 +26,6 @@ IconSprite.render = function () {
 IconSprite.eventHandler = {};
 
 IconSprite.eventHandler.attached = function () {
-    console.log('attached');
-    
     var thisAS = this;
     this._checkRootTimeout = 30;
     this.afterReady().then(function () {
