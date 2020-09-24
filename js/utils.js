@@ -174,31 +174,27 @@ export function openFileDialog(props) {
             input.attr('multiple');
         }
         input.value = null;
-        input.click();
-        var finished = false;
-        setTimeout(function () {
-            ACore.$(document.body).once('click', function () {
-                finished = true;
-            })
-        }, 100)
 
-        function waitFinish() {
-            if (input.files.length > 0) {
-                resolve(input.files);
-            }
-            else {
-                if (finished)
-                    resolve([]);
-                else {
-                    setTimeout(waitFinish, 400);
-                }
-            }
+        function focusHandler() {
+            setTimeout(function () {
+                document.removeEventListener('focus', focusHandler);
+                input.off('change', changeHandler);
+                resolve([]);
+            }, 100);
         }
 
-        setTimeout(waitFinish, 300);
-    });
+        input.on('change', function changeHandler() {
+            input.off('change', changeHandler);
+            document.removeEventListener('focus', focusHandler);
+            resolve(Array.prototype.slice.call(input.files));
+        });
+        input.click();
 
-};
+        setTimeout(function () {
+            document.addEventListener('focus', focusHandler);
+        }, 10);
+    });
+}
 
 
 export var charWidth = {
