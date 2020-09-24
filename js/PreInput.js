@@ -40,9 +40,9 @@ PreInput.prototype.applyData = function (text, offset) {
     var textNode = _({ text: text });
     this.clearChild()
         .addChild(textNode).addChild(_('br'));
-    if (this.isDescendantOf(document.body)) {
-        if (document.getSelection) {
 
+    if (document.activeElement == this && this.isDescendantOf(document.body)) {
+        if (document.getSelection) {
             var sel = document.getSelection();
             sel.removeAllRanges();
             var range = document.createRange();
