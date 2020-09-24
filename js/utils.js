@@ -177,21 +177,22 @@ export function openFileDialog(props) {
 
         function focusHandler() {
             setTimeout(function () {
-                document.removeEventListener('focus', focusHandler);
+                window.removeEventListener('focus', focusHandler);
                 input.off('change', changeHandler);
                 resolve([]);
             }, 100);
         }
 
-        input.on('change', function changeHandler() {
+        function changeHandler() {
             input.off('change', changeHandler);
-            document.removeEventListener('focus', focusHandler);
+            window.removeEventListener('focus', focusHandler);
             resolve(Array.prototype.slice.call(input.files));
-        });
+        }
+        input.on('change', changeHandler);
         input.click();
 
         setTimeout(function () {
-            document.addEventListener('focus', focusHandler);
+            window.addEventListener('focus', focusHandler);
         }, 10);
     });
 }
