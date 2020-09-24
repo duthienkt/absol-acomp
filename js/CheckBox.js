@@ -3,6 +3,7 @@ import ACore from "../ACore";
 import AElement from "absol/src/HTML5/AElement";
 import CheckboxInput from "./CheckBoxInput";
 import OOP from "absol/src/HTML5/OOP";
+import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -23,6 +24,7 @@ function CheckBox() {
         this.notifyChange.bind(this)
     );
     this.$labels = $$('span', this);
+    this.on('click', this.eventHandler.click);
     OOP.drillProperty(this, this.$input, ['checked', 'disabled'])
 }
 
@@ -103,6 +105,18 @@ CheckBox.property.text = {
         this.$labels[1].firstChild.data = value;
     }
 }
+
+/***
+ *
+ * @type {{}|CheckBox}
+ */
+CheckBox.eventHandler = {};
+
+CheckBox.eventHandler.click = function (event){
+    if (!EventEmitter.hitElement(this.$input, event)){
+        this.$input.click();
+    }
+};
 
 ACore.install(CheckBox);
 export default CheckBox;

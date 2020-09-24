@@ -2,6 +2,8 @@
 .absol-checkbox {
     display: inline-block;
     vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
 }
 
 .absol-checkbox.right > .absol-checkbox-label.as-right {
