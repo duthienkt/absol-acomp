@@ -16,6 +16,7 @@ function pressCloseEventHandler(event) {
     var parentElt = this.$parent;
     if (!parentElt) return;
     var value = this.value;
+    var data = this.data;
     var currentValues = parentElt.$selectlistBox.values;
     var index = currentValues.indexOf(value);
     if (index >= 0) {
@@ -28,17 +29,17 @@ function pressCloseEventHandler(event) {
     parentElt.emit('remove', Object.assign({}, event, {
         type: 'change',
         target: parentElt,
-        data: this.data,
-        value: this.value,
-        itemData: this.data
+        data: data,
+        value: value,
+        itemData: data
     }), parentElt);
     parentElt.emit('change', Object.assign({}, event, {
         type: 'change',
         action: 'remove',
         target: parentElt,
-        data: this.data,
-        value: this.value,
-        values: parentElt.values
+        data: data,
+        value: value,
+        itemData: data
     }), parentElt);
 }
 
