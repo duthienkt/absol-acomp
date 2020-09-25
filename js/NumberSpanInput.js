@@ -1,10 +1,12 @@
 import ACore from "../ACore";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+
 /***
- * @extends  Element
+ * @extends  AElement
  * @constructor
  */
 function NumberSpanInput() {
@@ -40,6 +42,7 @@ NumberSpanInput.prototype.selectEnd = function(){
     if (window.getSelection) {
         sel = window.getSelection();
         sel.removeAllRanges();
+        this._autoAddZero();
         var length = this.firstChild.data.length;
         var range = document.createRange();
         range.setStart(this.firstChild, length);
@@ -57,6 +60,13 @@ NumberSpanInput.prototype.selectNone = function(){
         sel.removeAllRanges();
     }
 }
+
+NumberSpanInput.prototype._autoAddZero = function (){
+    if (!this.firstChild){
+        this.addChild(_({text:'0'}));
+    }
+}
+
 /***
  *
  * @param {KeyboardEvent} event
@@ -93,6 +103,7 @@ NumberSpanInput.property.readOnly = {
  */
 NumberSpanInput.property.value = {
     set: function (value) {
+        this._autoAddZero();
         this.firstChild.data = value + '';
     },
     get: function () {
