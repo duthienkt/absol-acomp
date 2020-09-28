@@ -7,6 +7,7 @@ import './SelectBoxItem';
 import SelectBoxItem from "./SelectBoxItem";
 import {VALUE_HIDDEN} from "./SelectListBox";
 import OOP from "absol/src/HTML5/OOP";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -177,11 +178,16 @@ SelectBox.prototype._getItemsByValues = function (values) {
 
 
 SelectBox.prototype._updateItems = function () {
+    var cBound = this.getBoundingClientRect();
     var items = this._getItemsByValues(this._values);
     this._requireItem(items.length);
     this._assignItems(items);
     if (this.itemFocusable){
         this._updateFocusItem();
+    }
+    var nBound = this.getBoundingClientRect();
+    if (nBound.width != cBound.width || nBound.height!= cBound.height){
+        ResizeSystem.updateUp(this);
     }
 };
 
