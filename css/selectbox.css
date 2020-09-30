@@ -85,6 +85,7 @@
     padding-right: calc(var(--select-box-item-height) + 5px);
     padding-left: 5px;
     font-size: inherit;
+    white-space: nowrap;
 }
 
 .absol-selectbox-item-text:hover {
@@ -110,6 +111,7 @@
     user-select: none;
     cursor: pointer;
     background-color: rgba(0, 0, 0, var(--select-box-item-close-opacity));
+    white-space: nowrap;
 }
 
 .absol-selectbox-item-close::after,
