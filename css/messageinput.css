@@ -82,6 +82,7 @@
     width: calc(100% - 2px);
     max-height: 6.5em;
     box-sizing: border-box;
+    font-family: inherit;
     font-size: inherit;
     outline: none;
     vertical-align: middle;
@@ -89,6 +90,14 @@
     white-space: pre-wrap;
     overflow-x: hidden;
     overflow-y: auto;
+    line-height: 1.5;
+}
+
+.as-message-input-pre:before{
+    content: "";
+    line-height: 30px;
+    display: inline;
+    vertical-align: middle;
 }
 
 .as-message-input-camera-caller,
