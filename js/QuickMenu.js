@@ -67,7 +67,6 @@ QuickMenu.updatePosition = function () {
     if (ebound.bottom < outBound.top || ebound.left > outBound.right || ebound.top> outBound.bottom
     || ebound.right < outBound.left){
         QuickMenu._scrollOutListener && QuickMenu._scrollOutListener();
-        return ;
     }
     var menuBound = menu.getBoundingRecursiveRect(3);
     var qBound = qmenu.getBoundingClientRect();
@@ -330,7 +329,7 @@ QuickMenu.toggleWhenClick = function (trigger, adaptor) {
             QuickMenu.close(res.currentSession);
             if (adaptor.onClose) adaptor.onClose();
             res.currentSession = undefined;
-            if ( QuickMenu._scrollOutListener === finish )QuickMenu._scrollOutListener = undefined;
+            if ( QuickMenu._scrollOutListener === finish ) QuickMenu._scrollOutListener = undefined;
         };
         QuickMenu._scrollOutListener = finish;
 
