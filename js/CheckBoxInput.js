@@ -83,7 +83,7 @@ CheckboxInput.property.disabled = {
         this.$input.disabled = !!value;
     },
     get: function () {
-        this.$input.disabled;
+        return this.$input.disabled;
     }
 };
 
