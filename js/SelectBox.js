@@ -44,12 +44,22 @@ function pressCloseEventHandler(event) {
     }), parentElt);
 }
 
-function pressHandler(event){
+function pressHandler(event) {
     var parentElt = this.$parent;
     if (!parentElt) return;
     var value = this.value;
-    if (parentElt.itemFocusable){
-        parentElt.activeValue = value;
+    if (parentElt.itemFocusable) {
+        var prevActiveValue = parentElt.activeValue;
+        if (value !== prevActiveValue) {
+
+            parentElt.activeValue = value;
+            parentElt.emit('activevaluechange', {
+                target: parentElt,
+                originEvent: event,
+                prevActiveValue: prevActiveValue,
+                activeValue: value
+            }, parentElt);
+        }
     }
 }
 
@@ -123,7 +133,7 @@ SelectBox.render = function () {
     return _({
         tag: 'bscroller',
         class: ['absol-selectbox', 'absol-bscroller'],
-        extendEvent: ['change', 'add', 'remove'],
+        extendEvent: ['change', 'add', 'remove', 'activevaluechange'],
         attr: {
             tabindex: '1'
         }
@@ -182,11 +192,11 @@ SelectBox.prototype._updateItems = function () {
     var items = this._getItemsByValues(this._values);
     this._requireItem(items.length);
     this._assignItems(items);
-    if (this.itemFocusable){
+    if (this.itemFocusable) {
         this._updateFocusItem();
     }
     var nBound = this.getBoundingClientRect();
-    if (nBound.width != cBound.width || nBound.height!= cBound.height){
+    if (nBound.width != cBound.width || nBound.height != cBound.height) {
         ResizeSystem.updateUp(this);
     }
 };
