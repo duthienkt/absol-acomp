@@ -105,6 +105,11 @@
             }),
             values: [5, 2, 1],
             activeValue: 2
+        },
+        on:{
+            activevaluechange: function (event){
+                console.log(event);
+            }
         }
     }).addTo(absol.$('#test'));
 </script>
