@@ -49,7 +49,6 @@ QuickMenu._acceptAnchors = 0;
 QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
 QuickMenu._session = Math.random() * 10000000000 >> 0;
 QuickMenu._menuListener = undefined;
-QuickMenu._scrollOutListener = undefined;
 
 QuickMenu.$elt.$contextMenu.on('press', function (event) {
     if (QuickMenu._menuListener) QuickMenu._menuListener(event.menuItem);
@@ -63,11 +62,6 @@ QuickMenu.updatePosition = function () {
     var qmenu = QuickMenu.$elt;
     var menu = qmenu.$contextMenu;
     var ebound = QuickMenu.$element.getBoundingClientRect();
-    var outBound = Dom.traceOutBoundingClientRect(QuickMenu.$element);
-    if (ebound.bottom < outBound.top || ebound.left > outBound.right || ebound.top> outBound.bottom
-    || ebound.right < outBound.left){
-        QuickMenu._scrollOutListener && QuickMenu._scrollOutListener();
-    }
     var menuBound = menu.getBoundingRecursiveRect(3);
     var qBound = qmenu.getBoundingClientRect();
     var outBound = Dom.traceOutBoundingClientRect(qmenu);
@@ -271,9 +265,7 @@ QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, da
             document.body.removeEventListener('click', finish, false);
             QuickMenu.close(res.currentSession);
             res.currentSession = undefined;
-            if ( QuickMenu._scrollOutListener === finish )QuickMenu._scrollOutListener = undefined;
         };
-        QuickMenu._scrollOutListener = finish;
 
         setTimeout(function () {
             document.body.addEventListener('click', finish, false);
@@ -329,9 +321,7 @@ QuickMenu.toggleWhenClick = function (trigger, adaptor) {
             QuickMenu.close(res.currentSession);
             if (adaptor.onClose) adaptor.onClose();
             res.currentSession = undefined;
-            if ( QuickMenu._scrollOutListener === finish ) QuickMenu._scrollOutListener = undefined;
         };
-        QuickMenu._scrollOutListener = finish;
 
         setTimeout(function () {
             document.body.addEventListener('click', finish, false);
