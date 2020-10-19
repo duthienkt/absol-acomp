@@ -16,10 +16,15 @@
         var _ = absol._;
         var $ = absol.$;
         _('timeselectinput').addTo($('.inner'))
-        .on('change', function (event){
-            console.log(event);
-        });
-        console.log(absol.require('timeselectinput'))
+            .on('change', function (event){
+                console.log(event);
+            });
+        var disabledInput = _('timeselectinput').addTo($('.inner'))
+            .on('change', function (event){
+                console.log(event);
+            });
+        disabledInput.disabled = true;
+        console.log(absol.require('timeselectinput'));
 
 
     </script>
