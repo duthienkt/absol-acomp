@@ -16,7 +16,12 @@
     min-width: var(--list-min-width);
 }
 
-.as-time-select-input-text{
+.as-time-select-input.as-disabled {
+    pointer-events: none;
+    background-color: #ebebe4;
+}
+
+.as-time-select-input-text {
     display: inline-block;
     vertical-align: middle;
     height: 100%;
@@ -26,4 +31,5 @@
     box-sizing: border-box;
     padding-left: 10px;
     padding-right: 0;
+    background-color: transparent;
 }

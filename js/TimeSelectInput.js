@@ -211,6 +211,21 @@ TimeSelectInput.property.minute = {
 };
 
 TimeSelectInput.property.dayOffset = TimeInput.property.dayOffset;
+TimeSelectInput.property.disabled = {
+    set: function (value) {
+        this.$text.disabled = !!value;
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    }
+    ,
+    get: function () {
+        return this.containsClass('as-disabled');
+    }
+};
 
 
 /***
@@ -247,7 +262,7 @@ TimeSelectInput.eventHandler.preUpdateListPosition = function () {
 
 TimeSelectInput.eventHandler.textChange = function () {
     setTimeout(function () {
-        if (!this.textRegx.test(this.$text.value)){
+        if (!this.textRegx.test(this.$text.value)) {
             this.$text.value = this._mil2Text(this.dayOffset);
         }
     }.bind(this), 10);
@@ -257,11 +272,11 @@ TimeSelectInput.eventHandler.textChange = function () {
  *
  * @param {KeyboardEvent} event
  */
-TimeSelectInput.eventHandler.textKeyDown = function (event){
-      if (event.key == 'Enter'){
-          this.isFocus = false;
-          this.$text.blur();
-      }
+TimeSelectInput.eventHandler.textKeyDown = function (event) {
+    if (event.key == 'Enter') {
+        this.isFocus = false;
+        this.$text.blur();
+    }
 };
 
 
@@ -277,7 +292,7 @@ TimeSelectInput.eventHandler.textKeyUp = function (event) {
 TimeSelectInput.eventHandler.click = function (event) {
     if (!EventEmitter.hitElement(this.$text, event)) {
         this.isFocus = !this.isFocus;
-        setTimeout(function (){
+        setTimeout(function () {
             if (this.isFocus && this.$text != document.activeElement) {
                 this.$text.select();
             }
