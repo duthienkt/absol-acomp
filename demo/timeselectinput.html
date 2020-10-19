@@ -11,7 +11,7 @@
 </head>
 
 <body style="min-height: 80vh">
-    <div class="inner" style="height: 1000vh; padding-top: 100vh"></div>
+    <div class="inner" style="height: 1000vh; padding-top: 80vh"></div>
     <script class="viewable">
         var _ = absol._;
         var $ = absol.$;
@@ -24,6 +24,7 @@
                 console.log(event);
             });
         disabledInput.disabled = true;
+        disabledInput.addStyle('margin-left', '10px');
         console.log(absol.require('timeselectinput'));
 
 
