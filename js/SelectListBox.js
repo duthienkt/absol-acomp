@@ -29,6 +29,9 @@ SelectListBox.tag = 'SelectListBox'.toLowerCase();
 SelectListBox.render = function () {
     return _({
         tag: 'follower',
+        attr:{
+          tabindex:0
+        },
         class: 'as-select-list-box',
         extendEvent: ['pressitem'],
         child: [

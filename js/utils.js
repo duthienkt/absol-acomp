@@ -35,6 +35,33 @@ export function contenteditableTextOnly(element, processText) {
     });
 }
 
+/***
+ *
+ * @param num
+ * @param maxVal
+ * @return {number}
+ */
+export function positiveIntMod(num, maxVal) {
+    if (maxVal <=0) return 0;
+    if (num >= 0 && num < maxVal) {
+        return Math.floor(num);
+    }
+    else if (num === Infinity) {
+        if (maxVal === Infinity)
+            return Infinity;
+        else
+            return 0;
+    }
+    else if (num < 0) {
+        return (num + (Math.ceil(-num / maxVal) * maxVal)) % maxVal;
+    }
+    else if (num >=maxVal){
+        return Math.floor(num)%maxVal
+    }
+    else return 0;
+
+}
+
 
 export function measureText(text, font) {
     // re-use canvas object for better performance
@@ -188,6 +215,7 @@ export function openFileDialog(props) {
             window.removeEventListener('focus', focusHandler);
             resolve(Array.prototype.slice.call(input.files));
         }
+
         input.on('change', changeHandler);
         input.click();
 

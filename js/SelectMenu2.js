@@ -167,6 +167,9 @@ SelectMenu.property.isFocus = {
                 if (thisSM.enableSearch) {
                     thisSM.$selectlistBox.$searchInput.focus();
                 }
+                else {
+                    thisSM.$selectlistBox.focus();
+                }
                 $(document.body).on('click', thisSM.eventHandler.bodyClick);
             }, 100);
             this.$selectlistBox.viewListAtFirstSelected();
