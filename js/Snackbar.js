@@ -36,7 +36,7 @@ SnackBar.show = function (message) {
         clearTimeout(SnackBar._removeTimeout);
     }
     if (!SnackBar.$instance.parentElement) document.body.appendChild(SnackBar.$instance);
-    SnackBar.$instance.removeClass('as-hiding').removeClass('as-show');
+    SnackBar.$instance.removeClass('as-hiding');
     SnackBar._removeTimeout = setTimeout(function (){
         SnackBar.$instance.addClass('as-show');
         SnackBar.$instance.message = message;
