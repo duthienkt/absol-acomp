@@ -276,6 +276,7 @@ TimeSelectInput.eventHandler.textKeyDown = function (event) {
     if (event.key == 'Enter') {
         this.isFocus = false;
         this.$text.blur();
+        this.notifyCanBeChange();
     }
 };
 

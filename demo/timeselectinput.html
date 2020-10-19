@@ -9,27 +9,44 @@
     <script src="../dist/absol-acomp.js?time=<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
 
 </head>
+<style>
+    .mess{
 
+    }
+</style>
 <body style="min-height: 80vh">
-    <div class="inner" style="height: 1000vh; padding-top: 80vh"></div>
-    <script class="viewable">
-        var _ = absol._;
-        var $ = absol.$;
-        _('timeselectinput').addTo($('.inner'))
-            .on('change', function (event){
-                console.log(event);
-            });
-        var disabledInput = _('timeselectinput').addTo($('.inner'))
-            .on('change', function (event){
-                console.log(event);
-            });
-        disabledInput.disabled = true;
-        disabledInput.addStyle('margin-left', '10px');
-        console.log(absol.require('timeselectinput'));
-
-
-    </script>
-    <!-- <script src="https://absol.cf/absol/demo/autohightlighting.js"></script> -->
+<div class="inner" style="height: 1000vh; padding-top: 80vh"></div>
+<script class="viewable">
+    var _ = absol._;
+    var $ = absol.$;
+    var innerDiv = $('.inner');
+    const SnackBar = absol.require('snackbar');
+    var input0 = _({
+        tag: 'timeselectinput',
+        props: {
+            hour: 15,
+            minute: 30
+        },
+        on: {
+            change: function (event) {
+                SnackBar.show(this._mil2Text(this.dayOffset))
+            }
+        }
+    });
+    innerDiv.addChild(input0);
+    var input1 = _({
+        tag: 'timeselectinput',
+        style: {
+            marginLeft: '10px'
+        },
+        props: {
+            dayOffset: (10 * 3600 + 60 * 55) * 1000,
+            disabled: true
+        }
+    });
+    innerDiv.addChild(input1);
+</script>
+<!-- <script src="https://absol.cf/absol/demo/autohightlighting.js"></script> -->
 </body>
 
 </html>
