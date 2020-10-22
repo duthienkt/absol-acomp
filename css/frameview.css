@@ -1,25 +1,33 @@
-.absol-frame-view{
+.absol-frame-view {
     position: relative;
 }
 
 
-.absol-frame-view-frame-container{
+.absol-frame-view-frame-container {
     position: absolute;
     left: 0;
     right: 0;
-    top:0;
+    top: 0;
     bottom: 0;
 }
 
 
-.absol-frame-view-frame-container:not(.absol-active){
+.absol-frame-view-frame-container:not(.absol-active) {
     z-index: -100;
     visibility: hidden;
     opacity: 0;
-    pointer-events: none;
 }
 
-.absol-frame-view-frame-container>div{
+.absol-frame-view-frame-container:not(.absol-active) *,
+.absol-frame-view-frame-container:not(.absol-active) {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+
+.absol-frame-view-frame-container > div {
     width: 100%;
     height: 100%;
 }
