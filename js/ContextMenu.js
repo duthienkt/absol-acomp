@@ -115,8 +115,6 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems, 
 ContextCaptor.prototype._checkNeedHandle = function (target) {
     var current = target;
     var needHandle = false;
-    var dragzone = BoardTable.prototype._findDragZone(target);
-    if (dragzone) return false;
     while (current && !needHandle && !current.classList.contains('as-system-context-menu')) {
         if (current.isSupportedEvent && current.isSupportedEvent('contextmenu'))
             needHandle = true;
@@ -193,7 +191,8 @@ ContextCaptor.eventHandler.mousedown = function (event) {
     posCurrent = new Vec2(pointer.clientX, pointer.clientY);
 
     if (isTouch) {
-
+        var dragzone = BoardTable.prototype._findDragZone(target);
+        if (dragzone) return false;
         var thisCT = this;
         this._longPressTimeout = setTimeout(function () {
             if (!thisCT._checkNeedHandle(target)) return;
