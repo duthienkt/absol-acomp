@@ -192,7 +192,7 @@ ContextCaptor.eventHandler.mousedown = function (event) {
 
     if (isTouch) {
         var dragzone = BoardTable.prototype._findDragZone(target);
-        if (dragzone) return false;
+        if (dragzone) return;
         var thisCT = this;
         this._longPressTimeout = setTimeout(function () {
             if (!thisCT._checkNeedHandle(target)) return;
