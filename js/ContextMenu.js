@@ -5,6 +5,7 @@ import Dom from "absol/src/HTML5/Dom";
 import Vec2 from 'absol/src/Math/Vec2';
 import './Menu';
 import AElement from "absol/src/HTML5/AElement";
+import BoardTable from "./BoardTable";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -114,6 +115,8 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems, 
 ContextCaptor.prototype._checkNeedHandle = function (target) {
     var current = target;
     var needHandle = false;
+    var dragzone = BoardTable.prototype._findDragZone(target);
+    if (dragzone) return false;
     while (current && !needHandle && !current.classList.contains('as-system-context-menu')) {
         if (current.isSupportedEvent && current.isSupportedEvent('contextmenu'))
             needHandle = true;
