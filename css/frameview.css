@@ -16,6 +16,7 @@
     z-index: -100;
     visibility: hidden;
     opacity: 0;
+    pointer-events: none;
 }
 
 .absol-frame-view-frame-container>div{

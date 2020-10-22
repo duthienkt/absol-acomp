@@ -134,6 +134,7 @@
     z-index: -9999;
     visibility: hidden;
     opacity: 0;
+    pointer-events: none;
 }
 
 
