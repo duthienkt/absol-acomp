@@ -40,7 +40,7 @@ export function ExpNode() {
     this.$level = $('.absol-exp-node-level', this);
     this.$removeIcon = $('remove-ico', this)
         .on('click', function (event) {
-            this.emit('pressremove', { target: thisEN, type: 'pressremove' }, this);
+            thisEN.emit('pressremove', { target: thisEN, type: 'pressremove' }, this);
         });
 
     this.on('click', function (event) {
