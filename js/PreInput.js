@@ -7,7 +7,7 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
 var $ = ACore.$;
-var textDelay = BrowserDetector.isSafari? 100: 1;
+var textDelay = BrowserDetector.isSafari ? 100 : 1;
 
 
 /***
@@ -47,11 +47,11 @@ PreInput.prototype.applyData = function (text, offset) {
             sel.removeAllRanges();
             var range = document.createRange();
             if (typeof offset == 'number') {
-                range.setStart(textNode, offset);
+                range.setStart(textNode, Math.min(text.length, offset));
             }
             else {
-                range.setStart(textNode, offset.start);
-                range.setEnd(textNode, offset.end);
+                range.setStart(textNode, Math.min(text.length, offset.start));
+                range.setEnd(textNode, Math.min(text.length, offset.end));
             }
             sel.addRange(range);
             this.scrollIntoRange(range);
@@ -212,26 +212,25 @@ PreInput.prototype._pasteText = function (text) {
 
         sel = window.getSelection();
         if (sel.getRangeAt && sel.rangeCount) {
-            try{
+            try {
 
-            range = sel.getRangeAt(0);
-            range.deleteContents();
+                range = sel.getRangeAt(0);
+                range.deleteContents();
 
-            var textNode = _({ text: text });
-            range.insertNode(textNode);
-            if (sel.removeRange){
-                sel.removeRange(range);
-            }
-            else{
-                sel.removeAllRanges();
-            }
-            range = document.createRange();
-            range.setStart(textNode, text.length);
-            sel.addRange(range);
-            this.scrollIntoRange(range);
-            this.commitChange(this.stringOf(this), this.getPosition(textNode, text.length));
-            }
-            catch (error){
+                var textNode = _({ text: text });
+                range.insertNode(textNode);
+                if (sel.removeRange) {
+                    sel.removeRange(range);
+                }
+                else {
+                    sel.removeAllRanges();
+                }
+                range = document.createRange();
+                range.setStart(textNode, text.length);
+                sel.addRange(range);
+                this.scrollIntoRange(range);
+                this.commitChange(this.stringOf(this), this.getPosition(textNode, text.length));
+            } catch (error) {
                 alert(error.message)
             }
         }

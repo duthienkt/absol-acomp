@@ -5,6 +5,7 @@ import Dom from "absol/src/HTML5/Dom";
 import Vec2 from 'absol/src/Math/Vec2';
 import './Menu';
 import AElement from "absol/src/HTML5/AElement";
+import BoardTable from "./BoardTable";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -190,7 +191,8 @@ ContextCaptor.eventHandler.mousedown = function (event) {
     posCurrent = new Vec2(pointer.clientX, pointer.clientY);
 
     if (isTouch) {
-
+        var dragzone = BoardTable.prototype._findDragZone(target);
+        if (dragzone) return;
         var thisCT = this;
         this._longPressTimeout = setTimeout(function () {
             if (!thisCT._checkNeedHandle(target)) return;

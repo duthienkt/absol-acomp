@@ -84,6 +84,8 @@ import SelectListBox from "../SelectListBox";
 import SelectTreeBox from "../SelectTreeBox";
 import RibbonSplitButton from "../RibbonSplitButton";
 import RibbonButton from "../RibbonButton";
+import TimeSelectInput from "../TimeSelectInput";
+import SnackBar from "../Snackbar";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -172,6 +174,7 @@ export var publicCreators = [
     SelectTable2,
     SelectTreeMenu,
     SpanInput,
+    SnackBar,
     StaticTabbar,
     Switch,
     TableScroller,
@@ -179,6 +182,7 @@ export var publicCreators = [
     TextArea2,
     TextClipboard,
     TimeInput,
+    TimeSelectInput,
     TimePicker,
     ToolTip,
     TreeList,

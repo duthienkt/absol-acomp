@@ -15,6 +15,7 @@ import ContextCaptor from './js/ContextMenu';
 import install from "./js/dom/install";
 import SearchTextInput from "./js/Searcher";
 import {MaterialDesignIconsNameMap} from "./js/adapter/MaterialDesignIconsAdapter";
+import {openFileDialog} from "./js/utils";
 
 absol.parseMessage = parseMessage;
 
@@ -51,3 +52,4 @@ setTimeout(function () {
 }, 100);
 
 absol.MaterialDesignIconsNameMap = MaterialDesignIconsNameMap;
+absol.openFileDialog = openFileDialog;

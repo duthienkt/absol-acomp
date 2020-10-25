@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TimeSelectInput</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <script src="../dist/absol-acomp.js?time=<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+</head>
+<style>
+    .mess{
+
+    }
+</style>
+<body style="min-height: 80vh">
+<div class="inner" style="height: 50vh; padding-top: 30vh"></div>
+<script class="viewable">
+    var _ = absol._;
+    var $ = absol.$;
+    var innerDiv = $('.inner');
+    const SnackBar = absol.require('snackbar');
+    var input0 = _({
+        tag: 'timeselectinput',
+        props: {
+            hour: 15,
+            minute: 30
+        },
+        on: {
+            change: function (event) {
+                SnackBar.show(this._mil2Text(this.dayOffset))
+            }
+        }
+    });
+    innerDiv.addChild(input0);
+    var input1 = _({
+        tag: 'timeselectinput',
+        style: {
+            marginLeft: '10px'
+        },
+        props: {
+            dayOffset: (10 * 3600 + 60 * 55) * 1000,
+            disabled: true
+        }
+    });
+    innerDiv.addChild(input1);
+</script>
+ <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+</body>
+
+</html>

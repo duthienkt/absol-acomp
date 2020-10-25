@@ -41,13 +41,11 @@
 }
 
 
-
 .absol-tabbar .absol-scrollbar-button:active,
 .absol-tabbar .absol-hscrollbar.absol-active .absol-scrollbar-button {
     background-color: rgba(47, 47, 55, 0.4);
 
 }
-
 
 
 .absol-tabbar-button {
@@ -84,7 +82,7 @@
     margin-left: 0.5em;
 }
 
-.absol-tabbar-button-icon-container>span {
+.absol-tabbar-button-icon-container > span {
     display: inline-block;
     vertical-align: middle;
 }
@@ -111,7 +109,8 @@
 }
 
 
-.absol-button-range {}
+.absol-button-range {
+}
 
 
 .absol-tabview {
@@ -129,22 +128,30 @@
 }
 
 
-
 .absol-tabview-container.absol-tabview-container-hidden {
     z-index: -9999;
     visibility: hidden;
     opacity: 0;
+
+}
+
+.absol-tabview-container.absol-tabview-container-hidden *,
+.absol-tabview-container.absol-tabview-container-hidden {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 
-.absol-tabview-container>div,
-.absol-tabview-container>pre {
+.absol-tabview-container > div,
+.absol-tabview-container > pre {
     width: 100%;
     height: 100%;
     box-sizing: border-box;
 }
 
-.absol-tabview-container>pre {
+.absol-tabview-container > pre {
     margin: 0;
 }
 
@@ -228,7 +235,6 @@
 }
 
 
-
 .absol-hscroller.absol-tabbar.disabled .absol-scrollbar-container {
     visibility: hidden;
 }
@@ -253,10 +259,10 @@
 }
 
 
-.absol-tabview.as-without-close-button>.absol-tabbar .absol-tabbar-button .absol-tabbar-button-icon-container {
+.absol-tabview.as-without-close-button > .absol-tabbar .absol-tabbar-button .absol-tabbar-button-icon-container {
     display: none;
 }
 
-.absol-tabview.as-without-close-button>.absol-tabbar .absol-tabbar-button {
+.absol-tabview.as-without-close-button > .absol-tabbar .absol-tabbar-button {
     padding-right: 1em;
 }

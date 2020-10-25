@@ -65,7 +65,7 @@ QuickMenu.updatePosition = function () {
     var ebound = QuickMenu.$element.getBoundingClientRect();
     var outBound = Dom.traceOutBoundingClientRect(QuickMenu.$element);
     if (ebound.bottom < outBound.top || ebound.left > outBound.right || ebound.top> outBound.bottom
-    || ebound.right < outBound.left){
+        || ebound.right < outBound.left){
         QuickMenu._scrollOutListener && QuickMenu._scrollOutListener();
     }
     var menuBound = menu.getBoundingRecursiveRect(3);
