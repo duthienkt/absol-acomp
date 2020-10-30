@@ -1,6 +1,7 @@
 import '../css/searcher.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -30,6 +31,10 @@ ACore.creator['times-circle-ico'] = function () {
 };
 
 
+/**
+ * @extends {AElement}
+ * @constructor
+ */
 function SearchTextInput() {
     var thisSTI = this;
     this.defineEvent(['change', 'modify', 'stoptyping']);
@@ -37,6 +42,13 @@ function SearchTextInput() {
     this.eventHandler = OOP.bindFunctions(this, SearchTextInput.eventHandler);
     this.$button = $('button', this);
     this.$input = $('input', this);
+
+    ['keyup', 'keydown', 'focus', 'blur'].forEach(function (evName){
+        thisSTI.defineEvent(evName);
+        thisSTI.$input.on(evName, function (event){
+            thisSTI.emit(evName, event, thisSTI);
+        });
+    });
 
     this.$input.on('change', this.eventHandler.inputChange);
     this.$input.on('keyup', this.eventHandler.inputKeyUp);
@@ -48,7 +60,6 @@ function SearchTextInput() {
             thisSTI.focus();
         }, 50);
     });
-    return this;
 }
 
 SearchTextInput.tag = 'SearchTextInput'.toLowerCase();
