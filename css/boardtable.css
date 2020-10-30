@@ -7,9 +7,6 @@
     user-select: none !important;
 }
 
-.as-has-board-table-drag *{
-    pointer-events: none;
-}
 
 
 .as-board-table {
