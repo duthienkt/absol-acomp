@@ -32,7 +32,7 @@ CheckBox.tag = 'checkbox';
 
 CheckBox.render = function () {
     return _({
-        class: ['absol-checkbox'],
+        class: ['absol-checkbox','as-no-label'],
         child: [
             {
                 tag: 'span',
@@ -96,11 +96,17 @@ CheckBox.attribute = {
 CheckBox.property = {};
 CheckBox.property.text = {
     get: function () {
-
+        return  this._text;
     },
     set: function (value) {
         value = value || '';
-        this._value = value;
+        if (value.length === 0){
+            this.addClass('as-no-label');
+        }
+        else{
+            this.removeClass('as-no-label');
+        }
+        this._text = value;
         this.$labels[0].firstChild.data = value;
         this.$labels[1].firstChild.data = value;
     }

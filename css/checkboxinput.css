@@ -16,7 +16,6 @@ label.as-checkbox-input {
     border-radius: 0.25em;
     padding: 0;
     margin: 0; /*fix boostrap override*/
-    overflow: hidden;
 }
 
 label.as-checkbox-input:hover .bound,
@@ -34,6 +33,7 @@ label.as-checkbox-input:hover .bound,
     right: 100%;
     top: 0;
     opacity: 0.0;
+    z-index: -100000000000;
 }
 
 input.as-checkbox-input-value:not(:checked) ~ svg .tick {
