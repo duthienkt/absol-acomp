@@ -5,7 +5,7 @@ import Dom from "absol/src/HTML5/Dom";
 import ACore from "../../ACore";
 
 export var FontAwesomeIconsNameMap = {
-    'close': 'time'
+    'close': 'times'
 };
 
 export var MaterialDesignIconsCode = {};
@@ -23,7 +23,7 @@ Dom.documentReady.then(function () {
     var cssCodeLines = [];
     for (var oldName in FontAwesomeIconsNameMap) {
         iElt.addClass('fa-' + FontAwesomeIconsNameMap[oldName]);
-        content = getComputedStyle(iElt, '::before').content;
+        content = getComputedStyle(iElt, ':before').content;
         MaterialDesignIconsCode[oldName] = content;
         cssCodeLines.push('.fa-' + oldName + '::before{content:' + content + '}');
         iElt.removeClass('fa-' + FontAwesomeIconsNameMap[oldName]);
