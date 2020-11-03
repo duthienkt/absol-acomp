@@ -43,6 +43,7 @@ SinglePage.render = function () {
 
 
 SinglePage.prototype.updateSize = function () {
+    if (!this.isDescendantOf(document.body)) return ;
     var paddingTop = parseFloat(this.getComputedStyleValue('padding-top').replace('px', '')) || 0;
 
     if (this.$header) {
