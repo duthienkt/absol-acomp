@@ -48,6 +48,30 @@ DropZone.eventHandler.dropZoneFileDrop = function (event) {
     }
     event.preventDefault();
     this.removeClass('as-drag-over');
+    event._files = null;
+    Object.defineProperty(event, 'files',{
+        get: function (){
+            if (this._files) return  this._files;
+            var files = [];
+            var file;
+            if (event.dataTransfer.items) {
+                for (var i = 0; i < event.dataTransfer.items.length; i++) {
+                    if (event.dataTransfer.items[i].kind === 'file') {
+                        file = event.dataTransfer.items[i].getAsFile();
+                        files.push(file);
+                    }
+                }
+            } else {
+                // Use DataTransfer interface to access the file(s)
+                for (var i = 0; i < event.dataTransfer.files.length; i++) {
+                    files.push(event.dataTransfer.files[i]);
+                }
+            }
+            this._files = files;
+            return this._files;
+        }
+    });
+
     this.emit('filedrop', event, this);
 };
 
