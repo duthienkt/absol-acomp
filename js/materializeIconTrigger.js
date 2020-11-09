@@ -18,6 +18,7 @@ export default function materializeIconTrigger() {
             linkMaterial.off('loaded', onLoaded)
                 .off('load', onLoaded)
                 .off('error', onLoaded);
+            i.remove();
 
             requestAnimationFrame(function () {
                 ResizeSystem.update();
@@ -32,8 +33,14 @@ export default function materializeIconTrigger() {
             .on('error', onLoaded);
         var i = ACore._({
             tag: 'i',
+            class:"material-icons",
             style: {
-                fontSize: '14px'
+                fontSize: '14px',
+                position: 'fix',
+                top: '0',
+                left: '0',
+                zIndex: '-1000',
+                visibility: 'hidden'
             },
             child: { text: 'account_balance_wallet' }
         }).addTo(document.body);
