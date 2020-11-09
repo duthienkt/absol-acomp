@@ -2626,7 +2626,7 @@
             style: {
                 height: '50vh',
             },
-            child: absol.$('#example').cloneNode(true)
+            child: absol.$('#example').addStyle('width', '100%')
         }).addTo(document.body);
         absol._({
             tag: 'tablevscroller',
@@ -2636,25 +2636,25 @@
                 height: '50vh',
                 'margin-top': '10px'
             },
-            child: absol.$('#example_1').cloneNode(true)
+            child: absol.$('#example_1')
         }).addTo(document.body);
     </script>
 
     <h2>Table Scroller</h2>
     <script>
-        var mTableScroller = absol._({
-            tag: 'tablescroller',
-            class: 'KPIsimpletableclass KPItablehover row2colors'.split(/\s+/),
-            style: {
-                height: '500px',
-                width: '700px'
-            },
-            props: {
-                fixedCol: 2
-            },
-            child: absol.$(absol.$('#example').cloneNode(true)).addStyle('width', '1900px')
-        }).addTo(document.body);
-        document.body.insertBefore(mTableScroller, document.body.childNodes[0]);
+        // var mTableScroller = absol._({
+        //     tag: 'tablescroller',
+        //     class: 'KPIsimpletableclass KPItablehover row2colors'.split(/\s+/),
+        //     style: {
+        //         height: '500px',
+        //         width: '700px'
+        //     },
+        //     props: {
+        //         fixedCol: 2
+        //     },
+        //     child: absol.$(absol.$('#example').cloneNode(true)).addStyle('width', '1900px')
+        // }).addTo(document.body);
+        // document.body.insertBefore(mTableScroller, document.body.childNodes[0]);
     </script>
 
     <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
