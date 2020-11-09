@@ -16,6 +16,7 @@ import install from "./js/dom/install";
 import SearchTextInput from "./js/Searcher";
 import {MaterialDesignIconsNameMap} from "./js/adapter/MaterialDesignIconsAdapter";
 import {openFileDialog} from "./js/utils";
+import materializeIconTrigger from "./js/materializeIconTrigger";
 
 absol.parseMessage = parseMessage;
 
@@ -50,6 +51,8 @@ setTimeout(function () {
         }).addTo(document.head);
     }
 }, 100);
+
+materializeIconTrigger();
 
 absol.MaterialDesignIconsNameMap = MaterialDesignIconsNameMap;
 absol.openFileDialog = openFileDialog;
