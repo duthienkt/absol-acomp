@@ -12,7 +12,7 @@ function TableVScroller() {
     this.sync = new Promise(function (rs) {
         thisTS.$attachHook.on('error', rs)
     });
-    this.$viewport = $('bscroller.absol-table-vscroller-viewport', this);
+    this.$viewport = $('.absol-table-vscroller-viewport', this);
 
     this.$attachHook.on('error', function () {
         Dom.addToResizeSystem(thisTS.$attachHook);
@@ -28,7 +28,7 @@ TableVScroller.render = function () {
         {
             class: 'absol-table-vscroller',
             child: [
-                'bscroller.absol-table-vscroller-viewport',
+                '.absol-table-vscroller-viewport',
                 'table.absol-table-vscroller-head',
                 '.absol-table-vscroller-head-line',
                 'attachhook'
