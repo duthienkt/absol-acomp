@@ -2,8 +2,6 @@ import '../css/selecttreemenu.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu2";
-import treeListToList from "./list/treeListToList";
-import {prepareSearchForList, searchTreeListByText} from "./list/search";
 import SelectTreeBox from "./SelectTreeBox";
 
 var _ = ACore._;

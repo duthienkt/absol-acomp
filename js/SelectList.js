@@ -119,9 +119,9 @@ export function measureMaxTextWidth(items) {
         }
     }
     if (maxText)
-        maxTextWidth = 14 * 0.9 * maxLv + measureText(maxText, '14px  sans-serif').width;
+        maxTextWidth = 14 * 0.9 * maxLv + measureText(maxText, '14px Arial, Helvetica, sans-serif').width + 14;//padding left, right 7px
     return maxTextWidth;
-};
+}
 
 export function measureListHeight(items) {
     var border = 0;
@@ -132,9 +132,9 @@ export function measureListHeight(items) {
 export function measureListSize(items) {
     var descWidth = measureMaxDescriptionWidth(items);
     var textWidth = measureMaxTextWidth(items);
-    var width = 8 + textWidth + 34 + 16 + 2;//padding, margin
+    var width = textWidth;
     if (descWidth > 0) {
-        width += +descWidth + 14 + 12 + 28;
+        width += descWidth + 14;
     }
     var height = measureListHeight(items);
     return {

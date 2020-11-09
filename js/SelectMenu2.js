@@ -113,7 +113,8 @@ SelectMenu.property = {};
 SelectMenu.property.items = {
     set: function (items) {
         this.$selectlistBox.items = items || [];
-        this.addStyle('--list-min-width', this.$selectlistBox._estimateWidth + 'px');
+        this.addStyle('--select-list-estimate-width', this.$selectlistBox._estimateWidth + 'px');
+        this.addStyle( '--select-list-desc-width', this.$selectlistBox._estimateDescWidth + 'px');
 
         if (items.length == 0) return;
         var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
@@ -126,7 +127,6 @@ SelectMenu.property.items = {
         else {
             this.updateItem();
         }
-
     },
     get: function () {
         return this.$selectlistBox.items;

@@ -1,8 +1,10 @@
 .as-select-list-box {
+    --select-list-estimate-width: 0;
+    --max-height: calc(100vh - 80px);
     position: fixed;
     top: 10px;
     left: 10px;
-    --max-height: calc(100vh - 80px);
+    width: calc(var(--select-list-estimate-width) + 2px + 5px);
     font-size: 14px;
     font-family: Arial, Helvetica, sans-serif;
     border: solid 1px rgb(100, 100, 255);
@@ -14,8 +16,8 @@
     -moz-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
     box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
     outline: none;
-
 }
+
 .absol-follower.as-select-list-box{
     z-index: 1000000;
 }
@@ -74,6 +76,9 @@
     top: 0;
 }
 
+.as-select-list-box .absol-selectlist-item{
+    cursor: default;
+}
 
 .as-select-list-box-search-ctn {
     display: none;

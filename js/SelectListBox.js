@@ -320,8 +320,8 @@ SelectListBox.prototype._updateItems = function () {
     var estimateSize = measureListSize(this._itemNodeList);
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
-
-    this.addStyle('width', this._estimateWidth + 'px');
+    this._estimateDescWidth = estimateSize.descWidth;
+    this.addStyle('--select-list-estimate-width',estimateSize.width +'px');
     this.addStyle('--select-list-desc-width', estimateSize.descWidth + 'px')
     this._updateDisplayItem();
 };
