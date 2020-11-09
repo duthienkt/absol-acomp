@@ -15,9 +15,9 @@ export default function materializeIconTrigger() {
                 clearTimeout(checkInv);
                 checkInv = -1;
             }
-            linkMaterial.off('loaded', checkInv)
-                .off('load', checkInv)
-                .off('error', checkInv);
+            linkMaterial.off('loaded', onLoaded)
+                .off('load', onLoaded)
+                .off('error', onLoaded);
 
             requestAnimationFrame(function () {
                 ResizeSystem.update();
@@ -27,9 +27,9 @@ export default function materializeIconTrigger() {
             });
         }
 
-        linkMaterial.on('loaded', checkInv)
-            .on('load', checkInv)
-            .on('error', checkInv);
+        linkMaterial.on('loaded', onLoaded)
+            .on('load', onLoaded)
+            .on('error', onLoaded);
         var i = ACore._({
             tag: 'i',
             style: {
