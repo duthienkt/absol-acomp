@@ -6,11 +6,11 @@
     touch-action: none;
 }
 
-.absol-draggable-stack > .dragging {
+.absol-draggable-stack > .as-dragging {
     opacity: 0.2 !important;
 }
 
-.absol-draggable-stack-child-container.dragging {
+.absol-draggable-stack-child-container.as-dragging {
     opacity: 0.2 !important;
 }
 
@@ -38,6 +38,13 @@
     pointer-events: none !important;
 }
 
+.absol-draggable-stack-clone-container > * {
+    width: 100% !important;
+    height: 100% !important;
+    box-sizing: border-box;
+}
+
+
 .absol-draggable-stack-clone-container.home-going {
     transition: top 0.2s;
 }
@@ -56,18 +63,32 @@
     border-bottom: solid 3px rgb(74, 174, 233);
 }
 
-.absol-draggable-hstack > .absol-draggable-stack-dest-line {
+
+.absol-draggable-hstack {
+    --dest-x: 0px;
+}
+
+.absol-draggable-hstack.as-has-dragging::after {
+    content: "";
+    position: absolute;
     transition: left 0.1s;
     top: 0;
     bottom: 0;
+    left: calc(var(--dest-x) - 3px);
     border-left: solid 3px rgb(74, 174, 233);
     border-right: solid 3px rgb(74, 174, 233);
 }
+
+.absol-draggable-hstack.as-no-change::after {
+    visibility: hidden;
+}
+
 
 .absol-draggable-hstack > * {
     display: inline-block;
     vertical-align: middle;
 }
+
 
 .absol-draggable-vstack {
     --dest-y: unset;
