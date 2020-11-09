@@ -55,15 +55,15 @@ DraggableHStack.eventHandler.dragstart = function(event){
         }
     });
 
-    this.$cloneContainer.addTo(this);
+    this.$cloneContainer.addTo(document.body);
     this.$destLine.addTo(this);
 
     var containerBound = element.getBoundingClientRect();
     this._initBound = bound;
     this._currentBound = bound;
 
-    this._initTop = containerBound.top - bound.top;
-    this._initLeft = containerBound.left - bound.left;
+    this._initTop = bound.top;
+    this._initLeft =  bound.left;
     this._crLeft = this._initLeft;
     this._initWidth = containerBound.width;
     this._pressX = event.clientX - containerBound.left;
