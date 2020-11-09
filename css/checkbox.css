@@ -29,3 +29,7 @@
 .absol-checkbox-label.as-right{
     padding-left: 0.3em;
 }
+
+.absol-checkbox.as-no-label .absol-checkbox-label{
+    display: none;
+}
