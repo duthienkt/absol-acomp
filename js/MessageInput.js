@@ -362,9 +362,9 @@ MessageInput.prototype.addFiles = function (files) {
             });
             thisMi.$attachmentCtn.addChildBefore(itemElt, thisMi.$attachmentAddBtn);
         });
-        thisMi.notifySizeChange();
     });
     this._updateAttachmentClass();
+    thisMi.notifySizeChange();
 };
 
 
@@ -406,11 +406,13 @@ MessageInput.prototype.handleAddingFileByType = function (files) {
 
 
 MessageInput.prototype.notifySizeChange = function () {
+    console.log('notify')
     var bound = this.getBoundingClientRect();
     if (this._latBound.width != bound.width || this._latBound.height != bound.height) {
         this._latBound.width = bound.width;
         this._latBound.height = bound.height;
         this.emit('sizechange', { name: 'sizechange', bound: bound, target: this }, this);
+        console.log('sizechange')
     }
 };
 
