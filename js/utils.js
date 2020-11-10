@@ -206,6 +206,7 @@ export function openFileDialog(props) {
             setTimeout(function () {
                 window.removeEventListener('focus', focusHandler);
                 input.off('change', changeHandler);
+                input.remove();
                 resolve([]);
             }, 100);
         }
@@ -214,6 +215,7 @@ export function openFileDialog(props) {
             input.off('change', changeHandler);
             window.removeEventListener('focus', focusHandler);
             resolve(Array.prototype.slice.call(input.files));
+            input.remove();
         }
 
         input.on('change', changeHandler);
