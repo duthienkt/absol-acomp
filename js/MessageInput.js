@@ -7,6 +7,7 @@ import EmojiAnims from "./EmojiAnims";
 import EmojiPicker from "./EmojiPicker";
 import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import {randomIdent} from "absol/src/String/stringGenerate";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -25,6 +26,7 @@ var isMobile = BrowserDetector.isMobile;
  * @constructor
  */
 function MessageInput() {
+    this._plugins = [];
     this._mode = MODE_NEW;//edit
     this._editingText = "";
     this._iconAssetRoot = this.attr('data-icon-asset-root');
@@ -50,7 +52,9 @@ function MessageInput() {
 
 
     this._latBound = {};
-    //
+
+    this.$right = $('.as-message-input-right', this);
+
     this.$attachmentCtn = $('.as-message-input-attachment-ctn', this);
     this.$emojiBtn = $('.as-message-input-plugin-emoji', this)
         .on('click', this.eventHandler.clickEmojiBtn);
@@ -414,6 +418,19 @@ MessageInput.prototype.notifySizeChange = function () {
     }
 };
 
+MessageInput.prototype.installPlugin = function (option) {
+    var plugin = new this.PluginConstructor(this, option);
+    this._plugins.push(plugin);
+    var visiblePluginCount = this._plugins.reduce(function (ac, plugin) {
+        return ac + (plugin.alwaysVisible ? 1 : 0);
+    }, 0);
+
+    this.addStyle('--always-visible-plugin-buttons-width', visiblePluginCount * 45 +'px');
+    this.addStyle('---plugin-buttons-width',  this._plugins.length * 45 +'px');
+    //todo: add value to css style
+    return plugin;
+};
+
 
 /**
  * @type {MessageInput}
@@ -673,7 +690,7 @@ export function parseMessage(text, data) {
     var textLines = text.split(/\r?\n/);
     var lines = textLines.map(function (textLine) {
         var longTokenTexts = textLine.split(/\s/);
-        var tokenGoups = longTokenTexts.map(function (longTokenText, longTokenIndex) {
+        var tokenGroups = longTokenTexts.map(function (longTokenText, longTokenIndex) {
             var tokens = [];
             if (longTokenIndex > 0) tokens.push({
                 type: 'text',
@@ -738,8 +755,8 @@ export function parseMessage(text, data) {
         });
         var tokens = [];
 
-        for (var i = 0; i < tokenGoups.length; ++i) {
-            tokens.push.apply(tokens, tokenGoups[i]);
+        for (var i = 0; i < tokenGroups.length; ++i) {
+            tokens.push.apply(tokens, tokenGroups[i]);
         }
 
         return tokens.reduce(function (ac, token) {
@@ -797,3 +814,57 @@ export function parseMessage(text, data) {
 }
 
 MessageInput.parseMessage = parseMessage;
+
+/***
+ * @typedef MessageInputPluginOption
+ * @property {string} [id]
+ * @property {string|Object|AElement} icon
+ * @property {bool} [alwaysVisible]
+ */
+
+
+/***
+ *
+ * @param {MessageInput} inputElt
+ * @param {MessageInputPluginOption} option
+ * @constructor
+ */
+export function MessageInputPlugin(inputElt, option) {
+    this.inputElt = inputElt;
+    this.icon = option.icon;
+    this.id = option.id || randomIdent(16);
+    this.$icon = null;
+    this.$triggerBtn = null;
+    this.alwaysVisible = !!option.alwaysVisible;
+    this.attach();
+}
+
+
+MessageInputPlugin.prototype.attach = function () {
+    this.inputElt.$right.addChildBefore(this.getTriggerButton(), this.inputElt.$right.firstChild);
+};
+
+MessageInputPlugin.prototype.ev_pressTrigger = function (event) {
+
+};
+
+
+MessageInputPlugin.prototype.getIconElt = function () {
+    if (!this.$icon)
+        this.$icon = _(this.icon);
+    return this.$icon;
+};
+
+
+MessageInputPlugin.prototype.getTriggerButton = function () {
+    if (!this.$triggerBtn) {
+        this.$triggerBtn = _({
+            tag: 'button',
+            class: ['as-message-input-plugin-btn', 'as-message-input-plugin-' + this.id],
+            child: this.getIconElt()
+        });
+    }
+    return this.$triggerBtn;
+};
+
+MessageInput.prototype.PluginConstructor = MessageInputPlugin;
