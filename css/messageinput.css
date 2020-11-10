@@ -91,6 +91,7 @@
     overflow-x: hidden;
     overflow-y: auto;
     line-height: 1.5;
+    border: none;
 }
 
 .as-message-input-pre:before{
