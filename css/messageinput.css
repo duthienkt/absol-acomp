@@ -62,7 +62,7 @@
 
 .as-message-input-pre-ctn {
     position: relative;
-    width: calc(100% - 55px);
+    width: calc(100% - 55px - var(--plugin-buttons-width));
     border-radius: 25px;
     box-sizing: border-box;
     transition: width 0.1s;
@@ -76,6 +76,11 @@
     content: "";
     height: 30px;
     vertical-align: middle;
+}
+
+
+.as-message-input.as-has-text .as-message-input-pre-ctn {
+    width: calc(100% - 55px);
 }
 
 
@@ -96,7 +101,7 @@
     border: none;
 }
 
-.as-message-input-pre:before{
+.as-message-input-pre:before {
     content: "";
     line-height: 30px;
     display: inline;

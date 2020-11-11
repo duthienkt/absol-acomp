@@ -8,6 +8,8 @@ import EmojiPicker from "./EmojiPicker";
 import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import {randomIdent} from "absol/src/String/stringGenerate";
+import CMDRunner from "absol/src/AppPattern/CMDRunner";
+import {keyboardEventToKeyBindingIdent, normalizeKeyBindingIdent} from "absol/src/Input/keyboard";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -26,6 +28,8 @@ var isMobile = BrowserDetector.isMobile;
  * @constructor
  */
 function MessageInput() {
+    this._cmdRunner = new CMDRunner(this);
+    this._keyMaps = {};
     this._plugins = [];
     this._mode = MODE_NEW;//edit
     this._editingText = "";
@@ -418,19 +422,36 @@ MessageInput.prototype.notifySizeChange = function () {
     }
 };
 
-MessageInput.prototype.installPlugin = function (option) {
+MessageInput.prototype.addPlugin = function (option) {
     var plugin = new this.PluginConstructor(this, option);
     this._plugins.push(plugin);
     var visiblePluginCount = this._plugins.reduce(function (ac, plugin) {
         return ac + (plugin.alwaysVisible ? 1 : 0);
     }, 0);
 
-    this.addStyle('--always-visible-plugin-buttons-width', visiblePluginCount * 45 +'px');
-    this.addStyle('---plugin-buttons-width',  this._plugins.length * 45 +'px');
-    //todo: add value to css style
+    this.addStyle('--always-visible-plugin-buttons-width', visiblePluginCount * 45 + 'px');
+    this.addStyle('--plugin-buttons-width', this._plugins.length * 45 + 'px');
     return plugin;
 };
 
+/***
+ *
+ * @param {{name?:string, exec:function(_this:MessageInput):void, keyBiding?:string}} option
+ */
+MessageInput.prototype.addCommand = function (option) {
+    option.name = option.name || randomIdent(20);
+    this._cmdRunner.add(option.name, option.exec);
+    if (option.keyBiding && option.keyBiding.trim) {
+        var keyBindingIdent = normalizeKeyBindingIdent(option.keyBiding);
+        this._keyMaps[keyBindingIdent] = option.name;
+    }
+};
+
+MessageInput.prototype.exeCmd = function (name) {
+    var args = Array.prototype.slice.call(arguments);
+    args[0] = this;
+    this._cmdRunner.invoke.apply(this._cmdRunner, args);
+};
 
 /**
  * @type {MessageInput}
@@ -475,6 +496,11 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
     else if (event.key === "Escape" && this._mode === MODE_EDIT) {
         this.notifyCancel();
         event.preventDefault();
+    }
+    var keyBindingIdent = keyboardEventToKeyBindingIdent(event);
+    if (this._keyMaps[keyBindingIdent]) {
+        event.preventDefault();
+        this.exeCmd(this._keyMaps[keyBindingIdent]);
     }
     setTimeout(this.notifySizeChange.bind(this), 1);
 };
@@ -820,6 +846,8 @@ MessageInput.parseMessage = parseMessage;
  * @property {string} [id]
  * @property {string|Object|AElement} icon
  * @property {bool} [alwaysVisible]
+ * @property {function(_thisAdapter: MessageInputPlugin, _:Dom._, Dom.$):AElement} createContent
+ * @property {function(_thisAdapter:MessageInputPlugin):void} onPressTrigger
  */
 
 
@@ -835,7 +863,13 @@ export function MessageInputPlugin(inputElt, option) {
     this.id = option.id || randomIdent(16);
     this.$icon = null;
     this.$triggerBtn = null;
+    this.$content = null;
+    this.$popup = null;
     this.alwaysVisible = !!option.alwaysVisible;
+    if (option.createContent) this.createContent = option.createContent;
+    if (option.onPressTrigger) this.onPressTrigger = option.onPressTrigger;
+    this.ev_pressTrigger = this.ev_pressTrigger.bind(this);
+    this.ev_pressOut = this.ev_pressOut.bind(this);
     this.attach();
 }
 
@@ -845,7 +879,24 @@ MessageInputPlugin.prototype.attach = function () {
 };
 
 MessageInputPlugin.prototype.ev_pressTrigger = function (event) {
+    if (this.onPressTrigger) {
+        this.onPressTrigger(this);
+    }
+    else {
+        if (this.isPopupOpened()) {
+            this.closePopup();
+        }
+        else {
+            this.openPopup();
+        }
+    }
+};
 
+
+MessageInputPlugin.prototype.ev_pressOut = function (event) {
+    if (EventEmitter.hitElement(this.getTriggerButton(), event)) return;
+    if (EventEmitter.hitElement(this.getPopup(), event)) return;
+    this.closePopup();
 };
 
 
@@ -861,10 +912,60 @@ MessageInputPlugin.prototype.getTriggerButton = function () {
         this.$triggerBtn = _({
             tag: 'button',
             class: ['as-message-input-plugin-btn', 'as-message-input-plugin-' + this.id],
-            child: this.getIconElt()
+            child: this.getIconElt(),
+            on: {
+                click: this.ev_pressTrigger
+            }
         });
     }
     return this.$triggerBtn;
 };
+
+MessageInputPlugin.prototype.createContent = function (_thisAdapter, _, $) {
+    throw  new Error("Not implement!");
+};
+
+/***
+ *
+ * @type {null|function(_thisAdapter:MessageInputPlugin):void}
+ */
+MessageInputPlugin.prototype.onPressTrigger = null;
+
+
+MessageInputPlugin.prototype.getContent = function () {
+    if (!this.$content)
+        this.$content = this.createContent(this, _, $);
+    return this.$content;
+};
+
+
+MessageInputPlugin.prototype.getPopup = function () {
+    if (!this.$popup) {
+        this.$popup = _({
+            class: 'as-message-input-external-tools-popup',
+            child: this.getContent()
+        });
+    }
+    return this.$popup;
+};
+
+MessageInputPlugin.prototype.openPopup = function () {
+    if (this.isPopupOpened()) return;
+    this.inputElt.appendChild(this.getPopup());
+    document.body.addEventListener('click', this.ev_pressOut);
+};
+
+
+MessageInputPlugin.prototype.closePopup = function () {
+    if (!this.isPopupOpened()) return;
+    this.getPopup().remove();
+    document.body.removeEventListener('click', this.ev_pressOut);
+
+};
+
+MessageInputPlugin.prototype.isPopupOpened = function () {
+    return !!this.getPopup().parentElement;
+};
+
 
 MessageInput.prototype.PluginConstructor = MessageInputPlugin;

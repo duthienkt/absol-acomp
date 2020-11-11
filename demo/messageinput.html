@@ -178,7 +178,7 @@
                         this.clearAllContent();
                         this.focus();
                     }
-                    else{
+                    else {
                         this.images = [];
                         this.files = [];
 
@@ -187,11 +187,41 @@
             }
         });
         inputCtn.addChild(messInput);
-        messInput.installPlugin({
-            icon:'span.mdi.mdi-message-plus-outline',
+        messInput.addCommand({
+           name: 'haha',
+           keyBiding:'alt-g',
+           exec: function (_this){
+               console.log(this,_this, 'haha');
+           }
+        });
+        messInput.addPlugin({
+            icon: 'span.mdi.mdi-message-plus-outline',
             id: 'sample_message',
-            alwaysVisible:true
-        })
+            alwaysVisible: true,
+            createContent: function (_this, _, $) {
+                return _({
+                    style: {
+                        border: '1px solid #ddd',
+                        padding: '10px'
+                    },
+                    child: {
+                        tag: 'flexiconbutton',
+                        style: {
+                            height: '30px'
+                        },
+                        props: {
+                            text: 'close',
+                            icon: 'span.mdi.mdi-close'
+                        },
+                        on: {
+                            click: function () {
+                                _this.closePopup();
+                            }
+                        }
+                    }
+                });
+            }
+        });
 
     })()
 </script>
