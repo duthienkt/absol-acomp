@@ -1,5 +1,9 @@
 /** align middle in table cell **/
-td > .absol-checkbox {
+td > .absol-checkbox:first-child:last-child {
+    display: block;
+}
+
+td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input {
     display: block;
 }
 
@@ -25,12 +29,12 @@ td > .absol-checkbox {
 }
 
 
-.absol-checkbox-label.as-left{
+.absol-checkbox-label.as-left {
     padding-right: 0.3em;
 }
 
 
-.absol-checkbox-label.as-right{
+.absol-checkbox-label.as-right {
     padding-left: 0.3em;
 }
 
@@ -39,6 +43,7 @@ td > .absol-checkbox {
     height: calc(1em + 2px);
 }
 
-.absol-checkbox.as-no-label .absol-checkbox-label{
+
+.absol-checkbox.as-no-label .absol-checkbox-label {
     display: none;
 }
