@@ -1,3 +1,7 @@
+/** align middle in table cell **/
+td > .absol-checkbox {
+    display: block;
+}
 
 .absol-checkbox {
     display: inline-block;
