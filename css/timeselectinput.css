@@ -12,8 +12,8 @@
     white-space: nowrap;
     padding-right: 30px;
     --list-min-width: unset;
-    width: var(--list-min-width);
-    min-width: var(--list-min-width);
+    width: calc(var(--list-min-width) + 30px);
+    min-width: calc(var(--list-min-width) + 30px);
 }
 
 .as-time-select-input.as-disabled {
