@@ -42,7 +42,7 @@ export function contenteditableTextOnly(element, processText) {
  * @return {number}
  */
 export function positiveIntMod(num, maxVal) {
-    if (maxVal <=0) return 0;
+    if (maxVal <= 0) return 0;
     if (num >= 0 && num < maxVal) {
         return Math.floor(num);
     }
@@ -55,8 +55,8 @@ export function positiveIntMod(num, maxVal) {
     else if (num < 0) {
         return (num + (Math.ceil(-num / maxVal) * maxVal)) % maxVal;
     }
-    else if (num >=maxVal){
-        return Math.floor(num)%maxVal
+    else if (num >= maxVal) {
+        return Math.floor(num) % maxVal
     }
     else return 0;
 
@@ -352,3 +352,4 @@ export function cleanMenuItemProperty(obj) {
 
     return res;
 }
+
