@@ -78,7 +78,9 @@
 }
 
 
-.as-message-input.as-has-text .as-message-input-pre-ctn {
+.as-message-input.as-has-text .as-message-input-pre-ctn,
+.as-message-input.as-has-attachment .as-message-input-pre-ctn
+{
     width: calc(100% - 55px);
 }
 
