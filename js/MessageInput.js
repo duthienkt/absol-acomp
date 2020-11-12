@@ -425,11 +425,6 @@ MessageInput.prototype.notifySizeChange = function () {
 MessageInput.prototype.addPlugin = function (option) {
     var plugin = new this.PluginConstructor(this, option);
     this._plugins.push(plugin);
-    var visiblePluginCount = this._plugins.reduce(function (ac, plugin) {
-        return ac + (plugin.alwaysVisible ? 1 : 0);
-    }, 0);
-
-    this.addStyle('--always-visible-plugin-buttons-width', visiblePluginCount * 45 + 'px');
     this.addStyle('--plugin-buttons-width', this._plugins.length * 45 + 'px');
     return plugin;
 };
@@ -450,6 +445,7 @@ MessageInput.prototype.addCommand = function (option) {
 MessageInput.prototype.exeCmd = function (name) {
     var args = Array.prototype.slice.call(arguments);
     args[0] = this;
+    args.unshift(name);
     this._cmdRunner.invoke.apply(this._cmdRunner, args);
 };
 
@@ -845,7 +841,6 @@ MessageInput.parseMessage = parseMessage;
  * @typedef MessageInputPluginOption
  * @property {string} [id]
  * @property {string|Object|AElement} icon
- * @property {bool} [alwaysVisible]
  * @property {function(_thisAdapter: MessageInputPlugin, _:Dom._, Dom.$):AElement} createContent
  * @property {function(_thisAdapter:MessageInputPlugin):void} onPressTrigger
  */
@@ -865,7 +860,6 @@ export function MessageInputPlugin(inputElt, option) {
     this.$triggerBtn = null;
     this.$content = null;
     this.$popup = null;
-    this.alwaysVisible = !!option.alwaysVisible;
     if (option.createContent) this.createContent = option.createContent;
     if (option.onPressTrigger) this.onPressTrigger = option.onPressTrigger;
     this.ev_pressTrigger = this.ev_pressTrigger.bind(this);
