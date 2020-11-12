@@ -873,6 +873,8 @@ MessageInputPlugin.prototype.attach = function () {
 };
 
 MessageInputPlugin.prototype.ev_pressTrigger = function (event) {
+    var value = this.inputElt.$preInput.value;
+    this._lastInputSelectPosion = this.inputElt.$preInput.getSelectPosition() || { start: value.length, end: value.length };
     if (this.onPressTrigger) {
         this.onPressTrigger(this);
     }
@@ -885,6 +887,37 @@ MessageInputPlugin.prototype.ev_pressTrigger = function (event) {
         }
     }
 };
+
+MessageInputPlugin.prototype.insertText = function (itext){
+    if (!this._lastInputSelectPosion){
+        throw new Error('Invalid call');
+    }
+
+    var text = this.inputElt.$preInput.value;
+    var newText = text.substr(0, this._lastInputSelectPosion.start) + itext + text.substr(this._lastInputSelectPosion.end);
+    var selected = this._lastInputSelectPosion;
+    var newOffset = selected.start + itext.length;
+    this.inputElt.$preInput.focus();
+    this.inputElt.$preInput.applyData(newText, newOffset);
+    this.inputElt.$preInput.commitChange(newText, newOffset);
+    this.inputElt.notifySizeChange();
+    this.inputElt.$preInput.focus();
+};
+
+
+MessageInputPlugin.prototype.appendText = function (itext){
+    if (!this._lastInputSelectPosion){
+        throw new Error('Invalid call');
+    }
+    var text = this.inputElt.$preInput.value;
+    var newText = text + itext ;
+    var newOffset = newText.length;
+    this.inputElt.$preInput.focus();
+    this.inputElt.$preInput.applyData(newText, newOffset);
+    this.inputElt.$preInput.commitChange(newText, newOffset);
+    this.inputElt.notifySizeChange();
+    this.inputElt.$preInput.focus();
+}
 
 
 MessageInputPlugin.prototype.ev_pressOut = function (event) {
@@ -928,7 +961,7 @@ MessageInputPlugin.prototype.onPressTrigger = null;
 
 MessageInputPlugin.prototype.getContent = function () {
     if (!this.$content)
-        this.$content = this.createContent(this, _, $);
+        this.$content = this.createContent(this.inputElt, _, $);
     return this.$content;
 };
 
