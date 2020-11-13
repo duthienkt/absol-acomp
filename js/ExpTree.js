@@ -2,7 +2,7 @@ import '../css/exptree.css';
 import ACore from "../ACore";
 import {contenteditableTextOnly} from "./utils";
 import OOP from "absol/src/HTML5/OOP";
-import EventEmitter from "absol/src/HTML5/EventEmitter";
+import EventEmitter, {copyEvent} from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 import AElement from "absol/src/HTML5/AElement";
 
@@ -44,10 +44,16 @@ export function ExpNode() {
         .on('click', function (event) {
             thisEN.emit('pressremove', { target: thisEN, type: 'pressremove' }, this);
         });
+    this.on('keydown', this.eventHandler.buttonKeydown);
+
+    this.$toggleIcon = $('toggler-ico', this)
+        .on('click', function (event) {
+            thisEN.emit('presstoggle', copyEvent(event, { target: thisEN, type: 'pressremove' }), this);
+        });
 
     this.on('click', function (event) {
-        if (!EventEmitter.hitElement(thisEN.$removeIcon, event))
-            thisEN.emit('press', { target: thisEN, type: 'press' }, this);
+        if (!EventEmitter.hitElement(thisEN.$removeIcon, event) && !EventEmitter.hitElement(thisEN.$toggleIcon, event))
+            thisEN.emit('press', copyEvent(event, { target: thisEN, type: 'press' }), this);
     })
 
     this.$iconCtn = $('div.absol-exp-node-ext-icon', this);
@@ -69,7 +75,7 @@ ExpNode.tag = 'expnode';
 ExpNode.render = function () {
     return _({
         tag: 'button',
-        extendEvent: ['pressremove', 'press'],
+        extendEvent: ['pressremove', 'press', 'presstoggle'],
         class: 'absol-exp-node',
         child: [
             '.absol-exp-node-level',
@@ -182,13 +188,13 @@ ExpNode.property.status = {
 ExpNode.property.active = {
     set: function (value) {
         if (value)
-            this.addClass('active');
+            this.addClass('as-active');
         else
-            this.removeClass('active');
+            this.removeClass('as-active');
 
     },
     get: function () {
-        return this.containsClass('active');
+        return this.containsClass('as-active');
     }
 }
 
@@ -266,7 +272,88 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
 
     span.on('keydown', keydowEventHandle);
     span.on('blur', blurEventHandle);
-}
+};
+
+ExpNode.prototype.findNodeBefore = function () {
+    var tree = this.parentElement;
+    var root;
+    var prevTree;
+    var res = null;
+    if (tree.__isExpTree__) {
+        root = tree.getRoot();
+        root.visitRecursive(function (cTree) {
+            if (cTree === tree) {
+                res = prevTree;
+            }
+            prevTree = cTree;
+        })
+    }
+    return res && res.getNode();
+};
+
+ExpNode.prototype.findNodeAfter = function () {
+    var tree = this.parentElement;
+    var root;
+    var prevTree;
+    var res = null;
+    if (tree.__isExpTree__) {
+        root = tree.getRoot();
+        root.visitRecursive(function (cTree) {
+            if (prevTree === tree) {
+                res = cTree;
+            }
+            prevTree = cTree;
+        })
+    }
+    return res && res.getNode();
+};
+
+ExpNode.eventHandler = {};
+
+/****
+ *
+ * @param {KeyboardEvent} event
+ */
+ExpNode.eventHandler.buttonKeydown = function (event) {
+    if (event.target === this) {
+        if (!event.metaKey && !event.shiftKey && !event.ctrlKey && !event.altKey) {
+            var destNode;
+            var tree = this.parentElement;
+            var parentTree = tree && tree.getParent();
+            switch (event.key) {
+                case 'ArrowLeft':
+                    if (tree.status === 'open') {
+                        tree.status = 'close';
+                    }
+                    else {
+                        destNode = parentTree && parentTree.getNode();
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (tree.status === 'close') {
+                        tree.status = 'open';
+                    }
+                    else {
+                        destNode = this.findNodeAfter();
+                    }
+                    break;
+                case 'ArrowUp':
+                    destNode = this.findNodeBefore();
+                    break;
+                case 'ArrowDown':
+                    destNode = this.findNodeAfter();
+                    break;
+                case 'Space':
+                    this.click();
+                    break;
+            }
+            if (destNode) {
+                destNode.focus();
+                event.preventDefault();
+            }
+        }
+    }
+};
 
 /***
  * @extends AElement
@@ -276,8 +363,20 @@ export function ExpTree() {
     var thisET = this;
     this.$node = $('expnode', this)
         .on('press', function (event) {
-            thisET.emit('press', { target: thisET, node: this, type: 'press' }, this)
-        });
+            thisET.emit('press', Object.assign({}, {
+                target: thisET,
+                node: this,
+                type: 'press'
+            }, event), this);
+        })
+        .on('pressremove', function (event) {
+            thisET.emit('pressremove', Object.assign({}, {
+                target: thisET,
+                node: this,
+                type: 'pressremove'
+            }, event), this);
+        })
+        .on('presstoggle', this.eventHandler.nodePressToggle);
 
     this.$itemsContainer = $('.absol-exp-items', thisET);
     OOP.drillProperty(this, this.$node, ['desc', 'name', 'title', 'extSrc', 'active', 'icon']);
@@ -292,7 +391,7 @@ ExpTree.tag = 'ExpTree';
 ExpTree.render = function () {
     return _({
         class: 'absol-exp-tree',
-        extendEvent: 'press',
+        extendEvent: ['press', 'pressremove'],
         child: [
             'expnode',
             '.absol-exp-items'
@@ -358,7 +457,10 @@ ExpTree.prototype.addChildAfter = function (child, at) {
     this.$itemsContainer.addChildAfter(child, at);
 };
 
-
+/****
+ *
+ * @return {ExpTree}
+ */
 ExpTree.prototype.getParent = function () {
     var current = this.parentNode;
     while (current) {
@@ -369,6 +471,16 @@ ExpTree.prototype.getParent = function () {
     return current;
 };
 
+/***
+ *
+ * @return {ExpTree}
+ */
+ExpTree.prototype.getRoot = function () {
+    var parent = this.getParent();
+    if (!parent) return this;
+    return parent.getRoot();
+}
+
 
 ExpTree.prototype.getNode = function () {
     return this.$node;
@@ -376,6 +488,17 @@ ExpTree.prototype.getNode = function () {
 
 ExpTree.prototype.getChildren = function () {
     return Array.apply(null, this.$itemsContainer.childNodes);
+};
+
+/***
+ *
+ * @param {function(tree: ExpTree): void} cb
+ */
+ExpTree.prototype.visitRecursive = function (cb) {
+    cb(this);
+    Array.prototype.forEach.call(this.$itemsContainer.childNodes, function (child) {
+        child.visitRecursive(cb);
+    });
 };
 
 ExpTree.prototype.getPath = function () {
@@ -400,6 +523,23 @@ ExpTree.prototype.accessByPath = function (path) {
         }
     }
     return res;
+};
+
+ExpTree.prototype.toggle = function () {
+    switch (this.status) {
+        case 'close':
+            this.status = 'open';
+            break;
+        case 'open':
+            this.status = 'close';
+            break;
+    }
+}
+
+ExpTree.eventHandler = {};
+
+ExpTree.eventHandler.nodePressToggle = function (event) {
+    this.toggle();
 };
 
 
