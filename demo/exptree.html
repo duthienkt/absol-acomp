@@ -25,98 +25,91 @@
 </head>
 
 <body>
-    <h1>Exp Node</h1>
-    <div id="exp-node-demo-light" class="bg light" style="font-size: 12px;"></div>
-    <div id="exp-node-demo-dark" class="dark bg" style="font-size: 12px;"></div>
-    <script class="viewable">
+<h1>Exp Node</h1>
+<div id="exp-node-demo-light" class="bg light" style="font-size: 12px;"></div>
+<div id="exp-node-demo-dark" class="dark bg" style="font-size: 12px;"></div>
+<script class="viewable">
 
-        var exampeTreeParam = {
-            tag: 'exptree',
-            props: {
-                level: 0,
-                name: 'HTML5',
-                desc: 'node_modules/absol',
-                extSrc: 'https://absol.cf/exticons/extra/' + 'folder' + '.svg',
-                title: 'node_modules/absol/src',
-                status: 'open'
-            },
-            on: {
-                press: function () {
-                    if (this.status == 'open') {
-                        this.status = 'close';
-                    }
-                    else {
-                        this.status = 'open';
+    var exampeTreeParam = {
+        tag: 'exptree',
+        props: {
+            level: 0,
+            name: 'HTML5',
+            desc: 'node_modules/absol',
+            extSrc: 'https://absol.cf/exticons/extra/' + 'folder' + '.svg',
+            title: 'node_modules/absol/src',
+            status: 'open'
+        },
+        child: [
+            {
+                tag: 'exptree',
+                props: {
+                    name: 'Dom.js',
+                    // extSrc: 'https://absol.cf/exticons/vivid/' + 'js' + '.svg'
+                    icon: {
+                        tag: 'img',
+                        attr: {
+                            src: '//absol.cf/exticons/other/events.svg'
+                        }
                     }
                 }
             },
-            child: [
-                {
-                    tag: 'exptree',
-                    props: {
-                        name: 'Dom.js',
-                        // extSrc: 'https://absol.cf/exticons/vivid/' + 'js' + '.svg'
-                        icon: {
-                            tag: 'img',
-                            attr: {
-                                src:'//absol.cf/exticons/other/events.svg'
-                            }
-                        }
-                    }
-                },
-                {
-                    tag: 'exptree',
-                    props: {
-                        name: 'EventEmitter.js',
-                        extSrc: 'https://absol.cf/exticons/vivid/' + 'js' + '.svg',
-                    }
-                },
-                {
-                    tag: 'exptree',
+            {
+                tag: 'exptree',
+                props: {
+                    name: 'EventEmitter.js',
+                    extSrc: 'https://absol.cf/exticons/vivid/' + 'js' + '.svg',
+                }
+            },
+            {
+                tag: 'exptree',
 
+                props: {
+                    name: 'Color',
+                    extSrc: 'https://absol.cf/exticons/extra/' + 'folder' + '.svg',
+                    status: 'open'
+                },
+                child: [{
+                    tag: 'exptree',
                     props: {
-                        name: 'Color',
-                        extSrc: 'https://absol.cf/exticons/extra/' + 'folder' + '.svg',
-                        status: 'open'
-                    },
-                    on: {
-                        press: function () {
-                            if (this.status == 'open') {
-                                this.status = 'close';
-                            }
-                            else {
-                                this.status = 'open';
-                            }
-                        }
-                    },
-                    child: [{
-                        tag: 'exptree',
-                        props: {
-                            name: 'RGB.js',
-                            extSrc: 'https://absol.cf/exticons/vivid/' + 'js' + '.svg',
-                            status: 'modified'
-                        }
-                    },
+                        name: 'RGB.js',
+                        extSrc: 'https://absol.cf/exticons/vivid/' + 'js' + '.svg',
+                        status: 'modified'
+                    }
+                },
                     {
                         tag: 'exptree',
                         props: {
                             name: 'HSL.js',
                             status: 'removable',
-                            icon:'span.mdi.mdi-function'
+                            icon: 'span.mdi.mdi-function'
                         }
                     }]
-                }
-            ]
+            }
+        ]
 
-        };
-        var x = absol._(exampeTreeParam).addTo(absol.$('#exp-node-demo-light'));
-        var y = x.accessByPath(['Dom.js']);
-        if (y) y.active = true;
-        absol._(exampeTreeParam).addClass('dark').addTo(absol.$('#exp-node-demo-dark'));
-    </script>
+    };
+    var x = absol._(exampeTreeParam).addTo(absol.$('#exp-node-demo-light'));
+    var y = x.accessByPath(['Dom.js']);
+    if (y) y.active = true;
+    absol._(exampeTreeParam).addClass('dark').addTo(absol.$('#exp-node-demo-dark'));
+    var lastActive = absol.$('expnode.as-active');
+    if (lastActive) lastActive.parentElement;
+    absol.$('exptree', false, function (expElt) {
+        expElt.on('press', function (event) {
+            if (lastActive) lastActive.active = false;
+            lastActive = this;
+            this.active = true;
+            absol.require('snackbar').show(this.getPath().join('/'));
+        })
+            .on('pressremove', function (event) {
+                absol.require('snackbar').show("press remove "+ this.getPath().join('/'));
+            })
+    })
+</script>
 
 
-    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
 
