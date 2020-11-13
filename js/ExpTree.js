@@ -13,6 +13,7 @@ var $ = ACore.$;
 ACore.install('toggler-ico', function () {
     var res = _(
         '<svg class="toggler-ico" width="14" height="14" version="1.1" viewBox="0 0 3.7042 3.7042" xmlns="http://www.w3.org/2000/svg" >' +
+        '    <rect style="fill: transparent; stroke: none" x="0" y="0" width="3.7042" height="3.7042"></rect>' +
         '    <g transform="translate(0 -293.3)" class="toggle-close">' +
         '        <path d="m0.52917 293.82v2.6458l2.6458-1.3229z" />' +
         '    </g>' +
@@ -26,6 +27,7 @@ ACore.install('toggler-ico', function () {
 
 ACore.install('remove-ico', function () {
     return _('<svg class="remove-ico" width="24" height="24" viewBox="0 0 24 24">\
+                <rect style="fill: transparent; stroke: none" x="0" y="0" width="24" height="24"></rect>\
                 <path class="close" d="M3,16.74L7.76,12L3,7.26L7.26,3L12,7.76L16.74,3L21,7.26L16.24,12L21,16.74L16.74,21L12,16.24L7.26,21L3,16.74" />\
                 <circle class="modified" cx="12" cy="12" r="10" />\
             </svg>');
