@@ -187,10 +187,14 @@ ExpNode.property.status = {
 
 ExpNode.property.active = {
     set: function (value) {
-        if (value)
+        if (value) {
             this.addClass('as-active');
-        else
+            this.addClass('active');
+        }
+        else {
             this.removeClass('as-active');
+            this.removeClass('active');
+        }
 
     },
     get: function () {
