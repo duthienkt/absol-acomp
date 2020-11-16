@@ -38,8 +38,16 @@
 .as-multi-select-menu-toggle-btn svg.dropdown {
     width: 10px;
     height: 10px;
+    fill: #929292;
 }
 
+.as-multi-select-menu:hover svg.dropdown {
+    fill: black;
+}
+
+.as-multi-select-menu.as-disable-click-to-focus .as-multi-select-menu-toggle-btn{
+    display: none;
+}
 
 .as-multi-select-menu .absol-selectbox-item {
     margin: calc((var(--select-box-min-height) - 2px - var(--select-box-item-height)) / 2) 2px;
