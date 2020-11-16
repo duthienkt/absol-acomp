@@ -1,3 +1,7 @@
+:root {
+    --multi-select-menu-max-height: none;
+}
+
 .as-multi-select-menu {
     --list-min-width: 40px;
     display: inline-block;
@@ -8,14 +12,15 @@
     border: solid 1px #d6d6d6;
     border-radius: 3px;
     box-sizing: border-box;
-    overflow-y: auto;
     outline: none;
     background-color: white;
     padding-right: 30px;
 }
 
 .as-multi-select-menu-item-ctn {
-
+    display: block;
+    max-height: var(--multi-select-menu-max-height);
+    overflow-y: auto;
 }
 
 

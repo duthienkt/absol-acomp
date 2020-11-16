@@ -201,6 +201,7 @@ export var publicCreators = [
 function install(core) {
     core.install(publicCreators);
     core.install('checkboxbutton', CheckboxInput);
+    core.install('selectbox', MultiSelectMenu);
 }
 
 export default install;

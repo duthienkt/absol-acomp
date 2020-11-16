@@ -33,6 +33,8 @@ function MultiSelectMenu() {
     });
 
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
+    this.$attachhook = $('attachhook', this)
+        .on('attached', this.eventHandler.attached);
 
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
     this.$items = [];
@@ -49,20 +51,21 @@ function MultiSelectMenu() {
 MultiSelectMenu.tag = 'MultiSelectMenu'.toLowerCase();
 MultiSelectMenu.render = function () {
     return _({
-        class: ['as-multi-select-menu', 'absol-bscroller'],
+        class: ['as-multi-select-menu'],
         extendEvent: ['change', 'add', 'remove', 'activevaluechange'],
         attr: {
             tabindex: '1'
         },
         child: [
             {
-                class: 'as-multi-select-menu-item-ctn'
+                class: ['as-multi-select-menu-item-ctn', 'as-bscroller']
             },
             {
                 tag: 'button',
                 class: 'as-multi-select-menu-toggle-btn',
                 child: 'dropdown-ico'
-            }
+            },
+            'attachhook'
         ]
     });
 };
@@ -72,13 +75,13 @@ MultiSelectMenu.prototype._requireItem = function (n) {
     var itemElt;
     while (this.$items.length < n) {
         itemElt = requireItem(this);
-        this.addChild(itemElt);
+        this.$itemCtn.addChild(itemElt);
         this.$items.push(itemElt);
     }
 
     while (this.$items.length > n) {
         itemElt = this.$items.pop();
-        this.removeChild(itemElt);
+        this.$itemCtn.removeChild(itemElt);
         releaseItem(itemElt);
     }
 };
@@ -235,16 +238,27 @@ MultiSelectMenu.property.activeValue = {
 
 MultiSelectMenu.eventHandler = Object.assign({}, SelectMenu.eventHandler);
 
+MultiSelectMenu.eventHandler.attached = function () {
+    var maxHeightStyle = this.getComputedStyleValue('max-height') || 'none';
+    if (maxHeightStyle.match(/[0-9-]+px/)) {
+        this.addStyle('--multi-select-menu-max-height', maxHeightStyle);
+        this.addStyle('max-height', 'unset');
+    }
+    else if (maxHeightStyle !== 'none') {
+        console.warn('Can not adapt max-height:', maxHeightStyle);
+    }
+};
+
 
 MultiSelectMenu.eventHandler.click = function (event) {
-    if (event.target === this && !this.disableClickToFocus) {
+    if ((event.target === this || event.target === this.$itemCtn) && !this.disableClickToFocus) {
         this.isFocus = !this.isFocus;
     }
 };
 
 
 MultiSelectMenu.eventHandler.bodyClick = function (event) {
-    if (!EventEmitter.hitElement(this.$selectlistBox, event) && event.target !== this) {
+    if (!EventEmitter.hitElement(this.$selectlistBox, event) && event.target !== this && event.target !== this.$itemCtn) {
         this.isFocus = false;
     }
 };
