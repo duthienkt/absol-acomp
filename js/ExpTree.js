@@ -284,7 +284,6 @@ ExpNode.prototype.findNodeBefore = function () {
     var res = null;
     if (tree.__isExpTree__) {
         root = tree.getRoot();
-        console.log(root)
         root.visitRecursive(function (cTree) {
             if (cTree === tree) {
                 res = prevTree;
