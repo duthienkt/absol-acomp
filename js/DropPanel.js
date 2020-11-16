@@ -2,6 +2,8 @@ import '../css/droppanel.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
+import {ExpGroup} from "./ExpTree";
+
 
 
 var _ = ACore._;
@@ -13,6 +15,10 @@ var $ = ACore.$;
  */
 function DropPanel() {
     var thisDP = this;
+    /***
+     *
+     * @type {ExpGroup}
+     */
     this.$body = $('.absol-drop-panel-body', this);
     this.$head = $('.absol-drop-panel-head', this)
         .on('click', thisDP.eventHandler.clickHead);
@@ -41,6 +47,7 @@ DropPanel.render = function () {
 
             },
             {
+                tag:'expgroup',
                 class: ['absol-drop-panel-body', 'absol-bscroller']
             }
         ]

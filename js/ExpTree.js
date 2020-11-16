@@ -585,6 +585,7 @@ ExpGroup.prototype.getNode = function () {
 
 ACore.install(ExpNode);
 ACore.install(ExpTree);
+ACore.install(ExpGroup);
 
 
 export default ExpTree;
