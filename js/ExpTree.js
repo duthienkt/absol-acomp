@@ -284,6 +284,7 @@ ExpNode.prototype.findNodeBefore = function () {
     var res = null;
     if (tree.__isExpTree__) {
         root = tree.getRoot();
+        console.log(root)
         root.visitRecursive(function (cTree) {
             if (cTree === tree) {
                 res = prevTree;
@@ -385,7 +386,6 @@ export function ExpTree() {
     OOP.drillProperty(this, this.$node, ['desc', 'name', 'title', 'extSrc', 'active', 'icon']);
     this.__isExpTree__ = true;
     this._level = 0;
-    return thisET;
 }
 
 
@@ -499,9 +499,10 @@ ExpTree.prototype.getChildren = function () {
  */
 ExpTree.prototype.visitRecursive = function (cb) {
     cb(this);
-    Array.prototype.forEach.call(this.$itemsContainer.childNodes, function (child) {
-        child.visitRecursive(cb);
-    });
+    if (this.status === 'open')
+        Array.prototype.forEach.call(this.$itemsContainer.childNodes, function (child) {
+            child.visitRecursive(cb);
+        });
 };
 
 ExpTree.prototype.getPath = function () {
@@ -545,6 +546,43 @@ ExpTree.eventHandler.nodePressToggle = function (event) {
     this.toggle();
 };
 
+/***
+ * @extends ExpTree
+ * @constructor
+ */
+export function ExpGroup() {
+    this.addClass('as-exp-group');
+    this.__isExpTree__ = true;
+}
+
+
+ExpGroup.tag = 'ExpGroup'.toLowerCase();
+
+ExpGroup.render = function () {
+    return _('div');
+};
+
+/***
+ *
+ * @param {function(tree: ExpTree): void} cb
+ */
+ExpGroup.prototype.visitRecursive = function (cb) {
+    Array.prototype.forEach.call(this.childNodes, function (child) {
+        child.visitRecursive(cb);
+    });
+};
+
+ExpGroup.prototype.getParent = function () {
+    return null;
+};
+
+ExpGroup.prototype.getRoot = function () {
+    return this;
+};
+
+ExpGroup.prototype.getNode = function () {
+    return null;
+};
 
 ACore.install(ExpNode);
 ACore.install(ExpTree);

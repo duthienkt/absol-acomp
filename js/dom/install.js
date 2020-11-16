@@ -21,7 +21,7 @@ import DropPanelStack from "../DropPanelStack";
 import EditableText from "../EditableText";
 import EmojiPicker from "../EmojiPicker";
 import Sprite from "../Sprite";
-import ExpTree, {ExpNode} from "../ExpTree";
+import ExpTree, {ExpGroup, ExpNode} from "../ExpTree";
 import FlexiconButton from "../FlexiconButton";
 import FlexiconInput from "../FlexiconInput";
 import Follower from "../Follower";
@@ -130,6 +130,7 @@ export var publicCreators = [
     Sprite,
     ExpNode,
     ExpTree,
+    ExpGroup,
     FlexiconButton,
     FlexiconInput,
     Follower,
