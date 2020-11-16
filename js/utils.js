@@ -353,3 +353,15 @@ export function cleanMenuItemProperty(obj) {
     return res;
 }
 
+/***
+ *
+ * @param {AElement} e1
+ * @param {AElement} e2
+ */
+export function swapElt(e1, e2) {
+    var temp = _('div');
+    e1.parentElement.replaceChild(temp, e1);
+    e2.parentElement.replaceChild(e1, e2);
+    temp.parentElement.replaceChild(e2, temp);
+}
+
