@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SelectBox</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <style>
+        /* * {
+            box-sizing: border-box;
+        } */
+    </style>
+</head>
+
+<body>
+
+
+<div style="height: 75vh; overflow: auto; border: solid 1px black;">
+    <div style="height: 800px;padding-top:50vh;box-sizing: border-box;" id="test"></div>
+
+</div>
+
+<script class="viewable">
+    function randomTheme() {
+        return ['confirmed', 'declined', 'waiting', null][Math.random() * 4 >> 0];
+    }
+
+    absol._({
+        tag: 'multiselectmenu',
+        style: {
+            display: 'inline-block',
+            border: 'solid 1px gray',
+            'max-width': '50%',//có thể giới hạn cả chiều rộng và chiều cao, tự động tăng kính thước khi chọn thêm
+            'max-height': '4em',//cũng có thể thêm kích thước cố định vào, nếu tràn sẽ tự scroll
+            margin: '40px'
+        },
+        props: {
+            disableClickToFocus: true,
+            items: Array(30).fill(0).map(function (u, i) {
+                return {
+                    text: '[' + i + ']' + absol.string.randomPhrase(30),
+                    value: i,
+                    desc: absol.string.randomPhrase(30),
+                    theme: randomTheme()
+                };
+            }),
+            values: [5, 2, 1],
+            enableSearch: true,
+            orderly: true, // giữ đúng thứ tự theo items
+        },
+        on: {
+            change: function (event) {
+                console.log("change", this.values);
+            },
+            add: function (event) {
+                console.log("add", event.itemData, this.values);//item nào được thêm vào
+
+            },
+            remove: function (event) {
+                console.log("remove", event.itemData, this.values);//item  nào bị loại bỏ
+            }
+        }
+    }).addTo(absol.$('#test'));
+
+    absol._({
+        tag: 'multiselectmenu',
+        style: {
+            display: 'inline-block',
+            border: 'solid 1px gray',
+            margin: '40px',
+            'max-height': '60px'
+        },
+        props: {
+            enableSearch: true,
+            items: Array(30).fill(0).map(function (u, i) {
+                return {
+                    text: '[' + i + ']' + absol.string.randomPhrase(30),
+                    value: i,
+                    desc: absol.string.randomPhrase(30)
+                };
+            }),
+            values: [5, 2, 1]
+        }
+    }).addTo(absol.$('#test'));
+
+    absol._({
+        tag: 'multiselectmenu',
+        style: {
+            display: 'inline-block',
+            border: 'solid 1px gray',
+            margin: '40px'
+        },
+        props: {
+            itemFocusable: true,
+            enableSearch: false,
+            items: Array(30).fill(0).map(function (u, i) {
+                return {
+                    text: '[' + i + ']' + absol.string.randomPhrase(30),
+                    value: i,
+                    desc: absol.string.randomPhrase(30)
+                };
+            }),
+            values: [5, 2, 1],
+            activeValue: 2
+        },
+        on:{
+            activevaluechange: function (event){
+                console.log(event);
+            }
+        }
+    }).addTo(absol.$('#test'));
+</script>
+
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</body>
+
+</html>

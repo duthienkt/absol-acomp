@@ -86,6 +86,7 @@ import RibbonSplitButton from "../RibbonSplitButton";
 import RibbonButton from "../RibbonButton";
 import TimeSelectInput from "../TimeSelectInput";
 import SnackBar from "../Snackbar";
+import MultiSelectMenu from "../MultiSelectMenu";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -169,6 +170,7 @@ export var publicCreators = [
     SelectTreeBox,
     SelectMenu2,
     SelectBox,
+    MultiSelectMenu,
     SelectBoxItem,
     SelectTable,
     SelectTable2,

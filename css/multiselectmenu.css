@@ -1,0 +1,41 @@
+.as-multi-select-menu {
+    --list-min-width: 40px;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    min-height: var(--select-box-min-height);
+    min-width: var(--list-min-width);
+    border: solid 1px #d6d6d6;
+    border-radius: 3px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    outline: none;
+    background-color: white;
+    padding-right: 30px;
+}
+
+.as-multi-select-menu-item-ctn {
+
+}
+
+
+.as-multi-select-menu-toggle-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+    pointer-events: none;
+    border: none;
+    background-color: transparent;
+}
+
+.as-multi-select-menu-toggle-btn svg.dropdown {
+    width: 10px;
+    height: 10px;
+}
+
+
+.as-multi-select-menu .absol-selectbox-item {
+    margin: calc((var(--select-box-min-height) - 2px - var(--select-box-item-height)) / 2) 2px;
+}
