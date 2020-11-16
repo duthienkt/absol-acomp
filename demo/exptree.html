@@ -103,9 +103,23 @@
             absol.require('snackbar').show(this.getPath().join('/'));
         })
             .on('pressremove', function (event) {
-                absol.require('snackbar').show("press remove "+ this.getPath().join('/'));
+                absol.require('snackbar').show("press remove " + this.getPath().join('/'));
             })
-    })
+    });
+
+    var group = absol._({
+        tag: 'expgroup',
+        style: {
+            fontSize: '14px'
+        },
+        child: [
+            exampeTreeParam,
+            exampeTreeParam,
+            exampeTreeParam
+        ]
+    }).addTo(document.body);
+
+
 </script>
 
 
