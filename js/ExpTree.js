@@ -195,12 +195,11 @@ ExpNode.property.active = {
             this.removeClass('as-active');
             this.removeClass('active');
         }
-
     },
     get: function () {
         return this.containsClass('as-active');
     }
-}
+};
 
 ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
     var self = this;
