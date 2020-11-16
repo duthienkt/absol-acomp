@@ -327,6 +327,7 @@ ExpNode.eventHandler.buttonKeydown = function (event) {
                 case 'ArrowLeft':
                     if (tree.status === 'open') {
                         tree.status = 'close';
+                        tree.notifyStatusChange();
                     }
                     else {
                         destNode = parentTree && parentTree.getNode();
@@ -335,6 +336,7 @@ ExpNode.eventHandler.buttonKeydown = function (event) {
                 case 'ArrowRight':
                     if (tree.status === 'close') {
                         tree.status = 'open';
+                        tree.notifyStatusChange();
                     }
                     else {
                         destNode = this.findNodeAfter();
@@ -393,7 +395,7 @@ ExpTree.tag = 'ExpTree';
 ExpTree.render = function () {
     return _({
         class: 'absol-exp-tree',
-        extendEvent: ['press', 'pressremove'],
+        extendEvent: ['press', 'pressremove', 'statuschange'],
         child: [
             'expnode',
             '.absol-exp-items'
@@ -537,12 +539,18 @@ ExpTree.prototype.toggle = function () {
             this.status = 'close';
             break;
     }
-}
+};
+
+
+ExpTree.prototype.notifyStatusChange = function (props) {
+    this.emit('statuschange', Object.assign({ type: 'statuschange', target: this }, props), this);
+};
 
 ExpTree.eventHandler = {};
 
 ExpTree.eventHandler.nodePressToggle = function (event) {
     this.toggle();
+    this.notifyStatusChange({ originEvent: event });
 };
 
 /***
