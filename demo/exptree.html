@@ -105,6 +105,10 @@
             .on('pressremove', function (event) {
                 absol.require('snackbar').show("press remove " + this.getPath().join('/'));
             })
+        .on('statuschange', function (){
+            absol.require('snackbar').show(this.getPath().join('/') +' '+ this.status);
+            console.log();
+        })
     });
 
     var group = absol._({
