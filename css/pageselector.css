@@ -1,5 +1,8 @@
 .absol-page-selector{
     white-space: normal;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 .absol-page-selector > ul{
@@ -7,19 +10,19 @@
     margin-top: 0;
 }
 
-.page-number-buttons{
+.absol-page-number-buttons{
     display: inline-block;
     vertical-align: middle;
 }
 
-.page-number-input > label{
+.absol-page-number-input > label{
     font-weight: 100;
 }
 
-.page-number-buttons > li.page-previous, 
-.page-number-buttons > li.page-next,
-.page-number-buttons > li.page-first,
-.page-number-buttons > li.page-last
+.absol-page-number-buttons > li.page-previous, 
+.absol-page-number-buttons > li.page-next,
+.absol-page-number-buttons > li.page-first,
+.absol-page-number-buttons > li.page-last
 {
     display: inline-block;
     height: 30px;
@@ -31,7 +34,7 @@
     cursor: pointer;
 }
 
-.page-number-buttons > li.page-number{
+.absol-page-number-buttons > li.absol-page-number{
     display: inline-block;
     height: 30px;
     width: 40px;
@@ -42,34 +45,35 @@
 }
 
 
-.page-number-buttons > li.page-number.active{
+.absol-page-number-buttons > li.absol-page-number.active{
     box-shadow:  0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
     background-color: #4285f4;
     border-radius:2px; 
     
 }
 
-.page-number-buttons > li.page-number.active > a{
+.absol-page-number-buttons > li.absol-page-number.active > a{
 	color: white;
     
 }
 
-.page-number-buttons > li> a{
+.absol-page-number-buttons > li> a{
     line-height: 30px;
     text-decoration:none;
+    outline: none;
 }
 
-.page-number-buttons > li:not(.active):hover{
+.absol-page-number-buttons > li:not(.active):hover{
     background-color: #eee;
 
 }
 
-.absol-page-selector .page-number-input{
+.absol-page-selector .absol-page-number-input{
     display: inline-block;
     vertical-align: middle;
 }
 
-.absol-page-selector .page-number-input  input[type="text"]{
+.absol-page-selector .absol-page-number-input  input[type="text"]{
     width: 3em;
     margin-left: 5px; 
     margin-right: 10px;
@@ -79,4 +83,15 @@
     border: solid 1px #ccc; 
     border-radius: 2px;
 
+}
+
+.absol-page-link {
+    color: #147af6;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.absol-page-number {
+    color: #147af6;
+    cursor: pointer;
 }

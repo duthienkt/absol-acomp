@@ -6,17 +6,18 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function PageSelector() {
-    this.$pageInput = $('.page-number-input input', this);
-    this.$pageInput.on('keyup', PageSelector.eventHandler.pressEnterKey);
+    console.log(this);
+    this.$pageInput = $('.absol-page-number-input input', this);
+    this.$pageInput.on('keyup', this.eventHandler.pressEnterKey);
     this.$prevBtn = $('li.page-previous', this);
     this.$nextBtn = $('li.page-next', this);
     this.$firstBtn = $('li.page-first', this);
     this.$lastBtn = $('li.page-last', this);
-    this.$nextBtn.on('click', PageSelector.eventHandler.clickNext);
-    this.$prevBtn.on('click', PageSelector.eventHandler.clickPrev);
-    this.$firstBtn.on('click', PageSelector.eventHandler.clickFirst);
-    this.$lastBtn.on('click', PageSelector.eventHandler.clickLast);
-    this.$buttonContainer = $('.page-number-buttons', this);
+    this.$nextBtn.on('click', this.eventHandler.clickNext);
+    this.$prevBtn.on('click', this.eventHandler.clickPrev);
+    this.$firstBtn.on('click', this.eventHandler.clickFirst);
+    this.$lastBtn.on('click', this.eventHandler.clickLast);
+    this.$buttonContainer = $('.absol-page-number-buttons', this);
     this._buttons = [];
     this._pageOffset = 1;
     this._selectedIndex = 1;
@@ -34,7 +35,7 @@ PageSelector.render = function (){
         child:
             [
                 {
-                    class: 'page-number-input',
+                    class: 'absol-page-number-input',
                     child: [{
                         tag: 'label',
                         child: { text: "Page" }
@@ -49,20 +50,20 @@ PageSelector.render = function (){
 
                 {
                     tag: 'ul',
-                    class: 'page-number-buttons',
+                    class: 'absol-page-number-buttons',
                     child: [
                         ' <li class="page-first">\
-                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">First</a>\
+                        <a aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="absol-page-link">First</a>\
                     </li>',
                         ' <li class="page-previous">\
-                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>\
+                        <a aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="absol-page-link">Previous</a>\
                     </li>',
 
                         '<li class="page-next" >\
-                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="7" tabindex="0" class="page-link">Next</a>\
+                        <a aria-controls="dtBasicExample" data-dt-idx="7" tabindex="0" class="absol-page-link">Next</a>\
                     </li>',
                         ' <li class="page-last">\
-                        <a href="#" aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="page-link">Last</a>\
+                        <a aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="absol-page-link">Last</a>\
                     </li>',
                     ]
                 }
@@ -109,10 +110,10 @@ PageSelector.eventHandler.clickIndex = function (index, event) {
 PageSelector.prototype._createButton = function (index) {
     var button = _({
         tag: 'li',
-        class: 'page-number',
+        class: 'absol-page-number',
         child: {
             tag: 'a',
-            attr: { href: '#', 'data-index': index },
+            attr: {  'data-index': index },
             child: { text: '' + index }
         },
         on: {
