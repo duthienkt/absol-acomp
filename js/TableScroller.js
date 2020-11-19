@@ -392,6 +392,7 @@ TableScroller.prototype._updateScrollBarSize = function () {
 };
 
 TableScroller.prototype._updateContentSize = function () {
+    if (!this.$fixedTable) return;
     this._updateFixedTableSize();
     this._updateHeaderScrollerSize();
     this._updateLeftTableSize();
