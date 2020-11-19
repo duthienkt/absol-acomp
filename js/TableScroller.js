@@ -54,6 +54,7 @@ function TableScroller() {
 
     this.$vscrollbar.hidden = false;
     this.$hscrollbar.hidden = false;
+    this._fixedTableThsVisible = [];
 }
 
 TableScroller.tag = 'TableScroller'.toLowerCase();
