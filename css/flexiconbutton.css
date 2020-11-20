@@ -10,6 +10,13 @@
     vertical-align: middle;
 }
 
+.as-flexicon-button div,
+.as-flexicon-button span {
+    font-weight: inherit;
+    font-size: inherit;
+}
+
+
 .as-icon-button-table-box {
     display: table;
     width: 100%;
@@ -51,10 +58,10 @@
 }
 
 
-.as-flexicon-button-icon-container>span,
-.as-flexicon-button-icon-container>i,
-.as-flexicon-button-icon-container>svg,
-.as-flexicon-button-icon-container>img {
+.as-flexicon-button-icon-container > span,
+.as-flexicon-button-icon-container > i,
+.as-flexicon-button-icon-container > svg,
+.as-flexicon-button-icon-container > img {
     font-size: 1em;
 }
 
@@ -66,11 +73,11 @@
 }
 
 
-.as-flexicon-button-icon-container+.as-flexicon-button-text-container {
+.as-flexicon-button-icon-container + .as-flexicon-button-text-container {
     border-left: solid 1px #bfbfbf;
 }
 
-.as-flexicon-button-icon-container:empty+.as-flexicon-button-text-container {
+.as-flexicon-button-icon-container:empty + .as-flexicon-button-text-container {
     border-left: none
 }
 

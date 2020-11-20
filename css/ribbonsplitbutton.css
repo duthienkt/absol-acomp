@@ -4,8 +4,15 @@
     height: 30px;
     font-family: Arial, Helvetica, sans-serif;
     box-sizing: border-box;
-
 }
+
+.as-ribbon-split-button div,
+.as-ribbon-split-button span,
+.as-ribbon-split-button button {
+    font-weight: inherit;
+    font-size: inherit;
+}
+
 
 .as-ribbon-split-button-content {
     height: 100%;

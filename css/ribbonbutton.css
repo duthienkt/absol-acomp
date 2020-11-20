@@ -15,6 +15,12 @@
     background-color: transparent;
 }
 
+.as-ribbon-button div,
+.as-ribbon-button span {
+    font-weight: inherit;
+    font-size: inherit;
+}
+
 .as-ribbon-button:hover {
     background-color: rgba(169, 168, 169, 0.15);
 }
