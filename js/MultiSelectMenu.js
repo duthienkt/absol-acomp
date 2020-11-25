@@ -105,9 +105,14 @@ MultiSelectMenu.prototype._getItemsByValues = function (values) {
         return ac;
     }, []);
     if (this.orderly) {
-        itemHolders.sort(function (a, b) {
-            return a.idx - b.idx;
-        });
+        if (typeof this.orderly === 'function') {
+            itemHolders.sort(this.orderly);
+        }
+        else {
+            itemHolders.sort(function(a, b) {
+                return a.idx - b.idx;
+            });
+        }
     }
 
     return itemHolders.map(function (holder) {
@@ -183,10 +188,15 @@ MultiSelectMenu.property.values = {
 
 MultiSelectMenu.property.orderly = {
     set: function (value) {
-        this._orderly = !!value;
-        if (value) {
-            this.values = this.values;
-        }
+       var needUpdate = this._orderly === this._orderly;
+       if (typeof value === 'function') {
+           this._orderly;
+       }
+       else
+           this._orderly = !!value;
+       if (needUpdate) {
+           this.values = this.values;
+       }
     },
     get: function () {
         return !!this._orderly;

@@ -52,3 +52,8 @@
 .as-multi-select-menu .absol-selectbox-item {
     margin: calc((var(--select-box-min-height) - 2px - var(--select-box-item-height)) / 2) 2px;
 }
+
+
+.as-multi-select-menu.as-item-focusable .absol-selectbox-item.as-active{
+    background-color: var(--select-box-focus-item-color);
+}
