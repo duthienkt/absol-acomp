@@ -72,10 +72,12 @@
             display: 'inline-block',
             border: 'solid 1px gray',
             margin: '40px',
-            'max-height': '4em'//cũng có thể thêm kích thước cố định vào, nếu tràn sẽ tự scroll
+            'max-height': '4em',//cũng có thể thêm kích thước cố định vào, nếu tràn sẽ tự scroll,
+            backgroundColor: 'rgb(255, 200, 200)'
         },
         props: {
             enableSearch: true,
+            itemFocusable: true,
             items: Array(30).fill(0).map(function (u, i) {
                 return {
                     text: '[' + i + ']' + absol.string.randomPhrase(30),
