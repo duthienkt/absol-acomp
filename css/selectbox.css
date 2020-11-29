@@ -41,11 +41,11 @@
 }
 
 .absol-selectbox .absol-selectbox-item {
-    margin: calc((var(--select-box-min-height) - 2px -  var(--select-box-item-height)) / 2) 2px;
+    margin: calc((var(--select-box-min-height) - 2px - var(--select-box-item-height)) / 2) 2px;
 }
 
 .absol-selectbox-item {
-    font-family:Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
     display: inline-block;
     position: relative;
     font-size: var(--select-box-item-font-size);
@@ -64,7 +64,6 @@
     color: black;
     cursor: pointer;
 }
-
 
 
 .absol-selectbox-item.as-theme-confirmed {
@@ -115,7 +114,7 @@
 }
 
 .absol-selectbox-item-close::after,
-.absol-selectbox-item-text::before{
+.absol-selectbox-item-text::before {
     content: "";
     display: inline-block;
     vertical-align: middle;
@@ -129,6 +128,6 @@
 }
 
 
-.absol-selectbox.as-item-focusable .absol-selectbox-item.as-active{
+.absol-selectbox.as-item-focusable .absol-selectbox-item.as-active {
     background-color: var(--select-box-focus-item-color);
 }
