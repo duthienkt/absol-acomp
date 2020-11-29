@@ -253,8 +253,13 @@ SelectBox.property.values = {
 
 SelectBox.property.orderly = {
     set: function (value) {
-        this._orderly = !!value;
-        if (value) {
+        var needUpdate = this._orderly === this._orderly;
+        if (typeof value === 'function'){
+            this._orderly;
+        }
+        else
+            this._orderly = !!value;
+        if (needUpdate) {
             this.values = this.values;
         }
     },
