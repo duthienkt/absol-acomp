@@ -30,10 +30,9 @@
 }
 
 
-
 .absol-tooltip.top .absol-tooltip-content {
     margin-bottom: 0.3rem;
-} 
+}
 
 
 .absol-tooltip.bottom .absol-tooltip-arrow {
@@ -48,7 +47,6 @@
 .absol-tooltip.bottom .absol-tooltip-content {
     margin-top: 0.3rem;
 }
-
 
 
 .absol-tooltip.left .absol-tooltip-arrow {
@@ -79,14 +77,15 @@
 }
 
 
-.absol-tooltip-root{
+.absol-tooltip-root {
     position: relative;
     width: 0;
     height: 0;
 }
 
-.absol-tooltip-root-holder{
-    position: absolute;
+.absol-tooltip-root-holder {
+    position: fixed;
+    z-index: 100000000;
     left: 0;
     top: 0;
 }

@@ -32,8 +32,7 @@ ToolTip.render = function () {
 ACore.install(ToolTip);
 
 
-ToolTip.$root = _('.absol-tooltip-root').addStyle('visibility', 'hidden');
-ToolTip.$holder = _('.absol-tooltip-root-holder').addTo(ToolTip.$root);
+ToolTip.$holder = _('.absol-tooltip-root-holder')
 ToolTip.$tooltip = _('tooltip.top').addTo(ToolTip.$holder);
 ToolTip.$element = undefined;
 ToolTip.$content = undefined;
@@ -46,27 +45,25 @@ ToolTip.updatePosition = function () {
     var orientation = ToolTip._orientation;
 
     var tBound = ToolTip.$tooltip.getBoundingClientRect();
-
-    var rBound = ToolTip.$root.getBoundingClientRect();
-    var ebound = element.getBoundingRecursiveRect();
+    var ebound = element.getBoundingClientRect();
 
     var dx, dy;
 
     if (orientation == 'top') {
-        dy = ebound.top - rBound.top - tBound.height;
-        dx = ebound.left + ebound.width / 2 - rBound.left - tBound.width / 2;
+        dy = ebound.top - tBound.height;
+        dx = ebound.left + ebound.width / 2  - tBound.width / 2;
     }
     else if (orientation == 'left') {
-        dy = ebound.top + ebound.height / 2 - rBound.top - tBound.height / 2;
-        dx = ebound.left - rBound.left - tBound.width;
+        dy = ebound.top + ebound.height / 2  - tBound.height / 2;
+        dx = ebound.left - tBound.width;
     }
     else if (orientation == 'right') {
-        dy = ebound.top + ebound.height / 2 - rBound.top - tBound.height / 2;
-        dx = ebound.right - rBound.left;
+        dy = ebound.top + ebound.height / 2  - tBound.height / 2;
+        dx = ebound.right;
     }
     else if (orientation == 'bottom') {
-        dy = ebound.bottom - rBound.top;
-        dx = ebound.left + ebound.width / 2 - rBound.left - tBound.width / 2;
+        dy = ebound.bottom;
+        dx = ebound.left + ebound.width / 2  - tBound.width / 2;
 
     }
     else {
@@ -100,7 +97,6 @@ ToolTip.show = function (element, content, orientation) {
     $('', content, function (elt) {
         if (elt.tagName == "IMG" && elt.src) {
             Dom.waitImageLoaded(elt).then(ToolTip.updatePosition.bind(ToolTip));
-            ;
         }
         else if (elt.sync) {
             elt.sync.then(ToolTip.updatePosition.bind(ToolTip));
@@ -108,7 +104,7 @@ ToolTip.show = function (element, content, orientation) {
     });
     var currentSession = Math.random() * 10000000000 >> 0;
 
-    ToolTip.$root.addTo(document.body);
+    ToolTip.$holder.addTo(document.body);
     Dom.addToResizeSystem(ToolTip.$tooltip.$arrow);
 
     ToolTip.$element = element;
@@ -117,7 +113,7 @@ ToolTip.show = function (element, content, orientation) {
     ToolTip._orientation = orientation;
 
     ToolTip.$tooltip.clearChild().addChild(content);
-    ToolTip.$root.removeStyle('visibility');
+    ToolTip.$holder.removeStyle('visibility');
     ToolTip.$tooltip.removeClass('top').removeClass('left').removeClass('right').removeClass('bottom');
     ToolTip.$tooltip.addClass(orientation);
     ToolTip.updatePosition();
@@ -126,7 +122,7 @@ ToolTip.show = function (element, content, orientation) {
 
 ToolTip.closeTooltip = function (session) {
     if (session === true || session === this._session) {
-        ToolTip.$root.addStyle('visibility', 'hidden');
+        ToolTip.$holder.addStyle('visibility', 'hidden');
         ToolTip.$tooltip.clearChild();
         ToolTip.$holder.addStyle({
             top: false,
