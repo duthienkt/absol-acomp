@@ -1,7 +1,9 @@
 import '../css/tooltip.css';
 import ACore from "../ACore";
-import Dom from "absol/src/HTML5/Dom";
+import Dom, {getScreenSize} from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
+import Rectangle from "absol/src/Math/Rectangle";
+import SnackBar from "./Snackbar";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -46,28 +48,117 @@ ToolTip.updatePosition = function () {
 
     var tBound = ToolTip.$tooltip.getBoundingClientRect();
     var ebound = element.getBoundingClientRect();
+    var screenSize = getScreenSize();
+    screenSize.width = Math.min(screenSize.width, document.body.getBoundingClientRect().width);
+    var fontSize = this.$tooltip.getFontSize();
 
-    var dx, dy;
+    var dx = 0;
+    var dy = 0;
+    var arrowPos = null;
+    if (orientation === 'auto') {
+        var aHCenter = (ebound.left + ebound.width / 2 > tBound.width / 2)
+            && (screenSize.width - ebound.left - ebound.width / 2 > tBound.width / 2);
+        var aVCenter = (ebound.top + ebound.height / 2 > tBound.height / 2)
+            && (screenSize.height - ebound.top - ebound.height / 2 > tBound.height / 2);
+        var aTop = (tBound.height < ebound.top - 5);
+        var aBottom = tBound.height < screenSize.height - 5 - ebound.bottom;
+        var aRight = tBound.width < screenSize.width - 5 - ebound.right;
+        var aLeft = tBound.width < ebound.left - 5;
+
+        var aHLeft = (ebound.left + ebound.width / 2 - tBound.width / 2 < 5) && (ebound.left + ebound.width / 2 >= 5 + fontSize / 2);
+        var aHRight = (ebound.left + ebound.width / 2 + tBound.width / 2 > screenSize.width - 5) && (ebound.left + ebound.width / 2 < screenSize.width - 5 - fontSize / 2);
+        var aVTop = (ebound.top + ebound.width / 2 - tBound.height / 2 < 5) && (ebound.top + ebound.height / 2 >= 5 + fontSize / 2);
+        var aVBottom = (ebound.top + ebound.width / 2 + tBound.height / 2 <= screenSize.height - 5) && (ebound.top + ebound.height / 2 < screenSize.height - 5 - fontSize / 2);
+
+        if (aHCenter) {
+            if (aTop) {
+                orientation = 'top';
+            }
+            else if (aBottom) {
+                orientation = 'bottom';
+            }
+        }
+        else if (aVCenter) {
+            if (aRight) {
+                orientation = 'right';
+            }
+            else if (aLeft) {
+                orientation = 'left';
+            }
+        }
+
+        if (orientation === 'auto') {
+            if (aHLeft) {
+                if (aTop) orientation = "top";
+                else if (aBottom) orientation = 'bottom';
+                if (aTop || aBottom) {
+                    dx += tBound.width / 2 - (ebound.left + ebound.width / 2) + 5;
+                    arrowPos = tBound.width / 2 - dx + 'px';
+                }
+            }
+            else if (aHRight) {
+                if (aTop) orientation = "top";
+                else if (aBottom) orientation = 'bottom';
+                if (aTop || aBottom) {
+                    dx -= tBound.width / 2 - (screenSize.width - (ebound.left + ebound.width / 2)) + 5;
+                    arrowPos = tBound.width / 2 - dx + 'px';
+                }
+            }
+
+            if (orientation === 'auto') {//still fail
+                if (aVTop) {
+                    if (aLeft) orientation = "left";
+                    else if (aRight) orientation = 'right';
+                    if (aLeft || aRight) {
+                        dy += tBound.height / 2 - (ebound.top + ebound.height / 2) + 5;
+                        arrowPos = tBound.height / 2 - dy + 'px';
+                    }
+                }
+                else if (aVBottom) {
+                    if (aLeft) orientation = "left";
+                    else if (aRight) orientation = 'right';
+                    if (aLeft || aRight) {
+                        dy -= tBound.height / 2 - (screenSize.height - (ebound.top + ebound.height / 2)) + 5;
+                        arrowPos = tBound.height / 2 - dx + 'px'
+                    }
+                }
+            }
+        }
+
+        if (orientation === 'auto') orientation = 'top';
+        ToolTip.$tooltip.removeClass('top')
+            .removeClass('left')
+            .removeClass('right')
+            .removeClass('bottom')
+            .addClass(orientation);
+    }
 
     if (orientation == 'top') {
-        dy = ebound.top - tBound.height;
-        dx = ebound.left + ebound.width / 2  - tBound.width / 2;
+        dy += ebound.top - tBound.height;
+        dx += ebound.left + ebound.width / 2 - tBound.width / 2;
     }
     else if (orientation == 'left') {
-        dy = ebound.top + ebound.height / 2  - tBound.height / 2;
-        dx = ebound.left - tBound.width;
+        dy += ebound.top + ebound.height / 2 - tBound.height / 2;
+        dx += ebound.left - tBound.width;
     }
     else if (orientation == 'right') {
-        dy = ebound.top + ebound.height / 2  - tBound.height / 2;
-        dx = ebound.right;
+        dy += ebound.top + ebound.height / 2 - tBound.height / 2;
+        dx += ebound.right;
     }
     else if (orientation == 'bottom') {
-        dy = ebound.bottom;
-        dx = ebound.left + ebound.width / 2  - tBound.width / 2;
+        dy += ebound.bottom;
+        dx += ebound.left + ebound.width / 2 - tBound.width / 2;
 
     }
     else {
         throw new Error("Invalid orientation, orientation:['left', 'right', 'top', 'bottom', 'auto'] ");
+    }
+
+    if (arrowPos) {
+        ToolTip.$tooltip.addStyle('--tool-tip-arrow-pos', arrowPos);
+    }
+    else {
+        ToolTip.$tooltip.removeStyle('--tool-tip-arrow-pos')
     }
 
     ToolTip.$holder.addStyle({
@@ -114,7 +205,11 @@ ToolTip.show = function (element, content, orientation) {
 
     ToolTip.$tooltip.clearChild().addChild(content);
     ToolTip.$holder.removeStyle('visibility');
-    ToolTip.$tooltip.removeClass('top').removeClass('left').removeClass('right').removeClass('bottom');
+    ToolTip.$tooltip.removeClass('top')
+        .removeClass('left')
+        .removeClass('right')
+        .removeClass('bottom')
+        .removeClass('auto');
     ToolTip.$tooltip.addClass(orientation);
     ToolTip.updatePosition();
     return currentSession;
