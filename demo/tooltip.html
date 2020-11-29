@@ -13,65 +13,94 @@
             margin: 3em;
         }
 
-        .test-ctn>button {
+        .test-ctn > button {
             margin: 3em;
         }
     </style>
 </head>
 
 <body>
-    <div class="absol-tooltip top">
-        <div class="absol-tooltip-content">This is the text</div>
-        <div class="absol-tooltip-arrow"></div>
-    </div>
-
-    <div class="absol-tooltip bottom">
-        <div class="absol-tooltip-content">This is the <strong>text</strong> with <span style="color:yellow">html
-                element</span></div>
-        <div class="absol-tooltip-arrow"></div>
-    </div>
-
+<div class="absol-tooltip top">
+    <div class="absol-tooltip-content">This is the text</div>
     <div class="absol-tooltip-arrow"></div>
+</div>
+
+<div class="absol-tooltip bottom">
+    <div class="absol-tooltip-content">This is the <strong>text</strong> with <span style="color:yellow">html
+                element</span></div>
+    <div class="absol-tooltip-arrow"></div>
+</div>
+
+<div class="absol-tooltip-arrow"></div>
+</div>
+
+<div class="absol-tooltip right">
+    <div class="absol-tooltip-content">
+        <h3>Tiêu đề</h3>
+        <br>
+        <span>Nội dung</span>
     </div>
+    <div class="absol-tooltip-arrow"></div>
+</div>
+<div class="test-ctn">
+    <button id="btn1">Top Tooltop</button>
+    <button id="btn2">Bot Tooltop</button>
+    <button id="btn3">Left Tooltop</button>
+    <button id="btn4">Right Tooltop</button>
+    <a id="btn5">Auto</a>
+</div>
+<script class="viewable">
 
-    <div class="absol-tooltip right">
-        <div class="absol-tooltip-content">
-            <h3>Tiêu đề</h3>
-            <br>
-            <span>Nội dung</span>
-        </div>
-        <div class="absol-tooltip-arrow"></div>
-    </div>
-    <div class="test-ctn">
-        <button id="btn1">Top Tooltop</button>
-        <button id="btn2">Bot Tooltop</button>
-        <button id="btn3">Left Tooltop</button>
-        <button id="btn4">Right Tooltop</button>
-    </div>
-    <script class="viewable">
+    absol.Tooltip.showWhenClick(absol.$('#btn1'), 'this is top', 'top')
+    absol.Tooltip.showWhenClick(absol.$('#btn2'), 'this is bot || this is bot', 'bottom');
 
-        absol.Tooltip.showWhenClick(absol.$('#btn1'), 'this is top', 'top')
-        absol.Tooltip.showWhenClick(absol.$('#btn2'), 'this is bot || this is bot', 'bottom');
+    absol.Tooltip.showWhenClick(absol.$('#btn3'),
+        absol._({
+            tag: 'img', style: { height: "10em" },
+            attr: {
+                crossorigin: '', src: "http://absol.cf/share/8TEb9p4ec.jpg"
+            }
+        }), 'left');
 
-        absol.Tooltip.showWhenClick(absol.$('#btn3'),
-            absol._({
-                tag: 'img', style: { height: "10em" },
-                attr: {
-                    crossorigin: '', src: "http://absol.cf/share/8TEb9p4ec.jpg"
-                }
-            }), 'left');
+    absol.Tooltip.showWhenClick(absol.$('#btn4'),
+        absol._({
+            tag: 'img', style: { height: "10em" },
+            attr: {
+                crossorigin: '',
+                src: "http://absol.cf/share/8TEb9p4ec.jpg"
+            }
+        }), 'right');
 
-        absol.Tooltip.showWhenClick(absol.$('#btn4'),
-            absol._({
-                tag: 'img', style: { height: "10em" },
-                attr: {
-                    crossorigin: '',
-                    src: "http://absol.cf/share/8TEb9p4ec.jpg"
-                }
-            }), 'right');
+    absol.$('#btn5').addStyle({
+        position: 'fixed',
+        zIndex: '100000',
+        left: '10px',
+        top: '10px',
+        display:'block'
+    }).on('click', function () {
+        var bound = this.getBoundingClientRect();
+        var screenSize = absol.Dom.getScreenSize();
 
-    </script>
-    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+
+        absol.Tooltip.show(this, absol._({
+            tag: 'img', style: { height: "10em" },
+            attr: {
+                crossorigin: '',
+                src: "http://absol.cf/share/8TEb9p4ec.jpg"
+            }
+        }), 'auto');
+        var bt = this;
+        document.addEventListener('mousemove', function (event) {
+            bt.addStyle({
+                left: event.clientX - bound.width / 2 + 'px',
+                top: event.clientY - bound.height / 2 + 'px'
+            });
+            absol.Tooltip.updatePosition();
+        });
+    });
+
+</script>
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
 
