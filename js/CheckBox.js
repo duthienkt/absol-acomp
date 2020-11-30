@@ -25,7 +25,7 @@ function CheckBox() {
     );
     this.$labels = $$('span', this);
     this.on('click', this.eventHandler.click);
-    OOP.drillProperty(this, this.$input, ['checked', 'disabled'])
+    OOP.drillProperty(this, this.$input, ['checked'])
 }
 
 CheckBox.tag = 'checkbox';
@@ -110,7 +110,26 @@ CheckBox.property.text = {
         this.$labels[0].firstChild.data = value;
         this.$labels[1].firstChild.data = value;
     }
-}
+};
+
+
+CheckBox.property.disabled = {
+    get: function (){
+        return    this.$input.disabled;
+    },
+    set: function (value){
+        value = !!value;
+        this.$input.disabled = value;
+        if (value){
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    }
+};
+
+
 
 /***
  *

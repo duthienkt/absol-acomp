@@ -85,6 +85,10 @@ span.absol-radio-right-label {
     cursor: default;
 }
 
+.absol-radio.disabled{
+    color: #777;
+}
+
 .absol-radio.disabled:hover .dot,
 .absol-radio.disabled .dot {
     fill: #929292;
