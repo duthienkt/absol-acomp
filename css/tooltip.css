@@ -1,5 +1,7 @@
 :root {
     --tool-tip-arrow-pos: 50%;
+    --tool-tip-background-color: gray;
+    --tool-tip-text-color: white;
 }
 
 .absol-tooltip {
@@ -7,12 +9,13 @@
     position: relative;
     box-sizing: border-box;
     display: inline-block;
+    color: var(--tool-tip-text-color);
 }
 
 .absol-tooltip-content {
     display: inline-block;
     border-radius: 0.25em;
-    background-color: gray;
+    background-color: var(--tool-tip-background-color);
     padding: 0.25em 0.5em;
     font-size: inherit;
 }
@@ -30,7 +33,7 @@
     border-left: 0.4em solid transparent;
     border-right: 0.3em solid transparent;
 
-    border-top: 0.3em solid gray;
+    border-top: 0.3em solid var(--tool-tip-background-color);
     bottom: 0;
     left: calc(var(--tool-tip-arrow-pos) - 0.3em);
 }
@@ -44,7 +47,7 @@
 .absol-tooltip.bottom .absol-tooltip-arrow {
     border-left: 0.3em solid transparent;
     border-right: 0.4em solid transparent;
-    border-bottom: 0.3em solid gray;
+    border-bottom: 0.3em solid var(--tool-tip-background-color);
 
     top: 0;
     left: calc(var(--tool-tip-arrow-pos) - 0.3em);
@@ -58,7 +61,7 @@
 .absol-tooltip.left .absol-tooltip-arrow {
     border-top: 0.3em solid transparent;
     border-bottom: 0.4em solid transparent;
-    border-left: 0.4em solid gray;
+    border-left: 0.4em solid var(--tool-tip-background-color);
 
     right: 0;
     top: calc(var(--tool-tip-arrow-pos) - 0.3em);
@@ -72,7 +75,7 @@
 .absol-tooltip.right .absol-tooltip-arrow {
     border-top: 0.4em solid transparent;
     border-bottom: 0.4em solid transparent;
-    border-right: 0.4em solid gray;
+    border-right: 0.4em solid var(--tool-tip-background-color);
 
     left: 0;
     top: calc(var(--tool-tip-arrow-pos) - 0.3em);
@@ -81,7 +84,7 @@
 .absol-tooltip.ne .absol-tooltip-arrow {
     border-top: 0.3em solid transparent;
     border-bottom: 0.4em solid transparent;
-    border-left: 0.4em solid gray;
+    border-left: 0.4em solid var(--tool-tip-background-color);
     bottom: -0.3em;
     left: 0;
 }
@@ -89,7 +92,7 @@
 .absol-tooltip.nw .absol-tooltip-arrow {
     border-top: 0.3em solid transparent;
     border-bottom: 0.4em solid transparent;
-    border-right: 0.4em solid gray;
+    border-right: 0.4em solid var(--tool-tip-background-color);
     bottom: -0.3em;
     right: 0;
 }
@@ -97,7 +100,7 @@
 .absol-tooltip.se .absol-tooltip-arrow {
     border-top: 0.3em solid transparent;
     border-bottom: 0.4em solid transparent;
-    border-left: 0.4em solid gray;
+    border-left: 0.4em solid var(--tool-tip-background-color);
     top: -0.3em;
     left: 0;
 }
@@ -105,7 +108,7 @@
 .absol-tooltip.sw .absol-tooltip-arrow {
     border-top: 0.3em solid transparent;
     border-bottom: 0.4em solid transparent;
-    border-right: 0.4em solid gray;
+    border-right: 0.4em solid var(--tool-tip-background-color);
     top: -0.25em;
     right: 0;
 }
