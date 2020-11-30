@@ -1,5 +1,5 @@
-:root{
-    --tool-tip-arrow-pos:50%;
+:root {
+    --tool-tip-arrow-pos: 50%;
 }
 
 .absol-tooltip {
@@ -77,6 +77,38 @@
 
     left: 0;
     top: calc(var(--tool-tip-arrow-pos) - 0.3em);
+}
+
+.absol-tooltip.ne .absol-tooltip-arrow {
+    border-top: 0.3em solid transparent;
+    border-bottom: 0.4em solid transparent;
+    border-left: 0.4em solid gray;
+    bottom: -0.3em;
+    left: 0;
+}
+
+.absol-tooltip.nw .absol-tooltip-arrow {
+    border-top: 0.3em solid transparent;
+    border-bottom: 0.4em solid transparent;
+    border-right: 0.4em solid gray;
+    bottom: -0.3em;
+    right: 0;
+}
+
+.absol-tooltip.se .absol-tooltip-arrow {
+    border-top: 0.3em solid transparent;
+    border-bottom: 0.4em solid transparent;
+    border-left: 0.4em solid gray;
+    top: -0.3em;
+    left: 0;
+}
+
+.absol-tooltip.sw .absol-tooltip-arrow {
+    border-top: 0.3em solid transparent;
+    border-bottom: 0.4em solid transparent;
+    border-right: 0.4em solid gray;
+    top: -0.25em;
+    right: 0;
 }
 
 .absol-tooltip.right .absol-tooltip-content {
