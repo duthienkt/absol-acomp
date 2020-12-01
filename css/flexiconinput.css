@@ -32,6 +32,11 @@
     display: none;
 }
 
+
+.as-flexicon-input:not(.as-flexicon-input-has-icon) input{
+    padding-left: 0.3em;
+}
+
 .as-flexicon-input-icon-ctn {
     display: inline-block;
     vertical-align: middle;
