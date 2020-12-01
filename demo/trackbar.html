@@ -25,23 +25,48 @@
     var mTrackbar = _({
         tag: 'trackbar',
         style: {
+            width: '50vw',
+            marginBottom: '1em'
+        }
+    }).addTo($('.demo-trackbar'));
+    var mTrackbar1 = _({
+        tag: 'trackbar',
+        style: {
             width: '50vw'
+        },
+        props: {
+            disabled: true
         }
     }).addTo($('.demo-trackbar'));
 </script>
 <h2>Trackbar Input</h2>
 <div class="demo-trackbar-input"></div>
 <script class="viewable">
-    var mTrackbar = _({
+    var mTrackbar2 = _({
         tag: 'trackbarinput',
         style: {
             width: '50vw'
         },
-        props:{
-            unit:'%',
+        props: {
+            unit: '%',
             leftValue: 0,
             rightValue: 100,
             valueFixed: 2
+        }
+    }).addTo($('.demo-trackbar-input'));
+    var mTrackbar3 = _({
+        tag: 'trackbarinput',
+        style: {
+            width: '50vw',
+            marginBottom: '1em'
+        },
+        props: {
+            unit: '%',
+            leftValue: 0,
+            rightValue: 100,
+            valueFixed: 2,
+            disabled: true,
+            value: 20
         }
     }).addTo($('.demo-trackbar-input'));
 </script>
