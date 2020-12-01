@@ -59,8 +59,8 @@ TrackBarInput.prototype.init = function (props) {
 };
 
 TrackBarInput.prototype._calInputTextWidth = function () {
-    var l = Math.max(this.leftValue.toFixed(this.valueFixed ||0).length,this.rightValue.toFixed(this.valueFixed ||0).length, 2);
-    if (this.valueFixed > 0){
+    var l = Math.max(this.leftValue.toFixed(this.valueFixed || 0).length, this.rightValue.toFixed(this.valueFixed || 0).length, 2);
+    if (this.valueFixed > 0) {
         l -= 0.8;
     }
     this.inputTextWidth = l;
@@ -118,8 +118,8 @@ TrackBarInput.property.inputTextWidth = {
     set: function (value) {
         if (typeof value == 'number') {
             this._inputTextWidth = value;
-            this.$inputContainer.addStyle('width', 3 + (value - 2) * 0.42 + 'em');
-            this.$trackbarContainer.addStyle('right', 3.5 + (value - 2) * 0.42 + 'em');
+            this.$inputContainer.addStyle('width', 3 + (value - 2) * 0.42 + 0.3 + 'em');
+            this.$trackbarContainer.addStyle('right', 3.5 + (value - 2) * 0.42 + 0.3 + 'em');
         }
         else {
             this._inputTextWidth = value;
