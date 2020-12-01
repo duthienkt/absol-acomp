@@ -86,6 +86,22 @@ TrackBarInput.property.inputTextWidth = {
     }
 };
 
+TrackBarInput.property.disabled = {
+    get: function () {
+        return this.containsClass('as-disabled');
+    },
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+        this.$input.disabled = !!value;
+        this.$trackbar.disabled = !!value;
+    }
+};
+
 TrackBarInput.eventHandler = {};
 
 

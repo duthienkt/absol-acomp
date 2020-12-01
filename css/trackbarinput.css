@@ -34,3 +34,12 @@
     height: 2em;
 }
 
+.absol-trackbar-input.as-disabled {
+    pointer-events: none;
+    color: #777777;
+
+}
+
+.absol-trackbar-input input{
+    color: inherit;
+}

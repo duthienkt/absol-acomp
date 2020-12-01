@@ -111,6 +111,20 @@ TrackBar.property.rightValue = {
     }
 };
 
+TrackBar.property.disabled = {
+    get: function () {
+        return this.containsClass('as-disabled');
+    },
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    }
+};
+
 ACore.install(TrackBar);
 
 export default TrackBar;

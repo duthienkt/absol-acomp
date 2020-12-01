@@ -12,6 +12,7 @@
     padding: 0 0.6em;
     box-sizing: border-box;
 }
+
 .absol-trackbar-line {
     display: block;
     position: relative;
@@ -24,6 +25,7 @@
     border-radius: 0.15em;
     cursor: pointer;
 }
+
 .absol-trackbar-button {
     position: absolute;
     z-index: 1;
@@ -37,4 +39,20 @@
     cursor: pointer;
     border-radius: 50%;
     border: solid 1px rgb(139, 139, 139);
+}
+
+.absol-trackbar.as-disabled {
+    pointer-events: none;
+}
+
+.absol-trackbar.as-disabled .absol-trackbar-button {
+    background: rgb(225, 225, 225);
+    border: solid 1px rgb(200, 200, 200);
+}
+
+.absol-trackbar.as-disabled .absol-trackbar-line {
+    background-color: rgb(220, 220, 220);
+    -webkit-box-shadow: 0 0 0.2em 0.1em rgb(200, 200, 200) inset;
+    -moz-box-shadow: 0 0 0.2em 0.1em rgb(200, 200, 200) inset;
+    box-shadow: 0 0 0.2em 0.1em rgb(200, 200, 200) inset;
 }
