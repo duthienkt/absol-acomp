@@ -27,6 +27,14 @@
     bottom: 0;
 }
 
+.absol-trackbar-input-unit-input-container::before{
+    content: "";
+    display: inline-block;
+    white-space: nowrap;
+    height: 100%;
+    vertical-align: middle;
+}
+
 
 .absol-trackbar-input-unit-input-container .as-flexicon-input {
     width: 100%;
