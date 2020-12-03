@@ -57,3 +57,8 @@
 .as-multi-select-menu.as-item-focusable .absol-selectbox-item.as-active{
     background-color: var(--select-box-focus-item-color);
 }
+
+.as-multi-select-menu.as-disabled {
+    pointer-events: none;
+    background-color: #ebebe4;
+}
