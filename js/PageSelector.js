@@ -6,7 +6,6 @@ var _ = ACore._;
 var $ = ACore.$;
 
 function PageSelector() {
-    console.log(this);
     this.$pageInput = $('.absol-page-number-input input', this);
     this.$pageInput.on('keyup', this.eventHandler.pressEnterKey);
     this.$prevBtn = $('li.page-previous', this);
