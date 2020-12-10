@@ -1,0 +1,52 @@
+.as-toast {
+    display: block;
+    max-width: 350px;
+    overflow: hidden;
+    background-color: white;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-family: Roboto, sans-serif;
+}
+
+.as-toast-header {
+    display: flex;
+    display: -ms-flex;
+    -ms-flex-align: center;
+    align-items: center;
+    padding: 0.25em 0.75em;
+    color: #6c757d;
+    background-clip: padding-box;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.as-toast-header strong {
+    text-align: left;
+    margin-right: auto;
+}
+
+.as-toast-header svg.as-toast-type-color {
+    margin-right: 0.5em;
+}
+
+
+.as-toast-close-btn {
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: inherit;
+    margin-left: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+.as-toast-close-btn span {
+    font-size: 1.5em;
+}
+
+.as-toast-body {
+
+}
+
+.as-toast-message {
+    padding: 0.75em;
+}

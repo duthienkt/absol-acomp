@@ -88,6 +88,7 @@ import TimeSelectInput from "../TimeSelectInput";
 import SnackBar from "../Snackbar";
 import MultiSelectMenu from "../MultiSelectMenu";
 import CountdownClock from "../CountdownClock";
+import Toast from "../Toast";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -190,6 +191,7 @@ export var publicCreators = [
     TimeSelectInput,
     TimePicker,
     ToolTip,
+    Toast,
     TreeList,
     TreeListItem,
     WidthHeightResizer,
