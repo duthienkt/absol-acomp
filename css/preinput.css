@@ -4,6 +4,10 @@
     white-space: pre-wrap;
     -moz-user-modify: read-write;
     -webkit-user-modify: read-write;
+    word-break: normal;
+}
+pre.as-preinput{
+    word-break: normal;
 }
 
 
