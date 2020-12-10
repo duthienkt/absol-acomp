@@ -17,7 +17,8 @@ import SearchTextInput from "./js/Searcher";
 import {MaterialDesignIconsNameMap} from "./js/adapter/MaterialDesignIconsAdapter";
 import {openFileDialog} from "./js/utils";
 import materializeIconTrigger from "./js/materializeIconTrigger";
-
+import VariantColors from "./js/VariantColors";
+absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
 
 //for export to window
