@@ -29,8 +29,8 @@ function CountdownClock() {
     this.$sec = $(".as-countdown-clock-sec", this);
     this._prevText = -1;
     this._startTime = new Date().getTime();
-    this._remainSecond = 60;
-    this._remainSecond = 60;
+    this._totalSecond = 60;
+    this._remainSecond = 0;
 
     this.totalSecond = 60;
     this.remainSecond = 0;
@@ -128,7 +128,7 @@ CountdownClock.prototype._tick = function () {
 };
 
 CountdownClock.prototype.start = function () {
-    this._startTime = new Date().getTime();
+    this._startTime = new Date().getTime() - (this.totalSecond - this.remainSecond) * 1000;
     this.resume();
 };
 
