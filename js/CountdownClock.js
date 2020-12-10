@@ -128,6 +128,7 @@ CountdownClock.prototype._tick = function () {
 };
 
 CountdownClock.prototype.start = function () {
+    if (this.remainSecond ==0) this.remainSecond = this.totalSecond;
     this._startTime = new Date().getTime() - (this.totalSecond - this.remainSecond) * 1000;
     this.resume();
 };
