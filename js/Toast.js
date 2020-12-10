@@ -18,9 +18,8 @@ function Toast() {
     this.$body = $('.toast-body', this);
     OOP.drillProperty(this, this.$title.firstChild, 'htitle', 'data');
     OOP.drillProperty(this, this.$timeText.firstChild, 'timeText', 'data');
-
     this._message = null;
-
+    this.$message = null;
 
     this.htitle = 'Toast.htitle';
     this.timeText = 'Toast.timeText';
@@ -56,11 +55,7 @@ Toast.render = function () {
                 ]
             },
             {
-                class: 'toast-body',
-                child: {
-                    class: 'as-toast-message',
-                    child: { text: 'Hello, world! This is a toast message.' }
-                }
+                class: 'toast-body'
             }
         ]
     });
@@ -84,10 +79,29 @@ Toast.property.variant = {
 
 Toast.property.message = {
     set: function (value) {
-
+        if (typeof value !== "string" || value.length === 0) {
+            value = null;
+        }
+        if (value) {
+            if (!this.$message) {
+                this.$message = _({
+                    class: 'as-toast-message',
+                    child: { text: '' }
+                });
+            }
+            if (!this.$message.parentElement)
+                this.$body.addChild(this.$message);
+            this.$message.firstChild.data = value;
+        }
+        else {
+            if (this.$message && this.$message.parentElement) {
+                this.$message.remove();
+            }
+        }
+        this._message = value;
     },
     get: function () {
-
+        return this._message;
     }
 };
 
