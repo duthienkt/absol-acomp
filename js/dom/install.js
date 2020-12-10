@@ -87,6 +87,7 @@ import RibbonButton from "../RibbonButton";
 import TimeSelectInput from "../TimeSelectInput";
 import SnackBar from "../Snackbar";
 import MultiSelectMenu from "../MultiSelectMenu";
+import CountdownClock from "../CountdownClock";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -102,6 +103,7 @@ export var publicCreators = [
     CheckBoxButton,
     ChromeCalendar,
     CircleSectionLabel,
+    CountdownClock,
     DropZone,
     Scrollbar,
     VScrollbar,
