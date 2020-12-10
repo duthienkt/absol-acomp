@@ -2,9 +2,19 @@ import '../css/toast.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/Element";
+import VariantColors from "./VariantColors";
+import {buildCss} from "./utils";
+
 
 var $ = ACore.$;
 var _ = ACore._;
+
+buildCss(VariantColors.keys.reduce(function (ac, cr) {
+    ac['.as-toast.as-variant-'+cr+' .as-toast-variant-color'] = {
+        'background-color': VariantColors.base[cr]
+    }
+    return ac;
+}, {}))
 
 
 /***
@@ -24,6 +34,7 @@ function Toast() {
     this.htitle = 'Toast.htitle';
     this.timeText = 'Toast.timeText';
     this.message = null;
+    this.variant = null;
 
 }
 
@@ -36,7 +47,7 @@ Toast.render = function () {
             {
                 class: 'as-toast-header',
                 child: [
-                    '.as-toast-type-color',
+                    '.as-toast-variant-color',
                     {
                         tag: 'strong',
                         class: 'as-toast-title',
@@ -69,11 +80,17 @@ Toast.prototype.close = function () {
 Toast.property = {};
 
 Toast.property.variant = {
-    set: function () {
-
+    set: function (value) {
+        if (this._variant && this._variant !== value){
+            this.removeClass('as-variant-'+ this._variant);
+        }
+        if (VariantColors.has(value)){
+            this._variant = value;
+            this.addClass('as-variant-'+ this._variant);
+        }
     },
     get: function () {
-
+        return this._variant;
     }
 };
 
