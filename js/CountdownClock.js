@@ -68,14 +68,13 @@ CountdownClock.render = function () {
 CountdownClock.prototype._makePolygon = function (end) {
     var n = Math.ceil(Math.max(end / 0.2, 2));
     var fan = Array(n).fill(0).map(function (u, i) {
-        var angle = -Math.PI / 2 + end * 2 * i / n;
+        var angle = -Math.PI / 2 + end * i / n;
         return [numberAutoFixed(50 + 60 * Math.cos(angle), 5) + '%', numberAutoFixed(50 + 60 * Math.sin(angle), 5) + '%'].join(' ')
     });
     fan.push('50% 50%');
     return 'polygon('+fan.join(', ')+')';
 
 };
-console.log(CountdownClock.prototype._makePolygon(Math.PI * 1.6));
 
 
 CountdownClock.prototype._setBorderValue = function (val) {
