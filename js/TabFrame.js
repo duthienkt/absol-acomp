@@ -7,7 +7,7 @@ function TabFrame() {
 
 }
 
-TabFrame.tab = 'tabframe';
+TabFrame.tag = 'tabframe';
 TabFrame.render = function () {
     return _({
         tag: 'frame',

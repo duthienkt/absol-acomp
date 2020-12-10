@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CountdownClock</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <style>
+        /* body{
+            background-color: black;
+        } */
+    </style>
+</head>
+
+<body>
+<h1>Date Input</h1>
+
+<script>
+    var _ = absol._;
+    var $ = absol.$;
+
+</script>
+<script class="viewable">
+    var clock = _({
+        tag:'countdownclock',
+        props:{
+            totalSecond: 192,
+            remainSecond: 192,
+            autoStart: true
+        },
+        on:{
+            finish: function (){
+                console.log("FINISH");
+            },
+            update: function (){
+                console.log("UPDATE", this.remainSecond);
+            }
+        }
+    }).addTo(document.body);
+</script>
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+
+</body>
+
+</html>
