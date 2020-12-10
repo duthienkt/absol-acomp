@@ -2,6 +2,7 @@ import ACore from "../ACore";
 import AElement from "absol/src/HTML5/Element";
 import '../css/countdownclock.css';
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import {numberAutoFixed} from "absol/src/Math/int";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -63,39 +64,30 @@ CountdownClock.render = function () {
     });
 };
 
+
+CountdownClock.prototype._makePolygon = function (end) {
+    var n = Math.ceil(Math.max(end / 0.2, 2));
+    var fan = Array(n).fill(0).map(function (u, i) {
+        var angle = -Math.PI / 2 + end * 2 * i / n;
+        return [numberAutoFixed(50 + 60 * Math.cos(angle), 5) + '%', numberAutoFixed(50 + 60 * Math.sin(angle), 5) + '%'].join(' ')
+    });
+    fan.push('50% 50%');
+    return 'polygon('+fan.join(', ')+')';
+
+};
+console.log(CountdownClock.prototype._makePolygon(Math.PI * 1.6));
+
+
 CountdownClock.prototype._setBorderValue = function (val) {
     if (val >= 1 || !isFinite(val)) {
         this.$border.removeStyle("clip-path");
         return;
     }
     var bound = this.$border.getBoundingClientRect();
-    var r = bound.width / 2;
     var angle = val * Math.PI * 2;
-    var midAngle = angle / 2;
-    angle -= Math.PI / 2;
-    midAngle -= Math.PI / 2;
+    this.$border.addStyle("-webkit-clip-path", this._makePolygon(angle));
+    this.$border.addStyle("clip-path", this._makePolygon(angle));
 
-    var x0 = bound.width / 2;
-    var y0 = bound.width / 2;
-    var path = "M" + x0 + "," + y0 + "L " + x0 + ' ' + (y0 - r) + ' ' +
-        "A" +
-        r +
-        " " +
-        r +
-        " 0 0 1" +
-        (x0 + r * Math.cos(midAngle)) +
-        " " +
-        (y0 + r * Math.sin(midAngle)) +
-        "A" +
-        r +
-        " " +
-        r +
-        " 0 0 1" +
-        (x0 + r * Math.cos(angle)) +
-        " " +
-        (y0 + r * Math.sin(angle)) +
-        "Z";
-    this.$border.addStyle("clip-path", "path('" + path + "')");
 };
 
 CountdownClock.prototype._updateBorder = function () {
@@ -128,7 +120,7 @@ CountdownClock.prototype._tick = function () {
 };
 
 CountdownClock.prototype.start = function () {
-    if (this.remainSecond ==0) this.remainSecond = this.totalSecond;
+    if (this.remainSecond == 0) this.remainSecond = this.totalSecond;
     this._startTime = new Date().getTime() - (this.totalSecond - this.remainSecond) * 1000;
     this.resume();
 };
