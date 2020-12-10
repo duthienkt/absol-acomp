@@ -1,0 +1,12 @@
+:root {
+    --variant-color-primary: #007bff;
+    --variant-color-secondary: #6c757d;
+    --variant-color-success: #28a745;
+    --variant-color-warning: #ffc107;
+    --variant-color-danger: #dc3545;
+    --variant-color-info: #17a2b8;
+    --variant-color-light: #f8f9fa;
+    --variant-color-dark: #343a40;
+    --variant-color-error: #ff4052;
+    --variant-color-link: #007bff;
+}
