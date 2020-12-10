@@ -26,13 +26,13 @@
 <script class="viewable">
     //toast
     var toast = _({
-        tag:'toast',
-        props:{
-            totalSecond: 192,
-            autoStart: true
+        tag: 'toast',
+        props: {
+            message: 'Hello, this is toast message',
+            variant: 'error'
         },
-        on:{
-            finish: function (){
+        on: {
+            finish: function () {
                 console.log("FINISH");
             }
         }
