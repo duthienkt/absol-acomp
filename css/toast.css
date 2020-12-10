@@ -6,6 +6,7 @@
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.1);
     font-family: Roboto, sans-serif;
+    font-size: 14px;
 }
 
 .as-toast-header {
@@ -24,8 +25,13 @@
     margin-right: auto;
 }
 
-.as-toast-header svg.as-toast-type-color {
+.as-toast-type-color {
     margin-right: 0.5em;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: #007aff;
+    width: 1.25em;
+    height: 1.25em;
 }
 
 
@@ -39,8 +45,13 @@
     margin-bottom: 0.25em;
 }
 
+.as-toast-close-btn:hover{
+    color: black;
+}
+
 .as-toast-close-btn span {
     font-size: 1.5em;
+    text-shadow: 0 1px 0 currentColor;
 }
 
 .as-toast-body {

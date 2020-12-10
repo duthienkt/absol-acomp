@@ -1,30 +1,95 @@
 import '../css/toast.css';
 import ACore from "../ACore";
+import OOP from "absol/src/HTML5/OOP";
+import AElement from "absol/src/HTML5/Element";
 
+var $ = ACore.$;
+var _ = ACore._;
+
+
+/***
+ * @extends {AElement}
+ * @constructor
+ */
 function Toast() {
+    this.$closeBtn = $('.as-toast-close-btn', this);
+    this.$title = $('.as-toast-title', this);
+    this.$timeText = $('.as-toast-time-text', this);
+    this.$body = $('.toast-body', this);
+    OOP.drillProperty(this, this.$title.firstChild, 'htitle', 'data');
+    OOP.drillProperty(this, this.$timeText.firstChild, 'timeText', 'data');
+
+    this._message = null;
+
+
+    this.htitle = 'Toast.htitle';
+    this.timeText = 'Toast.timeText';
+    this.message = null;
 
 }
 
 Toast.tag = 'toast';
 
 Toast.render = function () {
-    return _(`<div role="alert" aria-live="assertive" aria-atomic="true" class="as-toast fade show" data-autohide="false">
-          <div class="as-toast-header">
-            <svg class="as-toast-type-color" width="20" height="20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img">
-              <rect fill="#007aff" width="100%" height="100%"></rect></svg>
-            <strong class="mr-auto">Bootstrap</strong>
-            <small>11 mins ago</small>
-            <button  class="as-toast-close-btn">
-              <span>×</span>
-            </button>
-          </div>
-          <div class="toast-body">
-          <div class="as-toast-message">
-            Hello, world! This is a toast message.
-</div>
-          </div>
-        </div>`);
-}
+    return _({
+        class: 'as-toast',
+        child: [
+            {
+                class: 'as-toast-header',
+                child: [
+                    '.as-toast-type-color',
+                    {
+                        tag: 'strong',
+                        class: 'as-toast-title',
+                        child: { text: "Absol Js" }
+                    },
+                    {
+                        tag: 'smal',
+                        class: 'as-toast-time-text',
+                        child: { text: '20 mis ago' }
+                    },
+                    {
+                        tag: 'button',
+                        class: 'as-toast-close-btn',
+                        child: { tag: 'span', child: { text: '×' } }
+                    }
+                ]
+            },
+            {
+                class: 'toast-body',
+                child: {
+                    class: 'as-toast-message',
+                    child: { text: 'Hello, world! This is a toast message.' }
+                }
+            }
+        ]
+    });
+};
+
+Toast.prototype.close = function () {
+    this.remove();
+    this.emit('close', { target: this, type: 'close' }, this);
+};
+
+Toast.property = {};
+
+Toast.property.variant = {
+    set: function () {
+
+    },
+    get: function () {
+
+    }
+};
+
+Toast.property.message = {
+    set: function (value) {
+
+    },
+    get: function () {
+
+    }
+};
 
 
 ACore.install(Toast);
