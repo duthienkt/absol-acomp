@@ -6,6 +6,8 @@ function SpectrumColor() {
 
 }
 
+SpectrumColor.tag = 'SpectrumColor'.toLowerCase();
+
 SpectrumColor.render = function () {
     return _({
         class:'as-spectrum-color',

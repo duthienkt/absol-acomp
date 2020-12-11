@@ -11,6 +11,8 @@ function SwatchesTable() {
     this._dict = {};
 }
 
+SwatchesTable.tag = 'SwatchesTable'.toLowerCase();
+
 SwatchesTable.render = function () {
     return _({
         extendEvent: 'presscell',
