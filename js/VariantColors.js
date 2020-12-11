@@ -32,7 +32,6 @@ VariantColor.prototype.loadFromCss = function () {
         ac[name] = style.getPropertyValue('--variant-color-' + name);
         return ac;
     }, {});
-    console.log(this.base)
 };
 
 export default new VariantColor();
