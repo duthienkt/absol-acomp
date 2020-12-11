@@ -46,10 +46,10 @@
     box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
 }
 
-.absol-context-hinge.dark .absol-hmenu,
-.absol-context-hinge.dark .absol-vmenu,
-.dark .absol-context-hinge .absol-hmenu,
-.dark .absol-context-hinge .absol-vmenu {
+.absol-context-menu-anchor.dark .absol-hmenu,
+.absol-context-menu-anchor.dark .absol-vmenu,
+.dark .absol-context-menu-anchor .absol-hmenu,
+.dark .absol-context-menu-anchor .absol-vmenu {
     background-color: rgb(37, 37, 38);
 }
 
