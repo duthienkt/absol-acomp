@@ -1,7 +1,7 @@
 .as-toast-list {
     position: fixed;
     z-index: 1100000000;
-    width: 370px;
+    width: 355px;
     max-height: calc(100vh - 20px);
     overflow-y: auto;
 }
