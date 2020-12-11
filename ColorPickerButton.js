@@ -14,6 +14,7 @@ function ColorPickerButton() {
     this.on('click', this.eventHandler.click);
 }
 
+ColorPickerButton.tag = 'ColorPickerButton'.toLowerCase();
 
 ColorPickerButton.prototype._isClickMenu = function (event) {
     var c = event.target;

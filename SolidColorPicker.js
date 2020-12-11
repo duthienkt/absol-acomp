@@ -90,7 +90,10 @@ function SolidColorPicker() {
     this.$submitBtn = $('.as-solid-color-picker-submit-btn', this)
         .on('click', this.notifySubmit.bind(this));
     this._updateNear();
-};
+}
+
+
+SolidColorPicker.tag = 'SolidColorPicker'.toLowerCase();
 
 SolidColorPicker.render = function () {
     return _({
