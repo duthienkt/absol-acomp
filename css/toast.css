@@ -4,11 +4,9 @@
     width: 370px;
     max-height: calc(100vh - 20px);
     overflow-y: auto;
-    pointer-events: none;
 }
 
 .as-toast-list > .as-toast {
-    pointer-events: all;
     box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.35);
 }
 
