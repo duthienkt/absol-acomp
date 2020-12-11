@@ -12,6 +12,7 @@ td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input {
     vertical-align: middle;
     cursor: pointer;
     user-select: none;
+    line-height: 16px;
 }
 
 .absol-checkbox.right > .absol-checkbox-label.as-right {
