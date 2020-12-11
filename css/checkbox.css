@@ -49,6 +49,10 @@ td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input {
     display: none;
 }
 
+.absol-checkbox.as-no-label .as-checkbox-input {
+    display: block;
+}
+
 .absol-checkbox.as-disabled .absol-checkbox-label {
     color: #777;
 }
