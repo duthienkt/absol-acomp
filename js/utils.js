@@ -150,7 +150,7 @@ export function buildCss(StyleSheet) {
  * @param {"camera"|"microphone"|"camcorder"|{accept:("image/*"|"audio/*"|"video/*"|undefined), capture:boolean|undefined, multiple:boolean|undefined}|{}} props
  * @return {Promise<File[]>}
  */
-export function openFileDialog(props) {
+export function openFileDialog(props, unSafe) {
     return new Promise(function (resolve) {
         var input = ACore._({
             tag: 'input',
@@ -205,16 +205,19 @@ export function openFileDialog(props) {
         function focusHandler() {
             setTimeout(function () {
                 window.removeEventListener('focus', focusHandler);
-                input.off('change', changeHandler);
-                input.remove();
-                resolve([]);
-            }, 100);
+                if (unSafe) {
+                    input.off('change', changeHandler);
+                    input.remove();
+                    resolve([]);
+                }
+            }, 1000);
         }
 
         function changeHandler() {
             input.off('change', changeHandler);
             window.removeEventListener('focus', focusHandler);
-            resolve(Array.prototype.slice.call(input.files));
+            var files = Array.prototype.slice.call(input.files)
+            resolve(files);
             input.remove();
         }
 
