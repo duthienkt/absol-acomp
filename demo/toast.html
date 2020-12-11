@@ -17,26 +17,168 @@
 
 <body>
 <h1>Toast</h1>
-
+<div class="demo"></div>
 <script>
     var _ = absol._;
     var $ = absol.$;
 
 </script>
+
 <script class="viewable">
-    //toast
-    var toast = _({
+    var demoDiv = $('.demo');
+    var standardToastElt0 = _({
         tag: 'toast',
-        props: {
-            message: 'Hello, this is toast message',
-            variant: 'error'
+        style: {
+            'margin-bottom': '20px'
         },
+        props: {
+            htitle: 'Standard Toast',
+            message: 'Hello, this is toast message',
+            variant: 'primary',
+            timeText: randomPick([new Date(), '11 minutes ago', 'now'])
+        }
+    });
+
+    var standardToastElt1 = _({
+        tag: 'toast',
+        style: {
+            'margin-bottom': '10px'
+        },
+        props: {
+            htitle: 'Standard Custom Toast',
+            variant: 'info',
+            timeText: randomPick([new Date(), '11 minutes ago', 'now'])
+        },
+        //do not set message property, add child with your custom style
+        child: [
+            {
+                style: {
+                    display: 'flex',
+                    padding: '5px',
+                    'align-items': 'center'
+                },
+                child: [
+                    {
+                        tag: 'img',
+                        style: {
+                            width: '40px',
+                            height: '40px'
+                        },
+                        props: {
+                            src: 'https://avatars1.githubusercontent.com/u/32388488?s=400&v=4'
+                        }
+                    },
+                    {
+                        style: {
+                            padding: '5px'
+                        },
+                        child: { tag: 'span', child: { text: absol.string.randomParagraph(200) } }
+                    }
+                ]
+            }
+        ]
+    });
+
+    demoDiv.addChild(standardToastElt0);
+    demoDiv.addChild(standardToastElt1);
+
+    //toast
+    function randomPick(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    var Toast = absol.require('toast');
+    var idx = 0;
+    var button = _({
+        tag: 'button',
+        child: { text: 'MAKE TOAST MESSAGE' },
         on: {
-            finish: function () {
-                console.log("FINISH");
+            click: function () {
+                var variant = randomPick([undefined, 'primary', 'secondary',
+                    'success', 'info',
+                    'warning', 'error', 'danger',
+                    'light', 'dark',
+                    'link'])
+                var toastElt = Toast.make({
+                    props: {
+                        htitle: 'Toast idx = ' + (++idx),
+                        message: 'Hello, this is toast message with variant = ' + variant,
+                        variant: variant,
+                        disappearTimeout: 6000,// auto disappear after 6s
+                        timeText: randomPick([new Date(), '11 minutes ago', 'now'])
+                    },
+                    on: {
+                        disappeared: function () {
+                            console.log("disappeared");
+                        }
+                    }
+                });
             }
         }
-    }).addTo(document.body);
+    });
+
+    var button1 = _({
+        tag: 'button',
+        style: {
+            'margin-left': '20px'
+        },
+        child: { text: 'MAKE CUSTOM TOAST' },
+        on: {
+            click: function () {
+                var variant = randomPick([undefined, 'primary', 'secondary',
+                    'success', 'info',
+                    'warning', 'error', 'danger',
+                    'light', 'dark',
+                    'link'])
+                var toastElt = Toast.make({
+                    props: {
+                        htitle: 'Toast idx = ' + (++idx),
+                        //do not set message property
+                        variant: variant,
+                        disappearTimeout: 6000,
+                        timeText: randomPick([new Date(), '11 minutes ago', 'now'])
+                    },
+                    child: [
+                        {
+                            style: {
+                                display: 'flex',
+                                padding: '5px',
+                                'align-items': 'center'
+                            },
+                            child: [
+                                {
+                                    tag: 'img',
+                                    style: {
+                                        width: '40px',
+                                        height: '40px'
+                                    },
+                                    props: {
+                                        src: 'https://avatars1.githubusercontent.com/u/32388488?s=400&v=4'
+                                    }
+                                },
+                                {
+                                    style: {
+                                        padding: '5px'
+                                    },
+                                    child: { tag: 'span', child: { text: absol.string.randomParagraph(200) } }
+                                }
+                            ]
+                        }
+                    ],
+                    on: {
+                        disappeared: function () {
+                            console.log("disappeared", this);
+                        }
+                    }
+                });
+            }
+        }
+    });
+
+    demoDiv.addChild(button);
+    demoDiv.addChild(button1);
+
+
 </script>
 <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
