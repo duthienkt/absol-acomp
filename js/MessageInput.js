@@ -919,6 +919,19 @@ MessageInputPlugin.prototype.appendText = function (itext){
     this.inputElt.$preInput.focus();
 }
 
+MessageInputPlugin.prototype.replaceText = function (itext){
+    if (!this._lastInputSelectPosion){
+        throw new Error('Invalid call');
+    }
+    var newText = itext ;
+    var newOffset = newText.length;
+    this.inputElt.$preInput.focus();
+    this.inputElt.$preInput.applyData(newText, newOffset);
+    this.inputElt.$preInput.commitChange(newText, newOffset);
+    this.inputElt.notifySizeChange();
+    this.inputElt.$preInput.focus();
+}
+
 
 MessageInputPlugin.prototype.ev_pressOut = function (event) {
     if (EventEmitter.hitElement(this.getTriggerButton(), event)) return;
