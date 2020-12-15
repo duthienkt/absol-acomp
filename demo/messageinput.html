@@ -189,16 +189,17 @@
         inputCtn.addChild(messInput);
         messInput.addCommand({
            name: 'haha',
-           keyBiding:'alt-g',
-           exec: function (_this){
-               console.log(this,_this, 'haha');
+           keyBiding:'escape',
+           exec: function ($input){
+               console.log(this,$input, 'haha');
            }
         });
         messInput.addPlugin({
             icon: 'span.mdi.mdi-message-plus-outline',
             id: 'sample_message',
             alwaysVisible: true,
-            createContent: function (_this, _, $) {
+            createContent: function ($input, _, $) {
+                var thisPlugin = this;
                 return _({
                     style: {
                         border: '1px solid #ddd',
@@ -215,7 +216,7 @@
                         },
                         on: {
                             click: function () {
-                                _this.closePopup();
+                                thisPlugin.closePopup();
                             }
                         }
                     }
