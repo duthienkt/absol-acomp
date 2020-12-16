@@ -55,7 +55,6 @@ QuickMenu.updatePosition = function () {
     if (!QuickMenu.$element) return;
     var menu = QuickMenu.$elt;
     var anchor = QuickMenu.$anchor;
-    var anchorBound = anchor.getBoundingClientRect();
     var eBound = QuickMenu.$element.getBoundingClientRect();
     var outBound = traceOutBoundingClientRect(QuickMenu.$element);
 
@@ -153,6 +152,8 @@ QuickMenu.$scrollTrackElements = [];
 
 
 QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) {
+    var menuElt = QuickMenu.$elt;
+    var anchorElt = QuickMenu.$anchor;
     //untrack all element
     QuickMenu.$scrollTrackElements.forEach(function (e) {
         if (e.removeEventListener)
@@ -180,17 +181,16 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     QuickMenu.$elt.updateSize = QuickMenu.updatePosition.bind(QuickMenu);
     QuickMenu.$element = element;
     QuickMenu._menuListener = menuListener;
-    var qmenu = QuickMenu.$elt;
-    var anchor = QuickMenu.$anchor;
-    Object.assign(qmenu, menuProps);
-    if (darkTheme) anchor.addClass('dark');
-    else anchor.removeClass('dark');
-    qmenu.removeStyle('visibility');//for prevent size change blink
+
+    Object.assign(menuElt, menuProps);
+    if (darkTheme) anchorElt.addClass('dark');
+    else anchorElt.removeClass('dark');
+    menuElt.removeStyle('visibility');//for prevent size change blink
     QuickMenu.$anchor.addClass('absol-active');
 
     QuickMenu.updatePosition();
     setTimeout(function () {
-        qmenu.addStyle('visibility', 'visible');
+        menuElt.addStyle('visibility', 'visible');
     }, BrowserDetector.isMobile ? 33 : 2);
 
     //track element
@@ -228,9 +228,9 @@ QuickMenu.close = function (session) {
         e.removeEventListener('scroll', QuickMenu._scrollEventHandler, false);
     });
     QuickMenu.$scrollTrackElements = [];
-    var qmenu = QuickMenu.$elt;
-    qmenu.removeStyle('visibility');//for prevent size change blink
-    qmenu.removeStyle({
+    var menuElt = QuickMenu.$elt;
+    menuElt.removeStyle('visibility');//for prevent size change blink
+    menuElt.removeStyle({
         left: true,
         top: true
     });
