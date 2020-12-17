@@ -46,7 +46,7 @@ QuickMenu._menuListener = undefined;
 QuickMenu._scrollOutListener = undefined;
 
 QuickMenu.$elt.on('press', function (event) {
-    if (QuickMenu._menuListener) QuickMenu._menuListener(event.menuItem);
+    if (QuickMenu._menuListener) QuickMenu._menuListener(cleanMenuItemProperty(event.menuItem));
 });
 
 
