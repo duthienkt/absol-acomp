@@ -62,7 +62,7 @@
     display: block;
     opacity: 0;
     visibility: hidden;
-    font-size: 12px;
+    font-size: inherit;
 }
 
 .absol-context-menu-anchor > textarea {
