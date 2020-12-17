@@ -181,6 +181,7 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     Dom.addToResizeSystem(QuickMenu.$elt);
     QuickMenu.$elt.updateSize = QuickMenu.updatePosition.bind(QuickMenu);
     QuickMenu.$element = element;
+    QuickMenu.$element.classList.add('as-quick-menu-attached');
     QuickMenu._menuListener = menuListener;
 
     Object.assign(menuElt, menuProps);
@@ -220,7 +221,8 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
 QuickMenu.close = function (session) {
     if (session !== true && session !== QuickMenu._session) return;
     QuickMenu._session = Math.random() * 10000000000 >> 0;
-    QuickMenu.$element.removeStyle('as-quick-menu-attached');
+    if (QuickMenu.$element)
+        QuickMenu.$element.classList.remove('as-quick-menu-attached');
     QuickMenu.$element = undefined;
     QuickMenu._menuListener = undefined;
     QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
