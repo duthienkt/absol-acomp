@@ -120,7 +120,7 @@ Toast.property.variant = {
         if (this._variant && this._variant !== value) {
             this.removeClass('as-variant-' + this._variant);
         }
-        if (VariantColors.has(value)) {
+        if (VariantColors.has(value) || (['sticky-note'].indexOf(value)>=0)) {
             this._variant = value;
             this.addClass('as-variant-' + this._variant);
         }
