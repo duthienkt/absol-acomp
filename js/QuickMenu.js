@@ -271,9 +271,12 @@ QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, da
 
     res.remove = function () {
         element.removeEventListener('click', clickHandler, false);
+        element.classList.remove('as-quick-menu-trigger');
+
     };
 
     element.addEventListener('click', clickHandler, false);
+    element.classList.add('as-quick-menu-trigger');
     return res;
 };
 
@@ -329,9 +332,12 @@ QuickMenu.toggleWhenClick = function (trigger, adaptor) {
 
     res.remove = function () {
         trigger.removeEventListener('click', clickHandler, false);
+        trigger.classList.remove('as-quick-menu-trigger');
     };
 
     trigger.addEventListener('click', clickHandler, false);
+    trigger.classList.add('as-quick-menu-trigger');
+
     return res;
 
 };
