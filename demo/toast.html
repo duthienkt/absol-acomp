@@ -80,8 +80,22 @@
         ]
     });
 
+    var standardToastElt2 = _({
+        tag: 'toast',
+        style: {
+            'margin-bottom': '20px'
+        },
+        props: {
+            htitle: 'Standard Toast',
+            message: 'Hello, this is toast message',
+            variant: 'sticky-note',
+            timeText: randomPick([new Date(), '11 minutes ago', 'now'])
+        }
+    });
+
     demoDiv.addChild(standardToastElt0);
     demoDiv.addChild(standardToastElt1);
+    demoDiv.addChild(standardToastElt2);
 
     //toast
     function randomPick(arr) {

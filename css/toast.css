@@ -7,7 +7,7 @@
 }
 
 .as-toast-list > .as-toast {
-    box-shadow: 1px 1px 3px 1px rgba(0,0,0,0.35);
+    box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.35);
 }
 
 
@@ -110,4 +110,8 @@
 
 .as-toast.as-disappearing {
     opacity: 0;
+}
+
+.as-toast.as-variant-sticky-note {
+    background-color: #ffff88;
 }

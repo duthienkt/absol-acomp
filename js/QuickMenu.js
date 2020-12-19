@@ -3,6 +3,7 @@ import Dom, {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Do
 import Rectangle from "absol/src/Math/Rectangle";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import './Menu';
+import {cleanMenuItemProperty} from "./utils";
 
 
 var _ = ACore._;
@@ -46,7 +47,7 @@ QuickMenu._menuListener = undefined;
 QuickMenu._scrollOutListener = undefined;
 
 QuickMenu.$elt.on('press', function (event) {
-    if (QuickMenu._menuListener) QuickMenu._menuListener(event.menuItem);
+    if (QuickMenu._menuListener) QuickMenu._menuListener(cleanMenuItemProperty(event.menuItem));
 });
 
 
@@ -180,6 +181,7 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     Dom.addToResizeSystem(QuickMenu.$elt);
     QuickMenu.$elt.updateSize = QuickMenu.updatePosition.bind(QuickMenu);
     QuickMenu.$element = element;
+    QuickMenu.$element.classList.add('as-quick-menu-attached');
     QuickMenu._menuListener = menuListener;
 
     Object.assign(menuElt, menuProps);
@@ -219,6 +221,8 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
 QuickMenu.close = function (session) {
     if (session !== true && session !== QuickMenu._session) return;
     QuickMenu._session = Math.random() * 10000000000 >> 0;
+    if (QuickMenu.$element)
+        QuickMenu.$element.classList.remove('as-quick-menu-attached');
     QuickMenu.$element = undefined;
     QuickMenu._menuListener = undefined;
     QuickMenu._previewAnchor = QuickMenu.DEFAULT_ANCHOR;
@@ -267,9 +271,12 @@ QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, da
 
     res.remove = function () {
         element.removeEventListener('click', clickHandler, false);
+        element.classList.remove('as-quick-menu-trigger');
+
     };
 
     element.addEventListener('click', clickHandler, false);
+    element.classList.add('as-quick-menu-trigger');
     return res;
 };
 
@@ -325,9 +332,12 @@ QuickMenu.toggleWhenClick = function (trigger, adaptor) {
 
     res.remove = function () {
         trigger.removeEventListener('click', clickHandler, false);
+        trigger.classList.remove('as-quick-menu-trigger');
     };
 
     trigger.addEventListener('click', clickHandler, false);
+    trigger.classList.add('as-quick-menu-trigger');
+
     return res;
 
 };
