@@ -9,7 +9,7 @@ var $ = ACore.$;
 function Switch() {
     var thisS = this;
     this.$input = $('input', this);
-    this.on('click', function (event) {
+    this.$input.on('click', function (event) {
         thisS.emit('change', event, thisS);
     });
     OOP.drillProperty(this, this.$input, 'checked');
