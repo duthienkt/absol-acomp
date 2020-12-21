@@ -120,3 +120,7 @@
 .as-toast.as-variant-sticky-note .as-toast-variant-color{
     display: none;
 }
+
+.as-toast.as-variant-sticky-note .as-toast-title{
+    color: rgb(30, 30, 200);
+}
