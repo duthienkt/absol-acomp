@@ -115,3 +115,8 @@
 .as-toast.as-variant-sticky-note {
     background-color: #ffff88;
 }
+
+
+.as-toast.as-variant-sticky-note .as-toast-variant-color{
+    display: none;
+}
