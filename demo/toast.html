@@ -113,10 +113,10 @@
                     'success', 'info',
                     'warning', 'error', 'danger',
                     'light', 'dark',
-                    'link'])
+                    'link', 'sticky-note'])
                 var toastElt = Toast.make({
                     props: {
-                        htitle: 'Toast idx = ' + (++idx),
+                        htitle: 'Toast idx = ' + (++idx) +' variant = '+variant,
                         message: 'Hello, this is toast message with variant = ' + variant,
                         variant: variant,
                         disappearTimeout: 6000,// auto disappear after 6s
@@ -144,10 +144,10 @@
                     'success', 'info',
                     'warning', 'error', 'danger',
                     'light', 'dark',
-                    'link'])
+                    'link', 'sticky-note'])
                 var toastElt = Toast.make({
                     props: {
-                        htitle: 'Toast idx = ' + (++idx),
+                        htitle: 'Toast idx = ' + (++idx) +' variant = '+variant,
                         //do not set message property
                         variant: variant,
                         disappearTimeout: 6000,
