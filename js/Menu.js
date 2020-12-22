@@ -690,15 +690,15 @@ HMenu.property.activeTab = {
         }
         if (lastActive >= 0) {
             if (tabIndex >= 0 && tabIndex != lastValue) {
-                this.emit('activetab', { type: 'activetab', tabIndex: tabIndex });
+                this.emit('activetab', { type: 'activetab', tabIndex: tabIndex, target: this }, this);
             }
             else if (!(tabIndex >= 0)) {
-                this.emit('cancel', { type: 'cancel', lastActiveIndex: lastActive });
+                this.emit('cancel', { type: 'cancel', lastActiveIndex: lastValue, target: this }, this);
             }
         }
         else {
             if (tabIndex >= 0) {
-                this.emit('activetab', { type: 'activetab', tabIndex: tabIndex });
+                this.emit('activetab', { type: 'activetab', tabIndex: tabIndex, target: this }, this);
             }
         }
     },
