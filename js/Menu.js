@@ -688,7 +688,7 @@ HMenu.property.activeTab = {
         else if ((lastValue >= 0) && !(this._activeTab >= 0)) {
             $(document.body).off('click', this.eventHandler.clickSomewhere, false);
         }
-        if (lastActive >= 0) {
+        if (lastValue >= 0) {
             if (tabIndex >= 0 && tabIndex != lastValue) {
                 this.emit('activetab', { type: 'activetab', tabIndex: tabIndex, target: this }, this);
             }
