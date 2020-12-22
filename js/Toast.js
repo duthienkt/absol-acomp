@@ -28,7 +28,7 @@ buildCss(VariantColors.keys.reduce(function (ac, cr) {
     }
 
     return ac;
-}, {}))
+}, {}));
 
 
 /***
