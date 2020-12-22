@@ -5,15 +5,28 @@ import AElement from "absol/src/HTML5/Element";
 import VariantColors from "./VariantColors";
 import {buildCss} from "./utils";
 import Dom, {isDomNode} from "absol/src/HTML5/Dom";
+import Color from "absol/src/Color/Color";
 
 
 var $ = ACore.$;
 var _ = ACore._;
 
 buildCss(VariantColors.keys.reduce(function (ac, cr) {
+    var color = Color.parse(VariantColors.base[cr]);
+    var textColor = color.getContrastYIQ();
+    var headerColor = color.getHightContrastColor();
     ac['.as-toast.as-variant-' + cr + ' .as-toast-variant-color'] = {
         'background-color': VariantColors.base[cr]
     }
+    ac['.as-toast.as-variant-background.as-variant-' + cr] = {
+        'background-color': VariantColors.base[cr],
+        color: textColor.toString('hex6')
+    }
+
+    ac['.as-toast.as-variant-background.as-variant-' + cr +' .as-toast-header'] = {
+        color: headerColor.toString('hex6')
+    }
+
     return ac;
 }, {}))
 
@@ -120,7 +133,7 @@ Toast.property.variant = {
         if (this._variant && this._variant !== value) {
             this.removeClass('as-variant-' + this._variant);
         }
-        if (VariantColors.has(value) || (['sticky-note'].indexOf(value)>=0)) {
+        if (VariantColors.has(value) || (['sticky-note'].indexOf(value) >= 0)) {
             this._variant = value;
             this.addClass('as-variant-' + this._variant);
         }

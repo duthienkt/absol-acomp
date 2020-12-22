@@ -6,18 +6,20 @@ function VariantColor() {
         'success', 'info',
         'warning', 'error', 'danger',
         'light', 'dark',
-        'link'];
+        'link',
+        'note'];
     this.base = {
-        primary: " #007bff",
-        secondary: " #6c757d",
-        success: " #28a745",
-        info: " #17a2b8",
-        warning: " #ffc107",
-        error: " #ff4052",
-        danger: " #dc3545",
-        light: " #f8f9fa",
-        dark: " #343a40",
-        link: " #007bff"
+        primary: "#007bff",
+        secondary: "#6c757d",
+        success: "#28a745",
+        info: "#17a2b8",
+        warning: "#ffc107",
+        error: "#ff4052",
+        danger: "#dc3545",
+        light: "#f8f9fa",
+        dark: "#343a40",
+        link: "#007bff",
+        note: '#1e1ec8'
     };
     Dom.documentReady.then(this.loadFromCss.bind(this));
 }
