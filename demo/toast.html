@@ -115,6 +115,7 @@
                     'light', 'dark',
                     'link', 'sticky-note'])
                 var toastElt = Toast.make({
+                    class: Math.random()>0.5?['as-variant-background']:[],
                     props: {
                         htitle: 'Toast idx = ' + (++idx) +' variant = '+variant,
                         message: 'Hello, this is toast message with variant = ' + variant,
