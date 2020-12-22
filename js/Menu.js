@@ -596,7 +596,7 @@ HMenu.tag = 'hmenu';
 HMenu.render = function () {
     return _({
         class: 'absol-hmenu',
-        extendEvent: ['press', 'enter']
+        extendEvent: ['press', 'enter', 'activetab', 'cancel']
     });
 };
 
@@ -688,6 +688,19 @@ HMenu.property.activeTab = {
         else if ((lastValue >= 0) && !(this._activeTab >= 0)) {
             $(document.body).off('click', this.eventHandler.clickSomewhere, false);
         }
+        if (lastActive >= 0) {
+            if (tabIndex >= 0 && tabIndex != lastValue) {
+                this.emit('activetab', { type: 'activetab', tabIndex: tabIndex });
+            }
+            else if (!(tabIndex >= 0)) {
+                this.emit('cancel', { type: 'cancel', lastActiveIndex: lastActive });
+            }
+        }
+        else {
+            if (tabIndex >= 0) {
+                this.emit('activetab', { type: 'activetab', tabIndex: tabIndex });
+            }
+        }
     },
     get: function () {
         return this._activeTab;
@@ -708,7 +721,7 @@ VRootMenu.tag = 'VRootMenu'.toLowerCase();
 VRootMenu.render = function () {
     return _({
         class: 'as-v-root-menu',
-        extendEvent: ['press', 'enter']
+        extendEvent: ['press', 'enter', 'activetab', 'cancel']
     });
 };
 
