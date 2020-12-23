@@ -214,7 +214,7 @@ ToolTip.$tooltip.$arrow.updateSize = ToolTip.updatePosition.bind(ToolTip);
 
 
 ToolTip.show = function (element, content, orientation) {
-
+    orientation = orientation || 'auto';
     if (typeof content == 'string') {
         content = _({
             tag: 'span',
