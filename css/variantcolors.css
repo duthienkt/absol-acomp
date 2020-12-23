@@ -10,4 +10,17 @@
     --variant-color-error: #ff4052;
     --variant-color-link: #007bff;
     --variant-color-note: #ffff88;
+
+
+    --variant-medium-contract-color-primary: #e2edd5;
+    --variant-medium-contract-color-secondary: #fca75b;
+    --variant-medium-contract-color-success: #fce8e8;
+    --variant-medium-contract-color-info: #fcf5e8;
+    --variant-medium-contract-color-warning: #5e5a75;
+    --variant-medium-contract-color-error:#e0dfce;
+    --variant-medium-contract-color-danger: #e5e8d5;
+    --variant-medium-contract-color-light: #7a5b3c;
+    --variant-medium-contract-color-dark: #bf7d3b;
+    --variant-medium-contract-color-link: #dde8c9;
+    --variant-medium-contract-color-note: #1e1ec8;
 }
