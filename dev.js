@@ -38,6 +38,7 @@ absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
 absol.ContextCaptor = ContextCaptor;
 window.AComp = absol.AComp;
+
 setTimeout(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
         if (e.href && e.href.toLowerCase().indexOf('materialdesignicons') >= 0) return true;

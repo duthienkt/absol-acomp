@@ -14,7 +14,7 @@ var _ = ACore._;
 buildCss(VariantColors.keys.reduce(function (ac, cr) {
     var color = Color.parse(VariantColors.base[cr]);
     var textColor = color.getContrastYIQ();
-    var headerColor = color.getHightContrastColor();
+    var headerColor = VariantColors.mediumContract[cr] || color.getHightContrastColor();
     ac['.as-toast.as-variant-' + cr + ' .as-toast-variant-color'] = {
         'background-color': VariantColors.base[cr]
     }
@@ -23,7 +23,7 @@ buildCss(VariantColors.keys.reduce(function (ac, cr) {
         color: textColor.toString('hex6')
     }
 
-    ac['.as-toast.as-variant-background.as-variant-' + cr +' .as-toast-header'] = {
+    ac['.as-toast.as-variant-background.as-variant-' + cr + ' .as-toast-header'] = {
         color: headerColor.toString('hex6')
     }
 
