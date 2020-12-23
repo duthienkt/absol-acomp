@@ -80,22 +80,26 @@
         ]
     });
 
-    var standardToastElt2 = _({
-        tag: 'toast',
-        style: {
-            'margin-bottom': '20px'
-        },
-        props: {
-            htitle: 'Standard Toast',
-            message: 'Hello, this is toast message',
-            variant: 'sticky-note',
-            timeText: randomPick([new Date(), '11 minutes ago', 'now'])
-        }
-    });
 
     demoDiv.addChild(standardToastElt0);
     demoDiv.addChild(standardToastElt1);
-    demoDiv.addChild(standardToastElt2);
+
+    absol.VariantColors.keys.forEach(function (variant) {
+        var standardToastElt2 = _({
+            tag: 'toast',
+            class: 'as-variant-background',
+            style: {
+                'margin-bottom': '20px'
+            },
+            props: {
+                htitle: 'Standard Toast',
+                message: 'Hello, this is toast message',
+                variant: variant,
+                timeText: randomPick([new Date(), '11 minutes ago', 'now'])
+            }
+        });
+        demoDiv.addChild(standardToastElt2);
+    })
 
     //toast
     function randomPick(arr) {
@@ -115,9 +119,9 @@
                     'light', 'dark',
                     'link', 'sticky-note'])
                 var toastElt = Toast.make({
-                    class: Math.random()>0.5?['as-variant-background']:[],
+                    class: Math.random() > 0.5 ? ['as-variant-background'] : [],
                     props: {
-                        htitle: 'Toast idx = ' + (++idx) +' variant = '+variant,
+                        htitle: 'Toast idx = ' + (++idx) + ' variant = ' + variant,
                         message: 'Hello, this is toast message with variant = ' + variant,
                         variant: variant,
                         disappearTimeout: 6000,// auto disappear after 6s
@@ -148,7 +152,7 @@
                     'link', 'sticky-note'])
                 var toastElt = Toast.make({
                     props: {
-                        htitle: 'Toast idx = ' + (++idx) +' variant = '+variant,
+                        htitle: 'Toast idx = ' + (++idx) + ' variant = ' + variant,
                         //do not set message property
                         variant: variant,
                         disappearTimeout: 6000,
