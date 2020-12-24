@@ -390,7 +390,7 @@ export function ExpTree() {
 }
 
 
-ExpTree.tag = 'ExpTree';
+ExpTree.tag = 'ExpTree'.toLowerCase();
 
 ExpTree.render = function () {
     return _({
