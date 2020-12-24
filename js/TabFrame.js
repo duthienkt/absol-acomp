@@ -111,7 +111,7 @@ TabFrame.attribute.modified = {
 };
 
 
-TabFrame.property.requestRemove = function () {
+TabFrame.prototype.requestRemove = function () {
     if (this.$parent && this.$parent.removeTab) {
         this.$parent.removeTab(this.id, false);
     }
