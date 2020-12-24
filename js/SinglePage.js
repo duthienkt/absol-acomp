@@ -57,7 +57,8 @@ SinglePage.prototype.updateSize = function () {
         var footerBound = this.$footer.getBoundingClientRect();
         this.$viewport.addStyle('padding-bottom', footerBound.height + 'px');
     }
-    this.emit('sizechange', {type: 'sizechange', target: this}, this);
+    if (this.isSupportedEvent('sizechange'))
+        this.emit('sizechange', { type: 'sizechange', target: this }, this);
 };
 
 SinglePage.prototype.addChild = function (elt) {
