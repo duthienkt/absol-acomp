@@ -150,6 +150,7 @@ OnScreenWindow.eventHandler.endDragHeaderbar = function (event) {
     this.$headerbar.off('dragend', this.eventHandler.endDragHeaderbar);
     this.__moveData__.modal.remove();
     this.__moveData__ = undefined;
+    this.emit('relocation', { type: 'relocation', target: this }, this);
 };
 
 
@@ -241,6 +242,7 @@ OnScreenWindow.eventHandler.dragTop = function (event) {
         'height': newHeight + 'px',
     });
     this.emit('sizechange', event, this);
+    this.emit('relocation', { type: 'relocation', target: this }, this);
 };
 
 
@@ -276,6 +278,7 @@ OnScreenWindow.eventHandler.dragLeft = function (event) {
         left: newLeft + 'px'
     });
     this.emit('sizechange', event, this);
+    this.emit('relocation', { type: 'relocation', target: this }, this);
 };
 
 
@@ -354,6 +357,7 @@ OnScreenWindow.eventHandler.dragBottomLeft = function (event) {
         left: newLeft + 'px'
     });
     this.emit('sizechange', event, this);
+    this.emit('relocation', { type: 'relocation', target: this }, this);
 };
 
 
@@ -396,6 +400,7 @@ OnScreenWindow.eventHandler.dragTopLeft = function (event) {
         left: newLeft + 'px'
     });
     this.emit('sizechange', event, this);
+    this.emit('relocation', { type: 'relocation', target: this }, this);
 };
 
 
@@ -439,6 +444,7 @@ OnScreenWindow.eventHandler.dragTopRight = function (event) {
         width: newWidth + 'px'
     });
     this.emit('sizechange', event, this);
+    this.emit('relocation', { type: 'relocation', target: this }, this);
 };
 
 
