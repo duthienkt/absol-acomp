@@ -32,6 +32,7 @@ SinglePage.tag = 'SinglePage'.toLowerCase();
 SinglePage.render = function () {
     return _({
         tag: 'tabframe',
+        extendEvent: ['resize'],
         class: 'absol-single-page',
         child: [{
             class: 'absol-single-page-scroller',
@@ -43,7 +44,7 @@ SinglePage.render = function () {
 
 
 SinglePage.prototype.updateSize = function () {
-    if (!this.isDescendantOf(document.body)) return ;
+    if (!this.isDescendantOf(document.body)) return;
     var paddingTop = parseFloat(this.getComputedStyleValue('padding-top').replace('px', '')) || 0;
 
     if (this.$header) {
@@ -56,6 +57,7 @@ SinglePage.prototype.updateSize = function () {
         var footerBound = this.$footer.getBoundingClientRect();
         this.$viewport.addStyle('padding-bottom', footerBound.height + 'px');
     }
+    this.emit('resize', {type: 'resize', target: this}, this);
 };
 
 SinglePage.prototype.addChild = function (elt) {
