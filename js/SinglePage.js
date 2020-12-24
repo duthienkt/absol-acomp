@@ -32,7 +32,7 @@ SinglePage.tag = 'SinglePage'.toLowerCase();
 SinglePage.render = function () {
     return _({
         tag: 'tabframe',
-        extendEvent: ['resize'],
+        extendEvent: ['sizechange'],
         class: 'absol-single-page',
         child: [{
             class: 'absol-single-page-scroller',
@@ -57,7 +57,7 @@ SinglePage.prototype.updateSize = function () {
         var footerBound = this.$footer.getBoundingClientRect();
         this.$viewport.addStyle('padding-bottom', footerBound.height + 'px');
     }
-    this.emit('resize', {type: 'resize', target: this}, this);
+    this.emit('sizechange', {type: 'sizechange', target: this}, this);
 };
 
 SinglePage.prototype.addChild = function (elt) {
