@@ -57,6 +57,7 @@ CalendarInput.property.value = {
             this.$input.value = this.formartDateString(value);
             this._quickOption.calendarProps.selectedDates = [];
             this._value = value;
+            this._quickOption.calendarProps.selectedDates = [new Date()]
         }
         else {
             if (typeof value == 'number') value = new Date(value);
