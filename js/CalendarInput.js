@@ -22,7 +22,7 @@ function CalendarInput() {
     this._quickOption = ChromeCalendar.showWhenClick(this, {
         minLimitDate: this.minLimitDate || this.minDateLimit,
         maxLimitDate: this.maxLimitDate || this.maxDateLimit,
-        selectedDates: [this._value]
+        selectedDates: [new Date()]
     }, 'auto', function (value) {
         thisCI._value = value;
         thisCI.$input.value = thisCI.formartDateString(value);
