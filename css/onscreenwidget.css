@@ -1,12 +1,12 @@
 .as-onscreen-widget {
     --client-width: 0px;
     --client-height: 0px;
-    --cx: 90%;
-    --cy: 90%;
+    --cx: 0.9;
+    --cy: 0.9;
     position: fixed;
     z-index: 1000000;
-    left: calc(var(--cx) - var(--client-width) / 2);
-    top: calc(var(--cy) - var(--client-height) / 2);
+    left: calc((100vw - var(--client-width) - 4px) * var(--cx) + 2px);
+    top: calc((100vh - var(--client-height) - 4px) * var(--cy) + 2px);
     touch-action: none;
     user-select: none;
 }

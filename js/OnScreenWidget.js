@@ -78,8 +78,8 @@ OnScreenWidget.prototype._loadConfig = function () {
     var cx = config.cx || 0;
     var cy = config.cy || 0;
     this.addStyle({
-        '--cx': cx + 'vw',
-        '--cy': cy + 'vh'
+        '--cx': cx / 100,
+        '--cy': cy / 100
     });
     this.config = config;
 };
@@ -124,15 +124,17 @@ OnScreenWidget.eventHandler.widgetDrag = function (event) {
     var p0 = new Vec2(this._widgetBound.left, this._widgetBound.top);
     var dv = event.currentPoint.sub(event.startingPoint);
     var p1 = p0.add(dv);
-    p1.x = Math.max(0, Math.min(screenSize.width - this._widgetBound.width, p1.x)) + this._widgetBound.width / 2;
-    p1.y = Math.max(0, Math.min(screenSize.height - this._widgetBound.height, p1.y)) + this._widgetBound.height / 2;
+    var cx = (p1.x - 2) * 100 / (screenSize.width - this._widgetBound.width - 4);
+    var cy = (p1.y - 2) * 100 / (screenSize.height - this._widgetBound.height - 4);
+    cx = Math.max(0, Math.min(100, cx));
+    cy = Math.max(0, Math.min(100, cy));
     this.addStyle({
-        '--cx': (p1.x * 100 / screenSize.width) + 'vw',
-        '--cy': (p1.y * 100 / screenSize.height) + 'vh'
+        '--cx': cx / 100,
+        '--cy': cy / 100
     });
     if (this.config) {
-        this.config.cx = (p1.x * 100 / screenSize.width);
-        this.config.cy = (p1.y * 100 / screenSize.height);
+        this.config.cx = cx;
+        this.config.cy = cy;
     }
 };
 
