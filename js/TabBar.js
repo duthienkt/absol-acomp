@@ -42,7 +42,7 @@ TabBar.prototype.getAllTabButtons = function () {
  * @return {TabButton}
  */
 TabBar.prototype.getButtonByIdent = function (ident) {
-    return $('tabbutton#tab-' + ident, this);
+    return $('tabbutton#tabbuton-' + ident, this);
 };
 
 
@@ -64,7 +64,7 @@ TabBar.property.tabs = {
 
 
 /***
- * 
+ *
  * @param {{text}}
  * @return {tabbar}
  */
