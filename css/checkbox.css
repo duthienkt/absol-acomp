@@ -1,11 +1,11 @@
 /** align middle in table cell **/
-td > .absol-checkbox:first-child:last-child {
-    display: block;
-}
+/*td > .absol-checkbox:first-child:last-child {*/
+/*    display: block;*/
+/*}*/
 
-td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input {
-    display: block;
-}
+/*td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input {*/
+/*    display: block;*/
+/*}*/
 
 .absol-checkbox {
     display: inline-block;
