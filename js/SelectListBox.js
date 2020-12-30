@@ -29,8 +29,8 @@ SelectListBox.tag = 'SelectListBox'.toLowerCase();
 SelectListBox.render = function () {
     return _({
         tag: 'follower',
-        attr:{
-          tabindex:0
+        attr: {
+            tabindex: 0
         },
         class: 'as-select-list-box',
         extendEvent: ['pressitem'],
@@ -284,7 +284,8 @@ SelectListBox.prototype._findLastPageIdx = function () {
     return -1;
 };
 
-SelectListBox.prototype._indexingByValue = function (items) {
+SelectListBox.prototype._indexingByValue = function (items, dict) {
+    var thisS = this;
     return items.reduce(function (ac, cr, idx) {
         var value = typeof cr === "string" ? cr : cr.value + '';
         ac[value] = ac[value] || [];
@@ -292,12 +293,15 @@ SelectListBox.prototype._indexingByValue = function (items) {
             idx: idx,
             item: cr
         });
+        if (cr && cr.items && cr.items.length > 0) {
+            thisS._indexingByValue(cr.items, ac);
+        }
         return ac;
-    }, {});
+    }, dict || {});
 };
 
 SelectListBox.prototype._updateDisplayItemIndex = function () {
-    this._displayItemHolderByValue = this._indexingByValue(this._displayItems);
+    this._displayItemHolderByValue = this._indexingByValue(this._displayItems, {});
 };
 
 SelectListBox.prototype._updateItemNodeIndex = function () {
@@ -321,7 +325,7 @@ SelectListBox.prototype._updateItems = function () {
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
     this._estimateDescWidth = estimateSize.descWidth;
-    this.addStyle('--select-list-estimate-width',estimateSize.width +'px');
+    this.addStyle('--select-list-estimate-width', estimateSize.width + 'px');
     this.addStyle('--select-list-desc-width', estimateSize.descWidth + 'px')
     this._updateDisplayItem();
 };
