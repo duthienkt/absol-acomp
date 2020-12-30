@@ -50,7 +50,7 @@ TabButton.render = function () {
                         tag: 'span',
                         class: ['absol-tabbar-button-close', 'mdi-close', 'mdi'],
 
-                        attr: { title: 'Close (Ctrl+F4)' }
+                        attr: { title: 'Close' }
                     },
                     {
                         tag: 'span',
