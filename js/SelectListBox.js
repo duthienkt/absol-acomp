@@ -293,11 +293,25 @@ SelectListBox.prototype._indexingByValue = function (items, dict) {
             idx: idx,
             item: cr
         });
-        if (cr && cr.items && cr.items.length > 0) {
-            thisS._indexingByValue(cr.items, ac);
-        }
         return ac;
     }, dict || {});
+};
+
+SelectListBox.prototype._depthIndexingByValue = function (items, context) {
+    context = context ||{idx: 0, dict: {}};
+    var thisS = this;
+    return items.reduce(function (ac, cr, idx) {
+        var value = typeof cr === "string" ? cr : cr.value + '';
+        ac[value] = ac[value] || [];
+        ac[value].push({
+            idx: context.idx++,
+            item: cr
+        });
+        if (cr && cr.items && cr.items.length >0){
+            thisS._depthIndexingByValue(cr.items, context);
+        }
+        return ac;
+    }, context.dict);
 };
 
 SelectListBox.prototype._updateDisplayItemIndex = function () {
@@ -305,7 +319,7 @@ SelectListBox.prototype._updateDisplayItemIndex = function () {
 };
 
 SelectListBox.prototype._updateItemNodeIndex = function () {
-    this._itemNodeHolderByValue = this._indexingByValue(this._items)
+    this._itemNodeHolderByValue = this._depthIndexingByValue(this._items)
 };
 
 SelectListBox.prototype._updateDisplayItem = function () {
