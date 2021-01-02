@@ -8,9 +8,16 @@ import Dom from "absol/src/HTML5/Dom";
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/***
+ * @extends AElement
+ * @constructor
+ */
 function OnScreenWindow() {
     var res = this;
+    this._lastSize = {
+        width: 0,
+        height: 0
+    }
     res.$headerbar = $('.absol-onscreen-window-head-bar', res)
         .on('dragstart', res.eventHandler.beginDragHeaderbar);
 
@@ -114,6 +121,15 @@ OnScreenWindow.render = function () {
     });
 };
 
+OnScreenWindow.prototype.maybeSizeChange = function () {
+    var bound = this.getBoundingClientRect();
+    if (this._lastSize.width !== bound.width || this._lastSize.height !== bound.height) {
+        this._lastSize = bound;
+        window.dispatchEvent(new Event('resize'));
+        this.emit('sizechange', {size: bound, target: this, type: 'sizechange'}, this);
+    }
+};
+
 OnScreenWindow.eventHandler = {};
 
 OnScreenWindow.eventHandler.beginDragHeaderbar = function (event) {
@@ -128,7 +144,6 @@ OnScreenWindow.eventHandler.beginDragHeaderbar = function (event) {
             maxLeft: screenSize.width - bound.width - 1,
             maxY: screenSize.height - bound.height - 1,
         };
-
     }
 };
 
@@ -173,7 +188,7 @@ OnScreenWindow.eventHandler.dragBottom = function (event) {
     var dy = d.y;
     var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));
     this.addStyle('height', newHeight + 'px');
-    this.emit('sizechange', event, this);
+    this.maybeSizeChange();
 };
 
 
@@ -205,7 +220,7 @@ OnScreenWindow.eventHandler.dragRight = function (event) {
     var dx = d.x;
     var newWidth = Math.max(this.__moveData__.minWidth, Math.min(this.__moveData__.maxWidth, this.__moveData__.bound.width + dx));
     this.addStyle('width', newWidth + 'px');
-    this.emit('sizechange', event, this);
+    this.maybeSizeChange();
 };
 
 
@@ -241,8 +256,8 @@ OnScreenWindow.eventHandler.dragTop = function (event) {
         'top': newTop + 'px',
         'height': newHeight + 'px',
     });
-    this.emit('sizechange', event, this);
     this.emit('relocation', { type: 'relocation', target: this }, this);
+    this.maybeSizeChange();
 };
 
 
@@ -277,8 +292,8 @@ OnScreenWindow.eventHandler.dragLeft = function (event) {
         width: newWidth + 'px',
         left: newLeft + 'px'
     });
-    this.emit('sizechange', event, this);
     this.emit('relocation', { type: 'relocation', target: this }, this);
+    this.maybeSizeChange();
 };
 
 
@@ -316,7 +331,8 @@ OnScreenWindow.eventHandler.dragButtonRight = function (event) {
     var newHeight = Math.max(this.__moveData__.minHeight, Math.min(this.__moveData__.maxHeight, this.__moveData__.bound.height + dy));
     this.addStyle('width', newWidth + 'px');
     this.addStyle('height', newHeight + 'px');
-    this.emit('sizechange', event, this);
+
+    this.maybeSizeChange();
 };
 
 
@@ -356,7 +372,6 @@ OnScreenWindow.eventHandler.dragBottomLeft = function (event) {
         width: newWidth + 'px',
         left: newLeft + 'px'
     });
-    this.emit('sizechange', event, this);
     this.emit('relocation', { type: 'relocation', target: this }, this);
 };
 
@@ -399,8 +414,8 @@ OnScreenWindow.eventHandler.dragTopLeft = function (event) {
         width: newWidth + 'px',
         left: newLeft + 'px'
     });
-    this.emit('sizechange', event, this);
     this.emit('relocation', { type: 'relocation', target: this }, this);
+    this.maybeSizeChange();
 };
 
 
@@ -443,8 +458,8 @@ OnScreenWindow.eventHandler.dragTopRight = function (event) {
         'height': newHeight + 'px',
         width: newWidth + 'px'
     });
-    this.emit('sizechange', event, this);
     this.emit('relocation', { type: 'relocation', target: this }, this);
+    this.maybeSizeChange();
 };
 
 
