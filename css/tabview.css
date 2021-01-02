@@ -65,15 +65,17 @@
 }
 
 .absol-tabbar-button-text,
-.absol-tabbar-button-close {
+.absol-tabbar-button-icon-container > span {
     display: inline;
     vertical-align: middle;
+    font-size: 1em;
 }
 
-.absol-tabbar-button .absol-tabbar-button-close {
+.absol-tabbar-button .absol-tabbar-button-close,
+.absol-tabbar-button .absol-tabbar-button-close-circle
+{
     visibility: hidden;
     color: rgb(190, 190, 190);
-    font-size: 1em
 }
 
 .absol-tabbar-button-icon-container {
@@ -82,14 +84,14 @@
     margin-left: 0.5em;
 }
 
-.absol-tabbar-button-icon-container > span {
-    display: inline-block;
-    vertical-align: middle;
-}
+
 
 
 .absol-tabbar-button:hover .absol-tabbar-button-close,
-.absol-tabbar-button-active .absol-tabbar-button-close {
+.absol-tabbar-button-active .absol-tabbar-button-close,
+.absol-tabbar-button:hover .absol-tabbar-button-close-circle,
+.absol-tabbar-button-active .absol-tabbar-button-close-circle
+{
     visibility: visible;
     color: red;
 }
@@ -104,7 +106,12 @@
 
 .absol-tabbar-button:not(.absol-tabbar-button-modified) .absol-tabbar-button-modified-flag,
 .absol-tabbar-button.absol-tabbar-button-modified:not(.active) .absol-tabbar-button-icon-container:hover .absol-tabbar-button-modified-flag,
-.absol-tabbar-button.absol-tabbar-button-modified .absol-tabbar-button-icon-container:not(:hover) .absol-tabbar-button-close {
+.absol-tabbar-button.absol-tabbar-button-modified .absol-tabbar-button-icon-container:not(:hover) .absol-tabbar-button-close,
+.absol-tabbar-button:not(.absol-tabbar-button-modified) .absol-tabbar-button-icon-container:not(:hover) .absol-tabbar-button-close-circle,
+.absol-tabbar-button:not(.absol-tabbar-button-modified) .absol-tabbar-button-icon-container:hover .absol-tabbar-button-close,
+.absol-tabbar-button.absol-tabbar-button-modified .absol-tabbar-button-close-circle,
+.absol-tabbar-button.absol-tabbar-button-modified .absol-tabbar-button-icon-container:not(:hover) .absol-tabbar-button-close
+{
     display: none;
 }
 
@@ -243,7 +250,8 @@
     line-height: 18px;
 }
 
-.absol-tabview.xp-tiny .absol-tabbar-button-close.mdi.mdi-close {
+.absol-tabview.xp-tiny .absol-tabbar-button-icon-container
+{
     display: none;
 }
 

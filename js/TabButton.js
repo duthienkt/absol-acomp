@@ -10,11 +10,10 @@ var $ = ACore.$;
 function TabButton() {
     var thisTB = this;
     this.$close = $('.absol-tabbar-button-close', this)
-        .on('click', function (event) {
-            event.tabButtonEventName = 'delete';
-            thisTB.emit('close', event);
-        });
-
+    this.$iconCtn = $('.absol-tabbar-button-icon-container', this).on('click', function (event) {
+        event.tabButtonEventName = 'delete';
+        thisTB.emit('close', event);
+    });
     this.$modifiedFlag = $('.absol-tabbar-button-modified-flag', this)
         .on('click', function (event) {
             event.tabButtonEventName = 'delete';
@@ -49,7 +48,11 @@ TabButton.render = function () {
                     {
                         tag: 'span',
                         class: ['absol-tabbar-button-close', 'mdi-close', 'mdi'],
-
+                        attr: { title: 'Close' }
+                    },
+                    {
+                        tag: 'span',
+                        class: ['absol-tabbar-button-close-circle', 'mdi-close-circle', 'mdi'],
                         attr: { title: 'Close' }
                     },
                     {
@@ -117,24 +120,3 @@ TabButton.property.modified = {
 ACore.install(TabButton);
 
 export default TabButton;
-
-
-Dom.documentReady.then(function () {
-    var a = _({
-        tag: 'span',
-        class: ['mdi', 'mdi-close-circle'],
-        style: {
-            display: 'none'
-        }
-    }).addTo(document.body);
-    var content = getComputedStyle(a, '::before').content;
-    a.remove();
-    _({
-        tag: 'style',
-        props: {
-            innerHTML: '.absol-tabview  .absol-tabbar-button-close:hover::before {\n' +
-                '    content: ' + content + ';\n' +
-                '}'
-        }
-    }).addTo(document.head);
-});
