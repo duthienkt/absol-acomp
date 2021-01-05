@@ -11,15 +11,25 @@ import Color from "absol/src/Color/Color";
 var $ = ACore.$;
 var _ = ACore._;
 
+var toastBg = {
+    success: "#a4f3b6",
+    info: "#67d5e7"
+}
+
+var toastTextColor = {
+    success: '#454040',
+    info: '#48433b'
+}
+
 buildCss(VariantColors.keys.reduce(function (ac, cr) {
-    var color = Color.parse(VariantColors.base[cr]);
+    var color = Color.parse(toastBg[cr] ||VariantColors.base[cr]);
     var textColor = color.getContrastYIQ();
-    var headerColor = VariantColors.mediumContract[cr] || color.getHightContrastColor();
+    var headerColor = toastTextColor[cr] || VariantColors.mediumContract[cr] || color.getHightContrastColor();
     ac['.as-toast.as-variant-' + cr + ' .as-toast-variant-color'] = {
-        'background-color': VariantColors.base[cr]
+        'background-color': color.toString('hex6')
     }
     ac['.as-toast.as-variant-background.as-variant-' + cr] = {
-        'background-color': VariantColors.base[cr],
+        'background-color': color.toString('hex6'),
         color: textColor.toString('hex6')
     }
 
