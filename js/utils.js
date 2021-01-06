@@ -385,8 +385,8 @@ export function vScrollIntoView(elt){
     }
     if (!parent) return;
     var parentBound = parent.getBoundingClientRect();
-    var viewportBound = this.getBoundingClientRect();
-    var currentScrollTop = this.scrollTop;
+    var viewportBound = parent.getBoundingClientRect();
+    var currentScrollTop = parent.scrollTop;
     var newScrollTop = currentScrollTop;
     if (parentBound.bottom > viewportBound.bottom) {
         newScrollTop = currentScrollTop + (parentBound.bottom - viewportBound.bottom);
