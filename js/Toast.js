@@ -22,7 +22,7 @@ var toastTextColor = {
 }
 
 buildCss(VariantColors.keys.reduce(function (ac, cr) {
-    var color = Color.parse(toastBg[cr] ||VariantColors.base[cr]);
+    var color = Color.parse(toastBg[cr] || VariantColors.base[cr]);
     var textColor = color.getContrastYIQ();
     var headerColor = toastTextColor[cr] || VariantColors.mediumContract[cr] || color.getHightContrastColor();
     ac['.as-toast.as-variant-' + cr + ' .as-toast-variant-color'] = {
@@ -200,11 +200,28 @@ Toast.property.timeText = {
 };
 
 Toast.$toastList = _('.as-toast-list.as-se.as-bscroller');
+Toast.$toastList4Pos = {
+    se: Toast.$toastList,
+    sw: _('.as-toast-list.as-sw.as-bscroller'),
+    nw: _('.as-toast-list.as-nw.as-bscroller'),
+    ne: _('.as-toast-list.as-ne.as-bscroller'),
+};
+
 Dom.documentReady.then(function () {
     Toast.$toastList.addTo(document.body);
-})
+    Toast.$toastList4Pos.sw.addTo(document.body);
+    Toast.$toastList4Pos.nw.addTo(document.body);
+    Toast.$toastList4Pos.ne.addTo(document.body);
+});
 
-Toast.make = function (aObject) {
+/***
+ *
+ * @param {AbsolConstructDescriptor|{}} aObject,
+ * @param {"se"|"sw"|"ne"|"nw" } [pos="se"]
+ * @return {AElementNS|AElement|Text}
+ */
+Toast.make = function (aObject, pos) {
+    pos = pos || 'se';
     aObject = aObject || {};
     if (typeof aObject !== "object") throw  new Error("param must be AbsolConstructDescriptor object!");
 
@@ -216,7 +233,8 @@ Toast.make = function (aObject) {
 
     }
     var toastElt = _(aObject);
-    Toast.$toastList.addChild(toastElt);
+    var toastListElt = Toast.$toastList4Pos[pos] || Toast.$toastList4Pos;
+    toastListElt.addChild(toastElt);
     return toastElt;
 };
 
@@ -224,3 +242,4 @@ Toast.make = function (aObject) {
 ACore.install(Toast);
 
 export default Toast;
+
