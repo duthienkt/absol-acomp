@@ -372,7 +372,8 @@ export function swapElt(e1, e2) {
  *
  * @param {HTMLElement} elt
  */
-export function vScrollIntoView(elt){
+export function vScrollIntoView(elt) {
+    padding = parent || 0;
     var parent = elt.parentElement;
     var overflowStyle;
     while (parent) {
@@ -384,20 +385,19 @@ export function vScrollIntoView(elt){
         parent = parent.parentElement;
     }
     if (!parent) return;
-    var parentBound = parent.getBoundingClientRect();
+    var eBound = elt.getBoundingClientRect();
     var viewportBound = parent.getBoundingClientRect();
     var currentScrollTop = parent.scrollTop;
     var newScrollTop = currentScrollTop;
-    if (parentBound.bottom > viewportBound.bottom) {
-        newScrollTop = currentScrollTop + (parentBound.bottom - viewportBound.bottom);
+    if (eBound.bottom > viewportBound.bottom) {
+        newScrollTop = currentScrollTop + (eBound.bottom - viewportBound.bottom);
     }
-    if (parentBound.top < viewportBound.top) {
-        newScrollTop = currentScrollTop - (viewportBound.top - parentBound.top);
+    if (eBound.top < viewportBound.top) {
+        newScrollTop = currentScrollTop - (viewportBound.top - eBound.top);
     }
 
     if (newScrollTop != currentScrollTop) {
         parent.scrollTop = newScrollTop;
     }
-
 }
 
