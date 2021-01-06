@@ -373,7 +373,6 @@ export function swapElt(e1, e2) {
  * @param {HTMLElement} elt
  */
 export function vScrollIntoView(elt) {
-    padding = parent || 0;
     var parent = elt.parentElement;
     var overflowStyle;
     while (parent) {
