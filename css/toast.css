@@ -16,7 +16,7 @@
     right: 10px;
 }
 
-.as-toast-list.as-sw{
+.as-toast-list.as-sw {
     bottom: 10px;
     left: 10px;
 }
@@ -26,7 +26,7 @@
     right: 10px;
 }
 
-.as-toast-list.as-nw{
+.as-toast-list.as-nw {
     top: 10px;
     left: 10px;
 }
@@ -37,8 +37,7 @@
 }
 
 .as-toast-list.as-ne > .as-toast,
-.as-toast-list.as-nw > .as-toast
-{
+.as-toast-list.as-nw > .as-toast {
     margin-bottom: 5px;
 }
 
@@ -137,10 +136,10 @@
 
 
 .as-toast.as-variant-sticky-note .as-toast-variant-color,
-.as-toast.as-variant-background .as-toast-variant-color{
+.as-toast.as-variant-background .as-toast-variant-color {
     display: none;
 }
 
-.as-toast.as-variant-sticky-note .as-toast-title{
+.as-toast.as-variant-sticky-note .as-toast-title {
     color: #1e1ec8;
 }
