@@ -379,7 +379,7 @@ export function vScrollIntoView(elt){
         overflowStyle = window.getComputedStyle(parent)['overflow'];
         if ((overflowStyle === 'auto' || overflowStyle === 'hidden auto' || overflowStyle === 'scroll' || parent.tagName === 'HTML')
             && (parent.clientHeight < parent.scrollHeight)) {
-            return parent;
+            break;
         }
         parent = parent.parentElement;
     }
