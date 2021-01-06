@@ -9,20 +9,23 @@ import ChromeCalendar from "./js/ChromeCalendar";
 import Radio from "./js/Radio";
 import EmojiChars from "./js/EmojiChars";
 import EmojiAnims from "./js/EmojiAnims";
-import MessageInput, { parseMessage } from './js/MessageInput';
+import MessageInput, {parseMessage} from './js/MessageInput';
 import EmojiPicker from './js/EmojiPicker';
 import ContextCaptor from './js/ContextMenu';
 import install from "./js/dom/install";
 import SearchTextInput from "./js/Searcher";
 import {MaterialDesignIconsNameMap} from "./js/adapter/MaterialDesignIconsAdapter";
-import {openFileDialog} from "./js/utils";
+import {openFileDialog, vScrollIntoView} from "./js/utils";
 import materializeIconTrigger from "./js/materializeIconTrigger";
 import VariantColors from "./js/VariantColors";
+import ToolTip from "./js/Tooltip";
+
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
+absol.vScrollIntoView = vScrollIntoView;
 
 //for export to window
-absol.Tooltip = AComp.creator.tooltip;
+absol.Tooltip = ToolTip;
 absol.QuickMenu = QuickMenu;
 absol.AComp = AComp;
 absol.Radio = Radio;

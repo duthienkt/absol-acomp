@@ -368,3 +368,36 @@ export function swapElt(e1, e2) {
     temp.parentElement.replaceChild(e2, temp);
 }
 
+/**
+ *
+ * @param {HTMLElement} elt
+ */
+export function vScrollIntoView(elt){
+    var parent = elt.parentElement;
+    var overflowStyle;
+    while (parent) {
+        overflowStyle = window.getComputedStyle(parent)['overflow'];
+        if ((overflowStyle === 'auto' || overflowStyle === 'hidden auto' || overflowStyle === 'scroll' || parent.tagName === 'HTML')
+            && (parent.clientHeight < parent.scrollHeight)) {
+            return parent;
+        }
+        parent = parent.parentElement;
+    }
+    if (!parent) return;
+    var parentBound = parent.getBoundingClientRect();
+    var viewportBound = this.getBoundingClientRect();
+    var currentScrollTop = this.scrollTop;
+    var newScrollTop = currentScrollTop;
+    if (parentBound.bottom > viewportBound.bottom) {
+        newScrollTop = currentScrollTop + (parentBound.bottom - viewportBound.bottom);
+    }
+    if (parentBound.top < viewportBound.top) {
+        newScrollTop = currentScrollTop - (viewportBound.top - parentBound.top);
+    }
+
+    if (newScrollTop != currentScrollTop) {
+        parent.scrollTop = newScrollTop;
+    }
+
+}
+
