@@ -19,7 +19,7 @@ ToolTip.render = function () {
     return _({
         class: 'absol-tooltip',
         child: [
-            { class: 'absol-tooltip-content', child: '<span>No</span>' },
+            { class: 'absol-tooltip-content' },
             '.absol-tooltip-arrow'
         ]
     });
