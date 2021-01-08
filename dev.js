@@ -42,7 +42,7 @@ absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
 absol.ContextCaptor = ContextCaptor;
 window.AComp = absol.AComp;
-absol.TextMeasure = {};
+absol.TextMeasure = TextMeasure;
 
 setTimeout(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
