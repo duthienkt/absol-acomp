@@ -9,10 +9,6 @@ function TextMeasure() {
     // this._makeFontSize('Arial');
 }
 
-
-TextMeasure.prototype.supportFont = ['Times New Roman', 'Arial'];
-TextMeasure.prototype.characterList = [];
-
 TextMeasure.prototype._loadComputedData = function () {
     var thisO = this;
     this.data.chars = TextMeasureData.chars;
