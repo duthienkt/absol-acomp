@@ -1,4 +1,4 @@
-import sText from './sample.tpl';
+// import sText from './sample.tpl';
 import {measureText} from "./utils";
 
 // var charList = Object.keys(sText.split('').reduce(function (ac, cr){
