@@ -89,6 +89,7 @@ import SnackBar from "../Snackbar";
 import MultiSelectMenu from "../MultiSelectMenu";
 import CountdownClock from "../CountdownClock";
 import Toast from "../Toast";
+import {SpinnerIco} from "../Icons";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -196,7 +197,8 @@ export var publicCreators = [
     TreeListItem,
     WidthHeightResizer,
     TrackBar,
-    TrackBarInput
+    TrackBarInput,
+    SpinnerIco
 ];
 
 /***

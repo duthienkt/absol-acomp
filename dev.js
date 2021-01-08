@@ -19,6 +19,7 @@ import {openFileDialog, vScrollIntoView} from "./js/utils";
 import materializeIconTrigger from "./js/materializeIconTrigger";
 import VariantColors from "./js/VariantColors";
 import ToolTip from "./js/Tooltip";
+import TextMeasure from "./js/TextMeasure";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -41,6 +42,7 @@ absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
 absol.ContextCaptor = ContextCaptor;
 window.AComp = absol.AComp;
+absol.TextMeasure = {};
 
 setTimeout(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
