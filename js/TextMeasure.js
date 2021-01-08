@@ -125,11 +125,11 @@ TextMeasure.prototype.measureWidth = function (text, fontName, fontSize) {
     var res = 0;
     var prevC = text[0];
     var c = text[0];
-    res += width[c];
+    res += width[c] || 0;
     for (var i = 1; i < text.length; ++i) {
         c = text[i];
         res += spacing[prevC + c] || 0;
-        res += width[c];
+        res += width[c] || 0;
         prevC = c;
     }
     return res * fontSize / 20;
