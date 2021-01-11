@@ -78,7 +78,9 @@
 }
 
 .as-flexicon-button-icon-container:empty + .as-flexicon-button-text-container {
-    border-left: none
+    border-left: none;
+    padding-left: 0.714em;
+    padding-right: 0.714em;
 }
 
 /*** theme  ***/
