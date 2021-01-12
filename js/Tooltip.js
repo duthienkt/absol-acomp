@@ -2,12 +2,14 @@ import '../css/tooltip.css';
 import ACore from "../ACore";
 import Dom, {getScreenSize} from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import Rectangle from "absol/src/Math/Rectangle";
-import SnackBar from "./Snackbar";
 
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function ToolTip() {
     this.$content = $('.absol-tooltip-content', this);
     this.$arrow = $('.absol-tooltip-arrow', this);

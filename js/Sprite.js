@@ -17,7 +17,8 @@ export var STATE_TO_STRING = ['NOT_READY', 'READY', 'START', 'RUNNING', 'PAUSE',
 
 
 /**
- * @extends AElement
+ * @augments AElement
+ * @augments HTMLCanvasElement
  * @constructor
  */
 function Sprite() {
@@ -183,7 +184,7 @@ Sprite.property.frameIndex = {
         value = value || 0;
         if (value < 0) value = this._length - 1;
         if (this._loop) {
-            this._frameIndex = value % this._length - 1;
+            this._frameIndex = value % this._length;
             this._overTime = 0;
         }
         else {
