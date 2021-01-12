@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Sprite</title>
+    <title>Emoji</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
@@ -11,6 +11,15 @@
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
 
     <style>
+        #demo2 {
+            text-align: center;
+            padding: 5px;
+        }
+
+        #demo2 .mdi {
+            display: inline-block;
+            margin-left: 130px;
+        }
 
     </style>
 </head>
@@ -18,20 +27,52 @@
 <body>
     <h1>Emoji Picker</h1>
     <div id="demo1"></div>
+    <h1>Emoji Picker Tooltip</h1>
+    <div id="demo2">
+        <span class="mdi mdi-emoticon-happy-outline"></span>
+        <span class="mdi mdi-emoticon-happy-outline"></span>
+        <span class="mdi mdi-emoticon-happy-outline"></span>
+        <span class="mdi mdi-emoticon-happy-outline"></span>
+    </div>
+
     <script class="viewable">
         (function () {
             var _ = absol._;
             var $ = absol.$;
             var demo1 = $('#demo1');
             var ep = _('emojipicker').addTo(demo1);
-            var input = _('textarea').addStyle({width:'90vw'}).addTo(demo1);
-            ep.on('pick', function(event){
+            var input = _('textarea').addStyle({ width: '90vw' }).addTo(demo1);
+            ep.on('pick', function (event) {
                 input.value += event.key;
             });
-            
-        })()
+
+            var demo2 = $('#demo2');
+            var EmojiPickerTooltip = absol.require('emojipickertooltip');
+            $('span', demo2, function (span) {
+                EmojiPickerTooltip.toggleWhenClick(span, {
+                    onSelect: function (icon) {
+                        console.log(span, icon)
+                    }, orientation: 'top'
+                });
+            });
+
+            // var trigger = _('span.mdi.mdi-emoticon-happy-outline');
+            // demo2.addChild(trigger);
+            // var tt = _({
+            //     tag: 'emojipickertooltip',
+            //     class: 'top',
+            //     style: {
+            //         position: 'fixed',
+            //         top: '300px',
+            //         left: '500px',
+            //         zIndex: '1000'
+            //     }
+            // }).addTo(document.body);
+
+        })();
 
     </script>
+
     <script src="https://absol.cf/absol/demo/autohightlighting.js?"></script>
 
 </body>
