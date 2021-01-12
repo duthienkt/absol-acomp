@@ -90,6 +90,7 @@ import MultiSelectMenu from "../MultiSelectMenu";
 import CountdownClock from "../CountdownClock";
 import Toast from "../Toast";
 import {SpinnerIco} from "../Icons";
+import EmojiPickerTooltip from "../EmojiPickerTooltip";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -107,6 +108,7 @@ export var publicCreators = [
     CircleSectionLabel,
     CountdownClock,
     DropZone,
+    EmojiPickerTooltip,
     Scrollbar,
     VScrollbar,
     HScrollbar,

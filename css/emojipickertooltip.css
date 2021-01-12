@@ -1,0 +1,92 @@
+.as-emoji-picker-tooltip {
+    --tool-tip-background-color: white;
+    position: fixed;
+    z-index: 5000000;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.as-emoji-picker-tooltip .absol-tooltip-content {
+    display: block;
+    padding: 0;
+    box-sizing: border-box;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.as-emoji-picker-tooltip .absol-tooltip-content::before,
+.as-emoji-picker-tooltip-scroller::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-emoji-picker-tooltip-left-btn,
+.as-emoji-picker-tooltip-right-btn {
+    display: inline-block;
+    vertical-align: middle;
+    height: 60px;
+    font-size: 20px;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    color: rgb(155, 155, 175);
+    outline: none;
+}
+
+.as-emoji-picker-tooltip-left-btn:hover,
+.as-emoji-picker-tooltip-right-btn:hover {
+    background-color: rgba(156, 156, 156, 0.15);
+}
+
+.as-emoji-picker-tooltip-left-btn:active,
+.as-emoji-picker-tooltip-right-btn:active {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.as-emoji-picker-tooltip-left-btn:disabled,
+.as-emoji-picker-tooltip-right-btn:disabled {
+    pointer-events: none;
+    color: rgb(200, 200, 200);
+}
+
+.as-emoji-picker-tooltip-scroller {
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    width: 360px;
+    height: 60px;
+    overflow: hidden;
+}
+
+.as-emoji-picker-tooltip-icon-list {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    transition: left 0.5s;
+    white-space: nowrap;
+}
+
+.as-emoji-picker-tooltip-icon-btn {
+    display: inline-block;
+    vertical-align: middle;
+    height: 60px;
+    width: 60px;
+    padding: 0;
+    border: none;
+    outline: none;
+    background-color: transparent;
+}
+
+
+.as-emoji-picker-tooltip-icon {
+    transition: width 0.3s, height 0.3s;
+    width: 35px;
+    height: 35px;
+}
+
+.as-emoji-picker-tooltip-icon-btn:hover .as-emoji-picker-tooltip-icon {
+    width: 45px;
+    height: 45px;
+}

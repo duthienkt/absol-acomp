@@ -1,5 +1,10 @@
 var EmojiAnims = [
     [
+        "(heart)",
+        "heart.png",
+        "Heart"
+    ],
+    [
         "(cool)",
         "cool.png",
         "Cool"
