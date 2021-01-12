@@ -47,7 +47,7 @@
 .as-emoji-picker-tooltip-left-btn:disabled,
 .as-emoji-picker-tooltip-right-btn:disabled {
     pointer-events: none;
-    color: rgb(200, 200, 200);
+    color: rgb(230, 230, 235);
 }
 
 .as-emoji-picker-tooltip-scroller {

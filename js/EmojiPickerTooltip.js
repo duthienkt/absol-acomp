@@ -7,7 +7,7 @@ import PositionTracker from "./PositionTracker";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
-import QuickMenu from "./QuickMenu";
+import {hitElement} from "absol/src/HTML5/EventEmitter";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -112,6 +112,7 @@ EmojiPickerTooltip.prototype._makeIconBtn = function (iconText) {
         spriteElt.play();
     }).on('mouseleave', function () {
         spriteElt.stop();
+        spriteElt.frameIndex = 0;
     });
 
     return buttonElt;
@@ -220,6 +221,7 @@ EmojiPickerTooltip.show = function (element, menuListener, orientation) {
     EmojiPickerTooltip._orientation = orientation || 'auto';
     EmojiPickerTooltip.$holder.addTo(document.body);
     ResizeSystem.add(EmojiPickerTooltip.$tooltip.$arrow);
+    EmojiPickerTooltip.$tooltip.viewOffset = 0;
     EmojiPickerTooltip.$tooltip.addClass('top')
         .removeClass('left')
         .removeClass('right')
@@ -262,7 +264,8 @@ EmojiPickerTooltip.toggleWhenClick = function (trigger, adaptor) {
         );
         if (res.adaptor.onOpen) res.adaptor.onOpen();
 
-        var finish = function () {
+        var finish = function (event) {
+            if (event && (hitElement(EmojiPickerTooltip.$tooltip.$leftBtn, event) || hitElement(EmojiPickerTooltip.$tooltip.$rightBtn, event)) || event.target.classList.contains('absol-tooltip-content')) return;
             document.body.removeEventListener('click', finish, false);
             EmojiPickerTooltip.close(res.currentSession);
             if (adaptor.onClose) adaptor.onClose();
