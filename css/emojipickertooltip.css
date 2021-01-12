@@ -26,7 +26,8 @@
     display: inline-block;
     vertical-align: middle;
     height: 60px;
-    font-size: 20px;
+    width: 40px;
+    font-size: 25px;
     padding: 0;
     background-color: transparent;
     border: none;
@@ -89,4 +90,21 @@
 .as-emoji-picker-tooltip-icon-btn:hover .as-emoji-picker-tooltip-icon {
     width: 45px;
     height: 45px;
+}
+
+.as-emoji-picker-tooltip-remove-btn {
+    display: inline-block;
+    vertical-align: middle;
+    height: 60px;
+    width: 60px;
+    padding: 0;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-size: 40px;
+    color: rgb(185,185,185);
+}
+
+.as-emoji-picker-tooltip-remove-btn:hover{
+    color: rgb(255,30,30);
 }

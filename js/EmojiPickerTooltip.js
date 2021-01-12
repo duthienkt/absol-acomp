@@ -8,9 +8,12 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
 var $ = ACore.$;
+var isMobile = BrowserDetector.isMobile;
+console.log(isMobile)
 
 /***
  * @extends Tooltip
@@ -23,6 +26,8 @@ function EmojiPickerTooltip() {
 
     this.$rightBtn = $('.as-emoji-picker-tooltip-right-btn', this)
         .on('click', this.eventHandler.clickRight);
+    this.$removeBtn = $('.as-emoji-picker-tooltip-remove-btn', this)
+        .on('click', this.eventHandler.clickRemove);
     this._iconButtonCache = {};
     this._icons = [];
     this.icons = EmojiPickerTooltip.defaultIcons;
@@ -37,8 +42,8 @@ EmojiPickerTooltip.defaultIcons = [';(', '(sarcastic)', ':O', '(cwl)', '(heart)'
 EmojiPickerTooltip.render = function () {
     return _({
         tag: 'tooltip',
-        extendEvent: 'pick',
-        class: 'as-emoji-picker-tooltip',
+        extendEvent: ['pick'],
+        class: ['as-emoji-picker-tooltip'].concat(isMobile ? ['as-mobile'] : []),
         child: [
             {
                 tag: 'button',
@@ -55,6 +60,14 @@ EmojiPickerTooltip.render = function () {
                 tag: 'button',
                 class: 'as-emoji-picker-tooltip-right-btn',
                 child: 'span.mdi.mdi-chevron-right'
+            },
+            {
+                tag: 'button',
+                attr: {
+                    title: 'Remove Emoji'
+                },
+                class: 'as-emoji-picker-tooltip-remove-btn',
+                child: 'span.mdi.mdi-close'
             }
         ]
 
@@ -166,7 +179,11 @@ EmojiPickerTooltip.eventHandler.clickRight = function () {
 };
 
 EmojiPickerTooltip.eventHandler.clickIconBtn = function (icon) {
-    this.emit('pick', Object.assign({ type: 'pick', icon: icon, target: this }, icon));
+    this.emit('pick', Object.assign({ type: 'pick', icon: icon, target: this }, icon), this);
+};
+
+EmojiPickerTooltip.eventHandler.clickRemove = function () {
+    this.emit('pick', Object.assign({ type: 'pressremove', icon: "REMOVE", target: this }), this);
 };
 
 ACore.install(EmojiPickerTooltip);
