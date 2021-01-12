@@ -2,6 +2,8 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>Emoji</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
@@ -51,23 +53,12 @@
             $('span', demo2, function (span) {
                 EmojiPickerTooltip.toggleWhenClick(span, {
                     onSelect: function (icon) {
-                        console.log(span, icon)
+                        console.log(span, icon);
+                        //icon is "REMOVE" if press remove icon
                     }, orientation: 'top'
                 });
             });
 
-            // var trigger = _('span.mdi.mdi-emoticon-happy-outline');
-            // demo2.addChild(trigger);
-            // var tt = _({
-            //     tag: 'emojipickertooltip',
-            //     class: 'top',
-            //     style: {
-            //         position: 'fixed',
-            //         top: '300px',
-            //         left: '500px',
-            //         zIndex: '1000'
-            //     }
-            // }).addTo(document.body);
 
         })();
 
