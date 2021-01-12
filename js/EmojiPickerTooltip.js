@@ -1,8 +1,13 @@
 import '../css/emojipickertooltip.css';
-import ToolTip from "./Tooltip";
+import {updateTooltipPosition} from "./Tooltip";
 import ACore from "../ACore";
 import EmojiPicker from "./EmojiPicker";
 import EmojiAnims from "./EmojiAnims";
+import PositionTracker from "./PositionTracker";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import Rectangle from "absol/src/Math/Rectangle";
+import QuickMenu from "./QuickMenu";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -164,6 +169,123 @@ EmojiPickerTooltip.eventHandler.clickIconBtn = function (icon) {
 };
 
 ACore.install(EmojiPickerTooltip);
+
+
+EmojiPickerTooltip.$holder = _('.absol-tooltip-root-holder')
+EmojiPickerTooltip.$tooltip = _('emojipickertooltip.top').addTo(EmojiPickerTooltip.$holder)
+    .on('pick', function (event) {
+        EmojiPickerTooltip._listener && EmojiPickerTooltip._listener(event.icon);
+    });
+/***
+ *
+ * @type {PositionTracker|undefined}
+ */
+EmojiPickerTooltip.$element = undefined;
+EmojiPickerTooltip.$content = undefined;
+EmojiPickerTooltip._orientation = 'auto';
+EmojiPickerTooltip._session = Math.random() * 10000000000 >> 0;
+EmojiPickerTooltip._listener = undefined;
+EmojiPickerTooltip._scrollOutListener = undefined;
+
+
+EmojiPickerTooltip.updatePosition = function () {
+    if (!EmojiPickerTooltip.$element) return;
+    var outBound = Rectangle.fromClientRect(traceOutBoundingClientRect(EmojiPickerTooltip.$element));
+    var eBound = Rectangle.fromClientRect(EmojiPickerTooltip.$element.getBoundingClientRect());
+    if (!outBound.isCollapse(eBound, 0)) {
+        EmojiPickerTooltip._scrollOutListener && EmojiPickerTooltip._scrollOutListener();
+    }
+    updateTooltipPosition(EmojiPickerTooltip);
+};
+
+EmojiPickerTooltip.updatePosition = EmojiPickerTooltip.updatePosition.bind(EmojiPickerTooltip);
+EmojiPickerTooltip.$tooltip.$arrow.updateSize = EmojiPickerTooltip.updatePosition;
+
+EmojiPickerTooltip.show = function (element, menuListener, orientation) {
+    if (EmojiPickerTooltip.$element) {
+        EmojiPickerTooltip.$element.stopTrackPosition();
+        EmojiPickerTooltip.$element.off('positionchange', EmojiPickerTooltip.updatePosition);
+    }
+    if (!element.startTrackPosition) {
+        _({
+            tag: PositionTracker.tag,
+            elt: element
+        })
+    }
+    element.startTrackPosition();
+    EmojiPickerTooltip.$element = element;
+    EmojiPickerTooltip.$element.on('positionchange', EmojiPickerTooltip.updatePosition);
+    EmojiPickerTooltip._listener = menuListener;
+    EmojiPickerTooltip._session = Math.random() * 10000000000 >> 0;
+    EmojiPickerTooltip._orientation = orientation || 'auto';
+    EmojiPickerTooltip.$holder.addTo(document.body);
+    ResizeSystem.add(EmojiPickerTooltip.$tooltip.$arrow);
+    EmojiPickerTooltip.$tooltip.addClass('top')
+        .removeClass('left')
+        .removeClass('right')
+        .removeClass('bottom')
+        .removeClass('ne')
+        .removeClass('nw')
+        .removeClass('auto');
+    EmojiPickerTooltip.updatePosition();
+
+    return EmojiPickerTooltip._session;
+};
+
+
+EmojiPickerTooltip.close = function (token) {
+    if (EmojiPickerTooltip._session !== token) return;
+    if (EmojiPickerTooltip.$element) {
+        EmojiPickerTooltip.$element.stopTrackPosition();
+        EmojiPickerTooltip.$element.off('positionchange', EmojiPickerTooltip.updatePosition);
+    }
+    EmojiPickerTooltip.$element = undefined;
+    EmojiPickerTooltip._listener = undefined;
+    EmojiPickerTooltip._session = Math.random() * 10000000000 >> 0;
+    EmojiPickerTooltip.$holder.remove();
+};
+
+
+EmojiPickerTooltip.toggleWhenClick = function (trigger, adaptor) {
+    var res = {
+        trigger: trigger,
+        adaptor: adaptor,
+        currentSession: undefined,
+    };
+
+    function clickHandler(event) {
+        if (res.currentSession === EmojiPickerTooltip._session) return;
+
+        res.currentSession = EmojiPickerTooltip.show(res.adaptor.getFlowedElement ? res.adaptor.getFlowedElement() : trigger,
+            res.adaptor.onSelect,
+            res.adaptor.orientation || 'auto'
+        );
+        if (res.adaptor.onOpen) res.adaptor.onOpen();
+
+        var finish = function () {
+            document.body.removeEventListener('click', finish, false);
+            EmojiPickerTooltip.close(res.currentSession);
+            if (adaptor.onClose) adaptor.onClose();
+            res.currentSession = undefined;
+            if (EmojiPickerTooltip._scrollOutListener === EmojiPickerTooltip) EmojiPickerTooltip._scrollOutListener = undefined;
+        };
+        EmojiPickerTooltip._scrollOutListener = finish;
+
+        setTimeout(function () {
+            document.body.addEventListener('click', finish, false);
+        }, 10);
+
+    }
+
+    res.remove = function () {
+        trigger.removeEventListener('click', clickHandler, false);
+        trigger.classList.remove('as-emoji-picker-tooltip-trigger');
+    };
+
+    trigger.addEventListener('click', clickHandler, false);
+    trigger.classList.add('as-emoji-picker-tooltip-trigger');
+    return res;
+};
 
 export default EmojiPickerTooltip;
 
