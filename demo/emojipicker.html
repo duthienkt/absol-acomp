@@ -23,6 +23,11 @@
             margin-left: 130px;
         }
 
+        #demo3 {
+            padding: 5px;
+            text-align: center;
+        }
+
     </style>
 </head>
 
@@ -36,6 +41,8 @@
         <span class="mdi mdi-emoticon-happy-outline"></span>
         <span class="mdi mdi-emoticon-happy-outline"></span>
     </div>
+    <h1>Emoji Counter</h1>
+    <div id="demo3"></div>
 
     <script class="viewable">
         (function () {
@@ -59,6 +66,41 @@
                 });
             });
 
+            var emojiCounter = _({
+                tag: 'emojicounter',
+                props: {
+                    text: '(heart)',
+                    count: 23,
+                    users: [
+                        {
+                            avatar: 'https://avatars2.githubusercontent.com/u/9133017?s=460&v=4',
+                            name: "Pham Quoc Du Thien"
+                        },
+                        {
+                            avatar: 'https://lab.daithangminh.vn/home_co/carddone/../user_avatars/avatar-default.png',
+                            name: "Thanh Yen"
+                        },
+                    ]
+                }
+            }).addTo($('#demo3'));
+
+            var emojiCounter1 = _({
+                tag: 'emojicounter',
+                props: {
+                    text: '(cwl)',
+                    count: 1,
+                    users: [
+                        {
+                            avatar: 'https://avatars2.githubusercontent.com/u/9133017?s=460&v=4',
+                            name: "Pham Quoc Du Thien"
+                        },
+                        {
+                            avatar: 'https://lab.daithangminh.vn/home_co/carddone/../user_avatars/avatar-default.png',
+                            name: "Thanh Yen"
+                        },
+                    ]
+                }
+            }).addTo($('#demo3'));
 
         })();
 
