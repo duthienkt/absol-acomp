@@ -2,6 +2,10 @@ import '../css/emojicounter.css';
 import ACore from "../ACore";
 import EmojiPickerTooltip from "./EmojiPickerTooltip";
 import EmojiPicker from "./EmojiPicker";
+import ToolTip, {updateTooltipPosition} from "./Tooltip";
+import Rectangle from "absol/src/Math/Rectangle";
+import {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import EmojiUserListTooltip from "./EmojiUserListTooltip";
 
 var $ = ACore.$;
 var _ = ACore._;
@@ -113,6 +117,12 @@ EmojiCounter.eventHandler.mouseEnter = function () {
     this.$sprite.play();
     this._checkInterval = setInterval(this.eventHandler.loop, 1000);
     this.on('mouseleave', this.eventHandler.finishHover);
+
+    if (this.users && this.users.length > 0) {
+        EmojiCounter.$element = this;
+        EmojiCounter.$holder.addTo(document.body);
+        updateTooltipPosition(EmojiCounter);
+    }
 };
 
 EmojiCounter.eventHandler.finishHover = function () {
@@ -122,6 +132,31 @@ EmojiCounter.eventHandler.finishHover = function () {
         clearInterval(this._checkInterval);
         this._checkInterval = -1;
     }
+    EmojiCounter.$holder.remove();
 };
+
+
+EmojiCounter.$holder = _('.absol-tooltip-root-holder');
+EmojiCounter.$tooltip = _('EmojiUserListTooltip.top'.toLowerCase()).addTo(EmojiCounter.$holder);
+EmojiCounter._scrollOutListener = undefined;
+EmojiCounter._orientation = 'top';
+EmojiCounter._session = Math.random() * 10000000000 >> 0;
+EmojiPickerTooltip._listener = undefined;
+EmojiCounter.$element = null;
+
+EmojiCounter.updatePosition = function () {
+    if (!EmojiCounter.$element) return;
+    var outBound = Rectangle.fromClientRect(traceOutBoundingClientRect(EmojiCounter.$element));
+    var eBound = Rectangle.fromClientRect(EmojiCounter.$element.getBoundingClientRect());
+    if (!outBound.isCollapse(eBound, 0)) {
+        EmojiPickerTooltip._scrollOutListener && EmojiCounter._scrollOutListener();
+    }
+    updateTooltipPosition(EmojiCounter);
+};
+
+
+EmojiCounter.updatePosition = EmojiCounter.updatePosition.bind(EmojiCounter);
+EmojiCounter.$tooltip.$arrow.updateSize = EmojiCounter.updatePosition;
+
 
 export default EmojiCounter;
