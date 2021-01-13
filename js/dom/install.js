@@ -92,6 +92,7 @@ import Toast from "../Toast";
 import {SpinnerIco} from "../Icons";
 import EmojiPickerTooltip from "../EmojiPickerTooltip";
 import PageIndicator from "../PageIndicator";
+import EmojiCounter from "../EmojiCounter";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -134,6 +135,7 @@ export var publicCreators = [
     DropPanelStack,
     EditableText,
     EmojiPicker,
+    EmojiCounter,
     Sprite,
     ExpNode,
     ExpTree,
