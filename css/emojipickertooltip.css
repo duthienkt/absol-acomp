@@ -14,13 +14,6 @@
     overflow: hidden;
 }
 
-.as-emoji-picker-tooltip .absol-tooltip-content::before,
-.as-emoji-picker-tooltip-scroller::before {
-    content: "";
-    display: inline-block;
-    vertical-align: middle;
-}
-
 .as-emoji-picker-tooltip-left-btn,
 .as-emoji-picker-tooltip-right-btn {
     display: inline-block;

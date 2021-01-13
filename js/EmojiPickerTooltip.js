@@ -9,14 +9,15 @@ import {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import PageIndicator from "./PageIndicator";
 
 var _ = ACore._;
 var $ = ACore.$;
 var isMobile = BrowserDetector.isMobile;
-console.log(isMobile)
 
 /***
- * @extends Tooltip
+ * @augments Tooltip
+ * @augments AElement
  * @constructor
  */
 function EmojiPickerTooltip() {
@@ -28,6 +29,8 @@ function EmojiPickerTooltip() {
         .on('click', this.eventHandler.clickRight);
     this.$removeBtn = $('.as-emoji-picker-tooltip-remove-btn', this)
         .on('click', this.eventHandler.clickRemove);
+    this.$pageIndicatior = $('pageindicator', this);
+
     this._iconButtonCache = {};
     this._icons = [];
     this.icons = EmojiPickerTooltip.defaultIcons;
@@ -68,7 +71,10 @@ EmojiPickerTooltip.render = function () {
                 },
                 class: 'as-emoji-picker-tooltip-remove-btn',
                 child: 'span.mdi.mdi-close'
-            }
+            },
+            // {
+            //     tag: 'pageindicator'
+            // }
         ]
 
 
@@ -149,6 +155,7 @@ EmojiPickerTooltip.property.icons = {
         this._icons = icons || [];
         this._updateIconList();
         this.viewOffset = 0;
+        this.$pageIndicatior.length = Math.ceil(this._icons.length / 6);
     },
     get: function () {
         return this._icons;
@@ -282,7 +289,8 @@ EmojiPickerTooltip.toggleWhenClick = function (trigger, adaptor) {
         if (res.adaptor.onOpen) res.adaptor.onOpen();
 
         var finish = function (event) {
-            if (event && (hitElement(EmojiPickerTooltip.$tooltip.$leftBtn, event) || hitElement(EmojiPickerTooltip.$tooltip.$rightBtn, event)) || event.target.classList.contains('absol-tooltip-content')) return;
+            if (event && (hitElement(EmojiPickerTooltip.$tooltip.$leftBtn, event) || hitElement(EmojiPickerTooltip.$tooltip.$rightBtn, event))
+                || (event && event.target && event.target.classList.contains('absol-tooltip-content'))) return;
             document.body.removeEventListener('click', finish, false);
             EmojiPickerTooltip.close(res.currentSession);
             if (adaptor.onClose) adaptor.onClose();
@@ -294,7 +302,6 @@ EmojiPickerTooltip.toggleWhenClick = function (trigger, adaptor) {
         setTimeout(function () {
             document.body.addEventListener('click', finish, false);
         }, 10);
-
     }
 
     res.remove = function () {
