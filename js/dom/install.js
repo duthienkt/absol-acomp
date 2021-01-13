@@ -91,6 +91,7 @@ import CountdownClock from "../CountdownClock";
 import Toast from "../Toast";
 import {SpinnerIco} from "../Icons";
 import EmojiPickerTooltip from "../EmojiPickerTooltip";
+import PageIndicator from "../PageIndicator";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -158,6 +159,7 @@ export var publicCreators = [
     NumberSpanInput,
     OnScreenWindow,
     OnScreenWidget,
+    PageIndicator,
     PageSelector,
     PreInput,
     ProgressBar,
