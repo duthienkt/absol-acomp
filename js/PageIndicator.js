@@ -9,7 +9,7 @@ var $ = ACore.$;
  * @constructor
  */
 function PageIndicator() {
-
+    this._idx = -1;
 
 }
 
@@ -38,12 +38,25 @@ PageIndicator.property.length = {
             this.addChild(_('.as-page-indicator-item'));
         }
         while (this.childNodes.length > value) {
-            this.removeChild(this.childNodes[this.childNodes.length -1]);
+            this.removeChild(this.childNodes[this.childNodes.length - 1]);
         }
-
+        this.idx = this._idx;//update
     },
     get: function () {
+        return this.childNodes.length;
+    }
+};
 
+PageIndicator.property.idx = {
+    set: function (value) {
+        var activeElt = this.childNodes[this._idx];
+        if (activeElt) activeElt.removeClass('as-active');
+        this._idx = value;
+        activeElt = this.childNodes[this._idx];
+        if (activeElt) activeElt.addClass('as-active');
+    },
+    get: function () {
+        return this._idx;
     }
 };
 
