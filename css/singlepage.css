@@ -37,4 +37,9 @@
 .absol-single-page.as-viewport-full > .absol-single-page-scroller > .absol-single-page-scroller-viewport {
     height: 100%;
     width: 100%;
+    overflow: hidden;
+}
+
+.absol-single-page.as-no-scroll > .absol-single-page-scroller {
+    overflow: hidden;
 }
