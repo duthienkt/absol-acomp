@@ -155,7 +155,7 @@ EmojiPickerTooltip.property.icons = {
         this._icons = icons || [];
         this._updateIconList();
         this.viewOffset = 0;
-        this.$pageIndicatior.length = Math.ceil(this._icons.length / 6);
+        // this.$pageIndicatior.length = Math.ceil(this._icons.length / 6);
     },
     get: function () {
         return this._icons;
