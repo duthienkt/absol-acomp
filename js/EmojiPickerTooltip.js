@@ -40,7 +40,14 @@ EmojiPickerTooltip.tag = 'EmojiPickerTooltip'.toLowerCase();
 
 
 EmojiPickerTooltip.defaultIcons = [';(', '(sarcastic)', ':O', '(cwl)', '(heart)', '(y)', '(n)', '(rock)', '(facepalm)', '(xd)', ':$', '(waiting)', '(headbang)', '(ghost)', '(clap)', '(punch)', '(ok)', '(angry)'];
-
+EmojiPickerTooltip.emojiDict = EmojiAnims.reduce(function (ac, cr) {
+    ac[cr[0]] = {
+        imageFileName: cr[1],
+        text: cr[0],
+        desc: cr[2]
+    };
+    return ac;
+}, {});
 
 EmojiPickerTooltip.render = function () {
     return _({
@@ -85,14 +92,7 @@ EmojiPickerTooltip.render = function () {
 
 
 EmojiPickerTooltip.prototype._makeIconBtn = function (iconText) {
-    EmojiPickerTooltip.emojiDict = EmojiPickerTooltip.emojiDict || EmojiAnims.reduce(function (ac, cr) {
-        ac[cr[0]] = {
-            imageFileName: cr[1],
-            text: cr[0],
-            desc: cr[2]
-        };
-        return ac;
-    }, {});
+
     var icon = EmojiPickerTooltip.emojiDict[iconText];
     var url = EmojiPicker.assetRoot + '/anim/x40/' + icon.imageFileName;
     var spriteElt = _({
