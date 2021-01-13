@@ -72,6 +72,7 @@ EmojiCounter.property.text = {
         if (!icon) return;
         if (this._text === value) return;
         this.$sprite.src = EmojiPicker.assetRoot + '/anim/x40/' + icon.imageFileName;
+        this._text = value;
     },
     get: function () {
         return this._text;

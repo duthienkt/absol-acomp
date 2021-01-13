@@ -93,6 +93,7 @@ import {SpinnerIco} from "../Icons";
 import EmojiPickerTooltip from "../EmojiPickerTooltip";
 import PageIndicator from "../PageIndicator";
 import EmojiCounter from "../EmojiCounter";
+import EmojiCounterList from "../EmojiCounterList";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -136,6 +137,7 @@ export var publicCreators = [
     EditableText,
     EmojiPicker,
     EmojiCounter,
+    EmojiCounterList,
     Sprite,
     ExpNode,
     ExpTree,
