@@ -18,8 +18,8 @@
     <div id="test-div"></div>
     <script class="viewable">
         var x = [];
-        for (var i = 1; i <= 50; i++){
-            x.push({name: 'name' + i, code: 'code' + i});
+        for (var i = 1; i <= 50; i++) {
+            x.push({ name: 'name' + i, code: 'code' + i });
         }
         absol._({
             tag: 'pageselector',
@@ -30,16 +30,20 @@
                 pageCount: 15
             },
             on: {
-                change: function(event, sender){
+                change: function (event, sender) {
                     console.log(event);
                     console.log(sender);
                 }
             }
         }).addTo(absol.$('#test-div'));
+
+        var pageIndicator = absol._({
+            tag: 'pageindicator'
+        }).addTo(document.body);
     </script>
 
-   
-<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+
+    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
 
