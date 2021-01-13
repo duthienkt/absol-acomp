@@ -33,6 +33,7 @@
     vertical-align: middle;
     font-size: inherit;
     color: inherit;
+    cursor: default;
 }
 
 .as-emoji-counter-num:empty {

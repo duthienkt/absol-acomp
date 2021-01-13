@@ -103,18 +103,20 @@ EmojiCounter.eventHandler = {};
 EmojiCounter.eventHandler.loop = function () {
     if (!this.isDescendantOf(document.body))
         this.eventHandler.finishHover();
+    if (this.getBoundingClientRect().width === 0)
+        this.eventHandler.finishHover();
 };
 
 EmojiCounter.eventHandler.mouseEnter = function () {
     if (this._checkInterval > 0) return;
     this.$sprite.play();
     this._checkInterval = setInterval(this.eventHandler.loop, 1000);
-    this.on('mouseleave',this.eventHandler.finishHover);
+    this.on('mouseleave', this.eventHandler.finishHover);
 };
 
 EmojiCounter.eventHandler.finishHover = function () {
     this.$sprite.stop();
-    this.off('mouseleave',this.eventHandler.finishHover);
+    this.off('mouseleave', this.eventHandler.finishHover);
     if (this._checkInterval > 0) {
         clearInterval(this._checkInterval);
         this._checkInterval = -1;
