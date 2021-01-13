@@ -65,6 +65,7 @@
                     }, orientation: 'top'
                 });
             });
+            var demo3Div = $('#demo3');
 
             var emojiCounter = _({
                 tag: 'emojicounter',
@@ -82,7 +83,7 @@
                         },
                     ]
                 }
-            }).addTo($('#demo3'));
+            }).addTo(demo3Div);
 
             var emojiCounter1 = _({
                 tag: 'emojicounter',
@@ -100,8 +101,54 @@
                         },
                     ]
                 }
-            }).addTo($('#demo3'));
+            }).addTo(demo3Div);
 
+            var emojiCounterList = _({
+                tag: 'emojicounterlist',
+                props: {
+                    counters: {
+                        '(cwl)': {
+                            count: 1,
+                            users: [
+                                {
+                                    avatar: 'https://avatars2.githubusercontent.com/u/9133017?s=460&v=4',
+                                    name: "Pham Quoc Du Thien"
+                                },
+                                {
+                                    avatar: 'https://lab.daithangminh.vn/home_co/carddone/../user_avatars/avatar-default.png',
+                                    name: "Thanh Yen"
+                                }
+                            ]
+                        },
+                        '(heart)': {
+                            count: 25
+                        }
+                    }
+                }
+            }).addTo(demo3Div);
+            setTimeout(function () {
+                emojiCounterList.counters = {
+                    '(heart)': {
+                        count: 10
+                    },
+                    ';(': {
+                        count: 7
+                    }
+                }
+            }, 3000);
+            setTimeout(function () {
+                emojiCounterList.counters = {
+                    '(heart)': {
+                        count: 10
+                    },
+                    '(cwl)': {
+                        count: 500
+                    },
+                    ';(': {
+                        count: 7
+                    }
+                }
+            }, 6000);
         })();
 
     </script>
