@@ -16,6 +16,7 @@ function TableVScroller() {
     this.$viewport = $('.absol-table-vscroller-viewport', this);
     this.$attachHook.on('error', function () {
         Dom.addToResizeSystem(thisTS.$attachHook);
+        this.updateSize();
     });
     this.$topTable = $('.absol-table-vscroller-head', this);
     this.$headLine = $('.absol-table-vscroller-head-line', this);
