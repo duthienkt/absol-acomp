@@ -28,6 +28,8 @@ function EmojiCounter() {
     this.count = 0;
     this._checkInterval = -1;
     this.on('mouseenter', this.eventHandler.mouseEnter);
+    this._tooltipSession = null;
+    this._tooltipFinishTimeout = -1;
 }
 
 EmojiCounter.tag = 'EmojiCounter'.toLowerCase();
@@ -40,6 +42,7 @@ EmojiCounter.render = function () {
             child: [
                 {
                     tag: 'sprite',
+                    class: 'as-emoji-counter-sprite',
                     props: {
                         src: url,
                         loop: true,
@@ -113,26 +116,46 @@ EmojiCounter.eventHandler.loop = function () {
 };
 
 EmojiCounter.eventHandler.mouseEnter = function () {
+    if (this._tooltipFinishTimeout > 0) {
+        clearTimeout(this._tooltipFinishTimeout);
+    }
     if (this._checkInterval > 0) return;
     this.$sprite.play();
     this._checkInterval = setInterval(this.eventHandler.loop, 1000);
     this.on('mouseleave', this.eventHandler.finishHover);
 
     if (this.users && this.users.length > 0) {
+        EmojiCounter._session = Math.random() * 10000000000 >> 0;
+        this._tooltipSession = EmojiCounter._session;
         EmojiCounter.$element = this;
-        EmojiCounter.$holder.addTo(document.body);
+        EmojiCounter.$holder.addTo(this);
+        EmojiCounter.$tooltip.text = this.text;
+        EmojiCounter.$tooltip.users = this.users;
+        EmojiCounter.$tooltip.playEmoji();
         updateTooltipPosition(EmojiCounter);
     }
 };
 
 EmojiCounter.eventHandler.finishHover = function () {
-    this.$sprite.stop();
-    this.off('mouseleave', this.eventHandler.finishHover);
-    if (this._checkInterval > 0) {
-        clearInterval(this._checkInterval);
-        this._checkInterval = -1;
+    if (this._tooltipFinishTimeout > 0) {
+        clearTimeout(this._tooltipFinishTimeout);
     }
-    EmojiCounter.$holder.remove();
+
+    this._tooltipFinishTimeout = setTimeout(function () {
+        this._tooltipFinishTimeout = -1;
+        this.$sprite.stop();
+        this.off('mouseleave', this.eventHandler.finishHover);
+        if (this._checkInterval > 0) {
+            clearInterval(this._checkInterval);
+            this._checkInterval = -1;
+        }
+        if (this._tooltipSession === EmojiCounter._session) {
+            EmojiCounter._session = Math.random() * 10000000000 >> 0;
+            EmojiCounter.$holder.remove();
+            EmojiCounter.$tooltip.stopEmoji();
+        }
+    }.bind(this), 500)
+
 };
 
 

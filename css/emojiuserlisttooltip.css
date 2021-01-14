@@ -1,0 +1,47 @@
+.as-emoji-user-list-tooltip {
+    --tool-tip-background-color: white;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+    text-align: left;
+}
+
+
+.as-emoji-user-list-tooltip-emoji {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    top: -30px;
+    left: calc(50% - 30px);
+    z-index: 2;
+
+}
+
+.as-emoji-user-list-tooltip .absol-tooltip-content {
+    min-height: 60px;
+    min-width: 120px;
+    padding-top: 25px;
+}
+
+.as-emoji-user-list-tooltip-user{
+    padding: 3px  10px 3px 0 ;
+}
+
+.as-emoji-user-list-tooltip-user.as-clickable{
+    cursor: pointer;
+}
+
+.as-emoji-user-list-tooltip-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-size: cover;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-emoji-user-list-tooltip-name {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+    color: rgb(70, 70, 72);
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
