@@ -53,6 +53,7 @@ TableVScroller.prototype.addChild = function (elt) {
             this.$topThead = this.$thead.cloneNode(true);
             this.$topTr = $('tr', this.$topThead);
             this.$topTable.addChild(this.$topThead).addStyle('display', 'none');
+            this.update();
         }
         else {
             throw new Error('Element must be a table!');
@@ -123,7 +124,6 @@ TableVScroller.prototype.update = function () {
     if (!this.$thead) return;
     this.updateStyle();
     this.updateSize();
-
 };
 
 ACore.install(TableVScroller);
