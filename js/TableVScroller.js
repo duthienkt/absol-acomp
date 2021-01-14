@@ -8,12 +8,12 @@ var $ = ACore.$;
 function TableVScroller() {
     var thisTS = this;
     this.$attachHook = $('attachhook', this);
+    this.$attachHook.updateSize = this.update.bind(this);
 
     this.sync = new Promise(function (rs) {
         thisTS.$attachHook.on('error', rs)
     });
     this.$viewport = $('.absol-table-vscroller-viewport', this);
-
     this.$attachHook.on('error', function () {
         Dom.addToResizeSystem(thisTS.$attachHook);
     });
@@ -123,12 +123,6 @@ TableVScroller.prototype.update = function () {
     this.updateStyle();
     this.updateSize();
 
-};
-
-TableVScroller.prototype.init = function (props) {
-    this.super(props);
-    this.sync.then(this.update.bind(this));
-    this.$attachHook.updateSize = this.update.bind(this);
 };
 
 ACore.install(TableVScroller);
