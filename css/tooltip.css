@@ -13,7 +13,7 @@
 }
 
 .absol-tooltip-content {
-    display: inline-block;
+    display: block;
     border-radius: 0.25em;
     background-color: var(--tool-tip-background-color);
     padding: 0.25em 0.5em;
