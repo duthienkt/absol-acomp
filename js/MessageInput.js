@@ -7,7 +7,7 @@ import EmojiAnims from "./EmojiAnims";
 import EmojiPicker from "./EmojiPicker";
 import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import {randomIdent} from "absol/src/String/stringGenerate";
+import {randomIdent, randomParagraph} from "absol/src/String/stringGenerate";
 import CMDRunner from "absol/src/AppPattern/CMDRunner";
 import {keyboardEventToKeyBindingIdent, normalizeKeyBindingIdent} from "absol/src/Input/keyboard";
 
@@ -15,6 +15,11 @@ var _ = ACore._;
 var $ = ACore.$;
 var $$ = ACore.$$;
 
+
+/***
+ *
+ * @typedef {{text:string, desc: string}|string} MessageInputQuote
+ */
 
 var iconCatalogCaches = {};
 
@@ -43,6 +48,7 @@ function MessageInput() {
      * @type {import('./PreInput').default}
      */
     this.$preInput = $('preinput', this);
+    this._quote = null;
 
     this.$preInput.on('change', this.eventHandler.preInputChange)
         .on('keyup', this.eventHandler.preInputKeyUp)
@@ -75,10 +81,26 @@ function MessageInput() {
     this.$emojiPickerCtn = _('.as-message-input-external-tools-popup');
     this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
         .on('pick', this.eventHandler.pickEmoji);
+
+    this.$quoteText = $('.as-message-input-quote-text', this);
+    this.$quoteDesc = $('.as-message-input-quote-desc', this);
+    this.$quoteRemoveBtn = $('.as-message-input-quote-remove-btn', this)
+        .on('click', this.eventHandler.clickQuoteRemoveBtn.bind(this));
+    ;
+
+
     this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
+
+
     this.on('drop', this.eventHandler.drop)
         .on('dragover', this.eventHandler.dragover);
+
     this.autoSend = false;
+    /***
+     *
+     * @type {MessageInputQuote|null}
+     */
+    this.quote = null;
 }
 
 MessageInput.MODE_EDIT = MODE_EDIT;
@@ -96,7 +118,7 @@ MessageInput.render = function (data) {
             'data-icon-asset-root': MessageInput.iconAssetRoot
         },
         class: 'as-message-input',
-        extendEvent: ['sendtext', 'sendimage', 'sendfile', 'cancel', 'change', 'sizechange', 'send'],
+        extendEvent: ['sendtext', 'sendimage', 'sendfile', 'sendquote', 'cancel', 'change', 'sizechange', 'send'],
         child: [
             {
                 class: 'as-message-input-right',
@@ -129,6 +151,35 @@ MessageInput.render = function (data) {
                             class: ['as-message-input-plugin-btn', 'as-message-input-plugin-emoji'],
                             child: 'span.mdi.mdi-emoticon-happy-outline'
                         }
+                    },
+                    {
+                        class: 'as-message-input-quote-ctn',
+                        child: [
+                            {
+                                class: 'as-message-input-quote-sym',
+                                child: 'span.mdi.mdi-format-quote-open-outline'
+                            },
+                            {
+                                class: 'as-message-input-quote',
+                                child: [
+                                    {
+                                        class: 'as-message-input-quote-text',
+                                        child: {
+                                            text: ''
+                                        }
+                                    },
+                                    {
+                                        class: 'as-message-input-quote-desc',
+                                        child: { text: '' }
+                                    }
+                                ]
+                            },
+                            {
+                                tag: 'button',
+                                class: 'as-message-input-quote-remove-btn',
+                                child: 'span.mdi.mdi-close'
+                            }
+                        ]
                     },
                     {
                         class: ['as-message-input-attachment-ctn', 'as-bscroller'],
@@ -191,6 +242,7 @@ MessageInput.prototype.notifySend = function () {
         imageRemovePrevented: false,
         fileRemovePrevented: false,
         textRemovePrevented: false,
+        quoteRemovePrevented: false,
         target: this,
         files: this.files,
         images: this.images,
@@ -212,19 +264,30 @@ MessageInput.prototype.notifySend = function () {
         }), this);
     }
 
-    if (this.files.length > 0 || eventData.images.length > 0 || eventData.text) {
+    if ((typeof this.quote === "string") || this.quote) {
+        this.emit('sendquote', Object.assign(eventData, {
+            type: 'sendquote', preventDefault: function () {
+                this.quoteRemovePrevented = true;
+            }
+        }), this);
+    }
+
+    if (this.files.length > 0 || eventData.images.length > 0 || eventData.text || ((typeof this.quote === "string") || this.quote)) {
         if (eventData.text) this.$preInput.focus();
         this.emit('send', Object.assign(eventData, {
             type: 'send', preventDefault: function () {
                 this.imageRemovePrevented = true;
                 this.fileRemovePrevented = true;
                 this.imageRemovePrevented = true;
+                this.quoteRemovePrevented = true;
+
             }
         }), this);
     }
     if (!eventData.fileRemovePrevented) this.files = [];
     if (!eventData.imageRemovePrevented) this.images = [];
     if (!eventData.textRemovePrevented) this.text = '';
+    if (!eventData.quoteRemovePrevented) this.quote = null;
 
 };
 
@@ -237,6 +300,7 @@ MessageInput.prototype.notifyCancel = function () {
 
 MessageInput.prototype.clearAllContent = function () {
     this.text = '';
+    this.quote = null;
     this.files = [];
     this.images = [];
 };
@@ -449,6 +513,38 @@ MessageInput.prototype.exeCmd = function (name) {
     this._cmdRunner.invoke.apply(this._cmdRunner, args);
 };
 
+
+MessageInput.prototype._updateQuote = function () {
+    var quote = this._quote;
+
+    var text, desc;
+    if (typeof quote === "string") {
+        text = quote;
+        desc = ''
+    }
+    else if (quote && (typeof quote === "object")) {
+        text = quote.text;
+        desc = quote.desc;
+    }
+
+    if (text === undefined) {
+        this.removeClass('as-has-quote');
+        this.$quoteText.firstChild.data = '';
+        this.$quoteDesc.firstChild.data = '';
+    }
+    else {
+        this.addClass('as-has-quote');
+        var parsedText = parseMessage(text);
+        var textEltChain = parsedText.map(function (c){
+            return _(c);
+        })
+        this.$quoteText.clearChild().addChild(textEltChain);
+        this.$quoteDesc.firstChild.data = desc;
+    }
+
+    this.notifySizeChange();
+};
+
 /**
  * @type {MessageInput}
  */
@@ -607,6 +703,10 @@ MessageInput.eventHandler.drop = function (event) {
     this.notifyChange();
 };
 
+MessageInput.eventHandler.clickQuoteRemoveBtn = function () {
+    this.quote = null;
+    this.notifyChange();
+}
 
 MessageInput.property = {};
 
@@ -693,6 +793,16 @@ MessageInput.property.autoSend = {
     },
     get: function () {
         return this.containsClass('as-auto-send');
+    }
+};
+
+MessageInput.property.quote = {
+    set: function (quote) {
+        this._quote = quote;
+        this._updateQuote();
+    },
+    get: function () {
+        return this._quote;
     }
 }
 
@@ -874,7 +984,10 @@ MessageInputPlugin.prototype.attach = function () {
 
 MessageInputPlugin.prototype.ev_pressTrigger = function (event) {
     var value = this.inputElt.$preInput.value;
-    this._lastInputSelectPosion = this.inputElt.$preInput.getSelectPosition() || { start: value.length, end: value.length };
+    this._lastInputSelectPosion = this.inputElt.$preInput.getSelectPosition() || {
+        start: value.length,
+        end: value.length
+    };
     if (this.onPressTrigger) {
         this.onPressTrigger(this);
     }
@@ -888,8 +1001,8 @@ MessageInputPlugin.prototype.ev_pressTrigger = function (event) {
     }
 };
 
-MessageInputPlugin.prototype.insertText = function (itext){
-    if (!this._lastInputSelectPosion){
+MessageInputPlugin.prototype.insertText = function (itext) {
+    if (!this._lastInputSelectPosion) {
         throw new Error('Invalid call');
     }
 
@@ -905,12 +1018,12 @@ MessageInputPlugin.prototype.insertText = function (itext){
 };
 
 
-MessageInputPlugin.prototype.appendText = function (itext){
-    if (!this._lastInputSelectPosion){
+MessageInputPlugin.prototype.appendText = function (itext) {
+    if (!this._lastInputSelectPosion) {
         throw new Error('Invalid call');
     }
     var text = this.inputElt.$preInput.value;
-    var newText = text + itext ;
+    var newText = text + itext;
     var newOffset = newText.length;
     this.inputElt.$preInput.focus();
     this.inputElt.$preInput.applyData(newText, newOffset);
@@ -919,11 +1032,11 @@ MessageInputPlugin.prototype.appendText = function (itext){
     this.inputElt.$preInput.focus();
 }
 
-MessageInputPlugin.prototype.replaceText = function (itext){
-    if (!this._lastInputSelectPosion){
+MessageInputPlugin.prototype.replaceText = function (itext) {
+    if (!this._lastInputSelectPosion) {
         throw new Error('Invalid call');
     }
-    var newText = itext ;
+    var newText = itext;
     var newOffset = newText.length;
     this.inputElt.$preInput.focus();
     this.inputElt.$preInput.applyData(newText, newOffset);
