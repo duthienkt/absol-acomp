@@ -534,7 +534,7 @@ MessageInput.prototype._updateQuote = function () {
     }
     else {
         this.addClass('as-has-quote');
-        var parsedText = parseMessage(text);
+        var parsedText = parseMessage(text.split(/\r?\n/).shift());
         var textEltChain = parsedText.map(function (c){
             return _(c);
         })
