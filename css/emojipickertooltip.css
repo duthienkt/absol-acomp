@@ -99,3 +99,79 @@
 .as-emoji-picker-tooltip-remove-btn:hover{
     color: rgb(255,30,30);
 }
+
+
+@media (max-width: 400px) and (min-width: 300px) {
+    .as-emoji-picker-tooltip-left-btn,
+    .as-emoji-picker-tooltip-right-btn {
+        height: 36px;
+        width: 24px;
+        font-size: 15px;
+    }
+
+    .as-emoji-picker-tooltip-scroller {
+        width: 216px;
+        height: 36px;
+    }
+
+    .as-emoji-picker-tooltip-icon-btn {
+        height: 36px;
+        width: 36px;
+    }
+
+
+    .as-emoji-picker-tooltip-icon {
+        width: 21px;
+        height: 21px;
+    }
+
+    .as-emoji-picker-tooltip-icon-btn:hover .as-emoji-picker-tooltip-icon {
+        width: 27px;
+        height: 27px;
+    }
+
+    .as-emoji-picker-tooltip-remove-btn {
+        height: 36px;
+        width: 36px;
+        font-size: 24px;
+    }
+}
+
+@media (max-width: 500px) and (min-width: 400px) {
+    .as-emoji-picker-tooltip-left-btn,
+    .as-emoji-picker-tooltip-right-btn {
+        height: 48px;
+        width: 32px;
+        font-size: 20px;
+    }
+
+
+
+    .as-emoji-picker-tooltip-scroller {
+        width: 288px;
+        height: 48px;
+    }
+
+
+    .as-emoji-picker-tooltip-icon-btn {
+        height: 48px;
+        width: 48px;
+    }
+
+
+    .as-emoji-picker-tooltip-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .as-emoji-picker-tooltip-icon-btn:hover .as-emoji-picker-tooltip-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .as-emoji-picker-tooltip-remove-btn {
+        height: 48px;
+        width: 48px;
+        font-size: 32px;
+    }
+}
