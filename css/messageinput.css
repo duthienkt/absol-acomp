@@ -1,3 +1,16 @@
+.as-conversation-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.as-conversation-box-message-ctn {
+    flex-grow: 1;
+}
+
+.as-conversation-box-input-ctn {
+    /** empty**/
+}
+
 .as-message-input {
     position: relative;
     box-sizing: border-box;
@@ -79,8 +92,7 @@
 
 
 .as-message-input.as-has-text .as-message-input-pre-ctn,
-.as-message-input.as-has-attachment .as-message-input-pre-ctn
-{
+.as-message-input.as-has-attachment .as-message-input-pre-ctn {
     width: calc(100% - 55px);
 }
 
