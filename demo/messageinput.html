@@ -30,7 +30,7 @@
         height: 100%;
     }
 
-    .message-box {
+    .as-conversation-box {
         position: fixed;
         left: 0;
         right: 0;
@@ -43,47 +43,15 @@
 
     }
 
-    .input-ctn {
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        border-top: solid 1px #ddd;
-    }
-
-    .message-ctn {
-        padding: 10px;
-        box-sizing: border-box;
-    }
-
-    .message-ctn {
-        border-bottom: solid 2px red;
-    }
-
-    .sync {
-        position: fixed;
-        top: 60px;
-        left: 5px;
-        z-index: 1000;
-    }
-
-    .message {
-        max-width: 50%;
-        padding: 10px;
-        background-color: #a8c7d6;
-        border-radius: 10px;
-        margin-bottom: 10px;
-        display: inline-block;
-    }
 
     .message .as-sprite {
         width: 60px;
         height: 60px;
     }
 </style>
-<div class="message-box">
-    <div class="message-ctn absol-bscroller"></div>
-    <div class="input-ctn"></div>
+<div class="as-conversation-box">
+    <div class="as-conversation-box-message-ctn absol-bscroller"></div>
+    <div class="as-conversation-box-input-ctn"></div>
 </div>
 
 <script>
@@ -91,10 +59,10 @@
         var _ = absol._;
         var $ = absol.$;
         var syncElt = _('.sync').addTo(document.body)
-        var messBox = $('.message-box');
+        var messBox = $('.as-conversation-box');
         absol.require('contextcaptor').auto();
-        var inputCtn = $('.input-ctn');
-        var messageCtn = $('.message-ctn');
+        var inputCtn = $('.as-conversation-box-input-ctn');
+        var messageCtn = $('.as-conversation-box-message-ctn');
         var messInput = _({
             tag: 'messageinput',
             props: {
@@ -107,7 +75,7 @@
 
                 },
                 sizechange: function (event) {
-                    messageCtn.addStyle('height', 'calc(100% - ' + (event.bound.height) + 'px)')
+                    // messageCtn.addStyle('height', 'calc(100% - ' + (event.bound.height) + 'px)')
                 },
                 send: function () {
                     if (this.mode == 'edit') return;
