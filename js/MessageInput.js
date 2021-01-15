@@ -244,8 +244,8 @@ MessageInput.prototype.clearAllContent = function () {
 MessageInput.prototype.focus = function () {
     var value = this.$preInput.value;
     var range = this.$preInput.getSelectPosition() || { start: value.length, end: value.length };
-    this.$preInput.applyData(value, range);
     this.$preInput.focus();
+    this.$preInput.applyData(value, range);
 };
 
 MessageInput.prototype.blur = function () {
