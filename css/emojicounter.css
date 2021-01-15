@@ -10,6 +10,7 @@
     padding: 0 8px;
     border-radius: 15px;
     font-size: 14px;
+    background-color: white;
 }
 
 .as-emoji-counter::before {
