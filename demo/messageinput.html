@@ -43,10 +43,18 @@
 
     }
 
+    .message {
+        padding: 10px;
+        background-color: #5bc0de;
+        display: inline-block;
+        margin: 5px;
+        border-radius: 5px;
+    }
 
     .message .as-sprite {
         width: 60px;
         height: 60px;
+
     }
 </style>
 <div class="as-conversation-box">
@@ -82,6 +90,7 @@
                     var text = this.text;
                     if (text) {
                         var message = absol.parseMessage(text);
+                        var now = new Date();
                         var messElt = _({
                             extendEvent: 'contextmenu',
                             class: 'message',
@@ -99,12 +108,17 @@
                                                 text: 'Xóa',
                                                 icon: 'span.mdi.mdi-delete',
                                                 cmd: 'delete'
+                                            },
+                                            {
+                                                text: 'Trích dẫn',
+                                                icon: 'span.mdi.mdi-format-quote-open-outline',
+                                                cmd: 'quote'
                                             }
                                         ]
                                     }, function (event) {
                                         var item = event.menuItem;
                                         if (item.cmd === 'delete') {
-                                            this.remove();
+                                            messElt.remove();
                                         }
                                         else if (item.cmd === 'edit') {
                                             function onSend() {
@@ -136,6 +150,9 @@
                                             messInput.clearAllContent();
                                             messInput.text = text;
                                         }
+                                        else if (item.cmd === 'quote') {
+                                            messInput.quote = { text:text, desc:"Pham Quoc Du Thien - "+ now.toLocaleString() };
+                                        }
                                     });
 
                                 }
@@ -156,11 +173,11 @@
         });
         inputCtn.addChild(messInput);
         messInput.addCommand({
-           name: 'haha',
-           keyBiding:'escape',
-           exec: function ($input){
-               console.log(this,$input, 'haha');
-           }
+            name: 'haha',
+            keyBiding: 'escape',
+            exec: function ($input) {
+                console.log(this, $input, 'haha');
+            }
         });
         messInput.addPlugin({
             icon: 'span.mdi.mdi-message-plus-outline',
