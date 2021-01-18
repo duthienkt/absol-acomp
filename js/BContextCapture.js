@@ -30,6 +30,7 @@ BContextCapture.prototype.auto = function () {
     }.bind(this));
 };
 
+
 BContextCapture.prototype.showContextMenu = ContextCaptor.prototype.showContextMenu;
 BContextCapture.prototype._fireContextMenuEvent = ContextCaptor.prototype._fireContextMenuEvent;
 BContextCapture.prototype._checkNeedHandle = ContextCaptor.prototype._checkNeedHandle;
@@ -48,5 +49,6 @@ BContextCapture.prototype.ev_contextMenu = function (event) {
     }
 };
 
-
-export default new BContextCapture();
+var instance = new BContextCapture();
+ContextCaptor.auto = instance.auto.bind(instance);//override old version
+export default instance;
