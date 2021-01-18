@@ -5,11 +5,12 @@ import EmojiPicker from "./EmojiPicker";
 import EmojiAnims from "./EmojiAnims";
 import PositionTracker from "./PositionTracker";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
-import {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import PageIndicator from "./PageIndicator";
+import Hanger from "./Hanger";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -18,19 +19,32 @@ var isMobile = BrowserDetector.isMobile;
 /***
  * @augments Tooltip
  * @augments AElement
+ * @augments Hanger
  * @constructor
  */
 function EmojiPickerTooltip() {
+    if (isMobile) {
+        _({
+            tag: Hanger.tag,
+            elt: this,
+            on: {
+                predrag: this.eventHandler.preDragTT,
+                dragstart: this.eventHandler.dragStartTT,
+                drag: this.eventHandler.dragTT,
+                dragend: this.eventHandler.dragEndTT
+            }
+        })
+    }
     this.$iconList = $('.as-emoji-picker-tooltip-icon-list', this);
     this.$leftBtn = $('.as-emoji-picker-tooltip-left-btn', this)
         .on('click', this.eventHandler.clickLeft);
+    this.$scroller = $('.as-emoji-picker-tooltip-scroller', this);
 
     this.$rightBtn = $('.as-emoji-picker-tooltip-right-btn', this)
         .on('click', this.eventHandler.clickRight);
     this.$removeBtn = $('.as-emoji-picker-tooltip-remove-btn', this)
         .on('click', this.eventHandler.clickRemove);
     this.$pageIndicatior = $('pageindicator', this);
-
     this._iconButtonCache = {};
     this._icons = [];
     this.icons = EmojiPickerTooltip.defaultIcons;
@@ -79,9 +93,14 @@ EmojiPickerTooltip.render = function () {
                 class: 'as-emoji-picker-tooltip-remove-btn',
                 child: 'span.mdi.mdi-close'
             },
-            // {
-            //     tag: 'pageindicator'
-            // }
+            {
+                tag: 'pageindicator',
+                class: 'as-emoji-picker-tooltip-page-indicator',
+                props: {
+                    length: 3,
+                    idx: 0
+                }
+            }
         ]
 
 
@@ -155,7 +174,7 @@ EmojiPickerTooltip.property.icons = {
         this._icons = icons || [];
         this._updateIconList();
         this.viewOffset = 0;
-        // this.$pageIndicatior.length = Math.ceil(this._icons.length / 6);
+        this.$pageIndicatior.length = Math.ceil(this._icons.length / 6);
     },
     get: function () {
         return this._icons;
@@ -165,9 +184,10 @@ EmojiPickerTooltip.property.icons = {
 EmojiPickerTooltip.property.viewOffset = {
     set: function (value) {
         this._viewOffset = Math.max(0, Math.min(value, this._icons.length - 6));
-        this.$iconList.addStyle('left', -60 * this._viewOffset + 'px');
+        this.$iconList.addStyle('left', -(100 * this._viewOffset/6) + '%');
         this.$leftBtn.disabled = this._viewOffset === 0;
         this.$rightBtn.disabled = this._viewOffset === this._icons.length - 6;
+        this.$pageIndicatior.idx = Math.floor(this._viewOffset / 6);
     },
     get: function () {
         return this._viewOffset;
@@ -186,11 +206,55 @@ EmojiPickerTooltip.eventHandler.clickRight = function () {
 };
 
 EmojiPickerTooltip.eventHandler.clickIconBtn = function (icon) {
+    if (this._preventClick) return;
     this.emit('pick', Object.assign({ type: 'pick', icon: icon, target: this }, icon), this);
 };
 
 EmojiPickerTooltip.eventHandler.clickRemove = function () {
     this.emit('pick', Object.assign({ type: 'pressremove', icon: "REMOVE", target: this }), this);
+};
+
+EmojiPickerTooltip.eventHandler.preDragTT = function (event) {
+    var scrollerBound = this.$scroller.getBoundingClientRect();
+    var listBound = this.$iconList.getBoundingClientRect();
+    this._scrollData = {
+        left: listBound.left - scrollerBound.left,
+        scrollerWidth: scrollerBound.width,
+        newLeft: listBound.left - scrollerBound.left
+    };
+};
+
+EmojiPickerTooltip.eventHandler.dragStartTT = function () {
+    this.addClass('as-scrolling');
+    this._preventClick = true;
+
+};
+
+EmojiPickerTooltip.eventHandler.dragTT = function (event) {
+    event.preventDefault();
+    var dx = event.currentPoint.sub(event.startingPoint).x;
+    var newLeft = Math.min(0, Math.max(-this._scrollData.scrollerWidth * 2, this._scrollData.left + dx));
+    this._scrollData.newLeft = newLeft;
+    this.$iconList.addStyle('left', newLeft + 'px');
+};
+
+EmojiPickerTooltip.eventHandler.dragEndTT = function (event) {
+    event.preventDefault();
+    this.removeClass('as-scrolling');
+    var dOffset = (this._scrollData.left - this._scrollData.newLeft) / this._scrollData.scrollerWidth;
+    if (dOffset > 0.25) {
+        dOffset = 1;
+    }
+    else if (dOffset < -0.25) {
+        dOffset = -1;
+    }
+    else {
+        dOffset = 0;
+    }
+    this.viewOffset += dOffset * 6;
+    setTimeout(function () {
+        this._preventClick = false;
+    }.bind(this), 5)
 };
 
 ACore.install(EmojiPickerTooltip);

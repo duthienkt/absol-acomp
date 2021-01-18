@@ -56,8 +56,12 @@
     top: 0;
     bottom: 0;
     left: 0;
-    transition: left 0.5s;
     white-space: nowrap;
+}
+
+
+.as-emoji-picker-tooltip:not(.as-scrolling) .as-emoji-picker-tooltip-icon-list {
+    transition: left 0.5s;
 }
 
 .as-emoji-picker-tooltip-icon-btn {
@@ -93,11 +97,21 @@
     outline: none;
     background-color: transparent;
     font-size: 40px;
-    color: rgb(185,185,185);
+    color: rgb(185, 185, 185);
 }
 
-.as-emoji-picker-tooltip-remove-btn:hover{
-    color: rgb(255,30,30);
+.as-emoji-picker-tooltip-remove-btn:hover {
+    color: rgb(255, 30, 30);
+}
+
+
+.as-emoji-picker-tooltip:not(.as-mobile) .as-emoji-picker-tooltip-page-indicator {
+    display: none;
+}
+
+.as-emoji-picker-tooltip.as-mobile .as-emoji-picker-tooltip-right-btn,
+.as-emoji-picker-tooltip.as-mobile .as-emoji-picker-tooltip-left-btn {
+    display: none;
 }
 
 
@@ -144,7 +158,6 @@
         width: 32px;
         font-size: 20px;
     }
-
 
 
     .as-emoji-picker-tooltip-scroller {
