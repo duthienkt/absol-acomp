@@ -75,7 +75,8 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems, 
     var finish = function (event) {
         (document.body).off('click', finish)
             .off('touchcancel', finish)
-            .off('touchend', finish);
+            .off('touchend', finish)
+            .off('contextmenu', finish);
 
         self.off('requestcontextmenu', finish);
         setTimeout(function () {
@@ -107,7 +108,8 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems, 
         anchor.addClass('absol-active');
     }, 30);
     setTimeout(function () {
-        (document.body).on('click', finish);
+        $(document.body).on('click', finish)
+            .on('contextmenu', finish);
         self.on('requestcontextmenu', finish);
     }, 10)
 };
@@ -125,7 +127,8 @@ ContextCaptor.prototype._checkNeedHandle = function (target) {
 
 
 ContextCaptor.prototype._fireContextMenuEvent = function () {
-    if (this._lastContextSession >= this._pointerSession) return;// prevent fire multi-times in a pointer session
+    if (this._lastContextSession >= this._pointerSession) return false;// prevent fire multi-times in a pointer session
+    var showed = false;
     this._lastContextSession = this._pointerSession;
     var baseEventData = {
         clientX: this._posCurrent.x,
@@ -140,6 +143,7 @@ ContextCaptor.prototype._fireContextMenuEvent = function () {
         clientX: this._posCurrent.x, clientY: this._posCurrent.y,
         target: this.$target,
         showContextMenu: function (props, onSelectItems) {
+            showed = true;
             self.sync = self.sync.then(function () {
                 return new Promise(function (rs) {
                     setTimeout(function () {
@@ -161,6 +165,7 @@ ContextCaptor.prototype._fireContextMenuEvent = function () {
         }
         current = current.parentElement;
     }
+    return showed;
 };
 
 /**
@@ -342,6 +347,7 @@ ContextCaptor.eventHandler.contextmenu = function (event) {
 
 
 ContextCaptor.auto = function () {
+    console.warn("ContextCaptor: use BContextCapture instead, with native support!");
     if (ContextCaptor.$elt) return;
     ContextCaptor.$elt = _('contextcaptor');
     Dom.documentReady.then(function () {
