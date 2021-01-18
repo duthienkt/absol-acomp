@@ -366,3 +366,11 @@
 img.as-emoji {
     vertical-align: bottom;
 }
+
+span.as-emoji-text{
+    position: absolute;
+    color: transparent;
+    width: 20px;
+    font-size: 2px;
+    opacity: 0;
+}

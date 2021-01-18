@@ -924,6 +924,11 @@ export function parseMessage(text, data) {
             }
             else if (token.type == 'emoji') {
                 ac.push({
+                    tag:'span',
+                    class:'as-emoji-text',
+                    child: { text: token.value[0] }
+                });
+                ac.push({
                     tag: 'img',
                     class: 'as-emoji',
                     props: {
