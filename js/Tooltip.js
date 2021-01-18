@@ -40,7 +40,7 @@ export function updateTooltipPosition(toolTipClass) {
     if (!element) return;
     var orientation = toolTipClass._orientation;
 
-    var tBound = toolTipClass.$tooltip.getBoundingClientRect();
+    var tBound = toolTipClass.$tooltip.$content.getBoundingClientRect();
     var ebound = element.getBoundingClientRect();
     var screenSize = getScreenSize();
     var sMargin = Math.round(Math.min(5, screenSize.width/100, screenSize.height));
