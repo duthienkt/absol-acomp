@@ -18,7 +18,7 @@ var $$ = ACore.$$;
 
 /***
  *
- * @typedef {{text:string, desc: string, img?:string, fileExt?:string}|string} MessageInputQuote
+ * @typedef {{text:string, desc: string, img?:string, file?:string}|string} MessageInputQuote
  */
 
 var iconCatalogCaches = {};
@@ -528,7 +528,7 @@ MessageInput.prototype._updateQuote = function () {
     var quote = this._quote;
 
     var text, desc;
-    var fileExt, img;
+    var file, img;
     if (typeof quote === "string") {
         text = quote;
         desc = ''
@@ -536,7 +536,7 @@ MessageInput.prototype._updateQuote = function () {
     else if (quote && (typeof quote === "object")) {
         text = quote.text;
         desc = quote.desc;
-        fileExt = quote.fileExt;
+        file = quote.file;
         img = quote.img;
     }
 
@@ -549,11 +549,11 @@ MessageInput.prototype._updateQuote = function () {
     }
     else {
         this.addClass('as-has-quote');
-        if (fileExt) {
-            fileExt = fileExt.toLowerCase();
+        if (file) {
+            file = file.toLowerCase().split('.').pop();
             this._iconSupportAsync.then(function (iconSupport) {
-                if (iconSupport.indexOf(fileExt) < 0) fileExt = 'default';
-                this.$quoteImg.addStyle('background-image', 'url(' + this._iconAssetRoot + '/' + fileExt + '.svg)');
+                if (iconSupport.indexOf(file) < 0) file = 'default';
+                this.$quoteImg.addStyle('background-image', 'url(' + this._iconAssetRoot + '/' + file + '.svg)');
             }.bind(this));
             this.$quoteCtn.addClass('as-has-file');
         }
