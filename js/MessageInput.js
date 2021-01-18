@@ -135,7 +135,7 @@ MessageInput.render = function (data) {
             {
                 class: 'as-message-input-pre-ctn',
                 child: [
-                    'messagequote.as-message-input-quote',
+                    'messagequote.as-message-input-quote.as-removable',
                     {
                         class: 'as-message-input-emoji-btn-ctn',
                         child: {

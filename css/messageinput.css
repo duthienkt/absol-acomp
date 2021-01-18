@@ -200,6 +200,16 @@
     color: rgb(143, 144, 151);
 }
 
+.as-message-quote-box {
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.as-message-quote-box:not(.as-removable) .as-message-quote-remove-btn{
+    display: none;
+}
+
+
 .as-message-quote-box > div {
     display: inline-block;
     vertical-align: top;
