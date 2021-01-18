@@ -38,22 +38,12 @@ function MessageInput() {
     this._plugins = [];
     this._mode = MODE_NEW;//edit
     this._editingText = "";
-    this._iconAssetRoot = this.attr('data-icon-asset-root');
-    var catalogiUrl = this._iconAssetRoot + '/catalog.json';
-    this._iconSupportAsync = iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
-        iconCatalogCaches[catalogiUrl] = JSON.parse(result);
-        return iconCatalogCaches[catalogiUrl];
-    });
+    prepareIcon();
     /**
      * @type {import('./PreInput').default}
      */
     this.$preInput = $('preinput', this);
-    /***
-     *
-     * @type {null|MessageInputQuote}
-     * @private
-     */
-    this._quote = null;
+
 
     this.$preInput.on('change', this.eventHandler.preInputChange)
         .on('keyup', this.eventHandler.preInputKeyUp)
@@ -67,6 +57,9 @@ function MessageInput() {
 
 
     this._latBound = {};
+
+    this.$quote = $('messagequote.as-message-input-quote', this)
+        .on('pressremove', this.eventHandler.clickQuoteRemoveBtn);
 
     this.$right = $('.as-message-input-right', this);
 
@@ -86,14 +79,6 @@ function MessageInput() {
     this.$emojiPickerCtn = _('.as-message-input-external-tools-popup');
     this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
         .on('pick', this.eventHandler.pickEmoji);
-
-    this.$quoteCtn = $('.as-message-input-quote-ctn', this);
-    this.$quoteImg = $('.as-message-input-quote-img', this.$quoteCtn);
-    this.$quoteText = $('.as-message-input-quote-text', this.$quoteCtn);
-    this.$quoteDesc = $('.as-message-input-quote-desc', this.$quoteCtn);
-    this.$quoteRemoveBtn = $('.as-message-input-quote-remove-btn', this.$quoteCtn)
-        .on('click', this.eventHandler.clickQuoteRemoveBtn.bind(this));
-    ;
 
 
     this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
@@ -150,7 +135,7 @@ MessageInput.render = function (data) {
             {
                 class: 'as-message-input-pre-ctn',
                 child: [
-
+                    'messagequote.as-message-input-quote',
                     {
                         class: 'as-message-input-emoji-btn-ctn',
                         child: {
@@ -158,38 +143,6 @@ MessageInput.render = function (data) {
                             class: ['as-message-input-plugin-btn', 'as-message-input-plugin-emoji'],
                             child: 'span.mdi.mdi-emoticon-happy-outline'
                         }
-                    },
-                    {
-                        class: 'as-message-input-quote-ctn',
-                        child: [
-                            {
-                                class: 'as-message-input-quote-img'
-                            },
-                            {
-                                class: 'as-message-input-quote-sym',
-                                child: 'span.mdi.mdi-format-quote-open-outline'
-                            },
-                            {
-                                class: 'as-message-input-quote',
-                                child: [
-                                    {
-                                        class: 'as-message-input-quote-text',
-                                        child: {
-                                            text: ''
-                                        }
-                                    },
-                                    {
-                                        class: 'as-message-input-quote-desc',
-                                        child: { text: '' }
-                                    }
-                                ]
-                            },
-                            {
-                                tag: 'button',
-                                class: 'as-message-input-quote-remove-btn',
-                                child: 'span.mdi.mdi-close'
-                            }
-                        ]
                     },
                     {
                         class: ['as-message-input-attachment-ctn', 'as-bscroller'],
@@ -394,14 +347,14 @@ MessageInput.prototype.addFiles = function (files) {
     var thisMi = this;
     Array.prototype.forEach.call(files, function (file, index) {
         thisMi._files.push(file);
-        thisMi._iconSupportAsync.then(function (ExtensionIcons) {
+        MessageInput.iconSupportAsync.then(function (ExtensionIcons) {
             var src;
             var ext = file.name.split('.').pop().toLowerCase();
             if (ExtensionIcons.indexOf(ext) > 0) {
-                src = thisMi._iconAssetRoot + '/' + ext + '.svg'
+                src = MessageInput.iconAssetRoot + '/' + ext + '.svg'
             }
             else {
-                src = thisMi._iconAssetRoot + '/' + 'default' + '.svg'
+                src = MessageInput.iconAssetRoot + '/' + 'default' + '.svg'
 
             }
             var itemElt = _({
@@ -525,53 +478,11 @@ MessageInput.prototype.exeCmd = function (name) {
 
 
 MessageInput.prototype._updateQuote = function () {
-    var quote = this._quote;
-
-    var text, desc;
-    var file, img;
-    if (typeof quote === "string") {
-        text = quote;
-        desc = ''
-    }
-    else if (quote && (typeof quote === "object")) {
-        text = quote.text;
-        desc = quote.desc;
-        file = quote.file;
-        img = quote.img;
-    }
-
-    if (text === undefined) {
-        this.removeClass('as-has-quote');
-        this.$quoteText.firstChild.data = '';
-        this.$quoteDesc.firstChild.data = '';
-        this.$quoteCtn.removeClass('as-has-file');
-        this.$quoteCtn.removeClass('as-has-img');
-    }
-    else {
+    this.$quote.data = this._quote;
+    if (this._quote)
         this.addClass('as-has-quote');
-        if (file) {
-            file = file.toLowerCase().split('.').pop();
-            this._iconSupportAsync.then(function (iconSupport) {
-                if (iconSupport.indexOf(file) < 0) file = 'default';
-                this.$quoteImg.addStyle('background-image', 'url(' + this._iconAssetRoot + '/' + file + '.svg)');
-            }.bind(this));
-            this.$quoteCtn.addClass('as-has-file');
-        }
-        else
-            this.$quoteCtn.removeClass('as-has-file');
-        if (img) {
-            this.$quoteImg.addStyle('background-image', 'url(' + img + ')');
-            this.$quoteCtn.addClass('as-has-img');
-        }
-        else this.$quoteCtn.removeClass('as-has-img');
-        var parsedText = parseMessage(text.split(/\r?\n/).shift());
-        var textEltChain = parsedText.map(function (c) {
-            return _(c);
-        })
-        this.$quoteText.clearChild().addChild(textEltChain);
-        this.$quoteDesc.firstChild.data = desc;
-    }
-
+    else
+        this.removeClass('as-has-quote');
     this.notifySizeChange();
 };
 
@@ -982,6 +893,18 @@ export function parseMessage(text, data) {
 
 MessageInput.parseMessage = parseMessage;
 
+function prepareIcon() {
+    if (!MessageInput.iconSupportAsync) {
+        var catalogiUrl = MessageInput.iconAssetRoot + '/catalog.json';
+        MessageInput.iconSupportAsync = MessageInput.iconSupportAsync || iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
+            iconCatalogCaches[catalogiUrl] = JSON.parse(result);
+            return iconCatalogCaches[catalogiUrl];
+        });
+    }
+    return MessageInput.iconSupportAsync;
+}
+
+
 /***
  * @typedef MessageInputPluginOption
  * @property {string} [id]
@@ -989,6 +912,131 @@ MessageInput.parseMessage = parseMessage;
  * @property {function(_thisAdapter: MessageInputPlugin, _:Dom._, Dom.$):AElement} createContent
  * @property {function(_thisAdapter:MessageInputPlugin):void} onPressTrigger
  */
+
+
+function MessageQuote() {
+    prepareIcon();
+    /***
+     *
+     * @type {null|MessageInputQuote}
+     * @private
+     */
+    this._data = null;
+    this.$img = $('.as-message-quote-img', this);
+    this.$text = $('.as-message-quote-text', this);
+    this.$desc = $('.as-message-quote-desc', this);
+    this.$removeBtn = $('.as-message-quote-remove-btn', this)
+        .on('click', this.eventHandler.clickRemoveBtn);
+    Object.defineProperty(this, '$text', {
+        set: function () {
+            console.trace();
+        },
+        get: function () {
+            return $('.as-message-quote-text', this);
+        }
+    })
+
+}
+
+MessageQuote.tag = 'MessageQuote'.toLowerCase();
+
+MessageQuote.render = function () {
+    return _({
+        extendEvent: 'pressremove',
+        class: 'as-message-quote-box',
+        child: [
+            {
+                class: 'as-message-quote-img'
+            },
+            {
+                class: 'as-message-quote-sym',
+                child: 'span.mdi.mdi-format-quote-open-outline'
+            },
+            {
+                class: 'as-message-quote',
+                child: [
+                    {
+                        class: 'as-message-quote-text',
+                        child: {
+                            text: ''
+                        }
+                    },
+                    {
+                        class: 'as-message-quote-desc',
+                        child: { text: '' }
+                    }
+                ]
+            },
+            {
+                tag: 'button',
+                class: 'as-message-quote-remove-btn',
+                child: 'span.mdi.mdi-close'
+            }
+        ]
+    });
+};
+
+MessageQuote.property = {};
+MessageQuote.eventHandler = {};
+
+MessageQuote.property.data = {
+    set: function (quote) {
+        this._data = quote;
+        var text, desc;
+        var file, img;
+        if (typeof quote === "string") {
+            text = quote;
+            desc = ''
+        }
+        else if (quote && (typeof quote === "object")) {
+            text = quote.text;
+            desc = quote.desc;
+            file = quote.file;
+            img = quote.img;
+        }
+
+
+        if (text === undefined) {
+            this.$text.clearChild();
+            this.$desc.firstChild.data = '';
+            this.removeClass('as-has-file');
+            this.removeClass('as-has-img');
+        }
+        else {
+            if (file) {
+                file = file.toLowerCase().split('.').pop();
+                MessageInput.iconSupportAsync.then(function (iconSupport) {
+                    if (iconSupport.indexOf(file) < 0) file = 'default';
+                    this.$img.addStyle('background-image', 'url(' + MessageInput.iconAssetRoot + '/' + file + '.svg)');
+                }.bind(this));
+                this.addClass('as-has-file');
+            }
+            else
+                this.removeClass('as-has-file');
+
+            if (img) {
+                this.$img.addStyle('background-image', 'url(' + img + ')');
+                this.addClass('as-has-img');
+            }
+            else this.removeClass('as-has-img');
+            var parsedText = parseMessage(text.split(/\r?\n/).shift());
+            var textEltChain = parsedText.map(function (c) {
+                return _(c);
+            });
+            this.$text.clearChild().addChild(textEltChain);
+            this.$desc.firstChild.data = desc;
+        }
+    },
+    get: function () {
+        return this.data;
+    }
+};
+
+MessageQuote.eventHandler.clickRemoveBtn = function () {
+    this.emit('pressremove', { target: this, type: 'pressclose' }, this);
+};
+
+ACore.install(MessageQuote);
 
 
 /***

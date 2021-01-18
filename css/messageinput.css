@@ -167,21 +167,21 @@
 .as-message-input.as-mode-edit .as-message-input-plugin-file,
 .as-message-input.as-has-text .as-message-input-plugin-file,
 .as-message-input.as-has-quote .as-message-input-plugin-file,
-.as-message-input:not(.as-has-quote) .as-message-input-quote-ctn {
+.as-message-input:not(.as-has-quote) .as-message-quote-box {
     display: none;
 }
 
 
-.as-message-input-quote-ctn {
+.as-message-quote-box {
     position: relative;
     border-bottom: 1px solid #ddd;
 }
 
-.as-message-input.as-has-attachment .as-message-input-quote-ctn {
+.as-message-input.as-has-attachment .as-message-quote-box {
     margin-bottom: 5px;
 }
 
-.as-message-input-quote-remove-btn {
+.as-message-quote-remove-btn {
     position: absolute;
     color: rgb(43, 44, 51);
     right: -7px;
@@ -196,20 +196,20 @@
     outline: none;
 }
 
-.as-message-input-quote-remove-btn:hover {
+.as-message-quote-remove-btn:hover {
     color: rgb(143, 144, 151);
 }
 
-.as-message-input-quote-ctn > div {
+.as-message-quote-box > div {
     display: inline-block;
     vertical-align: top;
 }
 
-.as-message-input-quote-ctn:not(.as-has-img):not(.as-has-file) .as-message-input-quote-img {
+.as-message-quote-box:not(.as-has-img):not(.as-has-file) .as-message-quote-img {
     display: none;
 }
 
-.as-message-input-quote-img {
+.as-message-quote-img {
     width: 40px;
     height: 40px;
     padding: 5px;
@@ -220,35 +220,34 @@
     background-repeat: no-repeat;
 }
 
-.as-message-input-quote-sym {
+.as-message-quote-sym {
     width: 25px;
 }
 
-.as-message-input-quote-sym > span {
+.as-message-quote-sym > span {
     font-size: 25px;
     color: rgb(169, 169, 172);
 }
 
-.as-message-input-quote {
+.as-message-quote-content {
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     width: calc(100% - 26px);
     box-sizing: border-box;
     padding-left: 20px;
 }
 
-.as-message-input-quote-ctn.as-has-img .as-message-input-quote,
-.as-message-input-quote-ctn.as-has-file .as-message-input-quote
-{
+.as-message-quote-box.as-has-img .as-message-quote-content,
+.as-message-quote-box.as-has-file .as-message-quote-content {
     width: calc(100% - 66px);
     padding-left: 5px;
 }
 
-.as-message-input-quote-ctn.as-has-file .as-message-input-quote-img{
+.as-message-quote-box.as-has-file .as-message-quote-img {
     background-origin: padding-box;
     background-size: contain;
 }
 
-.as-message-input-quote-text {
+.as-message-quote-text {
     font-size: 1.14em;
     line-height: 1.75;
     font-style: italic;
@@ -259,12 +258,12 @@
     overflow: hidden;
 }
 
-.as-message-input-quote-text .as-emoji {
+.as-message-quote-text .as-emoji {
     width: 20px;
     height: 20px;
 }
 
-.as-message-input-quote-desc {
+.as-message-quote-desc {
     font-size: 0.85em;
     color: rgb(80, 80, 88);
 }
