@@ -283,7 +283,7 @@ PreInput.eventHandler.paste = function (event) {
                 });
             }
             else {
-                console.error("Can not handle clipboard data");
+                window.ABSOL_DEBUG && console.error("Can not handle clipboard data");
             }
             event.preventDefault();
         }
