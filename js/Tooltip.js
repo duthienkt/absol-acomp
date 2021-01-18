@@ -43,6 +43,7 @@ export function updateTooltipPosition(toolTipClass) {
     var tBound = toolTipClass.$tooltip.getBoundingClientRect();
     var ebound = element.getBoundingClientRect();
     var screenSize = getScreenSize();
+    var sMargin = Math.round(Math.min(5, screenSize.width/100, screenSize.height));
     screenSize.width = Math.min(screenSize.width, document.body.getBoundingClientRect().width);
     var fontSize = toolTipClass.$tooltip.getFontSize();
 
@@ -54,15 +55,15 @@ export function updateTooltipPosition(toolTipClass) {
         && (screenSize.width - ebound.left - ebound.width / 2 > tBound.width / 2);
     var aVCenter = (ebound.top + ebound.height / 2 > tBound.height / 2)
         && (screenSize.height - ebound.top - ebound.height / 2 > tBound.height / 2);
-    var aTop = (tBound.height < ebound.top - 5);
-    var aBottom = tBound.height < screenSize.height - 5 - ebound.bottom;
-    var aRight = tBound.width < screenSize.width - 5 - ebound.right;
-    var aLeft = tBound.width < ebound.left - 5;
+    var aTop = (tBound.height < ebound.top - sMargin);
+    var aBottom = tBound.height < screenSize.height - sMargin - ebound.bottom;
+    var aRight = tBound.width < screenSize.width - sMargin - ebound.right;
+    var aLeft = tBound.width < ebound.left - sMargin;
 
-    var aHLeft = (ebound.left + ebound.width / 2 - tBound.width / 2 < 5) && (ebound.left + ebound.width / 2 >= 5 + fontSize / 2);
-    var aHRight = (ebound.left + ebound.width / 2 + tBound.width / 2 > screenSize.width - 5) && (ebound.left + ebound.width / 2 < screenSize.width - 5 - fontSize / 2);
-    var aVTop = (ebound.top + ebound.width / 2 - tBound.height / 2 < 5) && (ebound.top + ebound.height / 2 >= 5 + fontSize / 2);
-    var aVBottom = (ebound.top + ebound.width / 2 + tBound.height / 2 <= screenSize.height - 5) && (ebound.top + ebound.height / 2 > screenSize.height - 5 - fontSize / 2);
+    var aHLeft = (ebound.left + ebound.width / 2 - tBound.width / 2 < sMargin) && (ebound.left + ebound.width / 2 >= sMargin + fontSize / 2);
+    var aHRight = (ebound.left + ebound.width / 2 + tBound.width / 2 > screenSize.width - sMargin) && (ebound.left + ebound.width / 2 < screenSize.width - sMargin - fontSize / 2);
+    var aVTop = (ebound.top + ebound.width / 2 - tBound.height / 2 < sMargin) && (ebound.top + ebound.height / 2 >= sMargin + fontSize / 2);
+    var aVBottom = (ebound.top + ebound.width / 2 + tBound.height / 2 <= screenSize.height - sMargin) && (ebound.top + ebound.height / 2 > screenSize.height - sMargin - fontSize / 2);
 
     if (orientation === 'auto' && aHCenter) {
         if (aTop) {
@@ -86,7 +87,7 @@ export function updateTooltipPosition(toolTipClass) {
         if (aTop || orientation === 'auto') orientation = "top";
         else if (aBottom || orientation === 'auto') orientation = 'bottom';
         if (aTop || aBottom) {
-            dx += tBound.width / 2 - (ebound.left + ebound.width / 2) + 5;
+            dx += tBound.width / 2 - (ebound.left + ebound.width / 2) + sMargin;
             arrowPos = tBound.width / 2 - dx + 'px';
         }
     }
@@ -94,7 +95,7 @@ export function updateTooltipPosition(toolTipClass) {
         if (aTop || orientation === 'auto') orientation = "top";
         else if (aBottom || orientation === 'auto') orientation = 'bottom';
         if (aTop || aBottom) {
-            dx -= tBound.width / 2 - (screenSize.width - (ebound.left + ebound.width / 2)) + 5;
+            dx -= tBound.width / 2 - (screenSize.width - (ebound.left + ebound.width / 2)) + sMargin;
             arrowPos = tBound.width / 2 - dx + 'px';
         }
     }
@@ -106,7 +107,7 @@ export function updateTooltipPosition(toolTipClass) {
             orientation = 'right';
         }
         if (aLeft || aRight) {
-            dy += tBound.height / 2 - (ebound.top + ebound.height / 2) + 5;
+            dy += tBound.height / 2 - (ebound.top + ebound.height / 2) + sMargin;
             arrowPos = tBound.height / 2 - dy + 'px';
         }
     }
@@ -116,7 +117,7 @@ export function updateTooltipPosition(toolTipClass) {
             orientation = 'right';
         }
         if (aLeft || aRight) {
-            dy -= tBound.height / 2 - (screenSize.height - (ebound.top + ebound.height / 2)) + 5;
+            dy -= tBound.height / 2 - (screenSize.height - (ebound.top + ebound.height / 2)) + sMargin;
             arrowPos = tBound.height / 2 - dx + 'px'
         }
     }

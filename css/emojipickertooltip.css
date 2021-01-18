@@ -101,7 +101,7 @@
 }
 
 
-@media (max-width: 400px) and (min-width: 300px) {
+@media (max-width: 410px) and (min-width: 310px) {
     .as-emoji-picker-tooltip-left-btn,
     .as-emoji-picker-tooltip-right-btn {
         height: 36px;
@@ -137,7 +137,7 @@
     }
 }
 
-@media (max-width: 500px) and (min-width: 400px) {
+@media (max-width: 510px) and (min-width: 410px) {
     .as-emoji-picker-tooltip-left-btn,
     .as-emoji-picker-tooltip-right-btn {
         height: 48px;
