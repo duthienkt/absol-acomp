@@ -6,6 +6,7 @@ import Vec2 from 'absol/src/Math/Vec2';
 import './Menu';
 import AElement from "absol/src/HTML5/AElement";
 import BoardTable from "./BoardTable";
+import {getSelectionText} from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -157,6 +158,12 @@ ContextCaptor.prototype._fireContextMenuEvent = function () {
             propagation = false;
         }
     }, baseEventData);
+
+    Object.defineProperty(localEvent, 'selectedText', {
+        get: function () {
+            return getSelectionText();
+        }
+    });
 
     var current = this.$target;
     while (current && propagation) {

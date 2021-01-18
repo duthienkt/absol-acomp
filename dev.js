@@ -20,6 +20,7 @@ import materializeIconTrigger from "./js/materializeIconTrigger";
 import VariantColors from "./js/VariantColors";
 import ToolTip from "./js/Tooltip";
 import TextMeasure from "./js/TextMeasure";
+import BContextCapture from "./js/BContextCapture";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -40,7 +41,7 @@ absol.coreDom.install('searchcrosstextinput', SearchTextInput);
 Object.assign(absol.string, string);
 absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
-absol.ContextCaptor = ContextCaptor;
+absol.ContextCaptor = BContextCapture;
 window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;
 
