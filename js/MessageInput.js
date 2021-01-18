@@ -135,7 +135,7 @@ MessageInput.render = function (data) {
             {
                 class: 'as-message-input-pre-ctn',
                 child: [
-                    'messagequote.as-message-input-quote.as-removable',
+                    'messagequote.as-message-input-quote.as-removable.as-shorten-text',
                     {
                         class: 'as-message-input-emoji-btn-ctn',
                         child: {
@@ -953,7 +953,7 @@ MessageQuote.render = function () {
                 child: 'span.mdi.mdi-format-quote-open-outline'
             },
             {
-                class: 'as-message-quote',
+                class: 'as-message-quote-content',
                 child: [
                     {
                         class: 'as-message-quote-text',
@@ -978,6 +978,34 @@ MessageQuote.render = function () {
 
 MessageQuote.property = {};
 MessageQuote.eventHandler = {};
+
+MessageQuote.property.removable = {
+    set: function (val) {
+        if (val) {
+            this.addClass('as-removable');
+        }
+        else {
+            this.removeClass('as-removable');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-removable');
+    }
+};
+
+MessageQuote.property.shortenText = {
+    set: function (val) {
+        if (val) {
+            this.addClass('as-shorten-text');
+        }
+        else {
+            this.removeClass('as-shorten-text');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-shorten-text');
+    }
+};
 
 MessageQuote.property.data = {
     set: function (quote) {
@@ -1019,7 +1047,8 @@ MessageQuote.property.data = {
                 this.addClass('as-has-img');
             }
             else this.removeClass('as-has-img');
-            var parsedText = parseMessage(text.split(/\r?\n/).shift());
+            if (this.shortenText) text = text.split(/\r?\n/).shift();
+            var parsedText = parseMessage(text);
             var textEltChain = parsedText.map(function (c) {
                 return _(c);
             });

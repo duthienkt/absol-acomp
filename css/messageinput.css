@@ -205,7 +205,7 @@
     -webkit-user-select: none;
 }
 
-.as-message-quote-box:not(.as-removable) .as-message-quote-remove-btn{
+.as-message-quote-box:not(.as-removable) .as-message-quote-remove-btn {
     display: none;
 }
 
@@ -262,10 +262,17 @@
     line-height: 1.75;
     font-style: italic;
     color: rgb(43, 44, 51);
+    max-width: 100%;
+    word-break: break-word;
+    white-space: pre-wrap;
+}
+
+.as-message-quote-box.as-shorten-text .as-message-quote-text {
+    word-break: normal;
+
+    overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    max-width: 100%;
-    overflow: hidden;
 }
 
 .as-message-quote-text .as-emoji {
