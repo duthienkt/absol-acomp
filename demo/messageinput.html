@@ -151,7 +151,20 @@
                                             messInput.text = text;
                                         }
                                         else if (item.cmd === 'quote') {
-                                            messInput.quote = { text:text, desc:"Pham Quoc Du Thien - "+ now.toLocaleString() };
+                                            messInput.quote = {
+                                                text: text,
+                                                desc: "Pham Quoc Du Thien - " + now.toLocaleString()
+                                            };
+                                            messInput.quote = {
+                                                fileExt: 'php',
+                                                text: "[File] jsdom.php",
+                                                desc: "Pham Quoc Du Thien - " + now.toLocaleString()
+                                            };
+                                            messInput.quote = {
+                                                img: 'https://lab.daithangminh.vn/home_co/carddone/./uploads/images/1610513358591_JPEG_example_flower.jpg.upload',
+                                                text: "[File] jsdom.php",
+                                                desc: "Pham Quoc Du Thien - " + now.toLocaleString()
+                                            };
                                         }
                                     });
 
