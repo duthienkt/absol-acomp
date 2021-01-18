@@ -10,6 +10,8 @@ var $ = ACore.$;
  */
 function PageIndicator() {
     this._idx = -1;
+    this.length = 0;
+    this.idx = -1;
 
 }
 
@@ -19,12 +21,7 @@ PageIndicator.tag = 'PageIndicator'.toLowerCase();
 PageIndicator.render = function () {
     return _({
         class: 'as-page-indicator',
-        child: [
-            '.as-page-indicator-item',
-            '.as-page-indicator-item',
-            '.as-page-indicator-item',
-            '.as-page-indicator-item'
-        ]
+        child: []
     });
 };
 
@@ -35,7 +32,7 @@ PageIndicator.property.length = {
         value = value || 0;
         value = Math.max(0, value);
         while (this.childNodes.length < value) {
-            this.addChild(_('.as-page-indicator-item'));
+            this.addChild(_('button.as-page-indicator-item'));
         }
         while (this.childNodes.length > value) {
             this.removeChild(this.childNodes[this.childNodes.length - 1]);

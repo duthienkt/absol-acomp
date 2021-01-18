@@ -1,6 +1,5 @@
 .as-page-indicator {
     text-align: center;
-    height: 0.75em;
     white-space: nowrap;
 }
 
@@ -17,6 +16,9 @@
     text-align: center;
     font-size: inherit;
     width: 1.5em;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
 }
 
 
@@ -24,15 +26,18 @@
 .as-page-indicator-item::before {
     content: "";
     display: inline-block;
-    vertical-align: middle;
     height: 0.5em;
     width: 0.5em;
-    transition: width 0.25s, height 0.25s;
+    transition: width 0.25s, height 0.25s, color 0.25s;
     border-radius: 50%;
     background-color: rgb(196, 196, 196);
+    font-size: inherit;
+    vertical-align: middle;
 }
 
-.as-page-indicator-item:hover::before{
+.as-page-indicator-item.as-active::before{
     width: 0.75em;
     height: 0.75em;
+    background-color: var(--variant-color-primary);
+
 }
