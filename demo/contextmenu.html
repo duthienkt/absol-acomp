@@ -65,6 +65,7 @@
 <script>
     absol.ContextCaptor.auto();
     $('#test-zone').defineEvent('contextmenu').on('contextmenu', function (event) {
+        console.log(event.selectedText);
         event.showContextMenu({
             items: [{ text: 'Expand Down', value: 1, icon: 'span.mdi.mdi-arrow-expand-down' }, {
                 text: 'Expand Up',
