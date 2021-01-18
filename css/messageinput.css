@@ -205,6 +205,21 @@
     vertical-align: top;
 }
 
+.as-message-input-quote-ctn:not(.as-has-img):not(.as-has-file) .as-message-input-quote-img {
+    display: none;
+}
+
+.as-message-input-quote-img {
+    width: 40px;
+    height: 40px;
+    padding: 5px;
+    box-sizing: border-box;
+    background-size: cover;
+    background-origin: border-box;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
 .as-message-input-quote-sym {
     width: 25px;
 }
@@ -219,6 +234,18 @@
     width: calc(100% - 26px);
     box-sizing: border-box;
     padding-left: 20px;
+}
+
+.as-message-input-quote-ctn.as-has-img .as-message-input-quote,
+.as-message-input-quote-ctn.as-has-file .as-message-input-quote
+{
+    width: calc(100% - 66px);
+    padding-left: 5px;
+}
+
+.as-message-input-quote-ctn.as-has-file .as-message-input-quote-img{
+    background-origin: padding-box;
+    background-size: contain;
 }
 
 .as-message-input-quote-text {
@@ -367,7 +394,7 @@ img.as-emoji {
     vertical-align: bottom;
 }
 
-span.as-emoji-text{
+span.as-emoji-text {
     position: absolute;
     color: transparent;
     width: 20px;

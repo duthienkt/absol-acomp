@@ -18,7 +18,7 @@ var $$ = ACore.$$;
 
 /***
  *
- * @typedef {{text:string, desc: string}|string} MessageInputQuote
+ * @typedef {{text:string, desc: string, img?:string, fileExt?:string}|string} MessageInputQuote
  */
 
 var iconCatalogCaches = {};
@@ -48,6 +48,11 @@ function MessageInput() {
      * @type {import('./PreInput').default}
      */
     this.$preInput = $('preinput', this);
+    /***
+     *
+     * @type {null|MessageInputQuote}
+     * @private
+     */
     this._quote = null;
 
     this.$preInput.on('change', this.eventHandler.preInputChange)
@@ -82,9 +87,11 @@ function MessageInput() {
     this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
         .on('pick', this.eventHandler.pickEmoji);
 
-    this.$quoteText = $('.as-message-input-quote-text', this);
-    this.$quoteDesc = $('.as-message-input-quote-desc', this);
-    this.$quoteRemoveBtn = $('.as-message-input-quote-remove-btn', this)
+    this.$quoteCtn = $('.as-message-input-quote-ctn', this);
+    this.$quoteImg = $('.as-message-input-quote-img', this.$quoteCtn);
+    this.$quoteText = $('.as-message-input-quote-text', this.$quoteCtn);
+    this.$quoteDesc = $('.as-message-input-quote-desc', this.$quoteCtn);
+    this.$quoteRemoveBtn = $('.as-message-input-quote-remove-btn', this.$quoteCtn)
         .on('click', this.eventHandler.clickQuoteRemoveBtn.bind(this));
     ;
 
@@ -155,6 +162,9 @@ MessageInput.render = function (data) {
                     {
                         class: 'as-message-input-quote-ctn',
                         child: [
+                            {
+                                class: 'as-message-input-quote-img'
+                            },
                             {
                                 class: 'as-message-input-quote-sym',
                                 child: 'span.mdi.mdi-format-quote-open-outline'
@@ -518,6 +528,7 @@ MessageInput.prototype._updateQuote = function () {
     var quote = this._quote;
 
     var text, desc;
+    var fileExt, img;
     if (typeof quote === "string") {
         text = quote;
         desc = ''
@@ -525,17 +536,36 @@ MessageInput.prototype._updateQuote = function () {
     else if (quote && (typeof quote === "object")) {
         text = quote.text;
         desc = quote.desc;
+        fileExt = quote.fileExt;
+        img = quote.img;
     }
 
     if (text === undefined) {
         this.removeClass('as-has-quote');
         this.$quoteText.firstChild.data = '';
         this.$quoteDesc.firstChild.data = '';
+        this.$quoteCtn.removeClass('as-has-file');
+        this.$quoteCtn.removeClass('as-has-img');
     }
     else {
         this.addClass('as-has-quote');
+        if (fileExt) {
+            fileExt = fileExt.toLowerCase();
+            this._iconSupportAsync.then(function (iconSupport) {
+                if (iconSupport.indexOf(fileExt) < 0) fileExt = 'default';
+                this.$quoteImg.addStyle('background-image', 'url(' + this._iconAssetRoot + '/' + fileExt + '.svg)');
+            }.bind(this));
+            this.$quoteCtn.addClass('as-has-file');
+        }
+        else
+            this.$quoteCtn.removeClass('as-has-file');
+        if (img) {
+            this.$quoteImg.addStyle('background-image', 'url(' + img + ')');
+            this.$quoteCtn.addClass('as-has-img');
+        }
+        else this.$quoteCtn.removeClass('as-has-img');
         var parsedText = parseMessage(text.split(/\r?\n/).shift());
-        var textEltChain = parsedText.map(function (c){
+        var textEltChain = parsedText.map(function (c) {
             return _(c);
         })
         this.$quoteText.clearChild().addChild(textEltChain);
@@ -924,8 +954,8 @@ export function parseMessage(text, data) {
             }
             else if (token.type == 'emoji') {
                 ac.push({
-                    tag:'span',
-                    class:'as-emoji-text',
+                    tag: 'span',
+                    class: 'as-emoji-text',
                     child: { text: token.value[0] }
                 });
                 ac.push({
