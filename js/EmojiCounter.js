@@ -6,9 +6,12 @@ import ToolTip, {updateTooltipPosition} from "./Tooltip";
 import Rectangle from "absol/src/Math/Rectangle";
 import {traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import EmojiUserListTooltip from "./EmojiUserListTooltip";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var $ = ACore.$;
 var _ = ACore._;
+
+var isMobile = BrowserDetector.isMobile;
 
 /***
  * @extends AElement
@@ -27,7 +30,13 @@ function EmojiCounter() {
     this._count = 0;
     this.count = 0;
     this._checkInterval = -1;
-    this.on('mouseenter', this.eventHandler.mouseEnter);
+    if (isMobile) {
+        this.attr('tabindex', '1');
+        this.on('focus', this.eventHandler.mouseEnter);
+    }
+    else {
+        this.on('mouseenter', this.eventHandler.mouseEnter);
+    }
     this._tooltipSession = null;
     this._tooltipFinishTimeout = -1;
 }
@@ -154,8 +163,7 @@ EmojiCounter.eventHandler.finishHover = function () {
             EmojiCounter.$holder.remove();
             EmojiCounter.$tooltip.stopEmoji();
         }
-    }.bind(this), 500)
-
+    }.bind(this), 500);
 };
 
 
