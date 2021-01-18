@@ -914,7 +914,7 @@ function prepareIcon() {
  */
 
 
-function MessageQuote() {
+export function MessageQuote() {
     prepareIcon();
     /***
      *

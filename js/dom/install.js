@@ -36,7 +36,7 @@ import HRuler from "../HRuler";
 import IconSprite from "../IconSprite";
 import LinearColorBar from "../LinearColorBar";
 import MediaInput from "../MediaInput";
-import MessageInput from "../MessageInput";
+import MessageInput, {MessageQuote} from "../MessageInput";
 import NumberInput from "../NumberInput";
 import NumberSpanInput from "../NumberSpanInput";
 import OnScreenWindow from "../OnsScreenWindow";
@@ -158,6 +158,7 @@ export var publicCreators = [
     LinearColorBar,
     MediaInput,
     MessageInput,
+    MessageQuote,
     Modal,
     NumberInput,
     NumberSpanInput,
