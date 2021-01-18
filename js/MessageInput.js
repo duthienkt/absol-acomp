@@ -942,10 +942,10 @@ export function parseMessage(text, data) {
             ac.push('br');
         return ac;
     }, []);
-    if (res.length == 1 && res[0].class == 'as-emoji') {
-        res[0].tag = 'iconsprite',
-            res[0].props.fps = 15;
-        res[0].props.src = res[0].props.src.replace('/static/x' + data.staticSize, '/anim/x' + data.animSize);
+    if (res.length == 2 && res[1].class == 'as-emoji') {
+        res[1].tag = 'iconsprite',
+            res[1].props.fps = 30;
+        res[1].props.src = res[1].props.src.replace('/static/x' + data.staticSize, '/anim/x' + data.animSize);
     }
     return res;
 }
