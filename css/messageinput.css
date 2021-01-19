@@ -171,10 +171,13 @@
     display: none;
 }
 
+.as-message-input .as-message-quote-box {
+    border-bottom: 1px solid #ddd;
+}
 
 .as-message-quote-box {
     position: relative;
-    border-bottom: 1px solid #ddd;
+
 }
 
 .as-message-input.as-has-attachment .as-message-quote-box {
