@@ -46,7 +46,13 @@ function EmojiPicker() {
     this.$attachook = _('attachhook').addTo(this).on('error', this.eventHandler.attach);
 }
 
-EmojiPicker.assetRoot = 'https://absol.cf/emoji';
+EmojiPicker.assetRoot = (function (){
+    if (location.hostname.match(/^.+\.absol.cf$/))
+        return  'https://absol.cf/emoji';
+    return  '/emoji';
+})();
+
+
 EmojiPicker.tag = 'EmojiPicker'.toLowerCase();
 
 EmojiPicker.render = function (data) {

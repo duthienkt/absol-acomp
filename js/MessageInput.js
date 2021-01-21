@@ -98,7 +98,11 @@ function MessageInput() {
 MessageInput.MODE_EDIT = MODE_EDIT;
 MessageInput.MODE_NEW = MODE_NEW;
 
-MessageInput.iconAssetRoot = 'https://absol.cf/exticons/vivid';
+MessageInput.iconAssetRoot = (function () {
+    if (location.hostname.match(/^.+\.absol.cf$/))
+        return 'https://absol.cf/exticons/vivid';
+    return '/vivid_exticons';
+})();
 
 MessageInput.tag = 'MessageInput'.toLowerCase();
 
