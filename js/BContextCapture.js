@@ -3,6 +3,7 @@ import ContextCaptor from "./ContextMenu";
 import Vec2 from "absol/src/Math/Vec2";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import OOP from "absol/src/HTML5/OOP";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 /***
  * simple way, to replace old ContextCapture version
@@ -50,5 +51,8 @@ BContextCapture.prototype.ev_contextMenu = function (event) {
 };
 
 var instance = new BContextCapture();
-ContextCaptor.auto = instance.auto.bind(instance);//override old version
+if (!BrowserDetector.isMobile || !BrowserDetector.isSafari) {
+    ContextCaptor.auto = instance.auto.bind(instance);//override old version
+}
+
 export default instance;

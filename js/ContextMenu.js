@@ -354,7 +354,6 @@ ContextCaptor.eventHandler.contextmenu = function (event) {
 
 
 ContextCaptor.auto = function () {
-    console.warn("ContextCaptor: use BContextCapture instead, with native support!");
     if (ContextCaptor.$elt) return;
     ContextCaptor.$elt = _('contextcaptor');
     Dom.documentReady.then(function () {

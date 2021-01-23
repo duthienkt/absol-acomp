@@ -21,6 +21,7 @@ import VariantColors from "./js/VariantColors";
 import ToolTip from "./js/Tooltip";
 import TextMeasure from "./js/TextMeasure";
 import BContextCapture from "./js/BContextCapture";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -41,7 +42,13 @@ absol.coreDom.install('searchcrosstextinput', SearchTextInput);
 Object.assign(absol.string, string);
 absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
-absol.ContextCaptor = BContextCapture;
+if (BrowserDetector.isMobile && BrowserDetector.isSafari) {
+    absol.ContextCaptor = ContextCaptor;
+}
+else {
+    absol.ContextCaptor = BContextCapture;
+
+}
 window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;
 
