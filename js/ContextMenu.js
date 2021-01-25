@@ -7,11 +7,14 @@ import './Menu';
 import AElement from "absol/src/HTML5/AElement";
 import BoardTable from "./BoardTable";
 import {getSelectionText} from "./utils";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 var supportContextEvent = false;
+var isMobile = BrowserDetector.isMobile;
+
 
 /**
  * @extends AElement
@@ -62,7 +65,7 @@ ContextCaptor.tag = 'ContextCaptor'.toLowerCase();
 
 ContextCaptor.render = function () {
     return _({
-        class: 'absol-context-menu-anchor',
+        class: ['absol-context-menu-anchor'],
         extendEvent: 'requestcontextmenu',
         child: [
             'textarea'
@@ -70,9 +73,9 @@ ContextCaptor.render = function () {
     });
 };
 
-ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems, onCancel) {
+ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems) {
     var self = this;
-    var anchor = _('.absol-context-menu-anchor').addTo(document.body);
+    var anchor = _('.as-context-menu-ctn.absol-context-menu-anchor' + (isMobile ? '.as-anchor-modal' : '')).addTo(document.body);
     var finish = function (event) {
         (document.body).off('click', finish)
             .off('touchcancel', finish)
@@ -92,22 +95,28 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems, 
             }
         }
     }).addTo(anchor);
-    setTimeout(function () {
-        var screenSize = Dom.getScreenSize();
-        var menuBound = vmenu.getBoundingClientRect();
-        if (x + menuBound.width > screenSize.width - 17) {
-            x -= menuBound.width;
-        }
-        if (y + menuBound.height > screenSize.height - 17) {
-            y -= menuBound.height;
-        }
 
-        anchor.addStyle({
-            left: x + 'px',
-            top: y + 'px'
-        });
+
+    setTimeout(function () {
+        if (!isMobile) {
+            var screenSize = Dom.getScreenSize();
+            var menuBound = vmenu.getBoundingClientRect();
+            if (x + menuBound.width > screenSize.width - 17) {
+                x -= menuBound.width;
+            }
+            if (y + menuBound.height > screenSize.height - 17) {
+                y -= menuBound.height;
+            }
+
+            anchor.addStyle({
+                left: x + 'px',
+                top: y + 'px'
+            });
+        }
         anchor.addClass('absol-active');
     }, 30);
+
+
     setTimeout(function () {
         $(document.body).on('click', finish)
             .on('contextmenu', finish);

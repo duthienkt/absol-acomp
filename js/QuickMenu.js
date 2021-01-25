@@ -5,7 +5,7 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import './Menu';
 import {cleanMenuItemProperty} from "./utils";
 
-
+var isMobile = BrowserDetector.isMobile;
 var _ = ACore._;
 var $ = ACore.$;
 
@@ -37,7 +37,7 @@ QuickMenu.DEFAULT_ANCHOR = 0;
 
 QuickMenu.$elt = _('quickmenu');
 QuickMenu.$element = undefined;
-QuickMenu.$anchor = _('.absol-context-menu-anchor');
+QuickMenu.$anchor = _('.absol-context-menu-anchor.as-context-menu-ctn');
 QuickMenu.$anchor.addChild(QuickMenu.$elt);
 
 QuickMenu._acceptAnchors = 0;
@@ -52,7 +52,6 @@ QuickMenu.$elt.on('press', function (event) {
 
 
 QuickMenu.updatePosition = function () {
-
     if (!QuickMenu.$element) return;
     var menu = QuickMenu.$elt;
     var anchor = QuickMenu.$anchor;
@@ -120,32 +119,41 @@ QuickMenu.updatePosition = function () {
 
     var bestSquare = -1;
     var bestRect;
-    var priority = [QuickMenu._previewAnchor].concat(QuickMenu._acceptAnchors);
+    var priority = ((typeof QuickMenu._previewAnchor === 'number') ? [QuickMenu._previewAnchor] : []).concat(QuickMenu._acceptAnchors);
+    if (priority.length) {
 
-    var cAnchor;
-    var outRect = new Rectangle(outBound.left, outBound.top, outBound.width, outBound.height);
+        var cAnchor;
+        var outRect = new Rectangle(outBound.left, outBound.top, outBound.width, outBound.height);
 
-    var menuRect;
-    var viewSquare;
-    var cPos;
-    for (var i = 0; i < priority.length; ++i) {
-        cAnchor = priority[i];
-        cPos = getPos(cAnchor);
-        menuRect = new Rectangle(cPos.x, cPos.y, qBound.width, qBound.height);
-        viewSquare = outRect.collapsedSquare(menuRect);
+        var menuRect;
+        var viewSquare;
+        var cPos;
+        for (var i = 0; i < priority.length; ++i) {
+            cAnchor = priority[i];
+            cPos = getPos(cAnchor);
+            menuRect = new Rectangle(cPos.x, cPos.y, qBound.width, qBound.height);
+            viewSquare = outRect.collapsedSquare(menuRect);
 
-        if (viewSquare - 0.01 > bestSquare) {
-            bestSquare = viewSquare;
-            pos = cPos;
-            QuickMenu._previewAnchor = cAnchor;
-            bestRect = outRect.collapsedRect(menuRect);
+            if (viewSquare - 0.01 > bestSquare) {
+                bestSquare = viewSquare;
+                pos = cPos;
+                QuickMenu._previewAnchor = cAnchor;
+                bestRect = outRect.collapsedRect(menuRect);
+            }
         }
+
+        anchor.addStyle({
+            left: pos.x + 'px',
+            top: pos.y + 'px'
+        });
+    }
+    else {
+        anchor.removeStyle({
+            left: null,
+            top: null
+        });
     }
 
-    anchor.addStyle({
-        left: pos.x + 'px',
-        top: pos.y + 'px'
-    });
 };
 
 QuickMenu._scrollEventHandler = QuickMenu.updatePosition.bind(QuickMenu);
@@ -170,9 +178,21 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     else if (anchor instanceof Array) {
         QuickMenu._acceptAnchors = anchor;
     }
+    else if (anchor === 'modal') {
+        QuickMenu._acceptAnchors = [];
+
+    }
     else {
         QuickMenu._acceptAnchors = QuickMenu.PRIORITY_ANCHORS;
+
     }
+    if (anchor === 'modal') {
+        QuickMenu.$anchor.addClass('as-anchor-modal');
+    }
+    else {
+        QuickMenu.$anchor.removeClass('as-anchor-modal');
+    }
+
 
     QuickMenu._previewAnchor = QuickMenu._acceptAnchors[0];
 
@@ -187,13 +207,13 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     Object.assign(menuElt, menuProps);
     if (darkTheme) anchorElt.addClass('dark');
     else anchorElt.removeClass('dark');
-    menuElt.removeStyle('visibility');//for prevent size change blink
+    menuElt.addStyle('visibility', 'hidden');//for prevent size change blink
     QuickMenu.$anchor.addClass('absol-active');
 
     QuickMenu.updatePosition();
     setTimeout(function () {
         menuElt.addStyle('visibility', 'visible');
-    }, BrowserDetector.isMobile ? 33 : 2);
+    }, isMobile ? 33 : 2);
 
     //track element
     var trackElt = element.parentElement;
