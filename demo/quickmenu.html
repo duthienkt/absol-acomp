@@ -2,10 +2,10 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
     <meta charset="UTF-8">
     <title>Menu</title>
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
-    <link rel="stylesheet" href="https://absol.cf/css/materialdesignicons/materialdesignicons.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
@@ -196,7 +196,7 @@
             }, true);// darkTheme = true
         });
 
-        [[0, 3, 4, 7], [1, 2, 5, 6], [0, 7], [3, 4]].forEach(function (anchor, i) {
+        ['modal',[0, 3, 4, 7], [1, 2, 5, 6], [0, 7], [3, 4], 'modal'].forEach(function (anchor, i) {
             var button = absol._({
                 tag: 'button',
                 child: { text: 'Ancho = ' + JSON.stringify(anchor) }
