@@ -129,4 +129,6 @@
 
 .as-context-menu-ctn.as-anchor-modal > .absol-vmenu {
     min-width: 70%;
+    max-width: calc(100% - 10px);
+    max-height: calc(100% - 10px);
 }
