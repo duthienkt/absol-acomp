@@ -416,7 +416,7 @@ ChromeCalendar.prototype.viewMonth = function () {
     this.removeClass('view-year').addClass('view-month');
     this._fillMonth(this.$month, this._viewDate);
     this._updateMonth(this.$month);
-    this.$titleTime.innerHTML = datetime.formartDateString(this._viewDate, 'mmmm, yyyy');
+    this.$titleTime.innerHTML = datetime.formatDateString(this._viewDate, 'mmmm, yyyy');
 };
 
 
