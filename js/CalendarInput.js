@@ -1,6 +1,6 @@
 import '../css/calendarinput.css';
 import ACore from "../ACore";
-import {formartDateString} from "absol/src/Time/datetime";
+import {formatDateString} from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
@@ -25,7 +25,7 @@ function CalendarInput() {
         selectedDates: [new Date()]
     }, 'auto', function (value) {
         thisCI._value = value;
-        thisCI.$input.value = thisCI.formartDateString(value);
+        thisCI.$input.value = thisCI.formatDateString(value);
         thisCI._quickOption.calendarProps.selectedDates = [value];//change new option
         thisCI.emit('change', { target: thisCI, value: value }, thisCI);
     });
@@ -54,7 +54,7 @@ CalendarInput.property = {};
 CalendarInput.property.value = {
     set: function (value) {
         if (value === null || value === undefined) {
-            this.$input.value = this.formartDateString(value);
+            this.$input.value = this.formatDateString(value);
             this._quickOption.calendarProps.selectedDates = [];
             this._value = value;
             this._quickOption.calendarProps.selectedDates = [new Date()]
@@ -62,7 +62,7 @@ CalendarInput.property.value = {
         else {
             if (typeof value == 'number') value = new Date(value);
             this._value = value;
-            this.$input.value = this.formartDateString(value);
+            this.$input.value = this.formatDateString(value);
             this._quickOption.calendarProps.selectedDates = [value];
         }
     },
@@ -108,14 +108,14 @@ CalendarInput.attribute = {
 CalendarInput.property.dateToString = {
     set: function (value) {
         this._dateToString = value;
-        this.$input.value = this.formartDateString(this.value);
+        this.$input.value = this.formatDateString(this.value);
     },
     get: function () {
         return this._dateToString;
     }
 };
 
-CalendarInput.prototype.formartDateString = function (date) {
+CalendarInput.prototype.formatDateString = function (date) {
     if (!date) {
         return {
             'undefined': 'dd/mm/yyyy',
@@ -125,10 +125,10 @@ CalendarInput.prototype.formartDateString = function (date) {
         }[typeof this.dateToString] || '--/--/--';
     }
     if (!this.dateToString) {
-        return formartDateString(date);
+        return formatDateString(date);
     }
     else if (typeof this.dateToString == 'string') {
-        return formartDateString(date, this.dateToString);
+        return formatDateString(date, this.dateToString);
     }
     else if (typeof this.dateToString == 'function') {
         return this.dateToString(date);

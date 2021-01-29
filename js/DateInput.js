@@ -1,7 +1,7 @@
 import '../css/dateinput.css';
 
 import ACore from "../ACore";
-import {daysInMonth, beginOfDay, compareDate, formartDateString} from "absol/src/Time/datetime";
+import {daysInMonth, beginOfDay, compareDate, formatDateString} from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
@@ -385,11 +385,11 @@ DateInput.property.value = {
         }
         else if ((typeof value == 'string') || (typeof value == 'number')) {
             this._value = beginOfDay(new Date(value));
-            this.$input.value = formartDateString(this._value, this._format);
+            this.$input.value = formatDateString(this._value, this._format);
         }
         else if (value.getTime) {
             this._value = beginOfDay(value);
-            this.$input.value = formartDateString(this._value, this._format);
+            this.$input.value = formatDateString(this._value, this._format);
         }
         this._lastValue = this._value;
         this._calendarHolder.calendarProps.selectedDates = [this._value || new Date()];
