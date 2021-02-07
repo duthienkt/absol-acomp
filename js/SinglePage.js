@@ -2,6 +2,7 @@ import '../css/singlepage.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import AElement from "absol/src/HTML5/AElement";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -14,11 +15,30 @@ var warned = false;
  */
 function SinglePage() {
     var thisSP = this;
+    this._updateIntv = -1;
+    this._tick = function () {
+        if (this.isDescendantOf(document.body)) {
+            if (this.$header){
+                var headerHeight = this.$header.getBoundingClientRect().height;
+                if (this._prevHeaderHeight !== headerHeight){
+                    ResizeSystem.update();
+                }
+            }
+        }
+        else {
+            clearInterval(this._updateIntv);
+            this._updateIntv = -1;
+        }
+    }.bind(this);
     this.$attachhook = $('attachhook', this)
-        .on('error', function () {
+        .on('attached', function () {
             this.updateSize();
             setTimeout(this.updateSize, 20);
             Dom.addToResizeSystem(this);
+            if (thisSP._updateIntv < 0) {
+                thisSP._updateIntv = setInterval(thisSP._tick, 200);
+            }
+
         });
     this.$attachhook.updateSize = this.updateSize.bind(this);
     this.$header = null;
@@ -52,6 +72,7 @@ SinglePage.prototype.updateSize = function () {
         var headerMarginTop = parseFloat(this.$header.getComputedStyleValue('margin-top').replace('px', '')) || 0;
         var headerMarginBottom = parseFloat(this.$header.getComputedStyleValue('margin-bottom').replace('px', '')) || 0;
         this.$scroller.addStyle('top', (headerBound.height + headerMarginTop + headerMarginBottom + paddingTop) + 'px');
+        this._prevHeaderHeight = headerBound.height;
     }
     if (this.$footer) {
         var footerBound = this.$footer.getBoundingClientRect();
