@@ -233,7 +233,7 @@ Toast.make = function (aObject, pos) {
 
     }
     var toastElt = _(aObject);
-    var toastListElt = Toast.$toastList4Pos[pos] || Toast.$toastList4Pos;
+    var toastListElt = Toast.$toastList4Pos[pos] || Toast.$toastList;
     toastListElt.addChild(toastElt);
     return toastElt;
 };
