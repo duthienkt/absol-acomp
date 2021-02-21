@@ -18,7 +18,7 @@ if (isSupportedVar) {
         var cssElt = _('style#selectlist-dynamic-style');
         var cssCode = [
             '.absol-selectlist-item>span {',
-            '    margin-right: calc(1em + var(--select-list-desc-width));',
+            '    margin-right: calc(0.35em + var(--select-list-desc-width));',
             '}',
 
             '.absol-selectlist-item-desc-container {',
