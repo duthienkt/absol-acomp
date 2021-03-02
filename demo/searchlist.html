@@ -2,11 +2,9 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>Auto Complete Input</title>
-    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
-    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
     <style>
 
@@ -14,44 +12,245 @@
 </head>
 
 <body>
-    <h1>Auto Complete Input</h1>
-    <h2>Array string</h2>
-    <script class="viewable">
-        var list = [{
-            icon: "video_call", text: "Auto Complete Input", value: 1
-        },
-        {
-            icon: "video_call", text: "video_call", value: 2
-        },
-        {
-            icon: "video_call", text: "Voice", value: 3
-        },
-        {
-            icon: "video_call", text: "accept", value: 4
-        },
-        {
-            text: "C", icon: "video_call", value: 5
-        },
-        {
-            text: "D", value: 6
-        },
-        {
-            text: "EE", value: 7
-        }
-        ]
+<h1>SearchList</h1>
+<script>
+    function harmonicMean(a, b) {
+        return 2 / (1 / a + 1 / b);
+    }
 
-        absol._({
-            tag: 'searchlist',
-            props: {
-                items: list
+    function wordLike(a, b) {
+        var m = a.length;
+        var n = b.length;
+
+        function map(i, j) {
+            return i * (n + 1) + j;
+        }
+        var Q = Array((m + 1) * (n + 1)).fill(0);
+
+        for (var i = 0; i < m; ++i)
+            for (var j = 0; j < n; ++j)
+                if (a.charAt(i) == b.charAt(j)) {
+                    if (Q[map(i + 1, j + 1)]) {
+                        if (Q[map(i + 1, j + 1)] < Q[map(i, j)] + 1)
+                            Q[map(i + 1, j + 1)] = Q[map(i, j)] + 1;
+                    }
+                    else
+                        Q[map(i + 1, j + 1)] = Q[map(i, j)] + 1;
+                }
+                else
+                    Q[map(i + 1, j + 1)] = Math.max(Q[map(i + 1, j)], Q[map(i, j + 1)]);
+
+        return Q[map(m, n)] / harmonicMean(m, n);
+    }
+
+
+    /**
+     *
+     * @param {Array<String>} sq1
+     * @param {Array<String>} sq2
+     */
+     function wordsMatch(sq1, sq2, matchWordPow) {
+        matchWordPow = matchWordPow === undefined ? 1 : matchWordPow;
+
+        var m = sq1.length;
+        var n = sq2.length;
+        function map(i, j) {
+            return i * (n + 1) + j;
+        }
+        var Q = Array((m + 1) * (n + 1)).fill(0);
+        var e = 0.0;
+        for (var i = 0; i < m; ++i)
+            for (var j = 0; j < n; ++j) {
+                e = Math.pow(wordLike(sq1[i], sq2[j]), matchWordPow);
+
+                if (Q[map(i + 1, j + 1)]) {
+                    if (Q[map(i + 1, j + 1)] < Q[map(i, j)] + e)
+                        Q[map(i + 1, j + 1)] = Q[map(i, j)] + e;
+
+                }
+                else
+                    Q[map(i + 1, j + 1)] = Q[map(i, j)] + e;
+
+                e = Math.max(Q[map(i + 1, j)], Q[map(i, j + 1)]);
+                if (e > Q[map(i + 1, j + 1)]) Q[map(i + 1, j + 1)] = e;
+
             }
 
-        }).addTo(document.body);
+        return Q[map(m, n)];
+    }
 
 
-    </script>
+    /**
+     *
+     * @param {String} s
+     * @returns {String}
+     */
+    function nonAccentVietnamese(s) {
+        return s.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a")
+            .replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A")
+            .replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e")
+            .replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E")
+            .replace(/ì|í|ị|ỉ|ĩ/g, "i")
+            .replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I")
+            .replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o")
+            .replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O")
+            .replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u")
+            .replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U")
+            .replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y")
+            .replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y")
+            .replace(/đ/g, "d")
+            .replace(/Đ/g, "D")
+            .replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, "")
+            .replace(/\u02C6|\u0306|\u031B/g, "");
+    }
 
-    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+
+    var EXTRA_MATCH_SCORE = 7;
+    var UNCASE_MATCH_SCORE = 4;
+    var UVN_MATCH_SCORE = 3;
+    var EQUAL_MATCH_SCORE = 4;
+    var WORD_MATCH_SCORE = 3;
+
+    /***
+     *
+     * @param {SelectionItem} item
+     * @returns {*}
+     */
+    function prepareSearchForItem(item) {
+        if (!item.text || !item.text.charAt) item.text = item.text + '';
+        var spliter = /\s+/;
+        item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
+        item.__words__ = item.__text__.split(spliter);
+
+        item.__textNoneCase__ = item.__text__.toLowerCase();
+        item.__wordsNoneCase__ = item.__textNoneCase__.split(spliter);
+
+
+        item.__nvnText__ = nonAccentVietnamese(item.__text__);
+        item.__nvnWords__ = item.__nvnText__.split(spliter);
+
+        item.__nvnTextNoneCase__ = item.__nvnText__.toLowerCase();
+        item.__nvnWordsNoneCase__ = item.__nvnTextNoneCase__.split(spliter);
+        return item;
+    }
+
+
+    function prepareSearchForList(items) {
+        var item;
+        for (var i = 0; i < items.length; ++i) {
+            if (typeof items[i] == 'string') {
+                items[i] = { text: items[i], value: items[i] };
+            }
+            item = items[i];
+            prepareSearchForItem(item);
+            if (item.items) prepareSearchForList(item.items);
+        }
+        return items;
+    }
+
+    function calcItemMatchScore(queryItem, item) {
+        var score = 0;
+        if (item.__text__ == queryItem.__text__)
+            score += EQUAL_MATCH_SCORE * queryItem.__text__.length;
+
+        var extraIndex = item.__text__.indexOf(queryItem.__text__);
+
+        if (extraIndex >= 0) {
+            score += EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+        }
+
+        extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
+        if (extraIndex >= 0) {
+            score += UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+        }
+
+        extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
+        if (extraIndex >= 0) {
+            score += UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+        }
+
+        score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * WORD_MATCH_SCORE;
+        score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * WORD_MATCH_SCORE;
+        return score;
+    }
+
+    /***
+     *
+     * @param  {String} query
+     * @param {Array<SelectionItem>} items
+     */
+    function searchListByText(query, items) {
+        query = (query || '').trim();
+        if (query.length == 0 || items.length == 0)
+            return items;
+        var queryItem = prepareSearchForItem({ text: query });
+        var its = items.map(function (item) {
+            return {
+                item: item,
+                score: calcItemMatchScore(queryItem, item)
+            }
+        });
+        its.sort(function (a, b) {
+            if (b.score - a.score == 0) {
+                if (b.item.__nvnText__ > a.item.__nvnText__) return -1
+                return 1;
+            }
+            return b.score - a.score;
+        });
+        var midValue = (its[0].score + its[its.length - 1].score) / 2;
+        if (midValue === 0) midValue += 0.1;
+        if (midValue < 1) midValue = 1;
+        return its.filter(function (it) {
+            return it.score >= midValue;
+        }).map(function (it) {
+            return it.item;
+        });
+    }
+
+</script>
+<script class="viewable">
+    var _ = absol._;
+    var $ = absol.$;
+    var books = ('Tội ác và trừng phạt, Thằng ngốc, Bọn người bị ám, Anh em nhà Karamazov,' +
+        'Chiến tranh và hòa bình, Anna Karenina, Cái chết của Ivan Ilich,' +
+        ' Molloy, Malone hấp hối, Không thể gọi tên,' +
+        'Andersen (Tập truyện cổ), Balzac (Lão Goriot), Emily Bronte (Đồi gió hú),' +
+        ' Camus (Kẻ xa lạ), Dickens (Những hi vọng lớn lao), Flaubert (Bà Bovary, Giáo dục tình cảm), Goethe (Faust), Gogol (Những linh hồn chết), Hemingway (Ông già và biển cả), Homère (Iliade, Odyssée), Kafka (Vụ án, Lâu đài), Lỗ Tấn (Nhật ký người điên và một số truyện ngắn), Gabriel Garcia Marquez (Trăm năm cô đơn, Tình yêu thời thổ tả), Nabokov (Lolita), Proust (Đi tìm thời gian đã mất), Shakespeare (Hamlet, Vua Lear, Othello), Murasaki Shikibu (Truyện kể Genji), Stendhal (Đỏ và đen), Tchekhov (Tuyển tập truyện ngắn), ' +
+        'Mark Twain (Những cuộc phiêu lưu của Huckleberry Finn),' +
+        ' Kawabata Yasunari (Tiếng rền của núi),Người Đàn Bà Và Người Đàn Ông Có Chiếc Lồng Chim,' +
+        'Người đàn bá hóa đá, Đàn ông không giống đàn bà')
+    .split(/,\s*/);
+
+    var bookList = books.map((name, idx)=> ({text: name, value: idx}));
+    prepareSearchForList(bookList);
+
+
+
+    var queryElt = _({
+        tag:'searchtextinput',
+        on:{
+            stoptyping: function(){
+                var query = this.value.trim();
+                makeSearch(query);
+            }
+        }
+    }).addTo(document.body);
+
+    var listElt = _('selectlist').addTo(document.body);
+
+
+    function makeSearch(query){
+        if (query.length>0) {
+            var resultItems = searchListByText(query, bookList);
+            listElt.items = resultItems;
+        }
+        else{
+            listElt.items = bookList;
+        }
+    }
+
+</script>
+
 
 </body>
 
