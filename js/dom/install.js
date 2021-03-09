@@ -94,6 +94,7 @@ import EmojiPickerTooltip from "../EmojiPickerTooltip";
 import PageIndicator from "../PageIndicator";
 import EmojiCounter from "../EmojiCounter";
 import EmojiCounterList from "../EmojiCounterList";
+import RotatedText from "../RotatedText";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -176,6 +177,7 @@ export var publicCreators = [
     RadioInput,
     RibbonSplitButton,
     RibbonButton,
+    RotatedText,
     SelectList,
     RemoteSvg,
     ResizeBox,

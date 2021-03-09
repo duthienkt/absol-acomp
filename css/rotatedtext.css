@@ -1,0 +1,17 @@
+.as-rotated-text {
+
+}
+
+.as-rotated-text::after {
+    content: "o";
+    color: transparent;
+    display: inline;
+}
+
+.as-rotated-text-content {
+    position: fixed;
+    transform: rotate(0deg);
+    transform-origin: 0.3em 50%;
+    font: inherit;
+    z-index: 1000;
+}
