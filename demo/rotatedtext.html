@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>RotatedText</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+
+    <style>
+        #demo1 {
+            padding: 180px;
+            border: 1px solid brown;
+            display: inline-block;
+        }
+
+        #demo1-ctn {
+            width: 250px;
+            height: 250px;
+            overflow: scroll;
+        }
+
+        #demo2 {
+            padding: 50px;
+            overflow: hidden;
+            border-radius: 50%;
+            border: 1px solid red;
+            margin: 10vh;
+            display: inline-block;
+        }
+
+        .your-custom-class {
+            color: rgb(80, 90, 120);
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+
+<body>
+<h1>Rotated Text</h1>
+<div id="demo1-ctn">
+    <div id="demo1"></div>
+</div>
+
+<div id="demo2"></div>
+<script class="viewable">
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var demo1 = $('#demo1')
+        var demo2 = $('#demo2')
+        _({
+            tag: 'rotatedtext',
+            style: {
+                background: 'red'//show position
+            },
+            props: {
+                text: 'conhecido de todos que',
+                angle: '-40deg'
+            }
+        }).addTo(demo1);
+
+        var rText2 = _({
+            tag: 'rotatedtext',
+            class: 'your-custom-class',
+            props: {
+                text: 'conhecido de todos que',
+                angle: 45//or '45deg' or '1.57rad'
+            }
+        }).addTo(demo2);
+
+        demo2.on({
+            mousemove: function () {
+                rText2.angle += 10;
+            }
+        })
+    })()
+
+</script>
+</body>
+
+</html>
