@@ -124,8 +124,7 @@ RotatedText.eventHandler.attached = function () {
 };
 
 RotatedText.eventHandler.detached = function () {
-    this._cancelTrackPosition()
-    console.log('detached')
+    this._cancelTrackPosition();
 };
 
 RotatedText.eventHandler.intervalCheck = function () {
