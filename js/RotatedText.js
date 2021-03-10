@@ -9,7 +9,8 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 function RotatedText() {
     this.$attachHook = $('attachhook', this);
     this.$attachHook.requestUpdateSize = this.eventHandler.positionChange;
-    this.$attachHook.on('attached', this.eventHandler.attached)
+    this.$attachHook.on('attached', this.eventHandler.attached);
+    this.$anchor = $('.as-rotated-text-anchor', this);
     this.$content = $('.as-rotated-text-content', this);
     this.$contentText = this.$content.firstChild;
     this.$trackElts = [];
@@ -29,9 +30,12 @@ RotatedText.render = function () {
         child: [
             'attachhook',
             {
-                tag: 'span',
-                class: 'as-rotated-text-content',
-                child: { text: '' }
+                class:'as-rotated-text-anchor',
+                child: {
+                    tag: 'span',
+                    class: 'as-rotated-text-content',
+                    child: { text: '' }
+                }
             }
         ]
     });
@@ -131,7 +135,7 @@ RotatedText.eventHandler.intervalCheck = function () {
 
 RotatedText.eventHandler.positionChange = function () {
     var bound = this.getBoundingClientRect();
-    this.$content.addStyle({
+    this.$anchor.addStyle({
         top: bound.top + 'px',
         left: bound.left + 'px'
     });
