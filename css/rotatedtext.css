@@ -12,6 +12,7 @@
     transform: rotate(0deg);
     transform-origin: 0.3em 50%;
     display: block;
+    zoom: 1.001;
 }
 
 
