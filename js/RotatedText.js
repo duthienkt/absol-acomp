@@ -119,6 +119,7 @@ RotatedText.eventHandler = {};
 RotatedText.eventHandler.attached = function () {
     ResizeSystem.add(this);
     this.eventHandler.positionChange();
+    this.$content.addStyle('transform-origin',Math.round(0.3 * this.$content.getFontSize())  + 'px 50%');
     this._trackPosition();
 };
 
@@ -136,8 +137,8 @@ RotatedText.eventHandler.intervalCheck = function () {
 RotatedText.eventHandler.positionChange = function () {
     var bound = this.getBoundingClientRect();
     this.$anchor.addStyle({
-        top: bound.top + 'px',
-        left: bound.left + 'px'
+        top: Math.round(bound.top) + 'px',
+        left: Math.round(bound.left) + 'px'
     });
 };
 
