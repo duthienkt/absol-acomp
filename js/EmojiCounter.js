@@ -134,6 +134,7 @@ EmojiCounter.eventHandler.mouseEnter = function () {
     this.on('mouseleave', this.eventHandler.finishHover);
 
     if (this.users && this.users.length > 0) {
+        prepare();
         EmojiCounter._session = Math.random() * 10000000000 >> 0;
         this._tooltipSession = EmojiCounter._session;
         EmojiCounter.$element = this;
@@ -166,14 +167,18 @@ EmojiCounter.eventHandler.finishHover = function () {
     }.bind(this), 500);
 };
 
+function prepare() {
+    if (EmojiCounter.$holder) return;
+    EmojiCounter.$holder = _('.absol-tooltip-root-holder');
+    EmojiCounter.$tooltip = _('EmojiUserListTooltip.top'.toLowerCase()).addTo(EmojiCounter.$holder);
+    EmojiCounter._scrollOutListener = undefined;
+    EmojiCounter._orientation = 'top';
+    EmojiCounter._session = Math.random() * 10000000000 >> 0;
+    EmojiPickerTooltip._listener = undefined;
+    EmojiCounter.$element = null;
+    EmojiCounter.$tooltip.$arrow.updateSize = EmojiCounter.updatePosition;
+}
 
-EmojiCounter.$holder = _('.absol-tooltip-root-holder');
-EmojiCounter.$tooltip = _('EmojiUserListTooltip.top'.toLowerCase()).addTo(EmojiCounter.$holder);
-EmojiCounter._scrollOutListener = undefined;
-EmojiCounter._orientation = 'top';
-EmojiCounter._session = Math.random() * 10000000000 >> 0;
-EmojiPickerTooltip._listener = undefined;
-EmojiCounter.$element = null;
 
 EmojiCounter.updatePosition = function () {
     if (!EmojiCounter.$element) return;
@@ -187,7 +192,6 @@ EmojiCounter.updatePosition = function () {
 
 
 EmojiCounter.updatePosition = EmojiCounter.updatePosition.bind(EmojiCounter);
-EmojiCounter.$tooltip.$arrow.updateSize = EmojiCounter.updatePosition;
 
 
 export default EmojiCounter;

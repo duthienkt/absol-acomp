@@ -184,7 +184,7 @@ EmojiPickerTooltip.property.icons = {
 EmojiPickerTooltip.property.viewOffset = {
     set: function (value) {
         this._viewOffset = Math.max(0, Math.min(value, this._icons.length - 6));
-        this.$iconList.addStyle('left', -(100 * this._viewOffset/6) + '%');
+        this.$iconList.addStyle('left', -(100 * this._viewOffset / 6) + '%');
         this.$leftBtn.disabled = this._viewOffset === 0;
         this.$rightBtn.disabled = this._viewOffset === this._icons.length - 6;
         this.$pageIndicatior.idx = Math.floor(this._viewOffset / 6);
@@ -259,22 +259,25 @@ EmojiPickerTooltip.eventHandler.dragEndTT = function (event) {
 
 ACore.install(EmojiPickerTooltip);
 
-
-EmojiPickerTooltip.$holder = _('.absol-tooltip-root-holder')
-EmojiPickerTooltip.$tooltip = _('emojipickertooltip.top').addTo(EmojiPickerTooltip.$holder)
-    .on('pick', function (event) {
-        EmojiPickerTooltip._listener && EmojiPickerTooltip._listener(event.icon);
-    });
-/***
- *
- * @type {PositionTracker|undefined}
- */
-EmojiPickerTooltip.$element = undefined;
-EmojiPickerTooltip.$content = undefined;
-EmojiPickerTooltip._orientation = 'auto';
-EmojiPickerTooltip._session = Math.random() * 10000000000 >> 0;
-EmojiPickerTooltip._listener = undefined;
-EmojiPickerTooltip._scrollOutListener = undefined;
+function prepare() {
+    if (EmojiPickerTooltip.$holder) return;
+    EmojiPickerTooltip.$holder = _('.absol-tooltip-root-holder')
+    EmojiPickerTooltip.$tooltip = _('emojipickertooltip.top').addTo(EmojiPickerTooltip.$holder)
+        .on('pick', function (event) {
+            EmojiPickerTooltip._listener && EmojiPickerTooltip._listener(event.icon);
+        });
+    /***
+     *
+     * @type {PositionTracker|undefined}
+     */
+    EmojiPickerTooltip.$element = undefined;
+    EmojiPickerTooltip.$content = undefined;
+    EmojiPickerTooltip._orientation = 'auto';
+    EmojiPickerTooltip._session = Math.random() * 10000000000 >> 0;
+    EmojiPickerTooltip._listener = undefined;
+    EmojiPickerTooltip._scrollOutListener = undefined;
+    EmojiPickerTooltip.$tooltip.$arrow.updateSize = EmojiPickerTooltip.updatePosition;
+}
 
 
 EmojiPickerTooltip.updatePosition = function () {
@@ -288,9 +291,10 @@ EmojiPickerTooltip.updatePosition = function () {
 };
 
 EmojiPickerTooltip.updatePosition = EmojiPickerTooltip.updatePosition.bind(EmojiPickerTooltip);
-EmojiPickerTooltip.$tooltip.$arrow.updateSize = EmojiPickerTooltip.updatePosition;
+
 
 EmojiPickerTooltip.show = function (element, menuListener, orientation) {
+    prepare();
     if (EmojiPickerTooltip.$element) {
         EmojiPickerTooltip.$element.stopTrackPosition();
         EmojiPickerTooltip.$element.off('positionchange', EmojiPickerTooltip.updatePosition);
