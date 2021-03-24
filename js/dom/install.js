@@ -95,6 +95,7 @@ import PageIndicator from "../PageIndicator";
 import EmojiCounter from "../EmojiCounter";
 import EmojiCounterList from "../EmojiCounterList";
 import RotatedText from "../RotatedText";
+import VerticalTreeDiagram, {VerticalTreeDiagramNode} from "../VerticalTreeDiagram";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -209,7 +210,9 @@ export var publicCreators = [
     WidthHeightResizer,
     TrackBar,
     TrackBarInput,
-    SpinnerIco
+    SpinnerIco,
+    VerticalTreeDiagramNode,
+    VerticalTreeDiagram
 ];
 
 /***
