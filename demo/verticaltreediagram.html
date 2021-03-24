@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>VerticalTreeDiagram</title>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+
+<body>
+<script>
+
+    var data = {
+        name: "Adminstrator",
+        child: [
+            {
+                name: "About",
+                child: [
+                    {
+                        name: "Our board",
+                        child: [
+                            {
+                                name: "Cynthia Tolken"
+                            },
+                            {
+                                name: "Bobby Founderson"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Our products",
+                child: [
+                    {
+                        name: "The Widget 2000TM"
+                    },
+                    {
+                        name: "Th McGuffin V2",
+                        child: [
+                            {
+                                name: "Brad Whiteman"
+                            },
+                            {
+                                name: "Bobby Founderson"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Contact us"
+            }
+        ]
+    };
+    var tree = absol._({
+        tag: 'VerticalTreeDiagram'.toLowerCase(),
+        props: {
+            data: data
+        }
+    }).addTo(document.body);
+</script>
+
+</body>
+
+</html>
