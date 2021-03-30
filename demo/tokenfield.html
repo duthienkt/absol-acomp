@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TokenField</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js?')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    var  mTk = absol._({
+        tag:'tokenfield',
+        props:{
+            placeHolder: 'Enter text!',
+            items:['1','2', '3']
+        },
+        on:{
+            change: function (event){
+                console.log(event, this.items);
+            }
+        }
+    });
+    document.body.appendChild(mTk);
+</script>
+</body>
+</html>
