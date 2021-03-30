@@ -96,6 +96,7 @@ import EmojiCounter from "../EmojiCounter";
 import EmojiCounterList from "../EmojiCounterList";
 import RotatedText from "../RotatedText";
 import VerticalTreeDiagram, {VerticalTreeDiagramNode} from "../VerticalTreeDiagram";
+import TokenField from "../TokenField";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -207,6 +208,7 @@ export var publicCreators = [
     Toast,
     TreeList,
     TreeListItem,
+    TokenField,
     WidthHeightResizer,
     TrackBar,
     TrackBarInput,

@@ -1,0 +1,27 @@
+.as-token-field {
+    font-size: 14px;
+    border: 1px solid #dddddd;
+}
+
+.as-token-field-input-text {
+    font: inherit;
+    padding: 0;
+    box-sizing: border-box;
+    min-width: 60px;
+    border: none;
+    outline: none;
+    height: var(--select-box-item-height);
+    line-height: var(--select-box-item-height);
+    vertical-align: top;
+    margin-top: 2px;
+}
+
+.absol-selectbox-item.as-token-field-item {
+    font: inherit;
+    margin: 2px;
+    outline: none;
+}
+
+.as-token-field-item:focus {
+    background-color: var(--select-box-focus-item-color);
+}
