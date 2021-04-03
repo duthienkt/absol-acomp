@@ -5,6 +5,8 @@ import '../css/tokenfield.css';
 import {getCaretPosition, measureText} from "./utils";
 import Vec2 from "absol/src/Math/Vec2";
 import {setCaretPosition} from "absol/src/HTML5/Text";
+import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import {hitElement} from "absol/src/HTML5/EventEmitter";
 
 /***
  * @extends AElement
@@ -13,13 +15,35 @@ import {setCaretPosition} from "absol/src/HTML5/Text";
 function TokenField() {
     this.on('click', this.eventHandler.click);
     this.$input = $('input', this)
-        .on('keydown', this.eventHandler.inputKeyDown);
+        .on('keydown', this.eventHandler.inputKeyDown)
+        .on('focus', this.eventHandler.inputInteract)
+        .on('click', this.eventHandler.inputInteract)
+        .on('keydown', this.eventHandler.inputInteract);
     this.$attachhook = $('attachhook', this)
         .on('attached', function () {
             ResizeSystem.add(this);
             this.requestUpdateSize();
         });
     this.$attachhook.requestUpdateSize = this.updateSize.bind(this);
+
+
+    /***
+     *
+     * @type {SelectListBox}
+     */
+    this.$selectlistBox = _({
+        tag: 'selectlistbox',
+        props: {
+            anchor: [1, 6, 2, 5]
+        },
+        on: {
+            preupdateposition: this.eventHandler.preUpdateListPosition
+        }
+    });
+    this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
+    this.$selectlistBox.followTarget = this;
+
+    this.autocomplete = null;
     this.separator = ' ';
     this.placeHolder = '';
 }
@@ -56,7 +80,8 @@ TokenField.prototype._makeItem = function (text) {
 
     itemElt.on({
         keydown: this.eventHandler.itemKeyDown.bind(this, itemElt),
-        close: this.eventHandler.itemClose.bind(this, itemElt)
+        close: this.eventHandler.itemClose.bind(this, itemElt),
+        focus: this.eventHandler.itemFocus.bind(this, itemElt)
     });
 
     return itemElt;
@@ -86,6 +111,7 @@ TokenField.prototype._updateInputWidth = function () {
 };
 
 TokenField.prototype._isSeparatorKey = function (key) {
+    if (key === 'Enter') return true;
     if (this.separator === ' ') return key === ' ';
     if (this.separator === '\n') return key === 'Enter';
     if (this.separator === '\t') return key === 'Tab';
@@ -99,6 +125,25 @@ TokenField.prototype.updateSize = function () {
 TokenField.prototype._notifyChange = function (data) {
     this.emit('change', Object.assign({ type: 'change', target: this }, data), this);
 };
+
+TokenField.prototype._searchInList = function () {
+    if (this._searchTimeout > 0) {
+        clearTimeout(this._searchTimeout);
+    }
+    this._searchTimeout = setTimeout(function () {
+        var text = this.$input.value;
+        if (this.$selectlistBox.isDescendantOf(document.body)) {
+            this.$selectlistBox.$searchInput.value = text;
+            this.$selectlistBox.eventHandler.searchModify();
+            if (this.$selectlistBox._displayItems.length === 0) {
+                this.$selectlistBox.addStyle('visibility', 'hidden');
+            }
+            else {
+                this.$selectlistBox.removeStyle('visibility');
+            }
+        }
+    }.bind(this), 100);
+}
 
 TokenField.eventHandler = {};
 TokenField.property = {};
@@ -140,6 +185,26 @@ TokenField.property.items = {
             return elt.data.value;
         });
     }
+};
+
+TokenField.property.autocomplete = {
+    set: function (value) {
+        this._autocomplete = value || null;
+        if (this._autocomplete) {
+            this.$selectlistBox.items = this._autocomplete.map(function (it) {
+                return {
+                    value: it + '',
+                    text: it + ''
+                };
+            });
+        }
+        else {
+            this.$selectlistBox.items = [];
+        }
+    },
+    get: function () {
+        return this._autocomplete;
+    }
 }
 
 
@@ -152,12 +217,12 @@ TokenField.eventHandler.inputKeyDown = function (event) {
             this._appendItem(newItem);
             this.updateSize();
             this._notifyChange({ action: 'add', item: text, itemElt: newItem });
+            this.eventHandler.inputOut();
         }
         event.preventDefault();
     }
     else if (event.key.startsWith('Arrow') || event.key === 'Backspace') {
         if (this.$input.selectionStart === 0 && this.$input.selectionEnd === 0) {
-            console.log(event.key)
             if (event.key === 'ArrowLeft' || event.key === 'Backspace') {
                 event.preventDefault();
                 var prevChild = this.findChildBefore(this.$input);
@@ -191,8 +256,41 @@ TokenField.eventHandler.inputKeyDown = function (event) {
                 }
             }
         }
+        else {
+            this._searchInList();
+        }
+    }
+    else {
+        this._searchInList();
     }
 };
+
+
+TokenField.eventHandler.inputInteract = function (event) {
+    var lt = this._lastInteractTime;
+    this._lastInteractTime = new Date().getTime();
+    if (lt && (this._lastInteractTime - lt < 100)) {
+        return;
+    }
+    if (this.$selectlistBox.isDescendantOf(document.body)) return;
+    this.$selectlistBox.addTo(document.body);
+    this.$selectlistBox.domSignal.$attachhook.emit('attached');
+    this._searchInList();
+    var bound = this.getBoundingClientRect();
+    this.$selectlistBox.addStyle('min-width', bound.width + 'px');
+    this.$selectlistBox.refollow();
+    this.$selectlistBox.updatePosition();
+
+    setTimeout(document.addEventListener.bind(document, 'click', this.eventHandler.inputOut), 100)
+};
+
+TokenField.eventHandler.inputOut = function (event) {
+    if (event && (hitElement(this.$selectlistBox, event) || hitElement(this.$input, event))) return;
+    document.removeEventListener('click', this.eventHandler.inputOut);
+    this.$selectlistBox.remove();
+    this._lastInteractTime = new Date().getTime();
+};
+
 
 TokenField.eventHandler.itemKeyDown = function (itemElt, event) {
     var nextElt;
@@ -275,12 +373,9 @@ TokenField.eventHandler.itemKeyDown = function (itemElt, event) {
 };
 
 TokenField.eventHandler.itemFocus = function (itemElt) {
-    itemElt.addClass('as-focus');
+    this.eventHandler.inputOut();
 };
 
-TokenField.eventHandler.itemBlur = function (itemElt) {
-    itemElt.removeClass('as-focus');
-};
 
 TokenField.eventHandler.itemClose = function (itemElt) {
     itemElt.remove();
@@ -292,6 +387,31 @@ TokenField.eventHandler.click = function (event) {
     if (event.target === this)
         this.$input.focus();
 };
+
+TokenField.eventHandler.preUpdateListPosition = function () {
+    var bound = this.getBoundingClientRect();
+    var screenSize = getScreenSize();
+    var availableTop = bound.top - 5;
+    var availableBot = screenSize.height - 5 - bound.bottom;
+    this.$selectlistBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
+    var outBound = traceOutBoundingClientRect(this);
+    if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
+        // this.isFocus = false;
+        //
+        console.log("OUT");
+    }
+};
+
+TokenField.eventHandler.selectListBoxPressItem = function (event) {
+    var text = event.data.value;
+    var newItem = this._makeItem(text);
+    this._appendItem(newItem);
+    this.updateSize();
+    this._notifyChange({ action: 'add', item: text, itemElt: newItem });
+    this.eventHandler.inputOut();
+    this.$input.focus();
+    this.$input.value = '';
+}
 
 ACore.install(TokenField);
 
