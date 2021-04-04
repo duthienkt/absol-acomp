@@ -45,6 +45,9 @@
         }
     </script>
     <?php
+    // ini_set('display_errors', 1);
+    // ini_set('display_startup_errors', 1);
+    // error_reporting(E_ALL);
         set_error_handler(function() { /* ignore errors */ });
         $temp = scandir(".");
         $l = count($temp);
@@ -66,7 +69,7 @@
                $iconSrc = "/exticons/square-o/folder.svg";
             }
             else{
-                $namep = split("[\.]", strtolower($name));
+                $namep = explode(".", strtolower($name));
                 $iconSrc = "/exticons/square-o/". $namep[count($namep) - 1].".svg";
             }
 
