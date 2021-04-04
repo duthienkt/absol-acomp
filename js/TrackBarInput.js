@@ -12,8 +12,6 @@ var $ = ACore.$;
  */
 function TrackBarInput() {
     var thisTI = this;
-    this.$trackbarContainer = $('.absol-trackbar-input-trackbar-container', this)
-    this.$inputContainer = $('.absol-trackbar-input-unit-input-container', this)
     this.$trackbar = $('trackbar', this);
     this.$input = $('flexiconinput', this);
 
@@ -38,14 +36,9 @@ TrackBarInput.render = function () {
     return _({
         class: 'absol-trackbar-input',
         extendEvent: 'change',
-        child: [{
-            class: 'absol-trackbar-input-trackbar-container',
-            child: 'trackbar'
-        },
-            {
-                class: 'absol-trackbar-input-unit-input-container',
-                child: 'flexiconinput'
-            }
+        child: [
+            'trackbar',
+            'flexiconinput'
         ]
     });
 };
@@ -118,13 +111,11 @@ TrackBarInput.property.inputTextWidth = {
     set: function (value) {
         if (typeof value == 'number') {
             this._inputTextWidth = value;
-            this.$inputContainer.addStyle('width', 3 + (value - 2) * 0.42 + 0.3 + 'em');
-            this.$trackbarContainer.addStyle('right', 3.5 + (value - 2) * 0.42 + 0.3 + 'em');
+            this.addStyle('--input-width', 3 + (value - 2) * 0.42 + 0.3 + 'em');
         }
         else {
             this._inputTextWidth = value;
-            this.$inputContainer.addStyle('width', value);
-            this.$trackbarContainer.addStyle('right', value);
+            this.addStyle('--input-width', value);
         }
     },
     get: function () {
