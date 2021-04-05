@@ -26,7 +26,6 @@ function NumberInput() {
         .on('mousedown', this.eventHandler.mouseDownUpBtn);
     this.$downBtn = $('.absol-number-input-button-down-container button', this)
         .on('mousedown', this.eventHandler.mouseDownDownBtn);
-
     this._decimalSeparator = '.';
     this._thousandsSeparator = '';
     this._floatFixed = -1;// unset
@@ -77,7 +76,7 @@ NumberInput.eventHandler.mouseDownUpBtn = function (event) {
     function tick() {
         if (pressing) {
             if (i == 0 || i >= 4) {
-                self.value = Math.floor(self.value) + 1;
+                self.value = Math.round(self.value * Math.pow(10, Math.max(self._floatFixed, 0)) + 1) / Math.pow(10, Math.max(self._floatFixed, 0));
                 self.notifyChanged({ by: 'long_press_button' });
             }
             ++i;
@@ -115,9 +114,8 @@ NumberInput.eventHandler.mouseDownDownBtn = function (event) {
     function tick() {
         if (pressing) {
             if (i == 0 || i >= 4) {
-                self.value = Math.ceil(self.value) - 1;
+                self.value = Math.round(self.value * Math.pow(10, Math.max(self._floatFixed, 0)) - 1) / Math.pow(10, Math.max(self._floatFixed, 0));
                 self.notifyChanged({ by: 'long_press_button' });
-
             }
             ++i;
             self.__pressingUpTimeout__ = setTimeout(tick, 100);
