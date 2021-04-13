@@ -18,9 +18,9 @@ function SinglePage() {
     this._updateIntv = -1;
     this._tick = function () {
         if (this.isDescendantOf(document.body)) {
-            if (this.$header){
+            if (this.$header) {
                 var headerHeight = this.$header.getBoundingClientRect().height;
-                if (this._prevHeaderHeight !== headerHeight){
+                if (this._prevHeaderHeight !== headerHeight) {
                     ResizeSystem.update();
                 }
             }
@@ -80,6 +80,7 @@ SinglePage.prototype.updateSize = function () {
     }
     if (this.isSupportedEvent('sizechange'))
         this.emit('sizechange', { type: 'sizechange', target: this }, this);
+    this.addStyle('--single-page-scroller-height', this.$scroller.clientHeight + 'px');
 };
 
 SinglePage.prototype.addChild = function (elt) {
