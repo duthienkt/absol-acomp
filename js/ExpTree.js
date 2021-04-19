@@ -102,7 +102,7 @@ ExpNode.property.icon = {
             if (!Dom.isDomNode(value)) {
                 newE = _(value);
             }
-
+            this.$iconP = newE;
             this.$iconCtn.addChild(newE);
             this._icon = value;
         }
