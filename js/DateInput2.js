@@ -148,12 +148,25 @@ DateInput2.property.value = {
             this._value = null;
         }
         else if ((typeof value == 'string') || (typeof value == 'number')) {
-            this._value = beginOfDay(new Date(value));
-            this.$input.value = formatDateString(this._value, this._format);
+            value = new Date(value);
+            if (isNaN(value.getTime)) {
+                this.$input.value = this.format;
+                this._value = null;
+            }
+            else {
+                this._value = beginOfDay(value);
+                this.$input.value = formatDateString(this._value, this._format);
+            }
         }
         else if (value.getTime) {
-            this._value = beginOfDay(value);
-            this.$input.value = formatDateString(this._value, this._format);
+            if (isNaN(value.getTime())) {
+                this.$input.value = this.format;
+                this._value = null;
+            }
+            else {
+                this._value = beginOfDay(value);
+                this.$input.value = formatDateString(this._value, this._format);
+            }
         }
         this._lastValue = this._value;
         this._calendarHolder.calendarProps.selectedDates = [this._value || new Date()];
