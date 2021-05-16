@@ -210,15 +210,15 @@ ChromeCalendar.prototype._isSelectedYear = function (date) {
 
 ChromeCalendar.prototype._dayCmpLimit = function (date) {
     if (compareDate(date, this._minLimitDate) < 0) return -1;
-    if (compareDate(date, this._maxLimitDate) >= 0) return 1;
+    if (compareDate(date, this._maxLimitDate) > 0) return 1;
     return 0;
 };
 
 ChromeCalendar.prototype._monthCmpLimit = function (date) {
     var startOfMonth = beginOfMonth(date);
-    var endOfMonth = prevDate(nextMonth(date));
+    var endOfMonth = nextMonth(date);
     var minMil = Math.max(startOfMonth.getTime(), this._minLimitDate.getTime());
-    var maxMil = Math.min(endOfMonth.getTime(), this._maxLimitDate.getTime());
+    var maxMil = Math.min(endOfMonth.getTime(), nextDate(this._maxLimitDate).getTime());
     if (minMil < maxMil) return 0;
     return this._dayCmpLimit(date);
 };
@@ -227,7 +227,7 @@ ChromeCalendar.prototype._yearCmpLimit = function (date) {
     var startOfYear = beginOfYear(date);
     var endOfYear = new Date(date.getFullYear() + 1, 0, 1);
     var minMil = Math.max(startOfYear.getTime(), this._minLimitDate.getTime());
-    var maxMil = Math.min(endOfYear.getTime(), this._maxLimitDate.getTime());
+    var maxMil = Math.min(endOfYear.getTime(), nextDate(this._maxLimitDate).getTime());
     if (minMil < maxMil) return 0;
     return this._dayCmpLimit(date);
 };
@@ -916,6 +916,7 @@ ChromeCalendar.property.minLimitDate = {
     }
 };
 
+//include maxLimitDate
 ChromeCalendar.property.maxLimitDate = {
     set: function (value) {
         if (!value) value = new Date(2090, 0, 1);
