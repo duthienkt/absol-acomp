@@ -31,7 +31,7 @@
     right: 0;
 }
 
-.absol-chrome-calendar-header-buttons>button {
+.absol-chrome-calendar-header-buttons > button {
     font-size: 1em;
     width: 1.5em;
     height: 1.5em;
@@ -45,22 +45,27 @@
     color: rgb(110, 110, 110);
 }
 
-.absol-chrome-calendar-header-buttons>button:nth-child(2) {
+.absol-chrome-calendar-header-buttons > button:nth-child(2) {
     margin-left: 0.2em;
     margin-right: 0.2em;
 }
 
 
-.absol-chrome-calendar-header-buttons>button:active {
+.absol-chrome-calendar-header-buttons > button:active {
     box-shadow: 0px 0px 2px #aaa;
 
 }
 
-.absol-chrome-calendar-title {
+.absol-chrome-calendar:not(.view-era)  .absol-chrome-calendar-title {
     cursor: pointer;
 }
 
-.absol-chrome-calendar-title>span {
+.absol-chrome-calendar.as-level-day  .absol-chrome-calendar-title::after{
+    content: "\25BC";
+}
+
+
+.absol-chrome-calendar-title > span {
     line-height: 1.5em;
 }
 
@@ -84,7 +89,7 @@
     z-index: 10;
 }
 
-.absol-chrome-calendar-dayofweek>div {
+.absol-chrome-calendar-dayofweek > div {
     text-align: center;
     line-height: 1.2;
     display: inline-block;
@@ -108,7 +113,7 @@
     /* background: blue; */
 }
 
-.absol-chrome-calendar-month-animation-container>.absol-chrome-calendar-month {
+.absol-chrome-calendar-month-animation-container > .absol-chrome-calendar-month {
     width: 100%;
     height: 100%;
     margin-top: -1px;
@@ -128,14 +133,14 @@
     height: 1.2em;
 }
 
-.absol-chrome-calendar-week-in-mounth>div {
+.absol-chrome-calendar-week-in-mounth > div {
     display: table-cell;
     text-align: right;
     padding-right: 0.4em;
     cursor: pointer;
 }
 
-.absol-chrome-calendar-week-in-mounth>div:hover {
+.absol-chrome-calendar-week-in-mounth > div:hover {
     background-color: rgb(224, 245, 256);
 }
 
@@ -176,7 +181,8 @@
 }
 
 .absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-month,
-.absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-dayofweek {
+.absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-dayofweek,
+.absol-chrome-calendar:not(.view-era) .absol-chrome-calendar-era {
     display: none;
 }
 
@@ -233,11 +239,10 @@
     vertical-align: middle;
 }
 
-.absol-chrome-calendar-year-month:hover {
+.absol-chrome-calendar-year-month:hover,
+.absol-chrome-calendar-era-year:hover {
     background-color: rgb(224, 245, 256);
 }
-
-
 
 
 .absol-chrome-calendar-years:hover .absol-scrollbar {
@@ -251,15 +256,58 @@
     transition: opacity 0.2s;
 }
 
-.absol-chrome-calendar-date-disabled {
+.absol-chrome-calendar-date-disabled,
+.absol-chrome-calendar-era-year.absol-chrome-calendar-date-disabled{
     color: rgb(240, 230, 230);
     pointer-events: none;
     cursor: not-allowed;
 }
 
-button.absol-chrome-calendar-button-disabled {
+button.absol-chrome-calendar-button-disabled,
+.absol-chrome-calendar button:disabled {
     color: rgb(220, 210, 210);
     pointer-events: none;
     box-shadow: none;
     cursor: not-allowed;
 }
+
+.absol-chrome-calendar-era {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1000000;
+    /*width: 100%;*/
+    /*height: 100%; */
+    width: calc(196px + 17px);
+    box-sizing: border-box;
+    height: 100%;
+    background-color: white;
+    box-shadow: 0px 0px 1px 0 black;
+    overflow-y: scroll;
+    font-size: inherit;
+}
+
+.absol-chrome-calendar-era-row {
+    width: 14em;
+    height: 25%;
+    white-space: nowrap;
+    font-size: inherit;
+}
+
+.absol-chrome-calendar-era-year {
+    display: inline-block;
+    vertical-align: top;
+    height: 100%;
+    width: 25%;
+    text-align: center;
+    line-height: 2.1em;
+    font-size: inherit;
+    color: rgb(190, 190, 190);
+}
+
+
+.absol-chrome-calendar-in-decade:not(.absol-chrome-calendar-date-disabled) {
+    color: black;
+}
+
+/*.absol-chrome-calendar-era*/

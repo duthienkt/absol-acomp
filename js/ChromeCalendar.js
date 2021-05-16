@@ -5,7 +5,16 @@ import * as datetime from 'absol/src/Time/datetime';
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import Dom from "absol/src/HTML5/Dom";
 import {VScroller} from "./Scroller";
-import AElement from "absol/src/HTML5/AElement";
+import {
+    beginOfDay,
+    beginOfMonth, beginOfYear,
+    compareDate,
+    compareMonth, ddmmyyyy,
+    formatDateString,
+    nextDate, nextMonth,
+    prevDate, prevMonth
+} from "absol/src/Time/datetime";
+import DomSignal from "absol/src/HTML5/DomSignal";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -16,57 +25,31 @@ var $ = ACore.$;
  */
 function ChromeCalendar() {
     var thisCal = this;
+    this._level = "day";
     this.$years = $('.absol-chrome-calendar-years', this);
-    _({
-        child: Array(200).fill(0).map(function (u, i) {
-            return {
-                class: 'absol-chrome-calendar-year',
-                child: [
-                    {
-                        class: 'absol-chrome-calendar-year-head',
-                        child: { text: i + 1890 + '' },
-                    }
-                ],
-                props: {
-                    __year__: i + 1890
-                },
-                on: {
-                    click: function () {
-
-                        thisCal.expandYear(this.__year__);
-                    }
-                }
-            };
-        })
-    }).addTo(this.$years);
+    this._fillYearList(this.$years);
     this.$title = $('.absol-chrome-calendar-title', this)
-        .on('click', function () {
-            thisCal.viewYear();
-        });
-    this.$titleTime = $('.absol-chrome-calendar-title > .title-time', this);
+        .on('click', this.eventHandler.clickTitle);
+    this.$titleTime = $('.title-time', this.$title);
 
     this.$instance = $('.absol-chrome-calendar-instance', this);
-
+    this.$era = $('.absol-chrome-calendar-era', this)
+        .on('scroll', this.eventHandler.eraScroll)
+        .on('click', this.eventHandler.clickEra);
+    this._fillEra();
     this.$month = $('.absol-chrome-calendar-month', this);
-    this._minLimitDate = new Date(1890, 0, 1, 0, 0, 0, 0, 0);
-    this._maxLimitDate = new Date(2090, 0, 1, 0, 0, 0, 0, 0);
+    this._minLimitDate = new Date(1890, 0, 1);
+    this._maxLimitDate = new Date(2090, 0, 1);
 
     this._selectedDates = [datetime.beginOfDay(new Date())];
     this._viewDate = new Date();
 
     this.$prevBtn = $('.absol-chrome-calendar-header-buttons > button.prev-btn', this)
-        .on('click', function () {
-            thisCal.viewPrevMonth();
-        });
+        .on('click', this.eventHandler.clickPrev);
     this.$todayBtn = $('.absol-chrome-calendar-header-buttons > button.today-btn', this)
-        .on('click', function () {
-            thisCal.viewToday();
-            thisCal.pickDate(new Date());
-        });
+        .on('click', this.eventHandler.clickToday);
     this.$nextBtn = $('.absol-chrome-calendar-header-buttons > button.next-btn', this)
-        .on('click', function () {
-            thisCal.viewNexMounth();
-        });
+        .on('click', this.eventHandler.clickNext);
 
     /***
      *
@@ -79,24 +62,31 @@ function ChromeCalendar() {
         thisCal.$yearItems.push(e);
     });
 
-    this.$attachHook = _('attachhook').addTo(this)
-        .on('error', function () {
-            thisCal.$yearScroller.requestUpdateSize();
-            thisCal.expandYear(thisCal._viewDate.getFullYear());
-        });
+    this.$attachHook = _('attachhook').addTo(this);
+
+    this.domSignal = new DomSignal((this.$attachHook))
+        .on('level_change', this.eventHandler.levelChange)
+        .on('request_update_buttons', this._updateButtons.bind(this))
+        .on('request_update_month', this._updateMonth.bind(this, this.$month))
+        .on('request_update_open_year', this._updateOpenYear.bind(this))
+        .on('request_update_disabled_year_in_era', this._updateDisabledYearInEra.bind(this));
 
     this.sync = new Promise(function (rs) {
-        thisCal.$attachHook.on('error', rs);
+        thisCal.$attachHook.on('attached', rs);
     });
-
-    return this;
+    this.domSignal.emit('level_change');
+    this.sync.then('attached', function () {
+        thisCal.$yearScroller.requestUpdateSize();
+        thisCal.expandYear(thisCal._viewDate.getFullYear());
+        thisCal._updateYearInEra();
+    });
 }
 
 
 ChromeCalendar.tag = 'ChromeCalendar'.toLowerCase();
 ChromeCalendar.render = function () {
     return _({
-        class: 'absol-chrome-calendar',
+        class: ['absol-chrome-calendar', 'as-level-day'],
         extendEvent: 'pick',
         child: [
             {
@@ -110,10 +100,7 @@ ChromeCalendar.render = function () {
                                 class: 'title-time',
                                 child: { text: 'Septemper, 2019' }
                             },
-                            {
-                                tag: 'span',
-                                child: { text: '\u25bc' }
-                            }
+
                         ]
                     },
                     {
@@ -178,13 +165,15 @@ ChromeCalendar.render = function () {
                         tag: 'vscroller',
                         class: 'absol-chrome-calendar-years',
                         child: {}
+                    },
+                    {
+                        class: "absol-chrome-calendar-era"
                     }
                 ]
             }
         ]
     });
-
-}
+};
 
 
 /**
@@ -193,7 +182,7 @@ ChromeCalendar.render = function () {
  */
 ChromeCalendar.prototype._isSelectedDate = function (date) {
     for (var i = 0; i < this._selectedDates.length; ++i) {
-        if (datetime.compareDate(date, this._selectedDates[i]) == 0) return true;
+        if (compareDate(date, this._selectedDates[i]) === 0) return true;
     }
     return false;
 };
@@ -203,13 +192,54 @@ ChromeCalendar.prototype._isSelectedDate = function (date) {
  */
 ChromeCalendar.prototype._isSelectedMonth = function (date) {
     for (var i = 0; i < this._selectedDates.length; ++i) {
-        if (datetime.compareMonth(date, this._selectedDates[i]) == 0) return true;
+        if (compareMonth(date, this._selectedDates[i]) === 0) return true;
     }
     return false;
 };
 
+/**
+ * @param {Date} date
+ * @returns {Boolean}
+ */
+ChromeCalendar.prototype._isSelectedYear = function (date) {
+    for (var i = 0; i < this._selectedDates.length; ++i) {
+        if (date.getFullYear() === this._selectedDates[i].getFullYear()) return true;
+    }
+    return false;
+};
 
+ChromeCalendar.prototype._dayCmpLimit = function (date) {
+    if (compareDate(date, this._minLimitDate) < 0) return -1;
+    if (compareDate(date, this._maxLimitDate) >= 0) return 1;
+    return 0;
+};
+
+ChromeCalendar.prototype._monthCmpLimit = function (date) {
+    var startOfMonth = beginOfMonth(date);
+    var endOfMonth = prevDate(nextMonth(date));
+    var minMil = Math.max(startOfMonth.getTime(), this._minLimitDate.getTime());
+    var maxMil = Math.min(endOfMonth.getTime(), this._maxLimitDate.getTime());
+    if (minMil < maxMil) return 0;
+    return this._dayCmpLimit(date);
+};
+
+ChromeCalendar.prototype._yearCmpLimit = function (date) {
+    var startOfYear = beginOfYear(date);
+    var endOfYear = new Date(date.getFullYear() + 1, 0, 1);
+    var minMil = Math.max(startOfYear.getTime(), this._minLimitDate.getTime());
+    var maxMil = Math.min(endOfYear.getTime(), this._maxLimitDate.getTime());
+    if (minMil < maxMil) return 0;
+    return this._dayCmpLimit(date);
+};
+
+
+/***
+ *
+ * @param {Date} date
+ * @param event
+ */
 ChromeCalendar.prototype.pickDate = function (date, event) {
+    date = beginOfDay(date);
     this._selectedDates = [date];
     this._updateMonth(this.$month);
     if (this.$lastOpenYearItem) this.$lastOpenYearItem.$months.updateActiveMonth();
@@ -222,6 +252,45 @@ ChromeCalendar.prototype.pickDate = function (date, event) {
         selectedDates: this.selectedDates
     });
 };
+
+/***
+ *
+ * @param {Date} date
+ * @param event
+ */
+ChromeCalendar.prototype.pickMonth = function (date, event) {
+    date = beginOfMonth(date);
+    this._selectedDates = [date];
+    if (this.$lastOpenYearItem) this.$lastOpenYearItem.$months.updateActiveMonth();
+    console.log(this.$lastOpenYearItem, date)
+    this.emit('pick', {
+        type: 'pick', value: date,
+        isTrusted: event && event.isTrusted,
+        originEvent: event,
+        selectedDates: this.selectedDates
+    });
+};
+
+ChromeCalendar.prototype.pickYear = function (year, event) {
+    if (this.$lastPickYear) {
+        this.$lastPickYear.removeClass('absol-chrome-calendar-selected');
+    }
+    this.$lastPickYear = this._yearInAre(year);
+    if (this.$lastPickYear) {
+        this.$lastPickYear.addClass('absol-chrome-calendar-selected');
+        if (!this.$lastPickYear.containsClass('absol-chrome-calendar-in-decade')) {
+            this.scrollIntoDecade(Math.floor(year / 10) * 10, true);
+        }
+    }
+    var date = new Date(year, 0, 1, 0, 0, 0, 0);
+    this._selectedDates = [date];
+    this.emit('pick', {
+        type: 'pick', value: date,
+        isTrusted: event && event.isTrusted,
+        originEvent: event,
+    });
+};
+
 
 /**
  * @param {Element} monthElt
@@ -237,7 +306,7 @@ ChromeCalendar.prototype._fillMonth = function (monthElt, date) {
                 self.pickDate(this.__date__, event);
                 if (elt.containsClass('absol-chrome-calendar-not-in-month')) {
                     if (this.__date__.getDate() < 15) {
-                        self.viewNexMounth();
+                        self.viewNexMonth();
                     }
                     else {
                         self.viewPrevMonth();
@@ -251,7 +320,7 @@ ChromeCalendar.prototype._fillMonth = function (monthElt, date) {
     var d;
     var cell;
     for (var i = 0; i < monthElt.$cells.length; ++i) {
-        var cell = monthElt.$cells[i];
+        cell = monthElt.$cells[i];
         d = currentDate.getDate();
         cell.innerHTML = '' + d;
         cell.__date__ = datetime.beginOfDay(currentDate);
@@ -293,7 +362,58 @@ ChromeCalendar.prototype._updateMonth = function (monthElt) {
     }
 };
 
-ChromeCalendar.prototype.viewNexMounth = function () {
+ChromeCalendar.prototype._fillYearList = function (ctn) {
+    var thisCal = this;
+    _({
+        child: Array(200).fill(0).map(function (u, i) {
+            return {
+                class: 'absol-chrome-calendar-year',
+                child: [
+                    {
+                        class: 'absol-chrome-calendar-year-head',
+                        child: { text: i + 1890 + '' },
+                    }
+                ],
+                props: {
+                    __year__: i + 1890
+                },
+                on: {
+                    click: function () {
+                        thisCal.expandYear(this.__year__);
+                    }
+                }
+            };
+        })
+    }).addTo(ctn);
+};
+
+
+ChromeCalendar.prototype._fillEra = function () {
+    var now = new Date();
+    var cYear = now.getFullYear();
+    var rows = Array(50).fill(0).map(function (u, i) {
+        return _({
+            class: 'absol-chrome-calendar-era-row',
+            child: Array(4).fill(0).map(function (u1, j) {
+                var classList = ['absol-chrome-calendar-era-year'];
+                var year = 1890 + i * 4 + j;
+                if (cYear === year) {
+                    classList.push('absol-chrome-calendar-today');
+                }
+                return {
+                    class: classList,
+                    child: { text: year + '' },
+                    props: {
+                        __year__: year
+                    }
+                };
+            })
+        });
+    });
+    this.$era.addChild(rows);
+}
+
+ChromeCalendar.prototype.viewNexMonth = function () {
     var self = this;
     this.sync = this.sync.then(function () {
         return new Promise(function (rs) {
@@ -408,12 +528,23 @@ ChromeCalendar.prototype.viewPrevMonth = function () {
 
 ChromeCalendar.prototype.viewToday = function () {
     this._viewDate = new Date();
-    this.viewMonth();
+    switch (this._level) {
+        case "day":
+            this.viewMonth();
+            break;
+        case "month":
+            break;
+        case "year":
+            this.viewEra(true);
+            break;
+    }
 };
 
 ChromeCalendar.prototype.viewMonth = function () {
     this._updateButtons();
-    this.removeClass('view-year').addClass('view-month');
+    this.removeClass('view-year')
+        .removeClass('view-era')
+        .addClass('view-month');
     this._fillMonth(this.$month, this._viewDate);
     this._updateMonth(this.$month);
     this.$titleTime.innerHTML = datetime.formatDateString(this._viewDate, 'mmmm, yyyy');
@@ -422,20 +553,46 @@ ChromeCalendar.prototype.viewMonth = function () {
 
 ChromeCalendar.prototype.viewYear = function () {
     this.removeClass('view-month')
+        .removeClass('view-era')
         .addClass('view-year');
     this.expandYear(this._viewDate.getFullYear());
     this.$yearScroller.requestUpdateSize();
 };
 
-ChromeCalendar.prototype.expandYear = function (year) {
-    var fontSize = this.getFontSize();
+ChromeCalendar.prototype.viewEra = function (animation) {
+    this.removeClass('view-month')
+        .removeClass('view-year')
+        .addClass('view-era');
+    this.scrollIntoDecade(Math.floor(this._viewDate.getFullYear() / 10) * 10, animation);
+};
 
+ChromeCalendar.prototype.viewNextDecade = function (animation) {
+    this._viewDate = new Date(Math.min(2080, Math.floor(this._viewDate.getFullYear() / 10) * 10 + 10), 0, 1);
+    this._viewDate = new Date(Math.min(this._viewDate.getTime(), prevDate(this._maxLimitDate).getTime()));
+    this.viewEra(animation);
+};
+
+ChromeCalendar.prototype.viewPrevDecade = function (animation) {
+    this._viewDate = new Date((Math.max(1890, Math.floor(this._viewDate.getFullYear() / 10) * 10 - 10)), 0, 1);
+    this._viewDate = new Date(Math.max(this._viewDate.getTime(), this._minLimitDate.getTime()));
+    this.viewEra(animation);
+};
+
+
+ChromeCalendar.prototype.expandYear = function (year) {
+    if (this._level === 'month') {
+        this._viewDate = new Date(year, 0, 1);
+        this.$titleTime.innerHTML = formatDateString(this._viewDate, 'mmmm, yyyy');
+        this.domSignal.emit('request_update_buttons');
+    }
+
+    var fontSize = this.getFontSize();
     var self = this;
     var lastItemElt = this.$lastOpenYearItem;
 
     var itemElt = this.$yearItems[year - 1890];
     var lastYear = 100000000;
-    if (lastItemElt && lastItemElt.__year__ != year) {
+    if (lastItemElt && lastItemElt.__year__ !== year) {
         lastYear = lastItemElt.__year__;
         lastItemElt.addClass('start-closing');
         setTimeout(function () {
@@ -448,7 +605,7 @@ ChromeCalendar.prototype.expandYear = function (year) {
         }, 100);
     }
 
-    if (lastItemElt != itemElt) {
+    if (lastItemElt !== itemElt) {
         if (!itemElt.$months) {
             itemElt.$months = this._createMonths(year).addTo(itemElt);
             itemElt.addClass('start-opening');
@@ -469,35 +626,123 @@ ChromeCalendar.prototype.expandYear = function (year) {
     self.$yearScroller.scrollBy(dy, 100);
     this.$lastOpenYearItem = itemElt;
     itemElt.$months.updateActiveMonth();
+};
+
+ChromeCalendar.prototype.scrollIntoDecade = function (startYear, animation) {
+    if (!this.isDescendantOf(document.body)) {
+        return this.sync.then(this.scrollIntoDecade.bind(this));
+
+    }
+    var thisCal = this;
+    return new Promise(function (resolve) {
+
+        var eraBound = thisCal.$era.getBoundingClientRect();
+        var rowIdx = Math.floor((startYear - 1890) / 4);
+        if (thisCal._decadeScrollTimeout > 0) {
+            clearTimeout(thisCal._decadeScrollTimeout);
+            thisCal._decadeScrollTimeout = -1;
+        }
+        if (thisCal.scrollIntoDecadeResolve) {
+            thisCal.scrollIntoDecadeResolve();
+            thisCal.scrollIntoDecadeResolve = null;
+        }
+        thisCal.scrollIntoDecadeResolve = resolve;
+
+        var t0 = new Date().getTime();
+        var t1 = t0 + 250;
+        var y0 = thisCal.$era.scrollTop;
+        var y1 = rowIdx * eraBound.height / 4;
+        if (animation) {
+            thisCal._decadeScrollTimeout = setTimeout(function tick() {
+                var tc = new Date().getTime();
+                var yc = Math.min(1, Math.pow((tc - t0) / (t1 - t0), 2)) * (y1 - y0) + y0;
+                thisCal.$era.scrollTop = yc;
+                if (tc < t1) {
+                    thisCal._decadeScrollTimeout = setTimeout(tick, 30);
+                }
+                else {
+                    thisCal._decadeScrollTimeout = -1;
+                    thisCal.scrollIntoDecadeResolve = null;
+                    resolve();
+                }
+            }, 30);
+        }
+        else {
+            thisCal.$era.scrollTop = y1;
+        }
+    });
 
 };
 
 
-ChromeCalendar.prototype._updateButtons = function () {
-    var endOfPrevMonth = datetime.prevDate(datetime.beginOfMonth(this._viewDate));
+ChromeCalendar.prototype._updateButtons_day = function () {
+    if (this._monthCmpLimit(prevMonth(this._viewDate)) < 0) {
+        this.$prevBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+    else {
+        this.$prevBtn.removeClass('absol-chrome-calendar-button-disabled');
 
-    if (datetime.compareDate(endOfPrevMonth, this._minLimitDate) < 0) {
+    }
+    if (this._monthCmpLimit(nextMonth(this._viewDate)) > 0) {
+        this.$nextBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+    else {
+        this.$nextBtn.removeClass('absol-chrome-calendar-button-disabled');
+    }
+
+    var now = new Date();
+    if (this._monthCmpLimit(now) === 0) {
+        this.$todayBtn.removeClass('absol-chrome-calendar-button-disabled');
+    }
+    else {
+        this.$todayBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+
+};
+
+ChromeCalendar.prototype._updateButtons_year = function () {
+    if (!this._viewDate) return;
+    var year = Math.floor(this._viewDate.getFullYear() / 10) * 10;
+    if (this._yearCmpLimit(new Date(year - 1, 0, 1)) < 0) {
         this.$prevBtn.addClass('absol-chrome-calendar-button-disabled');
     }
     else {
         this.$prevBtn.removeClass('absol-chrome-calendar-button-disabled');
     }
-
-    var beginOfNextMonth = datetime.nextMonth(this._viewDate);
-
-    if (datetime.compareDate(beginOfNextMonth, this._maxLimitDate) > 0) {
+    if (this._yearCmpLimit(new Date(year + 10, 0, 1)) > 0) {
         this.$nextBtn.addClass('absol-chrome-calendar-button-disabled');
     }
     else {
         this.$nextBtn.removeClass('absol-chrome-calendar-button-disabled');
     }
     var now = new Date();
-    if (datetime.compareDate(now, this._maxLimitDate) > 0 || datetime.compareDate(now, this._minLimitDate) < 0) {
-        this.$todayBtn.addClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    if (this._yearCmpLimit(now) === 0) {
         this.$todayBtn.removeClass('absol-chrome-calendar-button-disabled');
     }
+    else {
+        this.$todayBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+};
+
+ChromeCalendar.prototype._updateButtons_month = function () {
+    if (this._yearCmpLimit(new Date(this._viewDate.getFullYear() + 1, 0, 1)) > 0) {
+        this.$nextBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+    else {
+        this.$nextBtn.removeClass('absol-chrome-calendar-button-disabled');
+    }
+    if (this._yearCmpLimit(new Date(this._viewDate.getFullYear() - 1, 0, 1)) < 0) {
+        this.$prevBtn.addClass('absol-chrome-calendar-button-disabled');
+    }
+    else {
+        this.$prevBtn.removeClass('absol-chrome-calendar-button-disabled');
+    }
+};
+
+ChromeCalendar.prototype._updateButtons = function () {
+    var fName = '_updateButtons_' + this._level;
+    console.log(fName)
+    this[fName] && this[fName]();
 };
 
 ChromeCalendar.prototype._createMonths = function (year) {
@@ -518,8 +763,7 @@ ChromeCalendar.prototype._createMonths = function (year) {
                         child: { text: datetime.monthNames[i * 4 + j].substr(0, 3) },
                         on: {
                             click: function () {
-                                self._viewDate = date;
-                                self.viewMonth();
+
                             }
                         },
                         props: {
@@ -528,7 +772,10 @@ ChromeCalendar.prototype._createMonths = function (year) {
                     }
                 })
             }
-        })
+        }),
+        on: {
+            click: this.eventHandler.clickMonthsInYear
+        }
     });
     res.$monthList = [];
     $('.absol-chrome-calendar-year-month', res, function (e) {
@@ -565,12 +812,73 @@ ChromeCalendar.prototype._createMonths = function (year) {
     return res;
 };
 
-
-ChromeCalendar.prototype.init = function (props) {
-    props = props || {};
-    this.super(props);
-    this.viewToday();
+ChromeCalendar.prototype._yearInAre = function (year) {
+    var d = year - 1890;
+    var rowIdx = Math.floor(d / 4);
+    var colIdx = d % 4;
+    return this.$era.childNodes[rowIdx] && this.$era.childNodes[rowIdx].childNodes[colIdx];
 };
+
+ChromeCalendar.prototype._clearYearInAre = function (startYear) {
+    var cellElt;
+    for (var i = 0; i < 10; ++i) {
+        cellElt = this._yearInAre(startYear + i);
+        if (cellElt) cellElt.removeClass('absol-chrome-calendar-in-decade');
+    }
+};
+
+ChromeCalendar.prototype._activeYearInAre = function (startYear) {
+    var cellElt;
+    for (var i = 0; i < 10; ++i) {
+        cellElt = this._yearInAre(startYear + i);
+        if (cellElt) cellElt.addClass('absol-chrome-calendar-in-decade');
+    }
+};
+
+ChromeCalendar.prototype._updateYearInEra = function () {
+    var eraBound = this.$era.getBoundingClientRect();
+    var startYear = 1890 + 4 * Math.ceil((this.$era.scrollTop - eraBound.height / 16) * 4 / eraBound.height);
+    var startDecade = Math.floor(startYear / 10) * 10;
+    if ((startDecade + 10 - startYear) < 8) startDecade += 10;
+    if (this._lastStartDecade !== startDecade) {
+        if (this._lastStartDecade > 0) {
+            this._clearYearInAre(this._lastStartDecade);
+        }
+        this._lastStartDecade = startDecade;
+        this._activeYearInAre(startDecade);
+        if (this._level === 'year') {
+            this.$titleTime.innerHTML = startDecade + '-' + (startDecade + 10);
+            if (!this._decadeScrollTimeout || this._decadeScrollTimeout < 0) {
+                if (this._yearCmpLimit(new Date(startDecade, 0, 1)) === 0)
+                    this._viewDate = new Date(startDecade, 0, 1);
+            }
+        }
+        this.domSignal.emit('request_update_buttons');
+    }
+};
+
+ChromeCalendar.prototype._updateDisabledYearInEra = function () {
+    var self = this;
+    Array.prototype.forEach.call(this.$era.childNodes, function (rowElt) {
+        Array.prototype.forEach.call(rowElt.childNodes, function (cellElt) {
+            if (cellElt.__year__) {
+                if (self._yearCmpLimit(new Date(cellElt.__year__, 0, 1)) === 0) {
+                    cellElt.removeClass('absol-chrome-calendar-date-disabled');
+                }
+                else {
+                    cellElt.addClass('absol-chrome-calendar-date-disabled');
+                }
+            }
+        });
+    });
+};
+
+ChromeCalendar.prototype._updateOpenYear = function () {
+    if (this.$lastOpenYearItem) {
+        this.$lastOpenYearItem.$months.updateActiveMonth();
+    }
+};
+
 
 ChromeCalendar.property = {};
 
@@ -592,17 +900,16 @@ ChromeCalendar.property.selectedDates = {
 
 ChromeCalendar.property.minLimitDate = {
     set: function (value) {
-        if (!value) value = new Date(1890, 0, 1, 0, 0, 0, 0, 0);
+        if (!value) value = new Date(1890, 0, 1);
         if (typeof value == 'number') value = new Date(value);
+        value = beginOfDay(value);
+        value = new Date(Math.max(new Date(1890, 0, 1).getTime(), value.getTime()));
         this._minLimitDate = value;
-        //todo
-        this._updateButtons();
-        this.sync = this.sync.then(function () {
-            this._updateMonth(this.$month);
-            if (this.$lastOpenYearItem) {
-                this.$lastOpenYearItem.$months.updateActiveMonth();
-            }
-        }.bind(this));
+        this.domSignal.emit('request_update_buttons');
+        this.domSignal.emit('request_update_month');
+        this.domSignal.emit('request_update_open_year');
+        this.domSignal.emit('request_update_disabled_year_in_era');
+
     },
     get: function () {
         return this._minLimitDate;
@@ -611,19 +918,18 @@ ChromeCalendar.property.minLimitDate = {
 
 ChromeCalendar.property.maxLimitDate = {
     set: function (value) {
-        if (!value) value = new Date(2090, 0, 1, 0, 0, 0, 0, 0);
+        if (!value) value = new Date(2090, 0, 1);
         if (typeof value == 'number') value = new Date(value);
+        if (value.getTime() > beginOfDay(value).getTime()) value = nextDate(beginOfDay(value));
+        value = new Date(Math.min(new Date(2090, 0, 1).getTime(), value.getTime()));
         this._maxLimitDate = value;
-        this._updateButtons();
-        this.sync = this.sync.then(function () {
-            this._updateMonth(this.$month);
-            if (this.$lastOpenYearItem) {
-                this.$lastOpenYearItem.$months.updateActiveMonth();
-            }
-        }.bind(this));
+        this.domSignal.emit('request_update_buttons');
+        this.domSignal.emit('request_update_month');
+        this.domSignal.emit('request_update_open_year');
+        this.domSignal.emit('request_update_disabled_year_in_era');
     },
     get: function () {
-        return this._minLimitDate;
+        return this._maxLimitDate;
     }
 };
 
@@ -649,6 +955,131 @@ ChromeCalendar.property.multiSelect = {
     },
     get: function () {
         return this.containsClass('multi-select');
+    }
+};
+
+
+ChromeCalendar.property.level = {
+    set: function (value) {
+        value = (value || '') + '';
+        value = value.toLowerCase();
+        if (['day', 'month', 'year'].indexOf(value) < 0) value = 'day';
+        if (this._level === value) return;
+        this.removeClass('as-level-' + this._level);
+        this._level = value;
+        this.addClass('as-level-' + this._level);
+        this.domSignal.emit('level_change');
+    },
+    get: function () {
+        return this._level;
+    }
+};
+
+ChromeCalendar.eventHandler = {};
+
+ChromeCalendar.eventHandler.eraScroll = function () {
+    this._updateYearInEra();
+};
+
+ChromeCalendar.eventHandler.clickEra = function (event) {
+    var yearElt = event.target;
+    var year = yearElt.__year__;
+    if (typeof year !== "number") return;
+    this.pickYear(year, event);
+};
+
+
+ChromeCalendar.eventHandler.clickPrev = function () {
+    switch (this._level) {
+        case "day":
+            this.viewPrevMonth();
+            break;
+        case "month":
+            this.expandYear(Math.min(this._maxLimitDate.getFullYear(), this._viewDate.getFullYear() - 1));
+            break;
+        case "year":
+            if (!this._decadeScrollTimeout || this._decadeScrollTimeout < 0)
+                this.viewPrevDecade(true);
+            break;
+
+    }
+};
+
+ChromeCalendar.eventHandler.clickNext = function () {
+    switch (this._level) {
+        case "day":
+            this.viewNexMonth();
+            break;
+        case "month":
+            this.expandYear(Math.max(prevDate(this._minLimitDate).getFullYear(), this._viewDate.getFullYear() + 1));
+            break;
+        case "year":
+            if (!this._decadeScrollTimeout || this._decadeScrollTimeout < 0)
+                this.viewNextDecade(true);
+            break;
+    }
+};
+
+
+ChromeCalendar.eventHandler.clickToday = function (event) {
+    this.viewToday();
+    switch (this._level) {
+        case "day":
+            this.pickDate(new Date());
+            break;
+        case "month":
+            this.expandYear(new Date().getFullYear());
+            this.pickMonth(beginOfMonth(new Date()), event);
+            break;
+        case "year":
+            this.pickDate(new Date(new Date().getFullYear(), 0, 1, 0, 0, 0, 0));
+            break;
+
+    }
+};
+
+ChromeCalendar.eventHandler.clickTitle = function (event) {
+    switch (this._level) {
+        case "day":
+            this.viewYear();
+            break;
+        case "month":
+            break;
+        case "year":
+            break;
+    }
+};
+
+
+ChromeCalendar.eventHandler.clickMonthsInYear = function (event) {
+    var monthElt = event.target;
+    var date = monthElt.__date__;
+    if (!date) return;
+    switch (this._level) {
+        case "day":
+            this._viewDate = date;
+            this.viewMonth();
+            break;
+        case "month":
+            this.pickMonth(date, event);
+            break;
+        case "year":
+            break;
+    }
+};
+
+
+ChromeCalendar.eventHandler.levelChange = function () {
+    switch (this._level) {
+        case "day":
+            this.viewMonth();
+            break;
+        case "month":
+            this.viewYear();
+            break;
+        case "year":
+            this.viewEra();
+            break;
     }
 };
 
@@ -760,6 +1191,7 @@ ChromeCalendar.close = function (session) {
         ChromeCalendar._listener = undefined;
         ChromeCalendar.$ctn.remove();
     }
+
     if (document.body) exec();
     else Dom.documentReady.then(exec);
 
