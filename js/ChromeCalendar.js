@@ -263,7 +263,6 @@ ChromeCalendar.prototype.pickMonth = function (date, event) {
     date = beginOfMonth(date);
     this._selectedDates = [date];
     if (this.$lastOpenYearItem) this.$lastOpenYearItem.$months.updateActiveMonth();
-    console.log(this.$lastOpenYearItem, date)
     this.emit('pick', {
         type: 'pick', value: date,
         isTrusted: event && event.isTrusted,
@@ -291,7 +290,7 @@ ChromeCalendar.prototype.pickYear = function (year, event) {
     var date = new Date(year, 0, 1, 0, 0, 0, 0);
     this._selectedDates = [date];
     this.domSignal.emit('request_update_picked_years');
-    this.scrollIntoDecade(Math.floor(year / 10)* 10, true);
+    this.scrollIntoDecade(Math.floor(year / 10) * 10, true);
     this.emit('pick', {
         type: 'pick', value: date,
         isTrusted: event && event.isTrusted,
@@ -749,7 +748,6 @@ ChromeCalendar.prototype._updateButtons_month = function () {
 
 ChromeCalendar.prototype._updateButtons = function () {
     var fName = '_updateButtons_' + this._level;
-    console.log(fName)
     this[fName] && this[fName]();
 };
 
