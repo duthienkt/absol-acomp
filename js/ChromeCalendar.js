@@ -69,7 +69,8 @@ function ChromeCalendar() {
         .on('request_update_buttons', this._updateButtons.bind(this))
         .on('request_update_month', this._updateMonth.bind(this, this.$month))
         .on('request_update_open_year', this._updateOpenYear.bind(this))
-        .on('request_update_disabled_year_in_era', this._updateDisabledYearInEra.bind(this));
+        .on('request_update_disabled_year_in_era', this._updateDisabledYearInEra.bind(this))
+        .on('request_update_picked_years', this._updatePickedYears.bind(this));
 
     this.sync = new Promise(function (rs) {
         thisCal.$attachHook.on('attached', rs);
@@ -271,19 +272,26 @@ ChromeCalendar.prototype.pickMonth = function (date, event) {
     });
 };
 
+ChromeCalendar.prototype._updatePickedYears = function () {
+    var yearElt;
+    var self = this;
+    while (this.$lastPickYears && this.$lastPickYears.length > 0) {
+        yearElt = this.$lastPickYears.pop();
+        yearElt.removeClass('absol-chrome-calendar-selected');
+    }
+    this.$lastPickYears = this._selectedDates.map(function (date) {
+        var yearElt = self._yearInAre(date.getFullYear());
+        yearElt.addClass('absol-chrome-calendar-selected');
+        return yearElt;
+    })
+
+};
+
 ChromeCalendar.prototype.pickYear = function (year, event) {
-    if (this.$lastPickYear) {
-        this.$lastPickYear.removeClass('absol-chrome-calendar-selected');
-    }
-    this.$lastPickYear = this._yearInAre(year);
-    if (this.$lastPickYear) {
-        this.$lastPickYear.addClass('absol-chrome-calendar-selected');
-        if (!this.$lastPickYear.containsClass('absol-chrome-calendar-in-decade')) {
-            this.scrollIntoDecade(Math.floor(year / 10) * 10, true);
-        }
-    }
     var date = new Date(year, 0, 1, 0, 0, 0, 0);
     this._selectedDates = [date];
+    this.domSignal.emit('request_update_picked_years');
+    this.scrollIntoDecade(Math.floor(year / 10)* 10, true);
     this.emit('pick', {
         type: 'pick', value: date,
         isTrusted: event && event.isTrusted,
@@ -887,10 +895,10 @@ ChromeCalendar.property.selectedDates = {
         value = value || [];
         if (value instanceof Date) value = [value];
         this._selectedDates = value;
-        this.sync = this.sync.then(function () {
-            this._viewDate = this._selectedDates[0] || new Date();//default is today
-            this.viewMonth();
-        }.bind(this));
+        this._viewDate = this._selectedDates[0] || new Date();
+        this.domSignal.emit('level_change');
+        if (this._level === 'year')
+            this.domSignal.emit('request_update_picked_years');
     },
     get: function () {
         return this._selectedDates;
@@ -970,6 +978,8 @@ ChromeCalendar.property.level = {
         this._level = value;
         this.addClass('as-level-' + this._level);
         this.domSignal.emit('level_change');
+        if (this._level === 'year')
+            this.domSignal.emit('request_update_picked_years');
     },
     get: function () {
         return this._level;
@@ -1033,9 +1043,10 @@ ChromeCalendar.eventHandler.clickToday = function (event) {
             this.pickMonth(beginOfMonth(new Date()), event);
             break;
         case "year":
-            this.pickDate(new Date(new Date().getFullYear(), 0, 1, 0, 0, 0, 0));
+            this.pickYear(new Date().getFullYear());
+            this._viewDate = new Date(new Date().getFullYear(), 0, 1);
+            this.viewEra(true);
             break;
-
     }
 };
 
