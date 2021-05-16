@@ -26,93 +26,118 @@
 </head>
 
 <body>
-    <h1>Calendar</h1>
+<h1>Calendar</h1>
 
-    <div class="absol-bscroller" style="height: 300px;">
-    </div>
+<div class="absol-bscroller" style="height: 300px;">
+</div>
 
-    <script class="viewable">
-        var _ = absol._;
-        var $ = absol.$;
-        var scroller = $('.absol-bscroller');
-        _({
-            tag: 'chromecalendar',
-            props: {
-                selectedDates: new Date(2019, 7, 3),
-                minLimitDate: new Date(2019, 7, 3),
-                maxLimitDate: new Date(2019, 11, 3)
-            }
-        }).addTo(scroller);
-    </script>
+<script class="viewable">
+    var _ = absol._;
+    var $ = absol.$;
+    var scroller = $('.absol-bscroller');
+    _({
+        tag: 'chromecalendar',
+        props: {
+            selectedDates: new Date(2019, 7, 3),
+            minLimitDate: new Date(2019, 7, 3),
+            maxLimitDate: new Date(2019, 11, 3)
+        }
+    }).addTo(scroller);
 
-    <h1>Quick Calendar</h1>
+    _({
+        tag: 'chromecalendar',
+        props: {
+            level: 'month',
+            minLimitDate: new Date(2005, 7, 3),
+            maxLimitDate: new Date(2022, 11, 3)
+        },
+        style: {
+            marginLeft: '10px'
+        }
+    }).addTo(scroller);
 
-    <button id="qc-btn">Open QuickCalendar</button>
-    <span id="qc-value"></span>
-    <script class="viewable">
-        absol.ChromeCalendar.showWhenClick(
-            $('#qc-btn'),
-            new Date(2018, 1, 1),
-            'auto',
-            function (date) {
-                $('#qc-value').innerHTML = date.toLocaleDateString();
-            }
-        );
-    </script>
+    _({
+        tag: 'chromecalendar',
+        props: {
+            level: 'year',
+            minLimitDate: new Date(2005, 7, 3),
+            maxLimitDate: new Date(2022, 11, 3),
+            debug: true
+        },
+        style: {
+            marginLeft: '10px'
+        }
+    }).addTo(scroller);
+</script>
 
-    <h1>Calendar Input</h1>
-    <div id="min-max-inputs">
-        <label id="min-lb">Min </label><input id="min-ip" />
-        <label id="max-lb"> Max </label><input id="max-ip" />
-        <label id="disabled-lb"> Disabled </label><input id="disabled-ip" />
-    </div>
-    <script class="viewable">
-        var mmInputs = $('#min-max-inputs');
-        var minValue = new Date(2019, 0, 1);
-        var maxValue = new Date(2020, 0, 1)
-        var minIp = absol._(
-            {
-                tag: 'calendarinput',
-                props: {
-                    value: minValue,
-                    maxLimitDate: maxValue
-                },
-                on: {
-                    change: function (ev) {
-                        maxIp.minLimitDate = ev.value;
-                    }
-                }
-            }
-        );
-        var maxIp = absol._(
-            {
-                tag: 'calendarinput',
-                props: {
-                    value: maxValue,
-                    minLimitDate: minValue,
-                    dateToString:'mmm-dd-yyyy'
-                },
-                on: {
-                    change: function (ev) {
-                        minIp.maxLimitDate = ev.value;
-                    }
-                }
-            }
-        );
-        $('#min-ip', mmInputs).selfReplace(minIp);
-        $('#max-ip', mmInputs).selfReplace(maxIp);
-        $('#disabled-ip', mmInputs).selfReplace(_({
+<h1>Quick Calendar</h1>
+
+<button id="qc-btn">Open QuickCalendar</button>
+<span id="qc-value"></span>
+<script class="viewable">
+    absol.ChromeCalendar.showWhenClick(
+        $('#qc-btn'),
+        new Date(2018, 1, 1),
+        'auto',
+        function (date) {
+            $('#qc-value').innerHTML = date.toLocaleDateString();
+        }
+    );
+</script>
+
+<h1>Calendar Input</h1>
+<div id="min-max-inputs">
+    <label id="min-lb">Min </label><input id="min-ip"/>
+    <label id="max-lb"> Max </label><input id="max-ip"/>
+    <label id="disabled-lb"> Disabled </label><input id="disabled-ip"/>
+</div>
+<script class="viewable">
+    var mmInputs = $('#min-max-inputs');
+    var minValue = new Date(2019, 0, 1);
+    var maxValue = new Date(2020, 0, 1)
+    var minIp = absol._(
+        {
             tag: 'calendarinput',
             props: {
-                // value: maxValue,
-                minLimitDate: minValue,
-                disabled: true
+                value: minValue,
+                maxLimitDate: maxValue
+            },
+            on: {
+                change: function (ev) {
+                    maxIp.minLimitDate = ev.value;
+                }
             }
-        }));
+        }
+    );
+    var maxIp = absol._(
+        {
+            tag: 'calendarinput',
+            props: {
+                value: maxValue,
+                minLimitDate: minValue,
+                dateToString: 'mmm-dd-yyyy'
+            },
+            on: {
+                change: function (ev) {
+                    minIp.maxLimitDate = ev.value;
+                }
+            }
+        }
+    );
+    $('#min-ip', mmInputs).selfReplace(minIp);
+    $('#max-ip', mmInputs).selfReplace(maxIp);
+    $('#disabled-ip', mmInputs).selfReplace(_({
+        tag: 'calendarinput',
+        props: {
+            // value: maxValue,
+            minLimitDate: minValue,
+            disabled: true
+        }
+    }));
 
-    </script>
+</script>
 
-    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
 
