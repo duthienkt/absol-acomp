@@ -14,8 +14,8 @@ var STATE_NONE = 0;
  */
 function DateTimeInput() {
     this._editingData = {};
-    this._dateFormat = 'dd/MM/yyyy';
-    this._fullFormat = 'dd/MM/yyyy hh:mm a';
+    this._value = null;
+    this._format = 'dd/MM/yyyy hh:mm a';
     this.$attachhook = _('attachhook').addTo(this);
     this.domSignal = new DomSignal(this.$attachhook);
     this.domSignal.on('request_auto_select', this._autoSelect.bind(this));
@@ -71,7 +71,7 @@ DateTimeInput.prototype._tokenAt = function (start) {
     var rgx = new RegExp(this.tokenRegex.source, 'g');
     var rgxFormat = new RegExp(this.tokenRegex.source, 'g');
     var s = this.$text.value;
-    var format = this._fullFormat;
+    var format = this._format;
     var tokenMatched = rgx.exec(s);
     var formatToken = rgxFormat.exec(format);
     var text, ident;
@@ -155,6 +155,108 @@ DateTimeInput.prototype._editPrevToken = function () {
     }
 };
 
+DateTimeInput.prototype.tokenMap = {
+    d: 'd',
+    dd: 'd',
+    M: 'M',
+    MM: 'M',
+    y: 'y',
+    yyyy: 'y',
+    hh: 'h',
+    h: 'h',
+    mm: 'm',
+    m: 'm',
+    a: 'a',
+}
+
+/***
+ *
+ * @param {string} s
+ * @returns {{}}
+ * @private
+ */
+DateTimeInput.prototype._makeTokenDict = function (s) {
+    var rgx = new RegExp(this.tokenRegex.source, 'g');
+    var rgxFormat = new RegExp(this.tokenRegex.source, 'g');
+    var format = this._format;
+    var tokenMap = this.tokenMap;
+    var tokenMatched = rgx.exec(s);
+    var formatToken = rgxFormat.exec(format);
+    var text, ident;
+    var idx;
+    var res = {};
+    while (tokenMatched && formatToken) {
+        text = tokenMatched[1];
+        ident = formatToken[1];
+        if (text) {
+            if (tokenMap[ident]) {
+                idx = tokenMatched.index;
+                res[tokenMap[ident]] = {
+                    text: text,
+                    idx: idx,
+                    length: text.length,
+                    sourceText: s,
+                    value: ident === 'a' ? text : parseInt(text)
+                }
+            }
+        }
+        tokenMatched = rgx.exec(s);
+        formatToken = rgxFormat.exec(format);
+    }
+    return res;
+};
+
+
+/***
+ *
+ * @param {Date} date
+ * @private
+ */
+DateTimeInput.prototype._makeValueDict = function (date) {
+    var res = {};
+    res.d = { value: date.getDay() };
+    res.y = { value: date.getFullYear() };
+    res.M = { value: date.getMonth() };
+    res.m = { value: date.getMinutes() };
+    res.h = { value: date.getHours() };
+    if (res.h.value < 12) {
+        if (res.h.value === 0) res.h.value = 12;
+        res.a = { value: "AM" };
+    }
+    else {
+        if (res.h.value > 12) res.h.value -= 12;
+        res.a = { value: "PM" };
+    }
+    return res;
+};
+
+
+DateTimeInput.prototype._applyTokenDict = function (format, dict, debug) {
+    var rgx = new RegExp(this.tokenRegex.source, 'g');
+    var tokenMap = this.tokenMap;
+    return format.replace(rgx, function (full, g1, g2, sourceText) {
+        if (g1 && tokenMap[g1]) {
+            var ident = tokenMap[g1];
+            if (ident === 'a') {
+                return (dict.a && dict.a.value) || 'a';
+            }
+            else {
+                if (dict[ident] && !isNaN(dict[ident].value)) {
+                    var numberText = dict[ident].value + '';
+                    while (numberText.length < g1.length) numberText = '0' + numberText;
+                    return numberText;
+                }
+                else {
+                    return full;
+                }
+            }
+        }
+        else
+            return full;
+    });
+
+};
+
 
 DateTimeInput.property = {};
 
@@ -172,21 +274,46 @@ DateTimeInput.property.disabled = {
     }
 };
 
-DateTimeInput.property.dateFormat = {
+DateTimeInput.property.format = {
     set: function (value) {
-        if (dateFormat2LocationList[value]) {
-            this._dateFormat = value;
+        var dict;
+        if (this._value) {
+            dict = this._makeValueDict(this._value);
         }
         else {
-            this._dateFormat = 'dd/mm/yyyy';
+            dict = this._makeTokenDict(this.$text.value);
         }
-        this._fullFormat = value + ' hour:min apm';
+        this._format = value;
+        this.$text.value = this._applyTokenDict(value, dict);
 
     },
     get: function () {
-        return this._dateFormat;
+        return this._format;
     }
 };
+
+DateTimeInput.property.value = {
+    set: function (value) {
+        var typeV = typeof value;
+        if (typeV === 'string' || typeV === 'number') {
+            value = new Date(value);
+        }
+        if (!value || !value.getTime) value = null;
+        this._value = value;
+        var dict;
+        if (this._value) {
+            dict = this._makeValueDict(this._value);
+        }
+        else {
+            dict = this._makeTokenDict(this.$text.value);
+        }
+        this.$text.value = this._applyTokenDict(this._format, dict, true);
+
+    },
+    get: function () {
+        return this._value;
+    }
+}
 
 DateTimeInput.eventHandler = {};
 
@@ -224,12 +351,12 @@ DateTimeInput.eventHandler.keydown = function (event) {
                     case 'd':
                         value = parseInt(token.text);
                         if (isNaN(value)) {
-                            this._editingData.day = event.key === 'ArrowUp' ? 1 : 31;
+                            this._editingData.d = event.key === 'ArrowUp' ? 1 : 31;
                         }
                         else {
-                            this._editingData.day = 1 + (value + (event.key === 'ArrowUp' ? 0 : 29)) % 31;
+                            this._editingData.d = 1 + (value + (event.key === 'ArrowUp' ? 0 : 29)) % 31;
                         }
-                        newTokenText = '' + this._editingData.day;
+                        newTokenText = '' + this._editingData.d;
                         while (newTokenText.length < token.ident.length) newTokenText = '0' + newTokenText;
                         token.replace(newTokenText, true);
                         break;
@@ -237,25 +364,25 @@ DateTimeInput.eventHandler.keydown = function (event) {
                     case 'M':
                         value = parseInt(token.text) - 1;
                         if (isNaN(value)) {
-                            this._editingData.month = event.key === 'ArrowUp' ? 0 : 11;
+                            this._editingData.M = event.key === 'ArrowUp' ? 0 : 11;
                         }
                         else {
-                            this._editingData.month = (value + (event.key === 'ArrowUp' ? 1 : 11)) % 12;
+                            this._editingData.M = (value + (event.key === 'ArrowUp' ? 1 : 11)) % 12;
                         }
-                        newTokenText = '' + (this._editingData.month + 1);
+                        newTokenText = '' + (this._editingData.M + 1);
                         while (newTokenText.length < token.ident.length) newTokenText = '0' + newTokenText;
                         token.replace(newTokenText, true);
                         break;
                     case 'yyyy':
                         value = parseInt(token.text);
                         if (isNaN(value)) {
-                            this._editingData.year = new Date().getFullYear();
+                            this._editingData.y = new Date().getFullYear();
                         }
                         else {
-                            this._editingData.year = Math.max(1890, Math.min(2089, value + (event.key === 'ArrowUp' ? 1 : -1)));
+                            this._editingData.y = Math.max(1890, Math.min(2089, value + (event.key === 'ArrowUp' ? 1 : -1)));
                         }
 
-                        newTokenText = this._editingData.year + '';
+                        newTokenText = this._editingData.y + '';
                         while (newTokenText.length < token.ident.length) newTokenText = '0' + newTokenText;
                         token.replace(newTokenText, true);
                         break;
@@ -263,12 +390,12 @@ DateTimeInput.eventHandler.keydown = function (event) {
                     case 'h':
                         value = parseInt(token.text);
                         if (isNaN(value)) {
-                            this._editingData.hour = event.key === 'ArrowUp' ? 1 : 12;
+                            this._editingData.h = event.key === 'ArrowUp' ? 1 : 12;
                         }
                         else {
-                            this._editingData.hour = 1 + (value + (event.key === 'ArrowUp' ? 0 : 10)) % 12;
+                            this._editingData.h = 1 + (value + (event.key === 'ArrowUp' ? 0 : 10)) % 12;
                         }
-                        newTokenText = this._editingData.hour + '';
+                        newTokenText = this._editingData.h + '';
                         while (newTokenText.length < token.ident.length) newTokenText = '0' + newTokenText;
                         token.replace(newTokenText, true);
                         break;
@@ -276,19 +403,19 @@ DateTimeInput.eventHandler.keydown = function (event) {
                     case 'm':
                         value = parseInt(token.text);
                         if (isNaN(value)) {
-                            this._editingData.min = event.key === 'ArrowUp' ? 0 : 59;
+                            this._editingData.m = event.key === 'ArrowUp' ? 0 : 59;
                         }
                         else {
-                            this._editingData.min = (value + (event.key === 'ArrowUp' ? 1 : 59)) % 60;
+                            this._editingData.m = (value + (event.key === 'ArrowUp' ? 1 : 59)) % 60;
                         }
-                        newTokenText = this._editingData.min + '';
+                        newTokenText = this._editingData.m + '';
                         while (newTokenText.length < token.ident.length) newTokenText = '0' + newTokenText;
                         token.replace(newTokenText, true);
                         break;
                     case 'a':
                         value = token.text;
-                        this._editingData.period = value === 'PM' ? "AM" : "PM";
-                        newTokenText = this._editingData.period;
+                        this._editingData.a = value === 'PM' ? "AM" : "PM";
+                        newTokenText = this._editingData.a;
                         token.replace(newTokenText, true);
                         break;
                 }
@@ -299,14 +426,6 @@ DateTimeInput.eventHandler.keydown = function (event) {
 
     }
 }
-
-DateTimeInput.prototype.formatHandlers = {};
-//
-// DateTimeInput.prototype.formatHandlers['dd/mm/yyyy'] = {
-//     tokenTypeAt: function (offset){
-//
-//     }
-// };
 
 
 ACore.install(DateTimeInput);
