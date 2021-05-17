@@ -1,0 +1,63 @@
+.as-chrome-time-picker {
+    box-sizing: border-box;
+    vertical-align: top;
+    display: inline-block;
+    font-family: Arial;
+    font-size: 14px;
+    padding: 0.6em;
+    border: solid 1px rgb(191, 191, 191);
+    box-shadow: 1px 1px 2px rgb(240, 240, 240);
+    z-index: 100;
+    touch-action: manipulation;
+    user-select: none;
+    background-color: rgb(255, 255, 255);
+    width: calc(160px + 1.2em);
+    height: 176px;
+    white-space: nowrap;
+}
+
+
+.as-chrome-time-picker-viewport {
+    width: 50px;
+    height: 100%;
+    overflow: hidden;
+    white-space: normal;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.as-chrome-time-picker-viewport:not(:first-child) {
+    margin-left: 5px;
+}
+
+
+.as-chrome-time-picker-list {
+    height: 100%;
+    overflow-y: scroll;
+    width: calc(100% + 18px);
+}
+
+.as-chrome-time-picker-btn {
+    font-size: inherit;
+    height: 28px;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+.as-chrome-time-picker-btn:hover {
+    background-color: rgb(224, 245, 256);
+}
+
+.as-chrome-time-picker-btn.as-selected {
+    background-color: rgb(188, 205, 236);
+    border-radius: 3px;
+}
+
+.as-chrome-time-picker-btn > span {
+    font-size: 16px;
+}
+
+
+

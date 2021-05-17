@@ -1,0 +1,264 @@
+import ACore, {_, $$} from '../ACore';
+import '../css/chrometimepicker.css';
+import Color from "absol/src/Color/Color";
+import DomSignal from "absol/src/HTML5/DomSignal";
+import {beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE} from "absol/src/Time/datetime";
+import TimePicker from "./TimePicker";
+
+/***
+ * @extends AElement
+ * @constructor
+ */
+function ChromeTimePicker() {
+    this._hour = 0;
+    this._minute = 0;
+    this.$lists = $$('.as-chrome-time-picker-list', this);
+    this.$hourList = this.$lists[0];
+    this.$hourList.on('scroll', this.eventHandler.hourScroll)
+        .on('click', this.eventHandler.clickHourList);
+    this.$minList = this.$lists[1];
+    this.$minList.on('scroll', this.eventHandler.minScroll)
+        .on('click', this.eventHandler.clickMinList);
+    this.$attachhook = _('attachhook').addTo(this);
+    this.domSignal = new DomSignal(this.$attachhook)
+        .on('request_scroll_into_selected', this._scrollIntoSelected.bind(this));
+    this.$amBtn = $('.as-chrome-time-picker-btn[data-value="AM"]', this)
+        .on('click', this.eventHandler.clickAM);
+    this.$pmBtn = $('.as-chrome-time-picker-btn[data-value="PM"]', this)
+        .on('click', this.eventHandler.clickPM);
+    this.domSignal.emit('request_scroll_into_selected');
+}
+
+ChromeTimePicker.tag = 'ChromeTimePicker'.toLowerCase();
+
+ChromeTimePicker.render = function () {
+    return _({
+        class: 'as-chrome-time-picker',
+        extendEvent: ['change'],
+        child: [{
+            class: 'as-chrome-time-picker-viewport',
+            child: {
+                class: 'as-chrome-time-picker-list',
+                child: Array(36).fill(0).map(function (u, i) {
+                    return {
+                        tag: 'button',
+                        class: 'as-chrome-time-picker-btn',
+
+                        child: {
+                            tag: 'span',
+                            child: { text: (i % 12) + 1 + '' }
+                        },
+                        props: {
+                            __hour__: (i % 12) + 1
+                        }
+                    }
+                })
+            }
+        }, {
+            class: 'as-chrome-time-picker-viewport',
+            child: {
+                class: 'as-chrome-time-picker-list',
+                child: Array(180).fill(0).map(function (u, i) {
+                    return {
+                        tag: 'button',
+                        class: 'as-chrome-time-picker-btn',
+
+                        child: {
+                            tag: 'span',
+
+                            child: { text: (i % 60) + '' }
+                        },
+                        props: {
+                            __min__: (i % 60)
+                        }
+                    }
+                })
+            }
+        }, {
+            class: 'as-chrome-time-picker-viewport',
+            child: ['AM', 'PM'].map(function (u,) {
+                return {
+                    tag: 'button',
+                    class: 'as-chrome-time-picker-btn',
+                    attr: {
+                        'data-value': u
+                    },
+                    child: {
+                        tag: 'span',
+                        child: { text: u }
+                    },
+                    props: {
+                        __APM__: u
+                    }
+                }
+            })
+        }
+        ]
+    });
+};
+
+
+ChromeTimePicker.prototype._scrollIntoSelected = function () {
+    var hour = this._hour % 12;
+    if (hour === 0) hour = 12;
+    this.$hourList.scrollTop = (hour + 11) * 28;
+    this.$minList.scrollTop = (this._minute + 60) * 28;
+};
+
+
+ChromeTimePicker.prototype.notifyChange = function (event) {
+    this.emit('change', {
+        type: 'change',
+        originEvent: event,
+        dayOffset: this.dayOffset,
+        hour: this.hour,
+        minute: this.minute,
+        target: this
+    }, this);
+}
+
+ChromeTimePicker.property = {};
+
+
+ChromeTimePicker.property.hour = {
+    set: function (value) {
+        value = (value % 24) || 0;
+        var prevVal = this._hour % 12;
+        if (prevVal === 0) prevVal = 12;
+        this.$hourList.childNodes[prevVal - 1].removeClass('as-selected');
+        this.$hourList.childNodes[prevVal - 1 + 12].removeClass('as-selected');
+        this.$hourList.childNodes[prevVal - 1 + 24].removeClass('as-selected');
+        this._hour = value;
+        prevVal = this._hour % 12;
+        if (prevVal === 0) prevVal = 12;
+        this.$hourList.childNodes[prevVal - 1].addClass('as-selected');
+        this.$hourList.childNodes[prevVal - 1 + 12].addClass('as-selected');
+        this.$hourList.childNodes[prevVal - 1 + 24].addClass('as-selected');
+        if (this._hour >= 12) {
+            this.$pmBtn.addClass('as-selected');
+            this.$amBtn.removeClass('as-selected');
+        }
+        else {
+            this.$amBtn.addClass('as-selected');
+            this.$pmBtn.removeClass('as-selected');
+        }
+    },
+    get: function () {
+        return this._hour;
+    }
+};
+
+
+ChromeTimePicker.property.minute = {
+    set: function (value) {
+        value = (value % 60) || 0;
+        var prevVal = this._minute;
+        this.$minList.childNodes[prevVal].removeClass('as-selected');
+        this.$minList.childNodes[prevVal + 60].removeClass('as-selected');
+        this.$minList.childNodes[prevVal + 120].removeClass('as-selected');
+        this._minute = value;
+        prevVal = this._minute;
+        this.$minList.childNodes[prevVal].addClass('as-selected');
+        this.$minList.childNodes[prevVal + 60].addClass('as-selected');
+        this.$minList.childNodes[prevVal + 120].addClass('as-selected');
+
+    },
+    get: function () {
+        return this._minute;
+    }
+};
+
+
+ChromeTimePicker.property.dayOffset = {
+    set: function (value) {
+        value = value || 0;
+        if (value.getTime)
+            value = value.getTime() - beginOfDay(value).getTime();
+        else {
+            value = value % MILLIS_PER_DAY;
+        }
+
+        this.hour = Math.floor(value / MILLIS_PER_HOUR);
+        this.minute = Math.floor((value % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE);
+        this.domSignal.emit('request_scroll_into_selected');
+    },
+    get: function () {
+        return this._hour * MILLIS_PER_HOUR + this._minute * MILLIS_PER_MINUTE;
+    }
+};
+
+ChromeTimePicker.eventHandler = {};
+
+ChromeTimePicker.eventHandler.hourScroll = function () {
+    var y = this.$hourList.scrollTop;
+    var dy = 0;
+    if (y < 28 * 12) dy = 28 * 12;
+    else if (y > 28 * 24) {
+        dy = -28 * 12;
+    }
+    if (dy !== 0) {
+        this.$hourList.scrollTop += dy;
+    }
+};
+
+ChromeTimePicker.eventHandler.minScroll = function () {
+    var y = this.$minList.scrollTop;
+    var dy = 0;
+    if (y < 28 * 60) dy = 28 * 60;
+    else if (y > 28 * 120) {
+        dy = -28 * 60;
+    }
+    if (dy !== 0) {
+        this.$minList.scrollTop += dy;
+    }
+};
+
+ChromeTimePicker.eventHandler.clickHourList = function (event) {
+    var hour;
+    if ('__hour__' in event.target) hour = event.target.__hour__;
+    if ('__hour__' in event.target.parentElement) hour = event.target.parentElement.__hour__;
+    if (hour !== undefined) {
+        if (this.hour >= 12) {
+            this.hour = hour === 12 ? hour : hour + 12;
+        }
+        else {
+            this.hour = hour === 12 ? 0 : hour;
+        }
+
+        this.notifyChange(event);
+    }
+};
+
+ChromeTimePicker.eventHandler.clickMinList = function (event) {
+    var min;
+    if ('__min__' in event.target) min = event.target.__min__;
+    if ('__min__' in event.target.parentElement) min = event.target.parentElement.__min__;
+    if (min !== undefined) {
+        this.minute = min;
+        if ((min + 60) * 28 < this.$minList.scrollTop) {
+            this.$minList.scrollTop = (min + 60) * 28;
+        }
+        else if (((min + 61) * 28) > this.$minList.scrollTop + this.$minList.clientHeight) {
+            this.$minList.scrollTop = (min + 61) * 28 - this.$minList.clientHeight;
+        }
+        this.notifyChange(event);
+    }
+};
+
+ChromeTimePicker.eventHandler.clickPM = function (event) {
+    if (this.hour < 12)
+        this.hour += 12;
+    this.notifyChange(event);
+
+};
+
+ChromeTimePicker.eventHandler.clickAM = function (event) {
+    if (this.hour >= 12)
+        this.hour -= 12;
+    this.notifyChange(event);
+};
+
+
+ACore.install(ChromeTimePicker);
+
+export default ChromeTimePicker;
