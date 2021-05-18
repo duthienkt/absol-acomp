@@ -2,6 +2,7 @@ import ACore, {_, $} from "../ACore";
 import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {dateFormat2LocationList} from "absol/src/Time/datetime";
+import {zeroPadding} from "./utils";
 
 
 var STATE_NEW = 1;
@@ -257,6 +258,14 @@ DateTimeInput.prototype._applyTokenDict = function (format, dict, debug) {
 
 };
 
+DateTimeInput.prototype._notifyIfChange = function (event) {
+
+};
+
+DateTimeInput.prototype._updateValueFromInput = function () {
+
+};
+
 
 DateTimeInput.property = {};
 
@@ -331,8 +340,14 @@ DateTimeInput.eventHandler.dblclickInput = function (event) {
  */
 DateTimeInput.eventHandler.keydown = function (event) {
     var token = this._tokenAt(this.$text.selectionStart);
+    var endToken = this._tokenAt(this.$text.selectionEnd);
+    if (!token) {
+        if (event.key === 'Enter') {
+            this._notifyIfChange(event);
+        }
+        return;
+    }
     var newTokenText;
-    var text = this.$text.value;
     var value;
     if (event.key.startsWith('Arrow')) {
         event.preventDefault();
@@ -422,11 +437,160 @@ DateTimeInput.eventHandler.keydown = function (event) {
                 break;
         }
     }
-    else {
-
+    else if (event.key === "Delete" || event.key === 'Backspace') {
+        event.preventDefault();
+        if (endToken.idx !== token.idx) {
+            this.$text.value = this._format;
+            this.$text.select();
+        }
+        else {
+            token.replace(token.ident, true);
+            if (event.key === "Delete") this._editNextToken();
+            else this._editPrevToken();
+        }
     }
+    else if (event.key === "Enter" || event.key === 'Tab') {
+        this._notifyIfChange(event);
+    }
+    else if (event.ctrlKey) {
+        switch (event.key) {
+            case 'a':
+            case 'A':
+                break;
+            case 'c':
+            case 'C':
+                break;
+            case 'x':
+            case 'X':
+                this.domSignal.once('clear_value', function () {
+                    this.$text.value = this._format;
+                    this.$text.select();
+                }.bind(this));
+                this.domSignal.emit('clear_value');
+                break;
+            default:
+                event.preventDefault();
+        }
+    }
+    else if (event.key.match(/^[0-9]$/g)) {
+        event.preventDefault();
+        var dVal = parseInt(event.key);
+        if (this._editingData.state === STATE_NEW) {
+            switch (token.ident) {
+                case 'dd':
+                case 'd':
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.state = STATE_EDITED;
+                    this._editingData.d = dVal;
+                    if (dVal > 3) {
+                        this._editNextToken();
+                    }
+                    break;
+                case 'MM':
+                case 'M':
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.state = STATE_EDITED;
+                    this._editingData.M = dVal;
+                    if (dVal > 1) {
+                        this._editNextToken();
+                    }
+                    break;
+                case 'yyyy':
+                case 'y':
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.state = STATE_EDITED;
+                    this._editingData.state_num = 1;
+                    break;
+                case 'm':
+                case 'mm':
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.state = STATE_EDITED;
+                    if (dVal > 5) {
+                        this._editNextToken();
+                    }
+                    break;
+                case 'h':
+                case 'hh':
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.state = STATE_EDITED;
+                    if (dVal > 1) {
+                        this._editNextToken();
+                    }
+                    break;
+
+            }
+        }
+        else {
+            switch (token.ident) {
+                case 'dd':
+                case 'd':
+                    dVal = (parseInt(token.text.split('').pop()) || 0) * 10 + dVal;
+                    dVal = Math.max(1, Math.min(31, dVal));
+                    this._editingData.d = dVal;
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editNextToken();
+                    break;
+                case 'MM':
+                case 'M':
+                    dVal = (parseInt(token.text.split('').pop()) || 0) * 10 + dVal;
+                    dVal = Math.max(1, Math.min(12, dVal));
+                    this._editingData.M = dVal - 1;
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editNextToken();
+                    break;
+                case 'yyyy':
+                case 'y':
+                    dVal = (parseInt(token.text.replace(/^./, '')) || 0) * 10 + dVal;
+                    this._editingData.state_num++;
+                    if (this._editingData.state_num >= 4) {
+                        dVal = Math.max(1890, Math.min(2089, dVal));
+                        token.replace(zeroPadding(dVal, token.ident.length), true);
+                        this._editNextToken();
+                    }
+                    else {
+                        token.replace(zeroPadding(dVal, token.ident.length), true);
+                    }
+                    break;
+                case 'm':
+                case 'mm':
+                    dVal = (parseInt(token.text.split('').pop()) || 0) * 10 + dVal;
+                    dVal = Math.max(0, Math.min(59, dVal));
+                    this._editingData.m = dVal;
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editNextToken();
+                    break;
+                case 'h':
+                case 'hh':
+                    dVal = (parseInt(token.text.split('').pop()) || 0) * 10 + dVal;
+                    dVal = Math.max(1, Math.min(12, dVal));
+                    this._editingData.h = dVal;
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editNextToken();
+                    break;
+            }
+        }
+    }
+    else if (event.key.match(/^[aApPSCsc]$/) && token.ident === 'a') {
+        event.preventDefault();
+        if (event.key.match(/^[aAsS]$/)) {
+            token.replace('AM', true);
+            this._editingData.a = "AM";
+        }
+        else {
+            token.replace('PM', true);
+            this._editingData.a = "PM";
+        }
+        this._editNextToken();
+    }
+    else {
+        event.preventDefault();
+    }
+
 }
 
+DateTimeInput.eventHandler.inputBlur = function () {
+
+};
 
 ACore.install(DateTimeInput);
 
