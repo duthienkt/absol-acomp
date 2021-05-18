@@ -1,7 +1,6 @@
 import ACore, {_, $} from "../ACore";
 import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
-import {dateFormat2LocationList} from "absol/src/Time/datetime";
 import {zeroPadding} from "./utils";
 
 
@@ -25,7 +24,7 @@ function DateTimeInput() {
      * @type {HTMLInputElement | AElement}
      */
     this.$text = $('.as-date-time-input-text', this)
-        // .on('mousedown', this.eventHandler.mouseDownInput)
+        .on('mousedown', this.eventHandler.mouseDownInput)
         .on('mouseup', this.eventHandler.mouseUpInput)
         .on('dblclick', this.eventHandler.dblclickInput)
         .on('keydown', this.eventHandler.keydown)
@@ -62,10 +61,11 @@ DateTimeInput.render = function () {
 
 DateTimeInput.prototype.tokenRegex = /([A-Za-z0-9]+)|([.\/:]+)/i;
 
+
 /***
  *
  * @param start
- * @returns {null|{ident: string, length: number, sourceText: string, replace: replace, text: string, idx: number, elt: (HTMLInputElement|absol.AElement)}}
+ * @returns {null|{ident: string, length: number, sourceText: string, replace: function(s: string, selecting:boolean):void, text: string, idx: number, elt: (HTMLInputElement|absol.AElement)}}
  * @private
  */
 DateTimeInput.prototype._tokenAt = function (start) {
@@ -262,7 +262,49 @@ DateTimeInput.prototype._notifyIfChange = function (event) {
 
 };
 
-DateTimeInput.prototype._updateValueFromInput = function () {
+DateTimeInput.prototype._correctingInput = function () {
+    var tkDict = this._makeTokenDict(this.$text.value);
+    console.log(tkDict);
+};
+
+DateTimeInput.prototype._correctingCurrentToken = function () {
+    var token = this._tokenAt(this.$text.selectionStart);
+    if (!token) return;
+    var value;
+    if (token.ident === 'a') {
+        if (token.text !== 'a' && token.text!== 'AM' && token.text !=='PM'){
+            token.replace('a', false);
+        }
+    }
+    else {
+        value = parseInt(token.text);
+        var rqMin = {
+            d: 1, dd: 1,
+            M: 1, MM: 1,
+            y: 1890, yyyy: 1890,
+            h: 1, hh: 1,
+            m: 0, mm: 0
+        }[token.ident];
+        var rqMax = {
+            d: 31, dd: 31,
+            M: 12, MM: 12,
+            y: 2089, yyyy: 2089,
+            h: 12, hh: 12,
+            m: 59, mm: 59
+        }[token.ident];
+        if (rqMin !== undefined) {
+            if (!isNaN(value)) {
+                if ((value < rqMin || value > rqMin)) {
+                    value = Math.max(rqMin, Math.min(rqMax, value));
+                    token.replace(zeroPadding(value, token.ident.length), false);
+                    this._editingData.d = value;
+                }
+            }
+            else if (token.text !== token.ident) {
+                token.replace(token.ident, false);
+            }
+        }
+    }
 
 };
 
@@ -329,6 +371,12 @@ DateTimeInput.eventHandler = {};
 DateTimeInput.eventHandler.mouseUpInput = function () {
     this.domSignal.emit('request_auto_select');
 };
+
+DateTimeInput.eventHandler.mouseDownInput = function () {
+    if (document.activeElement === this.$text) {
+        this._correctingCurrentToken();
+    }
+}
 
 DateTimeInput.eventHandler.dblclickInput = function (event) {
     event.preventDefault();
