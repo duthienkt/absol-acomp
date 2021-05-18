@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Date Time Input</title>
+    <meta charset="UTF-8">
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+</head>
+
+<body>
+<h1>Date Input</h1>
+<div class="input-demo">
+
+</div>
+<script>
+
+
+</script>
+<script class="viewable">
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var inputDemoDiv = $('.input-demo');
+        var supportFormats = [ 'd/MM/yyyy', 'dd/MM/yyyy', 'dd-MM-yyyy', 'dd.MM.yyyy', 'yyyy/MM/dd', 'yyyy-MM-dd', 'MM/dd/yyyy'];
+        supportFormats.forEach(function (format) {
+            _(
+                {
+                    style: {
+                        'margin-bottom': '10px'
+                    },
+                    child: [
+                        {
+                            tag: 'label',
+                            style: { width: '10em', 'line-height': '30px', display: 'inline-block' },
+                            child: { text: format + ' hh:mm a' }
+                        },
+                        {
+                            tag: 'datetimeinput',
+                            props: {
+                                value: new Date(),
+                                format: format + ' hh:mm a'
+                            },
+                            on: {
+                                change: function () {
+                                    absol.require('snackbar').show(this.value + '');
+                                }
+                            }
+                        }
+                    ]
+                }
+            ).addTo(inputDemoDiv);
+        });
+    })();
+
+
+</script>
+</body>
+
+</html>
