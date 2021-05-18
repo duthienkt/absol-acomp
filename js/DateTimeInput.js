@@ -2,6 +2,7 @@ import ACore, {_, $} from "../ACore";
 import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {zeroPadding} from "./utils";
+import {daysInMonth} from "absol/src/Time/datetime";
 
 
 var STATE_NEW = 1;
@@ -15,6 +16,8 @@ var STATE_NONE = 0;
 function DateTimeInput() {
     this._editingData = {};
     this._value = null;
+    this._min = new Date(1890, 0, 1);
+    this._max = new Date(new Date(2090, 0, 1).getTime() - 1);
     this._format = 'dd/MM/yyyy hh:mm a';
     this.$attachhook = _('attachhook').addTo(this);
     this.domSignal = new DomSignal(this.$attachhook);
@@ -28,6 +31,7 @@ function DateTimeInput() {
         .on('mouseup', this.eventHandler.mouseUpInput)
         .on('dblclick', this.eventHandler.dblclickInput)
         .on('keydown', this.eventHandler.keydown)
+        .on('blur', this.eventHandler.inputBlur)
         .on('contextmenu', function (event) {
             event.preventDefault();
         });
@@ -38,6 +42,7 @@ DateTimeInput.tag = 'DateTimeInput'.toLowerCase();
 //calendar-clock
 DateTimeInput.render = function () {
     return _({
+        extendEvent: ['change'],
         class: 'as-date-time-input',
         child: [
             {
@@ -258,13 +263,117 @@ DateTimeInput.prototype._applyTokenDict = function (format, dict, debug) {
 
 };
 
-DateTimeInput.prototype._notifyIfChange = function (event) {
+DateTimeInput.prototype._loadValueFromInput = function () {
+    var tkDict = this._makeTokenDict(this.$text.value);
+    var H = NaN;
+    if (tkDict.a.value === 'AM') {
+        H = tkDict.h.value % 12;
+    }
+    else if (tkDict.a.value === 'PM') {
+        H = tkDict.h.value + (tkDict.h.value === 12 ? 0 : 12);
+    }
+    var date = new Date(tkDict.y.value, tkDict.M.value - 1, tkDict.d.value, H, tkDict.m.value);
+    if (isNaN(date.getTime())) {
+        this._value = null;
+    }
+    else {
+        this._value = date;
+    }
+};
 
+DateTimeInput.prototype._notifyIfChange = function (event) {
+    if (!this._lastEmitValue && !this._value) return;
+    if (this._lastEmitValue && this._value && this._lastEmitValue.getTime() === this._value.getTime()) return;
+    this.emit('change', {
+        type: 'change',
+        target: this,
+        value: this._value,
+        originEvent: event
+    }, this);
+
+    this._lastEmitValue = this._value;
 };
 
 DateTimeInput.prototype._correctingInput = function () {
     var tkDict = this._makeTokenDict(this.$text.value);
-    console.log(tkDict);
+    var equalMin = true;
+    var equalMax = true;
+    if (!isNaN(tkDict.y.value)) {
+        tkDict.y.value = Math.max(this._min.getFullYear(), Math.min(this._max.getFullYear(), tkDict.y.value));
+        equalMin = tkDict.y.value === this._min.getFullYear();
+        equalMax = tkDict.y.value === this._max.getFullYear();
+    }
+    else {
+        equalMin = false;
+        equalMax = false;
+    }
+
+    if (!isNaN(tkDict.M.value)) {
+        tkDict.M.value = Math.max(1, Math.min(12, tkDict.M.value));
+        if (equalMin) {
+            tkDict.M.value = Math.max(this._min.getMonth() + 1, tkDict.M.value);
+            equalMin = tkDict.M.value === this._min.getMonth() + 1;
+        }
+
+        if (equalMax) {
+            tkDict.M.value = Math.min(this._max.getMonth() + 1, tkDict.M.value);
+            equalMax = this._max.getMonth() + 1;
+        }
+    }
+    else {
+        equalMin = false;
+        equalMax = false;
+    }
+
+    if (!isNaN(tkDict.d.value)) {
+        tkDict.d.value = Math.max(1, Math.min(31, tkDict.d.value));
+        if (!isNaN(tkDict.M.value)) {
+            tkDict.d.value = Math.min(tkDict.d.value,
+                daysInMonth(isNaN(tkDict.y.value) ? 2020 : tkDict.y.value, tkDict.M.value - 1));
+        }
+
+        if (equalMin) {
+            tkDict.d.value = Math.max(this._min.getDate(), tkDict.d.value);
+            equalMin = tkDict.d.value === this._min.getDate();
+        }
+
+        if (equalMax) {
+            tkDict.d.value = Math.min(this._max.getDate(), tkDict.d.value);
+            equalMax = tkDict.d.value === this._max.getDate();
+        }
+    }
+    else {
+        equalMin = false;
+        equalMax = false;
+    }
+//todo: min max
+    if (tkDict.a.value === 'AM' || tkDict.a.value === 'PM') {
+
+        if (equalMin) {
+
+        }
+    }
+    else {
+        equalMin = false;
+        equalMax = false;
+    }
+
+    var text = this._applyTokenDict(this._format, tkDict);
+    this.$text.value = text;
+    // if (!isNaN(tkDict.m.value)) {
+    //     tkDict.m.value = Math.max(0, Math.min(60, tkDict.m.value));
+    //     if (equalMin) {
+    //         tkDict.m.value = Math.max(this._min.getMinutes(), tkDict.m.value);
+    //         equalMin =  tkDict.m.value === this._min.getMinutes();
+    //     }
+    //
+    //     if (equalMax) {
+    //         tkDict.m.value = Math.min(this._max.getMinutes(), tkDict.m.value);
+    //         equalMax =  tkDict.m.value === this._max.getMinutes();
+    //     }
+    // }
+
+
 };
 
 DateTimeInput.prototype._correctingCurrentToken = function () {
@@ -272,7 +381,7 @@ DateTimeInput.prototype._correctingCurrentToken = function () {
     if (!token) return;
     var value;
     if (token.ident === 'a') {
-        if (token.text !== 'a' && token.text!== 'AM' && token.text !=='PM'){
+        if (token.text !== 'a' && token.text !== 'AM' && token.text !== 'PM') {
             token.replace('a', false);
         }
     }
@@ -359,7 +468,7 @@ DateTimeInput.property.value = {
             dict = this._makeTokenDict(this.$text.value);
         }
         this.$text.value = this._applyTokenDict(this._format, dict, true);
-
+        this._lastEmitValue = this._value;
     },
     get: function () {
         return this._value;
@@ -391,6 +500,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
     var endToken = this._tokenAt(this.$text.selectionEnd);
     if (!token) {
         if (event.key === 'Enter') {
+            this._correctingInput();
+            this._loadValueFromInput();
             this._notifyIfChange(event);
         }
         return;
@@ -498,6 +609,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
         }
     }
     else if (event.key === "Enter" || event.key === 'Tab') {
+        this._correctingInput();
+        this._loadValueFromInput();
         this._notifyIfChange(event);
     }
     else if (event.ctrlKey) {
@@ -637,7 +750,9 @@ DateTimeInput.eventHandler.keydown = function (event) {
 }
 
 DateTimeInput.eventHandler.inputBlur = function () {
-
+    this._correctingInput();
+    this._loadValueFromInput();
+    this._notifyIfChange();
 };
 
 ACore.install(DateTimeInput);
