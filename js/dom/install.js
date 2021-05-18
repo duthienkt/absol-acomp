@@ -97,6 +97,8 @@ import EmojiCounterList from "../EmojiCounterList";
 import RotatedText from "../RotatedText";
 import VerticalTreeDiagram, {VerticalTreeDiagramNode} from "../VerticalTreeDiagram";
 import TokenField from "../TokenField";
+import DateTimeInput from "../DateTimeInput";
+import ChromeTimePicker from "../ChromeTimePicker";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -111,6 +113,7 @@ export var publicCreators = [
     CheckBox,
     CheckBoxButton,
     ChromeCalendar,
+    ChromeTimePicker,
     CircleSectionLabel,
     CountdownClock,
     DropZone,
@@ -204,6 +207,7 @@ export var publicCreators = [
     TimeInput,
     TimeSelectInput,
     TimePicker,
+    DateTimeInput,
     ToolTip,
     Toast,
     TreeList,
