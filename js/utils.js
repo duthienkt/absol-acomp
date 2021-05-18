@@ -45,7 +45,8 @@ export function getSelectionText() {
         (typeof activeEl.selectionStart == "number")
     ) {
         text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
-    } else if (window.getSelection) {
+    }
+    else if (window.getSelection) {
         text = window.getSelection().toString();
     }
     return text;
@@ -327,6 +328,21 @@ export function estimateWidth14(text) {
 export function absCeil(v) {
     var a = Math.ceil(Math.abs(v));
     return v < 0 ? -a : a;
+}
+
+/***
+ *
+ * @param {number} x
+ * @param {number} l
+ * @returns {String}
+ */
+export function zeroPadding(x, l) {
+    var res = Math.abs(x) + '';
+    while (res.length < l) {
+        res = '0' + res;
+    }
+    if (x < 0) res = '-' + res;
+    return res;
 }
 
 var propertyFilter =
