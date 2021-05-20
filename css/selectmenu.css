@@ -130,11 +130,25 @@
     position: absolute;
     left: 0;
     right: 0;
-    top: 4px;
-    bottom: 4px;
+    top: 0;
+    bottom: 0;
     /*1px for border*/
+    white-space: nowrap;
 }
 
+.absol-selectmenu-holder-item::before{
+    content: "";
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+.absol-selectmenu-holder-item>.absol-selectlist-item{
+    display: inline-block;
+    width: 100%;
+    vertical-align: middle;
+}
 
 .absol-selectmenu .absol-selectlist-item span {
     padding-right: 28px;
