@@ -68,12 +68,12 @@
     </div>
     <script class="viewable">
         var mmInputs = $('#min-max-inputs');
-        var minValue = new Date(2019, 0, 1);
+        var minValue = new Date(2019, 5, 17);
         var maxValue = new Date(2020, 0, 1)
         var minIp = absol._(
             {
-                tag: 'calendar-input',
-                data: {
+                tag: 'dateinput',
+                props: {
                     value: minValue,
                     maxDateLimit: maxValue
                 },
@@ -86,8 +86,8 @@
         );
         var maxIp = absol._(
             {
-                tag: 'calendar-input',
-                data: {
+                tag: 'dateinput',
+                props: {
                     value: maxValue,
                     minDateLimit: minValue,
                     // dateToString: 'mmm-dd-yyyy', only support dd/mm/yyyy now
