@@ -984,6 +984,16 @@ ChromeCalendar.property.level = {
     }
 };
 
+ChromeCalendar.property.viewDate = {
+    set: function (date){
+        this._viewDate = date;
+        this.domSignal.emit('level_change');
+    },
+    get: function (){
+        return this._viewDate;
+    }
+}
+
 ChromeCalendar.eventHandler = {};
 
 ChromeCalendar.eventHandler.eraScroll = function () {
