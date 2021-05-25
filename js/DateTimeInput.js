@@ -64,14 +64,13 @@ DateTimeInput.render = function () {
     });
 };
 
-DateTimeInput.prototype.tokenRegex = /([A-Za-z0-9]+)|([.\/:]+)/i;
+DateTimeInput.prototype.tokenRegex = /([^.\/:\-,\\\s]+)|([.\/:\-,\\]+)/i;
 
 
 /***
  *
  * @param start
  * @returns {null|{ident: string, length: number, sourceText: string, replace: function(s: string, selecting:boolean):void, text: string, idx: number, elt: (HTMLInputElement|absol.AElement)}}
- * @private
  */
 DateTimeInput.prototype._tokenAt = function (start) {
     var rgx = new RegExp(this.tokenRegex.source, 'g');
@@ -173,7 +172,7 @@ DateTimeInput.prototype.tokenMap = {
     mm: 'm',
     m: 'm',
     a: 'a',
-}
+};
 
 /***
  *
@@ -220,9 +219,9 @@ DateTimeInput.prototype._makeTokenDict = function (s) {
  */
 DateTimeInput.prototype._makeValueDict = function (date) {
     var res = {};
-    res.d = { value: date.getDay() };
+    res.d = { value: date.getDate() };
     res.y = { value: date.getFullYear() };
-    res.M = { value: date.getMonth() };
+    res.M = { value: date.getMonth() + 1 };
     res.m = { value: date.getMinutes() };
     res.h = { value: date.getHours() };
     if (res.h.value < 12) {
@@ -360,20 +359,6 @@ DateTimeInput.prototype._correctingInput = function () {
 
     var text = this._applyTokenDict(this._format, tkDict);
     this.$text.value = text;
-    // if (!isNaN(tkDict.m.value)) {
-    //     tkDict.m.value = Math.max(0, Math.min(60, tkDict.m.value));
-    //     if (equalMin) {
-    //         tkDict.m.value = Math.max(this._min.getMinutes(), tkDict.m.value);
-    //         equalMin =  tkDict.m.value === this._min.getMinutes();
-    //     }
-    //
-    //     if (equalMax) {
-    //         tkDict.m.value = Math.min(this._max.getMinutes(), tkDict.m.value);
-    //         equalMax =  tkDict.m.value === this._max.getMinutes();
-    //     }
-    // }
-
-
 };
 
 DateTimeInput.prototype._correctingCurrentToken = function () {
