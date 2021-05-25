@@ -49,8 +49,8 @@ function DateInput2() {
     this.domSignal = new DomSignal(this.$domSignal);
     this.domSignal.on('request_auto_select', this._autoSelect.bind(this));
 
-    this._minLimitDate = new Date(1890, 0, 1, 0, 0, 0, 0);
-    this._maxLimitDate = new Date(2090, 0, 1, 0, 0, 0, 0);
+    this._min = new Date(1890, 0, 1, 0, 0, 0, 0);
+    this._max = new Date(2090, 0, 1, 0, 0, 0, 0);
     this.$calendarBtn = $('.as-date-input-icon-ctn', this)
         .on('click', this.eventHandler.clickCalendarBtn);
     this.$clearBtn = $('button.as-date-input-clear-btn', this)
@@ -58,6 +58,10 @@ function DateInput2() {
 
     this.value = this._value;
     this.format = this._format;
+    OOP.drillProperty(this, this, 'minLimitDate', 'min');
+    OOP.drillProperty(this, this, 'minDateLimit', 'min');
+    OOP.drillProperty(this, this, 'maxLimitDate', 'max');
+    OOP.drillProperty(this, this, 'maxDateLimit', 'max');
 }
 
 DateInput2.tag = 'dateinput';
@@ -151,8 +155,8 @@ DateInput2.prototype._makeTokenDict = DateTimeInput.prototype._makeTokenDict;
 
 DateInput2.prototype._correctingInput = function () {
     var tkDict = this._makeTokenDict(this.$text.value);
-    var min = this._minLimitDate;
-    var max = this._maxLimitDate;
+    var min = this._min;
+    var max = this._max;
     var equalMin;
     var equalMax;
     if (!isNaN(tkDict.y.value)) {
@@ -574,6 +578,25 @@ DateInput2.property.calendarLevel = {
 };
 
 
+DateInput2.property.min = {
+    set: function (value){
+        this._min = this._normalizeValue(value)|| new Date(1890, 0, 1);
+    },
+    get: function (){
+        return this._min;
+    }
+};
+
+DateInput2.property.max = {
+    set: function (value){
+        this._max = this._normalizeValue(value)|| new Date(2090, 0, 1);
+    },
+    get: function (){
+        return this._max;
+    }
+};
+
+
 DateInput2.prototype.share = {
     /***
      * @type {ChromeCalendar}
@@ -611,12 +634,12 @@ DateInput2.prototype._attachCalendar = function () {
     this.share.$holdingInput = this;
     this.share.$follower.followTarget = this;
     this.share.$calendar.level = this.calendarLevel;
-    this.share.$calendar.min = this._minLimitDate;
-    this.share.$calendar.max = this._maxLimitDate;
+    this.share.$calendar.min = this._min;
+    this.share.$calendar.max = this._max;
     this.share.$calendar.on('pick', this.eventHandler.calendarPick);
     this.share.$calendar.selectedDates = this.value ? [this.value] : [];
     this.share.$calendar.viewDate = this.value ? this.value
-        : new Date(Math.max(this._minLimitDate.getTime(), Math.min(this._maxLimitDate.getTime(), new Date().getTime())));
+        : new Date(Math.max(this._min.getTime(), Math.min(this._max.getTime(), new Date().getTime())));
     setTimeout(function () {
         document.body.addEventListener('click', this.eventHandler.clickOut);
         this.share.$follower.removeStyle('visibility');

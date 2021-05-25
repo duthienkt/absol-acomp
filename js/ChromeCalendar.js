@@ -15,6 +15,7 @@ import {
     prevDate, prevMonth
 } from "absol/src/Time/datetime";
 import DomSignal from "absol/src/HTML5/DomSignal";
+import OOP from "absol/src/HTML5/OOP";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -38,8 +39,8 @@ function ChromeCalendar() {
         .on('click', this.eventHandler.clickEra);
     this._fillEra();
     this.$month = $('.absol-chrome-calendar-month', this);
-    this._minLimitDate = new Date(1890, 0, 1);
-    this._maxLimitDate = new Date(2090, 0, 1);
+    this._min = new Date(1890, 0, 1);
+    this._max = new Date(2090, 0, 1);
 
     this._selectedDates = [datetime.beginOfDay(new Date())];
     this._viewDate = new Date();
@@ -81,6 +82,10 @@ function ChromeCalendar() {
         thisCal.expandYear(thisCal._viewDate.getFullYear());
         thisCal._updateYearInEra();
     });
+    OOP.drillProperty(this, this, 'minLimitDate', 'min');
+    OOP.drillProperty(this, this, 'minDateLimit', 'min');
+    OOP.drillProperty(this, this, 'maxLimitDate', 'max');
+    OOP.drillProperty(this, this, 'maxDateLimit', 'max');
 }
 
 
@@ -210,16 +215,16 @@ ChromeCalendar.prototype._isSelectedYear = function (date) {
 };
 
 ChromeCalendar.prototype._dayCmpLimit = function (date) {
-    if (compareDate(date, this._minLimitDate) < 0) return -1;
-    if (compareDate(date, this._maxLimitDate) > 0) return 1;
+    if (compareDate(date, this._min) < 0) return -1;
+    if (compareDate(date, this._max) > 0) return 1;
     return 0;
 };
 
 ChromeCalendar.prototype._monthCmpLimit = function (date) {
     var startOfMonth = beginOfMonth(date);
     var endOfMonth = nextMonth(date);
-    var minMil = Math.max(startOfMonth.getTime(), this._minLimitDate.getTime());
-    var maxMil = Math.min(endOfMonth.getTime(), nextDate(this._maxLimitDate).getTime());
+    var minMil = Math.max(startOfMonth.getTime(), this._min.getTime());
+    var maxMil = Math.min(endOfMonth.getTime(), nextDate(this._max).getTime());
     if (minMil < maxMil) return 0;
     return this._dayCmpLimit(date);
 };
@@ -227,8 +232,8 @@ ChromeCalendar.prototype._monthCmpLimit = function (date) {
 ChromeCalendar.prototype._yearCmpLimit = function (date) {
     var startOfYear = beginOfYear(date);
     var endOfYear = new Date(date.getFullYear() + 1, 0, 1);
-    var minMil = Math.max(startOfYear.getTime(), this._minLimitDate.getTime());
-    var maxMil = Math.min(endOfYear.getTime(), nextDate(this._maxLimitDate).getTime());
+    var minMil = Math.max(startOfYear.getTime(), this._min.getTime());
+    var maxMil = Math.min(endOfYear.getTime(), nextDate(this._max).getTime());
     if (minMil < maxMil) return 0;
     return this._dayCmpLimit(date);
 };
@@ -360,7 +365,7 @@ ChromeCalendar.prototype._updateMonth = function (monthElt) {
         else
             cell.removeClass('absol-chrome-calendar-selected');
 
-        if (datetime.compareDate(this._minLimitDate, currentDate) > 0 || datetime.compareDate(currentDate, this._maxLimitDate) > 0) {
+        if (datetime.compareDate(this._min, currentDate) > 0 || datetime.compareDate(currentDate, this._max) > 0) {
             cell.addClass('absol-chrome-calendar-date-disabled');
         }
         else {
@@ -575,13 +580,13 @@ ChromeCalendar.prototype.viewEra = function (animation) {
 
 ChromeCalendar.prototype.viewNextDecade = function (animation) {
     this._viewDate = new Date(Math.min(2080, Math.floor(this._viewDate.getFullYear() / 10) * 10 + 10), 0, 1);
-    this._viewDate = new Date(Math.min(this._viewDate.getTime(), prevDate(this._maxLimitDate).getTime()));
+    this._viewDate = new Date(Math.min(this._viewDate.getTime(), prevDate(this._max).getTime()));
     this.viewEra(animation);
 };
 
 ChromeCalendar.prototype.viewPrevDecade = function (animation) {
     this._viewDate = new Date((Math.max(1890, Math.floor(this._viewDate.getFullYear() / 10) * 10 - 10)), 0, 1);
-    this._viewDate = new Date(Math.max(this._viewDate.getTime(), this._minLimitDate.getTime()));
+    this._viewDate = new Date(Math.max(this._viewDate.getTime(), this._min.getTime()));
     this.viewEra(animation);
 };
 
@@ -807,7 +812,7 @@ ChromeCalendar.prototype._createMonths = function (year) {
             }
             var beginOfMonth = datetime.beginOfMonth(e.__date__);
             var endOfMonth = datetime.prevDate(datetime.nextMonth(e.__date__));
-            if (datetime.compareDate(self._minLimitDate, endOfMonth) > 0 || datetime.compareDate(beginOfMonth, self._maxLimitDate) > 0) {
+            if (datetime.compareDate(self._min, endOfMonth) > 0 || datetime.compareDate(beginOfMonth, self._max) > 0) {
                 e.addClass('absol-chrome-calendar-date-disabled');
             }
             else {
@@ -904,13 +909,13 @@ ChromeCalendar.property.selectedDates = {
 };
 
 
-ChromeCalendar.property.minLimitDate = {
+ChromeCalendar.property.min = {
     set: function (value) {
         if (!value) value = new Date(1890, 0, 1);
         if (typeof value == 'number') value = new Date(value);
         value = beginOfDay(value);
         value = new Date(Math.max(new Date(1890, 0, 1).getTime(), value.getTime()));
-        this._minLimitDate = value;
+        this._min = value;
         this.domSignal.emit('request_update_buttons');
         this.domSignal.emit('request_update_month');
         this.domSignal.emit('request_update_open_year');
@@ -918,31 +923,27 @@ ChromeCalendar.property.minLimitDate = {
 
     },
     get: function () {
-        return this._minLimitDate;
+        return this._min;
     }
 };
 
 //include maxLimitDate
-ChromeCalendar.property.maxLimitDate = {
+ChromeCalendar.property.max = {
     set: function (value) {
         if (!value) value = new Date(2090, 0, 1);
         if (typeof value == 'number') value = new Date(value);
         if (value.getTime() > beginOfDay(value).getTime()) value = nextDate(beginOfDay(value));
         value = new Date(Math.min(new Date(2090, 0, 1).getTime(), value.getTime()));
-        this._maxLimitDate = value;
+        this._max = value;
         this.domSignal.emit('request_update_buttons');
         this.domSignal.emit('request_update_month');
         this.domSignal.emit('request_update_open_year');
         this.domSignal.emit('request_update_disabled_year_in_era');
     },
     get: function () {
-        return this._maxLimitDate;
+        return this._max;
     }
 };
-
-
-ChromeCalendar.property.minDateLimit = ChromeCalendar.property.minLimitDate;
-ChromeCalendar.property.maxDateLimit = ChromeCalendar.property.maxLimitDate;
 
 
 ChromeCalendar.property.multiSelect = {
@@ -1014,7 +1015,7 @@ ChromeCalendar.eventHandler.clickPrev = function () {
             this.viewPrevMonth();
             break;
         case "month":
-            this.expandYear(Math.min(this._maxLimitDate.getFullYear(), this._viewDate.getFullYear() - 1));
+            this.expandYear(Math.min(this._max.getFullYear(), this._viewDate.getFullYear() - 1));
             break;
         case "year":
             if (!this._decadeScrollTimeout || this._decadeScrollTimeout < 0)
@@ -1030,7 +1031,7 @@ ChromeCalendar.eventHandler.clickNext = function () {
             this.viewNexMonth();
             break;
         case "month":
-            this.expandYear(Math.max(prevDate(this._minLimitDate).getFullYear(), this._viewDate.getFullYear() + 1));
+            this.expandYear(Math.max(prevDate(this._min).getFullYear(), this._viewDate.getFullYear() + 1));
             break;
         case "year":
             if (!this._decadeScrollTimeout || this._decadeScrollTimeout < 0)
