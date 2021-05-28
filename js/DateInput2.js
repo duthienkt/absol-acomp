@@ -104,7 +104,7 @@ DateInput2.prototype._verifyFormat = function (text) {
 };
 
 DateInput2.prototype._notifyIfChange = function (event) {
-    if (!this._lastValue !== !this._value || compareDate(this._lastValue, this._value) !== 0) {
+    if (!this._lastValue !== !this._value || (this._lastValue && compareDate(this._lastValue, this._value)) !== 0) {
         this._lastValue = this._value;
         this.emit('change', { type: 'change', target: this, value: this._value, originEvent: event }, this);
     }
