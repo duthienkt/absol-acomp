@@ -94,7 +94,7 @@ DateInput2.render = function () {
 DateInput2.prototype._verifyFormat = function (text) {
     var regex = /([,.\-\/])|([a-zA-Z0-9]+)/g;
     var tokens = text.match(regex);
-    var count = [['dd', 'd'], ['m', 'MM'], ['yy', 'yyyy']].map(function (list) {
+    var count = [['dd', 'd'], ['M', 'MM'], ['yy', 'yyyy']].map(function (list) {
         return list.reduce(function (ac, cr) {
             if (tokens.indexOf(cr) >= 0) return ac + 1;
             return ac;
