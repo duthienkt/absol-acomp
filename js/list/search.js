@@ -15,18 +15,63 @@ var WORD_MATCH_SCORE = 3;
 export default function prepareSearchForItem(item) {
     if (!item.text || !item.text.charAt) item.text = item.text + '';
     var spliter = /\s+/;
-    item.__text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
-    item.__words__ = item.__text__.split(spliter);
+    var __text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
+    var __textNoneCase__ = __text__.toLowerCase();
+    var __nvnText__ = nonAccentVietnamese(__text__);
+    var __nvnTextNoneCase__ = __nvnText__.toLowerCase();
 
-    item.__textNoneCase__ = item.__text__.toLowerCase();
-    item.__wordsNoneCase__ = item.__textNoneCase__.split(spliter);
+    Object.defineProperties(item, {
+        __text__: {
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __text__
+        },
+        __words__:{
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __text__.split(spliter)
+        },
+        __textNoneCase__:{
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __textNoneCase__
+        },
+        __wordsNoneCase__:{
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __textNoneCase__.split(spliter)
+        },
+        __nvnText__:{
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __nvnText__
+        },
+        __nvnWords__:{
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __nvnText__.split(spliter)
+        },
+        __nvnTextNoneCase__:{
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __nvnTextNoneCase__
+        },
+        __nvnWordsNoneCase__:{
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: item.__nvnTextNoneCase__.split(spliter)
+        }
+    });
 
 
-    item.__nvnText__ = nonAccentVietnamese(item.__text__);
-    item.__nvnWords__ = item.__nvnText__.split(spliter);
-
-    item.__nvnTextNoneCase__ = item.__nvnText__.toLowerCase();
-    item.__nvnWordsNoneCase__ = item.__nvnTextNoneCase__.split(spliter);
     return item;
 }
 

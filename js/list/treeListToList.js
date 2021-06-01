@@ -6,7 +6,11 @@
 export default function treeListToList(items) {
     var arr = [];
     function visit(level, node) {
-        node.level = level;
+        Object.defineProperty(node, 'level', {
+           configurable: true,
+            writable: true,
+            value: level
+        });
         arr.push(node);
         if (node.items && node.items.length > 0) node.items.forEach(visit.bind(null, level + 1));
     }
