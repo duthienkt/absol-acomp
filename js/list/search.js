@@ -67,7 +67,7 @@ export default function prepareSearchForItem(item) {
             configurable: true,
             enumerable: false,
             writable: true,
-            value: item.__nvnTextNoneCase__.split(spliter)
+            value: __nvnTextNoneCase__.split(spliter)
         }
     });
 
