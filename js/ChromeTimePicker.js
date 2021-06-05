@@ -27,6 +27,8 @@ function ChromeTimePicker() {
     this.$pmBtn = $('.as-chrome-time-picker-btn[data-value="PM"]', this)
         .on('click', this.eventHandler.clickPM);
     this.domSignal.emit('request_scroll_into_selected');
+    this.hour = 0;
+    this.minute = 0;
 }
 
 ChromeTimePicker.tag = 'ChromeTimePicker'.toLowerCase();
