@@ -1,4 +1,4 @@
-import ACore, {_, $$} from '../ACore';
+import ACore, {_, $,$$} from '../ACore';
 import '../css/chrometimepicker.css';
 import Color from "absol/src/Color/Color";
 import DomSignal from "absol/src/HTML5/DomSignal";
