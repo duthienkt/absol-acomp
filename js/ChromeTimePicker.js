@@ -1,9 +1,7 @@
 import ACore, {_, $,$$} from '../ACore';
 import '../css/chrometimepicker.css';
-import Color from "absol/src/Color/Color";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE} from "absol/src/Time/datetime";
-import TimePicker from "./TimePicker";
 
 /***
  * @extends AElement
