@@ -33,7 +33,7 @@
         _({
             tag: 'timeinput',
             style: {
-                fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+                // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
             },
             props: {
                 dayOffset: new Date(),//now, dayOffset can be Date or Number 
@@ -43,14 +43,14 @@
             },
             on: {
                 change: function () {
-                    alert(this.hour + ":" + this.minute + '=>' + this.dayOffset);
+                    absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
                 }
             }
         }).addTo(inputDemoDiv);
         _({
             tag: 'timeinput',
             style: {
-                fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+                // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
             },
             props: {
                 // dayOffset: new Date(),//now, dayOffset can be Date or Number 
@@ -62,7 +62,8 @@
             },
             on: {
                 change: function () {
-                    alert(this.hour + ":" + this.minute + '=>' + this.dayOffset);
+                    absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
+
                 }
             }
         }).addTo(inputDemoDiv);
