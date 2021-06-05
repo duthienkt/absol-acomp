@@ -1,40 +1,122 @@
 .ac-time-input {
     box-sizing: border-box;
     height: calc(2em + 2px);
+    width: 9em;
     border: solid 1px #d6d6d6;
     border-radius: 2px;
-    box-sizing: border-box;
-    cursor: pointer;
     font-size: 14px;
     outline: none;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     display: inline-block;
     vertical-align: middle;
-    padding-left: 0.35714285714em;
-    padding-right: 0.35714285714em;
     background-color: white;
+    position: relative;
 }
 
-.ac-time-input-picker-ctn {
-    position: fixed;
+.ac-time-input input {
+    font: inherit;
+    outline: none;
+    width: calc(100% - 30px);
+    height: 100%;
+    border: none;
+    display: block;
+    padding: 0 0 0 0.5em;
+    -webkit-user-select: auto;
+    user-select: auto;
+    -webkit-user-drag: none;
 }
 
-.ac-time-input>span {
-    font-size: 1em;
-    line-height: 2em;
+.as-time-input-icon-btn {
+    border-right: none;
+    border-top: none;
+    border-bottom: none;
+    border-left: 1px solid #ddd;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: calc(2em + 1px);
+    box-sizing: border-box;
+    background-color: rgba(169, 169, 169, 0.1);
+    cursor: pointer;
+    border-radius: 0;
+    font-size: inherit;
 }
 
-.ac-time-input-picker-ctn-hidden {
-    z-index: -1000;
-    opacity: 0;
-    visibility: hidden;
+
+.as-time-input-icon-btn > span {
+    font-size: 1.14em;
 }
 
-.ac-time-input-picker-ctn-hidden:not(.absol-follower) {
-    transition: all 0.1s;
+
+.as-time-input-icon-btn:hover {
+    background-color: rgba(169, 169, 169, 0.25);
 }
 
-.ac-time-input.as-disabled {
+.as-time-input-icon-btn:active {
+    background-color: rgba(169, 169, 169, 0.5);
+}
+
+
+.as-time-input-icon-btn.as-disabled {
     color: rgb(102, 102, 102);
     pointer-events: none;
 }
+
+
+
+.as-time-input-clear-btn {
+    font-size: inherit;
+    position: absolute;
+    right: calc(2em + 2px);
+    height: 2em;
+    top: calc(50% - 1em);
+    box-sizing: border-box;
+    background-color: transparent;
+    border: none;
+    color: #bbb;
+    visibility: hidden;
+}
+
+
+.ac-time-input.as-value-null .as-time-input-clear-btn {
+    display: none;
+}
+
+.as-time-input-clear-btn:hover {
+    color: rgb(132, 132, 132);
+}
+
+.as-time-input-clear-btn:active {
+    color: #525555;
+}
+
+.as-time-input-text:focus + .as-time-input-clear-btn,
+.ac-time-input:hover .as-time-input-clear-btn {
+    visibility: visible;
+}
+
+
+/*.ac-time-input-picker-ctn {*/
+/*    position: fixed;*/
+/*}*/
+
+/*.ac-time-input > span {*/
+/*    font-size: 1em;*/
+/*    line-height: 2em;*/
+/*}*/
+
+/*.ac-time-input-picker-ctn-hidden {*/
+/*    z-index: -1000;*/
+/*    opacity: 0;*/
+/*    visibility: hidden;*/
+/*}*/
+
+/*.ac-time-input-picker-ctn-hidden:not(.absol-follower) {*/
+/*    transition: all 0.1s;*/
+/*}*/
+
+/*.ac-time-input.as-disabled {*/
+/*    color: rgb(102, 102, 102);*/
+/*    pointer-events: none;*/
+/*}*/
