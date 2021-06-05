@@ -573,6 +573,7 @@ DateInput2.property.disabled = {
         this.$input.disabled = value;
         if (value) this.addClass('as-disabled');
         else this.removeClass('as-disabled');
+        this.$text.disabled = value;
     },
     get: function () {
         return this.$input.disabled;

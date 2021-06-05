@@ -46,6 +46,7 @@ function TimeInput() {
     this.dayOffset = null;
     this.hour = null;
     this.minute = null;
+    this.disabled = false;
 }
 
 
@@ -310,6 +311,7 @@ TimeInput.property.disabled = {
         this._disabled = value;
         if (value) this.addClass('as-disabled');
         else this.removeClass('as-disabled');
+        this.$text.disabled = value;
     },
     get: function () {
         return this._disabled;

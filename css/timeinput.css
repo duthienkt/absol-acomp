@@ -13,6 +13,11 @@
     position: relative;
 }
 
+.ac-time-input.as-disabled{
+    color: rgb(102, 102, 102);
+    pointer-events: none;
+}
+
 .ac-time-input input {
     font: inherit;
     outline: none;
@@ -24,6 +29,7 @@
     -webkit-user-select: auto;
     user-select: auto;
     -webkit-user-drag: none;
+    color: inherit;
 }
 
 .as-time-input-icon-btn {
@@ -41,6 +47,7 @@
     cursor: pointer;
     border-radius: 0;
     font-size: inherit;
+    color: inherit;
 }
 
 
