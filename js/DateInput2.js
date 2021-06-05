@@ -136,11 +136,20 @@ DateInput2.prototype._applyValue = function (value) {
     this._value = value;
     if (!value) {
         this.$input.value = this.format;
+    }
+    else {
+        this.$input.value = formatDateTime(this._value, this._format);
+    }
+    this._updateNullClass();
+};
+
+DateInput2.prototype._updateNullClass = function () {
+    var value = this._value;
+    if (!value) {
         this.addClass('as-value-null');
     }
     else {
         this.removeClass('as-value-null');
-        this.$input.value = formatDateTime(this._value, this._format);
     }
 };
 
@@ -282,6 +291,7 @@ DateInput2.prototype._loadValueFromInput = function () {
     else {
         this._value = date;
     }
+    this._updateNullClass();
 };
 
 DateInput2.prototype._applyTokenDict = function (format, dict, debug) {
@@ -579,19 +589,19 @@ DateInput2.property.calendarLevel = {
 
 
 DateInput2.property.min = {
-    set: function (value){
-        this._min = this._normalizeValue(value)|| new Date(1890, 0, 1);
+    set: function (value) {
+        this._min = this._normalizeValue(value) || new Date(1890, 0, 1);
     },
-    get: function (){
+    get: function () {
         return this._min;
     }
 };
 
 DateInput2.property.max = {
-    set: function (value){
-        this._max = this._normalizeValue(value)|| new Date(2090, 0, 1);
+    set: function (value) {
+        this._max = this._normalizeValue(value) || new Date(2090, 0, 1);
     },
-    get: function (){
+    get: function () {
         return this._max;
     }
 };
