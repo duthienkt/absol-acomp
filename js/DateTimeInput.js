@@ -3,6 +3,10 @@ import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {zeroPadding} from "./utils";
 import {daysInMonth} from "absol/src/Time/datetime";
+import ChromeTimePicker from "./ChromeTimePicker";
+import ChromeCalendar from "./ChromeCalendar";
+import Follower from "./Follower";
+import {hitElement} from "absol/src/HTML5/EventEmitter";
 
 
 var STATE_NEW = 1;
@@ -35,6 +39,8 @@ function DateTimeInput() {
         .on('contextmenu', function (event) {
             event.preventDefault();
         });
+    this.$pickerBtn = $('.as-date-time-input-icon-btn', this)
+        .on('click', this.eventHandler.clickPickerBtn);
 }
 
 DateTimeInput.tag = 'DateTimeInput'.toLowerCase();
@@ -281,6 +287,7 @@ DateTimeInput.prototype._loadValueFromInput = function () {
 };
 
 DateTimeInput.prototype._notifyIfChange = function (event) {
+    console.log(this._lastEmitValue, this._value, this._lastEmitValue.getTime(), this._value.getTime())
     if (!this._lastEmitValue && !this._value) return;
     if (this._lastEmitValue && this._value && this._lastEmitValue.getTime() === this._value.getTime()) return;
     this.emit('change', {
@@ -444,6 +451,10 @@ DateTimeInput.property.value = {
             value = new Date(value);
         }
         if (!value || !value.getTime) value = null;
+        if (value) {
+            value = new Date(value.getTime());
+            value.setSeconds(0, 0);
+        }
         this._value = value;
         var dict;
         if (this._value) {
@@ -739,6 +750,173 @@ DateTimeInput.eventHandler.inputBlur = function () {
     this._loadValueFromInput();
     this._notifyIfChange();
 };
+
+
+DateTimeInput.eventHandler.clickPickerBtn = function () {
+    this._attachPicker();
+};
+
+DateTimeInput.eventHandler.clickOut = function (event){
+    if (hitElement(this.share.$follower, event)) return;
+    this._releasePicker();
+}
+
+
+DateTimeInput.eventHandler.calendarPick = function (event) {
+    var value = event.value;
+    var tkDict = this._makeTokenDict(this.$text.value);
+    if (tkDict.y) {
+        tkDict.y.value = value.getFullYear();
+    }
+    if (tkDict.M) {
+        tkDict.M.value = value.getMonth() + 1;
+    }
+    if (tkDict.d) {
+        tkDict.d.value = value.getDate();
+    }
+
+    this.$text.value = this._applyTokenDict(this._format, tkDict);
+    this._correctingInput();
+    this._loadValueFromInput();
+    this._notifyIfChange(event);
+};
+
+DateTimeInput.eventHandler.timePick = function (event) {
+    var hour = event.hour;
+    var minute = event.minute;
+    var tkDict = this._makeTokenDict(this.$text.value);
+    if (tkDict.h) {
+        tkDict.h.value = 1 + ((hour + 11) % 12);
+        if (tkDict.a) {
+            tkDict.a.value = hour >= 12 ? "PM" : 'AM';
+        }
+    }
+    if (tkDict.m) {
+        tkDict.m.value = minute;
+    }
+
+    this.$text.value = this._applyTokenDict(this._format, tkDict);
+    this._correctingInput();
+    this._loadValueFromInput();
+    this._notifyIfChange(event);
+};
+
+DateTimeInput.prototype.share = {
+    $follower: null,
+    $calendar: null,
+    $timePicker: null,
+    $holdingInput: null
+};
+
+
+DateTimeInput.prototype._preparePicker = function () {
+    if (!this.share.$follower) {
+        this.share.$timePicker = _({
+            tag: ChromeTimePicker.tag,
+            class: 'as-date-time-input-time-picker'
+        });
+        this.share.$calendar = _({
+            tag: ChromeCalendar.tag,
+            class: 'as-date-time-input-time-picker'
+        });
+        this.share.$follower = _({
+            tag: Follower.tag,
+            class: 'as-date-time-input-follower',
+            child: [this.share.$calendar, this.share.$timePicker]
+        });
+    }
+};
+
+DateTimeInput.prototype._attachPicker = function () {
+    this._preparePicker();
+    if (this.share.$holdingInput) this.share.$holdingInput._releasePicker();
+    this.share.$holdingInput = this;
+    this.share.$follower.addStyle('visibility', 'hidden');
+    this.share.$follower.addTo(this);
+    this.share.$follower.followTarget = this;
+    this.$pickerBtn.off('click', this.eventHandler.clickPickerBtn);
+    this.share.$calendar.on('pick', this.eventHandler.calendarPick);
+    this.share.$timePicker.on('change', this.eventHandler.timePick);
+
+    var tkDict = this._makeTokenDict(this.$text.value);
+    if (tkDict.h && !isNaN(tkDict.h.value)) {
+        if (tkDict.a && tkDict.a.value === 'PM') {
+            this.share.$timePicker.hour = 12 + tkDict.h.value % 12;
+        }
+        else {
+            this.share.$timePicker.hour = tkDict.h.value % 12;
+
+        }
+    }
+    else {
+        this.share.$timePicker.hour = 0;
+    }
+
+    if (tkDict.m && !isNaN(tkDict.m.value)) {
+        this.share.$timePicker.minute = tkDict.m.value;
+    }
+    else {
+        this.share.$timePicker.minute = 0;
+    }
+
+    var date = null;
+    if (tkDict.d && !isNaN(tkDict.d.value)
+        && tkDict.M && !isNaN(tkDict.M.value)
+        && tkDict.y && !isNaN(tkDict.y.value)) {
+        date = new Date(tkDict.y.value, tkDict.M.value - 1, tkDict.d.value);
+        if (isNaN(date.getTime())) date = null;
+    }
+    if (date) {
+        this.share.$calendar.selectedDates = [date];
+        this.share.$calendar.viewDate = date;
+    }
+    else {
+        this.share.$calendar.selectedDates = [];
+        var viewDate = null;
+        if (tkDict.y && !isNaN(tkDict.y.value)) {
+            if (tkDict.M && !isNaN(tkDict.M.value)) {
+                if (tkDict.d && !isNaN(tkDict.d.value)) {
+                    viewDate = new Date(tkDict.y.value, tkDict.M.value - 1, tkDict.d.value);
+                }
+                else {
+                    viewDate = new Date(tkDict.y.value, tkDict.M.value - 1, 1);
+
+                }
+            }
+            else {
+                viewDate = new Date(tkDict.y.value, 0, 1);
+            }
+        }
+        else {
+            viewDate = new Date();
+        }
+        if (viewDate && !isNaN(viewDate.getTime())) {
+            this.share.$calendar.viewDate = viewDate;
+        }
+        else {
+            this.share.$calendar.viewDate = new Date();
+        }
+    }
+
+
+    setTimeout(function () {
+        this.share.$follower.removeStyle('visibility');
+        document.body.addEventListener('click', this.eventHandler.clickOut);
+    }.bind(this), 5);
+};
+
+DateTimeInput.prototype._releasePicker = function () {
+    if (this.share.$holdingInput !== this) return;
+    this.share.$follower.remove();
+    this.share.$holdingInput = null;
+    this.share.$calendar.off('pick', this, this.eventHandler.calendarPick);
+    this.share.$timePicker.off('change', this, this.eventHandler.timePick);
+    document.body.removeEventListener('click', this.eventHandler.clickOut);
+    setTimeout(function () {
+        this.$pickerBtn.on('click', this.eventHandler.clickPickerBtn);
+    }.bind(this));
+};
+
 
 ACore.install(DateTimeInput);
 

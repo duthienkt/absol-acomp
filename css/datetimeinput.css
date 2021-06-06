@@ -42,7 +42,7 @@
     border-radius: 0;
 }
 
-.as-date-time-input-icon-btn>span{
+.as-date-time-input-icon-btn > span {
     font-size: 16px;
 }
 
@@ -59,4 +59,15 @@
 .as-date-time-input-icon-btn.as-disabled {
     color: rgb(102, 102, 102);
     pointer-events: none;
+}
+
+.as-date-time-input-follower {
+    box-sizing: border-box;
+    background-color: white;
+    border: 1px solid #ddd;
+
+}
+
+.as-date-time-input-follower > div {
+    border-color: white;
 }
