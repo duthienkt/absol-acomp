@@ -438,6 +438,7 @@ DateTimeInput.property = {};
 
 DateTimeInput.property.disabled = {
     set: function (value) {
+        this.$text.disabled = !!value;
         if (value) {
             this.addClass('as-disabled');
         }

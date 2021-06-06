@@ -10,6 +10,10 @@
     background-color: white;
     overflow: hidden;
 }
+.as-date-time-input.as-disabled{
+    color: rgb(102, 102, 102);
+    pointer-events: none;
+}
 
 
 .as-date-time-input input {
@@ -17,12 +21,12 @@
     width: calc(100% - 30px);
     height: 100%;
     border: none;
-    background-color: transparent;
     display: block;
     padding: 0 0 0 0.5em;
     -webkit-user-select: auto;
     user-select: auto;
     -webkit-user-drag: none;
+    color: inherit;
 }
 
 
@@ -40,6 +44,7 @@
     background-color: rgba(169, 169, 169, 0.1);
     cursor: pointer;
     border-radius: 0;
+    color: inherit;
 }
 
 .as-date-time-input-icon-btn > span {
