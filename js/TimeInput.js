@@ -59,7 +59,7 @@ TimeInput.render = function () {
         child: [
             {
                 tag: 'input',
-                class:'as-time-input-text',
+                class: 'as-time-input-text',
                 attr: {
                     type: 'text'
                 }
@@ -130,7 +130,7 @@ TimeInput.prototype._applyValue = function (hour, minute) {
     this._updateNullClass();
 };
 
-TimeInput.prototype._updateNullClass = function (){
+TimeInput.prototype._updateNullClass = function () {
     if (this._hour == null && this._minute == null) {
         this.addClass('as-value-null');
     }
@@ -325,10 +325,17 @@ TimeInput.property.format = {
         if (typeof value !== "string") value = "hh:mm a";
         value = value || 'hh:mm a';
         this._format = value;
-        this.value = this['value'];
+        this.dayOffset = this['dayOffset'];
     },
     get: function () {
         return this._format;
+    }
+};
+
+TimeInput.property.s24 = {
+    get: function () {
+        var t = this.format.match(new RegExp(this.tokenRegex.source, 'g'));
+        return !t || t.indexOf('a') < 0;
     }
 };
 
@@ -580,6 +587,8 @@ TimeInput.prototype._attachPicker = function () {
     this.share.$follower.addStyle('visibility', 'hidden');
     this.share.$picker.hour = this.hour || 0;
     this.share.$picker.minute = this.minute || 0;
+    console.log(this.s24)
+    this.share.$picker.s24 = this.s24;
     this.share.$picker.domSignal.emit('request_scroll_into_selected')
     this.$clockBtn.off('click', this.eventHandler.clickClockBtn);
     this.share.$picker.on('change', this.eventHandler.pickerChange);
