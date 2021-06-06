@@ -1,4 +1,4 @@
-import ACore, {_, $,$$} from '../ACore';
+import ACore, {_, $, $$} from '../ACore';
 import '../css/chrometimepicker.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE} from "absol/src/Time/datetime";
@@ -14,7 +14,13 @@ function ChromeTimePicker() {
     this.$hourList = this.$lists[0];
     this.$hourList.on('scroll', this.eventHandler.hourScroll)
         .on('click', this.eventHandler.clickHourList);
-    this.$minList = this.$lists[1];
+
+    this.$hour24List = this.$lists[1];
+    this.$hour24List.on('scroll', this.eventHandler.hour24Scroll)
+        .on('click', this.eventHandler.clickHour24List);
+
+
+    this.$minList = this.$lists[2];
     this.$minList.on('scroll', this.eventHandler.minScroll)
         .on('click', this.eventHandler.clickMinList);
     this.$attachhook = _('attachhook').addTo(this);
@@ -24,9 +30,10 @@ function ChromeTimePicker() {
         .on('click', this.eventHandler.clickAM);
     this.$pmBtn = $('.as-chrome-time-picker-btn[data-value="PM"]', this)
         .on('click', this.eventHandler.clickPM);
-    this.domSignal.emit('request_scroll_into_selected');
+    this.scrollIntoSelected();
     this.hour = 0;
     this.minute = 0;
+    this.s24 = false;
 }
 
 ChromeTimePicker.tag = 'ChromeTimePicker'.toLowerCase();
@@ -35,71 +42,98 @@ ChromeTimePicker.render = function () {
     return _({
         class: 'as-chrome-time-picker',
         extendEvent: ['change'],
-        child: [{
-            class: 'as-chrome-time-picker-viewport',
-            child: {
-                class: 'as-chrome-time-picker-list',
-                child: Array(36).fill(0).map(function (u, i) {
-                    return {
-                        tag: 'button',
-                        class: 'as-chrome-time-picker-btn',
+        child: [
+            {
+                class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h12'],
+                child: {
+                    class: 'as-chrome-time-picker-list',
+                    child: Array(36).fill(0).map(function (u, i) {
+                        return {
+                            tag: 'button',
+                            class: 'as-chrome-time-picker-btn',
 
-                        child: {
-                            tag: 'span',
-                            child: { text: (i % 12) + 1 + '' }
-                        },
-                        props: {
-                            __hour__: (i % 12) + 1
+                            child: {
+                                tag: 'span',
+                                child: { text: (i % 12) + 1 + '' }
+                            },
+                            props: {
+                                __hour__: (i % 12) + 1
+                            }
                         }
-                    }
-                })
-            }
-        }, {
-            class: 'as-chrome-time-picker-viewport',
-            child: {
-                class: 'as-chrome-time-picker-list',
-                child: Array(180).fill(0).map(function (u, i) {
-                    return {
-                        tag: 'button',
-                        class: 'as-chrome-time-picker-btn',
-
-                        child: {
-                            tag: 'span',
-
-                            child: { text: (i % 60) + '' }
-                        },
-                        props: {
-                            __min__: (i % 60)
-                        }
-                    }
-                })
-            }
-        }, {
-            class: 'as-chrome-time-picker-viewport',
-            child: ['AM', 'PM'].map(function (u,) {
-                return {
-                    tag: 'button',
-                    class: 'as-chrome-time-picker-btn',
-                    attr: {
-                        'data-value': u
-                    },
-                    child: {
-                        tag: 'span',
-                        child: { text: u }
-                    },
-                    props: {
-                        __APM__: u
-                    }
+                    })
                 }
-            })
-        }
+            },
+            {
+                class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h24'],
+                child: {
+                    class: 'as-chrome-time-picker-list',
+                    child: Array(24 * 3).fill(0).map(function (u, i) {
+                        return {
+                            tag: 'button',
+                            class: 'as-chrome-time-picker-btn',
+
+                            child: {
+                                tag: 'span',
+                                child: { text: (i % 24) + '' }
+                            },
+                            props: {
+                                __hour__: (i % 24)
+                            }
+                        }
+                    })
+                }
+            }, {
+                class: 'as-chrome-time-picker-viewport',
+                child: {
+                    class: 'as-chrome-time-picker-list',
+                    child: Array(180).fill(0).map(function (u, i) {
+                        return {
+                            tag: 'button',
+                            class: 'as-chrome-time-picker-btn',
+
+                            child: {
+                                tag: 'span',
+
+                                child: { text: (i % 60) + '' }
+                            },
+                            props: {
+                                __min__: (i % 60)
+                            }
+                        }
+                    })
+                }
+            }, {
+                class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-period'],
+                child: ['AM', 'PM'].map(function (u,) {
+                    return {
+                        tag: 'button',
+                        class: 'as-chrome-time-picker-btn',
+                        attr: {
+                            'data-value': u
+                        },
+                        child: {
+                            tag: 'span',
+                            child: { text: u }
+                        },
+                        props: {
+                            __APM__: u
+                        }
+                    }
+                })
+            }
         ]
     });
 };
 
 
+ChromeTimePicker.prototype.scrollIntoSelected = function () {
+    this.domSignal.emit('request_scroll_into_selected');
+};
+
 ChromeTimePicker.prototype._scrollIntoSelected = function () {
-    var hour = this._hour % 12;
+    var hour = this._hour;
+    this.$hour24List.scrollTop = (hour + 24) * 28;
+    hour = this._hour % 12;
     if (hour === 0) hour = 12;
     this.$hourList.scrollTop = (hour + 11) * 28;
     this.$minList.scrollTop = (this._minute + 60) * 28;
@@ -123,12 +157,20 @@ ChromeTimePicker.property = {};
 ChromeTimePicker.property.hour = {
     set: function (value) {
         value = (value % 24) || 0;
-        var prevVal = this._hour % 12;
+        var prevVal = this._hour;
+        this.$hour24List.childNodes[prevVal].removeClass('as-selected');
+        this.$hour24List.childNodes[prevVal + 24].removeClass('as-selected');
+        this.$hour24List.childNodes[prevVal + 48].removeClass('as-selected');
+        prevVal = this._hour % 12;
         if (prevVal === 0) prevVal = 12;
         this.$hourList.childNodes[prevVal - 1].removeClass('as-selected');
         this.$hourList.childNodes[prevVal - 1 + 12].removeClass('as-selected');
         this.$hourList.childNodes[prevVal - 1 + 24].removeClass('as-selected');
         this._hour = value;
+        prevVal = this._hour;
+        this.$hour24List.childNodes[prevVal].addClass('as-selected');
+        this.$hour24List.childNodes[prevVal + 24].addClass('as-selected');
+        this.$hour24List.childNodes[prevVal + 48].addClass('as-selected');
         prevVal = this._hour % 12;
         if (prevVal === 0) prevVal = 12;
         this.$hourList.childNodes[prevVal - 1].addClass('as-selected');
@@ -187,6 +229,20 @@ ChromeTimePicker.property.dayOffset = {
     }
 };
 
+ChromeTimePicker.property.s24 = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-24h-clock');
+        }
+        else {
+            this.removeClass('as-24h-clock');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-24h-clock');
+    }
+}
+
 ChromeTimePicker.eventHandler = {};
 
 ChromeTimePicker.eventHandler.hourScroll = function () {
@@ -198,6 +254,18 @@ ChromeTimePicker.eventHandler.hourScroll = function () {
     }
     if (dy !== 0) {
         this.$hourList.scrollTop += dy;
+    }
+};
+
+ChromeTimePicker.eventHandler.hour24Scroll = function () {
+    var y = this.$hour24List.scrollTop;
+    var dy = 0;
+    if (y < 28 * 24) dy = 28 * 24;
+    else if (y > 28 * 48) {
+        dy = -28 * 24;
+    }
+    if (dy !== 0) {
+        this.$hour24List.scrollTop += dy;
     }
 };
 
@@ -225,6 +293,29 @@ ChromeTimePicker.eventHandler.clickHourList = function (event) {
             this.hour = hour === 12 ? 0 : hour;
         }
 
+        if ((hour - 1 + 12) * 28 < this.$hourList.scrollTop) {
+            this.$hourList.scrollTop = (hour - 1 + 12) * 28;
+        }
+        else if (((hour - 1 + 13) * 28) > this.$hourList.scrollTop + this.$hourList.clientHeight) {
+            this.$hourList.scrollTop = (hour - 1 + 13) * 28 - this.$hourList.clientHeight;
+        }
+        this.notifyChange(event);
+    }
+};
+
+
+ChromeTimePicker.eventHandler.clickHour24List = function (event) {
+    var hour;
+    if ('__hour__' in event.target) hour = event.target.__hour__;
+    if ('__hour__' in event.target.parentElement) hour = event.target.parentElement.__hour__;
+    if (hour !== undefined) {
+        this.hour = hour;
+        if ((hour + 24) * 28 < this.$hourList.scrollTop) {
+            this.$hourList.scrollTop = (hour + 24) * 28;
+        }
+        else if (((hour + 24) * 28) > this.$hourList.scrollTop + this.$hourList.clientHeight) {
+            this.$hourList.scrollTop = (hour + 24) * 28 - this.$hourList.clientHeight;
+        }
         this.notifyChange(event);
     }
 };

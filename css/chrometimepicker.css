@@ -11,9 +11,16 @@
     touch-action: manipulation;
     user-select: none;
     background-color: rgb(255, 255, 255);
-    width: calc(160px + 1.2em);
+    /*width: calc(160px + 1.2em);*/
     height: 176px;
     white-space: nowrap;
+}
+
+.as-chrome-time-picker.as-24h-clock .as-chrome-time-picker-h12,
+.as-chrome-time-picker:not(.as-24h-clock) .as-chrome-time-picker-h24,
+.as-chrome-time-picker.as-24h-clock .as-chrome-time-picker-period
+{
+    display: none;
 }
 
 
