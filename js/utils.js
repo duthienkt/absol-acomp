@@ -432,3 +432,6 @@ export function vScrollIntoView(elt) {
     }
 }
 
+export function isDateTimeFormatToken(text) {
+    return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a'].indexOf(text) >= 0;
+}

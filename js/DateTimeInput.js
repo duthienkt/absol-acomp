@@ -1,7 +1,7 @@
 import ACore, {_, $} from "../ACore";
 import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
-import {zeroPadding} from "./utils";
+import {isDateTimeFormatToken, zeroPadding} from "./utils";
 import {daysInMonth} from "absol/src/Time/datetime";
 import ChromeTimePicker from "./ChromeTimePicker";
 import ChromeCalendar from "./ChromeCalendar";
@@ -85,38 +85,62 @@ DateTimeInput.prototype._tokenAt = function (start) {
     var format = this._format;
     var tokenMatched = rgx.exec(s);
     var formatToken = rgxFormat.exec(format);
+    var tokenMatchedList = [];
+    var formatTokenList = [];
     var text, ident;
     var idx;
     while (tokenMatched && formatToken) {
         text = tokenMatched[1];
         ident = formatToken[1];
-        if (text) {
-            idx = tokenMatched.index;
-            if (idx <= start && idx + text.length >= start) {
-                return {
-                    idx: idx,
-                    text: text,
-                    length: text.length,
-                    ident: ident,
-                    elt: this.$text,
-                    sourceText: s,
-                    replace: function (newText, selecting) {
-                        var left = this.sourceText.substr(0, this.idx);
-                        var right = this.sourceText.substr(this.idx + this.length);
-                        this.text = newText;
-                        this.length = newText.length;
-                        this.sourceText = left + this.text + right;
-                        this.elt.value = this.sourceText;
-                        if (selecting) {
-                            this.elt.setSelectionRange(this.idx, this.idx + this.length);
-                        }
-                    }
-                }
-            }
+        if (text && isDateTimeFormatToken(ident)) {
+            tokenMatchedList.push(tokenMatched);
+            formatTokenList.push(formatToken);
         }
 
         tokenMatched = rgx.exec(s);
         formatToken = rgxFormat.exec(format);
+    }
+    var bestI = -1;
+    var bestD = Infinity;
+    var d;
+    for (var i = 0; i < tokenMatchedList.length; ++i) {
+        tokenMatched = tokenMatchedList[i];
+        formatToken = formatTokenList[i];
+        text = tokenMatched[1];
+        idx = tokenMatched.index;
+        d = Math.min(Math.abs(start - idx), Math.abs(start - (idx + text.length)));
+        if (d < bestD) {
+            bestD = d;
+            bestI = i;
+        }
+
+    }
+
+    if (bestI >= 0) {
+        tokenMatched = tokenMatchedList[bestI];
+        formatToken = formatTokenList[bestI];
+        text = tokenMatched[1];
+        ident = formatToken[1];
+        idx = tokenMatched.index;
+        return {
+            idx: idx,
+            text: text,
+            length: text.length,
+            ident: ident,
+            elt: this.$text,
+            sourceText: s,
+            replace: function (newText, selecting) {
+                var left = this.sourceText.substr(0, this.idx);
+                var right = this.sourceText.substr(this.idx + this.length);
+                this.text = newText;
+                this.length = newText.length;
+                this.sourceText = left + this.text + right;
+                this.elt.value = this.sourceText;
+                if (selecting) {
+                    this.elt.setSelectionRange(this.idx, this.idx + this.length);
+                }
+            }
+        }
     }
     return null;
 };
@@ -756,7 +780,7 @@ DateTimeInput.eventHandler.clickPickerBtn = function () {
     this._attachPicker();
 };
 
-DateTimeInput.eventHandler.clickOut = function (event){
+DateTimeInput.eventHandler.clickOut = function (event) {
     if (hitElement(this.share.$follower, event)) return;
     this._releasePicker();
 }
