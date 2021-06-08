@@ -58,6 +58,7 @@ function DateInput2() {
 
     this.value = this._value;
     this.format = this._format;
+    this.notNull = false;
     OOP.drillProperty(this, this, 'minLimitDate', 'min');
     OOP.drillProperty(this, this, 'minDateLimit', 'min');
     OOP.drillProperty(this, this, 'maxLimitDate', 'max');
@@ -236,8 +237,16 @@ DateInput2.prototype._correctingCurrentToken = function () {
             if ((value < rqMin || value > rqMin)) {
                 value = Math.max(rqMin, Math.min(rqMax, value));
                 token.replace(zeroPadding(value, token.ident.length), false);
-                this._editingData.d = value;
             }
+        }
+        else if (this.notNull) {
+            if (token.ident.startsWith('y')) {
+                value = new Date().getFullYear();
+            }
+            else {
+                value = rqMin;
+            }
+            token.replace(zeroPadding(value, token.ident.length), false);
         }
         else if (token.text !== token.ident) {
             token.replace(token.ident, false);
@@ -312,6 +321,11 @@ DateInput2.prototype._applyTokenDict = function (format, dict, debug) {
         else
             return full;
     });
+};
+
+DateInput2.prototype.focus = function () {
+    this.$text.focus();
+    this.$text.select();
 };
 
 
@@ -401,11 +415,34 @@ DateInput2.eventHandler.keydown = function (event) {
     else if (event.key === "Delete" || event.key === 'Backspace') {
         event.preventDefault();
         if (endToken.idx !== token.idx) {
-            this.$text.value = this._format;
+            if (this.notNull) {
+                this.$text.value = formatDateTime(new Date(Math.min(this.max.getTime(), Math.max(this.min.getTime(), new Date().getTime()))), this._format);
+            }
+            else {
+                this.$text.value = this._format;
+            }
             this.$text.select();
         }
         else {
-            token.replace(token.ident, true);
+            if (this.notNull) {
+                switch (token.ident) {
+                    case 'y':
+                    case 'yyyy':
+                        token.replace(zeroPadding(new Date().getFullYear(), token.ident.length), true);
+                        break;
+                    case 'M':
+                    case 'MM':
+                    case 'd':
+                    case 'dd':
+                        token.replace(zeroPadding(1, token.ident.length), true);
+                        break;
+                    default:
+                        token.replace(token.ident, true);
+                }
+            }
+            else {
+                token.replace(token.ident, true);
+            }
             if (event.key === "Delete") this._editNextToken();
             else this._editPrevToken();
         }
@@ -538,6 +575,7 @@ DateInput2.property = {};
 DateInput2.property.value = {
     set: function (value) {
         value = this._normalizeValue(value);
+        if (!value && this.notNull) value = beginOfDay(new Date());
         this._lastValue = value;
         this._applyValue(value);
     },
@@ -604,6 +642,22 @@ DateInput2.property.max = {
     },
     get: function () {
         return this._max;
+    }
+};
+
+
+DateInput2.property.notNull = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-must-not-null');
+            if (!this.value) this.value = new Date();
+        }
+        else {
+            this.removeClass('as-must-not-null');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-must-not-null');
     }
 };
 

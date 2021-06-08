@@ -56,7 +56,8 @@
     pointer-events: none;
 }
 
-.as-date-input.as-value-null .as-date-input-clear-btn {
+.as-date-input.as-value-null .as-date-input-clear-btn,
+.as-date-input.as-must-not-null .as-date-input-clear-btn {
     display: none;
 }
 
