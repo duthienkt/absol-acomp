@@ -22,7 +22,7 @@
     height: 100%;
     border: none;
     display: block;
-    padding: 0 0 0 0.5em;
+    padding: 0 0 0 var(--as-input-horizontal-padding);
     -webkit-user-select: auto;
     user-select: auto;
     -webkit-user-drag: none;

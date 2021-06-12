@@ -28,8 +28,8 @@
 .absol-selectlist-item>span {
     line-height: 20px;
     white-space: pre;
-    padding-left: 7px;
-    padding-right: 7px;
+    padding-left: var(--as-input-horizontal-padding);
+    padding-right: var(--as-input-horizontal-padding);
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;

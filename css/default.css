@@ -1,0 +1,10 @@
+:root {
+    --as-input-height: 30px;
+    --as-input-font-size: 14px;
+    --as-input-font-family: Arial, Helvetica, sans-serif;
+    --as-input-vertical-padding: 0.3571em;
+    --as-input-horizontal-padding: 0.5em;
+    --as-context-menu-font-size: 14px;
+    --as-context-font-family: Arial, Helvetica, sans-serif;
+}
+

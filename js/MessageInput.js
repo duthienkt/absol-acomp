@@ -897,7 +897,7 @@ export function parseMessage(text, data) {
 
 MessageInput.parseMessage = parseMessage;
 
-function prepareIcon() {
+export function prepareIcon() {
     if (!MessageInput.iconSupportAsync) {
         var catalogiUrl = MessageInput.iconAssetRoot + '/catalog.json';
         MessageInput.iconSupportAsync = MessageInput.iconSupportAsync || iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {

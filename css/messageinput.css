@@ -19,11 +19,16 @@
     padding-left: 5px;
     overflow: visible;
     --plugin-buttons-width: 0px;
+    font-size: var(--as-input-font-size);
+    font-family: var(--as-input-font-family);
+}
+
+.as-message-input * {
+    font: inherit;
 }
 
 
 .as-message-input-plugin-btn {
-    font-size: inherit;
     width: 40px;
     height: 40px;
     padding: 0;
