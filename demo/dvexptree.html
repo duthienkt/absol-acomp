@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DVExptree</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    var SnackBar = absol.require('snackbar');
+    var listeners = {
+        radiochange: function (event) {
+            console.log(event, this.radioName, this.radioChecked, this.radioValue);
+            if (this.radioChecked)
+                SnackBar.show(this.getPath().join('/'));
+        },
+        indexchange: function (event) {
+            console.log(this.indexValue);
+        }
+    };
+    var exp2 = absol._({
+        tag: 'expgroup',
+        style: {
+            fontSize: '14px'
+        },
+        child: [
+            {
+                tag: 'dvexptree',
+                props: {
+                    name: 'Sơ yếu lý lịch',
+                    icon: 'span.mdi.mdi-code-json',
+                    status: 'open',
+                    radioName: "syll_radio"
+                },
+                on: listeners,
+                child: [
+                    {
+                        tag: 'dvexptree',
+                        props: {
+                            icon: 'span.mdi.mdi-format-text',
+                            name: 'Họ và tên',
+                            radioName: "syll_radio"
+                        },
+                        on: listeners
+                    },
+                    {
+                        tag: 'dvexptree',
+                        props: {
+                            icon: 'span.mdi.mdi-numeric',
+                            name: 'Tuổi',
+                            radioName: "syll_radio"
+                        },
+                        on: listeners
+                    },
+                    {
+                        tag: 'dvexptree',
+                        props: {
+                            icon: 'span.mdi.mdi-code-array',
+                            name: 'Điện thoại',
+                            status: 'open',
+                            radioName: "syll_radio"
+                        },
+                        on: listeners,
+                        child: [
+                            {
+                                tag: 'dvexptree',
+                                props: {
+                                    icon: 'span.mdi.mdi-code-json',
+                                    name: 'items',
+                                    radioName: "syll_radio",
+                                    status: 'close',
+                                    hasIndex: true,
+                                    indexValue: 6// default: 0
+                                },
+                                child: [
+                                    {
+                                        tag: 'dvexptree',
+                                        props: {
+                                            icon: 'span.mdi.mdi-format-text',
+                                            name: 'Kiểu',
+                                            radioName: "syll_radio"
+                                        },
+                                        on: listeners
+                                    },
+                                    {
+                                        tag: 'dvexptree',
+                                        props: {
+                                            icon: 'span.mdi.mdi-format-text',
+                                            name: 'Giá trị',
+                                            radioName: "syll_radio"
+                                        },
+                                        on: listeners
+                                    }
+                                ]
+                            },
+                            {
+                                tag: 'dvexptree',
+                                props: {
+                                    icon: 'span.mdi.mdi-numeric',
+                                    name: 'length',
+                                    radioName: "syll_radio"
+                                },
+                                on: listeners
+                            }
+                        ]
+                    },
+                    {
+                        tag: 'dvexptree',
+                        props: {
+                            icon: 'span.mdi.mdi-format-text',
+                            name: 'Email',
+                            radioName: "syll_radio"
+                        },
+                        on: listeners
+                    }
+                ]
+            },
+            {
+                tag: 'dvexptree',
+                props: {
+                    name: "Người thân",
+                    radioName: "syll_radio",
+                    status: 'close',
+                    hasIndex: true,
+                    indexValue: 6,// default: 0,
+                    icon: 'span.mdi.mdi-code-array',
+                },
+                child: [
+                    {
+                        tag: 'dvexptree',
+                        props: {
+                            icon: 'span.mdi.mdi-code-json',
+                            name: 'items',
+                            radioName: "syll_radio",
+                            status: 'close',
+                            hasIndex: true,
+                            indexValue: 6// default: 0
+                        },
+                        child: {
+                            tag: 'dvexptree',
+                            props: {
+                                name: 'Sơ yếu lý lịch',
+                                icon: 'span.mdi.mdi-code-json',
+                                status: 'open',
+                                radioName: "syll_radio"
+                            },
+                            on: listeners,
+                            child: [
+                                {
+                                    tag: 'dvexptree',
+                                    props: {
+                                        icon: 'span.mdi.mdi-format-text',
+                                        name: 'Họ và tên',
+                                        radioName: "syll_radio"
+                                    },
+                                    on: listeners
+                                },
+                                {
+                                    tag: 'dvexptree',
+                                    props: {
+                                        icon: 'span.mdi.mdi-numeric',
+                                        name: 'Tuổi',
+                                        radioName: "syll_radio"
+                                    },
+                                    on: listeners
+                                },
+                                {
+                                    tag: 'dvexptree',
+                                    props: {
+                                        icon: 'span.mdi.mdi-code-array',
+                                        name: 'Điện thoại',
+                                        status: 'open',
+                                        radioName: "syll_radio"
+                                    },
+                                    on: listeners,
+                                    child: [
+                                        {
+                                            tag: 'dvexptree',
+                                            props: {
+                                                icon: 'span.mdi.mdi-code-array',
+                                                name: 'items',
+                                                radioName: "syll_radio",
+                                                status: 'close',
+                                                hasIndex: true,
+                                                indexValue: 6// default: 0
+                                            },
+                                            child: [
+                                                {
+                                                    tag: 'dvexptree',
+                                                    props: {
+                                                        icon: 'span.mdi.mdi-format-text',
+                                                        name: 'Kiểu',
+                                                        radioName: "syll_radio"
+                                                    },
+                                                    on: listeners
+                                                },
+                                                {
+                                                    tag: 'dvexptree',
+                                                    props: {
+                                                        icon: 'span.mdi.mdi-format-text',
+                                                        name: 'Giá trị',
+                                                        radioName: "syll_radio"
+                                                    },
+                                                    on: listeners
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            tag: 'dvexptree',
+                                            props: {
+                                                icon: 'span.mdi.mdi-numeric',
+                                                name: 'length',
+                                                radioName: "syll_radio"
+                                            },
+                                            on: listeners
+                                        }
+                                    ]
+                                },
+                                {
+                                    tag: 'dvexptree',
+                                    props: {
+                                        icon: 'span.mdi.mdi-format-text',
+                                        name: 'Email',
+                                        radioName: "syll_radio"
+                                    },
+                                    on: listeners
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        tag: 'dvexptree',
+                        props: {
+                            icon: 'span.mdi.mdi-numeric',
+                            name: 'length',
+                            radioName: "syll_radio"
+                        },
+                        on: listeners
+                    }
+                ]
+            }
+        ]
+    }).addTo(document.body);
+</script>
+</body>
+</html>
