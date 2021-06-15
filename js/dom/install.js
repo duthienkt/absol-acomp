@@ -99,6 +99,7 @@ import VerticalTreeDiagram, {VerticalTreeDiagramNode} from "../VerticalTreeDiagr
 import TokenField from "../TokenField";
 import DateTimeInput from "../DateTimeInput";
 import ChromeTimePicker from "../ChromeTimePicker";
+import DVExpTree from "../DVExpTree";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -148,6 +149,7 @@ export var publicCreators = [
     ExpNode,
     ExpTree,
     ExpGroup,
+    DVExpTree,
     FlexiconButton,
     FlexiconInput,
     Follower,

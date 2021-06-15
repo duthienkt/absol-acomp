@@ -1,0 +1,30 @@
+.as-dv-exp-tree {
+
+}
+
+.as-dv-exp-tree > .absol-exp-node > .absol-exp-node-level {
+}
+
+.as-dv-exp-tree > .absol-exp-node > .absol-radio-button {
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+
+.as-dv-exp-tree:not(.as-has-radio) > .absol-exp-node > .absol-radio-button {
+    visibility: hidden;
+}
+
+.as-dv-exp-tree > .absol-exp-node > input[type=number] {
+    width: 3em;
+    text-align: right;
+    box-sizing: border-box;
+    padding: 0 0 0 0.5em;
+    margin-left: 0.5em;
+    outline: none;
+}
+
+.as-dv-exp-tree:not(.as-has-index-input) > .absol-exp-node > input[type=number] {
+    display: none;
+}

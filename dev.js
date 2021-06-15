@@ -22,6 +22,7 @@ import ToolTip from "./js/Tooltip";
 import TextMeasure from "./js/TextMeasure";
 import BContextCapture from "./js/BContextCapture";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import Dom from "absol/src/HTML5/Dom";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -52,7 +53,7 @@ else {
 window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;
 
-setTimeout(function () {
+Dom.documentReady.then(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
         if (e.href && e.href.toLowerCase().indexOf('materialdesignicons') >= 0) return true;
     });
@@ -65,7 +66,7 @@ setTimeout(function () {
             }
         }).addTo(document.head);
     }
-}, 100);
+});
 
 materializeIconTrigger();
 
