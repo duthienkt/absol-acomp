@@ -725,7 +725,7 @@ DateTimeInput.eventHandler.keydown = function (event) {
                     dVal = (parseInt(token.text.replace(/^./, '')) || 0) * 10 + dVal;
                     this._editingData.state_num++;
                     if (this._editingData.state_num >= 4) {
-                        dVal = Math.max(1890, Math.min(2089, dVal));
+                        // dVal = Math.max(1890, Math.min(2089, dVal));
                         token.replace(zeroPadding(dVal, token.ident.length), true);
                         this._editNextToken();
                     }
