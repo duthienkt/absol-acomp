@@ -31,7 +31,7 @@ DVExpTree.prototype.injectInput = function () {
     this.$node.insertBefore(this.$radio, this.$node.$removeIcon);
     this.$index = _({
         tag: 'input',
-        attr: { type: 'number', min: '0', value: 0 },
+        attr: { type: 'text' },
         on: {
             change: this.eventHandler.indexChange
         }
@@ -99,7 +99,7 @@ DVExpTree.property.indexValue = {
         this.$index.value = value;
     },
     get: function () {
-        return parseInt(this.$index.value);
+        return this.$index.value;
     }
 };
 

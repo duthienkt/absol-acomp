@@ -16,7 +16,7 @@
     visibility: hidden;
 }
 
-.as-dv-exp-tree > .absol-exp-node > input[type=number] {
+.as-dv-exp-tree > .absol-exp-node > input[type=text] {
     width: 3em;
     text-align: right;
     box-sizing: border-box;
@@ -25,6 +25,6 @@
     outline: none;
 }
 
-.as-dv-exp-tree:not(.as-has-index-input) > .absol-exp-node > input[type=number] {
+.as-dv-exp-tree:not(.as-has-index-input) > .absol-exp-node > input[type=text] {
     display: none;
 }
