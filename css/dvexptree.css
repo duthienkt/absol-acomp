@@ -18,7 +18,6 @@
 
 .as-dv-exp-tree > .absol-exp-node > input[type=text] {
     width: 3em;
-    text-align: right;
     box-sizing: border-box;
     padding: 0 0 0 0.5em;
     margin-left: 0.5em;
