@@ -121,7 +121,7 @@ ExpNode.property.level = {
         if (value != this.level) {
             this._level = value || 0;
 
-            this.$level.innerHTML = '&nbsp;'.repeat(this._level * 4);
+            this.$level.innerHTML = '&nbsp;'.repeat(this._level * 6);
         }
     },
     get: function () {
