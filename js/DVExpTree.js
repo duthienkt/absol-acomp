@@ -117,8 +117,8 @@ DVExpTree.eventHandler.indexChange = function (event) {
 
 
 DVExpTree.eventHandler.clickInNode = function (event) {
-    if (hitElement(this.$index, event) || hitElement(this.$radio, event) || hitElement(this.$toggleIcon, event)) return;
-    if (hitElement(this.$node, event))
+    if (hitElement(this.$index, event) || hitElement(this.$radio, event) || hitElement(this.$node.$toggleIcon, event)) return;
+    if (hitElement(this.$node, event) && this.radioName)
         this.$radio.click();
 };
 
