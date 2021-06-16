@@ -9,12 +9,16 @@
     vertical-align: middle;
     display: inline-block;
     margin-right: 5px;
+    /*margin-left: 5px;*/
 }
 
 
 .as-dv-exp-tree:not(.as-has-radio) > .absol-exp-node > .absol-radio-button {
-    visibility: hidden;
+    /*visibility: hidden;*/
+    display: none;
 }
+
+
 
 .as-dv-exp-tree > .absol-exp-node > input[type=text] {
     width: 3em;
@@ -27,3 +31,11 @@
 .as-dv-exp-tree:not(.as-has-index-input) > .absol-exp-node > input[type=text] {
     display: none;
 }
+
+/*.as-dv-exp-tree>.absol-exp-node:not(.status-open):not(.status-close)>.toggler-ico{*/
+/*    display: none;*/
+/*}*/
+
+/*.as-dv-exp-tree .absol-exp-node-ext-icon{*/
+/*    display: none;*/
+/*}*/

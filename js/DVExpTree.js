@@ -1,6 +1,7 @@
 import ExpTree from "./ExpTree";
 import ACore, {_} from "../ACore";
 import '../css/dvexptree.css';
+import {hitElement} from "absol/src/HTML5/EventEmitter";
 
 /***
  * @extends ExpTree
@@ -28,7 +29,7 @@ DVExpTree.prototype.injectInput = function () {
             change: this.eventHandler.radioChange
         }
     });
-    this.$node.insertBefore(this.$radio, this.$node.$removeIcon);
+    this.$node.insertBefore(this.$radio, this.$node.$extIcon);
     this.$index = _({
         tag: 'input',
         attr: { type: 'text' },
@@ -36,7 +37,8 @@ DVExpTree.prototype.injectInput = function () {
             change: this.eventHandler.indexChange
         }
     });
-    this.$node.insertBefore(this.$index, this.$node.$desc)
+    this.$node.insertBefore(this.$index, this.$node.$desc);
+    this.$node.on('click', this.eventHandler.clickInNode);
 };
 
 
@@ -113,6 +115,12 @@ DVExpTree.eventHandler.indexChange = function (event) {
     this.emit('indexchange', Object.assign({}, event, { target: this, indexInput: this.$index }), this);
 };
 
+
+DVExpTree.eventHandler.clickInNode = function (event) {
+    if (hitElement(this.$index, event) || hitElement(this.$radio, event) || hitElement(this.$toggleIcon, event)) return;
+    if (hitElement(this.$node, event))
+        this.$radio.click();
+};
 
 ACore.install(DVExpTree);
 
