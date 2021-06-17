@@ -14,7 +14,7 @@
             if (this.radioChecked)
                 SnackBar.show(this.getPath().join('/'));
         },
-        indexchange: function (event) {
+        indexclick: function (event) {
             console.log(this.indexValue);
         }
     };
@@ -58,7 +58,6 @@
                             icon: 'span.mdi.mdi-code-array',
                             name: 'Điện thoại',
                             status: 'open',
-                            radioName: "syll_radio"
                         },
                         on: listeners,
                         child: [
@@ -173,7 +172,6 @@
                                         icon: 'span.mdi.mdi-code-array',
                                         name: 'Điện thoại',
                                         status: 'open',
-                                        radioName: "syll_radio"
                                     },
                                     on: listeners,
                                     child: [
