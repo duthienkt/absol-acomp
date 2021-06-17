@@ -19,16 +19,23 @@
 }
 
 
-
-.as-dv-exp-tree > .absol-exp-node > input[type=text] {
-    width: 3em;
+.as-dv-exp-tree > .absol-exp-node > .as-dv-exp-tree-index {
     box-sizing: border-box;
     padding: 0 0 0 0.5em;
     margin-left: 0.5em;
     outline: none;
+    height: 1.2em;
+    min-width: 3em;
+    box-shadow: 0 0  0 1px #dddddd;
+    display: inline-block;
+    vertical-align: middle;
 }
 
-.as-dv-exp-tree:not(.as-has-index-input) > .absol-exp-node > input[type=text] {
+.as-dv-exp-tree > .absol-exp-node > .as-dv-exp-tree-index:hover{
+    box-shadow: 0 0  0 1px #aaaaaa;
+}
+
+.as-dv-exp-tree:not(.as-has-index-input) > .absol-exp-node > .as-dv-exp-tree-index {
     display: none;
 }
 

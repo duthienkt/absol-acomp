@@ -17,7 +17,7 @@ DVExpTree.tag = 'DVExpTree'.toLowerCase();
 DVExpTree.render = function () {
     return _({
         tag: ExpTree.tag,
-        extendEvent: ['radiochange', 'indexchange'],
+        extendEvent: ['radiochange', 'indexclick'],
         class: 'as-dv-exp-tree'
     }, true);
 };
@@ -31,10 +31,10 @@ DVExpTree.prototype.injectInput = function () {
     });
     this.$node.insertBefore(this.$radio, this.$node.$extIcon);
     this.$index = _({
-        tag: 'input',
-        attr: { type: 'text' },
+        tag: 'span',
+        class: 'as-dv-exp-tree-index',
         on: {
-            change: this.eventHandler.indexChange
+            click: this.eventHandler.indexClick
         }
     });
     this.$node.insertBefore(this.$index, this.$node.$desc);
@@ -98,10 +98,10 @@ DVExpTree.property.hasIndex = {
 DVExpTree.property.indexValue = {
     enumerable: true,
     set: function (value) {
-        this.$index.value = value;
+        this.$index.innerHTML = value;
     },
     get: function () {
-        return this.$index.value;
+        return this.$index.innerHTML;
     }
 };
 
@@ -111,8 +111,8 @@ DVExpTree.eventHandler.radioChange = function (event) {
     this.emit('radiochange', Object.assign({}, event, { target: this, radioElt: this.$radio }), this);
 };
 
-DVExpTree.eventHandler.indexChange = function (event) {
-    this.emit('indexchange', Object.assign({}, event, { target: this, indexInput: this.$index }), this);
+DVExpTree.eventHandler.indexClick = function (event) {
+    this.emit('indexclick', Object.assign({}, event, { target: this, indexInput: this.$index }), this);
 };
 
 
