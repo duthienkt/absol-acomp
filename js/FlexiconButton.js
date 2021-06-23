@@ -61,7 +61,7 @@ FlexiconButton.property.text = {
         }
     },
     get: function () {
-        this._text;
+        return this._text;
     }
 };
 
