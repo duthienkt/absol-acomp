@@ -17,12 +17,12 @@
     <h1>Number Input</h1>
     <script class="viewable">
         var mNumberInput = absol._('numberinput').addStyle({ width: '8em' }).addTo(document.body);
-        mNumberInput.floatFixed = 3;
-        mNumberInput.decimalPadding = 2;
+        mNumberInput.floatFixed = 0;
+        mNumberInput.decimalPadding = 0;
         mNumberInput.max = 10;
         mNumberInput.min = -10;
         mNumberInput.on('change', function (event) {
-            console.log(event);
+            console.log(event, this.value);
         });
 
         var mNumberInputDisabled = absol._('numberinput').addStyle({ width: '8em' }).addTo(document.body);
