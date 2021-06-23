@@ -311,7 +311,6 @@ DateTimeInput.prototype._loadValueFromInput = function () {
 };
 
 DateTimeInput.prototype._notifyIfChange = function (event) {
-    console.log(this._lastEmitValue, this._value, this._lastEmitValue.getTime(), this._value.getTime())
     if (!this._lastEmitValue && !this._value) return;
     if (this._lastEmitValue && this._value && this._lastEmitValue.getTime() === this._value.getTime()) return;
     this.emit('change', {
