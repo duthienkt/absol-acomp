@@ -144,7 +144,7 @@ NumberInput.eventHandler.mouseDownDownBtn = function (event) {
 
 NumberInput.eventHandler.keyup = function (event) {
     var cValue = parseFloat(this.$input.value);
-    if (!isNaN(cValue)) {
+    if (!isNaN(cValue) && cValue <= this.max && this.min <=cValue) {
         this._value = cValue;
         this.notifyChanged({ originEvent: event, by: 'keyup' });
     }
