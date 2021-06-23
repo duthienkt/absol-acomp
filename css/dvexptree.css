@@ -29,6 +29,7 @@
     box-shadow: 0 0  0 1px #dddddd;
     display: inline-block;
     vertical-align: middle;
+    background-color: white;
 }
 
 .as-dv-exp-tree > .absol-exp-node > .as-dv-exp-tree-index:hover{
