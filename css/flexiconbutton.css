@@ -10,6 +10,12 @@
     vertical-align: middle;
 }
 
+.as-flexicon-button:disabled {
+    pointer-events: none;
+    background-color: #c7c7c7 !important;
+}
+
+
 .as-flexicon-button div,
 .as-flexicon-button span {
     font-weight: inherit;
