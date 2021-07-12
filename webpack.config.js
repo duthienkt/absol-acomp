@@ -1,5 +1,6 @@
 const path = require('path');
-
+const webpack = require('webpack');
+const os = require('os');
 
 var packages = {
     default: {
@@ -7,6 +8,16 @@ var packages = {
         filename: "./dist/absol-acomp.js"
     }
 }
+
+var package = Object.assign({}, require("./package.json"));
+package.buildPCName = os.hostname();
+package.buildFolder = __dirname;
+package.buildTime = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
+
+delete package.scripts;
+delete package.devDependencies;
+delete package.main;
+
 
 const PACKAGE = 'default';
 
@@ -22,7 +33,15 @@ module.exports = {
     resolve: {
         modules: [
             path.join(__dirname, './node_modules')
-        ]
+        ],
+        fallback: {
+            fs: false,
+            path: require.resolve("path-browserify"),
+            buffer: require.resolve("buffer/"),
+            "util": false,
+            semver:false,
+            "assert": require.resolve("assert/")
+        }
     },
     module: {
         rules: [
@@ -52,5 +71,16 @@ module.exports = {
     },
     performance: {
         hints: false
-    }
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            PACKAGE: JSON.stringify(package)
+        }),
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        }),
+        new webpack.ProvidePlugin({
+            Buffer: ['buffer', 'Buffer'],
+        })
+    ]
 };
