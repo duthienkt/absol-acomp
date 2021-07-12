@@ -85,6 +85,79 @@
                 sizechange: function (event) {
                     // messageCtn.addStyle('height', 'calc(100% - ' + (event.bound.height) + 'px)')
                 },
+                useraddfile: function (event) {
+                    var files = event.files;
+                    /* trong trường hợp chỉ lấy những file < 3MB và không có bất đồng bộ
+                    var files = event.files;
+                    files = files.filter(function (file) {
+                        return file.size < 1024 * 1024 * 3;
+                    })
+                    event.resolve(files);
+                    */
+                    var bigFiles = files.filter(function (file) {
+                        return file.size > 1024 * 600;
+                    });
+                    var smallFiles = files.filter(function (file) {
+                        return file.size <= 1024 * 600;
+                    });
+                    if (bigFiles.length > 0)// ngược lại không cần gọi resolve
+                        event.resolve(new Promise(function (resolve) {
+                            var windowElt = _({
+                                style: {
+                                    backgroundColor: 'white',
+                                    border: '1px solid #ddd',
+                                    boxShadow: '1px 1px 2px 2px rgba(0,0,0,0.3)',
+                                    borderRadius: '8px',
+                                    padding: '10px'
+                                },
+                                child: [
+                                    '<h3>Không thể thêm file lớn hơn 600KB</h3>',
+                                    {
+                                        child: bigFiles.map(function (file) {
+                                            return {
+                                                child: [
+                                                    { tag: 'strong', child: { text: file.name } },
+                                                    '<span> - </span>',
+                                                    { tag: 'span', text: file.size + 'B' },
+                                                ]
+                                            };
+                                        })
+                                    },
+                                    "br",
+                                    {
+                                        style: {
+                                            textAlign: 'center',
+                                        },
+                                        child: {
+                                            tag: 'flexiconbutton',
+                                            style: { height: '30px', width: '80px' },
+                                            props: {
+                                                text: "OK",
+                                                icon: 'span.mdi.mdi-send'
+                                            },
+                                            on: {
+                                                click: function () {
+                                                    modal.remove();
+                                                    resolve(smallFiles);
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            });
+
+                            var modal = _({
+                                tag: 'modal',
+                                style: {
+                                    zIndex: 1000
+                                },
+                                child: windowElt
+                            });
+                            document.body.appendChild(modal)
+                        }));
+
+
+                },
                 send: function () {
                     if (this.mode == 'edit') return;
                     var text = this.text;
@@ -222,7 +295,8 @@
             }
         });
 
-    })()
+    })
+    ()
 </script>
 </body>
 
