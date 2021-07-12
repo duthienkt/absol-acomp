@@ -432,6 +432,19 @@ export function vScrollIntoView(elt) {
     }
 }
 
+export function fileSize2Text(s) {
+    if (typeof s !== "number" || isNaN(s)) return '';
+    var units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    var b = 1;
+    for (var i = 0; i < units.length; ++i) {
+        if (s <= b * 1024) {
+            return Math.floor(s / b * 100) / 100 + units[i];
+        }
+        b *= 1024;
+    }
+    return Math.floor(s / b * 10) / 100 + 'PB';
+}
+
 export function isDateTimeFormatToken(text) {
     return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a'].indexOf(text) >= 0;
 }

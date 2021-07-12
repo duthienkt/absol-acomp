@@ -369,17 +369,26 @@
     display: none;
 }
 
-.as-message-input-attach-preview-name {
+
+.as-message-input-attach-preview-info {
     position: absolute;
     left: 10px;
     bottom: 10px;
     right: 10px;
+    max-height: calc(100% - 20px);
     text-shadow: 0px 1px 3px white;
     color: black;
     font-size: 14px;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.as-message-input-attach-preview-name {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.as-message-input-attach-preview-size {
+    color: #42494c;
 }
 
 .as-message-input-attachment-add-btn {

@@ -1,7 +1,7 @@
 import '../css/messageinput.css';
 import ACore from "../ACore";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
-import {openFileDialog} from "./utils";
+import {fileSize2Text, openFileDialog} from "./utils";
 import XHR from "absol/src/Network/XHR";
 import EmojiAnims from "./EmojiAnims";
 import EmojiPicker from "./EmojiPicker";
@@ -114,7 +114,7 @@ MessageInput.render = function (data) {
             'data-icon-asset-root': MessageInput.iconAssetRoot
         },
         class: 'as-message-input',
-        extendEvent: ['sendtext', 'sendimage', 'sendfile', 'sendquote', 'cancel', 'change', 'sizechange', 'send'],
+        extendEvent: ['sendtext', 'sendimage', 'sendfile', 'sendquote', 'cancel', 'change', 'sizechange', 'send', 'useraddfile'],
         child: [
             {
                 class: 'as-message-input-right',
@@ -335,8 +335,17 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
                         }
                     }
                 }, {
-                    class: ['as-message-input-attach-preview-name'],
-                    child: { text: file.name }
+                    class: 'as-message-input-attach-preview-info',
+                    child: [
+                        {
+                            class: 'as-message-input-attach-preview-name',
+                            child: { text: file.name }
+                        },
+                        {
+                            class: 'as-message-input-attach-preview-size',
+                            child: { text: fileSize2Text(file.size) }
+                        }
+                    ]
                 }
             ]
         }).addTo(thisMi.$attachmentCtn);
@@ -394,8 +403,17 @@ MessageInput.prototype.addFiles = function (files) {
                         }
                     },
                     {
-                        class: 'as-message-input-attach-preview-name',
-                        child: { text: file.name }
+                        class: 'as-message-input-attach-preview-info',
+                        child: [
+                            {
+                                class: 'as-message-input-attach-preview-name',
+                                child: { text: file.name }
+                            },
+                            {
+                                class: 'as-message-input-attach-preview-size',
+                                child: { text: fileSize2Text(file.size) }
+                            }
+                        ]
                     }
                 ]
             });
@@ -419,7 +437,26 @@ MessageInput.prototype.openFileDialog = function () {
     var thisMi = this;
     openFileDialog({ multiple: true }).then(function (file) {
         if (!thisMi.autoSend) thisMi.$preInput.focus();
-        thisMi.handleAddingFileByType(file);
+        var event = {
+            resolvedAsync: Promise.resolve(file),
+            files: file,
+            resolve: function (result){
+                if (!result) {
+                    this.resolvedAsync = Promise.resolve(undefined);
+                }
+                else if(result.then){
+                    this.resolvedAsync = result;
+                }
+                else {
+                    this.resolvedAsync = Promise.resolve(result);
+                }
+            }
+        };
+        thisMi.emit('useraddfile', event);
+        event.resolvedAsync.then(function (files) {
+            if (files && files.length > 0)
+                thisMi.handleAddingFileByType(file);
+        });
     });
 };
 
