@@ -933,8 +933,8 @@ DateTimeInput.prototype._releasePicker = function () {
     if (this.share.$holdingInput !== this) return;
     this.share.$follower.remove();
     this.share.$holdingInput = null;
-    this.share.$calendar.off('pick', this, this.eventHandler.calendarPick);
-    this.share.$timePicker.off('change', this, this.eventHandler.timePick);
+    this.share.$calendar.off('pick', this.eventHandler.calendarPick);
+    this.share.$timePicker.off('change', this.eventHandler.timePick);
     document.body.removeEventListener('click', this.eventHandler.clickOut);
     setTimeout(function () {
         this.$pickerBtn.on('click', this.eventHandler.clickPickerBtn);
