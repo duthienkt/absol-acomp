@@ -409,6 +409,34 @@ PreInput.property.value = {
     }
 };
 
+PreInput.property.disabled = {
+    set: function (value) {
+        value = !!value;
+        if (value === this.containsClass('as-disabled')) return;
+        if (value) {
+            this.addClass('as-disabled');
+            this.attr({
+                contenteditable: undefined,
+                oncut: 'return false',
+                onpaste: 'return false',
+                onkeydown: 'if(event.metaKey) return true; return false;'
+            });
+        }
+        else {
+            this.removeClass('as-disabled');
+            this.attr({
+                contenteditable: true,
+                oncut: undefined,
+                onpaste: undefined,
+                onkeydown: undefined
+            });
+        }
+    },
+    get: function () {
+        return this.containsClass('as-disabled');
+    }
+}
+
 
 ACore.install(PreInput);
 
