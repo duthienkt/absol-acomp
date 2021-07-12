@@ -856,7 +856,7 @@ DateTimeInput.prototype._attachPicker = function () {
     if (this.share.$holdingInput) this.share.$holdingInput._releasePicker();
     this.share.$holdingInput = this;
     this.share.$follower.addStyle('visibility', 'hidden');
-    this.share.$follower.addTo(this);
+    this.share.$follower.addTo(document.body);
     this.share.$follower.followTarget = this;
     this.$pickerBtn.off('click', this.eventHandler.clickPickerBtn);
     this.share.$calendar.on('pick', this.eventHandler.calendarPick);
