@@ -455,7 +455,7 @@ MessageInput.prototype.openFileDialog = function () {
         thisMi.emit('useraddfile', event);
         event.resolvedAsync.then(function (files) {
             if (files && files.length > 0)
-                thisMi.handleAddingFileByType(file);
+                thisMi.handleAddingFileByType(files);
         });
     });
 };
