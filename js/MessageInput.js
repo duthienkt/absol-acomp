@@ -433,27 +433,31 @@ MessageInput.prototype.closeEmoji = function () {
 };
 
 
+MessageInput.prototype.notifyAddFiles = function (files){
+    var event = {
+        resolvedAsync: Promise.resolve(files),
+        files: files,
+        resolve: function (result){
+            if (!result) {
+                this.resolvedAsync = Promise.resolve(undefined);
+            }
+            else if(result.then){
+                this.resolvedAsync = result;
+            }
+            else {
+                this.resolvedAsync = Promise.resolve(result);
+            }
+        }
+    };
+    this.emit('useraddfile', event);
+    return event.resolvedAsync;
+}
+
 MessageInput.prototype.openFileDialog = function () {
     var thisMi = this;
-    openFileDialog({ multiple: true }).then(function (file) {
+    openFileDialog({ multiple: true }).then(function (files) {
         if (!thisMi.autoSend) thisMi.$preInput.focus();
-        var event = {
-            resolvedAsync: Promise.resolve(file),
-            files: file,
-            resolve: function (result){
-                if (!result) {
-                    this.resolvedAsync = Promise.resolve(undefined);
-                }
-                else if(result.then){
-                    this.resolvedAsync = result;
-                }
-                else {
-                    this.resolvedAsync = Promise.resolve(result);
-                }
-            }
-        };
-        thisMi.emit('useraddfile', event);
-        event.resolvedAsync.then(function (files) {
+        thisMi.notifyAddFiles(files).then(function (files) {
             if (files && files.length > 0)
                 thisMi.handleAddingFileByType(files);
         });
@@ -587,8 +591,16 @@ MessageInput.eventHandler.preInputKeyUp = function (event) {
 
 MessageInput.eventHandler.preInputPasteImg = function (event) {
     if (this._mode == 'edit') return;
-    this.addImageFiles(event.imageFiles, event.urls);
-    this.notifyChange();
+    var files = Array.prototype.slice.call(event.imageFiles);
+    var urls =  event.urls && Array.prototype.slice.call(event.urls);
+    this.notifyAddFiles(files).then(function (newFiles){
+        if (!newFiles || newFiles.length === 0) return;
+        var newUrls = urls && newFiles.map(function (file){
+            return urls[files.indexOf(file)];
+        });
+        this.addImageFiles(newFiles,newUrls);
+        this.notifyChange();
+    }.bind(this));
 };
 
 
@@ -642,22 +654,17 @@ MessageInput.eventHandler.dragover = function (event) {
 
 MessageInput.eventHandler.drop = function (event) {
     event.preventDefault();
-    var imageFiles = [];
-    var otherFiles = [];
+    var files = [];
+    var file;
     if (event.dataTransfer.items) {
         for (var i = 0; i < event.dataTransfer.items.length; i++) {
             if (event.dataTransfer.items[i].kind === 'file') {
-                var file = event.dataTransfer.items[i].getAsFile();
+                 file = event.dataTransfer.items[i].getAsFile();
                 if (!file.type && file.size % 4096 == 0) {
                     //todo: folder
                 }
                 else {
-                    if (!!file.type && file.type.match && file.type.match(/^image\//)) {
-                        imageFiles.push(file);
-                    }
-                    else {
-                        otherFiles.push(file);
-                    }
+                    files.push(file);
                 }
 
             }
@@ -665,24 +672,19 @@ MessageInput.eventHandler.drop = function (event) {
     }
     else {
         for (var i = 0; i < event.dataTransfer.files.length; i++) {
-            var file = event.dataTransfer.files[i];
+             file = event.dataTransfer.files[i];
             if (!file.type && file.size % 4096 == 0) {
 
             }
             else {
-                if (!!file.type && file.type.match && file.type.match(/^image\//)) {
-                    imageFiles.push(file);
-                }
-                else {
-                    otherFiles.push(file);
-                }
+                files.push(file);
             }
         }
     }
 
-    this.addImageFiles(imageFiles);
-    this.addFiles(otherFiles);
-    this.notifyChange();
+    this.notifyAddFiles(files).then(function (files){
+       this.handleAddingFileByType(files);
+    }.bind(this));
 };
 
 MessageInput.eventHandler.clickQuoteRemoveBtn = function () {
