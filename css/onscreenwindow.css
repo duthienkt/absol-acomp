@@ -28,16 +28,24 @@
     box-sizing: border-box;
 }
 
+.absol-onscreen-window-head-bar-icon{
+    margin-right: 0.2em;
+    font-size: inherit;
+}
+
 span.absol-onscreen-window-head-bar-icon {
     line-height: 1.2em;
-    font-size: 1em;
-    margin-right: 0.2em;
+}
+
+svg.absol-onscreen-window-head-bar-icon{
+    width: 1.2em;
+    height: 1.2em;
 }
 
 span.absol-onscreen-window-head-bar-title {
     line-height: 1.2em;
     font-size: 1em;
-    color: rgba(33, 33, 34);
+    color: rgb(33, 33, 34);
 }
 
 .absol-onscreen-window-head-bar-buttons {
@@ -54,16 +62,16 @@ span.absol-onscreen-window-head-bar-title {
     padding: 0;
     margin: 0 0 0 0.1em;
     border: none;
-    color: rgba(169, 169, 169);
+    color: rgb(169, 169, 169);
     outline: none;
 }
 
 .absol-onscreen-window-head-bar-buttons>button:hover {
-    color: rgba(103, 103, 103);
+    color: rgb(103, 103, 103);
 }
 
 .absol-onscreen-window-head-bar-buttons>button:active {
-    color: rgba(33, 33, 34);
+    color: rgb(33, 33, 34);
 }
 
 .absol-onscreen-window-head-bar-buttons>button:hover>.mdi-close {
