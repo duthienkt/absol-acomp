@@ -174,11 +174,23 @@ PreInput.prototype.getSelectPosition = function () {
         var sel = window.getSelection();
         if (sel.getRangeAt && sel.rangeCount) {
             var range = sel.getRangeAt(0);
+            var direction = 'forward';
+            var cmpPosition = sel.anchorNode.compareDocumentPosition(sel.focusNode);
+            if (cmpPosition === 4) {
+                direction = 'forward';
+            }
+            else if (cmpPosition === 2) {
+                direction = 'backward'
+            }
+            else if (!cmpPosition && sel.anchorOffset > sel.focusOffset ||
+                cmpPosition === Node.DOCUMENT_POSITION_PRECEDING){
+                direction = 'backward';
+            }
             var startOffset = this.getPosition(range.startContainer, range.startOffset);
             var endOffset = this.getPosition(range.endContainer, range.endOffset);
             if (isNaN(startOffset)) return null;
             return {
-                start: startOffset, end: endOffset
+                start: startOffset, end: endOffset, direction: direction
             }
         }
     }
