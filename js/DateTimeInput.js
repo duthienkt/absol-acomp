@@ -2,7 +2,7 @@ import ACore, {_, $} from "../ACore";
 import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {isDateTimeFormatToken, zeroPadding} from "./utils";
-import {daysInMonth} from "absol/src/Time/datetime";
+import {daysInMonth, formatDateTime} from "absol/src/Time/datetime";
 import ChromeTimePicker from "./ChromeTimePicker";
 import ChromeCalendar from "./ChromeCalendar";
 import Follower from "./Follower";
@@ -432,6 +432,19 @@ DateTimeInput.prototype._correctingCurrentToken = function () {
 
 };
 
+DateTimeInput.prototype._dateFrom = function (value) {
+    var typeV = typeof value;
+    if (typeV === 'string' || typeV === 'number') {
+        value = new Date(value);
+    }
+    if (!value || !value.getTime) value = null;
+    if (value) {
+        value = new Date(value.getTime());
+        value.setSeconds(0, 0);
+    }
+    return value || null;
+}
+
 
 DateTimeInput.property = {};
 
@@ -470,16 +483,7 @@ DateTimeInput.property.format = {
 
 DateTimeInput.property.value = {
     set: function (value) {
-        var typeV = typeof value;
-        if (typeV === 'string' || typeV === 'number') {
-            value = new Date(value);
-        }
-        if (!value || !value.getTime) value = null;
-        if (value) {
-            value = new Date(value.getTime());
-            value.setSeconds(0, 0);
-        }
-        this._value = value;
+        this._value = this._dateFrom(value);
         var dict;
         if (this._value) {
             dict = this._makeValueDict(this._value);
@@ -493,7 +497,27 @@ DateTimeInput.property.value = {
     get: function () {
         return this._value;
     }
-}
+};
+
+DateTimeInput.property.min = {
+    set: function (value) {
+        this._min = this._dateFrom(value) || new Date(1890, 0, 1);
+    },
+    get: function () {
+        return this._min;
+    }
+};
+
+
+DateTimeInput.property.max = {
+    set: function (value) {
+        this._max = this._dateFrom(value) || new Date(new Date(2090, 0, 1).getTime() - 1);
+    },
+    get: function () {
+        return this._max;
+    }
+};
+
 
 DateTimeInput.eventHandler = {};
 
@@ -528,7 +552,7 @@ DateTimeInput.eventHandler.keydown = function (event) {
     }
     var newTokenText;
     var value;
-    if (event.key.startsWith('Arrow')) {
+    if (event.key.startsWith('Arrow') || [' ', ':', '/', '-'].indexOf(event.key) >= 0) {
         event.preventDefault();
 
         switch (event.key) {
@@ -536,6 +560,10 @@ DateTimeInput.eventHandler.keydown = function (event) {
                 this._editPrevToken();
                 break;
             case 'ArrowRight':
+            case ' ':
+            case ':':
+            case '/':
+            case '-':
                 this._editNextToken();
                 break;
             case 'ArrowUp':
@@ -619,11 +647,51 @@ DateTimeInput.eventHandler.keydown = function (event) {
     else if (event.key === "Delete" || event.key === 'Backspace') {
         event.preventDefault();
         if (endToken.idx !== token.idx) {
-            this.$text.value = this._format;
+            if (this.notNull) {
+                this.$text.value = formatDateTime(
+                    new Date(Math.max(this.min.getTime(), Math.min(this.max.getTime(), new Date().getTime()))),
+                    this.format);
+            }
+            else {
+                this.$text.value = this._format;
+            }
             this.$text.select();
         }
         else {
-            token.replace(token.ident, true);
+            if (this.notNull) {
+                switch (token.ident) {
+                    case 'HH':
+                    case 'mm':
+                    case 'H':
+                    case 'm':
+                        token.replace(zeroPadding(0, token.ident.length), true);
+                        break;
+                    case 'h':
+                    case 'hh':
+                        token.replace('12', true);
+                        break;
+                    case 'M':
+                    case 'MM':
+                    case 'dd':
+                    case 'd':
+                        token.replace(zeroPadding(1, token.ident.length), true);
+                        break;
+                    case 'y':
+                    case 'yyyy':
+                        token.replace(
+                            zeroPadding(Math.max(this.min.getFullYear(), Math.min(this.max.getFullYear(), new Date().getFullYear())),
+                                token.ident.length),
+                            true);
+                        break;
+                    case 'a':
+                        token.replace('AM', true);
+                        break;
+
+                }
+            }
+            else {
+                token.replace(token.ident, true);
+            }
             if (event.key === "Delete") this._editNextToken();
             else this._editPrevToken();
         }

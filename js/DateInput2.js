@@ -357,13 +357,17 @@ DateInput2.eventHandler.keydown = function (event) {
     }
     var newTokenText;
     var value;
-    if (event.key.startsWith('Arrow')) {
+    if (event.key.startsWith('Arrow') || event.key.match(/^[\-/,\s]$/)) {
         event.preventDefault();
         switch (event.key) {
             case 'ArrowLeft':
                 this._editPrevToken();
                 break;
             case 'ArrowRight':
+            case '-':
+            case ',':
+            case '/':
+            case ' ':
                 this._editNextToken();
                 break;
             case 'ArrowUp':
