@@ -46,6 +46,19 @@
                                     absol.require('snackbar').show(this.value + '');
                                 }
                             }
+                        },
+                        {
+                            tag: 'datetimeinput',
+                            props: {
+                                value: new Date(),
+                                format: format + ' hh:mm a',
+                                notNull: true
+                            },
+                            on: {
+                                change: function () {
+                                    absol.require('snackbar').show(this.value + '');
+                                }
+                            }
                         }
                     ]
                 }
