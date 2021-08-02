@@ -34,6 +34,7 @@ function ChromeTimePicker() {
     this.hour = 0;
     this.minute = 0;
     this.s24 = false;
+    $$('.as-chrome-time-picker-scroller', this).forEach(this._makeScroller.bind(this));
 }
 
 ChromeTimePicker.tag = 'ChromeTimePicker'.toLowerCase();
@@ -44,65 +45,84 @@ ChromeTimePicker.render = function () {
         extendEvent: ['change'],
         child: [
             {
-                class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h12'],
-                child: {
-                    class: 'as-chrome-time-picker-list',
-                    child: Array(36).fill(0).map(function (u, i) {
-                        return {
-                            tag: 'button',
-                            class: 'as-chrome-time-picker-btn',
+                class: ['as-chrome-time-picker-scroller', 'as-chrome-time-picker-scroller-h12'],
+                child: [
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
+                    {
+                        class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h12'],
+                        child: {
+                            class: 'as-chrome-time-picker-list',
+                            child: Array(36).fill(0).map(function (u, i) {
+                                return {
+                                    tag: 'button',
+                                    class: 'as-chrome-time-picker-btn',
 
-                            child: {
-                                tag: 'span',
-                                child: { text: (i % 12) + 1 + '' }
-                            },
-                            props: {
-                                __hour__: (i % 12) + 1
-                            }
+                                    child: {
+                                        tag: 'span',
+                                        child: { text: (i % 12) + 1 + '' }
+                                    },
+                                    props: {
+                                        __hour__: (i % 12) + 1
+                                    }
+                                }
+                            })
                         }
-                    })
-                }
+                    }]
             },
             {
-                class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h24'],
-                child: {
-                    class: 'as-chrome-time-picker-list',
-                    child: Array(24 * 3).fill(0).map(function (u, i) {
-                        return {
-                            tag: 'button',
-                            class: 'as-chrome-time-picker-btn',
+                class: ['as-chrome-time-picker-scroller', 'as-chrome-time-picker-scroller-h24'],
+                child: [
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
+                    {
+                        class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h24'],
+                        child: {
+                            class: 'as-chrome-time-picker-list',
+                            child: Array(24 * 3).fill(0).map(function (u, i) {
+                                return {
+                                    tag: 'button',
+                                    class: 'as-chrome-time-picker-btn',
 
-                            child: {
-                                tag: 'span',
-                                child: { text: (i % 24) + '' }
-                            },
-                            props: {
-                                __hour__: (i % 24)
-                            }
+                                    child: {
+                                        tag: 'span',
+                                        child: { text: (i % 24) + '' }
+                                    },
+                                    props: {
+                                        __hour__: (i % 24)
+                                    }
+                                }
+                            })
                         }
-                    })
-                }
+                    }]
             }, {
-                class: 'as-chrome-time-picker-viewport',
-                child: {
-                    class: 'as-chrome-time-picker-list',
-                    child: Array(180).fill(0).map(function (u, i) {
-                        return {
-                            tag: 'button',
-                            class: 'as-chrome-time-picker-btn',
+                class: 'as-chrome-time-picker-scroller',
+                child: [
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
+                    {
+                        class: 'as-chrome-time-picker-viewport',
+                        child: {
+                            class: 'as-chrome-time-picker-list',
+                            child: Array(180).fill(0).map(function (u, i) {
+                                return {
+                                    tag: 'button',
+                                    class: 'as-chrome-time-picker-btn',
 
-                            child: {
-                                tag: 'span',
+                                    child: {
+                                        tag: 'span',
 
-                                child: { text: (i % 60) + '' }
-                            },
-                            props: {
-                                __min__: (i % 60)
-                            }
+                                        child: { text: (i % 60) + '' }
+                                    },
+                                    props: {
+                                        __min__: (i % 60)
+                                    }
+                                }
+                            })
                         }
-                    })
-                }
-            }, {
+                    }]
+            },
+            {
                 class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-period'],
                 child: ['AM', 'PM'].map(function (u,) {
                     return {
@@ -123,6 +143,42 @@ ChromeTimePicker.render = function () {
             }
         ]
     });
+};
+
+ChromeTimePicker.prototype._makeScroller = function (rootElt) {
+    var upBtn = $('.as-chrome-time-picker-scroller-up', rootElt);
+    var downBtn = $('.as-chrome-time-picker-scroller-down', rootElt);
+    var listElt = $('.as-chrome-time-picker-list', rootElt);
+    var delta = 0;
+
+    function tick() {
+        if (delta === 0) return;
+        listElt.scrollTop += delta;
+        requestAnimationFrame(tick);
+    }
+
+    function cancel() {
+        delta = 0;
+        document.body.removeEventListener('mouseup', cancel);
+        document.body.removeEventListener('mouseleave', cancel);
+    }
+
+    upBtn.on('mousedown', function () {
+        delta = 5;
+        document.body.addEventListener('mouseup', cancel);
+        document.body.addEventListener('mouseleave', cancel);
+        tick();
+
+    });
+
+    downBtn.on('mousedown', function () {
+        delta = -5;
+        document.body.addEventListener('mouseup', cancel);
+        document.body.addEventListener('mouseleave', cancel);
+        tick();
+    });
+
+
 };
 
 

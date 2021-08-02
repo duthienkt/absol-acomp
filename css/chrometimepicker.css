@@ -16,11 +16,58 @@
     white-space: nowrap;
 }
 
-.as-chrome-time-picker.as-24h-clock .as-chrome-time-picker-h12,
-.as-chrome-time-picker:not(.as-24h-clock) .as-chrome-time-picker-h24,
-.as-chrome-time-picker.as-24h-clock .as-chrome-time-picker-period
-{
+.as-chrome-time-picker.as-24h-clock .as-chrome-time-picker-scroller-h12,
+.as-chrome-time-picker:not(.as-24h-clock) .as-chrome-time-picker-scroller-h24,
+.as-chrome-time-picker.as-24h-clock .as-chrome-time-picker-period {
     display: none;
+}
+
+.as-chrome-time-picker-period {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+
+.as-chrome-time-picker > div:not(:first-child) {
+    margin-left: 5px;
+}
+
+
+.as-chrome-time-picker-scroller {
+    position: relative;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: inline-block;
+    vertical-align: top;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.as-chrome-time-picker-scroller-up,
+.as-chrome-time-picker-scroller-down {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: transparent;
+    border-radius: 3px;
+    border: none;
+    font-size: 1.5em;
+}
+
+.as-chrome-time-picker-scroller-up:hover,
+.as-chrome-time-picker-scroller-down:hover {
+    background-color: rgba(169, 169, 169, 0.2);
+}
+
+.as-chrome-time-picker-scroller-up {
+    top: -5px;
+}
+
+.as-chrome-time-picker-scroller-down {
+    bottom: -5px;
 }
 
 
@@ -31,10 +78,6 @@
     white-space: normal;
     display: inline-block;
     vertical-align: top;
-}
-
-.as-chrome-time-picker-viewport:not(:first-child) {
-    margin-left: 5px;
 }
 
 
