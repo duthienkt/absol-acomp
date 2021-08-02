@@ -41,6 +41,11 @@ function DateTimeInput() {
         });
     this.$pickerBtn = $('.as-date-time-input-icon-btn', this)
         .on('click', this.eventHandler.clickPickerBtn);
+    this.$clearBtn = $('button.as-time-input-clear-btn', this)
+        .on('click', this.clear.bind(this));
+    this.notNull = false;
+    this.min = this._min;
+    this.max = this._max;
 }
 
 DateTimeInput.tag = 'DateTimeInput'.toLowerCase();
@@ -60,6 +65,11 @@ DateTimeInput.render = function () {
                 props: {
                     value: 'dd/MM/yyyy hh:mm a'
                 }
+            },
+            {
+                tag: 'button',
+                class: 'as-time-input-clear-btn',
+                child: 'span.mdi.mdi-close-circle'
             },
             {
                 tag: 'button',
@@ -310,6 +320,21 @@ DateTimeInput.prototype._loadValueFromInput = function () {
     }
 };
 
+DateTimeInput.prototype.clear = function () {
+    var lev = this._lastEmitValue;
+    if (this.notNull) {
+        this.value = formatDateTime(
+            new Date(Math.max(this.min.getTime(), Math.min(this.max.getTime(), new Date().getTime()))),
+            this.format);
+    }
+    else {
+        this.value = null;
+    }
+
+    this._lastEmitValue = lev;
+    this._notifyIfChange();
+};
+
 DateTimeInput.prototype._notifyIfChange = function (event) {
     if (!this._lastEmitValue && !this._value) return;
     if (this._lastEmitValue && this._value && this._lastEmitValue.getTime() === this._value.getTime()) return;
@@ -491,7 +516,12 @@ DateTimeInput.property.value = {
         else {
             dict = this._makeTokenDict(this.$text.value);
         }
-        this.$text.value = this._applyTokenDict(this._format, dict, true);
+        if (value) {
+            this.$text.value = this._applyTokenDict(this._format, dict, true);
+        }
+        else {
+            this.$text.value = this.format;
+        }
         this._lastEmitValue = this._value;
     },
     get: function () {

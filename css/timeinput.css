@@ -101,8 +101,8 @@
     color: #525555;
 }
 
-.as-time-input-text:focus + .as-time-input-clear-btn,
-.ac-time-input:hover .as-time-input-clear-btn {
+input:focus + .as-time-input-clear-btn,
+.ac-time-input .as-time-input-clear-btn {
     visibility: visible;
 }
 

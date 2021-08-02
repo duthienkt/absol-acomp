@@ -76,3 +76,7 @@
 .as-date-time-input-follower > div {
     border-color: white;
 }
+
+.as-date-time-input:hover .as-time-input-clear-btn {
+    visibility: visible;
+}
