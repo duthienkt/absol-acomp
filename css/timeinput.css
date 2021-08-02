@@ -13,9 +13,13 @@
     position: relative;
 }
 
-.ac-time-input.as-disabled{
+.ac-time-input.as-disabled {
     color: rgb(102, 102, 102);
     pointer-events: none;
+}
+
+.ac-time-input.as-must-not-null .as-time-input-clear-btn {
+    display: none;
 }
 
 .ac-time-input input {
@@ -69,7 +73,6 @@
     color: rgb(102, 102, 102);
     pointer-events: none;
 }
-
 
 
 .as-time-input-clear-btn {

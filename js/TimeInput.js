@@ -47,6 +47,7 @@ function TimeInput() {
     this.hour = null;
     this.minute = null;
     this.disabled = false;
+    this.notNull = true;
 }
 
 
@@ -339,6 +340,24 @@ TimeInput.property.s24 = {
     }
 };
 
+TimeInput.property.notNull = {
+    set: function (value) {
+        if (value) {
+            if (this.dayOffset === null) {
+                this.dayOffset = 0;
+            }
+            this.addClass('as-must-not-null');
+
+        }
+        else {
+            this.removeClass('as-must-not-null');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-must-not-null');
+    }
+}
+
 TimeInput.eventHandler = {};
 
 TimeInput.eventHandler.clickClockBtn = function () {
@@ -445,11 +464,22 @@ TimeInput.eventHandler.keydown = function (event) {
     else if (event.key === "Delete" || event.key === 'Backspace') {
         event.preventDefault();
         if (endToken.idx !== token.idx) {
-            this.$text.value = this._format;
+            if (this.notNull) {
+                this.$text.value = formatDateTime(beginOfDay(new Date()), this.format);
+            }
+            else {
+                this.$text.value = this._format;
+            }
             this.$text.select();
         }
         else {
-            token.replace(token.ident, true);
+            if (this.notNull) {
+                token.replace(token.ident === 'a' ? 'AM' : zeroPadding(token.ident === 'hh' ? 12 : 0, token.ident.length), true);
+            }
+            else {
+                token.replace(token.ident, true);
+            }
+
             if (event.key === "Delete") this._editNextToken();
             else this._editPrevToken();
         }
@@ -587,7 +617,6 @@ TimeInput.prototype._attachPicker = function () {
     this.share.$follower.addStyle('visibility', 'hidden');
     this.share.$picker.hour = this.hour || 0;
     this.share.$picker.minute = this.minute || 0;
-    console.log(this.s24)
     this.share.$picker.s24 = this.s24;
     this.share.$picker.domSignal.emit('request_scroll_into_selected')
     this.$clockBtn.off('click', this.eventHandler.clickClockBtn);
