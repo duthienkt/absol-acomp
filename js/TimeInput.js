@@ -474,7 +474,7 @@ TimeInput.eventHandler.keydown = function (event) {
         }
         else {
             if (this.notNull) {
-                token.replace(token.ident === 'a' ? 'AM' : zeroPadding(token.ident === 'hh' ? 12 : 0, token.ident.length), true);
+                token.replace(token.ident === 'a' ? 'AM' : zeroPadding((token.ident === 'hh' || token.ident === 'h') ? 12 : 0, token.ident.length), true);
             }
             else {
                 token.replace(token.ident, true);
