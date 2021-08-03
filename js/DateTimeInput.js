@@ -881,12 +881,16 @@ DateTimeInput.eventHandler.clickPickerBtn = function () {
 DateTimeInput.eventHandler.clickOut = function (event) {
     if (hitElement(this.share.$follower, event)) return;
     this._releasePicker();
-}
+};
+
+DateTimeInput.eventHandler.clickCancelBtn = function (){
+    this._releasePicker();
+};
 
 
 DateTimeInput.eventHandler.calendarPick = function (event) {
     var value = event.value;
-    var tkDict = this._makeTokenDict(this.$text.value);
+    var tkDict = this._makeTokenDict(this.share.pickedValeText);
     if (tkDict.y) {
         tkDict.y.value = value.getFullYear();
     }
@@ -897,10 +901,15 @@ DateTimeInput.eventHandler.calendarPick = function (event) {
         tkDict.d.value = value.getDate();
     }
 
-    this.$text.value = this._applyTokenDict(this._format, tkDict);
+    this.share.pickedValeText = this._applyTokenDict(this._format, tkDict);
+};
+
+DateTimeInput.eventHandler.clickOKBtn = function (event) {
+    this.$text.value = this.share.pickedValeText;
     this._correctingInput();
     this._loadValueFromInput();
     this._notifyIfChange(event);
+    this._releasePicker();
 };
 
 DateTimeInput.eventHandler.timePick = function (event) {
@@ -917,10 +926,7 @@ DateTimeInput.eventHandler.timePick = function (event) {
         tkDict.m.value = minute;
     }
 
-    this.$text.value = this._applyTokenDict(this._format, tkDict);
-    this._correctingInput();
-    this._loadValueFromInput();
-    this._notifyIfChange(event);
+    this.share.pickedValeText = this._applyTokenDict(this._format, tkDict);
 };
 
 DateTimeInput.prototype.share = {
@@ -939,12 +945,46 @@ DateTimeInput.prototype._preparePicker = function () {
         });
         this.share.$calendar = _({
             tag: ChromeCalendar.tag,
-            class: 'as-date-time-input-time-picker'
+            class: 'as-date-time-input-date-picker'
+        });
+        this.share.$closeBtn = _({
+            tag: 'button',
+            class: 'as-date-time-input-picker-btn',
+            child: 'span.mdi.mdi-close'
+        });
+        this.share.$cancelBtn = _({
+            tag: 'button',
+            class: 'as-date-time-input-picker-btn',
+            child: { text: 'CANCEL' }
+        });
+        this.share.$okBtn = _({
+            tag: 'button',
+            class: 'as-date-time-input-picker-btn',
+            child: { text: 'OK' }
         });
         this.share.$follower = _({
             tag: Follower.tag,
             class: 'as-date-time-input-follower',
-            child: [this.share.$calendar, this.share.$timePicker]
+            child: [
+                {
+                    class: 'as-date-time-input-picker-header',
+                    child: this.share.$closeBtn
+                },
+                {
+                    class: 'as-date-time-input-picker-ctn',
+                    child: [
+                        this.share.$calendar,
+                        this.share.$timePicker
+                    ]
+                }, {
+                    class: 'as-date-time-input-picker-footer',
+                    child: [
+                        this.share.$okBtn,
+                        this.share.$cancelBtn
+                    ]
+                }
+
+            ]
         });
     }
 };
@@ -952,6 +992,7 @@ DateTimeInput.prototype._preparePicker = function () {
 DateTimeInput.prototype._attachPicker = function () {
     this._preparePicker();
     if (this.share.$holdingInput) this.share.$holdingInput._releasePicker();
+    this.share.pickedValeText = this.$text.value;
     this.share.$holdingInput = this;
     this.share.$follower.addStyle('visibility', 'hidden');
     this.share.$follower.addTo(document.body);
@@ -959,6 +1000,9 @@ DateTimeInput.prototype._attachPicker = function () {
     this.$pickerBtn.off('click', this.eventHandler.clickPickerBtn);
     this.share.$calendar.on('pick', this.eventHandler.calendarPick);
     this.share.$timePicker.on('change', this.eventHandler.timePick);
+    this.share.$okBtn.on('click', this.eventHandler.clickOKBtn);
+    this.share.$cancelBtn.on('click', this.eventHandler.clickCancelBtn);
+    this.share.$closeBtn.on('click', this.eventHandler.clickCancelBtn);
 
     var tkDict = this._makeTokenDict(this.$text.value);
     if (tkDict.h && !isNaN(tkDict.h.value)) {
@@ -1033,6 +1077,9 @@ DateTimeInput.prototype._releasePicker = function () {
     this.share.$holdingInput = null;
     this.share.$calendar.off('pick', this.eventHandler.calendarPick);
     this.share.$timePicker.off('change', this.eventHandler.timePick);
+    this.share.$okBtn.off('click', this.eventHandler.clickOKBtn);
+    this.share.$cancelBtn.off('click', this.eventHandler.clickCancelBtn);
+    this.share.$closeBtn.off('click', this.eventHandler.clickCancelBtn);
     document.body.removeEventListener('click', this.eventHandler.clickOut);
     setTimeout(function () {
         this.$pickerBtn.on('click', this.eventHandler.clickPickerBtn);

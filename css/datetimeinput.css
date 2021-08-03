@@ -10,7 +10,8 @@
     background-color: white;
     overflow: hidden;
 }
-.as-date-time-input.as-disabled{
+
+.as-date-time-input.as-disabled {
     color: rgb(102, 102, 102);
     pointer-events: none;
 }
@@ -70,7 +71,57 @@
     box-sizing: border-box;
     background-color: white;
     border: 1px solid #ddd;
+    padding: 5px;
+}
 
+.as-date-time-input-date-picker {
+    border: none;
+    box-shadow: none;
+}
+
+.as-date-time-input-picker-header {
+    text-align: right;
+    padding-bottom: 5px;
+}
+
+.as-date-time-input-picker-footer {
+    text-align: center;
+}
+
+.as-date-time-input-picker-footer >button{
+    margin: 0 10px;
+}
+
+.as-date-time-input-picker-btn {
+    height: 20px;
+    min-width: 25px;
+    padding: 0 5px;
+    box-sizing: border-box;
+    font-size: inherit;
+    border: 1px solid rgb(47, 82, 143);
+    background-color: rgb(68, 144, 196);
+    color: white;
+    border-radius: 0;
+}
+
+.as-date-time-input-picker-btn:active{
+    background-color: rgb(50, 122, 169);
+}
+
+
+.as-chrome-time-picker.as-date-time-input-time-picker {
+    height: 166px;
+    box-sizing: border-box;
+}
+
+.as-date-time-input-picker-ctn {
+    white-space: nowrap;
+}
+
+.as-date-time-input-picker-ctn > div {
+    display: inline-block;
+    white-space: initial;
+    vertical-align: top;
 }
 
 .as-date-time-input-follower > div {
