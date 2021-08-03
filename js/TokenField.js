@@ -398,7 +398,6 @@ TokenField.eventHandler.preUpdateListPosition = function () {
     if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
         // this.isFocus = false;
         //
-        console.log("OUT");
     }
 };
 
