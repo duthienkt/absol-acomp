@@ -29,7 +29,7 @@
 
 .absol-selectbox.as-disabled {
     pointer-events: none;
-    background-color: #ebebe4;
+    background-color: var(--as-disabled-background-color);
 }
 
 .absol-selectbox.as-disabled .absol-selectbox-item {

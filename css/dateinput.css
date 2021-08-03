@@ -13,13 +13,14 @@
 
 .as-date-input-text {
     outline: none;
-    width: calc(100% - 30px);
+    width: calc(100% - 29px);
     height: 100%;
     border: none;
     background-color: transparent;
     display: block;
     padding: 0 0 0 var(--as-input-horizontal-padding);
     font: inherit;
+    box-sizing: border-box;
 
 }
 
@@ -52,8 +53,12 @@
 }
 
 .as-date-input.as-disabled {
-    color: rgb(102, 102, 102);
+    color: var(--as-disabled-text-color);
     pointer-events: none;
+}
+
+.as-date-input.as-disabled input {
+    background-color: var(--as-disabled-background-color);
 }
 
 .as-date-input.as-value-null .as-date-input-clear-btn,

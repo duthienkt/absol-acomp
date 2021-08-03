@@ -9,7 +9,7 @@
 </head>
 
 <body>
-<h1>Date Input</h1>
+<h1>Date Time Input</h1>
 <div class="input-demo">
 
 </div>
@@ -53,6 +53,20 @@
                                 value: new Date(),
                                 format: format + ' hh:mm a',
                                 notNull: true
+                            },
+                            on: {
+                                change: function () {
+                                    absol.require('snackbar').show(this.value + '');
+                                }
+                            }
+                        },
+                        {
+                            tag: 'datetimeinput',
+                            props: {
+                                value: new Date(),
+                                format: format + ' hh:mm a',
+                                notNull: true,
+                                disabled: true
                             },
                             on: {
                                 change: function () {

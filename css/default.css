@@ -6,5 +6,7 @@
     --as-input-horizontal-padding: 0.5em;
     --as-context-menu-font-size: 14px;
     --as-context-font-family: Arial, Helvetica, sans-serif;
+    --as-disabled-background-color: #ebebe4;
+    --as-disabled-text-color: rgb(102, 102, 102);
 }
 

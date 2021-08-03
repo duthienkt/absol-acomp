@@ -75,8 +75,8 @@
 .as-select-menu.as-disabled
 {
     pointer-events: none;
-    background-color: #ebebe4;
-
+    background-color: var(--as-disabled-background-color);
+    color: var(--as-disabled-text-color);
 }
 
 .absol-selectmenu {
