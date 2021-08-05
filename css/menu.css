@@ -282,6 +282,6 @@ img.absol-vmenu-button-icon[src] {
 .as-v-root-menu {
     display: inline-block;
     box-sizing: border-box;
-    overflow-y: auto;
-    overflow-x: hidden;
+    /*overflow-y: auto;*/
+    /*overflow-x: hidden;*/
 }

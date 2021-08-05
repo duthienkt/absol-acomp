@@ -720,7 +720,7 @@ VRootMenu.tag = 'VRootMenu'.toLowerCase();
 
 VRootMenu.render = function () {
     return _({
-        class: ['as-v-root-menu', 'as-bscroller'],
+        class: ['as-v-root-menu'],
         extendEvent: ['press', 'enter', 'activetab', 'cancel']
     });
 };
