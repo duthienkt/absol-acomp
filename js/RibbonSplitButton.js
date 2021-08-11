@@ -68,6 +68,9 @@ RibbonSplitButton.property.items = {
                 this._menuHolder = QuickMenu.toggleWhenClick(this.$extendBtn || this, {
                     getMenuProps: function () {
                         return {
+                            extendStyle: {
+                                'min-width': thisB.getBoundingClientRect().width + 'px'
+                            },
                             items: thisB._items
                         }
                     },
