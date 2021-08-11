@@ -259,6 +259,8 @@ EmojiPickerTooltip.eventHandler.dragEndTT = function (event) {
 
 ACore.install(EmojiPickerTooltip);
 
+EmojiPickerTooltip._session = Math.random() * 10000000000 >> 0;
+
 function prepare() {
     if (EmojiPickerTooltip.$holder) return;
     EmojiPickerTooltip.$holder = _('.absol-tooltip-root-holder')
