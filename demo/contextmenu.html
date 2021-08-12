@@ -67,7 +67,7 @@
     $('#test-zone').defineEvent('contextmenu').on('contextmenu', function (event) {
         console.log(event.selectedText);
         event.showContextMenu({
-            items: [{ text: 'Expand Down', value: 1, icon: 'span.mdi.mdi-arrow-expand-down' }, {
+            items: [{text: 'Expand Down', value: 1, icon: 'span.mdi.mdi-arrow-expand-down'}, {
                 text: 'Expand Up',
                 value: 2,
                 icon: 'span.mdi.mdi-arrow-expand-up'
@@ -76,6 +76,14 @@
             console.log(event.menuItem.text);
         });
     });
+    var info = Object.assign({}, absol.BrowserDetector);
+    delete info.rulesheet;
+    _({
+        tag: 'pre',
+        child: {
+            text: JSON.stringify(info, null, 4)
+        }
+    }).addTo(document.body);
 </script>
 <!--Created using ToHtml.com on 2019-05-27 04:27:01 UTC -->
 </body>
