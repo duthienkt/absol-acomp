@@ -43,13 +43,8 @@ absol.coreDom.install('searchcrosstextinput', SearchTextInput);
 Object.assign(absol.string, string);
 absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
-if (BrowserDetector.isMobile && BrowserDetector.isSafari) {
-    absol.ContextCaptor = ContextCaptor;
-}
-else {
-    absol.ContextCaptor = BContextCapture;
+absol.ContextCaptor = ContextCaptor;
 
-}
 window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;
 

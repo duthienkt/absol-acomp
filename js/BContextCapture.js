@@ -51,8 +51,13 @@ BContextCapture.prototype.ev_contextMenu = function (event) {
 };
 
 var instance = new BContextCapture();
-if (!BrowserDetector.isMobile || !BrowserDetector.isSafari) {
+if ((!BrowserDetector.isMobile || !BrowserDetector.isSafari) && (BrowserDetector.os.type !== 'ios')) {
+    BrowserDetector.nativeContextMenuSupport = true;
     ContextCaptor.auto = instance.auto.bind(instance);//override old version
 }
+else {
+    BrowserDetector.nativeContextMenuSupport = false;
+}
+
 
 export default instance;
