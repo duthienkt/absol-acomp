@@ -73,6 +73,9 @@
     border: none;
     opacity: 0;
     cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 .absol-context-menu-anchor.absol-active {

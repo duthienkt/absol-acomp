@@ -23,6 +23,7 @@ var isMobile = BrowserDetector.isMobile;
 export function ContextCaptor() {
     this.attachedElt = null;
     this.$textarea = $('textarea', this)
+        .attr('readonly', 'true')
         .on('contextmenu', this.eventHandler.contextmenu, true);
     this._ss = 0;
     this._isTouch = false;
@@ -81,12 +82,20 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems) 
             .off('touchcancel', finish)
             .off('touchend', finish)
             .off('contextmenu', finish);
+        anchor.off('click', touchModal);
+
 
         self.off('requestcontextmenu', finish);
         setTimeout(function () {
             anchor.selfRemove();//
         }, 10);
     };
+
+    function touchModal(event){
+        if (event.target.classList && event.target.classList.contains('as-anchor-modal')){
+            finish(event);
+        }
+    }
     var vmenu = _({
         tag: 'vmenu',
         props: props,
@@ -121,6 +130,7 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems) 
         $(document.body).on('click', finish)
             .on('contextmenu', finish);
         self.on('requestcontextmenu', finish);
+        anchor.on('click', touchModal);
     }, 10)
 };
 
