@@ -36,7 +36,7 @@ export default function materializeIconTrigger() {
             class:"material-icons",
             style: {
                 fontSize: '14px',
-                position: 'fix',
+                position: 'fixed',
                 top: '0',
                 left: '0',
                 zIndex: '-1000',
