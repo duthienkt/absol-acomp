@@ -221,7 +221,12 @@
                                             });
                                             messInput.mode = 'edit';
                                             messInput.clearAllContent();
+                                            messInput.focus();
                                             messInput.text = text;
+                                            setTimeout(function (){
+
+                                                messInput.$preInput.applyData(text, text.length)
+                                            }, 100)
                                         }
                                         else if (item.cmd === 'quote') {
                                             messInput.quote = {
