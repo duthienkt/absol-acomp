@@ -1,29 +1,17 @@
 import '../css/selectlist.css';
 import ACore from "../ACore";
+import CheckboxButton from "./CheckboxButton";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/***
+ *
+ * @extends AElement
+ * @constructor
+ */
 function SelectListItem() {
-    var res = _({
-        class: 'absol-selectlist-item',
-        child: [
-            {
-                tag: 'span',
-                class: 'absol-selectlist-item-text',
-                child: { text: '' }
-            },
-            {
-                class: 'absol-selectlist-item-desc-container',
-                child: {
-                    tag: 'span',
-                    class: 'absol-selectlist-item-desc',
-                    child: { text: '' }
-                }
-            }
-        ]
-    });
+    var res = this;
     res.$text = $('span.absol-selectlist-item-text', res);
     res.$textValue = res.$text.childNodes[0];
     res.$descCtn = $('.absol-selectlist-item-desc-container', res);
@@ -33,10 +21,29 @@ function SelectListItem() {
     res._extendStyle = {};
     res._data = "";
     res._level = 0;
-    return res;
 }
 
-//bold 14pt arial
+SelectListItem.render = function (){
+    return _({
+        class: 'absol-selectlist-item',
+        child: [
+            {
+                tag: 'span',
+                class: 'absol-selectlist-item-text',
+                child: {text: ''}
+            },
+            {
+                class: 'absol-selectlist-item-desc-container',
+                child: {
+                    tag: 'span',
+                    class: 'absol-selectlist-item-desc',
+                    child: {text: ''}
+                }
+            }
+        ]
+    })
+};
+
 
 
 SelectListItem.property = {};
@@ -85,8 +92,7 @@ SelectListItem.property.data = {
             this.lastInGroup = false;
             this.isLeaf = false;
             this.selected = false;
-        }
-        else {
+        } else {
             this.$textValue.data = value.text || '';
             this.$descValue.data = value.desc || '';
             this.level = value.level || 0;
@@ -138,8 +144,7 @@ SelectListItem.property.lastInGroup = {
     set: function (value) {
         if (value) {
             this.addClass('as-last-in-group');
-        }
-        else {
+        } else {
             this.removeClass('as-last-in-group');
         }
     },
@@ -152,8 +157,7 @@ SelectListItem.property.isLeaf = {
     set: function (value) {
         if (value) {
             this.addClass('as-is-leaf');
-        }
-        else {
+        } else {
             this.removeClass('as-is-leaf');
         }
     },
@@ -166,8 +170,7 @@ SelectListItem.property.selected = {
     set: function (value) {
         if (value) {
             this.addClass('as-selected');
-        }
-        else {
+        } else {
             this.removeClass('as-selected');
         }
     },

@@ -5,6 +5,7 @@ import Follower from "./Follower";
 import {measureListSize, releaseItem, requireItem} from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {getScreenSize} from "absol/src/HTML5/Dom";
+import {depthIndexingByValue, indexingByValue} from "./list/listIndexing";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -157,8 +158,7 @@ SelectListBox.prototype._updateSelectedItem = function () {
             var value = itemElt.value + '';
             if (valueDict[value]) {
                 itemElt.selected = true;
-            }
-            else {
+            } else {
                 itemElt.selected = false;
             }
         });
@@ -209,8 +209,7 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
     }
     if (this._displayValue == VALUE_HIDDEN) {
         return false;
-    }
-    else if (this._values.length > 0) {
+    } else if (this._values.length > 0) {
         var value = this._values[0];
         var itemHolders = this._displayItemHolderByValue[value + ''];
         if (itemHolders) {
@@ -226,10 +225,8 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
             }.bind(this));
             this.domSignal.emit('scrollIntoSelected');
             return true;
-        }
-        else return false;
-    }
-    else
+        } else return false;
+    } else
         return false;
 };
 
@@ -259,11 +256,11 @@ SelectListBox.prototype.resetSearchState = function () {
 };
 
 SelectListBox.prototype.notifyPressOut = function () {
-    this.emit('pressout', { target: this, type: 'pressout' }, this);
+    this.emit('pressout', {target: this, type: 'pressout'}, this);
 };
 
 SelectListBox.prototype.notifyPressClose = function () {
-    this.emit('pressclose', { target: this, type: 'pressclose' }, this);
+    this.emit('pressclose', {target: this, type: 'pressclose'}, this);
 };
 
 SelectListBox.prototype._findFirstPageIdx = function () {
@@ -284,42 +281,12 @@ SelectListBox.prototype._findLastPageIdx = function () {
     return -1;
 };
 
-SelectListBox.prototype._indexingByValue = function (items, dict) {
-    var thisS = this;
-    return items.reduce(function (ac, cr, idx) {
-        var value = typeof cr === "string" ? cr : cr.value + '';
-        ac[value] = ac[value] || [];
-        ac[value].push({
-            idx: idx,
-            item: cr
-        });
-        return ac;
-    }, dict || {});
-};
-
-SelectListBox.prototype._depthIndexingByValue = function (items, context) {
-    context = context ||{idx: 0, dict: {}};
-    var thisS = this;
-    return items.reduce(function (ac, cr, idx) {
-        var value = typeof cr === "string" ? cr : cr.value + '';
-        ac[value] = ac[value] || [];
-        ac[value].push({
-            idx: context.idx++,
-            item: cr
-        });
-        if (cr && cr.items && cr.items.length >0){
-            thisS._depthIndexingByValue(cr.items, context);
-        }
-        return ac;
-    }, context.dict);
-};
-
 SelectListBox.prototype._updateDisplayItemIndex = function () {
-    this._displayItemHolderByValue = this._indexingByValue(this._displayItems, {});
+    this._displayItemHolderByValue = indexingByValue(this._displayItems, {});
 };
 
 SelectListBox.prototype._updateItemNodeIndex = function () {
-    this._itemNodeHolderByValue = this._depthIndexingByValue(this._items)
+    this._itemNodeHolderByValue = depthIndexingByValue(this._items);
 };
 
 SelectListBox.prototype._updateDisplayItem = function () {
@@ -409,8 +376,7 @@ SelectListBox.property.displayValue = {
         this._updateItemNodeIndex();
         if (value === VALUE_HIDDEN) {
             this.addClass('as-value-hidden');
-        }
-        else {
+        } else {
             this.removeClass('as-value-hidden');
         }
     },
@@ -498,8 +464,7 @@ SelectListBox.eventHandler.scroll = function () {
             this._updateSelectedItem();
         }
     }
-}
-;
+};
 
 ACore.install(SelectListBox);
 
