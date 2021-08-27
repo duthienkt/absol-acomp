@@ -100,6 +100,9 @@ import TokenField from "../TokenField";
 import DateTimeInput from "../DateTimeInput";
 import ChromeTimePicker from "../ChromeTimePicker";
 import DVExpTree from "../DVExpTree";
+import CheckListItem from "../CheckListItem";
+import CheckListBox from "../CheckListBox";
+import MultiCheckMenu from "../MultiCheckMenu";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -113,6 +116,8 @@ export var publicCreators = [
     CheckboxInput,
     CheckBox,
     CheckBoxButton,
+    CheckListItem,
+    CheckListBox,
     ChromeCalendar,
     ChromeTimePicker,
     CircleSectionLabel,
@@ -220,7 +225,8 @@ export var publicCreators = [
     TrackBarInput,
     SpinnerIco,
     VerticalTreeDiagramNode,
-    VerticalTreeDiagram
+    VerticalTreeDiagram,
+    MultiCheckMenu
 ];
 
 /***

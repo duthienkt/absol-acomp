@@ -1,0 +1,22 @@
+.as-check-list-item {
+    padding-left: 0.35em;
+    height: 25px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.as-check-list-item-checkbox {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.absol-selectlist-item.as-check-list-item > span {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 25px;
+}
+
+.absol-selectlist-item.as-check-list-item .absol-selectlist-item-desc {
+    line-height: 25px;
+}
