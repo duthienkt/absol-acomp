@@ -30,6 +30,7 @@ function MultiCheckMenu() {
         .on('attached', this.eventHandler.attached);
 
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
+    this._isFocus = false;
     this.$items = [];
     this._values = [];
     this.items = [];
@@ -57,8 +58,9 @@ MultiCheckMenu.property.isFocus = {
         }
         return MultiSelectMenu.property.isFocus.set.apply(this, arguments);
     },
-    get: MultiSelectMenu.property.get
+    get: MultiSelectMenu.property.isFocus.get
 };
+
 
 MultiCheckMenu.eventHandler.selectListBoxPressItem = function (event) {
     var prevValues = this._values;
