@@ -26,6 +26,7 @@ function pressCloseEventHandler(event) {
 
     parentElt.$selectlistBox.values = currentValues;
     parentElt.$selectlistBox.updatePosition();
+    parentElt._values = currentValues;
     parentElt._updateItems();
     parentElt.emit('remove', Object.assign({}, event, {
         type: 'change',
