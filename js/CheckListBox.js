@@ -1,37 +1,58 @@
 import ACore, {_, $} from "../ACore";
 import Follower from "./Follower";
 import SelectListBox from "./SelectListBox";
-import {prepareSearchForList} from "./list/search";
-import CheckListItem, {measureCheckListSize} from "./CheckListItem";
+import CheckListItem  from "./CheckListItem";
 import '../css/checklistbox.css'
-import DomSignal from "absol/src/HTML5/DomSignal";
 import noop from "absol/src/Code/noop";
 
 
+var itemPool = [];
+
+
+export function makeItem() {
+    return _({
+        tag: CheckListItem,
+        on: {
+            select: function (event) {
+                this.$parent.eventHandler.itemSelect(this, event)
+            }
+        }
+    });
+}
+
+export function requireItem($parent) {
+    var item;
+    if (itemPool.length > 0) {
+        item = itemPool.pop();
+    } else {
+        item = makeItem();
+    }
+    item.$parent = $parent;
+    return item;
+}
+
+export function releaseItem(item) {
+    item.$parent = null;
+    item.selected = false;
+    itemPool.push(item);
+}
+
+
 /***
- * @extends Follower
+ * @extends SelectListBox
  * @constructor
  */
 function CheckListBox() {
-    this.$content = $('.as-select-list-box-content', this);
-    this.$checkAll = $('.as-select-list-box-check-all', this)
-        .on('change', this.eventHandler.checkAllChange);
-    this.$OKBtn = $('.as-select-list-box-ok-btn', this)
-        .on('click', this.eventHandler.clickOKBtn);
-    this.$domSignal = $('attachhook.as-dom-signal', this);
-    this.domSignal = new DomSignal(this.$domSignal);
-    this.$searchInput = $('searchtextinput', this);
-    this.$itemByValue = {};
-    this.itemByValue = {};
-    this.checkedValueDict = {};
-    this._items = [];
-    this._values = [];
-    this.items = this._items;
-    this.values = [];
+    this._initDomHook();
+    this._initControl();
+    this._initScroller();
+    this._initFooter();
+    this._initProperty();
+
+
 }
 
 CheckListBox.tag = 'CheckListBox'.toLowerCase();
-
 
 CheckListBox.render = function () {
     return _({
@@ -49,7 +70,10 @@ CheckListBox.render = function () {
             {
                 class: ['as-bscroller', 'as-select-list-box-scroller'],
                 child: [
-                    '.as-select-list-box-content'
+                    {
+                        class: 'as-select-list-box-content',
+                        child: Array(this.prototype.preLoadN).fill('.as-select-list-box-page')
+                    }
                 ]
             },
             {
@@ -75,92 +99,52 @@ CheckListBox.render = function () {
     });
 };
 
-CheckListBox.prototype.findItemsByValue = SelectListBox.prototype.findItemsByValue;
+Object.assign(CheckListBox.prototype, SelectListBox.prototype);
+CheckListBox.property = Object.assign({}, SelectListBox.property);
+CheckListBox.eventHandler = Object.assign({}, SelectListBox.eventHandler);
+CheckListBox.prototype.itemHeight = 25;
+
+CheckListBox.prototype._initFooter = function () {
+    this.$checkAll = $('.as-select-list-box-check-all', this)
+        .on('change', this.eventHandler.checkAllChange);
+    this.$OKBtn = $('.as-select-list-box-ok-btn', this)
+        .on('click', this.eventHandler.clickOKBtn);
+};
+
+
+CheckListBox.prototype._requireItem = function (pageElt, n) {
+    var itemElt;
+    while (pageElt.childNodes.length > n) {
+        itemElt = pageElt.lastChild;
+        itemElt.selfRemove();
+        releaseItem(itemElt);
+    }
+    while (pageElt.childNodes.length < n) {
+        itemElt = requireItem(this);
+        pageElt.addChild(itemElt);
+    }
+};
+
 
 CheckListBox.prototype.viewListAtFirstSelected = noop;
-CheckListBox.prototype._updateItemNodeIndex = SelectListBox.prototype._updateItemNodeIndex;
-
-CheckListBox.prototype._updateItems = function () {
-    this._estimateSize = measureCheckListSize(this._items);
-    this._estimateWidth = this._estimateSize.width;
-    this.addStyle('--select-list-estimate-width', this._estimateSize.width + 'px');
-    this._updateItemNodeIndex();
-    this.$content.clearChild();
-    var onSelectListener = this.eventHandler.itemSelect;
-    var selectedDict = this.checkedValueDict;
-    this.$items = this._items.map(function (item) {
-        var itemElt = _({
-            tag: CheckListItem.tag,
-            props: {
-                data: item
-            }
-        });
-        itemElt.selected = ((itemElt.value + '') in selectedDict);
-        itemElt.on('select', onSelectListener.bind(null, itemElt));
-        return itemElt;
-    });
-    this.$itemByValue = this.$items.reduce(function (ac, cr) {
-        ac[cr.value] = cr;
-        return ac;
-    }, {});
-    this.$content.addChild(this.$items);
-};
-
-CheckListBox.prototype._updateSelectedItems = function () {
-    var dict = this.checkedValueDict;
-    this.$items.forEach(function (itemElt) {
-        itemElt.selected = ((itemElt.value + '') in dict);
-    });
-};
-
-CheckListBox.prototype.resetSearchState = noop;
 
 
-CheckListBox.property = {};
-
-CheckListBox.property.values = {
+SelectListBox.property.values = {
     set: function (values) {
+        values = values || [];
         this._values = values;
-        this.checkedValueDict = values.reduce(function (ac, cr) {
-            ac[cr + ''] = cr;
+        this._valueDict = values.reduce(function (ac, cr) {
+            ac[cr + ''] = true;
             return ac;
-        }.bind(this), {});
-        this._updateSelectedItems();
-        if (this._values.length < this.items.length) this.$checkAll.checked = false;
+        }, {});
+        this._updateDisplayItem();
+        this.viewListAtCurrentScrollTop();
+        if (this._pageOffsets[this.preLoadN] > this._pageOffsets[0]) this._updateSelectedItem();
     },
-    /***
-     * @this CheckListBox
-     * @return {string[]}
-     */
     get: function () {
-        var dict = this.checkedValueDict;
-        return Object.keys(dict).map(function (key) {
-            return dict[key];
-        });
+        return this._values;
     }
 };
-
-CheckListBox.property.items = {
-    /***
-     * @this CheckListBox
-     * @param items
-     */
-    set: function (items) {
-        items = items || [];
-        prepareSearchForList(items);
-        this._items = items;
-        this._updateItems();
-    },
-
-    get: function () {
-        return this._items;
-    }
-};
-
-CheckListBox.property.enableSearch = SelectListBox.property.enableSearch;
-
-
-CheckListBox.eventHandler = {};
 
 
 /***
@@ -169,16 +153,20 @@ CheckListBox.eventHandler = {};
  */
 CheckListBox.eventHandler.checkAllChange = function (event) {
     var checked = this.$checkAll.checked;
-    this.$items.reduce(function (ac, it) {
-        var value = it.value;
-        it.selected = checked;
-        if (checked) {
-            ac[value] = value;
-        } else {
-            delete ac[value];
-        }
-        return ac;
-    }, this.checkedValueDict);
+    if (checked){
+        this._values = this.items.map(function (cr){
+            return typeof cr === "object"? cr.value : cr;
+        });
+        this._valueDict = this._values.reduce(function (ac, value) {
+            ac[value + ''] = true;
+            return ac;
+        }, {});
+    }
+    else{
+        this._values = [];
+        this._valueDict = {};
+    }
+    this._updateSelectedItem();
     this.emit('change', {
         target: this,
         type: 'change',
@@ -195,11 +183,18 @@ CheckListBox.eventHandler.checkAllChange = function (event) {
 CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
     var selected = itemElt.selected;
     var value = itemElt.value;
+    var idx;
     if (selected) {
-        this.checkedValueDict[value + ''] = value;
+        this._values.push(value);
+        this._valueDict[value + ''] = true;
     } else {
-        delete this.checkedValueDict[value + ''];
-        this.$checkAll.checked = false;
+        idx = this._values.indexOf(value);
+        delete this._valueDict[value + ''];
+        if (idx >= 0) {
+            this._values.splice(idx, 1);
+        } else {
+            console.error("Violation data");
+        }
     }
     this.emit('change', {
         target: this,
