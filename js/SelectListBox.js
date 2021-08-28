@@ -58,6 +58,8 @@ SelectListBox.prototype.toLoadNextY = 200;
 
 SelectListBox.prototype.preLoadN = 3;
 
+SelectListBox.prototype.itemHeight = 20;
+
 
 SelectListBox.prototype._initDomHook = function () {
     this.$domSignal = $('attachhook.as-dom-signal', this);
@@ -177,7 +179,7 @@ SelectListBox.prototype.viewListAt = function (offset) {
     var fontSize = this.$listScroller.getFontSize() || 14;
     offset = Math.max(0, Math.min(offset, this._displayItems.length - 1));
     var screenSize = getScreenSize();
-    var maxItem = Math.ceil(Math.max(window.screen.height, screenSize.height) / 20);
+    var maxItem = Math.ceil(Math.max(window.screen.height, screenSize.height) / this.itemHeight);
     var contentBound = this.$content.getBoundingClientRect();
 
     this._pageOffsets[0] = Math.max(offset - maxItem, 0);
@@ -193,7 +195,7 @@ SelectListBox.prototype.viewListAt = function (offset) {
         pageElt = this.$listPages[pageIndex];
 
 
-        pageElt.addStyle('top', this._pageOffsets[pageIndex] * 20 + 'px');
+        pageElt.addStyle('top', this._pageOffsets[pageIndex] * this.itemHeight + 'px');
         this._requireItem(pageElt, nItem);
         this._assignItems(pageElt, sIdx);
         pageBound = pageElt.getBoundingClientRect();
@@ -235,7 +237,7 @@ SelectListBox.prototype.viewListAtCurrentScrollTop = function () {
         this.emit('viewListAtCurrentScrollTop');
         return;
     }
-    this.viewListAt(Math.floor(this.$listScroller.scrollTop / 20));
+    this.viewListAt(Math.floor(this.$listScroller.scrollTop / this.itemHeight));
 };
 
 
@@ -293,7 +295,7 @@ SelectListBox.prototype._updateDisplayItem = function () {
     this._displayItems = this._filterDisplayItems(this._preDisplayItems);
     this._updateDisplayItemIndex();
     this.$content.addStyle({
-        'height': this._displayItems.length * 20 + 'px'
+        'height': this._displayItems.length * this.itemHeight + 'px'
     });
 
 };
@@ -417,7 +419,7 @@ SelectListBox.eventHandler.searchModify = function () {
     this._preDisplayItems = this._itemsToNodeList(searchedItems);
     this._displayItems = this._filterDisplayItems(this._preDisplayItems);
     this.$content.addStyle({
-        'height': this._displayItems.length * 20 + 'px'
+        'height': this._displayItems.length * this.itemHeight + 'px'
     });
     this._updateItemNodeIndex();
     this.viewListAt(0);
@@ -430,13 +432,13 @@ SelectListBox.eventHandler.scroll = function () {
     var scrollerBound = this.$listScroller.getBoundingClientRect();
     var topIdx = this._findFirstPageIdx();
     var screenSize = getScreenSize();
-    var maxItem = Math.ceil(Math.max(window.screen.height, screenSize.height) / 20);
+    var maxItem = Math.ceil(Math.max(window.screen.height, screenSize.height) / this.itemHeight);
     var topBound = this.$listPages[topIdx].getBoundingClientRect();
     var botIdx = this._findLastPageIdx();
     var botBound;
     botBound = this.$listPages[botIdx].getBoundingClientRect();
     if (topBound.top > scrollerBound.top || topBound.bottom < scrollerBound.bottom) {
-        this.viewListAt(Math.floor(this.$listScroller.scrollTop / 20))
+        this.viewListAt(Math.floor(this.$listScroller.scrollTop / this.itemHeight))
         return;
     }
 
@@ -449,7 +451,7 @@ SelectListBox.eventHandler.scroll = function () {
             this._requireItem(this.$listPages[topIdx], this._pageOffsets[topIdx + 1] - this._pageOffsets[topIdx]);
             this._assignItems(this.$listPages[topIdx], this._pageOffsets[topIdx]);
             this._updateSelectedItem();
-            this.$listPages[topIdx].addStyle('top', this._pageOffsets[topIdx] * 20 + 'px');
+            this.$listPages[topIdx].addStyle('top', this._pageOffsets[topIdx] * this.itemHeight + 'px');
         }
     }
 
@@ -458,7 +460,7 @@ SelectListBox.eventHandler.scroll = function () {
             this._pageOffsets.push(this._pageOffsets.shift());
             this.$listPages.push(this.$listPages.shift());
             this._pageOffsets[botIdx + 1] = Math.min(this._displayItems.length, this._pageOffsets[botIdx] + maxItem);
-            this.$listPages[botIdx].addStyle('top', this._pageOffsets[botIdx] * 20 + 'px');
+            this.$listPages[botIdx].addStyle('top', this._pageOffsets[botIdx] * this.itemHeight + 'px');
             this._requireItem(this.$listPages[botIdx], this._pageOffsets[botIdx + 1] - this._pageOffsets[botIdx]);
             this._assignItems(this.$listPages[botIdx], this._pageOffsets[botIdx]);
             this._updateSelectedItem();
