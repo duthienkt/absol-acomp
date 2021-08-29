@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MultiCheckMenu</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var Color = absol.Color;
+
+        _('<h3>Item</h3>').addTo(document.body);
+        var bg, cc;
+        for (var i = 0; i < 5; ++i) {
+            bg = new Color([Math.random(), Math.random(), Math.random(), 1]);
+            cc = bg.getContrastYIQ();
+            _({
+                tag: 'checklistitem',
+                style: {
+                    backgroundColor: bg.toString('hex6'),
+                    color: cc.toString('hex6'),
+                },
+                props: {
+                    data: {
+                        text: i + ' - text of item',
+                        desc: 'item level = ' + i
+                    },
+                    level: i
+                }
+            }).addTo(document.body);
+        }
+
+        /********************************************/
+
+        _('<h3>CheckListBox</h3>').addTo(document.body);
+        var bt1 = _({
+            style: {
+                border: '1px solid #ddd',
+                minHeight: '30px',
+                minWidth: '60px',
+                marginBottom: '350px'
+            }
+        }).addTo(document.body);
+        var items = Array(1600).fill(null).map(function (u, i) {
+            return {text: `[${i}] ${absol.string.randomPhrase(30)}`, value: i, desc: absol.string.randomPhrase(20)};
+        });
+        var now = new Date().getTime();
+        var clb1 = _({
+            tag: 'checklistbox',
+            style: {
+                '--max-height': '300px'
+            },
+            props: {
+                enableSearch: true,
+                items: items
+            },
+            on: {
+                change: function (event) {
+                    console.log(this.values);
+                },
+                submit: function () {
+                    bt1.innerHTML = this.values.join(', ');
+                    this.updatePosition();
+                }
+            }
+        }).addTo(document.body);
+        clb1.followTarget = bt1;
+        console.log("build list", new Date().getTime() - now);
+        /********************************************/
+
+        _('<h3>MultiCheckMenu</h3>').addTo(document.body);
+        var menu1 = _({
+            tag: 'multicheckmenu',
+            style: {
+                'max-height': '300px',
+                marginBottom: '800px'
+            },
+            props: {
+                enableSearch: false,
+                items: items,
+                itemFocusable: true
+            },
+            on: {
+                change: function (event) {
+                    console.log(event.type,this.values);
+                },
+                // add: function (event) {
+                //     console.log("add", event.itemData, event.value);
+                // },
+                // remove: function (event) {
+                //     console.log("remove", event.itemData, event.value);
+                // }
+            }
+        }).addTo(document.body);
+return;
+        fetch('./demo_tree_list.js').then(res => res.text()).then(text => {
+            var factory = new Function('module', 'exports', text + '\nreturn module.exports;');
+            var module = {exports: {}};
+            return factory.call(window, module, module.exports);
+        }).then(items => {
+            _('<h3>MultiCheckMenu(with tree)</h3>').addTo(document.body);
+            var menu2 = _({
+                tag: 'multicheckmenu',
+                style: {
+                    '--max-height': '300px',
+                    marginBottom: '800px'
+                },
+                props: {
+                    enableSearch: true,
+                    items: items,
+                    itemFocusable: true
+                },
+                on: {
+                    change: function (event) {
+                        // console.log(this.values);
+                    },
+                    // add: function (event) {
+                    //     console.log("add", event.itemData, event.value);
+                    // },
+                    // remove: function (event) {
+                    //     console.log("remove", event.itemData, event.value);
+                    // }
+                }
+            }).addTo(document.body);
+        });
+        // MultiCheckMenu
+    })();
+</script>
+</body>
+</html>
