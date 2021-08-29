@@ -313,6 +313,23 @@ MultiSelectMenu.eventHandler.selectListBoxPressItem = function (event) {
 };
 
 
+MultiSelectMenu.eventHandler.pressItem = function (item, event){
+    var value = item.value;
+    if (this.itemFocusable) {
+        var prevActiveValue = this.activeValue;
+        if (value !== prevActiveValue) {
+
+            this.activeValue = value;
+            this.emit('activevaluechange', {
+                target: this,
+                originEvent: event,
+                prevActiveValue: prevActiveValue,
+                activeValue: value
+            }, this);
+        }
+    }
+};
+
 ACore.install(MultiSelectMenu);
 
 export default MultiSelectMenu;

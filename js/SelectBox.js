@@ -23,20 +23,7 @@ function pressCloseEventHandler(event) {
 function pressHandler(event) {
     var parentElt = this.$parent;
     if (!parentElt) return;
-    var value = this.value;
-    if (parentElt.itemFocusable) {
-        var prevActiveValue = parentElt.activeValue;
-        if (value !== prevActiveValue) {
-
-            parentElt.activeValue = value;
-            parentElt.emit('activevaluechange', {
-                target: parentElt,
-                originEvent: event,
-                prevActiveValue: prevActiveValue,
-                activeValue: value
-            }, parentElt);
-        }
-    }
+   parentElt.eventHandler.pressItem(this, event);
 }
 
 /***
@@ -363,6 +350,22 @@ SelectBox.eventHandler.pressCloseItem = function(item, event){
     }), this);
 };
 
+SelectBox.eventHandler.pressItem = function (item, event){
+    var value = item.value;
+    if (this.itemFocusable) {
+        var prevActiveValue = this.activeValue;
+        if (value !== prevActiveValue) {
+
+            this.activeValue = value;
+            this.emit('activevaluechange', {
+                target: this,
+                originEvent: event,
+                prevActiveValue: prevActiveValue,
+                activeValue: value
+            }, this);
+        }
+    }
+};
 
 ACore.install(SelectBox);
 
