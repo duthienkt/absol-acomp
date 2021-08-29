@@ -1,6 +1,6 @@
 import ACore, {_, $} from "../ACore";
 import Follower from "./Follower";
-import SelectListBox from "./SelectListBox";
+import SelectListBox, {VALUE_HIDDEN} from "./SelectListBox";
 import CheckListItem from "./CheckListItem";
 import '../css/checklistbox.css'
 import noop from "absol/src/Code/noop";
@@ -48,8 +48,7 @@ function CheckListBox() {
     this._initScroller();
     this._initFooter();
     this._initProperty();
-
-
+    this.domSignal.on('viewListAtValue', this.viewListAtValue.bind(this));
 }
 
 CheckListBox.tag = 'CheckListBox'.toLowerCase();
@@ -130,6 +129,36 @@ CheckListBox.prototype._requireItem = function (pageElt, n) {
 
 
 CheckListBox.prototype.viewListAtFirstSelected = noop;
+
+CheckListBox.prototype.viewListAtValue = function (value) {
+    if (!this.isDescendantOf(document.body)) {
+        this.domSignal.emit('viewListAtValue', value);
+        return;
+    }
+    if (this._displayValue == VALUE_HIDDEN) {
+        return false;
+    }
+
+
+    var itemHolders = this._displayItemHolderByValue[value + ''];
+    if (itemHolders) {
+        this.domSignal.once('scrollIntoValue', function () {
+            var holder = itemHolders[0];
+            this.viewListAt(holder.idx);
+            var itemElt = $('.as-check-list-item', this.$listScroller, function (elt) {
+                return elt.value === value;
+            });
+            if (itemElt) {
+                var scrollBound = this.$listScroller.getBoundingClientRect();
+                var itemBound = itemElt.getBoundingClientRect();
+                this.$listScroller.scrollTop += itemBound.top - scrollBound.top;
+            }
+        }.bind(this));
+        this.domSignal.emit('scrollIntoValue');
+        return true;
+    } else return false;
+
+};
 
 
 CheckListBox.property.values = {

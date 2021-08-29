@@ -123,7 +123,7 @@ MultiCheckMenu.property.isFocus = {
         if (!this._isFocus && value) {
             this._tempValues = this._values.slice();
             this.$selectlistBox.values = this._values;
-
+            this.activeValue = null;
         }
         return MultiSelectMenu.property.isFocus.set.apply(this, arguments);
     },
@@ -228,6 +228,27 @@ MultiCheckMenu.eventHandler.pressCloseItem = function (item, event) {
     }
 };
 
+
+
+
+MultiCheckMenu.eventHandler.pressItem = function (item, event){
+    var value = item.value;
+    if (this.itemFocusable && !this.isFocus) {
+        var prevActiveValue = this.activeValue;
+        if (value !== prevActiveValue) {
+            this.activeValue = value;
+            this.emit('activevaluechange', {
+                target: this,
+                originEvent: event,
+                prevActiveValue: prevActiveValue,
+                activeValue: value
+            }, this);
+        }
+    }
+    else if (this.isFocus){
+        this.$selectlistBox.viewListAtValue(value);
+    }
+};
 ACore.install(MultiCheckMenu);
 
 export default MultiCheckMenu;
