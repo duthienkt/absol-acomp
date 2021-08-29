@@ -1,7 +1,7 @@
 import ACore, {_, $} from "../ACore";
 import Follower from "./Follower";
 import SelectListBox from "./SelectListBox";
-import CheckListItem  from "./CheckListItem";
+import CheckListItem from "./CheckListItem";
 import '../css/checklistbox.css'
 import noop from "absol/src/Code/noop";
 
@@ -57,7 +57,7 @@ CheckListBox.tag = 'CheckListBox'.toLowerCase();
 CheckListBox.render = function () {
     return _({
         tag: Follower.tag,
-        extendEvent: ['change', 'submit'],
+        extendEvent: ['change', 'cancel'],
         attr: {
             tabindex: 0
         },
@@ -88,9 +88,12 @@ CheckListBox.render = function () {
                         }
                     },
                     {
-                        tag: 'a',
-                        class: 'as-select-list-box-ok-btn',
-                        child: {text: 'OK'}
+                        class: 'as-select-list-box-footer-right',
+                        child: {
+                            tag: 'a',
+                            class: 'as-select-list-box-cancel-btn',
+                            child: {text: 'Cancel'}
+                        }
                     }
                 ]
             },
@@ -107,8 +110,8 @@ CheckListBox.prototype.itemHeight = 25;
 CheckListBox.prototype._initFooter = function () {
     this.$checkAll = $('.as-select-list-box-check-all', this)
         .on('change', this.eventHandler.checkAllChange);
-    this.$OKBtn = $('.as-select-list-box-ok-btn', this)
-        .on('click', this.eventHandler.clickOKBtn);
+    this.$cancelBtn = $('.as-select-list-box-cancel-btn', this)
+        .on('click', this.eventHandler.clickCancelBtn);
 };
 
 
@@ -129,23 +132,13 @@ CheckListBox.prototype._requireItem = function (pageElt, n) {
 CheckListBox.prototype.viewListAtFirstSelected = noop;
 
 
-SelectListBox.property.values = {
-    set: function (values) {
-        values = values || [];
-        this._values = values;
-        this._valueDict = values.reduce(function (ac, cr) {
-            ac[cr + ''] = true;
-            return ac;
-        }, {});
-        this._updateDisplayItem();
-        this.viewListAtCurrentScrollTop();
-        if (this._pageOffsets[this.preLoadN] > this._pageOffsets[0]) this._updateSelectedItem();
+CheckListBox.property.values = {
+    set: function (value) {
+        SelectListBox.property.values.set.apply(this, arguments);
+        this.$checkAll.checked = this._values.length === this.items.length;
     },
-    get: function () {
-        return this._values;
-    }
+    get: SelectListBox.property.values.get
 };
-
 
 /***
  * @this CheckListBox
@@ -153,16 +146,15 @@ SelectListBox.property.values = {
  */
 CheckListBox.eventHandler.checkAllChange = function (event) {
     var checked = this.$checkAll.checked;
-    if (checked){
-        this._values = this.items.map(function (cr){
-            return typeof cr === "object"? cr.value : cr;
+    if (checked) {
+        this._values = this.items.map(function (cr) {
+            return typeof cr === "object" ? cr.value : cr;
         });
         this._valueDict = this._values.reduce(function (ac, value) {
             ac[value + ''] = true;
             return ac;
         }, {});
-    }
-    else{
+    } else {
         this._values = [];
         this._valueDict = {};
     }
@@ -170,7 +162,8 @@ CheckListBox.eventHandler.checkAllChange = function (event) {
     this.emit('change', {
         target: this,
         type: 'change',
-        originalEvent: event.originalEvent || event.originEvent || event
+        originalEvent: event.originalEvent || event.originEvent || event,
+        action: checked ? 'check_all' : "uncheck_all"
     }, this);
 };
 
@@ -183,6 +176,7 @@ CheckListBox.eventHandler.checkAllChange = function (event) {
 CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
     var selected = itemElt.selected;
     var value = itemElt.value;
+    var itemData = itemElt.data;
     var idx;
     if (selected) {
         this._values.push(value);
@@ -199,7 +193,10 @@ CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
     this.emit('change', {
         target: this,
         type: 'change',
-        originalEvent: event.originalEvent || event.originEvent || event
+        originalEvent: event.originalEvent || event.originEvent || event,
+        action: selected ? 'check' : 'uncheck',
+        value: value,
+        itemData: itemData
     }, this);
 };
 
@@ -208,8 +205,8 @@ CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
  * @this CheckListBox
  * @param event
  */
-CheckListBox.eventHandler.clickOKBtn = function (event) {
-    this.emit('submit', {type: 'submit', target: this, originalEvent: event}, this);
+CheckListBox.eventHandler.clickCancelBtn = function (event) {
+    this.emit('cancel', {type: 'submit', target: this, originalEvent: event}, this);
 };
 
 ACore.install(CheckListBox);
