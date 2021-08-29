@@ -356,6 +356,7 @@ SelectListBox.property.items = {
 SelectListBox.property.values = {
     set: function (values) {
         values = values || [];
+        values = values.slice();
         this._values = values;
         this._valueDict = values.reduce(function (ac, cr) {
             ac[cr + ''] = true;

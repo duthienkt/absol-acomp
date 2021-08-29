@@ -23,7 +23,7 @@ function SelectListItem() {
     res._level = 0;
 }
 
-SelectListItem.render = function (){
+SelectListItem.render = function () {
     return _({
         class: 'absol-selectlist-item',
         child: [
@@ -43,7 +43,6 @@ SelectListItem.render = function (){
         ]
     })
 };
-
 
 
 SelectListItem.property = {};
@@ -111,19 +110,19 @@ SelectListItem.property.data = {
 
 SelectListItem.property.value = {
     get: function () {
-        return (typeof this._data == "string") ? this._data : this._data.value;
+        return getValueOfListItem(this._data);
     }
 };
 
 SelectListItem.property.text = {
     get: function () {
-        return (typeof this._data == "string") ? this._data : this._data.text;
+        return getTextOfListItem(this._data );
     }
 };
 
 SelectListItem.property.desc = {
     get: function () {
-        return (typeof this._data == "string") ? undefined : this._data.desc;
+        return getDescriptionOfListItem(this._data);
     }
 };
 
@@ -183,3 +182,16 @@ ACore.install('SelectListItem'.toLowerCase(), SelectListItem);
 
 
 export default SelectListItem;
+
+
+export function getTextOfListItem(item) {
+    return (typeof item == "string") ? item : this._data.text;
+}
+
+export function getValueOfListItem(item) {
+    return (typeof item == "string") ? item : item.value;
+}
+
+export function getDescriptionOfListItem(item) {
+    return (typeof item == "string") ? undefined : item.desc;
+}
