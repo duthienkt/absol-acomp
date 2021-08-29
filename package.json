@@ -1,13 +1,13 @@
 {
     "name": "absol-acomp",
-    "version": "0.9.61",
+    "version": "0.9.62",
     "description": "HTML5 components base on absol.js",
     "main": "AComp.js",
     "directories": {
         "test": "test"
     },
     "scripts": {
-        "dev": "webpack serve --config webpack.config.js --public https://frame.absol.cf",
+        "dev": "webpack serve --config webpack.config.js",
         "dist": "webpack --config webpack.config.js --progress --profile  --mode production "
     },
     "repository": {
