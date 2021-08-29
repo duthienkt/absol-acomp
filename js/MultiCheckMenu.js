@@ -68,12 +68,11 @@ MultiCheckMenu.eventHandler.click = function (event) {
 MultiCheckMenu.eventHandler.bodyClick = function (event) {
     if (this.isFocus
         && !EventEmitter.hitElement(this.$selectlistBox, event)
-        && (event.target?.isDescendantOf(document.body))
+        && (event.target.isDescendantOf && event.target.isDescendantOf(document.body))
         && (!hitElement(this.$itemCtn, event) || event.target === this.$itemCtn)
     ) {
         this.eventHandler.selectListBoxPressItem(event);
         this.isFocus = false;
-
     }
 };
 
@@ -229,9 +228,7 @@ MultiCheckMenu.eventHandler.pressCloseItem = function (item, event) {
 };
 
 
-
-
-MultiCheckMenu.eventHandler.pressItem = function (item, event){
+MultiCheckMenu.eventHandler.pressItem = function (item, event) {
     var value = item.value;
     if (this.itemFocusable && !this.isFocus) {
         var prevActiveValue = this.activeValue;
@@ -244,8 +241,7 @@ MultiCheckMenu.eventHandler.pressItem = function (item, event){
                 activeValue: value
             }, this);
         }
-    }
-    else if (this.isFocus){
+    } else if (this.isFocus) {
         this.$selectlistBox.viewListAtValue(value);
     }
 };
