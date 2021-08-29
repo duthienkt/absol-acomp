@@ -15,11 +15,16 @@ var $ = ACore.$;
 
 
 /***
- * @extends PositionTracker
+ * @augments SelectBox
+ * @augments PositionTracker
  * @constructor
  */
 function MultiSelectMenu() {
     this.on('click', this.eventHandler.click);
+    /***
+     *
+     * @type {SelectListBox}
+     */
     this.$selectlistBox = _({
         tag: 'selectlistbox',
         props: {
@@ -123,8 +128,12 @@ MultiSelectMenu.prototype._getItemsByValues = function (values) {
 
 
 MultiSelectMenu.prototype._updateItems = function () {
+    this.viewItemsByValues(this._values);
+};
+
+MultiSelectMenu.prototype.viewItemsByValues = function (values) {
     var cBound = this.getBoundingClientRect();
-    var items = this._getItemsByValues(this._values);
+    var items = this._getItemsByValues(values);
     this._requireItem(items.length);
     this._assignItems(items);
     if (this.itemFocusable) {
@@ -135,6 +144,8 @@ MultiSelectMenu.prototype._updateItems = function () {
         ResizeSystem.updateUp(this);
     }
 };
+
+
 
 
 MultiSelectMenu.property = {};
@@ -280,6 +291,7 @@ MultiSelectMenu.eventHandler.selectListBoxPressItem = function (event) {
     currentValues.push(data.value);
     this.$selectlistBox.values = currentValues;
     this.$selectlistBox.updatePosition();
+    this._values = currentValues.slice();
     this._activeValue = data.value;
     this._updateItems();
     this.isFocus = false;
