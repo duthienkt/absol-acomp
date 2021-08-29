@@ -16,33 +16,8 @@ var $ = ACore.$;
 function pressCloseEventHandler(event) {
     var parentElt = this.$parent;
     if (!parentElt) return;
-    var value = this.value;
-    var data = this.data;
-    var currentValues = parentElt.$selectlistBox.values;
-    var index = currentValues.indexOf(value);
-    if (index >= 0) {
-        currentValues.splice(index, 1);
-    }
-
-    parentElt.$selectlistBox.values = currentValues;
-    parentElt.$selectlistBox.updatePosition();
-    parentElt._values = currentValues;
-    parentElt._updateItems();
-    parentElt.emit('remove', Object.assign({}, event, {
-        type: 'change',
-        target: parentElt,
-        data: data,
-        value: value,
-        itemData: data
-    }), parentElt);
-    parentElt.emit('change', Object.assign({}, event, {
-        type: 'change',
-        action: 'remove',
-        target: parentElt,
-        data: data,
-        value: value,
-        itemData: data
-    }), parentElt);
+    parentElt.eventHandler.pressCloseItem(this, event);
+    
 }
 
 function pressHandler(event) {
@@ -189,8 +164,12 @@ SelectBox.prototype._getItemsByValues = function (values) {
 
 
 SelectBox.prototype._updateItems = function () {
+    this.viewItemsByValues(this._values);
+};
+
+SelectBox.prototype.viewItemsByValues = function (values){
+    var items = this._getItemsByValues(values);
     var cBound = this.getBoundingClientRect();
-    var items = this._getItemsByValues(this._values);
     this._requireItem(items.length);
     this._assignItems(items);
     if (this.itemFocusable) {
@@ -352,6 +331,35 @@ SelectBox.eventHandler.selectListBoxPressItem = function (event) {
         value: data.value,
         data: data,
         values: this.values
+    }), this);
+};
+
+SelectBox.eventHandler.pressCloseItem = function(item, event){
+    var value = item.value;
+    var data = item.data;
+    var currentValues = this.$selectlistBox.values;
+    var index = currentValues.indexOf(value);
+    if (index >= 0) {
+        currentValues.splice(index, 1);
+    }
+    this.$selectlistBox.values = currentValues;
+    this.$selectlistBox.updatePosition();
+    this._values = currentValues;
+    this._updateItems();
+    this.emit('remove', Object.assign({}, event, {
+        type: 'change',
+        target: this,
+        data: data,
+        value: value,
+        itemData: data
+    }), this);
+    this.emit('change', Object.assign({}, event, {
+        type: 'change',
+        action: 'remove',
+        target: this,
+        data: data,
+        value: value,
+        itemData: data
     }), this);
 };
 
