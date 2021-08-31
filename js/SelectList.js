@@ -63,8 +63,7 @@ export function requireItem($parent) {
     var item;
     if (itemPool.length > 0) {
         item = itemPool.pop();
-    }
-    else {
+    } else {
         item = makeItem();
     }
     item.$parent = $parent;
@@ -114,7 +113,7 @@ export function measureMaxTextWidth(items) {
             if (est > maxEst) {
                 maxEst = est;
                 maxText = text;
-                maxLv = item.level||0;
+                maxLv = item.level || 0;
             }
         }
     }
@@ -218,15 +217,13 @@ SelectList.prototype._assignItems = function (from, to) {
         itemElt.__index__ = i;
         if (this.$itemByValue[item.value]) {
             console.warn('Value  ' + this.$items[i].value + ' is duplicated!');
-        }
-        else {
+        } else {
             this.$itemByValue[item.value] = itemElt;
             if (this._selectValue == item.value) {
                 itemElt.addClass('selected');
                 this.$selectedItem = itemElt;
                 foundSelected = true;
-            }
-            else {
+            } else {
                 itemElt.removeClass('selected');
             }
         }
@@ -251,13 +248,13 @@ SelectList.prototype.setItemsAsync = function (items) {
 
     function tick() {
         if (thisSL._itemSession != session) {
-            thisSL.emit('cancelasync', { session: session, type: 'cancelasync' }, this);
+            thisSL.emit('cancelasync', {session: session, type: 'cancelasync'}, this);
             return;
         }
         if (i >= items.length) {
             thisSL._updateSelectedItem();
             thisSL._finished = false;
-            thisSL.emit('finishasync', { session: session, type: 'finishasync' }, this);
+            thisSL.emit('finishasync', {session: session, type: 'finishasync'}, this);
             return;
         }
 
@@ -275,12 +272,12 @@ SelectList.prototype.setItemsAsync = function (items) {
             }, thisSL);
         }
 
-        thisSL.emit('sizechangeasync', { session: session, type: 'sizechangeasync' }, this);
+        thisSL.emit('sizechangeasync', {session: session, type: 'sizechangeasync'}, this);
         setTimeout(tick, 2);
     }
 
     setTimeout(tick, 2);
-    return Object.assign({ session: session }, this.measuredSize);
+    return Object.assign({session: session}, this.measuredSize);
 };
 
 

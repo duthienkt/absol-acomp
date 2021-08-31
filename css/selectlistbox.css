@@ -18,7 +18,7 @@
     outline: none;
 }
 
-.absol-follower.as-select-list-box{
+.absol-follower.as-select-list-box {
     z-index: 1000000;
 }
 
@@ -76,7 +76,7 @@
     top: 0;
 }
 
-.as-select-list-box .absol-selectlist-item{
+.as-select-list-box .absol-selectlist-item {
     cursor: default;
 }
 
@@ -103,10 +103,10 @@
     background-color: #efefef;
 }
 
-.as-select-list-box.as-value-hidden .absol-selectlist-item.as-selected{
+.as-select-list-box.as-value-hidden .absol-selectlist-item.as-selected {
     color: #aaaaaa;
 }
 
-.as-select-list-box.as-value-hidden .absol-selectlist-item.as-selected.as-is-leaft{
+.as-select-list-box.as-value-hidden .absol-selectlist-item.as-selected.as-is-leaft {
     display: none;
 }

@@ -10,8 +10,7 @@ export function insertTextAtCursor(text) {
             range.deleteContents();
             range.insertNode(document.createTextNode(text));
         }
-    }
-    else if (document.selection && document.selection.createRange) {
+    } else if (document.selection && document.selection.createRange) {
         document.selection.createRange().text = text;
     }
 }
@@ -26,8 +25,7 @@ export function contenteditableTextOnly(element, processText) {
             var text = e.clipboardData.getData("text/plain");
             if (processText) text = processText(text)
             document.execCommand("insertHTML", false, text);
-        }
-        else if (window.clipboardData && window.clipboardData.getData) {
+        } else if (window.clipboardData && window.clipboardData.getData) {
             var text = window.clipboardData.getData("Text");
             if (processText) text = processText(text)
             insertTextAtCursor(text);
@@ -41,12 +39,11 @@ export function getSelectionText() {
     var activeElTagName = activeEl ? activeEl.tagName.toLowerCase() : null;
     if (
         (activeElTagName == "textarea") || (activeElTagName == "input" &&
-        /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
+            /^(?:text|search|password|tel|url)$/i.test(activeEl.type)) &&
         (typeof activeEl.selectionStart == "number")
     ) {
         text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
-    }
-    else if (window.getSelection) {
+    } else if (window.getSelection) {
         text = window.getSelection().toString();
     }
     return text;
@@ -62,20 +59,16 @@ export function positiveIntMod(num, maxVal) {
     if (maxVal <= 0) return 0;
     if (num >= 0 && num < maxVal) {
         return Math.floor(num);
-    }
-    else if (num === Infinity) {
+    } else if (num === Infinity) {
         if (maxVal === Infinity)
             return Infinity;
         else
             return 0;
-    }
-    else if (num < 0) {
+    } else if (num < 0) {
         return (num + (Math.ceil(-num / maxVal) * maxVal)) % maxVal;
-    }
-    else if (num >= maxVal) {
+    } else if (num >= maxVal) {
         return Math.floor(num) % maxVal
-    }
-    else return 0;
+    } else return 0;
 
 }
 
@@ -98,8 +91,7 @@ export function getCaretPosition(oField) {
         var oSel = document.selection.createRange();
         oSel.moveStart('character', -oField.value.length);
         iCaretPos = oSel.text.length;
-    }
-    else if (oField.selectionStart || oField.selectionStart == '0')
+    } else if (oField.selectionStart || oField.selectionStart == '0')
         iCaretPos = oField.selectionDirection == 'backward' ? oField.selectionStart : oField.selectionEnd;
     return iCaretPos;
 }
@@ -124,8 +116,7 @@ export function preventNotNumberInput(elt) {
         if (e.clipboardData && e.clipboardData.getData) {
             text = e.clipboardData.getData("text/plain");
 
-        }
-        else if (window.clipboardData && window.clipboardData.getData) {
+        } else if (window.clipboardData && window.clipboardData.getData) {
             text = window.clipboardData.getData("Text");
         }
         var matched = text.match(/[+-]?([0-9]*[.])?[0-9]+/);
@@ -139,8 +130,7 @@ export function preventNotNumberInput(elt) {
             if (key.match(/[0-9.\-\+]/)) {
                 if (key == '.' && this.value.indexOf('.') >= 0) event.preventDefault();
                 if ((key == '+' || key == '-') && (this.value.indexOf('+') >= 0 || this.value.indexOf('-') >= 0 || getCaretPosition(this) > 0)) event.preventDefault();
-            }
-            else event.preventDefault();
+            } else event.preventDefault();
         }
     });
 }
@@ -184,14 +174,12 @@ export function openFileDialog(props, unSafe) {
                 accept: 'image/*',
                 capture: 'camera'
             }
-        }
-        else if (props === 'microphone') {
+        } else if (props === 'microphone') {
             props = {
                 accept: 'audio/*',
                 capture: "microphone"
             }
-        }
-        else if (props === 'camcorder') {
+        } else if (props === 'camcorder') {
             props = {
                 accept: 'video/*',
                 capture: 'camcorder'
@@ -203,8 +191,7 @@ export function openFileDialog(props, unSafe) {
                 input.attr('accept', props.accept.join(','));
             else
                 input.attr('accept', props.accept);
-        }
-        else {
+        } else {
             input.attr('accept', null);
         }
 
@@ -213,8 +200,7 @@ export function openFileDialog(props, unSafe) {
         }
         if (props.multiple) {
             input.attr('multiple', 'true');
-        }
-        else {
+        } else {
             input.attr('multiple');
         }
         input.value = null;
@@ -250,11 +236,47 @@ export function openFileDialog(props, unSafe) {
 
 export var charWidth = {
     "A": 9.337890625,
+    "Á": 9.337890625,
+    "À": 9.337890625,
+    "Ả": 9.337890625,
+    "Ã": 9.337890625,
+    "Ạ": 9.337890625,
+
     "a": 7.7861328125,
+    "á": 7.7861328125,
+    "à": 7.7861328125,
+    "ả": 7.7861328125,
+    "ã": 7.7861328125,
+    "ạ": 7.7861328125,
+
     "Ă": 9.337890625,
+    "Ắ": 9.337890625,
+    "Ằ": 9.337890625,
+    "Ẳ": 9.337890625,
+    "Ẵ": 9.337890625,
+    "Ặ": 9.337890625,
+
     "ă": 7.7861328125,
+    "ắ": 7.7861328125,
+    "ằ": 7.7861328125,
+    "ẳ": 7.7861328125,
+    "ẵ": 7.7861328125,
+    "ặ": 7.7861328125,
+
     "Â": 9.337890625,
+    "Ấ": 9.337890625,
+    "Ầ": 9.337890625,
+    "Ẩ": 9.337890625,
+    "Ẫ": 9.337890625,
+    "Ậ": 9.337890625,
+
     "â": 7.7861328125,
+    "ấ": 7.7861328125,
+    "ầ": 7.7861328125,
+    "ẩ": 7.7861328125,
+    "ẫ": 7.7861328125,
+    "ậ": 7.7861328125,
+
     "B": 9.337890625,
     "b": 7.7861328125,
     "C": 10.1103515625,
@@ -263,16 +285,54 @@ export var charWidth = {
     "d": 7.7861328125,
     "Đ": 10.1103515625,
     "đ": 7.7861328125,
+
     "E": 9.337890625,
+    "É": 9.337890625,
+    "È": 9.337890625,
+    "Ẻ": 9.337890625,
+    "Ẽ": 9.337890625,
+    "Ẹ": 9.337890625,
+
     "e": 7.7861328125,
+    "é": 7.7861328125,
+    "è": 7.7861328125,
+    "ẻ": 7.7861328125,
+    "ẽ": 7.7861328125,
+    "ẹ": 7.7861328125,
+
     "Ê": 9.337890625,
+    "Ế": 9.337890625,
+    "Ề": 9.337890625,
+    "Ể": 9.337890625,
+    "Ễ": 9.337890625,
+    "Ệ": 9.337890625,
+
     "ê": 7.7861328125,
+    "ế": 7.7861328125,
+    "ề": 7.7861328125,
+    "ể": 7.7861328125,
+    "ễ": 7.7861328125,
+    "ệ": 7.7861328125,
+
     "G": 10.8896484375,
     "g": 7.7861328125,
     "H": 10.1103515625,
     "h": 7.7861328125,
+
     "I": 3.8896484375,
+    "Í": 3.8896484375,
+    "Ì": 3.8896484375,
+    "Ỉ": 3.8896484375,
+    "Ĩ": 3.8896484375,
+    "Ị": 3.8896484375,
+
     "i": 3.1103515625,
+    "í": 3.1103515625,
+    "ì": 3.1103515625,
+    "ỉ": 3.1103515625,
+    "ĩ": 3.1103515625,
+    "ị": 3.1103515625,
+
     "K": 9.337890625,
     "k": 7,
     "L": 7.7861328125,
@@ -281,12 +341,50 @@ export var charWidth = {
     "m": 11.662109375,
     "N": 10.1103515625,
     "n": 7.7861328125,
+
     "O": 10.8896484375,
+    "Ó": 10.8896484375,
+    "Ò": 10.8896484375,
+    "Ỏ": 10.8896484375,
+    "Õ": 10.8896484375,
+    "Ọ": 10.8896484375,
+
     "o": 7.7861328125,
+    "ó": 7.7861328125,
+    "ò": 7.7861328125,
+    "ỏ": 7.7861328125,
+    "õ": 7.7861328125,
+    "ọ": 7.7861328125,
+
     "Ô": 10.8896484375,
+    "Ố": 10.8896484375,
+    "Ồ": 10.8896484375,
+    "Ổ": 10.8896484375,
+    "Ỗ": 10.8896484375,
+    "Ộ": 10.8896484375,
+
     "ô": 7.7861328125,
+    "ố": 7.7861328125,
+    "ồ": 7.7861328125,
+    "ổ": 7.7861328125,
+    "ỗ": 7.7861328125,
+    "ộ": 7.7861328125,
+
+
     "Ơ": 12.00390625,
+    "Ớ": 12.00390625,
+    "Ờ": 12.00390625,
+    "Ở": 12.00390625,
+    "Ỡ": 12.00390625,
+    "Ợ": 12.00390625,
+
     "ơ": 9.1806640625,
+    "ớ": 9.1806640625,
+    "ờ": 9.1806640625,
+    "ở": 9.1806640625,
+    "ỡ": 9.1806640625,
+    "ợ": 9.1806640625,
+
     "P": 9.337890625,
     "p": 7.7861328125,
     "Q": 10.8896484375,
@@ -297,16 +395,53 @@ export var charWidth = {
     "s": 7,
     "T": 8.5517578125,
     "t": 3.8896484375,
+
     "U": 10.1103515625,
+    "Ú": 10.1103515625,
+    "Ù": 10.1103515625,
+    "Ủ": 10.1103515625,
+    "Ũ": 10.1103515625,
+    "Ụ": 10.1103515625,
+
     "u": 7.7861328125,
+    "ú": 7.7861328125,
+    "ù": 7.7861328125,
+    "ủ": 7.7861328125,
+    "ũ": 7.7861328125,
+    "ụ": 7.7861328125,
+
     "Ư": 11.9560546875,
+    "Ứ": 11.9560546875,
+    "Ừ": 11.9560546875,
+    "Ử": 11.9560546875,
+    "Ữ": 11.9560546875,
+    "Ự": 11.9560546875,
+
     "ư": 9.3720703125,
+    "ứ": 9.3720703125,
+    "ừ": 9.3720703125,
+    "ử": 9.3720703125,
+    "ữ": 9.3720703125,
+    "ự": 9.3720703125,
+
     "V": 9.337890625,
     "v": 7,
     "X": 9.337890625,
     "x": 7,
+
     "Y": 9.337890625,
+    "Ý": 9.337890625,
+    "Ỳ": 9.337890625,
+    "Ỷ": 9.337890625,
+    "Ỹ": 9.337890625,
+    "Ỵ": 9.337890625,
+
     "y": 7,
+    "ý": 7,
+    "ỳ": 7,
+    "ỷ": 7,
+    "ỹ": 7,
+    "ỵ": 7,
     " ": 3.8896484375
 };
 
