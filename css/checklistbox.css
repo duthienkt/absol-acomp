@@ -1,3 +1,7 @@
+.as-check-list-box.as-select-list-box{
+    width: calc(var(--select-list-estimate-width) + 2px + 5px + 23px);
+}
+
 .as-check-list-box.as-select-list-box.as-enable-search .as-select-list-box-scroller {
     max-height: calc(var(--max-height) - 38px - 29px);
 }
