@@ -4,6 +4,7 @@ import OOP from "absol/src/HTML5/OOP";
 import CheckListBox from "./CheckListBox";
 import EventEmitter, {hitElement} from "absol/src/HTML5/EventEmitter";
 import {getValueOfListItem} from "./SelectListItem";
+import AElement from "absol/src/HTML5/AElement";
 
 
 /***
@@ -68,7 +69,7 @@ MultiCheckMenu.eventHandler.click = function (event) {
 MultiCheckMenu.eventHandler.bodyClick = function (event) {
     if (this.isFocus
         && !EventEmitter.hitElement(this.$selectlistBox, event)
-        && (event.target.isDescendantOf && event.target.isDescendantOf(document.body))
+        && (AElement.prototype.isDescendantOf.call(event.target, document.body))
         && (!hitElement(this.$itemCtn, event) || event.target === this.$itemCtn)
     ) {
         this.eventHandler.selectListBoxPressItem(event);
