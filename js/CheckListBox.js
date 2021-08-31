@@ -235,7 +235,7 @@ CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
  * @param event
  */
 CheckListBox.eventHandler.clickCancelBtn = function (event) {
-    this.emit('cancel', {type: 'submit', target: this, originalEvent: event}, this);
+    this.emit('cancel', {type: 'cancel', target: this, originalEvent: event}, this);
 };
 
 ACore.install(CheckListBox);
