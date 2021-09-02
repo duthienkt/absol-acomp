@@ -112,9 +112,8 @@ MultiSelectMenu.prototype._getItemsByValues = function (values) {
     if (this.orderly) {
         if (typeof this.orderly === 'function') {
             itemHolders.sort(this.orderly);
-        }
-        else {
-            itemHolders.sort(function(a, b) {
+        } else {
+            itemHolders.sort(function (a, b) {
                 return a.idx - b.idx;
             });
         }
@@ -144,8 +143,6 @@ MultiSelectMenu.prototype.viewItemsByValues = function (values) {
         ResizeSystem.updateUp(this);
     }
 };
-
-
 
 
 MultiSelectMenu.property = {};
@@ -199,15 +196,14 @@ MultiSelectMenu.property.values = {
 
 MultiSelectMenu.property.orderly = {
     set: function (value) {
-       var needUpdate = this._orderly === this._orderly;
-       if (typeof value === 'function') {
-           this._orderly;
-       }
-       else
-           this._orderly = !!value;
-       if (needUpdate) {
-           this.values = this.values;
-       }
+        var needUpdate = this._orderly === this._orderly;
+        if (typeof value === 'function') {
+            this._orderly;
+        } else
+            this._orderly = !!value;
+        if (needUpdate) {
+            this.values = this.values;
+        }
     },
     get: function () {
         return !!this._orderly;
@@ -218,8 +214,7 @@ MultiSelectMenu.property.disableClickToFocus = {
     set: function (value) {
         if (value) {
             this.addClass('as-disable-click-to-focus');
-        }
-        else {
+        } else {
             this.removeClass('as-disable-click-to-focus');
         }
     },
@@ -232,8 +227,7 @@ MultiSelectMenu.property.itemFocusable = {
     set: function (value) {
         if (value) {
             this.addClass('as-item-focusable');
-        }
-        else {
+        } else {
             this.removeClass('as-item-focusable');
         }
         this._updateFocusItem();
@@ -264,8 +258,7 @@ MultiSelectMenu.eventHandler.attached = function () {
     if (maxHeightStyle.match(/[0-9-]+px/)) {
         this.addStyle('--multi-select-menu-max-height', maxHeightStyle);
         this.addStyle('max-height', 'unset');
-    }
-    else if (maxHeightStyle !== 'none') {
+    } else if (maxHeightStyle !== 'none') {
         console.warn('Can not adapt max-height:', maxHeightStyle);
     }
 };
@@ -313,7 +306,7 @@ MultiSelectMenu.eventHandler.selectListBoxPressItem = function (event) {
 };
 
 
-MultiSelectMenu.eventHandler.pressItem = function (item, event){
+MultiSelectMenu.eventHandler.pressItem = function (item, event) {
     var value = item.value;
     if (this.itemFocusable) {
         var prevActiveValue = this.activeValue;
@@ -334,39 +327,27 @@ MultiSelectMenu.eventHandler.pressItem = function (item, event){
 MultiSelectMenu.eventHandler.pressCloseItem = function (item, event) {
     var value = item.value;
     var data = item.data;
-    var currentValues;
     var index;
-    if (this.isFocus) {
-        currentValues = this.$selectlistBox.values;
-        index = currentValues.indexOf(value);
-        if (index >= 0) {
-            currentValues.splice(index, 1);
-        }
-        this.$selectlistBox.values = currentValues;
-        this.$selectlistBox.updatePosition();
-        this.viewItemsByValues(this.$selectlistBox.values);
-    } else {
-        index = this._values.indexOf(value);
-        if (index >= 0) {
-            this._values.splice(index, 1);
-            this._updateItems();
-
-            this.emit('remove', Object.assign({}, event, {
-                type: 'change',
-                target: this,
-                data: data,
-                value: value,
-                itemData: data
-            }), this);
-            this.emit('change', Object.assign({}, event, {
-                type: 'change',
-                action: 'remove',
-                target: this,
-                data: data,
-                value: value,
-                itemData: data
-            }), this);
-        }
+    index = this._values.indexOf(value);
+    if (index >= 0) {
+        this._values.splice(index, 1);
+        this._updateItems();
+        this.$selectlistBox.values = this._values;
+        this.emit('remove', Object.assign({}, event, {
+            type: 'change',
+            target: this,
+            data: data,
+            value: value,
+            itemData: data
+        }), this);
+        this.emit('change', Object.assign({}, event, {
+            type: 'change',
+            action: 'remove',
+            target: this,
+            data: data,
+            value: value,
+            itemData: data
+        }), this);
     }
 };
 

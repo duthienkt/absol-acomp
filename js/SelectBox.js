@@ -22,7 +22,7 @@ function pressCloseEventHandler(event) {
 function pressHandler(event) {
     var parentElt = this.$parent;
     if (!parentElt) return;
-   parentElt.eventHandler.pressItem(this, event);
+    parentElt.eventHandler.pressItem(this, event);
 }
 
 /***
@@ -45,8 +45,7 @@ export function requireItem($parent) {
     var item;
     if (itemPool.length > 0) {
         item = itemPool.pop();
-    }
-    else {
+    } else {
         item = makeItem();
     }
     item.$parent = $parent;
@@ -153,7 +152,7 @@ SelectBox.prototype._updateItems = function () {
     this.viewItemsByValues(this._values);
 };
 
-SelectBox.prototype.viewItemsByValues = function (values){
+SelectBox.prototype.viewItemsByValues = function (values) {
     var items = this._getItemsByValues(values);
     var cBound = this.getBoundingClientRect();
     this._requireItem(items.length);
@@ -220,10 +219,9 @@ SelectBox.property.values = {
 SelectBox.property.orderly = {
     set: function (value) {
         var needUpdate = this._orderly === this._orderly;
-        if (typeof value === 'function'){
+        if (typeof value === 'function') {
             this._orderly;
-        }
-        else
+        } else
             this._orderly = !!value;
         if (needUpdate) {
             this.values = this.values;
@@ -238,8 +236,7 @@ SelectBox.property.disableClickToFocus = {
     set: function (value) {
         if (value) {
             this.addClass('as-disable-click-to-focus');
-        }
-        else {
+        } else {
             this.removeClass('as-disable-click-to-focus');
         }
     },
@@ -252,8 +249,7 @@ SelectBox.property.itemFocusable = {
     set: function (value) {
         if (value) {
             this.addClass('as-item-focusable');
-        }
-        else {
+        } else {
             this.removeClass('as-item-focusable');
         }
         this._updateFocusItem();
@@ -320,7 +316,7 @@ SelectBox.eventHandler.selectListBoxPressItem = function (event) {
     }), this);
 };
 
-SelectBox.eventHandler.pressCloseItem = function(item, event){
+SelectBox.eventHandler.pressCloseItem = function (item, event) {
     var value = item.value;
     var data = item.data;
     var currentValues = this.$selectlistBox.values;
@@ -349,7 +345,7 @@ SelectBox.eventHandler.pressCloseItem = function(item, event){
     }), this);
 };
 
-SelectBox.eventHandler.pressItem = function (item, event){
+SelectBox.eventHandler.pressItem = function (item, event) {
     var value = item.value;
     if (this.itemFocusable) {
         var prevActiveValue = this.activeValue;
@@ -370,39 +366,27 @@ SelectBox.eventHandler.pressItem = function (item, event){
 SelectBox.eventHandler.pressCloseItem = function (item, event) {
     var value = item.value;
     var data = item.data;
-    var currentValues;
     var index;
-    if (this.isFocus) {
-        currentValues = this.$selectlistBox.values;
-        index = currentValues.indexOf(value);
-        if (index >= 0) {
-            currentValues.splice(index, 1);
-        }
-        this.$selectlistBox.values = currentValues;
-        this.$selectlistBox.updatePosition();
-        this.viewItemsByValues(this.$selectlistBox.values);
-    } else {
-        index = this._values.indexOf(value);
-        if (index >= 0) {
-            this._values.splice(index, 1);
-            this._updateItems();
-
-            this.emit('remove', Object.assign({}, event, {
-                type: 'change',
-                target: this,
-                data: data,
-                value: value,
-                itemData: data
-            }), this);
-            this.emit('change', Object.assign({}, event, {
-                type: 'change',
-                action: 'remove',
-                target: this,
-                data: data,
-                value: value,
-                itemData: data
-            }), this);
-        }
+    index = this._values.indexOf(value);
+    if (index >= 0) {
+        this._values.splice(index, 1);
+        this._updateItems();
+        this.$selectlistBox.values = this._values;
+        this.emit('remove', Object.assign({}, event, {
+            type: 'change',
+            target: this,
+            data: data,
+            value: value,
+            itemData: data
+        }), this);
+        this.emit('change', Object.assign({}, event, {
+            type: 'change',
+            action: 'remove',
+            target: this,
+            data: data,
+            value: value,
+            itemData: data
+        }), this);
     }
 };
 
