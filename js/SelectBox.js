@@ -17,7 +17,6 @@ function pressCloseEventHandler(event) {
     var parentElt = this.$parent;
     if (!parentElt) return;
     parentElt.eventHandler.pressCloseItem(this, event);
-    
 }
 
 function pressHandler(event) {
@@ -363,6 +362,46 @@ SelectBox.eventHandler.pressItem = function (item, event){
                 prevActiveValue: prevActiveValue,
                 activeValue: value
             }, this);
+        }
+    }
+};
+
+
+SelectBox.eventHandler.pressCloseItem = function (item, event) {
+    var value = item.value;
+    var data = item.data;
+    var currentValues;
+    var index;
+    if (this.isFocus) {
+        currentValues = this.$selectlistBox.values;
+        index = currentValues.indexOf(value);
+        if (index >= 0) {
+            currentValues.splice(index, 1);
+        }
+        this.$selectlistBox.values = currentValues;
+        this.$selectlistBox.updatePosition();
+        this.viewItemsByValues(this.$selectlistBox.values);
+    } else {
+        index = this._values.indexOf(value);
+        if (index >= 0) {
+            this._values.splice(index, 1);
+            this._updateItems();
+
+            this.emit('remove', Object.assign({}, event, {
+                type: 'change',
+                target: this,
+                data: data,
+                value: value,
+                itemData: data
+            }), this);
+            this.emit('change', Object.assign({}, event, {
+                type: 'change',
+                action: 'remove',
+                target: this,
+                data: data,
+                value: value,
+                itemData: data
+            }), this);
         }
     }
 };
