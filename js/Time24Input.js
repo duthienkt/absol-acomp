@@ -18,6 +18,7 @@ function Time24Input() {
     this.dayOffset = this._dayOffset;
     this.value = this._value;
     this.format = this._format;
+    this.notNull = true;
 }
 
 Time24Input.tag = 'Time24Input'.toLowerCase();
@@ -138,13 +139,14 @@ Time24Input.property.dayOffset = {
 
 Time24Input.property.value = {
     set: function (value) {
-        this._value = isRealNumber(value) ? value : null;
+        this._value = isRealNumber(value) ? value : (this.notNull ? 0 : null);
         this._updateText();
     },
     get: function () {
         return this._value;
     }
 };
+
 Time24Input.property.displayTime = {
     get: function () {
         if (isRealNumber(this._value) && isRealNumber(this._dayOffset)) {
@@ -152,6 +154,24 @@ Time24Input.property.displayTime = {
         } else {
             return null;
         }
+    }
+};
+
+
+Time24Input.property.notNull = {
+    set: function (value) {
+        if (value) {
+            if (this.value === null) {
+                this.value = 0;
+            }
+            this.addClass('as-must-not-null');
+
+        } else {
+            this.removeClass('as-must-not-null');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-must-not-null');
     }
 };
 

@@ -356,7 +356,7 @@ TimeInput.property.notNull = {
     get: function () {
         return this.containsClass('as-must-not-null');
     }
-}
+};
 
 TimeInput.eventHandler = {};
 
