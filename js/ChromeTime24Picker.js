@@ -1,4 +1,4 @@
-import ACore, {$$} from "../ACore";
+import ACore, {$$, $, _} from "../ACore";
 import '../css/chrometimepicker.css';
 import '../css/chrometime24picker.css';
 import ChromeTimePicker from "./ChromeTimePicker";
