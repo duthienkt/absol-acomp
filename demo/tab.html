@@ -21,6 +21,19 @@
             padding-bottom: 20px;
             border: solid 1px rgb(30, 30, 32);
         }
+
+        .absol-static-tabbar.bold .absol-static-tabbar-button{
+            color: #2a64f7;
+        }
+
+        .absol-static-tabbar.bold .absol-static-tabbar-button.active{
+
+            text-shadow: 1px 0 0 currentColor;
+        }
+
+        .absol-static-tabbar.bold .absol-static-tabbar-hline{
+            display: none;
+        }
     </style>
 </head>
 
@@ -32,6 +45,7 @@
     <div id="static-tabbar-demo">
         <div class="light bg"></div>
         <div class="dark bg"></div>
+        <div class="normal bg"></div>
     </div>
     <script class="viewable">
         var frameView = absol._({
@@ -186,6 +200,8 @@
         };
         absol._(statictabParams).addTo(absol.$('#static-tabbar-demo .light.bg'));
         absol._(statictabParams).addClass('dark').addTo(absol.$('#static-tabbar-demo .dark.bg'));
+        absol._(statictabParams).addClass('bold').addTo(absol.$('#static-tabbar-demo .normal.bg'));
+
     </script>
 
 
@@ -221,7 +237,7 @@
                 height: '100%'
             },
             attr: {
-                src: "https://absol.cf/vchart/demo/dualchart.html"
+                src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
             }
         }));
         var tabview1 = absol._({
@@ -265,7 +281,7 @@
                 height: '100%'
             },
             attr: {
-                src: "https://absol.cf/vchart/demo/dualchart.html"
+                src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
             }
         }));
 
@@ -310,7 +326,7 @@
                 height: '100%'
             },
             attr: {
-                src: "https://absol.cf/vchart/demo/dualchart.html"
+                src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
             }
         }));
         var tabviewXP = absol._({
@@ -323,7 +339,7 @@
         }).addTo(absol.$('#demo'));
     </script>
 
-    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+<!--    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>-->
 
 </body>
 
