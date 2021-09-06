@@ -9,149 +9,161 @@
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <style>
-        body{
+        body {
             /* background-color: black; */
+            min-height: 80vh;
         }
     </style>
 </head>
 
 <body>
-    <h1>TimeInput</h1>
-    <div class="input-demo">
+<h3>Time24Picker</h3>
+<script>
+    var _ = absol._;
+    var $ = absol.$;
+    _({
+        tag: 'chrometime24picker',
+        props: {}
+    }).addTo(document.body);
+</script>
+<h3>TimeInput</h3>
+<div class="input-demo"></div>
+<script>
 
-    </div>
-    <script>
-        var _ = absol._;
-        var $ = absol.$;
-        var isTouchDevice = 'ontouchstart' in window ||
-            window.DocumentTouch && document instanceof window.DocumentTouch ||
-            navigator.maxTouchPoints > 0 ||
-            window.navigator.msMaxTouchPoints > 0;
-    </script>
-    <script class="viewable">
-        var inputDemoDiv = $('.input-demo');
-        _({
-            tag: 'timeinput',
-            style: {
-                // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
-            },
-            props: {
-                dayOffset: new Date(),//now, dayOffset can be Date or Number 
-                // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59 
-                // hour: 20, or set hour and minute
-                // minute:59
-            },
-            on: {
-                change: function () {
-                    absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
-                }
+    var isTouchDevice = 'ontouchstart' in window ||
+        window.DocumentTouch && document instanceof window.DocumentTouch ||
+        navigator.maxTouchPoints > 0 ||
+        window.navigator.msMaxTouchPoints > 0;
+</script>
+<script class="viewable">
+    var inputDemoDiv = $('.input-demo');
+    _({
+        tag: 'timeinput',
+        style: {
+            // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+        },
+        props: {
+            dayOffset: new Date(),//now, dayOffset can be Date or Number
+            // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59
+            // hour: 20, or set hour and minute
+            // minute:59
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
             }
-        }).addTo(inputDemoDiv);
-        _({
-            tag: 'timeinput',
-            style: {
-                width: '180px'
-                // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
-            },
-            props: {
-                dayOffset: new Date(),//now, dayOffset can be Date or Number
-                // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59
-                // hour: 20, or set hour and minute
-                // minute:59,
-                format: 'HH giờ mm phút'
-            },
-            on: {
-                change: function () {
-                    absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
-                }
+        }
+    }).addTo(inputDemoDiv);
+    _({
+        tag: 'timeinput',
+        style: {
+            width: '180px'
+            // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+        },
+        props: {
+            dayOffset: new Date(),//now, dayOffset can be Date or Number
+            // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59
+            // hour: 20, or set hour and minute
+            // minute:59,
+            format: 'HH giờ mm phút'
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
             }
-        }).addTo(inputDemoDiv);
-        _({
-            tag: 'timeinput',
-            style: {
-                width: '180px'
-                // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
-            },
-            props: {
-                dayOffset: new Date(),//now, dayOffset can be Date or Number
-                // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59
-                // hour: 20, or set hour and minute
-                // minute:59,
-                format: 'HH giờ mm phút',
-                notNull: true
-            },
-            on: {
-                change: function () {
-                    absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
-                }
+        }
+    }).addTo(inputDemoDiv);
+    _({
+        tag: 'timeinput',
+        style: {
+            width: '180px'
+            // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+        },
+        props: {
+            dayOffset: new Date(),//now, dayOffset can be Date or Number
+            // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59
+            // hour: 20, or set hour and minute
+            // minute:59,
+            format: 'HH giờ mm phút',
+            notNull: true
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
             }
-        }).addTo(inputDemoDiv);
-        _({
-            tag: 'timeinput',
-            style: {
-                width: '180px'
-                // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
-            },
-            props: {
-                dayOffset: new Date(),//now, dayOffset can be Date or Number
-                // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59
-                // hour: 20, or set hour and minute
-                // minute:59,
-                format: 'hh : mm a',
-                notNull: true
+        }
+    }).addTo(inputDemoDiv);
+    _({
+        tag: 'timeinput',
+        style: {
+            width: '180px'
+            // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+        },
+        props: {
+            dayOffset: new Date(),//now, dayOffset can be Date or Number
+            // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59
+            // hour: 20, or set hour and minute
+            // minute:59,
+            format: 'hh : mm a',
+            notNull: true
 
-            },
-            on: {
-                change: function () {
-                    absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
-                }
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
             }
-        }).addTo(inputDemoDiv);
-        _({
-            tag: 'timeinput',
-            style: {
-                // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
-            },
-            props: {
-                // dayOffset: new Date(),//now, dayOffset can be Date or Number 
-                // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59 
-                // hour: 20, or set hour and minute
-                // minute:59
-                dayOffset: null,
-                disabled: true
-            },
-            on: {
-                change: function () {
-                    absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
+        }
+    }).addTo(inputDemoDiv);
+    _({
+        tag: 'timeinput',
+        style: {
+            // fontSize: isTouchDevice ? '4vw' : '14px'//default 14px, optional
+        },
+        props: {
+            // dayOffset: new Date(),//now, dayOffset can be Date or Number
+            // dayOffset: 1000 * 60 * ( 5* 60 + 59) => 5h59
+            // hour: 20, or set hour and minute
+            // minute:59
+            dayOffset: null,
+            disabled: true
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(this.hour + ":" + this.minute + '=>' + this.dayOffset);
 
-                }
             }
-        }).addTo(inputDemoDiv);
-    </script>
+        }
+    }).addTo(inputDemoDiv);
+</script>
+<h3>Time24Input</h3>
+<div><label>Thời gian bắt đầu </label><input type="timeinput"/> <label> Thời gian kết thúc </label> <input
+        type="time24input"/></div>
+<script>
+    var start = _({
+        tag: 'timeinput',
+        props: {
+            format: 'HH:mm',
+            value: new Date(2021, 8, 9, 11, 30, 0),
+            notNull: false
+        },
+        on:{
+            change: function (){
+                end.dayOffset = this.dayOffset
+            }
+        }
+    });
+    var end = _({
+        tag: 'time24input',
+        props: {
+            // format:'HH:mm',
+            value: 0
+        }
+    });
+    $('input[type="timeinput"]').selfReplace(start);
+    $('input[type="time24input"]').selfReplace(end);
+</script>
 
-    <h2>Expert</h2>
-    <div>
-        <span>From </span><time-input data-day-offset="3600000"></time-input><span> to </span> <time-input data-day-offset="7200000"></time-input>
-    </div>
-    <script  class="viewable">
-        /**
-         *  <div>
-         *    <span>From </span><time-input data-day-offset="3600000"></time-input><span> to </span> <time-input data-day-offset="7200000"></time-input>
-         *   </div>
-         */
-        $('time-input', false, function(elt){
-            $(elt);
-            var dayOffset = parseInt(elt.attr('data-day-offset'));
-            elt.selfReplace(_({
-                tag:'timeinput',
-                props:{
-                    dayOffset: dayOffset
-                }
-            }));
-        });
-    </script>
-
-    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+<!--<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>-->
 
 </body>
 
