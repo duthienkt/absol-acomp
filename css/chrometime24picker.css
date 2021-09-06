@@ -1,0 +1,20 @@
+.ac-time-input.as-time-24-input {
+    width: 13em;
+}
+
+
+.as-chrome-time-24-picker .as-chrome-time-picker-h24 {
+    width: 100px;
+}
+
+.as-chrome-time-24-picker-tomorrow-text {
+    display: none;
+}
+
+.as-in-tomorrow.as-chrome-time-picker-btn .as-chrome-time-24-picker-tomorrow-text {
+    display: initial;
+}
+
+.as-chrome-time-24-picker .as-chrome-time-picker-btn:disabled {
+    pointer-events: none;
+}
