@@ -153,7 +153,7 @@ ChromeTimePicker.prototype._makeScroller = function (rootElt) {
 
     function tick() {
         if (delta === 0) return;
-        listElt.scrollTop += delta;
+        listElt.scrollTop -= delta;
         requestAnimationFrame(tick);
     }
 
