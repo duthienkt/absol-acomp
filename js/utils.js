@@ -544,7 +544,7 @@ export function vScrollIntoView(elt) {
     var overflowStyle;
     while (parent) {
         overflowStyle = window.getComputedStyle(parent)['overflow'];
-        if ((overflowStyle === 'auto' || overflowStyle === 'hidden auto' || overflowStyle === 'scroll' || parent.tagName === 'HTML')
+        if (( overflowStyle === 'auto scroll'||overflowStyle === 'auto' || overflowStyle === 'hidden auto' || overflowStyle === 'scroll' || parent.tagName === 'HTML')
             && (parent.clientHeight < parent.scrollHeight)) {
             break;
         }
@@ -582,4 +582,8 @@ export function fileSize2Text(s) {
 
 export function isDateTimeFormatToken(text) {
     return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a'].indexOf(text) >= 0;
+}
+
+export function isRealNumber(value){
+    return (isFinite(value) && (typeof value === "number"));
 }

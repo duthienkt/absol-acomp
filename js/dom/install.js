@@ -103,6 +103,8 @@ import DVExpTree from "../DVExpTree";
 import CheckListItem from "../CheckListItem";
 import CheckListBox from "../CheckListBox";
 import MultiCheckMenu from "../MultiCheckMenu";
+import ChromeTime24Picker from "../ChromeTime24Picker";
+import Time24Input from "../Time24Input";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -120,6 +122,7 @@ export var publicCreators = [
     CheckListBox,
     ChromeCalendar,
     ChromeTimePicker,
+    ChromeTime24Picker,
     CircleSectionLabel,
     CountdownClock,
     DropZone,
@@ -212,6 +215,7 @@ export var publicCreators = [
     TextArea2,
     TextClipboard,
     TimeInput,
+    Time24Input,
     TimeSelectInput,
     TimePicker,
     DateTimeInput,
