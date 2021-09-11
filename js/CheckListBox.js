@@ -105,6 +105,8 @@ Object.assign(CheckListBox.prototype, SelectListBox.prototype);
 CheckListBox.property = Object.assign({}, SelectListBox.property);
 CheckListBox.eventHandler = Object.assign({}, SelectListBox.eventHandler);
 CheckListBox.prototype.itemHeight = 25;
+CheckListBox.prototype.footerMinWidth = 110;
+
 
 CheckListBox.prototype._initFooter = function () {
     this.$checkAll = $('.as-select-list-box-check-all', this)

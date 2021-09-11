@@ -300,7 +300,7 @@ SelectListBox.prototype._updateDisplayItem = function () {
 
 };
 
-
+SelectListBox.prototype.footerMinWidth = 0;
 SelectListBox.prototype._updateItems = function () {
     this._preDisplayItems = this._itemsToNodeList(this._items);
     this._searchCache = {};
@@ -308,7 +308,7 @@ SelectListBox.prototype._updateItems = function () {
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
     this._estimateDescWidth = estimateSize.descWidth;
-    this.addStyle('--select-list-estimate-width', estimateSize.width + 'px');
+    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, estimateSize.width) + 'px');
     this.addStyle('--select-list-desc-width', estimateSize.descWidth + 'px')
     this._updateDisplayItem();
 };
