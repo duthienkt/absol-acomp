@@ -73,6 +73,20 @@
         /********************************************/
 
         _('<h3>MultiCheckMenu</h3>').addTo(document.body);
+        var menu0 = _({
+            tag: 'multicheckmenu',
+            style: {
+                'max-height': '300px',
+                marginBottom: '800px'
+            },
+            props: {
+                enableSearch: false,
+                items: [
+                    {text:'dem', value: 1}
+                ],
+                itemFocusable: true
+            }}).addTo(document.body);
+
         var menu1 = _({
             tag: 'multicheckmenu',
             style: {
