@@ -146,8 +146,8 @@
             value: new Date(2021, 8, 9, 11, 30, 0),
             notNull: false
         },
-        on:{
-            change: function (){
+        on: {
+            change: function () {
                 end.dayOffset = this.dayOffset
             }
         }
@@ -161,6 +161,83 @@
     });
     $('input[type="timeinput"]').selfReplace(start);
     $('input[type="time24input"]').selfReplace(end);
+</script>
+
+<h2>TimeRange24Input</h2>
+<script>
+    var i1 = _({
+        tag: 'TimeRange24Input'.toLowerCase(),
+        props: {
+            dayOffset: new Date().getTime(),
+            duration: 3600 * 1000 * 2.5
+        },
+        on:{
+            change: function(){
+                update(i1, o1);
+            }
+        }
+    }).addTo(document.body);
+    var o1 = _('<span></span>').addTo(document.body);
+
+    function update(i, o) {
+        o.innerHTML = ' dayOffset: ' + i.dayOffset + ' - duration:' + i.duration;
+    }
+
+    update(i1, o1);
+    _('br').addTo(document.body);
+    _('br').addTo(document.body);
+
+    var i2 = _({
+        tag: 'TimeRange24Input'.toLowerCase(),
+        props: {
+            dayOffset: 0,
+            duration: null,
+            notNull: false
+        },
+        on:{
+            change: function(){
+                update(i2, o2);
+            }
+        }
+    }).addTo(document.body);
+    var o2 = _('<span> 0 null</span>').addTo(document.body);
+    update(i2, o2);
+    _('br').addTo(document.body);
+    _('br').addTo(document.body);
+
+    var i3 = _({
+        tag: 'TimeRange24Input'.toLowerCase(),
+        props: {
+            dayOffset: null,
+            duration: 0,
+            notNull: false
+        },
+        on:{
+            change: function(){
+                update(i3, o3);
+            }
+        }
+    }).addTo(document.body);
+    var o3 = _('<span> null 0</span>').addTo(document.body);
+    update(i3, o3);
+    _('br').addTo(document.body);
+    _('br').addTo(document.body);
+
+    var i4 = _({
+        tag: 'TimeRange24Input'.toLowerCase(),
+        props: {
+            dayOffset: null,
+            duration: null,
+            notNull: false
+        },
+        on:{
+            change: function(){
+                update(i4, o4);
+            }
+        }
+    }).addTo(document.body);
+    o4 = _('<span> null null</span>').addTo(document.body);
+    update(i4, o4);
 </script>
 
 <!--<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>-->
