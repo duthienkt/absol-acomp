@@ -75,6 +75,22 @@ TimeRange24Input.property.notNull = {
     }
 };
 
+TimeRange24Input.property.disabled = {
+    set: function (value) {
+        value = !!value;
+        if (value) {
+            this.addClass('as-disabled');
+        } else {
+            this.removeClass('as-disabled');
+        }
+        this.$offset.disabled = value;
+        this.$duration.disabled = value;
+    },
+    get: function () {
+        return this.containsClass('as-disabled');
+    }
+}
+
 
 TimeRange24Input.property.dayOffset = {
     set: function (value) {

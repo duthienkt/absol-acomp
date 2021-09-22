@@ -185,6 +185,19 @@ Time24Input.property.notNull = {
     }
 };
 
+Time24Input.property.disabled = {
+    set: function (value) {
+        value = !!value;
+        this._disabled = value;
+        if (value) this.addClass('as-disabled');
+        else this.removeClass('as-disabled');
+        this.$text.disabled = value;
+    },
+    get: function () {
+        return this._disabled;
+    }
+};
+
 
 Time24Input.property.format = {
     set: function (value) {
