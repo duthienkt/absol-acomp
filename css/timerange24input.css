@@ -1,0 +1,9 @@
+.as-time-range-24-input {
+    white-space: nowrap;
+    display: inline-block;
+    min-width: 318px;
+}
+
+.as-time-range-24-input > div:first-child {
+    margin-right: 10px;
+}

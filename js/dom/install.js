@@ -105,6 +105,7 @@ import CheckListBox from "../CheckListBox";
 import MultiCheckMenu from "../MultiCheckMenu";
 import ChromeTime24Picker from "../ChromeTime24Picker";
 import Time24Input from "../Time24Input";
+import TimeRange24Input from "../TimeRange24Input";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -216,6 +217,7 @@ export var publicCreators = [
     TextClipboard,
     TimeInput,
     Time24Input,
+    TimeRange24Input,
     TimeSelectInput,
     TimePicker,
     DateTimeInput,
