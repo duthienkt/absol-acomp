@@ -12,6 +12,8 @@ function Time24Input() {
     this.$clockBtn = $('.as-time-input-icon-btn', this)
         .on('click', this.eventHandler.clickClockBtn);
     this.$text = $('.as-time-input-text', this);
+    this.$clearBtn = $('button.as-time-input-clear-btn', this)
+        .on('click', this.clear.bind(this));
     this._dayOffset = 0;
     this._value = 0;
     this._format = 'HH:mm';
@@ -67,6 +69,14 @@ Time24Input.prototype._updateText = function () {
 
 Time24Input.prototype._notifyChange = function (event) {
     this.emit('change', {type: 'change', originalEvent: event.originalEvent || event.originEvent || event}, this);
+};
+
+
+Time24Input.prototype.clear = function (event) {
+    if (this._value !== null && !this.notNull){
+        this.value = null;
+        this._notifyChange(event);
+    }
 };
 
 
@@ -190,6 +200,7 @@ Time24Input.property.format = {
 Time24Input.eventHandler = {};
 
 Time24Input.eventHandler.pickerChange = function (event) {
+    if (this.dayOffset === null) this.dayOffset = 0;
     this.value = this.share.$picker.value;
     this._notifyChange(event);
 };
@@ -203,6 +214,7 @@ Time24Input.eventHandler.clickOut = function (event) {
 Time24Input.eventHandler.clickClockBtn = function () {
     this._attachPicker();
 };
+
 
 ACore.install(Time24Input);
 
