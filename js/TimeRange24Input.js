@@ -45,6 +45,7 @@ TimeRange24Input.render = function () {
 
 
 TimeRange24Input.prototype.init = function (props) {
+    props = props || {};
     var cpProps = Object.assign(props);
     if ('notNull' in props) {
         this.notNull = props.notNull;
