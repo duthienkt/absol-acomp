@@ -165,6 +165,25 @@
 
 <h2>TimeRange24Input</h2>
 <script>
+    var i0 = _({
+        tag: 'TimeRange24Input'.toLowerCase(),
+        props: {
+            dayOffset: new Date().getTime(),
+            duration: 3600 * 1000 * 2.5,
+            disabled: true
+        },
+        on:{
+            change: function(){
+                update(i1, o1);
+            }
+        }
+    }).addTo(document.body);
+    var o0 = _('<span></span>').addTo(document.body);
+
+    update(i0, o0);
+    _('br').addTo(document.body);
+    _('br').addTo(document.body);
+
     var i1 = _({
         tag: 'TimeRange24Input'.toLowerCase(),
         props: {
