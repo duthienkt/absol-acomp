@@ -57,7 +57,7 @@ Time24Input.prototype._updateText = function () {
     var text;
     if (isRealNumber(this._value) && isRealNumber(this._dayOffset)) {
         text = formatDateTime(new Date(beginOfDay(new Date).getTime() + this._value + this._dayOffset), this._format);
-        if (this._value + this._dayOffset >= MILLIS_PER_DAY) text += '(hôm sau)';
+        if (this._value + this._dayOffset >= MILLIS_PER_DAY) text += ' (Hôm sau)';
         this.removeClass('as-value-null');
     } else {
         text = this._format;

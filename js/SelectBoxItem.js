@@ -41,8 +41,8 @@ SelectBoxItem.eventHandler.clickClose = function (event) {
     this.emit('close', event);
 };
 
-SelectBoxItem.eventHandler.click = function (event){
-    if (!EventEmitter.hitElement(this.$close, event)){
+SelectBoxItem.eventHandler.click = function (event) {
+    if (!EventEmitter.hitElement(this.$close, event)) {
         this.emit('press', event, this);
     }
 };
@@ -54,6 +54,11 @@ SelectBoxItem.property.data = {
         this._data = value;
         this.$text.clearChild();
         this.$text.addChild(_('<span>' + this.text + '</span>'));
+        if (value && value.desc) {
+            this.attr('title', value.desc);
+        } else {
+            this.attr('title', undefined);
+        }
         if (this._themeClassName) this.removeClass(this._themeClassName);
         this._themeClassName = null;
         if (this.theme) {
@@ -92,8 +97,7 @@ SelectBoxItem.property.active = {
     set: function (value) {
         if (value) {
             this.addClass('as-active');
-        }
-        else {
+        } else {
             this.removeClass('as-active');
         }
     },

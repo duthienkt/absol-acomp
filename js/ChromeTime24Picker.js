@@ -76,7 +76,7 @@ ChromeTime24Picker.render = function () {
                                         {
                                             tag: 'span',
                                             class: 'as-chrome-time-24-picker-tomorrow-text',
-                                            child: {text: '(hôm sau)'}
+                                            child: {text: ' (Hôm sau)'}
                                         }
                                     ],
                                     props: {
