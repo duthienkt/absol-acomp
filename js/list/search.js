@@ -196,6 +196,7 @@ export function searchTreeListByText(query, items) {
             }
             else {
                 res = Object.assign({}, node.item);
+                res.ref = node.item;
                 if (node.children && node.children.length > 0) {
                     res.items = filterItems(node.children, medScore);
                     if (res.items.length == 0) delete res.items;
