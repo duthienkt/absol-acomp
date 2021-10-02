@@ -116,7 +116,7 @@ SelectListItem.property.value = {
 
 SelectListItem.property.text = {
     get: function () {
-        return getTextOfListItem(this._data );
+        return getTextOfListItem(this._data);
     }
 };
 
@@ -185,13 +185,26 @@ export default SelectListItem;
 
 
 export function getTextOfListItem(item) {
-    return (typeof item == "string") ? item : this._data.text;
+    if (item) {
+        if (item.match) {
+
+        } else if (item.text && item.text.match) {
+            return item.text;
+        } else return '';
+    } else return '';
 }
 
 export function getValueOfListItem(item) {
-    return (typeof item == "string") ? item : item.value;
+    if (item) {
+        if (item.match) {
+            return item;
+        } else if (typeof item === "object")
+            return item.value;
+        else
+            return item;
+    } else return item;
 }
 
 export function getDescriptionOfListItem(item) {
-    return (typeof item == "string") ? undefined : item.desc;
+    return (item && (typeof item == "object")) ? item.desc : undefined;
 }

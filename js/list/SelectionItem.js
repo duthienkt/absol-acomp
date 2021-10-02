@@ -12,5 +12,7 @@
  * @property {Array<String>} __nvnWordsNoneCase__
  * @property {String|Number} value
  * @property {*} icon
+ * @property {SelectionItem[]|undefined} items
+ * @property {SelectionItem|undefined} ref
  * @module SelectionItem
 */
