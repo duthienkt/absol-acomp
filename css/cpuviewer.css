@@ -1,0 +1,13 @@
+.as-cpu-viewer{
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    box-sizing: border-box;
+    z-index: 1000000000;
+    border: 1px solid black;
+    display: inline-block;
+}
+
+.as-cpu-viewer canvas{
+    display: block;
+}
