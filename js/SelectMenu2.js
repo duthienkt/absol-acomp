@@ -103,28 +103,31 @@ SelectMenu.prototype.updateItem = function () {
     var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
     if (selectedItems.length >= 1) {
         this.$viewItem.data = selectedItems[0].item;
-    }
-    else {
-        this.$viewItem.data = { text: '', value: null }
+    } else {
+        this.$viewItem.data = {text: '', value: null}
     }
 };
+
+
+SelectMenu.prototype.findItemsByValue = function (value) {
+    return this.$selectlistBox.findItemsByValue(value);
+};
+
 
 SelectMenu.property = {};
 SelectMenu.property.items = {
     set: function (items) {
         this.$selectlistBox.items = items || [];
         this.addStyle('--select-list-estimate-width', this.$selectlistBox._estimateWidth + 'px');
-        this.addStyle( '--select-list-desc-width', this.$selectlistBox._estimateDescWidth + 'px');
+        this.addStyle('--select-list-desc-width', this.$selectlistBox._estimateDescWidth + 'px');
 
         if (items.length == 0) return;
         var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
         if (selectedItems.length === 0) {
             this.value = items[0].value;
-        }
-        else if (selectedItems.length > 1) {
+        } else if (selectedItems.length > 1) {
             console.warn(this, 'has duplicate item value');
-        }
-        else {
+        } else {
             this.updateItem();
         }
     },
@@ -166,15 +169,13 @@ SelectMenu.property.isFocus = {
             setTimeout(function () {
                 if (thisSM.enableSearch) {
                     thisSM.$selectlistBox.$searchInput.focus();
-                }
-                else {
+                } else {
                     thisSM.$selectlistBox.focus();
                 }
                 $(document.body).on('click', thisSM.eventHandler.bodyClick);
             }, 100);
             this.$selectlistBox.viewListAtFirstSelected();
-        }
-        else {
+        } else {
             $(document.body).off('click', thisSM.eventHandler.bodyClick);
             this.$selectlistBox.selfRemove();
             this.$selectlistBox.unfollow();
@@ -191,8 +192,7 @@ SelectMenu.property.disabled = {
     set: function (value) {
         if (value) {
             this.addClass('as-disabled');
-        }
-        else {
+        } else {
             this.removeClass('as-disabled');
         }
     },
@@ -206,8 +206,7 @@ SelectMenu.property.hidden = {
     set: function (value) {
         if (value) {
             this.addClass('as-hidden');
-        }
-        else {
+        } else {
             this.removeClass('as-hidden');
         }
     },
@@ -218,7 +217,7 @@ SelectMenu.property.hidden = {
 
 SelectMenu.property.selectedIndex = {
     get: function () {
-        var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
+        var selectedItems = this.$selectlistBox.findItemsByValue(this._value);
         if (selectedItems.length > 0) {
             return selectedItems[0].idx;
         }
