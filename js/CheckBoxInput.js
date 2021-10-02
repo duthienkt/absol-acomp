@@ -11,6 +11,7 @@ var tickIcon = _(['<svg class="as-checkbox-input-check-icon" width="18px" height
         ' <g transform="translate(0 -279)">',
         '  <path class="bound" d="m3 279.69h12c1.3434 0.0111 2.3298 1.5259 2.3131 2.4775v11.836c0.05005 0.89373-1.1834 2.2964-2.3131 2.3131h-12c-0.82692 0.0166-2.3131-1.1834-2.3131-2.3131v-12.237c0.0022374-1.171 0.3775-2.0759 2.3131-2.0759z" style="stroke-linejoin:round; stroke-width: 1"/>',
         '  <path class="tick" d="m3.1656 288.66c-0.10159 0.0612-0.11743 0.12506-0.12993 0.18899l3.7473 4.3467c0.066638 0.0459 0.11813 0.0263 0.16832 1e-3 0 0 1.7699-4.2166 4.7251-7.4568 1.4783-1.6208 3.2406-3.3659 3.2406-3.3659 0.0054-0.14125-0.10946-0.15807-0.1754-0.22551 0 0-2.5832 1.6364-4.7524 3.8336-1.8697 1.8939-3.6666 4.4016-3.6666 4.4016z"/>',
+        '  <path class="minus" d="m4 287 h10 v2 h-10z"/>',
         ' </g>',
         '</svg>'
     ].join('')
@@ -56,15 +57,14 @@ CheckboxInput.render = function (data) {
  * as normal, change event will be fired when checkbox change by system
  */
 CheckboxInput.prototype.notifyChange = function () {
-    var event = { checked: this.checked };
+    var event = {checked: this.checked};
     this.emit('change', event, this);
 };
 
 CheckboxInput.prototype._updateCheckedClass = function () {
     if (this.checked) {
         this.addClass('as-checked');
-    }
-    else {
+    } else {
         this.removeClass('as-checked');
     }
 };
@@ -76,8 +76,7 @@ CheckboxInput.property.disabled = {
     set: function (value) {
         if (value) {
             this.addClass('as-disabled');
-        }
-        else {
+        } else {
             this.removeClass('as-disabled');
         }
         this.$input.disabled = !!value;
@@ -106,8 +105,7 @@ CheckboxInput.attribute = {
         set: function (value) {
             if (value === 'false' || value === null) {
                 this.checked = false;
-            }
-            else {
+            } else {
                 this.checked = true;
             }
         },
@@ -122,8 +120,7 @@ CheckboxInput.attribute = {
         set: function (value) {
             if (value === 'false' || value === null) {
                 this.disabled = false;
-            }
-            else {
+            } else {
                 this.disabled = true;
             }
         },
@@ -179,14 +176,11 @@ CheckboxInput.autoReplace = function () {
                     }
                     return style;
                 }, style);
-            }
-            else if (attrName == 'class') {
+            } else if (attrName == 'class') {
                 classList = attrValue.trim().split(/\s+/);
-            }
-            else if (attrName == 'onchange') {
+            } else if (attrName == 'onchange') {
                 props.onchange = new Function('event', 'sender', attrValue);
-            }
-            else {
+            } else {
                 attrs[attrName] = attrValue;
             }
         }
