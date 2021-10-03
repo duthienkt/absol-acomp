@@ -1,0 +1,17 @@
+.as-check-tree-item {
+    font-size: 14px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    height: 28px;
+}
+
+.as-check-tree-item:focus {
+    background-color: unset;
+}
+
+.as-check-tree-item:hover:focus {
+    background-color: rgba(169, 169, 172, 0.1);
+}
+
+.as-check-tree-item .as-checkbox-input {
+    margin-right: 0.35em;
+}
