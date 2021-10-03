@@ -12,7 +12,14 @@ var $ = Svg.ShareInstance.$;
  * @constructor
  */
 function CandyBoxButton() {
-    var res = _({
+    this._paths = {};
+    this._status = 'none';
+}
+
+CandyBoxButton.tag ='CandyBoxButton'.toLowerCase();
+
+CandyBoxButton.render = function () {
+    return _({
         tag: 'svg',
         attr: {
             width:'18',
@@ -29,21 +36,8 @@ function CandyBoxButton() {
             }
         }]
     });
-
-    res._paths = {};
-    res._status = 'none';
-
-    return res;
-}
-
-
-CandyBoxButton.prototype.addPath = function (statusName, pathString) {
-
 };
 
-CandyBoxButton.prototype.removePath = function (statusName) {
-
-};
 
 
 CandyBoxButton.property = {};
