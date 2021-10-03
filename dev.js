@@ -23,6 +23,7 @@ import TextMeasure from "./js/TextMeasure";
 import BContextCapture from "./js/BContextCapture";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Dom from "absol/src/HTML5/Dom";
+import CPUViewer from "./js/CPUViewer";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -67,3 +68,6 @@ materializeIconTrigger();
 
 absol.MaterialDesignIconsNameMap = MaterialDesignIconsNameMap;
 absol.openFileDialog = openFileDialog;
+absol.CPUViewer = CPUViewer;
+if (location.href.indexOf('localhost') >= 0 || location.href.indexOf('absol') >= 0)
+    CPUViewer.start();
