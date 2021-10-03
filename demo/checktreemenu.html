@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CheckTreeBox</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<h2>Check Tree Item</h2>
+<div id="demo-0"></div>
+<h2 id="check-tree-box-h">Check Tree Box</h2>
+<div id="demo-1" style="height: 10em"></div>
+<h2>Multi Check Tree Menu</h2>
+<div id="demo-2" style="min-height: 30em"></div>
+
+
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var strings = absol.string;
+        var demo0 = $('#demo-0');
+        Array(15).fill(null).forEach(function (u, i) {
+            var itemElt = _({
+                tag: 'checktreeitem',
+                props: {
+                    data: {
+                        text: '[' + i + ']' + strings.randomPhrase(30),
+                        desc: Math.random() < 0.5 ? strings.randomPhrase(30) : undefined,
+                        icon: Math.random() < 0.8 ? {
+                            tag: 'img',
+                            props: {src: 'https://absol.cf/vivid_exticons/asx.svg'}
+                        } : null
+                    },
+                    status: Math.random() < 0.5 ? (Math.random() < 0.5 ? 'close' : 'open') : 'none',
+                    level: i % 5,
+                    selected: ['all', 'none', 'child'][Math.random() * 3 << 0]
+                }
+            }).addTo(demo0);
+            _('br').addTo(demo0);
+        });
+
+        var listDataAsync = fetch('./demo_tree_list.js').then(function (res) {
+            return res.text();
+        }).then(function (text) {
+            var module = {exports: {}};
+            var factor = new Function('module', 'exports', text + '\nreturn module.exports;');
+            return factor(module, module.exports);
+        });
+        listDataAsync.then(function (items) {
+            var ctm = _({
+                tag: 'checktreebox',
+                style: {},
+                props: {
+                    followTarget: $('#check-tree-box-h'),
+                    items: items,
+                    values: [2027, 3547, 3550, 2028, 2057]
+                }
+            }).addTo(document.body);
+        });
+
+        var demo2 = $('#demo-2');
+        listDataAsync.then(function (items) {
+            var mn1 = _({
+                tag: 'multichecktreemenu',
+                style: {
+                    marginBottom: '2em',
+                    width: '80vw'
+                },
+                props: {
+                    items: items,
+                    values: [2027, 3547, 3550, 2028, 2057]
+                },
+                on: {
+                    change: function () {
+                        var values = this.values;
+                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
+                        var t = _({
+                            tag: 'div',
+                            child: {text: text}
+                        });
+                        demo2.addChildAfter(this, t);
+                    }
+                }
+            }).addTo(demo2);
+            var items2 = JSON.parse(JSON.stringify(items));
+            items2.forEach(function visit(item) {
+                var text = absol.string.nonAccentVietnamese(item.text).toLowerCase();
+                var c = text[0].toLowerCase();
+                if (text === 'cong ty')
+                    item.icon = 'span.mdi.mdi-domain';
+                else if (item.items && item.items.length > 0) {
+                    item.icon = 'span.mdi.mdi-account-group-outline';
+                } else {
+                    item.icon = 'span.mdi.mdi-alpha-' + c + '-circle-outline';
+                }
+
+                if (item.items) {
+                    item.items.forEach(visit);
+                }
+            });
+
+            var mn2 = _({
+                tag: 'multichecktreemenu',
+                style: {
+                    marginBottom: '2em',
+                    width: '80vw'
+                },
+                props: {
+                    items: items2,
+                    values: [2027, 3547, 3550, 2028, 2057],
+                    enableSearch: true
+                },
+                on: {
+                    change: function () {
+                        var values = this.values;
+                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
+                        var t = _({
+                            tag: 'div',
+                            child: {text: text}
+                        });
+                        demo2.addChildAfter(this, t);
+                    }
+                }
+            }).addTo(demo2);
+        });
+
+    })();
+</script>
+
+</body>
+</html>
