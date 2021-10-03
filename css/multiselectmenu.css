@@ -1,5 +1,5 @@
 :root {
-    --multi-select-menu-max-height: none;
+    --multi-select-menu-max-height: 90px;
 }
 
 .as-multi-select-menu {

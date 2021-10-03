@@ -106,6 +106,9 @@ import MultiCheckMenu from "../MultiCheckMenu";
 import ChromeTime24Picker from "../ChromeTime24Picker";
 import Time24Input from "../Time24Input";
 import TimeRange24Input from "../TimeRange24Input";
+import CheckTreeItem from "../CheckTreeItem";
+import CheckTreeBox from "../CheckTreeBox";
+import MultiCheckTreeMenu from "../MultiCheckTreeMenu";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -232,7 +235,10 @@ export var publicCreators = [
     SpinnerIco,
     VerticalTreeDiagramNode,
     VerticalTreeDiagram,
-    MultiCheckMenu
+    MultiCheckMenu,
+    CheckTreeItem,
+    CheckTreeBox,
+    MultiCheckTreeMenu
 ];
 
 /***
