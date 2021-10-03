@@ -42,18 +42,18 @@ export function ExpNode() {
     this.$level = $('.absol-exp-node-level', this);
     this.$removeIcon = $('remove-ico', this)
         .on('click', function (event) {
-            thisEN.emit('pressremove', { target: thisEN, type: 'pressremove' }, this);
+            thisEN.emit('pressremove', {target: thisEN, type: 'pressremove'}, this);
         });
     this.on('keydown', this.eventHandler.buttonKeydown);
 
     this.$toggleIcon = $('toggler-ico', this)
         .on('click', function (event) {
-            thisEN.emit('presstoggle', copyEvent(event, { target: thisEN, type: 'pressremove' }), this);
+            thisEN.emit('presstoggle', copyEvent(event, {target: thisEN, type: 'pressremove'}), this);
         });
 
     this.on('click', function (event) {
         if (!EventEmitter.hitElement(thisEN.$removeIcon, event) && !EventEmitter.hitElement(thisEN.$toggleIcon, event))
-            thisEN.emit('press', copyEvent(event, { target: thisEN, type: 'press' }), this);
+            thisEN.emit('press', copyEvent(event, {target: thisEN, type: 'press'}), this);
     })
 
     this.$iconCtn = $('div.absol-exp-node-ext-icon', this);
@@ -105,8 +105,7 @@ ExpNode.property.icon = {
             this.$iconP = newE;
             this.$iconCtn.addChild(newE);
             this._icon = value;
-        }
-        else {
+        } else {
             this._icon = undefined;
         }
     },
@@ -118,7 +117,7 @@ ExpNode.property.icon = {
 ExpNode.property.level = {
     set: function (value) {
         value = value || 0;
-        if (value != this.level) {
+        if (value !== this.level) {
             this._level = value || 0;
 
             this.$level.innerHTML = '&nbsp;'.repeat(this._level * 6);
@@ -132,10 +131,11 @@ ExpNode.property.level = {
 
 ExpNode.property.name = {
     set: function (value) {
-        this._name = value + '';
+        value = value + '';
+        this._name = value;
         this.$name.clearChild();
-        if (this.name && this.name.length > 0)
-            this.$name.addChild(_({ text: this._name }))
+        if (value && value.length > 0)
+            this.$name.addChild(_({text: value}));
     },
     get: function () {
         return this._name || '';
@@ -143,9 +143,9 @@ ExpNode.property.name = {
 };
 ExpNode.property.desc = {
     set: function (value) {
-        this._desc = value + '';
+        this._desc = (value || '') + '';
         this.$desc.clearChild();
-        this.$desc.addChild(_({ text: this._desc }))
+        this.$desc.addChild(_({text: this._desc}));
     },
     get: function () {
         return this._desc || '';
@@ -162,20 +162,15 @@ ExpNode.property.status = {
         if (!value || value == 'none') {
             //todo
 
-        }
-        else if (value == 'close') {
+        } else if (value == 'close') {
             this.addClass('status-close')
-        }
-        else if (value == 'open') {
+        } else if (value == 'open') {
             this.addClass('status-open');
-        }
-        else if (value == 'removable') {
+        } else if (value == 'removable') {
             this.addClass('status-removable');
-        }
-        else if (value == 'modified') {
+        } else if (value == 'modified') {
             this.addClass('status-modified');
-        }
-        else {
+        } else {
             throw new Error('Invalid status ' + value)
         }
         this._status = value;
@@ -190,8 +185,7 @@ ExpNode.property.active = {
         if (value) {
             this.addClass('as-active');
             this.addClass('active');
-        }
-        else {
+        } else {
             this.removeClass('as-active');
             this.removeClass('active');
         }
@@ -215,8 +209,7 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
             event.preventDefault();
             span.blur();
             span.attr('contenteditable', undefined);
-        }
-        else if (key == "ESC") {
+        } else if (key == "ESC") {
             event.preventDefault();
             span.innerHTML = lastName;
             span.blur();
@@ -229,24 +222,20 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
         var curentName = span.innerHTML.replace(/[\\\/\|\?\:\<\>\*\r\n]/, '').trim();
         if (curentName == lastName) {
             rejectCallback && rejectCallback();
-        }
-        else {
+        } else {
             if (curentName.length == 0) {
                 span.innerHTML = lastName;
                 rejectCallback && rejectCallback();
-            }
-            else {
+            } else {
                 var res = resolveCallback && resolveCallback(curentName);
                 if (res === false) {
                     span.innerHTML = lastName;
-                }
-                else if (res && res.then) {
+                } else if (res && res.then) {
                     res.then(function (result) {
                         if (result === false) {
                             span.innerHTML = lastName;
                             //faile
-                        }
-                        else {
+                        } else {
                             //success
                         }
                     }, function () {
@@ -254,8 +243,7 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
                         span.innerHTML = lastName;
 
                     })
-                }
-                else {
+                } else {
                     //success
                 }
             }
@@ -328,8 +316,7 @@ ExpNode.eventHandler.buttonKeydown = function (event) {
                     if (tree.status === 'open') {
                         tree.status = 'close';
                         tree.notifyStatusChange();
-                    }
-                    else {
+                    } else {
                         destNode = parentTree && parentTree.getNode();
                     }
                     break;
@@ -337,8 +324,7 @@ ExpNode.eventHandler.buttonKeydown = function (event) {
                     if (tree.status === 'close') {
                         tree.status = 'open';
                         tree.notifyStatusChange();
-                    }
-                    else {
+                    } else {
                         destNode = this.findNodeAfter();
                     }
                     break;
@@ -427,8 +413,7 @@ ExpTree.property.status = {
         this.$node.status = value;
         if (value != 'open') {
             this.addClass('hide-children');
-        }
-        else {
+        } else {
             this.removeClass('hide-children');
         }
     },
@@ -543,14 +528,14 @@ ExpTree.prototype.toggle = function () {
 
 
 ExpTree.prototype.notifyStatusChange = function (props) {
-    this.emit('statuschange', Object.assign({ type: 'statuschange', target: this }, props), this);
+    this.emit('statuschange', Object.assign({type: 'statuschange', target: this}, props), this);
 };
 
 ExpTree.eventHandler = {};
 
 ExpTree.eventHandler.nodePressToggle = function (event) {
     this.toggle();
-    this.notifyStatusChange({ originEvent: event });
+    this.notifyStatusChange({originEvent: event});
 };
 
 /***
