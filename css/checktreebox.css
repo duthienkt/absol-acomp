@@ -1,0 +1,18 @@
+.as-select-list-box-page > .as-check-tree-item {
+    width: 100%;
+}
+
+
+.as-check-tree-box.as-no-transition label.as-checkbox-input .minus ,
+.as-check-tree-box.as-no-transition label.as-checkbox-input .tick{
+    transition: none;
+}
+
+
+.as-check-tree-box.as-select-list-box.as-enable-search .as-select-list-box-scroller {
+    max-height: calc(var(--max-height) - 38px - 29px);
+}
+
+.as-check-tree-box.as-select-list-box .as-select-list-box-scroller {
+    max-height: calc(var(--max-height) - 29px);
+}
