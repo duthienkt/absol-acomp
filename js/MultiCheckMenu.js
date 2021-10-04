@@ -67,9 +67,12 @@ MultiCheckMenu.eventHandler.click = function (event) {
 
 
 MultiCheckMenu.eventHandler.bodyClick = function (event) {
+    var isRemovedItem = !AElement.prototype.isDescendantOf.call(event.target, document.body)
+        && (event.target.classList.contains('absol-selectbox-item-close')
+            || (event.target.parentElement && event.target.parentElement.classList.contains('absol-selectbox-item-close')));
     if (this.isFocus
         && !EventEmitter.hitElement(this.$selectlistBox, event)
-        && (AElement.prototype.isDescendantOf.call(event.target, document.body))
+        && (!isRemovedItem)
         && (!hitElement(this.$itemCtn, event) || event.target === this.$itemCtn)
     ) {
         this.eventHandler.selectListBoxPressItem(event);

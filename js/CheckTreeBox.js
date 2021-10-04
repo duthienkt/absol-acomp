@@ -6,7 +6,6 @@ import '../css/checktreebox.css';
 import {estimateWidth14, measureText} from "./utils";
 import {prepareSearchForList, searchListByText, searchTreeListByText} from "./list/search";
 import CPUViewer from "./CPUViewer";
-import MultiCheckTreeMenu from "./MultiCheckTreeMenu";
 
 
 /***
