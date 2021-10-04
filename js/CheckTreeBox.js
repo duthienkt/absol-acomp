@@ -375,7 +375,7 @@ CheckTreeBox.property.items = {
         CPUViewer.release();
     },
     get: function () {
-        return this.items;
+        return this._items;
     }
 };
 
