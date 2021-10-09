@@ -153,7 +153,7 @@ Dropdown.property.show = {
             var aPst = this.findAvailablePosition();
             if (aPst.crampedHeight) {
                 this.removeClass('overlap-top');
-                this.$container.followTarget = null;
+                // this.$container.followTarget = null;?
                 this.$container.addStyle({
                     'max-height': aPst.maxHeight + 'px'
                 });
