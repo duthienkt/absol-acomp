@@ -59,6 +59,8 @@ MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
 
 
+
+
 MultiCheckMenu.eventHandler.click = function (event) {
     if ((event.target === this || event.target === this.$itemCtn) && !this.isFocus) {
         this.isFocus = true;
@@ -121,6 +123,9 @@ MultiCheckMenu.eventHandler.selectListBoxCancel = function (event) {
     this.$selectlistBox.values = this._values;
 };
 
+
+
+
 MultiCheckMenu.property.isFocus = {
     set: function (value) {
         if (!this._isFocus && value) {
@@ -128,7 +133,38 @@ MultiCheckMenu.property.isFocus = {
             this.$selectlistBox.values = this._values;
             this.activeValue = null;
         }
-        return MultiSelectMenu.property.isFocus.set.apply(this, arguments);
+        var thisSM = this;
+        if (!this.items || this.items.length === 0) value = false;//prevent focus
+        if (this._isFocus === value) return;
+        this._isFocus = !!value;
+        if (this._isFocus) {
+            thisSM.off('click', this.eventHandler.click);
+            document.body.appendChild(this.$selectlistBox);
+            this.$selectlistBox.domSignal.$attachhook.emit('attached');
+            var bound = this.getBoundingClientRect();
+            this.$selectlistBox.addStyle('min-width', bound.width + 'px');
+            this.$selectlistBox.refollow();
+            this.$selectlistBox.updatePosition();
+            setTimeout(function () {
+                if (thisSM.enableSearch) {
+                    thisSM.$selectlistBox.$searchInput.focus();
+                } else {
+                    thisSM.$selectlistBox.focus();
+                }
+                $(document.body).on('mousedown', thisSM.eventHandler.bodyClick);
+            }, 100);
+            this.$selectlistBox.viewListAtFirstSelected();
+        } else {
+            $(document.body).off('mousedown', thisSM.eventHandler.bodyClick);
+            $(document.body).once('mouseup', function(){
+                setTimeout(function (){
+                    thisSM.on('click', thisSM.eventHandler.click);
+                }, 5);
+            });
+            this.$selectlistBox.selfRemove();
+            this.$selectlistBox.unfollow();
+            this.$selectlistBox.resetSearchState();
+        }
     },
     get: MultiSelectMenu.property.isFocus.get
 };
