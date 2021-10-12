@@ -173,11 +173,13 @@ MultiCheckTreeMenu.property.isFocus = {
      * @param value
      */
     set: function (value) {
+        var self = this;
         value = !!value;
         var c = this.containsClass('as-focus');
         if (value === c) return;
         CPUViewer.hold();
         if (value) {
+            self.off('click', self.eventHandler.click);
             var bound = this.getBoundingClientRect();
             this.$checkTreeBox.addStyle('min-width', bound.width + 'px');
             this.addClass('as-focus');
@@ -187,7 +189,7 @@ MultiCheckTreeMenu.property.isFocus = {
                 clearTimeout(this._focusTimeout);
             }
             this._focusTimeout = setTimeout(function () {
-                document.addEventListener('click', this.eventHandler.clickOut);
+                document.addEventListener('mousedown', this.eventHandler.clickOut);
                 this._focusTimeout = -1;
             }.bind(this));
 
@@ -195,7 +197,16 @@ MultiCheckTreeMenu.property.isFocus = {
             this.removeClass('as-focus');
             this.$checkTreeBox.selfRemove();
             this.$checkTreeBox.resetSearchState();
-            document.removeEventListener('click', this.eventHandler.clickOut);
+            document.removeEventListener('mousedown', this.eventHandler.clickOut);
+
+            function waitMouseUp() {
+                document.removeEventListener('mouseup', waitMouseUp);
+                setTimeout(function () {
+                    self.on('click', self.eventHandler.click);
+                }, 5)
+            }
+
+            document.addEventListener('mouseup', waitMouseUp);
         }
         CPUViewer.release();
     },
@@ -243,7 +254,7 @@ MultiCheckTreeMenu.eventHandler = {};
  * @param event
  */
 MultiCheckTreeMenu.eventHandler.clickOut = function (event) {
-    if (!hitElement(this, event) && !hitElement(this.$checkTreeBox, event)) {
+    if (event.target === this || event.target === this.$itemCtn || (!hitElement(this, event) && !hitElement(this.$checkTreeBox, event))) {
         this.commitView();
         this.isFocus = false;
     }
@@ -256,7 +267,7 @@ MultiCheckTreeMenu.eventHandler.clickOut = function (event) {
  */
 MultiCheckTreeMenu.eventHandler.click = function (event) {
     if (event.target === this || event.target === this.$itemCtn) {
-        this.isFocus = !this.isFocus;
+        this.isFocus = true;
     }
 };
 
