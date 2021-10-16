@@ -50,14 +50,15 @@ ColorPickerButton.eventHandler.submit = function (event) {
 ColorPickerButton.prototype.togglePicker = function () {
     if (this.containsClass('as-color-picker-selecting')) {
         this.closePicker();
-    }
-    else {
+    } else {
         this.openPicker();
     }
 };
 
 
 ColorPickerButton.prototype.openPicker = function () {
+    if (this.containsClass('as-color-picker-selecting')) return;
+
     if (ColorPickerButton.lastOpen) {
         ColorPickerButton.lastOpen.closePicker();
     }
@@ -70,35 +71,43 @@ ColorPickerButton.prototype.openPicker = function () {
     this.$follower.addStyle('visibility', 'hidden');
     this.$follower.addTo(document.body);
     this.$follower.followTarget = this;
-    $(document.body).on('click', this.eventHandler.clickBody);
+    setTimeout(function () {
+        document.addEventListener('click', this.eventHandler.clickBody);
+    }.bind(this), 100)
     this._lastValue = this.value;
     ColorPickerButton.$ColorPicker.value = this.value;
     setTimeout(function () {
         thisBt.$follower.removeStyle('visibility');
     }, 1);
+//10p
 };
 
 
 ColorPickerButton.prototype.closePicker = function () {
+    if (!this.containsClass('as-color-picker-selecting')) return;
     this.removeClass('as-color-picker-selecting');
-    if (ColorPickerButton.lastOpen == this) {
-        ColorPickerButton.lastOpen == null;
+    if (ColorPickerButton.lastOpen === this) {
+        ColorPickerButton.lastOpen = null;
         this.$follower.remove();
     }
     this.$ColorPicker.off('change', this.eventHandler.changeColor)
         .off('submit', this.eventHandler.submit);
-    $(document.body).off('click', this.eventHandler.clickBody);
-    if (this.value != this._lastValue) {
-        this.emit('stopchange', { target: this, value: this.value }, this);
+    document.removeEventListener('click', this.eventHandler.clickBody);
+    if (this.value !== this._lastValue) {
+        this.emit('stopchange', {target: this, value: this.value}, this);
     }
 };
 
 ColorPickerButton.prototype.prepare = function () {
     if (!ColorPickerButton.$ColorPicker) {
         if (isMobile) {
-            ColorPickerButton.$follower = _('modal');
-        }
-        else {
+            ColorPickerButton.$follower = _('modal').on('click', function (event){
+                if (event.tagert === this){
+                    if (ColorPickerButton.lastOpen) ColorPickerButton.lastOpen.closePicker();
+
+                }
+            });
+        } else {
             ColorPickerButton.$follower = _('follower.as-color-picker-button-follower');
         }
 
@@ -134,8 +143,7 @@ ColorPickerButton.property.value = {
         this._value = value;
         if (this._value) {
             this.$innerValue.addStyle("background-color", value);
-        }
-        else {
+        } else {
         }
     },
     get: function () {
