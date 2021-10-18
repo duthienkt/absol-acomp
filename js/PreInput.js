@@ -18,6 +18,7 @@ function PreInput() {
     this.defineEvent(['pasteimg', 'pastetext', 'change']);
     this.on('paste', this.eventHandler.paste);
     this.on('keydown', this.eventHandler.keydown);
+    this.value = '';
     this.history = [];
     this.historyIndex = -1;
     this.commitChange('', 0);
@@ -41,7 +42,7 @@ PreInput.prototype.applyData = function (text, offset) {
     this.clearChild()
         .addChild(textNode).addChild(_('br'));
 
-    if (document.activeElement == this && this.isDescendantOf(document.body)) {
+    if (document.activeElement === this && this.isDescendantOf(document.body)) {
         if (document.getSelection) {
             var sel = document.getSelection();
             sel.removeAllRanges();
@@ -63,6 +64,11 @@ PreInput.prototype.applyData = function (text, offset) {
     }
 };
 
+
+PreInput.prototype.select = function (offset){
+    if (document.activeElement !== this) this.focus();
+    this.applyData(this.value, offset);
+};
 
 PreInput.prototype.scrollIntoRange = function (range) {
     var elementBound = range.getBoundingClientRect();
