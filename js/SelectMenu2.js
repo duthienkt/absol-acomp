@@ -117,14 +117,19 @@ SelectMenu.prototype.findItemsByValue = function (value) {
 SelectMenu.property = {};
 SelectMenu.property.items = {
     set: function (items) {
-        this.$selectlistBox.items = items || [];
+        items = items || [];
+        this.$selectlistBox.items = items;
         this.addStyle('--select-list-estimate-width', this.$selectlistBox._estimateWidth + 'px');
         this.addStyle('--select-list-desc-width', this.$selectlistBox._estimateDescWidth + 'px');
 
-        if (items.length == 0) return;
+        if (items.length === 0) return;
         var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
         if (selectedItems.length === 0) {
-            this.value = items[0].value;
+            if (this._value === null || this._value === undefined) {
+                this.value = items[0].value;
+            } else {
+                this.updateItem();
+            }
         } else if (selectedItems.length > 1) {
             console.warn(this, 'has duplicate item value');
         } else {
