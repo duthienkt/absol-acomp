@@ -1,6 +1,6 @@
 /** align middle in table cell **/
-td > .absol-checkbox:first-child:last-child,
-td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input{
+.KPIsimpletableclass  td > .absol-checkbox:first-child:last-child,
+.KPIsimpletableclass  td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input{
     display: block;
     margin: auto;
 }
