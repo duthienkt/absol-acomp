@@ -125,10 +125,15 @@ SelectMenu.property.items = {
         if (items.length === 0) return;
         var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
         if (selectedItems.length === 0) {
-            if (this._value === null || this._value === undefined) {
-                this.value = items[0].value;
-            } else {
-                this.updateItem();
+            if (this.attr('data-strict-value') === 'true'){
+                this.value = items[0].value;//true concept
+            }
+            else {
+                if (this._value === null || this._value === undefined) {
+                    this.value = items[0].value;
+                } else {
+                    this.updateItem();
+                }
             }
         } else if (selectedItems.length > 1) {
             console.warn(this, 'has duplicate item value');

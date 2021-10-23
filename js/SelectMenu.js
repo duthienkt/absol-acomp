@@ -252,7 +252,7 @@ SelectMenu.prototype.updateDropdownPostion = function (updateAnchor) {
         }
         else {
             this.isDropdowUp = true;
-            if (this.$dropdownBox.lastChild != this.$searchTextInput) {
+            if (this.$dropdownBox.lastChild !== this.$searchTextInput) {
                 this.$searchTextInput.selfRemove();
                 this.$dropdownBox.addChild(this.$searchTextInput);
             }
