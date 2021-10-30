@@ -18,8 +18,8 @@ function PreInput() {
     this.defineEvent(['pasteimg', 'pastetext', 'change']);
     this.on('paste', this.eventHandler.paste);
     this.on('keydown', this.eventHandler.keydown);
-    this.value = '';
     this.history = [];
+    this.value = '';
     this.historyIndex = -1;
     this.commitChange('', 0);
 }
@@ -123,6 +123,7 @@ PreInput.prototype.redo = function () {
 
 
 PreInput.prototype.commitChange = function (text, offset) {
+    console.log(this)
     while (this.historyIndex < this.history.length - 1) {
         this.history.pop();
     }
