@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>File Input</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+
+<body>
+<h1>FileInput</h1>
+<style>
+
+</style>
+
+<script>
+    [true, false].forEach(function (removable) {
+
+        ['https://absol.cf/share/DE-SO-05.doc',
+            "https://absol.cf/share/ExcelTut.rar",
+            "https://absol.cf/share/No%20Friends%20AMV.mp4", null
+        ].forEach(function (value) {
+            [true, false].forEach(function (allowUpload) {
+                [true, false].forEach(function (downloadable) {
+                    var fib = absol._({
+                        tag: 'fileinputbox',
+                        style: {
+                            margin: '5px',
+                            display: 'inline-block'
+                        },
+                        props: {
+                            value: value,
+                            downloadable: downloadable,
+                            allowUpload: allowUpload,
+                            removable: removable
+                        },
+                        on: {
+                            change: function (event) {
+                                console.log(event, this.value)
+                            }
+                        }
+                    }).addTo(document.body);
+                })
+            });
+        });
+    });
+
+</script>
+
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+
+</body>
+
+</html>
