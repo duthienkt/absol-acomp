@@ -99,7 +99,7 @@ MessageInput.MODE_EDIT = MODE_EDIT;
 MessageInput.MODE_NEW = MODE_NEW;
 
 MessageInput.iconAssetRoot = (function () {
-    if (location.hostname.match(/^.+\.absol.cf$/))
+    if (location.hostname.match(/^.+\.absol.cf$/) || location.hostname === 'localhost')
         return 'https://absol.cf/exticons/vivid';
     return '/vivid_exticons';
 })();
@@ -185,7 +185,7 @@ MessageInput.prototype.toggleEmoji = function () {
 MessageInput.prototype.showEmoji = function () {
     if (this.containsClass('as-message-input-show-emoji')) return;
     var value = this.$preInput.value;
-    this._lastInputSelectPosion = this.$preInput.getSelectPosition() || { start: value.length, end: value.length };
+    this._lastInputSelectPosion = this.$preInput.getSelectPosition() || {start: value.length, end: value.length};
     this.addClass('as-message-input-show-emoji');
     this.addChild(this.$emojiPickerCtn);
     var thisMi = this;
@@ -197,7 +197,7 @@ MessageInput.prototype.showEmoji = function () {
 
 
 MessageInput.prototype.notifyChange = function () {
-    this.emit('change', { name: 'change', target: this }, this);
+    this.emit('change', {name: 'change', target: this}, this);
     if (this.autoSend) {
         if (this.files.length > 0 || this.images.length > 0)
             this.notifySend();
@@ -274,7 +274,7 @@ MessageInput.prototype.clearAllContent = function () {
 
 MessageInput.prototype.focus = function () {
     var value = this.$preInput.value;
-    var range = this.$preInput.getSelectPosition() || { start: value.length, end: value.length };
+    var range = this.$preInput.getSelectPosition() || {start: value.length, end: value.length};
     this.$preInput.focus();
     this.$preInput.applyData(value, range);
 };
@@ -287,8 +287,7 @@ MessageInput.prototype.blur = function () {
 MessageInput.prototype._updateAttachmentClass = function () {
     if (this._imageFiles.length + this._files.length) {
         this.addClass("as-has-attachment");
-    }
-    else {
+    } else {
         this.removeClass("as-has-attachment");
     }
 };
@@ -339,11 +338,11 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
                     child: [
                         {
                             class: 'as-message-input-attach-preview-name',
-                            child: { text: file.name }
+                            child: {text: file.name}
                         },
                         {
                             class: 'as-message-input-attach-preview-size',
-                            child: { text: fileSize2Text(file.size) }
+                            child: {text: fileSize2Text(file.size)}
                         }
                     ]
                 }
@@ -365,8 +364,7 @@ MessageInput.prototype.addFiles = function (files) {
             var ext = file.name.split('.').pop().toLowerCase();
             if (ExtensionIcons.indexOf(ext) > 0) {
                 src = MessageInput.iconAssetRoot + '/' + ext + '.svg'
-            }
-            else {
+            } else {
                 src = MessageInput.iconAssetRoot + '/' + 'default' + '.svg'
 
             }
@@ -407,11 +405,11 @@ MessageInput.prototype.addFiles = function (files) {
                         child: [
                             {
                                 class: 'as-message-input-attach-preview-name',
-                                child: { text: file.name }
+                                child: {text: file.name}
                             },
                             {
                                 class: 'as-message-input-attach-preview-size',
-                                child: { text: fileSize2Text(file.size) }
+                                child: {text: fileSize2Text(file.size)}
                             }
                         ]
                     }
@@ -433,18 +431,16 @@ MessageInput.prototype.closeEmoji = function () {
 };
 
 
-MessageInput.prototype.notifyAddFiles = function (files){
+MessageInput.prototype.notifyAddFiles = function (files) {
     var event = {
         resolvedAsync: Promise.resolve(files),
         files: files,
-        resolve: function (result){
+        resolve: function (result) {
             if (!result) {
                 this.resolvedAsync = Promise.resolve(undefined);
-            }
-            else if(result.then){
+            } else if (result.then) {
                 this.resolvedAsync = result;
-            }
-            else {
+            } else {
                 this.resolvedAsync = Promise.resolve(result);
             }
         }
@@ -455,7 +451,7 @@ MessageInput.prototype.notifyAddFiles = function (files){
 
 MessageInput.prototype.openFileDialog = function () {
     var thisMi = this;
-    openFileDialog({ multiple: true }).then(function (files) {
+    openFileDialog({multiple: true}).then(function (files) {
         if (!thisMi.autoSend) thisMi.$preInput.focus();
         thisMi.notifyAddFiles(files).then(function (files) {
             if (files && files.length > 0)
@@ -473,8 +469,7 @@ MessageInput.prototype.handleAddingFileByType = function (files) {
             file = files[i];
             if (!!file.type && file.type.match && file.type.match(/^image\//)) {
                 imageFiles.push(file);
-            }
-            else {
+            } else {
                 otherFiles.push(file);
             }
         }
@@ -490,7 +485,7 @@ MessageInput.prototype.notifySizeChange = function () {
     if (this._latBound.width != bound.width || this._latBound.height != bound.height) {
         this._latBound.width = bound.width;
         this._latBound.height = bound.height;
-        this.emit('sizechange', { name: 'sizechange', bound: bound, target: this }, this);
+        this.emit('sizechange', {name: 'sizechange', bound: bound, target: this}, this);
     }
 };
 
@@ -540,15 +535,13 @@ MessageInput.eventHandler.preInputChange = function (event) {
     var text = this.$preInput.value;
     if (text.length > 0) {
         this.addClass('as-has-text');
-    }
-    else {
+    } else {
         this.removeClass('as-has-text');
     }
 
     if (text === this._editingText) {
         this.removeClass('as-text-changed');
-    }
-    else {
+    } else {
         this.addClass('as-text-changed');
 
     }
@@ -560,8 +553,7 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
     if (!(event.shiftKey || event.ctrlKey || event.altKey) && event.key === 'Enter') {
         this.notifySend();
         event.preventDefault();
-    }
-    else if ((event.shiftKey || event.ctrlKey || event.altKey) && event.key === 'Enter') {
+    } else if ((event.shiftKey || event.ctrlKey || event.altKey) && event.key === 'Enter') {
         event.preventDefault();
         var text = this.$preInput.value;
         var selectedPos = this.$preInput.getSelectPosition();
@@ -570,8 +562,7 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
         this.$preInput.applyData(newText, selectedPos.start + 1);
         this.notifySizeChange();
         this.$preInput.commitChange(newText, selectedPos.start + 1);
-    }
-    else if (event.key === "Escape" && this._mode === MODE_EDIT) {
+    } else if (event.key === "Escape" && this._mode === MODE_EDIT) {
         this.notifyCancel();
         event.preventDefault();
     }
@@ -585,20 +576,20 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
 
 MessageInput.eventHandler.preInputKeyUp = function (event) {
     var value = this.$preInput.value;
-    this._lastInputSelectPosion = this.$preInput.getSelectPosition() || { start: value.length, end: value.length };
+    this._lastInputSelectPosion = this.$preInput.getSelectPosition() || {start: value.length, end: value.length};
     this.notifySizeChange();
 };
 
 MessageInput.eventHandler.preInputPasteImg = function (event) {
     if (this._mode == 'edit') return;
     var files = Array.prototype.slice.call(event.imageFiles);
-    var urls =  event.urls && Array.prototype.slice.call(event.urls);
-    this.notifyAddFiles(files).then(function (newFiles){
+    var urls = event.urls && Array.prototype.slice.call(event.urls);
+    this.notifyAddFiles(files).then(function (newFiles) {
         if (!newFiles || newFiles.length === 0) return;
-        var newUrls = urls && newFiles.map(function (file){
+        var newUrls = urls && newFiles.map(function (file) {
             return urls[files.indexOf(file)];
         });
-        this.addImageFiles(newFiles,newUrls);
+        this.addImageFiles(newFiles, newUrls);
         this.notifyChange();
     }.bind(this));
 };
@@ -627,7 +618,7 @@ MessageInput.eventHandler.pickEmoji = function (event) {
     var newText = text.substr(0, this._lastInputSelectPosion.start) + event.key + text.substr(this._lastInputSelectPosion.end);
     var selected = this._lastInputSelectPosion;
     var newOffset = selected.start + event.key.length;
-    this._lastInputSelectPosion = { start: newOffset, end: newOffset };
+    this._lastInputSelectPosion = {start: newOffset, end: newOffset};
     this.$preInput.focus();
     this.$preInput.applyData(newText, newOffset);
     this.$preInput.commitChange(newText, newOffset);
@@ -659,31 +650,28 @@ MessageInput.eventHandler.drop = function (event) {
     if (event.dataTransfer.items) {
         for (var i = 0; i < event.dataTransfer.items.length; i++) {
             if (event.dataTransfer.items[i].kind === 'file') {
-                 file = event.dataTransfer.items[i].getAsFile();
+                file = event.dataTransfer.items[i].getAsFile();
                 if (!file.type && file.size % 4096 == 0) {
                     //todo: folder
-                }
-                else {
+                } else {
                     files.push(file);
                 }
 
             }
         }
-    }
-    else {
+    } else {
         for (var i = 0; i < event.dataTransfer.files.length; i++) {
-             file = event.dataTransfer.files[i];
+            file = event.dataTransfer.files[i];
             if (!file.type && file.size % 4096 == 0) {
 
-            }
-            else {
+            } else {
                 files.push(file);
             }
         }
     }
 
-    this.notifyAddFiles(files).then(function (files){
-       this.handleAddingFileByType(files);
+    this.notifyAddFiles(files).then(function (files) {
+        this.handleAddingFileByType(files);
     }.bind(this));
 };
 
@@ -727,8 +715,7 @@ MessageInput.property.text = {
         this.$preInput.value = '' + text;
         if (text.length > 0) {
             this.addClass('as-has-text');
-        }
-        else {
+        } else {
             this.removeClass('as-has-text');
         }
         if (this._mode === MODE_EDIT) {
@@ -752,8 +739,7 @@ MessageInput.property.mode = {
             this.addClass('as-mode-edit');
             value = MODE_EDIT;
             this._editingText = this.$preInput.value;
-        }
-        else {
+        } else {
             value = MODE_NEW;
             this._editingText = '';
             this.removeClass('as-mode-edit');
@@ -770,8 +756,7 @@ MessageInput.property.autoSend = {
     set: function (value) {
         if (value) {
             this.addClass('as-auto-send');
-        }
-        else {
+        } else {
             this.removeClass('as-auto-send');
         }
     },
@@ -848,8 +833,7 @@ export function parseMessage(text, data) {
                         });
                         found = true;
                     }
-                }
-                else {
+                } else {
                     tokens.push({
                         type: 'text',
                         value: longTokenText
@@ -878,14 +862,13 @@ export function parseMessage(text, data) {
         return tokens.reduce(function (ac, token) {
                 if (token.type == 'text' && ac.last.type == 'text') {
                     ac.last.value += token.value;
-                }
-                else {
+                } else {
                     ac.last = token;
                     ac.result.push(token);
                 }
                 return ac;
             },
-            { result: [], last: { type: 'null' } })
+            {result: [], last: {type: 'null'}})
             .result;
     });
     var res = lines.reduce(function (ac, line, lineIndex, lines) {
@@ -893,24 +876,22 @@ export function parseMessage(text, data) {
             if (token.type == 'text') {
                 ac.push({
                     tag: 'span',
-                    child: { text: token.value }
+                    child: {text: token.value}
                 })
-            }
-            else if (token.type == 'url') {
+            } else if (token.type == 'url') {
                 ac.push({
                     tag: 'a',
                     class: 'as-protocal-' + token.protocal,
-                    child: { text: token.value },
+                    child: {text: token.value},
                     props: {
                         href: token.value
                     }
                 })
-            }
-            else if (token.type == 'emoji') {
+            } else if (token.type == 'emoji') {
                 ac.push({
                     tag: 'span',
                     class: 'as-emoji-text',
-                    child: { text: token.value[0] }
+                    child: {text: token.value[0]}
                 });
                 ac.push({
                     tag: 'img',
@@ -1006,7 +987,7 @@ MessageQuote.render = function () {
                     },
                     {
                         class: 'as-message-quote-desc',
-                        child: { text: '' }
+                        child: {text: ''}
                     }
                 ]
             },
@@ -1026,8 +1007,7 @@ MessageQuote.property.removable = {
     set: function (val) {
         if (val) {
             this.addClass('as-removable');
-        }
-        else {
+        } else {
             this.removeClass('as-removable');
         }
     },
@@ -1040,8 +1020,7 @@ MessageQuote.property.shortenText = {
     set: function (val) {
         if (val) {
             this.addClass('as-shorten-text');
-        }
-        else {
+        } else {
             this.removeClass('as-shorten-text');
         }
     },
@@ -1058,8 +1037,7 @@ MessageQuote.property.data = {
         if (typeof quote === "string") {
             text = quote;
             desc = ''
-        }
-        else if (quote && (typeof quote === "object")) {
+        } else if (quote && (typeof quote === "object")) {
             text = quote.text;
             desc = quote.desc;
             file = quote.file;
@@ -1072,8 +1050,7 @@ MessageQuote.property.data = {
             this.$desc.firstChild.data = '';
             this.removeClass('as-has-file');
             this.removeClass('as-has-img');
-        }
-        else {
+        } else {
             if (file) {
                 file = file.toLowerCase().split('.').pop();
                 MessageInput.iconSupportAsync.then(function (iconSupport) {
@@ -1081,15 +1058,13 @@ MessageQuote.property.data = {
                     this.$img.addStyle('background-image', 'url(' + MessageInput.iconAssetRoot + '/' + file + '.svg)');
                 }.bind(this));
                 this.addClass('as-has-file');
-            }
-            else
+            } else
                 this.removeClass('as-has-file');
 
             if (img) {
                 this.$img.addStyle('background-image', 'url(' + img + ')');
                 this.addClass('as-has-img');
-            }
-            else this.removeClass('as-has-img');
+            } else this.removeClass('as-has-img');
             if (this.shortenText) text = text.split(/\r?\n/).shift();
             var parsedText = parseMessage(text);
             var textEltChain = parsedText.map(function (c) {
@@ -1105,7 +1080,7 @@ MessageQuote.property.data = {
 };
 
 MessageQuote.eventHandler.clickRemoveBtn = function () {
-    this.emit('pressremove', { target: this, type: 'pressclose' }, this);
+    this.emit('pressremove', {target: this, type: 'pressclose'}, this);
 };
 
 ACore.install(MessageQuote);
@@ -1145,12 +1120,10 @@ MessageInputPlugin.prototype.ev_pressTrigger = function (event) {
     };
     if (this.onPressTrigger) {
         this.onPressTrigger(this);
-    }
-    else {
+    } else {
         if (this.isPopupOpened()) {
             this.closePopup();
-        }
-        else {
+        } else {
             this.openPopup();
         }
     }
