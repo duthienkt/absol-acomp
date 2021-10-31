@@ -1,0 +1,165 @@
+.as-file-input-box {
+    font-size: 14px;
+    position: relative;
+    width: 100px;
+    height: 100px;
+    box-sizing: border-box;
+    border: 1px solid #dddddd;
+    background-color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    overflow: hidden;
+}
+
+.as-file-input-box-trigger:hover + .as-file-input-box-upload-overlay,
+.as-file-input-box-trigger.as-drag-over + .as-file-input-box-upload-overlay {
+    display: block;
+}
+
+.as-file-input-box-trigger input {
+    visibility: hidden;
+    opacity: 0;
+}
+
+.as-file-input-box-upload-overlay {
+    display: none;
+    pointer-events: none;
+    background-color: rgba(30, 30, 80, 0.3);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 5;
+    overflow: hidden;
+    text-align: center;
+    white-space: nowrap;
+    font-size: 3em;
+    color: #b0fffb;
+}
+
+.as-file-input-box-upload-overlay::before,
+.as-file-input-box-upload-overlay > span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-file-input-box-upload-overlay::before {
+    content: "";
+    height: 100%;
+}
+
+
+.as-file-input-box-trigger {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    opacity: 0;
+}
+
+.as-file-input-box:not(.as-has-file-name) .as-file-input-box-file-name,
+.as-file-input-box:not(.as-has-file-name) .as-file-input-box-file-name + br,
+.as-file-input-box:not(.as-has-file-size) .as-file-input-box-file-size,
+.as-file-input-box:not(.as-has-value) .as-file-input-box-action-left,
+.as-file-input-box:not(.as-has-value) .as-file-input-box-action-right,
+.as-file-input-box:not(.as-downloadable) .as-file-input-box-action-right,
+.as-file-input-box:not(.as-removable) .as-file-input-box-action-left,
+.as-file-input-box:not(.as-allow-upload) .as-file-input-box-trigger {
+    display: none;
+}
+
+
+.as-file-input-box-background {
+    position: absolute;
+    z-index: 1;
+    left: 4%;
+    top: 4%;
+    right: 4%;
+    bottom: 4%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    overflow: hidden;
+}
+
+.as-file-input-box.as-allow-upload .as-file-input-box-background {
+    background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZlcnNpb249IjEuMSIgIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4NCiAgIDxwYXRoIGZpbGw9IiNhYWFhYWEiIGQ9Ik0xMyw5SDE4LjVMMTMsMy41VjlNNiwySDE0TDIwLDhWMjBBMiwyIDAgMCwxIDE4LDIySDZDNC44OSwyMiA0LDIxLjEgNCwyMFY0QzQsMi44OSA0Ljg5LDIgNiwyTTExLDE1VjEySDlWMTVINlYxN0g5VjIwSDExVjE3SDE0VjE1SDExWiIgLz4NCjwvc3ZnPg==);
+}
+
+
+.as-file-input-box-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 2px;
+    z-index: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    text-align: center;
+}
+
+.as-file-input-box-file-name {
+    font-size: inherit;
+    color: black;
+    text-shadow: 0 0 5px white;
+    white-space: nowrap;
+}
+
+.as-file-input-box-action-left,
+.as-file-input-box-action-right {
+    position: absolute;
+    z-index: 6;
+    top: 0;
+}
+
+
+.as-file-input-box-action-left {
+    left: 0;
+}
+
+
+.as-file-input-box-action-right {
+    right: 0;
+}
+
+.as-file-input-box button {
+    height: 2em;
+    width: 2em;
+    padding: 0;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 0;
+}
+
+.as-file-input-box button span {
+    font-size: 1.5em;
+}
+
+.as-file-input-box .mdi-close {
+    color: rgb(250, 100, 100);
+}
+
+.as-file-input-box .mdi-download {
+    color: rgb(100, 100, 250);
+}
+
+.as-file-input-box button:hover .mdi-close {
+    color: rgb(250, 50, 50);
+}
+
+.as-file-input-box button:hover .mdi-download {
+    color: rgb(50, 50, 250);
+}
+
+.as-file-input-box button:active .mdi-close {
+    color: rgb(250, 0, 0);
+}
+
+.as-file-input-box button:active .mdi-download {
+    color: rgb(0, 0, 250);
+}

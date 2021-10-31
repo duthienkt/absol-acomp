@@ -109,6 +109,7 @@ import TimeRange24Input from "../TimeRange24Input";
 import CheckTreeItem from "../CheckTreeItem";
 import CheckTreeBox from "../CheckTreeBox";
 import MultiCheckTreeMenu from "../MultiCheckTreeMenu";
+import FileInputBox from "../FileInputBox";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -131,6 +132,7 @@ export var publicCreators = [
     CountdownClock,
     DropZone,
     EmojiPickerTooltip,
+    FileInputBox,
     Scrollbar,
     VScrollbar,
     HScrollbar,
