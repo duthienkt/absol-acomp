@@ -340,6 +340,7 @@ SelectListBox.property = {};
 SelectListBox.property.items = {
     set: function (items) {
         items = items || [];
+        if (!(items instanceof Array)) items = [];
         prepareSearchForList(items);
         this._items = items;
         this._itemNodeList = this._itemsToNodeList(this._items);
