@@ -69,5 +69,3 @@ materializeIconTrigger();
 absol.MaterialDesignIconsNameMap = MaterialDesignIconsNameMap;
 absol.openFileDialog = openFileDialog;
 absol.CPUViewer = CPUViewer;
-if (location.href.indexOf('localhost') >= 0 || location.href.indexOf('absol') >= 0)
-    CPUViewer.start();
