@@ -99,7 +99,7 @@ MessageInput.MODE_EDIT = MODE_EDIT;
 MessageInput.MODE_NEW = MODE_NEW;
 
 MessageInput.iconAssetRoot = (function () {
-    if (location.hostname.match(/^.+\.absol.cf$/) || location.hostname === 'localhost')
+    if (location.hostname.match(/^.+\.(absol\.cf|absol\.ddns\.net)$/) || location.hostname === 'localhost')
         return 'https://absol.cf/exticons/vivid';
     return '/vivid_exticons';
 })();

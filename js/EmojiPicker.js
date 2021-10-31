@@ -47,7 +47,7 @@ function EmojiPicker() {
 }
 
 EmojiPicker.assetRoot = (function (){
-    if (location.hostname.match(/^.+\.absol.cf$/) ||location.hostname.match(/^localhost$/) )
+    if (location.hostname.match(/^.+\.(absol\.cf|absol\.ddns\.net)$/) ||location.hostname.match(/^localhost$/) )
         return  'https://absol.cf/emoji';
 
     return  '/emoji';
