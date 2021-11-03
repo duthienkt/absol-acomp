@@ -16,7 +16,7 @@
 </head>
 
 <body>
-<h1>Date Input</h1>
+<h1>Clock</h1>
 
 <script>
     var _ = absol._;
@@ -25,22 +25,45 @@
 </script>
 <script class="viewable">
     var clock = _({
-        tag:'countdownclock',
-        props:{
+        tag: 'countdownclock',
+        props: {
             totalSecond: 192,
             remainSecond: 192,
             autoStart: true
         },
-        on:{
-            finish: function (){
+        on: {
+            finish: function () {
                 console.log("FINISH");
             },
-            update: function (){
+            update: function () {
                 console.log("UPDATE", this.remainSecond);
             }
         }
     }).addTo(document.body);
 </script>
+<h1>Text</h1>
+<h3>Basic</h3>
+<script>
+    var countdownText = _({
+        tag: 'countdowntext',
+        props: {
+            finishTime: absol.datetime.beginOfDay(absol.datetime.nextDate(new Date()))
+        }
+    }).addTo(document.body);
+</script>
+
+<h3>Expert</h3>
+<p>Còn <span id="text-holder"></span> sẽ đến ngày mai</p>
+<script>
+    var countdownText2 = _({
+        elt: absol.$('#text-holder'),
+        tag: 'countdowntext',
+        props: {
+            finishTime:absol.datetime.beginOfDay(absol.datetime.nextDate(new Date()))
+        }
+    });
+</script>
+
 <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
