@@ -110,6 +110,7 @@ import CheckTreeItem from "../CheckTreeItem";
 import CheckTreeBox from "../CheckTreeBox";
 import MultiCheckTreeMenu from "../MultiCheckTreeMenu";
 import FileInputBox from "../FileInputBox";
+import CountdownText from "../CountdownText";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -130,6 +131,7 @@ export var publicCreators = [
     ChromeTime24Picker,
     CircleSectionLabel,
     CountdownClock,
+    CountdownText,
     DropZone,
     EmojiPickerTooltip,
     FileInputBox,

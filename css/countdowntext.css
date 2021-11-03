@@ -1,0 +1,7 @@
+.as-countdown-text {
+
+}
+
+.as-countdown-text::before {
+    content: attr(data-hh) ":" attr(data-mm);
+}
