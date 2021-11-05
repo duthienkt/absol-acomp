@@ -123,7 +123,6 @@ PreInput.prototype.redo = function () {
 
 
 PreInput.prototype.commitChange = function (text, offset) {
-    console.log(this)
     while (this.historyIndex < this.history.length - 1) {
         this.history.pop();
     }
