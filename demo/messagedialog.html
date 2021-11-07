@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Message Dialog</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var yesNo1 = _({
+            tag: 'yesnoquestiondialog',
+            props: {
+                dialogTitle: 'Chú ý',
+                message: 'Bạn có muốn lưu không?'
+            },
+            on: {
+                action: function (event) {
+                    console.log(event.action);
+                    var modal = _({
+                        tag: 'modal',
+                        child: {
+                            tag: 'yesnoquestiondialog',
+                            props: {
+                                dialogTitle: "Nhắc lại",
+                                message: "Có phải bạn vừa chọn " + event.action + ' không?',
+                                textYes:"Đúng",
+                                textNo:"Không phải"
+                            },
+                            on:{
+                                action: function (){
+                                    modal.remove();
+                                }
+                            }
+                        }
+                    }).addTo(document.body)
+                }
+            }
+        }).addTo(document.body);
+    })();
+</script>
+</body>
+</html>
