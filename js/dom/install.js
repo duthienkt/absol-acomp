@@ -111,6 +111,7 @@ import CheckTreeBox from "../CheckTreeBox";
 import MultiCheckTreeMenu from "../MultiCheckTreeMenu";
 import FileInputBox from "../FileInputBox";
 import CountdownText from "../CountdownText";
+import YesNoQuestionDialog from "../YesNoQuestionDialog";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -242,7 +243,8 @@ export var publicCreators = [
     MultiCheckMenu,
     CheckTreeItem,
     CheckTreeBox,
-    MultiCheckTreeMenu
+    MultiCheckTreeMenu,
+    YesNoQuestionDialog
 ];
 
 /***
