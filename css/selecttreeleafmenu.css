@@ -1,0 +1,22 @@
+.as-select-tree-leaf-item:not(.as-is-leaf) > .absol-exp-node > .absol-exp-node-name,
+.as-select-tree-leaf-item:not(.as-is-leaf) > .absol-exp-node > .absol-exp-node-ext-icon {
+    color: #888;
+}
+
+.as-select-tree-leaf-item:not(.as-is-leaf) > .absol-exp-node > .absol-exp-node-desc {
+    color: rgb(169, 169, 172)
+}
+
+.as-select-tree-leaf-item > .absol-exp-node:hover,
+.as-select-tree-leaf-item > .absol-exp-node:focus,
+.as-select-tree-leaf-item > .absol-exp-node:active {
+    background-color: transparent;
+}
+
+.as-select-tree-leaf-item.as-is-leaf > .absol-exp-node:hover {
+    background-color: #efefef;
+}
+
+.as-select-tree-leaf-item.as-selected>.absol-exp-node{
+    background-color: #dfdfdf;
+}
