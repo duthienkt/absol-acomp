@@ -112,6 +112,9 @@ import MultiCheckTreeMenu from "../MultiCheckTreeMenu";
 import FileInputBox from "../FileInputBox";
 import CountdownText from "../CountdownText";
 import YesNoQuestionDialog from "../YesNoQuestionDialog";
+import LoadingCubeModal from "../LoadingCubeModal";
+import SelectTreeLeafBox from "../SelectTreeLeafBox";
+import SelectTreeLeafMenu from "../SelectTreeLeafMenu";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -185,6 +188,7 @@ export var publicCreators = [
     MessageInput,
     MessageQuote,
     Modal,
+    LoadingCubeModal,
     NumberInput,
     NumberSpanInput,
     OnScreenWindow,
@@ -215,6 +219,8 @@ export var publicCreators = [
     SelectTable,
     SelectTable2,
     SelectTreeMenu,
+    SelectTreeLeafBox,
+    SelectTreeLeafMenu,
     SpanInput,
     SnackBar,
     StaticTabbar,
