@@ -1,6 +1,8 @@
 import ACore from "../ACore";
 import '../css/countdownclock.css';
 import '../css/countdowntext.css';
+import {DATE_TIME_TOKEN_RGX} from "absol/src/Time/datetime";
+import {isRealNumber, zeroPadding} from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -14,18 +16,19 @@ function CountdownText() {
     this.addClass('as-countdown-text');
     this.defineEvent('update');
     this.defineEvent('finish');
-    this._hh = null;
-    this._mm = null;
-
+    this.text = '';
+    this._formatTokens = {};
+    this._format = 'HH:mm';
+    this.format = 'HH:mm';
+    this.fps = 5;
     this._finishTime = null;
     this.finishTime = null;
-    this.remainSecond = null;
-
     this['_tick'] = this._tick.bind(this);
     setTimeout(this.start.bind(this), 0);//auto start
 }
 
 CountdownText.tag = 'CountdownText'.toLowerCase();
+
 
 CountdownText.render = function () {
     return _('span');
@@ -34,25 +37,62 @@ CountdownText.render = function () {
 
 CountdownText.prototype._tick = function () {
     var remainSecond = this.remainSecond;
-    var hh = Math.floor(remainSecond / 3600);
-    var mm = Math.floor(remainSecond / 60) % 60;
-    mm = mm < 10 ? '0' + mm : '' + mm;
-    hh = hh < 10 ? '0' + hh : '' + hh;
-    var updated = false;
-    if (mm !== this._mm) {
-        this.attr('data-mm', mm);
-        updated = true;
-        this._mm = mm;
-    }
-    if (hh !== this._hh) {
-        this.attr('data-hh', hh);
-        updated = true;
-        this._hh = hh;
+    var prevText = this.text;
+    var newText;
+    var format = this._format;
+    var tokens = this._formatTokens;
+    var sec, min, hour;
+    if (typeof format === "function") {
+        newText = format.call(this, remainSecond);
+    } else {
+        sec = Math[(tokens['ms'] || tokens['mss']) ? 'floor' : 'ceil'](remainSecond);
+        min = Math.floor(remainSecond / 60);
+        hour = Math.floor(remainSecond / 60 / 60);
+        newText = format.replace(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g'), function (all) {
+            switch (all) {
+                case 'D':
+                    return Math.floor(remainSecond / 60 / 60 / 24) + '';
+                case 'HH':
+                case 'H':
+                case 'hh':
+                    if (tokens['D']) {
+                        return zeroPadding(hour % 24, all.length);
+                    } else {
+                        return zeroPadding(hour, all.length);
+                    }
+                case 'mm':
+                case 'M':
+                case 'MM':
+                    if (tokens['HH'] || tokens['hh']) {
+                        return zeroPadding(min % 60, all.length);
+                    } else {
+                        return zeroPadding(min, all.length);
+                    }
+                case 'ss':
+                case 'S':
+                case 'SS':
+                    if (tokens['m'] || tokens['mm']) {
+                        return zeroPadding(sec % 60, all.length);
+                    } else {
+                        return zeroPadding(sec, all.length);
+                    }
+                case 'cs':
+                    return zeroPadding(Math.ceil(remainSecond * 100) % 100, 2);
+                case 'ms':
+                    return zeroPadding(Math.ceil(remainSecond * 1000) % 1000, 3);
+                default:
+                    return all;
+            }
+        });
     }
 
-    if (updated) {
+    if (prevText !== newText) {
+        this.text = newText;
+        this.innerHTML = newText;
         this.emit('update', {target: this, type: 'update'}, this);
     }
+
+
     if (remainSecond <= 0) {
         this.stop();
         this.emit('finish', {target: this, type: 'update'}, this);
@@ -65,7 +105,7 @@ CountdownText.prototype.start = function () {
 
 CountdownText.prototype.resume = function () {
     if (this._intvId > 0) return;
-    this._intvId = setInterval(this._tick, 500);
+    this._intvId = setInterval(this._tick, 1000 / this.fps);
 };
 
 CountdownText.prototype.pause = function () {
@@ -83,6 +123,23 @@ CountdownText.prototype.stop = function () {
 
 CountdownText.property = {};
 
+CountdownText.property.format = {
+    set: function (value) {
+        if (typeof value === "string" || typeof value === 'function') {
+            this._format = value || 'HH:mm';
+            this._formatTokens = (this._format.match(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g')) || []).reduce(function (ac, cr) {
+                ac[cr] = true;
+                return ac;
+            }, {})
+        } else {
+            this._formatTokens = {};
+            this._format = 'HH:mm';
+        }
+    },
+    get: function () {
+        return this._format;
+    }
+};
 
 CountdownText.property.remainSecond = {
     set: function (value) {
@@ -93,7 +150,7 @@ CountdownText.property.remainSecond = {
     },
     get: function () {
         if (this.finishTime !== null) {
-            return Math.max(0, Math.ceil((this.finishTime.getTime() - new Date().getTime()) / 1000));
+            return Math.max(0, (this.finishTime.getTime() - new Date().getTime()) / 1000);
         } else return null;
     }
 };
@@ -109,6 +166,19 @@ CountdownText.property.finishTime = {
     },
     get: function () {
         return this._finishTime;
+    }
+};
+
+CountdownText.property.fps = {
+    set: function (value) {
+        this._fps = isRealNumber(value) ? value : 200;
+        if (this._intvId > 0) {
+            clearInterval(this._intvId);
+            this._intvId = setInterval(this._tick, 1000 / this._fps);
+        }
+    },
+    get: function () {
+        return this._fps;
     }
 };
 
