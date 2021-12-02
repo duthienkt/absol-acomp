@@ -58,8 +58,14 @@
     var countdownText2 = _({
         elt: absol.$('#text-holder'),
         tag: 'countdowntext',
+        style: {
+            fontFamily: 'Consolas',
+            fontSize: '30px'
+        },
         props: {
-            finishTime:absol.datetime.beginOfDay(absol.datetime.nextDate(new Date()))
+            finishTime: absol.datetime.beginOfDay(absol.datetime.nextDate(new Date())),
+            format: 'D ngày HH:mm:ss .cs',
+            fps: 3
         }
     });
 </script>
