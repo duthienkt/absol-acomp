@@ -22,6 +22,10 @@ Modal.render = function () {
     }
 });
 
+Modal.prototype.getChildren = function (){
+  return this.$content.children;
+};
+
 
 Modal.property = {};
 Modal.property.show = {

@@ -6,40 +6,46 @@
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js?')['mtime'];?>"></script>
 </head>
 <body>
+<div id="demo1"></div>
 <script>
+    var demo1 = absol.$('#demo1');
     var myModal = absol._({
-            tag: 'modal',
-            child: [
-                {
-                    style:{
-                        height: '100%'
-                    },
-                    child: [
-                        {
-                        tag: 'img',
-                        style: {
-                            'max-width': '100%',
-                            'max-height': 'calc(100% - 30px)',
-                            width: '500px',
-                            height: 'auto'
-                        },
-                        props: {
-                            src: "https://absol.cf/share/IMG_5466.JPG"
-                        }
-                    },
-                        {
-                            style: {
-                                height: '30px',
-                                'padding-left': '30px'
-                            },
-                            child: { text: "Đây là tiêu đề" }
-                        }]
-                }
+        tag: 'modal',
+        child: [
+            '<h1>5</h1>'
+        ]
+    });
+    absol._({
+        tag: 'button',
+        child: {text: 'Show Modal'},
+        on: {
+            click: function () {
+                demo1.addChild(myModal);
+                var count = 5;
+                setTimeout(function tick() {
+                    if (count <= 0) myModal.remove();
+                    else {
+                        myModal.getChildren()[0].innerHTML = (--count) + '';
+                        setTimeout(tick, 1000);
+                    }
+                }, 1000);
+            }
+        }
+    }).addTo(demo1);
 
-            ]
-        })
-    ;
-    document.body.appendChild(myModal);
+    absol._({
+        tag: 'button',
+        style: {marginLeft: '20px'},
+        child: {text: 'Show Cube Loading'},
+        on: {
+            click: function () {
+                var token = absol.require('loadingcubemodal').show();
+                setTimeout(function () {
+                    absol.require('loadingcubemodal').close(token);
+                }, 3000);
+            }
+        }
+    }).addTo(demo1);
 </script>
 </body>
 </html>
