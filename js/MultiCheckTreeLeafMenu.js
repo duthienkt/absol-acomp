@@ -128,6 +128,7 @@ MultiCheckTreeLeafMenu.eventHandler.click = function (event) {
 
 MultiCheckTreeLeafMenu.eventHandler.selectBoxChange = function () {
     this._updateSelectedItems();
+    this.emit('change', {type: 'change', target: this}, this);
 };
 
 MultiCheckTreeLeafMenu.eventHandler.itemPressClose = function (itemElt, event) {
@@ -136,6 +137,7 @@ MultiCheckTreeLeafMenu.eventHandler.itemPressClose = function (itemElt, event) {
         return value !== item.value;
     });
     this._updateSelectedItems();
+    this.emit('change', {type: 'change', target: this}, this);
 };
 
 ACore.install(MultiCheckTreeLeafMenu);
