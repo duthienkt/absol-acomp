@@ -31,8 +31,7 @@ module.exports = [
                                 "mdi-folder-account"
                             ]
                         },
-                        items: [],
-                        sortText: "abc"
+                        items: []
                     },
                     {
                         value: -17,
@@ -43,8 +42,7 @@ module.exports = [
                                 "mdi",
                                 "mdi-account"
                             ]
-                        },
-                        sortText: "admin"
+                        }
                     },
                     {
                         value: -18,
@@ -55,8 +53,7 @@ module.exports = [
                                 "mdi",
                                 "mdi-account"
                             ]
-                        },
-                        sortText: "dat"
+                        }
                     },
                     {
                         value: -19,
@@ -67,8 +64,7 @@ module.exports = [
                                 "mdi",
                                 "mdi-account"
                             ]
-                        },
-                        sortText: "hieu"
+                        }
                     },
                     {
                         value: -21,
@@ -79,11 +75,9 @@ module.exports = [
                                 "mdi",
                                 "mdi-account"
                             ]
-                        },
-                        sortText: "tran thi thanh yen"
+                        }
                     }
-                ],
-                sortText: "bo phan a211"
+                ]
             },
             {
                 value: 15,
@@ -105,14 +99,11 @@ module.exports = [
                                 "mdi",
                                 "mdi-account"
                             ]
-                        },
-                        sortText: "a2"
+                        }
                     }
-                ],
-                sortText: "ssssssssssssss"
+                ]
             }
-        ],
-        sortText: "cong ty 2h"
+        ]
     },
     {
         value: 16,
@@ -145,13 +136,10 @@ module.exports = [
                                 "mdi",
                                 "mdi-account"
                             ]
-                        },
-                        sortText: "b1"
+                        }
                     }
-                ],
-                sortText: "123"
+                ]
             }
-        ],
-        sortText: "sssssssss"
+        ]
     }
 ];

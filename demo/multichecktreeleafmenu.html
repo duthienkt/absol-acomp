@@ -58,12 +58,21 @@
             props: {
                 items: items2,
                 enableSearch: true,
-                values:[-17, -18]
+                values: [-17, -18]
             },
             on: {
                 change: function () {
-                    absol.require('snackbar').show('change : ' + this.value);
+                    absol.require('snackbar').show('change : ' + this.values.join(', '));
                 }
+            }
+        }).addTo(document.body);
+
+        _({
+            tag: 'pre',
+            style:{background: '#eef'},
+            child: {
+                tag: 'code',
+                child: {text: 'items = ' + absol.generateJSVariable(items)}
             }
         }).addTo(document.body);
 
