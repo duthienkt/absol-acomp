@@ -171,7 +171,7 @@ SelectTreeLeafBox.prototype._calcEstimateSize = function (items) {
     function visit(item, level) {
         var itemWidth = self._estimateItemWidth(item, level);
         width = Math.max(width, itemWidth);
-        height += 24;
+        height += 28;
         if (item.items && item.items.length) {
             item.items.forEach(function (item) {
                 visit(item, level + 1);
@@ -224,6 +224,7 @@ SelectTreeLeafBox.property.items = {
         this.$items = items.map(function (item) {
             return self._makeTree(item, self.$itemByValue, self._savedStatus);
         });
+        this.$dislayItems = this.$items;
         this.$content.addChild(this.$items);
         this.estimateSize = this._calcEstimateSize(items);
         this.addStyle('--select-list-estimate-width', this.estimateSize.width + 'px');
