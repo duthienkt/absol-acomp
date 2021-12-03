@@ -115,6 +115,8 @@ import YesNoQuestionDialog from "../YesNoQuestionDialog";
 import LoadingCubeModal from "../LoadingCubeModal";
 import SelectTreeLeafBox from "../SelectTreeLeafBox";
 import SelectTreeLeafMenu from "../SelectTreeLeafMenu";
+import MultiCheckTreeLeafBox from "../MultiCheckTreeLeafBox";
+import MultiCheckTreeLeafMenu from "../MultiCheckTreeLeafMenu";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -215,7 +217,10 @@ export var publicCreators = [
     SelectMenu2,
     SelectBox,
     MultiSelectMenu,
+    MultiCheckTreeLeafBox,
+    MultiCheckTreeLeafMenu,
     SelectBoxItem,
+
     SelectTable,
     SelectTable2,
     SelectTreeMenu,

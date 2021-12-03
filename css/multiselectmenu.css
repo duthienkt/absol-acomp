@@ -45,7 +45,7 @@
     fill: black;
 }
 
-.as-multi-select-menu.as-disable-click-to-focus .as-multi-select-menu-toggle-btn{
+.as-multi-select-menu.as-disable-click-to-focus .as-multi-select-menu-toggle-btn {
     display: none;
 }
 
@@ -54,11 +54,16 @@
 }
 
 
-.as-multi-select-menu.as-item-focusable .absol-selectbox-item.as-active{
+.as-multi-select-menu.as-item-focusable .absol-selectbox-item.as-active {
     background-color: var(--select-box-focus-item-color);
 }
 
 .as-multi-select-menu.as-disabled {
     pointer-events: none;
     background-color: #ebebe4;
+}
+
+
+.as-multi-select-menu.as-multi-check-tree-leaf-menu {
+    min-width: calc(var(--select-list-estimate-width) + 14px);
 }
