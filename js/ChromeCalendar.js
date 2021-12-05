@@ -7,15 +7,16 @@ import Dom from "absol/src/HTML5/Dom";
 import {VScroller} from "./Scroller";
 import {
     beginOfDay,
-    beginOfMonth, beginOfYear,
+    beginOfMonth, beginOfWeek, beginOfYear,
     compareDate,
     compareMonth, ddmmyyyy,
     formatDateString,
     nextDate, nextMonth,
-    prevDate, prevMonth
+    prevDate, prevMonth, weekIndexOf
 } from "absol/src/Time/datetime";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import OOP from "absol/src/HTML5/OOP";
+import {zeroPadding} from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -26,6 +27,7 @@ var $ = ACore.$;
  */
 function ChromeCalendar() {
     var thisCal = this;
+    this._startDayOfWeek = 0;
     this._level = "day";
     this.$years = $('.absol-chrome-calendar-years', this);
     this._fillYearList(this.$years);
@@ -39,6 +41,7 @@ function ChromeCalendar() {
         .on('click', this.eventHandler.clickEra);
     this._fillEra();
     this.$month = $('.absol-chrome-calendar-month', this);
+    this.$dayOfWeek = $('.absol-chrome-calendar-dayofweek', this);
     this._min = new Date(1890, 0, 1);
     this._max = new Date(2090, 0, 1);
 
@@ -104,7 +107,7 @@ ChromeCalendar.render = function () {
                             {
                                 tag: 'span',
                                 class: 'title-time',
-                                child: { text: 'Septemper, 2019' }
+                                child: {text: 'Septemper, 2019'}
                             },
 
                         ]
@@ -148,7 +151,7 @@ ChromeCalendar.render = function () {
                         class: 'absol-chrome-calendar-dayofweek',
                         child: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(function (text) {
                             return {
-                                child: { text: text }
+                                child: {text: text}
                             }
                         })
                     },
@@ -157,10 +160,10 @@ ChromeCalendar.render = function () {
                         class: 'absol-chrome-calendar-month',
                         child: Array(6).fill(0).map(function (u, i) {
                             return {
-                                class: 'absol-chrome-calendar-week-in-mounth',
+                                class: 'absol-chrome-calendar-week-in-month',
                                 child: Array(7).fill(0).map(function (v, j) {
                                     return {
-                                        child: { text: i * 7 + j + '' }
+                                        child: {text: i * 7 + j + ''}
                                     }
                                 })
                             }
@@ -250,7 +253,6 @@ ChromeCalendar.prototype.pickDate = function (date, event) {
     this._updateMonth(this.$month);
     if (this.$lastOpenYearItem) this.$lastOpenYearItem.$months.updateActiveMonth();
 
-
     this.emit('pick', {
         type: 'pick', value: date,
         isTrusted: event && event.isTrusted,
@@ -310,25 +312,49 @@ ChromeCalendar.prototype.pickYear = function (year, event) {
  */
 ChromeCalendar.prototype._fillMonth = function (monthElt, date) {
     var self = this;
-    if (monthElt.$cells === undefined) {//for faster, attach event to element 
+    if (monthElt.$cells === undefined) {//for faster, attach event to element
         monthElt.$cells = [];
-        $('.absol-chrome-calendar-week-in-mounth > div', this.$month, function (elt) {
-            monthElt.$cells.push(elt);
-            elt.on('click', function (event) {
-                self.pickDate(this.__date__, event);
-                if (elt.containsClass('absol-chrome-calendar-not-in-month')) {
-                    if (this.__date__.getDate() < 15) {
+        Array.prototype.forEach.call(monthElt.childNodes, function (row) {
+            row.on('click', function (event) {
+                if (event.target !== this) return;
+                var pickedElt = this.firstChild;
+                var pickDate = this.firstChild.__date__;
+                self.pickDate(pickDate, event);
+                if (pickedElt.containsClass('absol-chrome-calendar-not-in-month')) {
+                    if (pickDate.getDate() < 15) {
                         self.viewNexMonth();
-                    }
-                    else {
+                    } else {
                         self.viewPrevMonth();
                     }
                 }
             });
         });
+        $('.absol-chrome-calendar-week-in-month > div', this.$month, function (elt) {
+            monthElt.$cells.push(elt);
+
+            elt.on('click', function (event) {
+                var pickedElt = elt;
+                var pickDate = this.__date__;
+                if (self._level === 'week') {
+                    pickDate = beginOfWeek(pickDate, false, self._startDayOfWeek);
+                    pickedElt = elt.parentElement.firstChild;
+                }
+                self.pickDate(pickDate, event);
+                if (pickedElt.containsClass('absol-chrome-calendar-not-in-month')) {
+                    if (pickDate.getDate() < 15) {
+                        self.viewNexMonth();
+                    } else {
+                        self.viewPrevMonth();
+                    }
+                }
+
+            });
+        });
     }
 
-    var currentDate = datetime.beginOfWeek(datetime.beginOfMonth(date));
+    var currentDate = datetime.beginOfWeek(datetime.beginOfMonth(date), false, this._startDayOfWeek);
+
+
     var d;
     var cell;
     for (var i = 0; i < monthElt.$cells.length; ++i) {
@@ -338,6 +364,10 @@ ChromeCalendar.prototype._fillMonth = function (monthElt, date) {
         cell.__date__ = datetime.beginOfDay(currentDate);
         currentDate = datetime.nextDate(currentDate);
     }
+    Array.prototype.forEach.call(monthElt.childNodes, function (row) {
+        var weekIdx = weekIndexOf(row.firstChild.__date__, false, self._startDayOfWeek);
+        row.attr('data-week-idx-text', zeroPadding(1 + weekIdx, 2) + '');
+    });
 };
 
 ChromeCalendar.prototype._updateMonth = function (monthElt) {
@@ -347,6 +377,7 @@ ChromeCalendar.prototype._updateMonth = function (monthElt) {
     var m;
     var cell;
     var currentDate;
+    var selectedWeeks = {};
     for (var i = 0; i < monthElt.$cells.length; ++i) {
         cell = monthElt.$cells[i];
         currentDate = cell.__date__;
@@ -355,23 +386,34 @@ ChromeCalendar.prototype._updateMonth = function (monthElt) {
             cell.addClass('absol-chrome-calendar-not-in-month');
         else
             cell.removeClass('absol-chrome-calendar-not-in-month');
-        if (datetime.compareDate(currentDate, now) == 0)
+        if (datetime.compareDate(currentDate, now) === 0)
             cell.addClass('absol-chrome-calendar-today');
         else
             cell.removeClass('absol-chrome-calendar-today');
 
-        if (this._isSelectedDate(currentDate))
+        if (this._isSelectedDate(currentDate)) {
             cell.addClass('absol-chrome-calendar-selected');
-        else
+            selectedWeeks[weekIndexOf(currentDate, false, this._startDayOfWeek)] = true;
+        } else
             cell.removeClass('absol-chrome-calendar-selected');
 
         if (datetime.compareDate(this._min, currentDate) > 0 || datetime.compareDate(currentDate, this._max) > 0) {
             cell.addClass('absol-chrome-calendar-date-disabled');
-        }
-        else {
+        } else {
             cell.removeClass('absol-chrome-calendar-date-disabled');
         }
     }
+    console.log(selectedWeeks)
+    Array.prototype.forEach.call(monthElt.childNodes, function (row) {
+        var weekIdx = weekIndexOf(row.firstChild.__date__, false, this._startDayOfWeek);
+        if (selectedWeeks[weekIdx]) {
+            row.addClass('as-week-selected');
+
+        } else {
+            row.removeClass('as-week-selected');
+        }
+    }.bind(this))
+
 };
 
 ChromeCalendar.prototype._fillYearList = function (ctn) {
@@ -383,7 +425,7 @@ ChromeCalendar.prototype._fillYearList = function (ctn) {
                 child: [
                     {
                         class: 'absol-chrome-calendar-year-head',
-                        child: { text: i + 1890 + '' },
+                        child: {text: i + 1890 + ''},
                     }
                 ],
                 props: {
@@ -414,7 +456,7 @@ ChromeCalendar.prototype._fillEra = function () {
                 }
                 return {
                     class: classList,
-                    child: { text: year + '' },
+                    child: {text: year + ''},
                     props: {
                         __year__: year
                     }
@@ -542,6 +584,7 @@ ChromeCalendar.prototype.viewToday = function () {
     this._viewDate = new Date();
     switch (this._level) {
         case "day":
+        case 'week':
             this.viewMonth();
             break;
         case "month":
@@ -671,15 +714,13 @@ ChromeCalendar.prototype.scrollIntoDecade = function (startYear, animation) {
                 thisCal.$era.scrollTop = yc;
                 if (tc < t1) {
                     thisCal._decadeScrollTimeout = setTimeout(tick, 30);
-                }
-                else {
+                } else {
                     thisCal._decadeScrollTimeout = -1;
                     thisCal.scrollIntoDecadeResolve = null;
                     resolve();
                 }
             }, 30);
-        }
-        else {
+        } else {
             thisCal.$era.scrollTop = y1;
         }
     });
@@ -690,48 +731,43 @@ ChromeCalendar.prototype.scrollIntoDecade = function (startYear, animation) {
 ChromeCalendar.prototype._updateButtons_day = function () {
     if (this._monthCmpLimit(prevMonth(this._viewDate)) < 0) {
         this.$prevBtn.addClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    } else {
         this.$prevBtn.removeClass('absol-chrome-calendar-button-disabled');
 
     }
     if (this._monthCmpLimit(nextMonth(this._viewDate)) > 0) {
         this.$nextBtn.addClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    } else {
         this.$nextBtn.removeClass('absol-chrome-calendar-button-disabled');
     }
 
     var now = new Date();
     if (this._monthCmpLimit(now) === 0) {
         this.$todayBtn.removeClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    } else {
         this.$todayBtn.addClass('absol-chrome-calendar-button-disabled');
     }
-
 };
+
+ChromeCalendar.prototype._updateButtons_week = ChromeCalendar.prototype._updateButtons_day;
 
 ChromeCalendar.prototype._updateButtons_year = function () {
     if (!this._viewDate) return;
     var year = Math.floor(this._viewDate.getFullYear() / 10) * 10;
     if (this._yearCmpLimit(new Date(year - 1, 0, 1)) < 0) {
         this.$prevBtn.addClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    } else {
         this.$prevBtn.removeClass('absol-chrome-calendar-button-disabled');
     }
     if (this._yearCmpLimit(new Date(year + 10, 0, 1)) > 0) {
         this.$nextBtn.addClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    } else {
         this.$nextBtn.removeClass('absol-chrome-calendar-button-disabled');
     }
     var now = new Date();
     if (this._yearCmpLimit(now) === 0) {
         this.$todayBtn.removeClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    } else {
         this.$todayBtn.addClass('absol-chrome-calendar-button-disabled');
     }
 };
@@ -739,14 +775,12 @@ ChromeCalendar.prototype._updateButtons_year = function () {
 ChromeCalendar.prototype._updateButtons_month = function () {
     if (this._yearCmpLimit(new Date(this._viewDate.getFullYear() + 1, 0, 1)) > 0) {
         this.$nextBtn.addClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    } else {
         this.$nextBtn.removeClass('absol-chrome-calendar-button-disabled');
     }
     if (this._yearCmpLimit(new Date(this._viewDate.getFullYear() - 1, 0, 1)) < 0) {
         this.$prevBtn.addClass('absol-chrome-calendar-button-disabled');
-    }
-    else {
+    } else {
         this.$prevBtn.removeClass('absol-chrome-calendar-button-disabled');
     }
 };
@@ -771,7 +805,7 @@ ChromeCalendar.prototype._createMonths = function (year) {
                             .concat((year == now.getFullYear() && now.getMonth() == i * 4 + j) ? ['absol-chrome-calendar-today'] : [])
                             .concat(self._isSelectedMonth(date) ? ['absol-chrome-calendar-selected'] : [])
                         ,
-                        child: { text: datetime.monthNames[i * 4 + j].substr(0, 3) },
+                        child: {text: datetime.monthNames[i * 4 + j].substr(0, 3)},
                         on: {
                             click: function () {
 
@@ -798,15 +832,13 @@ ChromeCalendar.prototype._createMonths = function (year) {
             now = new Date();
             if (datetime.compareMonth(e.__date__, now) == 0) {
                 e.addClass('absol-chrome-calendar-today');
-            }
-            else {
+            } else {
                 e.removeClass('absol-chrome-calendar-today');
             }
 
             if (self._isSelectedMonth(e.__date__)) {
                 e.addClass('absol-chrome-calendar-selected');
-            }
-            else {
+            } else {
                 e.removeClass('absol-chrome-calendar-selected');
 
             }
@@ -814,8 +846,7 @@ ChromeCalendar.prototype._createMonths = function (year) {
             var endOfMonth = datetime.prevDate(datetime.nextMonth(e.__date__));
             if (datetime.compareDate(self._min, endOfMonth) > 0 || datetime.compareDate(beginOfMonth, self._max) > 0) {
                 e.addClass('absol-chrome-calendar-date-disabled');
-            }
-            else {
+            } else {
                 e.removeClass('absol-chrome-calendar-date-disabled');
             }
         });
@@ -875,8 +906,7 @@ ChromeCalendar.prototype._updateDisabledYearInEra = function () {
             if (cellElt.__year__) {
                 if (self._yearCmpLimit(new Date(cellElt.__year__, 0, 1)) === 0) {
                     cellElt.removeClass('absol-chrome-calendar-date-disabled');
-                }
-                else {
+                } else {
                     cellElt.addClass('absol-chrome-calendar-date-disabled');
                 }
             }
@@ -954,8 +984,7 @@ ChromeCalendar.property.multiSelect = {
         if (lastValue != value) {
             if (value) {
                 this.addClass('multi-select')
-            }
-            else {
+            } else {
                 this.removeClass('multi-select');
             }
             this._updateMonth(this.$month);
@@ -971,7 +1000,7 @@ ChromeCalendar.property.level = {
     set: function (value) {
         value = (value || '') + '';
         value = value.toLowerCase();
-        if (['day', 'month', 'year'].indexOf(value) < 0) value = 'day';
+        if (['day', 'week', 'month', 'year'].indexOf(value) < 0) value = 'day';
         if (this._level === value) return;
         this.removeClass('as-level-' + this._level);
         this._level = value;
@@ -985,12 +1014,31 @@ ChromeCalendar.property.level = {
     }
 };
 
+ChromeCalendar.prototype.dayInWeekTexts = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+ChromeCalendar.property.startDayOfWeek = {
+    set: function (value) {
+        value = Math.max(0, Math.min(Math.floor(value || 0), 6));
+        if (this._startDayOfWeek !== value) {
+            this._startDayOfWeek = value;
+            Array.prototype.forEach.call(this.$dayOfWeek.childNodes, function (e, i) {
+                e.firstChild.data = this.dayInWeekTexts[(i + value) % 7];
+            }.bind(this));
+        }
+        this._updateMonth(this.$month);
+    },
+    get: function () {
+        return this._startDayOfWeek;
+    }
+};
+
+
 ChromeCalendar.property.viewDate = {
-    set: function (date){
+    set: function (date) {
         this._viewDate = date;
         this.domSignal.emit('level_change');
     },
-    get: function (){
+    get: function () {
         return this._viewDate;
     }
 }
@@ -1012,6 +1060,7 @@ ChromeCalendar.eventHandler.clickEra = function (event) {
 ChromeCalendar.eventHandler.clickPrev = function () {
     switch (this._level) {
         case "day":
+        case 'week':
             this.viewPrevMonth();
             break;
         case "month":
@@ -1028,6 +1077,7 @@ ChromeCalendar.eventHandler.clickPrev = function () {
 ChromeCalendar.eventHandler.clickNext = function () {
     switch (this._level) {
         case "day":
+        case 'week':
             this.viewNexMonth();
             break;
         case "month":
@@ -1045,7 +1095,10 @@ ChromeCalendar.eventHandler.clickToday = function (event) {
     this.viewToday();
     switch (this._level) {
         case "day":
-            this.pickDate(new Date());
+            this.pickDate(new Date(), event);
+            break;
+        case 'week':
+            this.pickDate(beginOfWeek(new Date(), false, this.startDayOfWeek), event)
             break;
         case "month":
             this.expandYear(new Date().getFullYear());
@@ -1062,6 +1115,7 @@ ChromeCalendar.eventHandler.clickToday = function (event) {
 ChromeCalendar.eventHandler.clickTitle = function (event) {
     switch (this._level) {
         case "day":
+        case "week":
             this.viewYear();
             break;
         case "month":
@@ -1078,6 +1132,7 @@ ChromeCalendar.eventHandler.clickMonthsInYear = function (event) {
     if (!date) return;
     switch (this._level) {
         case "day":
+        case "week":
             this._viewDate = date;
             this.viewMonth();
             break;
@@ -1093,6 +1148,7 @@ ChromeCalendar.eventHandler.clickMonthsInYear = function (event) {
 ChromeCalendar.eventHandler.levelChange = function () {
     switch (this._level) {
         case "day":
+        case "week":
             this.viewMonth();
             break;
         case "month":
@@ -1113,7 +1169,7 @@ ChromeCalendar._listener = undefined;
 
 ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calendarPickListener, darkTheme) {
     var res = {
-        calendarProps: Object.assign({ maxDateLimit: null, minDateLimit: null }, calendarProps),
+        calendarProps: Object.assign({maxDateLimit: null, minDateLimit: null}, calendarProps),
         anchor: anchor,
         currentSession: undefined,
         element: element,
@@ -1179,8 +1235,8 @@ ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickList
 
         ChromeCalendar.$ctn.addTo(document.body);
         // only one value need
-        if (calendarProps instanceof Date) calendarProps = { selectedDates: [calendarProps] };
-        if (calendarProps instanceof Array) calendarProps = { selectedDates: calendarProps };
+        if (calendarProps instanceof Date) calendarProps = {selectedDates: [calendarProps]};
+        if (calendarProps instanceof Array) calendarProps = {selectedDates: calendarProps};
 
         Object.assign(ChromeCalendar.$calendar, calendarProps);
         if (darkTheme) ChromeCalendar.$ctn.addClass('dark');
