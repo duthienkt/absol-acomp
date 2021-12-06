@@ -28,19 +28,33 @@
 <body>
 <h1>Calendar</h1>
 
-<div class="absol-bscroller" style="height: 300px;">
+<div class="absol-bscroller" style="height: 400px;">
 </div>
 
 <script class="viewable">
     var _ = absol._;
     var $ = absol.$;
     var scroller = $('.absol-bscroller');
+    var now = new Date();
+    mnD = new Date(now.getTime() - absol.datetime.MILLIS_PER_DAY * 32);
+    mxD = new Date(now.getTime() + absol.datetime.MILLIS_PER_DAY * 32);
     _({
         tag: 'chromecalendar',
         props: {
             selectedDates: new Date(2019, 7, 3),
             minLimitDate: new Date(2019, 7, 3),
             maxLimitDate: new Date(2019, 11, 3)
+        }
+    }).addTo(scroller);
+
+    _({
+        tag: 'chromecalendar',
+        props: {
+            level: 'week',
+            startDayOfWeek: 1,
+            selectedDates: now,
+            minLimitDate: new Date(2021, 0, 1),
+            maxLimitDate: mxD
         }
     }).addTo(scroller);
 
@@ -72,7 +86,7 @@
     _({
         tag: 'chrometimepicker',
         props: {
-           dayOffset: new Date()
+            dayOffset: new Date()
         },
         style: {
             marginLeft: '10px'
