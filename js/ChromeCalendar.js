@@ -403,7 +403,6 @@ ChromeCalendar.prototype._updateMonth = function (monthElt) {
             cell.removeClass('absol-chrome-calendar-date-disabled');
         }
     }
-    console.log(selectedWeeks)
     Array.prototype.forEach.call(monthElt.childNodes, function (row) {
         var weekIdx = weekIndexOf(row.firstChild.__date__, false, this._startDayOfWeek);
         if (selectedWeeks[weekIdx]) {
