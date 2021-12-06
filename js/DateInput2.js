@@ -6,7 +6,7 @@ import {
     compareDate,
     formatDateString,
     parseDateString,
-    formatDateTime, parseDateTime
+    formatDateTime, parseDateTime, DATE_TIME_TOKEN_RGX, weekIndexOf, prevDate
 } from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
@@ -35,6 +35,7 @@ function DateInput2() {
     this._format = 'dd/MM/yyyy';
     this.$input = $('input', this);
     this._editingData = {};
+    this._startDayOfWeek = 1;
     this.$text = this.$input;
     this.$text.on('mousedown', this.eventHandler.mouseDownInput)
         .on('mouseup', this.eventHandler.mouseUpInput)
@@ -107,13 +108,13 @@ DateInput2.prototype._verifyFormat = function (text) {
 DateInput2.prototype._notifyIfChange = function (event) {
     if (!this._lastValue !== !this._value || (this._lastValue && compareDate(this._lastValue, this._value)) !== 0) {
         this._lastValue = this._value;
-        this.emit('change', { type: 'change', target: this, value: this._value, originEvent: event }, this);
+        this.emit('change', {type: 'change', target: this, value: this._value, originEvent: event}, this);
     }
 };
 
 DateInput2.prototype.notifyChange = function () {
     this._lastValue = this._value;
-    this.emit('change', { type: 'change', target: this, value: this._value }, this);
+    this.emit('change', {type: 'change', target: this, value: this._value}, this);
 };
 
 DateInput2.prototype.focus = function () {
@@ -137,8 +138,7 @@ DateInput2.prototype._applyValue = function (value) {
     this._value = value;
     if (!value) {
         this.$input.value = this.format;
-    }
-    else {
+    } else {
         this.$input.value = formatDateTime(this._value, this._format);
     }
     this._updateNullClass();
@@ -148,8 +148,7 @@ DateInput2.prototype._updateNullClass = function () {
     var value = this._value;
     if (!value) {
         this.addClass('as-value-null');
-    }
-    else {
+    } else {
         this.removeClass('as-value-null');
     }
 };
@@ -173,8 +172,7 @@ DateInput2.prototype._correctingInput = function () {
         tkDict.y.value = Math.max(min.getFullYear(), Math.min(max.getFullYear(), tkDict.y.value));
         equalMin = tkDict.y.value === min.getFullYear();
         equalMax = tkDict.y.value === max.getFullYear();
-    }
-    else {
+    } else {
         equalMin = false;
         equalMax = false;
     }
@@ -190,8 +188,7 @@ DateInput2.prototype._correctingInput = function () {
             tkDict.M.value = Math.min(max.getMonth() + 1, tkDict.M.value);
             equalMax = max.getMonth() + 1;
         }
-    }
-    else {
+    } else {
         equalMin = false;
         equalMax = false;
     }
@@ -212,8 +209,14 @@ DateInput2.prototype._correctingInput = function () {
         }
     }
 
-    var text = this._applyTokenDict(this._format, tkDict);
-    this.$text.value = text;
+    if (tkDict.w && !isNaN(tkDict.w.value)){
+        if (!isNaN(tkDict.y.value)){
+            tkDict.w.value = Math.max(1, Math.min(tkDict.w.value, 1
+                + weekIndexOf(prevDate(new Date(tkDict.y.value +1, 0, 1)), false, this._startDayOfWeek)));
+        }
+    }
+
+    this.$text.value =  this._applyTokenDict(this._format, tkDict);
 }
 
 DateInput2.prototype._correctingCurrentToken = function () {
@@ -225,12 +228,14 @@ DateInput2.prototype._correctingCurrentToken = function () {
     var rqMin = {
         d: 1, dd: 1,
         M: 1, MM: 1,
-        y: 1890, yyyy: 1890
+        y: 1890, yyyy: 1890,
+        w: 1, ww: 1
     }[token.ident];
     var rqMax = {
         d: 31, dd: 31,
         M: 12, MM: 12,
-        y: 2089, yyyy: 2089
+        y: 2089, yyyy: 2089,
+        w: 54, ww: 54
     }[token.ident];
     if (rqMin !== undefined) {
         if (!isNaN(value)) {
@@ -238,17 +243,14 @@ DateInput2.prototype._correctingCurrentToken = function () {
                 value = Math.max(rqMin, Math.min(rqMax, value));
                 token.replace(zeroPadding(value, token.ident.length), false);
             }
-        }
-        else if (this.notNull) {
+        } else if (this.notNull) {
             if (token.ident.startsWith('y')) {
                 value = new Date().getFullYear();
-            }
-            else {
+            } else {
                 value = rqMin;
             }
             token.replace(zeroPadding(value, token.ident.length), false);
-        }
-        else if (token.text !== token.ident) {
+        } else if (token.text !== token.ident) {
             token.replace(token.ident, false);
         }
     }
@@ -271,19 +273,16 @@ DateInput2.prototype._normalizeValue = function (date) {
             temp = parseDateTime(date, this._format);
         }
         date = temp;
-    }
-    else if (typeof date === 'number') {
+    } else if (typeof date === 'number') {
         date = new Date(date);
     }
     if (date.getTime && date.getHours) {
         if (isNaN(date.getTime())) {
             return null;
-        }
-        else {
+        } else {
             return beginOfDay(date);
         }
-    }
-    else {
+    } else {
         return null;
     }
 };
@@ -296,8 +295,7 @@ DateInput2.prototype._loadValueFromInput = function () {
     var date = new Date(y, m, d);
     if (isNaN(date.getTime())) {
         this._value = null;
-    }
-    else {
+    } else {
         this._value = date;
     }
     this._updateNullClass();
@@ -306,21 +304,18 @@ DateInput2.prototype._loadValueFromInput = function () {
 DateInput2.prototype._applyTokenDict = function (format, dict, debug) {
     var rgx = new RegExp(this.tokenRegex.source, 'g');
     var tokenMap = this.tokenMap;
-    return format.replace(rgx, function (full, g1, g2, sourceText) {
+    var res =  format.replace(rgx, function (full, g1, g2, sourceText) {
         if (g1 && tokenMap[g1]) {
             var ident = tokenMap[g1];
             if (dict[ident] && !isNaN(dict[ident].value)) {
-                var numberText = dict[ident].value + '';
-                while (numberText.length < g1.length) numberText = '0' + numberText;
-                return numberText;
-            }
-            else {
+                return  zeroPadding(dict[ident].value , g1.length);
+            } else {
                 return full;
             }
-        }
-        else
+        } else
             return full;
     });
+    return res;
 };
 
 DateInput2.prototype.focus = function () {
@@ -335,7 +330,8 @@ DateInput2.prototype.tokenMap = {
     M: 'M',
     MM: 'M',
     y: 'y',
-    yyyy: 'y'
+    yyyy: 'y',
+    ww: 'w'
 }
 
 /**
@@ -378,12 +374,22 @@ DateInput2.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.d = event.key === 'ArrowUp' ? 1 : 31;
-                        }
-                        else {
+                        } else {
                             this._editingData.d = 1 + (value + (event.key === 'ArrowUp' ? 0 : 29)) % 31;
                         }
                         newTokenText = '' + this._editingData.d;
                         while (newTokenText.length < token.ident.length) newTokenText = '0' + newTokenText;
+                        token.replace(newTokenText, true);
+                        break;
+                    case 'w':
+                    case 'ww':
+                        value = parseInt(token.text);
+                        if (isNaN(value)) {
+                            this._editingData.w = event.key === 'ArrowUp' ? 1 : 54;
+                        } else {
+                            this._editingData.w = 1 + (value + (event.key === 'ArrowUp' ? 0 : 52)) % 54;
+                        }
+                        newTokenText = zeroPadding(this._editingData.w, token.ident.length);
                         token.replace(newTokenText, true);
                         break;
                     case 'MM':
@@ -391,8 +397,7 @@ DateInput2.eventHandler.keydown = function (event) {
                         value = parseInt(token.text) - 1;
                         if (isNaN(value)) {
                             this._editingData.M = event.key === 'ArrowUp' ? 0 : 11;
-                        }
-                        else {
+                        } else {
                             this._editingData.M = (value + (event.key === 'ArrowUp' ? 1 : 11)) % 12;
                         }
                         newTokenText = '' + (this._editingData.M + 1);
@@ -403,8 +408,7 @@ DateInput2.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.y = new Date().getFullYear();
-                        }
-                        else {
+                        } else {
                             this._editingData.y = Math.max(1890, Math.min(2089, value + (event.key === 'ArrowUp' ? 1 : -1)));
                         }
 
@@ -415,24 +419,25 @@ DateInput2.eventHandler.keydown = function (event) {
 
                 }
         }
-    }
-    else if (event.key === "Delete" || event.key === 'Backspace') {
+    } else if (event.key === "Delete" || event.key === 'Backspace') {
         event.preventDefault();
         if (endToken.idx !== token.idx) {
             if (this.notNull) {
                 this.$text.value = formatDateTime(new Date(Math.min(this.max.getTime(), Math.max(this.min.getTime(), new Date().getTime()))), this._format);
-            }
-            else {
+            } else {
                 this.$text.value = this._format;
             }
             this.$text.select();
-        }
-        else {
+        } else {
             if (this.notNull) {
                 switch (token.ident) {
                     case 'y':
                     case 'yyyy':
                         token.replace(zeroPadding(new Date().getFullYear(), token.ident.length), true);
+                        break;
+                    case 'w':
+                    case 'ww':
+                        token.replace(zeroPadding(1, token.ident.length), true);
                         break;
                     case 'M':
                     case 'MM':
@@ -443,20 +448,17 @@ DateInput2.eventHandler.keydown = function (event) {
                     default:
                         token.replace(token.ident, true);
                 }
-            }
-            else {
+            } else {
                 token.replace(token.ident, true);
             }
             if (event.key === "Delete") this._editNextToken();
             else this._editPrevToken();
         }
-    }
-    else if (event.key === "Enter" || event.key === 'Tab') {
+    } else if (event.key === "Enter" || event.key === 'Tab') {
         this._correctingInput();
         this._loadValueFromInput();
         this._notifyIfChange(event);
-    }
-    else if (event.ctrlKey) {
+    } else if (event.ctrlKey) {
         switch (event.key) {
             case 'a':
             case 'A':
@@ -475,8 +477,7 @@ DateInput2.eventHandler.keydown = function (event) {
             default:
                 event.preventDefault();
         }
-    }
-    else if (event.key.match(/^[0-9]$/g)) {
+    } else if (event.key.match(/^[0-9]$/g)) {
         event.preventDefault();
         var dVal = parseInt(event.key);
         if (this._editingData.state === STATE_NEW) {
@@ -487,6 +488,15 @@ DateInput2.eventHandler.keydown = function (event) {
                     this._editingData.state = STATE_EDITED;
                     this._editingData.d = dVal;
                     if (dVal > 3) {
+                        this._editNextToken();
+                    }
+                    break;
+                case 'w':
+                case 'ww':
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.state = STATE_EDITED;
+                    this._editingData.d = dVal;
+                    if (dVal > 6) {
                         this._editNextToken();
                     }
                     break;
@@ -506,13 +516,20 @@ DateInput2.eventHandler.keydown = function (event) {
                     this._editingData.state_num = 1;
                     break;
             }
-        }
-        else {
+        } else {
             switch (token.ident) {
                 case 'dd':
                 case 'd':
                     dVal = (parseInt(token.text.split('').pop()) || 0) * 10 + dVal;
                     dVal = Math.max(1, Math.min(31, dVal));
+                    this._editingData.d = dVal;
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editNextToken();
+                    break;
+                case 'ww':
+                case 'w':
+                    dVal = (parseInt(token.text.split('').pop()) || 0) * 10 + dVal;
+                    dVal = Math.max(1, Math.min(54, dVal));
                     this._editingData.d = dVal;
                     token.replace(zeroPadding(dVal, token.ident.length), true);
                     this._editNextToken();
@@ -533,15 +550,13 @@ DateInput2.eventHandler.keydown = function (event) {
                         // dVal = Math.max(1890, Math.min(2089, dVal));
                         token.replace(zeroPadding(dVal, token.ident.length), true);
                         this._editNextToken();
-                    }
-                    else {
+                    } else {
                         token.replace(zeroPadding(dVal, token.ident.length), true);
                     }
                     break;
             }
         }
-    }
-    else {
+    } else {
         event.preventDefault();
     }
 };
@@ -602,6 +617,7 @@ DateInput2.property.format = {
             console.error("Invalid date format: " + value);
         }
         this._format = value;
+        this._formatTokens = this._format.match(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g')) || [];
         this.value = this.value;//update
     },
     get: function () {
@@ -622,10 +638,16 @@ DateInput2.property.disabled = {
     }
 };
 
+/***
+ * @memberOf DateInput2
+ * @name calendarLevel
+ * @type {number}
+ */
 DateInput2.property.calendarLevel = {
     get: function () {
-        if (this._format.indexOf('d') >= 0) return 'day';
-        if (this._format.indexOf('M') >= 0) return 'month';
+        if (this._formatTokens.indexOf('d') >= 0 || this._formatTokens.indexOf('dd') >= 0) return 'day';
+        if (this._formatTokens.indexOf('w') >= 0 || this._formatTokens.indexOf('ww') >= 0) return 'week';
+        if (this._formatTokens.indexOf('M') >= 0 || this._formatTokens.indexOf('MM') >= 0) return 'month';
         return 'year';
     }
 };
@@ -655,8 +677,7 @@ DateInput2.property.notNull = {
         if (value) {
             this.addClass('as-must-not-null');
             if (!this.value) this.value = new Date();
-        }
-        else {
+        } else {
             this.removeClass('as-must-not-null');
         }
     },
