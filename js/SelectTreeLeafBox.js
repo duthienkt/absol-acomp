@@ -235,6 +235,7 @@ SelectTreeLeafBox.property.items = {
                 this.value = firstLeaf.value;
             }
         }
+        this._updateSelectedItem();
     }, get: function () {
         return this._items;
     }
