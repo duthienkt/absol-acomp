@@ -35,7 +35,7 @@ function DateInput2() {
     this._format = 'dd/MM/yyyy';
     this.$input = $('input', this);
     this._editingData = {};
-    this._startDayOfWeek = 1;
+    this.startDayOfWeek = 1;
     this.$text = this.$input;
     this.$text.on('mousedown', this.eventHandler.mouseDownInput)
         .on('mouseup', this.eventHandler.mouseUpInput)
@@ -209,14 +209,14 @@ DateInput2.prototype._correctingInput = function () {
         }
     }
 
-    if (tkDict.w && !isNaN(tkDict.w.value)){
-        if (!isNaN(tkDict.y.value)){
+    if (tkDict.w && !isNaN(tkDict.w.value)) {
+        if (!isNaN(tkDict.y.value)) {
             tkDict.w.value = Math.max(1, Math.min(tkDict.w.value, 1
-                + weekIndexOf(prevDate(new Date(tkDict.y.value +1, 0, 1)), false, this._startDayOfWeek)));
+                + weekIndexOf(prevDate(new Date(tkDict.y.value + 1, 0, 1)), false, this._startDayOfWeek)));
         }
     }
 
-    this.$text.value =  this._applyTokenDict(this._format, tkDict);
+    this.$text.value = this._applyTokenDict(this._format, tkDict);
 }
 
 DateInput2.prototype._correctingCurrentToken = function () {
@@ -304,11 +304,11 @@ DateInput2.prototype._loadValueFromInput = function () {
 DateInput2.prototype._applyTokenDict = function (format, dict, debug) {
     var rgx = new RegExp(this.tokenRegex.source, 'g');
     var tokenMap = this.tokenMap;
-    var res =  format.replace(rgx, function (full, g1, g2, sourceText) {
+    var res = format.replace(rgx, function (full, g1, g2, sourceText) {
         if (g1 && tokenMap[g1]) {
             var ident = tokenMap[g1];
             if (dict[ident] && !isNaN(dict[ident].value)) {
-                return  zeroPadding(dict[ident].value , g1.length);
+                return zeroPadding(dict[ident].value, g1.length);
             } else {
                 return full;
             }
@@ -724,6 +724,7 @@ DateInput2.prototype._attachCalendar = function () {
     this.share.$holdingInput = this;
     this.share.$follower.followTarget = this;
     this.share.$calendar.level = this.calendarLevel;
+    this.share.$calendar.startDayOfWeek = this.startDayOfWeek || 0;
     this.share.$calendar.min = this._min;
     this.share.$calendar.max = this._max;
     this.share.$calendar.on('pick', this.eventHandler.calendarPick);
