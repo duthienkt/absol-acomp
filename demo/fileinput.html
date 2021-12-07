@@ -48,6 +48,20 @@
         });
     });
 
+    var fileListInput = absol._({tag: 'filelistinput'}).addTo(document.body);
+    fileListInput.files =  ['https://absol.cf/share/DE-SO-05.doc',
+        "https://absol.cf/share/ExcelTut.rar",
+        "https://absol.cf/share/No%20Friends%20AMV.mp4"
+    ];
+
+    var fileListInput1 = absol._({tag: 'filelistinput'}).addTo(document.body);
+    fileListInput1.files =  ['https://absol.cf/share/DE-SO-05.doc',
+        "https://absol.cf/share/ExcelTut.rar",
+        "https://absol.cf/share/No%20Friends%20AMV.mp4"
+    ];
+
+    fileListInput1.readOnly = true;
+
 </script>
 
 <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
