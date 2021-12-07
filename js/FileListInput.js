@@ -33,7 +33,7 @@ FileListInput.tag = 'FileListInput'.toLowerCase();
 
 FileListInput.render = function () {
     return _({
-        class: 'as-file-list-input',
+        class: ['as-file-list-input', 'as-bscroller'],
         extendEvent: ['change'],
         child: [
             {
@@ -97,6 +97,7 @@ FileListInput.prototype.add = function (file) {
     var fileElt = this._makeFileBox(file);
     this.$fileBoxes.push(fileElt);
     this.addChildBefore(fileElt, this.$add);
+    this._files.push(file);
 };
 
 

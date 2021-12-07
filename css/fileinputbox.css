@@ -169,6 +169,7 @@
     padding: 5px;
     border: 1px solid #dddddd;
     box-sizing: border-box;
+    overflow: auto;
 }
 
 .as-file-list-input .as-file-input-box {
