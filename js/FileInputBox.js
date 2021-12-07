@@ -100,8 +100,14 @@ FileInputBox.render = function () {
 
 
 FileInputBox.prototype.download = function () {
-    if (this.value) {
-        saveAs(this.value, this.fileName);
+    var value = this.value;
+    if (value) {
+        if (value && value.name && value.url){
+            saveAs(value.url, value.name);
+        }
+        else {
+            saveAs(value, this.fileName);
+        }
     }
 };
 
@@ -136,6 +142,11 @@ FileInputBox.property.value = {
             type = value.replace(/\.upload$/, '').split('.').pop();
             name = value.split('/').pop().replace(/%20/g, ' ');
             this.attr('title', value);
+        }
+        else if (value && value.name && value.url){//keeview file format
+            this.attr('title', value.url);
+            name = value.name;
+            type = name.split('.').pop().toLowerCase();
         }
         this._value = value;
         this.fileSize = size;
