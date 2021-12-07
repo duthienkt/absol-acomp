@@ -76,7 +76,7 @@ SelectTreeLeafMenu.property.items = {
         if (this.$selectBox.$selectedItem) {
             this.$holderItem.data = this.$selectBox.$selectedItem.itemData;
         } else {
-            this.$holderItem.data = null;
+            this.$holderItem.data = {text:''};
         }
     },
     get: function () {
@@ -87,6 +87,11 @@ SelectTreeLeafMenu.property.items = {
 SelectTreeLeafMenu.property.value = {
     set: function (value) {
         this.$selectBox.value = value;
+        if (this.$selectBox.$selectedItem) {
+            this.$holderItem.data = this.$selectBox.$selectedItem.itemData;
+        } else {
+            this.$holderItem.data = {text:''};
+        }
     },
     get: function () {
         return this.$selectBox.value;
