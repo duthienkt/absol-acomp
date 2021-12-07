@@ -23,6 +23,8 @@ function MultiCheckTreeLeafMenu() {
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
 }
 
+MultiCheckTreeLeafMenu.tag = 'MultiCheckTreeLeafMenu'.toLowerCase();
+
 MultiCheckTreeLeafMenu.render = function () {
     return _({
         class: ['as-multi-select-menu', 'as-multi-check-tree-leaf-menu'],
@@ -109,6 +111,7 @@ MultiCheckTreeLeafMenu.property.values = {
 
     },
     get: function () {
+
         return this.$selectBox.values;
     }
 };
