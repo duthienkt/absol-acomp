@@ -163,3 +163,73 @@
 .as-file-input-box button:active .mdi-download {
     color: rgb(0, 0, 250);
 }
+
+
+.as-file-list-input {
+    padding: 5px;
+    border: 1px solid #dddddd;
+    box-sizing: border-box;
+}
+
+.as-file-list-input .as-file-input-box {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.as-file-list-input.as-read-only .as-file-list-input-add {
+    display: none;
+}
+
+.as-file-list-input-add {
+    border: none;
+    width: 50px;
+    border-radius: 5px;
+    background-color: rgba(235, 235, 235, 0.2);
+    height: 100px;
+    box-sizing: border-box;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    vertical-align: middle;
+}
+
+
+.as-file-list-input-add:hover {
+    background-color: rgb(235, 235, 235);
+}
+
+.as-file-list-input-add:active {
+    background-color: rgb(212, 212, 212);
+}
+
+
+.as-file-list-input-add input {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.as-file-list-input-add-icon-ctn {
+    font-size: 2.5em;
+    text-align: center;
+    color: rgb(100, 100, 250);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.as-file-list-input-add-icon-ctn span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-file-list-input-add-icon-ctn::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}

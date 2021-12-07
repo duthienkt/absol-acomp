@@ -26,12 +26,12 @@ function FileInputBox() {
 
         }
     });
-    console.log(this.$trigger)
     this.$downloadBtn = $('.as-file-input-box-download-btn', this)
         .on('click', this.download.bind(this));
     this.$removeBtn = $('.as-file-input-box-remove-btn', this)
-        .on('click', this.clearValue.bind(this));
+        .on('click', this.clearValue.bind(this, true));
 
+    this.allowUpload = true;
     this._value = null;
     this.value = this._value;
     this._fileSize = null;
@@ -57,7 +57,6 @@ FileInputBox.render = function () {
                 class: 'as-file-input-box-trigger',
                 child: {
                     tag: 'input',
-
                     attr: {
                         type: 'file',
                         accept: '*',
@@ -106,10 +105,17 @@ FileInputBox.prototype.download = function () {
     }
 };
 
-FileInputBox.prototype.clearValue = function () {
+FileInputBox.prototype.clearValue = function (userAction, event) {
     if (this.value) {
         this.value = null;
-        //todo
+        if (userAction){
+            this.emit('change', {
+                type: 'change',
+                originalEvent: event,
+                action: 'clear',
+                target: this
+            }, this);
+        }
     }
 }
 
@@ -121,7 +127,6 @@ FileInputBox.property.value = {
         var type = null;
         var size = null;
         var name = null;
-        var matched;
         if ((value instanceof File) || (value instanceof Blob)) {
             size = value.size;
             name = value.name;
@@ -286,7 +291,7 @@ FileInputBox.eventHandler.input_fileDrop = function (event) {
         this.emit('change', {type: 'change', originalEvent: event, file: file, action: 'drop', target: this}, this);
     }
 
-}
+};
 
 
 ACore.install(FileInputBox);

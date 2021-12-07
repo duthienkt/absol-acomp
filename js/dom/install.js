@@ -117,6 +117,7 @@ import SelectTreeLeafBox from "../SelectTreeLeafBox";
 import SelectTreeLeafMenu from "../SelectTreeLeafMenu";
 import MultiCheckTreeLeafBox from "../MultiCheckTreeLeafBox";
 import MultiCheckTreeLeafMenu from "../MultiCheckTreeLeafMenu";
+import FileListInput from "../FileListInput";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -141,6 +142,7 @@ export var publicCreators = [
     DropZone,
     EmojiPickerTooltip,
     FileInputBox,
+    FileListInput,
     Scrollbar,
     VScrollbar,
     HScrollbar,
