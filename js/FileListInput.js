@@ -86,11 +86,17 @@ FileListInput.prototype._makeFileBox = function (file) {
     if (file instanceof File || file instanceof Blob || typeof file === 'string') {
         fileElt.value = file;
     } else if (typeof file === 'object') {
-        if (file.value) fileElt.value = file.value;
-        if (file.fileName) fileElt.fileName = file.fileName;
+        if (file.value || file.url) fileElt.value = file.value || file.url;
+        if (file.fileName || file.name) fileElt.fileName = file.fileName || file.name;
         if (file.removable) fileElt.removable = file.removable && !this.readOnly;
     }
     return fileElt;
+};
+
+FileListInput.prototype.add = function (file) {
+    var fileElt = this._makeFileBox(file);
+    this.$fileBoxes.push(fileElt);
+    this.addChildBefore(fileElt, this.$add);
 };
 
 
@@ -150,14 +156,10 @@ FileListInput.eventHandler.add = function (event) {
     var files = Array.prototype.slice.call(this.$addedFile.files);
     this.$addedFile.files = null;
     if (files.length === 0) return;
-    var file, fileElt;
     for (var i = 0; i < files.length; ++i) {
-        file = files[i];
-        fileElt = this._makeFileBox(file);
-        this.$fileBoxes.push(fileElt);
-        this.addChildBefore(fileElt, this.$add);
+        this.add(files[i]);
     }
-    this.emit('change', {files: files, type: 'change', target: this, originalEvent: event, action: 'add'}, this)
+    this.emit('change', {files: files, type: 'change', target: this, originalEvent: event, action: 'add'}, this);
 };
 
 
