@@ -118,6 +118,8 @@ import SelectTreeLeafMenu from "../SelectTreeLeafMenu";
 import MultiCheckTreeLeafBox from "../MultiCheckTreeLeafBox";
 import MultiCheckTreeLeafMenu from "../MultiCheckTreeLeafMenu";
 import FileListInput from "../FileListInput";
+import DateInYearPicker from "../DateInYearPicker";
+import DateInYearInput from "../DateInYearInput";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -139,6 +141,9 @@ export var publicCreators = [
     CircleSectionLabel,
     CountdownClock,
     CountdownText,
+    DateInYearPicker,
+    DateInYearInput,
+    DateTimeInput,
     DropZone,
     EmojiPickerTooltip,
     FileInputBox,

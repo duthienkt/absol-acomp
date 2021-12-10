@@ -1,5 +1,5 @@
 import '../css/dateinyearinput.css';
-import {$, $$, _} from "../ACore";
+import ACore, {$, $$, _} from "../ACore";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {compareDate, nextMonth} from "absol/src/Time/datetime";
 
@@ -263,8 +263,8 @@ DateInYearPicker.property.date = {
             cM = new Date(2000, this._month, 1);
             dim = compareDate(nextMonth(cM), cM);
         }
-
-        value = Math.max(1, Math.min(dim, Math.floor(value)));
+        if (typeof value === "number")
+            value = Math.max(1, Math.min(dim, Math.floor(value)));
         if (isNaN(value)) value = null;
         if (this._date === value) return;
         if (this._date !== null) {
@@ -287,8 +287,9 @@ DateInYearPicker.property.month = {
      * @param value
      */
     set: function (value) {
-        if (typeof value !== 'number') value = null;
-        value = Math.max(0, Math.min(11, Math.floor(value)));
+        if (typeof value == 'number') {
+            value = Math.max(0, Math.min(11, Math.floor(value)));
+        } else value = null;
         if (isNaN(value)) value = null;
         if (this._month === value) return;
         if (this._month !== null) {
@@ -326,7 +327,7 @@ DateInYearPicker.property.month = {
 
 DateInYearPicker.property.value = {
     set: function (value) {
-        value = value || {};
+        value = value || {month: null, date: null};
         this.month = value.month;
         this.date = value.date;
     },
@@ -335,5 +336,6 @@ DateInYearPicker.property.value = {
     }
 };
 
+ACore.install(DateInYearPicker);
 
 export default DateInYearPicker;
