@@ -12,9 +12,7 @@
 
 <body>
 <h1>FileInput</h1>
-<style>
 
-</style>
 
 <script>
     [true, false].forEach(function (removable) {
@@ -48,16 +46,17 @@
         });
     });
 
+   absol._('<h1>FileListInput</h1>').addTo(document.body);
     var fileListInput = absol._({tag: 'filelistinput'}).addTo(document.body);
-    fileListInput.files =  ['https://absol.cf/share/DE-SO-05.doc',
+    fileListInput.files = ['https://absol.cf/share/DE-SO-05.doc',
         "https://absol.cf/share/ExcelTut.rar",
         "https://absol.cf/share/No%20Friends%20AMV.mp4"
     ];
 
     var fileListInput1 = absol._({tag: 'filelistinput'}).addTo(document.body);
-    fileListInput1.files =  ['https://absol.cf/share/DE-SO-05.doc',
+    fileListInput1.files = ['https://absol.cf/share/DE-SO-05.doc',
         "https://absol.cf/share/ExcelTut.rar",
-        "https://absol.cf/share/No%20Friends%20AMV.mp4"
+        {url: "https://absol.cf/share/No%20Friends%20AMV.mp4", name: 'No Friend.mp4'}
     ];
 
     fileListInput1.readOnly = true;

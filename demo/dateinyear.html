@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Date In Year</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var Snackbar = absol.require('snackbar');
+        _('<h2>Date In Year Picker</h2>').addTo(document.body);
+        var picker = _({
+            tag: 'dateinyearpicker',
+            on: {
+                change: function () {
+                    Snackbar.show('Change ' + this.date + '/' + this.month + ' ' + JSON.stringify(this.value));
+                }
+            }
+        }).addTo(document.body);
+        _('<h2>Date In Year Input</h2>').addTo(document.body);
+
+        var input = _({
+            tag: 'dateinyearinput',
+            on: {
+                change: function () {
+                    Snackbar.show('Change ' + JSON.stringify(this.value));
+                }
+            },
+            props: {
+                value: null
+                // value: {date: 20, month: 9}// 20/10
+            }
+        }).addTo(document.body);
+
+        var input = _({
+            tag: 'dateinyearinput',
+            style: {
+                marginLeft: '30px'
+            },
+            on: {
+                change: function () {
+                    Snackbar.show('Change ' + JSON.stringify(this.value));
+                }
+            },
+            props: {
+                // value:null
+                notNull: true,
+                value: {date: 20, month: 9}// 20/10
+            }
+        }).addTo(document.body);
+
+    })();
+</script>
+</body>
+</html>
