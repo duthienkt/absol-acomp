@@ -183,6 +183,19 @@ DateInYearInput.property.notNull = {
     }
 };
 
+DateInYearInput.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        } else {
+            this.removeClass('as-disabled');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-disabled');
+    }
+};
+
 /***
  * @memberOf DateInYearInput#
  * @type {{}}
