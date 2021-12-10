@@ -1,0 +1,144 @@
+.as-date-in-year-picker {
+    font-size: 14px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    width: 276px;
+    box-sizing: border-box;
+    border: 1px solid #dddddd;
+    display: inline-block;
+    padding: 10px 5px;
+}
+
+
+.as-date-in-year-picker-table {
+    display: table;
+}
+
+.as-date-in-year-picker-row {
+    display: table-row;
+}
+
+
+.as-date-in-year-picker-row:first-child {
+    text-align: center;
+    line-height: 1.5;
+}
+
+.as-date-in-year-picker-cell {
+    display: table-cell;
+}
+
+
+.as-date-in-year-picker-cell:first-child {
+    padding-right: 10px;
+}
+
+
+.as-date-in-year-picker-month-col {
+    position: relative;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-date-in-year-picker-month-viewport {
+    width: 50px;
+    overflow: hidden;
+
+}
+
+.as-date-in-year-picker-month-scroller {
+    width: 70px;
+    height: 112px;
+    overflow-y: scroll;
+    box-sizing: border-box;
+}
+
+
+button.as-date-in-year-picker-month {
+    font-size: inherit;
+    height: 28px;
+    width: 50px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+button.as-date-in-year-picker-month:hover {
+    background-color: rgb(224, 245, 256);
+}
+
+button.as-date-in-year-picker-month.as-selected {
+    background-color: rgb(188, 205, 236);
+    border-radius: 3px;
+}
+
+button.as-date-in-year-picker-month > span {
+    font-size: 16px;
+}
+
+
+.as-chrome-time-picker-scroller-up:hover,
+.as-chrome-time-picker-scroller-down:hover {
+    background-color: rgba(169, 169, 169, 0.2);
+}
+
+
+.as-date-in-year-picker-month-btn {
+    position: absolute;
+    left: 0;
+    font-size: inherit;
+    height: 20px;
+    width: 50px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    box-sizing: border-box;
+    border-radius: 3px;
+}
+
+.as-date-in-year-picker-month-btn.as-up {
+    top: 0;
+}
+
+.as-date-in-year-picker-month-btn.as-down {
+    bottom: 0;
+}
+
+
+.as-date-in-year-picker-month-btn:hover {
+    background-color: rgba(169, 169, 169, 0.2);
+}
+
+.as-date-in-year-picker-month-btn > span {
+    font-size: 1.5em;
+}
+
+
+.as-date-in-year-picker-days {
+    display: inline-table;
+    vertical-align: middle;
+    border: solid 1px rgb(190, 190, 190);
+}
+
+.as-date-in-year-picker-week {
+    display: table-row;
+}
+
+.as-date-in-year-picker-day {
+    display: table-cell;
+    text-align: right;
+    padding: 5px;
+    line-height: 20px;
+    font-size: inherit;
+}
+
+
+.as-date-in-year-picker-day:hover{
+    background-color: rgb(224, 245, 256);
+    cursor: default;
+}
+
+.as-date-in-year-picker-day.as-selected{
+    background-color: rgb(188, 205, 236);
+}
