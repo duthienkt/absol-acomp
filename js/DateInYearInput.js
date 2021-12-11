@@ -187,8 +187,10 @@ DateInYearInput.property.disabled = {
     set: function (value) {
         if (value) {
             this.addClass('as-disabled');
+            this.$input.disabled = true;
         } else {
             this.removeClass('as-disabled');
+            this.$input.disabled = false;
         }
     },
     get: function () {
