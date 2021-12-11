@@ -1,11 +1,8 @@
 import ACore, {_, $} from '../ACore';
-import SelectTreeLeafBox from "./SelectTreeLeafBox";
-import OOP from "absol/src/HTML5/OOP";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
-import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import MultiCheckTreeLeafBox from "./MultiCheckTreeLeafBox";
 import SelectTreeLeafMenu from "./SelectTreeLeafMenu";
 import SelectBoxItem from "./SelectBoxItem";
+import MultiSelectMenu from "./MultiSelectMenu";
 
 /****
  * @extends AElement
@@ -111,13 +108,14 @@ MultiCheckTreeLeafMenu.property.values = {
 
     },
     get: function () {
-
         return this.$selectBox.values;
     }
 };
 
 
 MultiCheckTreeLeafMenu.property.isFocus = SelectTreeLeafMenu.property.isFocus;
+
+MultiCheckTreeLeafMenu.property.disabled =  MultiSelectMenu.property.disabled;
 
 MultiCheckTreeLeafMenu.eventHandler = {};
 

@@ -6,6 +6,7 @@ import SelectBoxItem from "./SelectBoxItem";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import MultiSelectMenu from "./MultiSelectMenu";
 
 
 /***
@@ -245,6 +246,8 @@ MultiCheckTreeMenu.property.values = {
         return this._values;
     }
 };
+
+MultiCheckTreeMenu.property.disabled = MultiSelectMenu.property.disabled;
 
 
 MultiCheckTreeMenu.eventHandler = {};
