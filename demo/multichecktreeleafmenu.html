@@ -67,9 +67,24 @@
             }
         }).addTo(document.body);
 
+        var menu1 = _({
+            tag: 'multichecktreeleafmenu',
+            props: {
+                items: items2,
+                enableSearch: true,
+                values: [-17, -18],
+                disabled: true
+            },
+            on: {
+                change: function () {
+                    absol.require('snackbar').show('change : ' + this.values.join(', '));
+                }
+            }
+        }).addTo(document.body);
+
         _({
             tag: 'pre',
-            style:{background: '#eef'},
+            style: {background: '#eef'},
             child: {
                 tag: 'code',
                 child: {text: 'items = ' + absol.generateJSVariable(items)}

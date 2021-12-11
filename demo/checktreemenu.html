@@ -123,6 +123,31 @@
                     }
                 }
             }).addTo(demo2);
+
+            var mn2 = _({
+                tag: 'multichecktreemenu',
+                style: {
+                    marginBottom: '2em',
+                    width: '80vw'
+                },
+                props: {
+                    items: items2,
+                    values: [2027, 3547, 3550, 2028, 2057],
+                    enableSearch: true,
+                    disabled: true,
+                },
+                on: {
+                    change: function () {
+                        var values = this.values;
+                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
+                        var t = _({
+                            tag: 'div',
+                            child: {text: text}
+                        });
+                        demo2.addChildAfter(this, t);
+                    }
+                }
+            }).addTo(demo2);
         });
 
     })();

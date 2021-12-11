@@ -77,7 +77,6 @@
             tag: 'multicheckmenu',
             style: {
                 'max-height': '300px',
-                marginBottom: '800px'
             },
             props: {
                 enableSearch: false,
@@ -91,7 +90,6 @@
             tag: 'multicheckmenu',
             style: {
                 'max-height': '300px',
-                marginBottom: '800px'
             },
             props: {
                 enableSearch: false,
@@ -101,21 +99,34 @@
             on: {
                 change: function (event) {
                     console.log(event.type,this.values);
-                },
-                // add: function (event) {
-                //     console.log("add", event.itemData, event.value);
-                // },
-                // remove: function (event) {
-                //     console.log("remove", event.itemData, event.value);
-                // }
+                }
             }
         }).addTo(document.body);
-return;
+        var menu2 = _({
+            tag: 'multicheckmenu',
+            style: {
+                'max-height': '300px',
+                marginBottom: '800px'
+            },
+            props: {
+                enableSearch: false,
+                items: items,
+                itemFocusable: true,
+                disabled: true
+            },
+            on: {
+                change: function (event) {
+                    console.log(event.type,this.values);
+                }
+            }
+        }).addTo(document.body);
+        return;
         fetch('./demo_tree_list.js').then(res => res.text()).then(text => {
             var factory = new Function('module', 'exports', text + '\nreturn module.exports;');
             var module = {exports: {}};
             return factory.call(window, module, module.exports);
         }).then(items => {
+            console.log(items)
             _('<h3>MultiCheckMenu(with tree)</h3>').addTo(document.body);
             var menu2 = _({
                 tag: 'multicheckmenu',

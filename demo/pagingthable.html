@@ -38,7 +38,11 @@
         }).addTo(absol.$('#test-div'));
 
         var pageIndicator = absol._({
-            tag: 'pageindicator'
+            tag: 'pageindicator',
+            props:{
+                length: 7,
+                idx: 3
+            }
         }).addTo(document.body);
     </script>
 
