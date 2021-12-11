@@ -3,6 +3,7 @@ import SelectTreeLeafBox from "./SelectTreeLeafBox";
 import OOP from "absol/src/HTML5/OOP";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
 import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import SelectMenu from "./SelectMenu2";
 
 
 /***
@@ -145,6 +146,8 @@ SelectTreeLeafMenu.property.isFocus = {
         return this.containsClass('as-focus');
     }
 };
+
+SelectTreeLeafMenu.property.disabled = SelectMenu.property.disabled;
 
 
 SelectTreeLeafMenu.eventHandler = {};
