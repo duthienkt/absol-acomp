@@ -52,7 +52,12 @@
         },
         {
             text: 'Save(without icon)'
-        }
+        },
+            {
+                icon: 'span.mdi.mdi-content-save',
+                text: 'Save',
+                disabled: true
+            }
         ]
         var ctn = $('#ctn');
         theme.forEach(function (theme) {
@@ -62,7 +67,7 @@
                 var button = _({
                     tag: 'flexiconbutton',
                     style: {
-                        'font-family':"'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif", 
+                        'font-family':"'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
                         margin: '0.2em',
                     },
                     class: theme || [],

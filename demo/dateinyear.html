@@ -35,7 +35,7 @@
             }
         }).addTo(document.body);
 
-        var input = _({
+        var input2 = _({
             tag: 'dateinyearinput',
             style: {
                 marginLeft: '30px'
@@ -49,6 +49,22 @@
                 // value:null
                 notNull: true,
                 value: {date: 20, month: 9}// 20/10
+            }
+        }).addTo(document.body);
+
+        var input3 = _({
+            tag: 'dateinyearinput',
+            style: {
+                marginLeft: '30px'
+            },
+            on: {
+                change: function () {
+                    Snackbar.show('Change ' + JSON.stringify(this.value));
+                }
+            },
+            props: {
+                value: {date: 20, month: 9},// 20/10
+                disabled: true
             }
         }).addTo(document.body);
 
