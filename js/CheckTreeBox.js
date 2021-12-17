@@ -48,7 +48,7 @@ CheckTreeBox.prototype._initDomHook = function () {
 CheckTreeBox.prototype._initProperty = function () {
     this._items = [];
     this._values = [];
-    this.indexedHolderByValue = {};
+    this.itemHolderByValue = {};
     /***
      *
      * @type {TreeNodeHolder[]}
@@ -129,11 +129,13 @@ CheckTreeBox.render = function () {
     });
 };
 
+CheckTreeBox.prototype.HolderClass = TreeNodeHolder;
 
 CheckTreeBox.prototype.depthIndexing = function (items, arr, rootArr) {
     var res = {};
     var count = 0;
     var self = this;
+    var HolderClass = this.HolderClass;
 
     /***
      *
@@ -144,7 +146,7 @@ CheckTreeBox.prototype.depthIndexing = function (items, arr, rootArr) {
         items.forEach(function visit(item) {
             var value = item.value + '';
             res[value] = res[value] || [];
-            var node = new TreeNodeHolder(self, item, count++, root);
+            var node = new HolderClass(self, item, count++, root);
             res[value].push(node);
             arr && arr.push(node);
             if (root) {
@@ -201,7 +203,6 @@ CheckTreeBox.prototype.noTransition = function () {
     setTimeout(function () {
         this.removeClass('as-no-transition');
     }.bind(this), 100);
-
 };
 
 
@@ -306,7 +307,7 @@ CheckTreeBox.prototype._updateToValues = function () {
 
 CheckTreeBox.prototype._updateFromValues = function () {
     var values = this._values;
-    var valueDict = this.values.reduce(function (ac, cr) {
+    var valueDict = this._values.reduce(function (ac, cr) {
         ac[cr] = true;
         return ac;
     }, {});
@@ -381,11 +382,22 @@ CheckTreeBox.property.items = {
 
 
 CheckTreeBox.property.values = {
+    /***
+     * @this CheckTreeBox
+     * @param values
+     */
     set: function (values) {
         this._values = values || [];
         this._updateFromValues();
+
     },
     get: function () {
+        return this._values;
+    }
+};
+
+CheckTreeBox.property.viewValues = {
+    get: function (){
         return this._values;
     }
 };
@@ -393,7 +405,8 @@ CheckTreeBox.property.values = {
 CheckTreeBox.property.enableSearch = {
     set: function (value) {
         if (value) this.addClass('as-enable-search');
-        else this.removeClass('as-enable-search');
+        else
+            this.removeClass('as-enable-search');
     },
     get: function () {
         return this.containsClass('as-enable-search');
@@ -618,7 +631,7 @@ export default CheckTreeBox;
  * @param {TreeNodeHolder} parent
  * @constructor
  */
-function TreeNodeHolder(boxElt, item, idx, parent) {
+export function TreeNodeHolder(boxElt, item, idx, parent) {
     this.boxElt = boxElt;
     this.item = item;
     this.idx = idx;
@@ -705,7 +718,6 @@ TreeNodeHolder.prototype.selectAll = function (isDownUpdate) {
     if (this.selected === 'all') return;
     this.selected = 'all';
     if (this.itemElt) this.itemElt.selected = this.selected;
-    //todo find ref
     this.child.forEach(function (child) {
         child.selectAll(true);
     });
@@ -826,6 +838,7 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
             elt.level = this.level;
             elt.status = this.status;
             elt.selected = this.selected;
+            elt.title = this.leafCount+'';
         } else {
             this._elt = null;
         }
