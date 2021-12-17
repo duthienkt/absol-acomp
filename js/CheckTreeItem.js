@@ -67,17 +67,21 @@ CheckTreeItem.property.data = {
 
 CheckTreeItem.property.selected = {
     set: function (value) {
+        this.$checkbox.disabled = value === 'empty';
         if (value === 'all') {
-            this.$checkbox.removeClass('as-has-minus');
+            this.$checkbox.removeClass('as-has-minus')
+                .removeClass('as-has-minus');
             this.$checkbox.checked = true;
         } else if (value === 'child') {
             this.$checkbox.checked = false;
             this.$checkbox.addClass('as-has-minus');
+        } else if (value === 'empty') {
+            this.$checkbox.removeClass('as-has-minus')
+            this.$checkbox.checked = false;
         } else {
             this.$checkbox.removeClass('as-has-minus');
             this.$checkbox.checked = false;
         }
-
     },
     get: function () {
         if (this.$checkbox.checked) {
