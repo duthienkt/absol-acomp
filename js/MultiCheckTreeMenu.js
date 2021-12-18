@@ -7,6 +7,7 @@ import {hitElement} from "absol/src/HTML5/EventEmitter";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import MultiSelectMenu from "./MultiSelectMenu";
+import CheckTreeLeafOnlyBox from "./CheckTreeLeafOnlyBox";
 
 
 /***
@@ -14,10 +15,11 @@ import MultiSelectMenu from "./MultiSelectMenu";
  * @constructor
  */
 function MultiCheckTreeMenu() {
+    this._items = [];
     this._values = [];
     this._viewValues = [];
     /***
-     * @type {CheckTreeBox}
+     * @type {CheckTreeBox|CheckTreeLeafOnlyBox}
      */
     this.$checkTreeBox = _({
         tag: CheckTreeBox.tag,
@@ -33,6 +35,12 @@ function MultiCheckTreeMenu() {
     this.on('click', this.eventHandler.click);
     OOP.drillProperty(this, this.$checkTreeBox, 'enableSearch');
     this.enableSearch = false;
+
+    /**
+     * @name leafOnly
+     * @type {boolean}
+     * @memberOf MultiCheckTreeMenu#
+     */
 }
 
 
@@ -102,6 +110,171 @@ MultiCheckTreeMenu.prototype._assignTokens = function (items) {
     }
 };
 
+
+MultiCheckTreeMenu.prototype._switchLeafMode = function () {
+    if (this.leafOnly) {
+        this.$checkTreeBox = _({
+            tag: CheckTreeLeafOnlyBox.tag,
+            on: {
+                change: this.eventHandler.boxChange,
+                preupdateposition: this.eventHandler.preUpdateListPosition,
+                toggleitem: this.eventHandler.boxToggleItem,
+                cancel: this.eventHandler.boxCancel
+            }
+        });
+        this._explicit = this._leafOnlyExplicit;
+
+    } else {
+        this.$checkTreeBox = _({
+            tag: CheckTreeBox.tag,
+            on: {
+                change: this.eventHandler.boxChange,
+                preupdateposition: this.eventHandler.preUpdateListPosition,
+                toggleitem: this.eventHandler.boxToggleItem,
+                cancel: this.eventHandler.boxCancel
+            }
+        });
+        this._explicit = this._normalExplicit;
+
+    }
+    this.$checkTreeBox.followTarget = this;
+    this.$checkTreeBox.items = this._items;
+    this.$checkTreeBox.values = this._values;
+};
+
+
+MultiCheckTreeMenu.prototype._implicit = function (values) {
+    values = (values || []);
+    var valueDict = (values || []).reduce(function (ac, cr) {
+        ac[cr + ''] = true;
+        return ac;
+    }, {});
+
+    var resDict = {};
+
+    function depthRemoveValueDict(node) {
+        if (valueDict[node.value]) delete valueDict[node.value];
+        if (node.items && node.items.length) {
+            node.items.forEach(depthRemoveValueDict);
+        }
+    }
+
+    var leafOnly = this.leafOnly;
+    var scan;
+    var leafCount = {};
+    var leafScan;
+    if (leafOnly) {
+        leafScan = function (node) {
+            if (node.isLeaf) {
+                leafCount[node.value] = 1;
+            } else {
+                leafCount[node.value] = 0;
+            }
+            if (node.items && node.items.length > 0) {
+                if (!node.isLeaf) {
+                    node.items.forEach(leafScan);
+                    leafCount[node.value] = node.items.reduce(function (ac, cr) {
+                        return ac + (leafCount[cr.value] || 0);
+                    }, 0);
+                } else {
+                    console.error("Invalid item:", node);
+                }
+            }
+        };
+        this._items.forEach(leafScan);
+        scan = function scan(node) {
+            if (!leafCount[node.value]) {
+                depthRemoveValueDict(node);
+                return true;
+            }
+            if (valueDict[node.value] && leafCount[node.value] > 0) return true;
+            if (!node.items || node.items.length === 0) return false;
+            var cs = node.items.map(scan);
+            if (cs.every(function (e) {
+                return e
+            })) {
+                depthRemoveValueDict(node);
+                return true;
+            } else {
+                node.items.forEach(function (nd, i) {
+                    if (cs[i] && leafCount[nd.value] > 0) resDict[nd.value] = nd;
+                });
+                return false;
+            }
+        };
+    } else {
+        scan = function scan(node) {
+            if (valueDict[node.value]) {
+                depthRemoveValueDict(node);
+                return true;
+            }
+            if (!node.items || node.items.length === 0) return false;
+            var cs = node.items.map(scan);
+            if (cs.every(function (e) {
+                return e
+            })) {
+                depthRemoveValueDict(node);
+                return true;
+            } else {
+                node.items.forEach(function (nd, i) {
+                    if (cs[i]) resDict[nd.value] = nd;
+                });
+                return false;
+            }
+        };
+    }
+
+    var csRoot = this._items.map(scan);
+
+    this._items.forEach(function (nd, i) {
+        if (csRoot[i] && (!leafOnly || leafCount[nd.value] > 0)) resDict[nd.value] = nd;
+    });
+
+    var eValues = values.reduce(function (ac, cr) {
+        if (valueDict[cr.value]) ac.push(cr.value);
+        return ac;
+    }, []);
+    for (var key in resDict) {
+        eValues.push(resDict[key].value);
+    }
+
+    return eValues;
+};
+
+
+MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
+    return (values || []).slice();
+};
+
+
+MultiCheckTreeMenu.prototype._leafOnlyExplicit = function (values) {
+    var valueDict = values.reduce(function (ac, cr) {
+        ac[cr] = true;
+        return ac;
+    }, {});
+    var res = [];
+
+    function scan(node, selected) {
+        selected = selected || valueDict[node.value];
+        if (node.isLeaf  && selected) res.push(node.value);
+        if (node.items && node.items.length > 0 ){
+            node.items.forEach(function (cNode){
+                scan(cNode, selected);
+            })
+        }
+    }
+
+    this._items.forEach(function (node){
+        scan(node, false);
+    });
+
+    return res;
+};
+
+
+MultiCheckTreeMenu.prototype._explicit = MultiCheckTreeMenu.prototype._normalExplicit;
+
+
 MultiCheckTreeMenu.prototype.findItemsByValues = function (values) {
     return values.map(function (value) {
         var holders = this.$checkTreeBox.findItemHoldersByValue(value);
@@ -153,6 +326,10 @@ MultiCheckTreeMenu.prototype.cancelView = function () {
 MultiCheckTreeMenu.prototype.init = function (props) {
     props = props || {};
     var cProps = Object.assign({}, props);
+    if ('leafOnly' in props) {
+        this.leafOnly = props.leafOnly;
+        delete cProps.leafOnly;
+    }
     if ('items' in props) {
         this.items = props.items;
         delete cProps.items;
@@ -218,7 +395,8 @@ MultiCheckTreeMenu.property.isFocus = {
 
 MultiCheckTreeMenu.property.items = {
     set: function (items) {
-        this.$checkTreeBox.items = items || [];
+        this._items = items || [];
+        this.$checkTreeBox.items = this._items;
         this.addStyle('--list-min-width', this.$checkTreeBox.estimateSize.width + 'px');
         this.values = this._values;//update
     },
@@ -233,7 +411,7 @@ MultiCheckTreeMenu.property.values = {
      * @param values
      */
     set: function (values) {
-        values = values || [];
+        values = this._implicit(values || []);
         this.$checkTreeBox.values = values;
         this._values = values;
         values = this.$checkTreeBox.values.slice();//correct wrong item
@@ -243,9 +421,26 @@ MultiCheckTreeMenu.property.values = {
      * @this MultiCheckTreeMenu
      */
     get: function () {
-        return this._values;
+        return this._explicit(this._values);
     }
 };
+
+MultiCheckTreeMenu.property.leafOnly = {
+    set: function (value) {
+        if (!!value === this.containsClass('as-leaf-only'))
+            return;
+        if (value) {
+            this.addClass('as-leaf-only');
+        } else {
+            this.removeClass('as-leaf-only');
+        }
+        this._switchLeafMode();
+    },
+    get: function () {
+        return this.containsClass('as-leaf-only');
+    }
+};
+
 
 MultiCheckTreeMenu.property.disabled = MultiSelectMenu.property.disabled;
 

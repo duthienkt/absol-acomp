@@ -838,7 +838,6 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
             elt.level = this.level;
             elt.status = this.status;
             elt.selected = this.selected;
-            elt.title = this.leafCount+'';
         } else {
             this._elt = null;
         }

@@ -120,6 +120,7 @@ import MultiCheckTreeLeafMenu from "../MultiCheckTreeLeafMenu";
 import FileListInput from "../FileListInput";
 import DateInYearPicker from "../DateInYearPicker";
 import DateInYearInput from "../DateInYearInput";
+import CheckTreeLeafOnlyBox from "../CheckTreeLeafOnlyBox";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -135,6 +136,7 @@ export var publicCreators = [
     CheckBoxButton,
     CheckListItem,
     CheckListBox,
+    CheckTreeLeafOnlyBox,
     ChromeCalendar,
     ChromeTimePicker,
     ChromeTime24Picker,
