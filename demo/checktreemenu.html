@@ -46,6 +46,16 @@
             var module = {exports: {}};
             var factor = new Function('module', 'exports', text + '\nreturn module.exports;');
             return factor(module, module.exports);
+        }).then(function (items) {
+            items.forEach(function visit(item) {
+                var isGroup = (item.items && item.items.length > 0) || (item.text.toUpperCase() === item.text);
+                item.icon = item.icon || (isGroup ? 'span.mdi.mdi-account-group-outline' : 'span.mdi.mdi-account-outline');
+                item.isLeaf = !isGroup;
+                if (item.items && item.items.length > 0) {
+                    item.items.forEach(visit);
+                }
+            });
+            return items;
         });
         listDataAsync.then(function (items) {
             var ctm = _({
@@ -89,7 +99,7 @@
                 var c = text[0].toLowerCase();
                 if (text === 'cong ty')
                     item.icon = 'span.mdi.mdi-domain';
-                else if (item.items && item.items.length > 0) {
+                else if (!item.isLeaf) {
                     item.icon = 'span.mdi.mdi-account-group-outline';
                 } else {
                     item.icon = 'span.mdi.mdi-alpha-' + c + '-circle-outline';
@@ -123,8 +133,29 @@
                     }
                 }
             }).addTo(demo2);
+            var mn3 = _({
+                tag: 'multichecktreemenu',
+                style: {
+                    marginBottom: '2em',
+                    width: '80vw',
+                    borderColor: 'red'
+                },
+                props: {
+                    leafOnly: true,
+                    items: items2,
+                    values: [2085, 2061, 2089, 2072],
+                    enableSearch: true
+                },
+                on: {
+                    change: function () {
+                        var values = this.values;
+                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
+                      absol.require('snackbar').show(text);
+                    }
+                }
+            }).addTo(demo2);
 
-            var mn2 = _({
+            var mn4 = _({
                 tag: 'multichecktreemenu',
                 style: {
                     marginBottom: '2em',
@@ -148,6 +179,7 @@
                     }
                 }
             }).addTo(demo2);
+
         });
 
     })();
