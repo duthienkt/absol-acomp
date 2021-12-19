@@ -83,6 +83,7 @@ DateInput2.render = function () {
             class: 'as-date-input-clear-btn',
             child: 'span.mdi.mdi-close-circle'
         }, {
+            tag:'button',
             class: 'as-date-input-icon-ctn',
             child: 'span.mdi.mdi-calendar'
         }]

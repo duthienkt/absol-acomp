@@ -98,6 +98,7 @@ DateInput.render = function () {
             }
         },
             {
+                tag:'button',
                 class: 'as-date-input-icon-ctn',
                 child: 'span.mdi.mdi-calendar'
             }
