@@ -20,7 +20,6 @@ function FileListInput() {
     this.$attachhook.requestUpdateSize = this.updateSize.bind(this);
     this.$attachhook.on('attached', function () {
         ResizeSystem.add(this);
-        console.log(this)
         this.requestUpdateSize();
     });
     this.on('filedrop', this.eventHandler.input_fileDrop);
