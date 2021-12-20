@@ -74,7 +74,7 @@ ContextCaptor.render = function () {
     });
 };
 
-ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems) {
+ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItem) {
     var self = this;
     var anchor = _('.as-context-menu-ctn.absol-context-menu-anchor' + (isMobile ? '.as-anchor-modal' : '')).addTo(document.body);
     var finish = function (event) {
@@ -100,7 +100,7 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItems) 
         tag: 'vmenu',
         props: props,
         on: {
-            press: onSelectItems || function () {
+            press: onSelectItem || function () {
             }
         }
     }).addTo(anchor);
@@ -162,12 +162,12 @@ ContextCaptor.prototype._fireContextMenuEvent = function () {
     var localEvent = Object.assign({
         clientX: this._posCurrent.x, clientY: this._posCurrent.y,
         target: this.$target,
-        showContextMenu: function (props, onSelectItems) {
+        showContextMenu: function (props, onSelectItem) {
             showed = true;
             self.sync = self.sync.then(function () {
                 return new Promise(function (rs) {
                     setTimeout(function () {
-                        self.showContextMenu(self._posCurrent.x, self._posCurrent.y, props, onSelectItems);
+                        self.showContextMenu(self._posCurrent.x, self._posCurrent.y, props, onSelectItem);
                         rs();
                     }, 30)
                 });
