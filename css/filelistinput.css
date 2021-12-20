@@ -1,0 +1,173 @@
+
+.as-file-list-input {
+    padding: 5px;
+    border: 1px solid #dddddd;
+    box-sizing: border-box;
+    overflow: auto;
+    --item-width: 100%;
+    --item-require-width: 300px;
+    position: relative;
+}
+
+.as-file-list-input-upload-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    text-align: center;
+    white-space: nowrap;
+    pointer-events: none;
+    background-color: rgba(30, 30, 80, 0.3);
+    color: #b0fffb;
+}
+
+.as-file-list-input-upload-overlay::before {
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+    content: "";
+}
+
+.as-file-list-input-upload-overlay > span {
+    font-size: 30px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-file-list-input:not(.as-drag-over) .as-file-list-input-upload-overlay,
+.as-file-list-input.as-read-only .as-file-list-input-upload-overlay {
+    display: none;
+}
+
+/*span.mdi.mdi-upload*/
+
+.as-file-list-input .as-file-input-box {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.as-file-list-input.as-read-only .as-file-list-input-add {
+    display: none;
+}
+
+.as-file-list-input-add {
+    border: none;
+    width: 50px;
+    border-radius: 5px;
+    background-color: rgba(235, 235, 235, 0.2);
+    height: 30px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+
+.as-file-list-input-add:hover {
+    background-color: rgb(235, 235, 235);
+}
+
+.as-file-list-input-add:active {
+    background-color: rgb(212, 212, 212);
+}
+
+
+.as-file-list-input-add input {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.as-file-list-input-add-icon-ctn {
+    font-size: 1.5em;
+    text-align: center;
+    color: rgb(100, 100, 250);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.as-file-list-input-add-icon-ctn span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-file-list-input-add-icon-ctn::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.as-file-list-input.as-drag-over .as-file-list-input-add,
+.as-file-list-input.as-drag-over .as-file-list-drag-file-text {
+    visibility: hidden;
+}
+
+.as-file-list-item {
+    position: relative;
+    height: 30px;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    width: calc(var(--item-width) - 5px);
+    padding-left: 32px;
+    white-space: nowrap;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
+.as-file-list-item-icon {
+    position: absolute;
+    left: 0;
+    top: calc(50% - 15px);
+    bottom: 0;
+    width: 30px;
+    height: 30px;
+}
+
+
+.as-file-list-item-name {
+    color: rgb(89, 89, 95);
+    display: inline-block;
+    overflow-x: hidden;
+    vertical-align: middle;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+
+.as-file-list-item::before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+
+.as-file-list-input .as-file-list-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
+
+.as-file-list-input:not(.as-empty) .as-file-list-drag-file-text {
+    display: none;
+}
+
+.as-file-list-item.as-active {
+    background-color: rgba(20, 185, 235, 0.3);
+}

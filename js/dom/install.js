@@ -121,6 +121,7 @@ import FileListInput from "../FileListInput";
 import DateInYearPicker from "../DateInYearPicker";
 import DateInYearInput from "../DateInYearInput";
 import CheckTreeLeafOnlyBox from "../CheckTreeLeafOnlyBox";
+import FileListItem from "../FileListItem";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -149,6 +150,7 @@ export var publicCreators = [
     DropZone,
     EmojiPickerTooltip,
     FileInputBox,
+    FileListItem,
     FileListInput,
     Scrollbar,
     VScrollbar,
