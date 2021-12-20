@@ -38,6 +38,8 @@
 }
 
 .as-file-list-input:not(.as-drag-over) .as-file-list-input-upload-overlay,
+.as-file-list-input:not(.as-droppable) .as-file-list-input-upload-overlay,
+.as-file-list-input:not(.as-droppable) .as-file-list-drag-file-text,
 .as-file-list-input.as-read-only .as-file-list-input-upload-overlay {
     display: none;
 }
@@ -109,7 +111,7 @@
     height: 100%;
 }
 
-.as-file-list-input.as-drag-over .as-file-list-input-add,
+.as-file-list-input.as-drag-over.as-droppable .as-file-list-input-add,
 .as-file-list-input.as-drag-over .as-file-list-drag-file-text {
     visibility: hidden;
 }

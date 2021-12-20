@@ -52,6 +52,11 @@ function FileListInput() {
      * @memberOf FileListInput#
      * @type {boolean}
      */
+    /***
+     * @name droppable
+     * @memberOf FileListInput#
+     * @type {boolean}
+     */
 }
 
 FileListInput.tag = 'FileListInput'.toLowerCase();
@@ -59,7 +64,7 @@ FileListInput.tag = 'FileListInput'.toLowerCase();
 FileListInput.render = function () {
     return _({
         tag: DropZone.tag,
-        class: ['as-file-list-input', 'as-bscroller', 'as-empty'],
+        class: ['as-file-list-input', 'as-bscroller', 'as-empty', 'as-droppable'],
         extendEvent: ['change', 'contextmenu'],
         child: [
             {
@@ -244,6 +249,23 @@ FileListInput.property.readOnly = {
     }
 };
 
+FileListInput.property.droppable = {
+    set: function (value) {
+        value = !!value;
+        if (value) {
+            this.addClass('as-droppable');
+        } else {
+            this.removeClass('as-droppable');
+        }
+        this.$fileItems.forEach(function (fileElt) {
+            fileElt.removable = !value;
+        });
+    },
+    get: function () {
+        return this.containsClass('as-droppable');
+    }
+};
+
 FileListInput.property.multiple = {
     set: function (value) {
         this.$addedFile.multiple = !!value;
@@ -294,7 +316,7 @@ FileListInput.eventHandler.mouseDownItem = function (itemElt, event) {
 
 
 FileListInput.eventHandler.input_fileDrop = function (event) {
-    if (this.readOnly) return;
+    if (this.readOnly || !this.droppable) return;
     var self = this;
     var files = Array.prototype.slice.call(event.files);
     if (files.length === 0) return;
