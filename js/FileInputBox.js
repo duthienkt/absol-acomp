@@ -176,7 +176,7 @@ FileInputBox.property.fileType = {
         }
     },
     get: function () {
-        return this._fileSize;
+        return this._fileType;
     }
 };
 
