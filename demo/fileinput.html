@@ -45,17 +45,53 @@
             });
         });
     });
+    absol._('<h1>FileListItem</h1>').addTo(document.body);
+    var fileListItem = absol._('filelistitem').addTo(document.body);
+    var fileListItem = absol._({
+        tag: 'filelistitem',
+        props: {
+            fileType: 'jpg',
+            fileName: "home.jpg"
+        }
+    }).addTo(document.body);
+    absol._('<h1>FileListInput</h1>').addTo(document.body);
+    var fileListInputEmpty = absol._({tag: 'filelistinput'}).addTo(document.body);
 
-   absol._('<h1>FileListInput</h1>').addTo(document.body);
     var fileListInput = absol._({tag: 'filelistinput'}).addTo(document.body);
     fileListInput.files = ['https://absol.cf/share/DE-SO-05.doc',
         "https://absol.cf/share/ExcelTut.rar",
-        "https://absol.cf/share/No%20Friends%20AMV.mp4"
+        "https://absol.cf/share/No%20Friends%20AMV.mp4",
+        'https://absol.cf/share/mail.txt',
+        'https://absol.cf/share/10h.mp4',
+        'https://absol.cf/share/303.doc',
+        'https://absol.cf/share/8TEb9p4ec.jpg',
+        'https://absol.cf/share/Arduino.zip',
+        'https://absol.cf/share/LUONG%20UYEN.xlsx.rigj',
+        'https://absol.cf/share/WHENCHAT.rar',
+        'https://absol.cf/share/al.apk',
+        'https://absol.cf/share/nav.php',
+        'https://absol.cf/share/setup_little_inferno_2.0.0.1.zip',
+        'https://absol.cf/share/tunnel.js',
+        {url: "https://absol.cf/share/No%20Friends%20AMV.mp4", name: 'No Friend.mp4'}
     ];
+
+
 
     var fileListInput1 = absol._({tag: 'filelistinput'}).addTo(document.body);
     fileListInput1.files = ['https://absol.cf/share/DE-SO-05.doc',
         "https://absol.cf/share/ExcelTut.rar",
+        "https://absol.cf/share/No%20Friends%20AMV.mp4",
+        'https://absol.cf/share/mail.txt',
+        'https://absol.cf/share/10h.mp4',
+        'https://absol.cf/share/303.doc',
+        'https://absol.cf/share/8TEb9p4ec.jpg',
+        'https://absol.cf/share/Arduino.zip',
+        'https://absol.cf/share/LUONG%20UYEN.xlsx.rigj',
+        'https://absol.cf/share/WHENCHAT.rar',
+        'https://absol.cf/share/al.apk',
+        'https://absol.cf/share/nav.php',
+        'https://absol.cf/share/setup_little_inferno_2.0.0.1.zip',
+        'https://absol.cf/share/tunnel.js',
         {url: "https://absol.cf/share/No%20Friends%20AMV.mp4", name: 'No Friend.mp4'}
     ];
 
