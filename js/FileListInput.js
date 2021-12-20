@@ -24,6 +24,8 @@ function FileListInput() {
         this.requestUpdateSize();
     });
     this.on('filedrop', this.eventHandler.input_fileDrop);
+    this.on('contextmenu', this.eventHandler.itemContext);
+
 
     this.$addedFile = $('input', this.$add)
         .on('change', this.eventHandler.clickAdd);
@@ -59,7 +61,7 @@ FileListInput.render = function () {
     return _({
         tag: DropZone.tag,
         class: ['as-file-list-input', 'as-bscroller', 'as-empty'],
-        extendEvent: ['change'],
+        extendEvent: ['change', 'contextmenu'],
         child: [
             {
                 tag: 'label',
@@ -117,14 +119,12 @@ FileListInput.prototype.updateSize = function () {
 FileListInput.prototype._makeFileItem = function (file) {
     var fileElt = _({
         tag: FileListItem.tag,
-        extendEvent: 'contextmenu',
         props: {
             allowUpload: false,
             fileData: file,
         }
     });
     fileElt.on('mousedown', this.eventHandler.mouseDownItem.bind(this, fileElt));
-    fileElt.on('contextmenu', this.eventHandler.itemContext.bind(this, fileElt));
     if (file instanceof File || file instanceof Blob || typeof file === 'string') {
         fileElt.value = file;
     } else if (typeof file === 'object') {
@@ -185,6 +185,16 @@ FileListInput.prototype.deleteFileItemElt = function (fileElt) {
         this._files.splice(idx, 1);
     }
     fileElt.remove();
+};
+
+FileListInput.prototype._findFileItemElt = function (target) {
+    while (target && target !== this) {
+        if (target.containsClass && target.containsClass('as-file-list-item')) {
+            return target;
+        }
+        target = target.parentElement;
+    }
+    return null;
 };
 
 
@@ -308,18 +318,27 @@ FileListInput.eventHandler.input_fileDrop = function (event) {
  * @param itemElt
  * @param event
  */
-FileListInput.eventHandler.itemContext = function (itemElt, event) {
+FileListInput.eventHandler.itemContext = function (event) {
     var self = this;
-    var menuItems = [
-        {text: LanguageSystem.getText('txt_download') || "Download", icon: 'span.mdi.mdi-download', cmd: 'download'}
-    ];
-    if (!this.readOnly) {
+    var itemElt = this._findFileItemElt(event.target);
+    console.log(itemElt)
+    var menuItems = [];
+    if (itemElt) {
         menuItems.push({
+            text: LanguageSystem.getText('txt_download') || "Download",
+            icon: 'span.mdi.mdi-download',
+            cmd: 'download'
+        });
+    }
+    if (!this.readOnly) {
+        if (itemElt)
+            menuItems.push({
                 text: LanguageSystem.getText('txt_delete') || "Delete",
                 icon: 'span.mdi.mdi-delete',
                 cmd: 'delete',
                 extendClasses: ['bsc-quickmenu', 'red']
-            },
+            });
+        menuItems.push(
             {
                 text: LanguageSystem.getText('txt_delete_all') || "Delete All",
                 icon: 'span.mdi.mdi-delete-empty',
@@ -327,26 +346,27 @@ FileListInput.eventHandler.itemContext = function (itemElt, event) {
                 extendClasses: ['bsc-quickmenu', 'red']
             });
     }
-
-    event.showContextMenu({
-        items: menuItems
-    }, function (event) {
-        var files;
-        switch (event.menuItem.cmd) {
-            case 'download':
-                self.downloadFileItemElt(itemElt);
-                break;
-            case 'delete':
-                self.deleteFileItemElt(itemElt);
-                self.emit('change', {type: 'change', item: itemElt.fileData, target: this, action: 'delete'}, this);
-                break;
-            case 'delete_all':
-                files = self.files;
-                self.files = [];
-                self.emit('change', {type: 'change', items: files, target: this, action: 'delete_all'}, this);
-                break;
-        }
-    });
+    if (menuItems.length > 0) {
+        event.showContextMenu({
+            items: menuItems
+        }, function (event) {
+            var files;
+            switch (event.menuItem.cmd) {
+                case 'download':
+                    self.downloadFileItemElt(itemElt);
+                    break;
+                case 'delete':
+                    self.deleteFileItemElt(itemElt);
+                    self.emit('change', {type: 'change', item: itemElt.fileData, target: this, action: 'delete'}, this);
+                    break;
+                case 'delete_all':
+                    files = self.files;
+                    self.files = [];
+                    self.emit('change', {type: 'change', items: files, target: this, action: 'delete_all'}, this);
+                    break;
+            }
+        });
+    }
 };
 
 
