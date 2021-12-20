@@ -56,7 +56,8 @@
     }).addTo(document.body);
     absol._('<h1>FileListInput</h1>').addTo(document.body);
     var fileListInputEmpty = absol._({tag: 'filelistinput'}).addTo(document.body);
-
+    var fileListInputDDrop = absol._({tag: 'filelistinput'}).addTo(document.body);
+    fileListInputDDrop.droppable = false;
     var fileListInput = absol._({tag: 'filelistinput'}).addTo(document.body);
     fileListInput.files = ['https://absol.cf/share/DE-SO-05.doc',
         "https://absol.cf/share/ExcelTut.rar",
