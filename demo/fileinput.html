@@ -15,6 +15,10 @@
 
 
 <script>
+    function render(o) {
+        return absol._(o).addTo(document.body);
+    }
+
     [true, false].forEach(function (removable) {
 
         ['https://absol.cf/share/DE-SO-05.doc',
@@ -54,10 +58,8 @@
             fileName: "home.jpg"
         }
     }).addTo(document.body);
-    absol._('<h1>FileListInput</h1>').addTo(document.body);
+    render('<h1>FileListInput</h1>');
     var fileListInputEmpty = absol._({tag: 'filelistinput'}).addTo(document.body);
-    var fileListInputDDrop = absol._({tag: 'filelistinput'}).addTo(document.body);
-    fileListInputDDrop.droppable = false;
     var fileListInput = absol._({tag: 'filelistinput'}).addTo(document.body);
     fileListInput.files = ['https://absol.cf/share/DE-SO-05.doc',
         "https://absol.cf/share/ExcelTut.rar",
@@ -76,7 +78,7 @@
         {url: "https://absol.cf/share/No%20Friends%20AMV.mp4", name: 'No Friend.mp4'}
     ];
 
-
+    render('<h3>readOnly=true</h3>')
 
     var fileListInput1 = absol._({tag: 'filelistinput'}).addTo(document.body);
     fileListInput1.files = ['https://absol.cf/share/DE-SO-05.doc',
@@ -97,6 +99,12 @@
     ];
 
     fileListInput1.readOnly = true;
+
+    render('<h3>droppable=false</h3>')
+    var fileListInputDDrop = absol._({tag: 'filelistinput'}).addTo(document.body);
+
+    fileListInputDDrop.droppable = false;
+
 
 </script>
 
