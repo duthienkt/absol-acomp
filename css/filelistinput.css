@@ -7,6 +7,7 @@
     --item-width: 100%;
     --item-require-width: 300px;
     position: relative;
+    min-height: 42px;
 }
 
 .as-file-list-input-upload-overlay {
@@ -164,7 +165,8 @@
     margin-right: 5px;
 }
 
-.as-file-list-input:not(.as-empty) .as-file-list-drag-file-text {
+.as-file-list-input:not(.as-empty) .as-file-list-drag-file-text,
+.as-file-list-input.as-read-only .as-file-list-drag-file-text {
     display: none;
 }
 

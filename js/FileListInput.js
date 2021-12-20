@@ -320,7 +320,6 @@ FileListInput.eventHandler.input_fileDrop = function (event) {
 FileListInput.eventHandler.itemContext = function (event) {
     var self = this;
     var itemElt = this._findFileItemElt(event.target);
-    console.log(itemElt)
     var menuItems = [];
     if (itemElt) {
         menuItems.push({
@@ -334,15 +333,13 @@ FileListInput.eventHandler.itemContext = function (event) {
             menuItems.push({
                 text: LanguageSystem.getText('txt_delete') || "Delete",
                 icon: 'span.mdi.mdi-delete',
-                cmd: 'delete',
-                extendClasses: ['bsc-quickmenu', 'red']
+                cmd: 'delete'
             });
         menuItems.push(
             {
                 text: LanguageSystem.getText('txt_delete_all') || "Delete All",
                 icon: 'span.mdi.mdi-delete-empty',
-                cmd: 'delete_all',
-                extendClasses: ['bsc-quickmenu', 'red']
+                cmd: 'delete_all'
             });
     }
     if (menuItems.length > 0) {
