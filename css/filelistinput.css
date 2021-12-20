@@ -172,6 +172,14 @@
     display: none;
 }
 
+
+.as-file-list-item:hover {
+    background-color: rgba(169, 169, 172, 0.1);
+}
+
+
 .as-file-list-item.as-active {
     background-color: rgba(20, 185, 235, 0.3);
 }
+
+
