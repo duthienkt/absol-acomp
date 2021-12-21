@@ -78,6 +78,54 @@
                 }
             ).addTo(inputDemoDiv);
         });
+
+
+        _(
+            {
+                style: {
+                    'margin-bottom': '10px'
+                },
+                child: [
+                    {
+                        tag: 'label',
+                        style: { width: '10em', 'line-height': '30px', display: 'inline-block' },
+                        child: { text: 'default' }
+                    },
+                    {
+                        tag: 'datetimeinput',
+                        props: {
+                        },
+                        on: {
+                            change: function () {
+                                absol.require('snackbar').show(this.value + '');
+                            }
+                        }
+                    },
+                    {
+                        tag: 'datetimeinput',
+                        props: {
+                        },
+                        on: {
+                            change: function () {
+                                absol.require('snackbar').show(this.value + '');
+                            }
+                        }
+                    },
+                    {
+                        tag: 'datetimeinput',
+                        props: {
+                            notNull: true,
+                            disabled: true
+                        },
+                        on: {
+                            change: function () {
+                                absol.require('snackbar').show(this.value + '');
+                            }
+                        }
+                    }
+                ]
+            }
+        ).addTo(inputDemoDiv);
     })();
 
 
