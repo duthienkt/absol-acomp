@@ -2,14 +2,15 @@ import ACore, {_, $, $$} from '../ACore';
 import '../css/chrometimepicker.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE} from "absol/src/Time/datetime";
+import {isRealNumber} from "./utils";
 
 /***
  * @extends AElement
  * @constructor
  */
 function ChromeTimePicker() {
-    this._hour = 0;
-    this._minute = 0;
+    this._hour = null;
+    this._minute = null;
     this.$lists = $$('.as-chrome-time-picker-list', this);
     this.$hourList = this.$lists[0];
     this.$hourList.on('scroll', this.eventHandler.hourScroll)
@@ -31,8 +32,8 @@ function ChromeTimePicker() {
     this.$pmBtn = $('.as-chrome-time-picker-btn[data-value="PM"]', this)
         .on('click', this.eventHandler.clickPM);
     this.scrollIntoSelected();
-    this.hour = 0;
-    this.minute = 0;
+    this.hour = null;
+    this.minute = null;
     this.s24 = false;
     $$('.as-chrome-time-picker-scroller', this).forEach(this._makeScroller.bind(this));
 }
@@ -47,8 +48,8 @@ ChromeTimePicker.render = function () {
             {
                 class: ['as-chrome-time-picker-scroller', 'as-chrome-time-picker-scroller-h12'],
                 child: [
-                    { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
-                    { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
+                    {tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up'},
+                    {tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down'},
                     {
                         class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h12'],
                         child: {
@@ -60,7 +61,7 @@ ChromeTimePicker.render = function () {
 
                                     child: {
                                         tag: 'span',
-                                        child: { text: (i % 12) + 1 + '' }
+                                        child: {text: (i % 12) + 1 + ''}
                                     },
                                     props: {
                                         __hour__: (i % 12) + 1
@@ -73,8 +74,8 @@ ChromeTimePicker.render = function () {
             {
                 class: ['as-chrome-time-picker-scroller', 'as-chrome-time-picker-scroller-h24'],
                 child: [
-                    { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
-                    { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
+                    {tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up'},
+                    {tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down'},
                     {
                         class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h24'],
                         child: {
@@ -86,7 +87,7 @@ ChromeTimePicker.render = function () {
 
                                     child: {
                                         tag: 'span',
-                                        child: { text: (i % 24) + '' }
+                                        child: {text: (i % 24) + ''}
                                     },
                                     props: {
                                         __hour__: (i % 24)
@@ -98,8 +99,8 @@ ChromeTimePicker.render = function () {
             }, {
                 class: 'as-chrome-time-picker-scroller',
                 child: [
-                    { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
-                    { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
+                    {tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up'},
+                    {tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down'},
                     {
                         class: 'as-chrome-time-picker-viewport',
                         child: {
@@ -112,7 +113,7 @@ ChromeTimePicker.render = function () {
                                     child: {
                                         tag: 'span',
 
-                                        child: { text: (i % 60) + '' }
+                                        child: {text: (i % 60) + ''}
                                     },
                                     props: {
                                         __min__: (i % 60)
@@ -133,7 +134,7 @@ ChromeTimePicker.render = function () {
                         },
                         child: {
                             tag: 'span',
-                            child: { text: u }
+                            child: {text: u}
                         },
                         props: {
                             __APM__: u
@@ -212,33 +213,43 @@ ChromeTimePicker.property = {};
 
 ChromeTimePicker.property.hour = {
     set: function (value) {
-        value = (value % 24) || 0;
+        if (isRealNumber(value)) {
+            value = Math.min(23, Math.max(0, Math.floor(value) % 24));
+        } else {
+            value = null;
+        }
         var prevVal = this._hour;
-        this.$hour24List.childNodes[prevVal].removeClass('as-selected');
-        this.$hour24List.childNodes[prevVal + 24].removeClass('as-selected');
-        this.$hour24List.childNodes[prevVal + 48].removeClass('as-selected');
-        prevVal = this._hour % 12;
-        if (prevVal === 0) prevVal = 12;
-        this.$hourList.childNodes[prevVal - 1].removeClass('as-selected');
-        this.$hourList.childNodes[prevVal - 1 + 12].removeClass('as-selected');
-        this.$hourList.childNodes[prevVal - 1 + 24].removeClass('as-selected');
+        if (prevVal !== null) {
+            this.$hour24List.childNodes[prevVal].removeClass('as-selected');
+            this.$hour24List.childNodes[prevVal + 24].removeClass('as-selected');
+            this.$hour24List.childNodes[prevVal + 48].removeClass('as-selected');
+            prevVal = this._hour % 12;
+            if (prevVal === 0) prevVal = 12;
+            this.$hourList.childNodes[prevVal - 1].removeClass('as-selected');
+            this.$hourList.childNodes[prevVal - 1 + 12].removeClass('as-selected');
+            this.$hourList.childNodes[prevVal - 1 + 24].removeClass('as-selected');
+        }
         this._hour = value;
         prevVal = this._hour;
-        this.$hour24List.childNodes[prevVal].addClass('as-selected');
-        this.$hour24List.childNodes[prevVal + 24].addClass('as-selected');
-        this.$hour24List.childNodes[prevVal + 48].addClass('as-selected');
-        prevVal = this._hour % 12;
-        if (prevVal === 0) prevVal = 12;
-        this.$hourList.childNodes[prevVal - 1].addClass('as-selected');
-        this.$hourList.childNodes[prevVal - 1 + 12].addClass('as-selected');
-        this.$hourList.childNodes[prevVal - 1 + 24].addClass('as-selected');
-        if (this._hour >= 12) {
-            this.$pmBtn.addClass('as-selected');
-            this.$amBtn.removeClass('as-selected');
-        }
-        else {
-            this.$amBtn.addClass('as-selected');
+        if (prevVal !== null) {
+            this.$hour24List.childNodes[prevVal].addClass('as-selected');
+            this.$hour24List.childNodes[prevVal + 24].addClass('as-selected');
+            this.$hour24List.childNodes[prevVal + 48].addClass('as-selected');
+            prevVal = this._hour % 12;
+            if (prevVal === 0) prevVal = 12;
+            this.$hourList.childNodes[prevVal - 1].addClass('as-selected');
+            this.$hourList.childNodes[prevVal - 1 + 12].addClass('as-selected');
+            this.$hourList.childNodes[prevVal - 1 + 24].addClass('as-selected');
+            if (this._hour >= 12) {
+                this.$pmBtn.addClass('as-selected');
+                this.$amBtn.removeClass('as-selected');
+            } else {
+                this.$amBtn.addClass('as-selected');
+                this.$pmBtn.removeClass('as-selected');
+            }
+        } else {
             this.$pmBtn.removeClass('as-selected');
+            this.$amBtn.removeClass('as-selected');
         }
     },
     get: function () {
@@ -249,17 +260,24 @@ ChromeTimePicker.property.hour = {
 
 ChromeTimePicker.property.minute = {
     set: function (value) {
-        value = (value % 60) || 0;
+        if (isRealNumber(value)) {
+            value = Math.min(59, Math.max(0, Math.floor(value) % 60));
+        } else {
+            value = null;
+        }
         var prevVal = this._minute;
-        this.$minList.childNodes[prevVal].removeClass('as-selected');
-        this.$minList.childNodes[prevVal + 60].removeClass('as-selected');
-        this.$minList.childNodes[prevVal + 120].removeClass('as-selected');
+        if (prevVal !== null) {
+            this.$minList.childNodes[prevVal].removeClass('as-selected');
+            this.$minList.childNodes[prevVal + 60].removeClass('as-selected');
+            this.$minList.childNodes[prevVal + 120].removeClass('as-selected');
+        }
         this._minute = value;
         prevVal = this._minute;
-        this.$minList.childNodes[prevVal].addClass('as-selected');
-        this.$minList.childNodes[prevVal + 60].addClass('as-selected');
-        this.$minList.childNodes[prevVal + 120].addClass('as-selected');
-
+        if (prevVal !== null) {
+            this.$minList.childNodes[prevVal].addClass('as-selected');
+            this.$minList.childNodes[prevVal + 60].addClass('as-selected');
+            this.$minList.childNodes[prevVal + 120].addClass('as-selected');
+        }
     },
     get: function () {
         return this._minute;
@@ -269,19 +287,28 @@ ChromeTimePicker.property.minute = {
 
 ChromeTimePicker.property.dayOffset = {
     set: function (value) {
-        value = value || 0;
-        if (value.getTime)
+        if (!isRealNumber(value) && !(value instanceof Date)) {
+            value = null;
+        }
+        if (value && value.getTime) {
             value = value.getTime() - beginOfDay(value).getTime();
-        else {
-            value = value % MILLIS_PER_DAY;
+            if (!isRealNumber(value)) value = null;
+        } else if (isRealNumber(value)) {
+            value = Math.min(MILLIS_PER_DAY - 1, Math.max(0, value % MILLIS_PER_DAY));
         }
 
-        this.hour = Math.floor(value / MILLIS_PER_HOUR);
-        this.minute = Math.floor((value % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE);
+        if (isRealNumber(value)) {
+            this.hour = Math.floor(value / MILLIS_PER_HOUR);
+            this.minute = Math.floor((value % MILLIS_PER_HOUR) / MILLIS_PER_MINUTE);
+        } else {
+            this.hour = null;
+            this.minute = null;
+        }
         this.domSignal.emit('request_scroll_into_selected');
     },
     get: function () {
-        return this._hour * MILLIS_PER_HOUR + this._minute * MILLIS_PER_MINUTE;
+        var res = this._hour * MILLIS_PER_HOUR + this._minute * MILLIS_PER_MINUTE;
+        return isRealNumber(res) ? res : null;
     }
 };
 
@@ -289,8 +316,7 @@ ChromeTimePicker.property.s24 = {
     set: function (value) {
         if (value) {
             this.addClass('as-24h-clock');
-        }
-        else {
+        } else {
             this.removeClass('as-24h-clock');
         }
     },
@@ -344,15 +370,13 @@ ChromeTimePicker.eventHandler.clickHourList = function (event) {
     if (hour !== undefined) {
         if (this.hour >= 12) {
             this.hour = hour === 12 ? hour : hour + 12;
-        }
-        else {
+        } else {
             this.hour = hour === 12 ? 0 : hour;
         }
 
         if ((hour - 1 + 12) * 28 < this.$hourList.scrollTop) {
             this.$hourList.scrollTop = (hour - 1 + 12) * 28;
-        }
-        else if (((hour - 1 + 13) * 28) > this.$hourList.scrollTop + this.$hourList.clientHeight) {
+        } else if (((hour - 1 + 13) * 28) > this.$hourList.scrollTop + this.$hourList.clientHeight) {
             this.$hourList.scrollTop = (hour - 1 + 13) * 28 - this.$hourList.clientHeight;
         }
         this.notifyChange(event);
@@ -368,8 +392,7 @@ ChromeTimePicker.eventHandler.clickHour24List = function (event) {
         this.hour = hour;
         if ((hour + 24) * 28 < this.$hourList.scrollTop) {
             this.$hourList.scrollTop = (hour + 24) * 28;
-        }
-        else if (((hour + 24) * 28) > this.$hourList.scrollTop + this.$hourList.clientHeight) {
+        } else if (((hour + 24) * 28) > this.$hourList.scrollTop + this.$hourList.clientHeight) {
             this.$hourList.scrollTop = (hour + 24) * 28 - this.$hourList.clientHeight;
         }
         this.notifyChange(event);
@@ -384,8 +407,7 @@ ChromeTimePicker.eventHandler.clickMinList = function (event) {
         this.minute = min;
         if ((min + 60) * 28 < this.$minList.scrollTop) {
             this.$minList.scrollTop = (min + 60) * 28;
-        }
-        else if (((min + 61) * 28) > this.$minList.scrollTop + this.$minList.clientHeight) {
+        } else if (((min + 61) * 28) > this.$minList.scrollTop + this.$minList.clientHeight) {
             this.$minList.scrollTop = (min + 61) * 28 - this.$minList.clientHeight;
         }
         this.notifyChange(event);
@@ -393,15 +415,23 @@ ChromeTimePicker.eventHandler.clickMinList = function (event) {
 };
 
 ChromeTimePicker.eventHandler.clickPM = function (event) {
-    if (this.hour < 12)
-        this.hour += 12;
+    if (isRealNumber(this.hour)) {
+        if (this.hour < 12)
+            this.hour += 12;
+    } else {
+        this.hour = 12;
+    }
     this.notifyChange(event);
 
 };
 
 ChromeTimePicker.eventHandler.clickAM = function (event) {
-    if (this.hour >= 12)
-        this.hour -= 12;
+    if (isRealNumber(this.hour)) {
+        if (this.hour >= 12)
+            this.hour -= 12;
+    } else {
+        this.hour = 0;
+    }
     this.notifyChange(event);
 };
 
