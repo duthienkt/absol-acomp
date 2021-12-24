@@ -122,6 +122,8 @@ import DateInYearPicker from "../DateInYearPicker";
 import DateInYearInput from "../DateInYearInput";
 import CheckTreeLeafOnlyBox from "../CheckTreeLeafOnlyBox";
 import FileListItem from "../FileListItem";
+import DualSelectBox from "../DualSelectBox";
+import DualSelectMenu from "../DualSelectMenu";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -231,6 +233,9 @@ export var publicCreators = [
     MultiCheckTreeLeafBox,
     MultiCheckTreeLeafMenu,
     SelectBoxItem,
+
+    DualSelectBox,
+    DualSelectMenu,
 
     SelectTable,
     SelectTable2,

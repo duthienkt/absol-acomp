@@ -1,0 +1,94 @@
+.as-dual-select-box {
+    -webkit-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+    -moz-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+    box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+    --max-height: 70vh;
+    box-sizing: border-box;
+    --dual-list-estimate-width: 0;
+    width: var(--dual-list-estimate-width);
+    z-index: 10000000;
+    background-color: white;
+
+}
+
+.as-dual-select-box-search-ctn {
+    padding: 5px;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.as-dual-select-box.as-enable-search.as-anchor-6 .as-dual-select-box-search-ctn,
+.as-dual-select-box.as-enable-search.as-anchor-5 .as-dual-select-box-search-ctn {
+    bottom: 0;
+}
+
+.as-dual-select-box.as-enable-search.as-anchor-6,
+.as-dual-select-box.as-enable-search.as-anchor-5 {
+    padding-bottom: 38px;
+}
+
+.as-dual-select-box.as-enable-search.as-anchor-1,
+.as-dual-select-box.as-enable-search.as-anchor-2 {
+    padding-top: 38px;
+}
+
+.as-dual-select-box.as-enable-search.as-anchor-1 .as-dual-select-box-search-ctn,
+.as-dual-select-box.as-enable-search.as-anchor-2 .as-dual-select-box-search-ctn {
+    top: 0;
+}
+
+
+.as-dual-select-box-list-ctn {
+    white-space: nowrap;
+    display: flex;
+    align-items: stretch;
+}
+
+.as-dual-select-box:not(.as-enable-search) .as-dual-select-box-search-ctn{
+    display: none;
+}
+
+.as-dual-select-box-list {
+    display: inline-block;
+    vertical-align: top;
+    max-height: calc(var(--max-height));
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.as-dual-select-box.as-enable-search .as-dual-select-box-list {
+    max-height: calc(var(--max-height) - 38px);
+}
+
+.as-dual-select-box-arrow-ctn {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.as-dual-select-box-arrow-ctn::before,
+.as-dual-select-box-arrow-ctn span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-dual-select-box-arrow-ctn::before {
+    content: "";
+    height: 100%;
+}
+
+
+.as-dual-select-box-list:first-child {
+    border-right: solid 1px #dddddd;
+}
+
+
+.as-dual-select-box-list:last-child {
+    border-left: solid 1px #dddddd;
+    flex-grow: 1;
+}
+.as-dual-select-menu
+{
+    min-width: calc(var(--dual-list-estimate-text-width) + 10px + 30px);
+    --dual-list-estimate-text-width: 20px;
+}
