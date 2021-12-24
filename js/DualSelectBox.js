@@ -214,7 +214,7 @@ DualSelectBox.prototype._calcEstimateSize = function (items) {
         }
     }
 
-    var leftTextWidth = measureText(longestItem.text, '14px arial').width;
+    var leftTextWidth = longestItem? measureText(longestItem.text, '14px arial').width:0;
     var maxN = items.length;
     for (i = 0; i < items.length; ++i) {
         item = items[i];
@@ -229,7 +229,7 @@ DualSelectBox.prototype._calcEstimateSize = function (items) {
             }
         }
     }
-    var rightTextWidth = measureText(longestItem.text, '14px arial').width;
+    var rightTextWidth = longestItem?measureText(longestItem.text, '14px arial').width: 0;
 
     return {
         width: 7 + leftTextWidth + 7 + 5 + 7 + 1 + 17 + 1 + 7 + rightTextWidth + 7 + 5 + 7 + 20,
