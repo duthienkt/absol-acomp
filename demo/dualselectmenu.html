@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DualSelectMenu</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        var dataSync = fetch('https://raw.githubusercontent.com/duthienkt/absol-geography/main/CityList.js').then(function (res) {
+            return res.text();
+        }).then(function (text) {
+            var js = text.replace('export default', 'return');
+            var data = (new Function(js))();
+            var res = data.countries.map(function (c) {
+                var item = {};
+                item.text = c[0];
+                item.value = c[0];
+                if (c.t) {
+                    item.items = c.t.map(function (city) {
+                        return {
+                            text: city[0],
+                            value: city[0]
+                        }
+                    });
+
+                    item.items.sort(function (a, b) {
+                        return a.text < b.text ? -1 : 1;
+                    });
+                }
+                else {
+                    item.items = [{ text: 'none', value: 'none' }]
+                }
+                return item;
+            });
+            res.sort(function (a, b) {
+                return a.text < b.text ? -1 : 1;
+            });
+            return res;
+        });
+
+        function render(o) {
+            return _(o).addTo(document.body);
+        }
+
+        var t1 = render('<h2>DualSelectBox</h2>');
+        var box = render({
+            tag: 'dualselectbox',
+            class: ['as-anchor-1'],
+            style: {},
+            props: {
+                value: ['Vietnam', 'Kon Tum'],
+                // enableSearch: true
+                followTarget: t1
+            },
+            on: {
+                change: function () {
+                    console.log(this.value);
+                }
+            }
+        });
+
+
+        render({ style: { height: '70vh' } });
+        render('<h2>DualSelectMenu</h2>');
+
+        var dsm = render({
+            tag: 'dualselectmenu',
+            props: {
+                value: ['Vietnam', 'Kon Tum'],
+                // enableSearch: true
+            },
+        });
+
+        render({ style: { height: '30vh' } });
+
+        dataSync.then(function (items) {
+            box.items = items;
+            box.scrollIntoSelected();
+            var itemJS = 'module.exports = ' + absol.generateJSVariable(items);
+            var downloadBtn = _({
+                tag: 'flexiconbutton',
+                style: {
+                    marginLeft: '20px',
+                    height: '30px'
+                },
+
+                props: {
+                    text: 'Tải xuống items mẫu',
+                    icon: 'span.mdi.mdi-download'
+                },
+                on: {
+                    click: function () {
+                        absol.FileSaver.saveTextAs(itemJS, 'example_items.js');
+                    }
+                }
+            });
+            $(document.body).addChildAfter(downloadBtn, dsm);
+            dsm.items = items;
+            var l = new absol.ListDictionary(items);
+            console.log(l);
+        });
+
+    })();
+</script>
+<pre><code>
+     var dsm = _({
+            tag: 'dualselectmenu',
+            props: {
+                value: ['Vietnam', 'Kon Tum'],
+                // enableSearch: true
+                items: your_items
+            },
+        });</code>
+</pre>
+</body>
+</html>
