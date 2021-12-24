@@ -24,6 +24,7 @@ import BContextCapture from "./js/BContextCapture";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Dom from "absol/src/HTML5/Dom";
 import CPUViewer from "./js/CPUViewer";
+import ListDictionary from "./js/list/ListDictionary";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -45,6 +46,7 @@ Object.assign(absol.string, string);
 absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
 absol.ContextCaptor = ContextCaptor;
+absol.ListDictionary = ListDictionary;
 
 window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;

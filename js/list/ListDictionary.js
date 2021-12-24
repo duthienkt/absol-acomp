@@ -1,4 +1,6 @@
-
+/***
+ * usage: HR
+ */
 /***
  *
  * @param {Array<SelectionItem>} arr
@@ -8,27 +10,37 @@ function ItemDictionary(arr) {
     this.arr = arr;
     this.dict = {};
     this.dupKeys = [];
+    this.update();
 }
 
 ItemDictionary.prototype.update = function () {
-    var dict = {};
+    this.dict = {};
+    var dict = this.dict;
     var item;
-    var arr = this.arr;
-    var n = this.arr.length;
+
     var dupKeyDict = {};
-    for (var i = 0; i < n; ++i) {
-        item = arr[i];
-        if (dict[item.value]) {
-            this.dict[item.value].dupItems = this.dict[item.value].dupItems || [];
-            this.dict[item.value].dupItems.push(item);
-            dupKeyDict[item.value] = 1;
-        } else {
-            dict[item.value] = {
-                idx: i,
-                item: item
-            };
+
+    function scan(arr) {
+        for (var i = 0; i < arr.length; ++i) {
+            item = arr[i];
+            if (dict[item.value]) {
+                dict[item.value].dupItems = dict[item.value].dupItems || [];
+                dict[item.value].dupItems.push(item);
+                dupKeyDict[item.value] = 1;
+            }
+            else {
+                dict[item.value] = {
+                    idx: i,
+                    item: item
+                };
+            }
+            if (item.items  && item.items.length > 0){
+                scan( item.items);
+            }
         }
     }
+
+    scan(this.arr);
     this.dupKeys = Object.keys(dupKeyDict);
 };
 
@@ -50,7 +62,7 @@ ItemDictionary.prototype.getItemByValue = function (value) {
  */
 ItemDictionary.prototype.getAllItemByValue = function (value) {
     var iDict = this.dict[value];
-    if (iDict) return [iDict.item].concat(iDict.dupItems||[]);
+    if (iDict) return [iDict.item].concat(iDict.dupItems || []);
     return [];
 };
 
@@ -58,4 +70,4 @@ ItemDictionary.prototype.getDuplicateKeys = function () {
     return this.dupKeys;
 };
 
-export default  ItemDictionary;
+export default ItemDictionary;
