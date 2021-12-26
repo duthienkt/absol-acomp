@@ -33,7 +33,7 @@ function MultiCheckTreeMenu() {
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.$checkTreeBox.followTarget = this;
     this.on('click', this.eventHandler.click);
-    OOP.drillProperty(this, this.$checkTreeBox, 'enableSearch');
+
     this.enableSearch = false;
 
     /**
@@ -112,6 +112,7 @@ MultiCheckTreeMenu.prototype._assignTokens = function (items) {
 
 
 MultiCheckTreeMenu.prototype._switchLeafMode = function () {
+    var enableSearch = this.enableSearch;
     if (this.leafOnly) {
         this.$checkTreeBox = _({
             tag: CheckTreeLeafOnlyBox.tag,
@@ -140,6 +141,7 @@ MultiCheckTreeMenu.prototype._switchLeafMode = function () {
     this.$checkTreeBox.followTarget = this;
     this.$checkTreeBox.items = this._items;
     this.$checkTreeBox.values = this._values;
+    this.$checkTreeBox.enableSearch = enableSearch;
 };
 
 
@@ -529,6 +531,16 @@ MultiCheckTreeMenu.eventHandler.boxToggleItem = function (event) {
     var availableBot = screenSize.height - 5 - bound.bottom;
     this.$checkTreeBox.addStyle('--max-height', (this.$checkTreeBox._lastAnchor < 4 ? availableBot : availableTop) + 'px');
     this.$checkTreeBox.updatePosition();
+};
+
+
+MultiCheckTreeMenu.property.enableSearch = {
+    set: function (value) {
+        this.$checkTreeBox.enableSearch = !!value;
+    },
+    get: function () {
+        return this.$checkTreeBox.enableSearch;
+    }
 };
 
 
