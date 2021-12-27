@@ -287,7 +287,7 @@ DualSelectBox.property.enableSearch = {
         }
     },
     get: function () {
-        this.containsClass('as-enable-search');
+        return this.containsClass('as-enable-search');
     }
 };
 
@@ -344,8 +344,8 @@ DualSelectBox.eventHandler.clickLeftItem = function (itemElt, event) {
     this.cView.updateRightList();
     this.cView.toRightList();
 
-    if (this.cView.$leftItemByValue[item.value] &&this.cView.$leftItemByValue[item.value].itemData
-        && this.cView.$leftItemByValue[item.value].itemData.items &&this.cView.$leftItemByValue[item.value].itemData.items.length > 0) {
+    if (this.cView.$leftItemByValue[item.value] && this.cView.$leftItemByValue[item.value].itemData
+        && this.cView.$leftItemByValue[item.value].itemData.items && this.cView.$leftItemByValue[item.value].itemData.items.length > 0) {
         this._value[1] = this.cView.$leftItemByValue[item.value].itemData.items[0].value;
         this.cView.updateRightSelectedItem();
     }
