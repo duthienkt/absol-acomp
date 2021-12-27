@@ -1,8 +1,8 @@
-import ACore, {$$, _} from "../ACore";
+import ACore, { $, $$, _ } from "../ACore";
 import Follower from "./Follower";
 import '../css/dualselectmenu.css';
-import {prepareSearchForList} from "./list/search";
-import {estimateWidth14, measureText, vScrollIntoView} from "./utils";
+import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
+import { estimateWidth14, measureText, vScrollIntoView } from "./utils";
 import DomSignal from "absol/src/HTML5/DomSignal";
 
 /***
@@ -17,15 +17,26 @@ function DualSelectBox() {
     this._value = [null, null];
     this.holderByValue = {};
     this.$lists = $$('.as-dual-select-box-list', this);
-    this.$leftItems = [];
-    this.$rightItems = [];
+    this.$searcTextInput = $('searchtextinput', this)
+        .on('stoptyping', this.eventHandler.searchTextInputModify);
+    this.cView = new DualSelectView(this, this._items);
+    this.searchedView = {
+        '*': this.cView
+    };
+
+
     this.estimateSize = { width: 0, height: 0 };
-    this.$leftItemByValue = {};
-    this.$rightItemByValue = {};
+
     this._emittedValue = [null, null];
-    this.$leftSelectedItem = null;
+
+
     /***
      * @name strictValue
+     * @type {boolean}
+     * @memberOf DualSelectBox#
+     */
+    /***
+     * @name enableSearch
      * @type {boolean}
      * @memberOf DualSelectBox#
      */
@@ -145,27 +156,6 @@ DualSelectBox.prototype._notifyIfChange = function (event) {
 };
 
 
-DualSelectBox.prototype._updateLeftSelectedItem = function () {
-    if (this.$leftSelectedItem) {
-        this.$leftSelectedItem.removeClass('as-selected');
-    }
-    this.$leftSelectedItem = this.$leftItemByValue[this._value[0]] || null;
-    if (this.$leftSelectedItem) {
-        this.$leftSelectedItem.addClass('as-selected');
-    }
-};
-
-DualSelectBox.prototype._updateRightSelectedItem = function () {
-    if (this.$rightSelectedItem) {
-        this.$rightSelectedItem.removeClass('as-selected');
-    }
-    this.$rightSelectedItem = this.$rightItemByValue[this._value[1]] || null;
-    if (this.$rightSelectedItem) {
-        this.$rightSelectedItem.addClass('as-selected');
-    }
-};
-
-
 DualSelectBox.prototype._makeLeftItem = function (item) {
     var itemElt = _({
         class: 'absol-selectlist-item',
@@ -175,15 +165,13 @@ DualSelectBox.prototype._makeLeftItem = function (item) {
         }
     });
     itemElt.itemData = item;
-
     itemElt.on('click', this.eventHandler.clickLeftItem.bind(this, itemElt));
-
 
     return itemElt;
 };
 
 
-DualSelectBox.prototype._makeRightItem = function (item) {
+DualSelectBox.prototype.makeRightItem = function (item) {
     var itemElt = _({
         class: 'absol-selectlist-item',
         child: {
@@ -192,9 +180,7 @@ DualSelectBox.prototype._makeRightItem = function (item) {
         }
     });
     itemElt.itemData = item;
-
     itemElt.on('click', this.eventHandler.clickRightItem.bind(this, itemElt));
-
 
     return itemElt;
 };
@@ -214,7 +200,7 @@ DualSelectBox.prototype._calcEstimateSize = function (items) {
         }
     }
 
-    var leftTextWidth = longestItem? measureText(longestItem.text, '14px arial').width:0;
+    var leftTextWidth = longestItem ? measureText(longestItem.text, '14px arial').width : 0;
     var maxN = items.length;
     for (i = 0; i < items.length; ++i) {
         item = items[i];
@@ -229,7 +215,7 @@ DualSelectBox.prototype._calcEstimateSize = function (items) {
             }
         }
     }
-    var rightTextWidth = longestItem?measureText(longestItem.text, '14px arial').width: 0;
+    var rightTextWidth = longestItem ? measureText(longestItem.text, '14px arial').width : 0;
 
     return {
         width: 7 + leftTextWidth + 7 + 5 + 7 + 1 + 17 + 1 + 7 + rightTextWidth + 7 + 5 + 7 + 20,
@@ -239,47 +225,17 @@ DualSelectBox.prototype._calcEstimateSize = function (items) {
 };
 
 
-DualSelectBox.prototype._updateRightList = function () {
-    var self = this;
-    var leftValue = this._value[0];
-    this.$lists[1].clearChild();
-    var items = this.$leftItemByValue[leftValue] && this.$leftItemByValue[leftValue].itemData.items;
-    if (items && items.length > 0) {
-        this.$rightItems = items.map(function (item) {
-            return self._makeRightItem(item);
-        });
-        this.$lists[1].addChild(this.$rightItems);
-
-    }
-    else {
-        this.$rightItems = [];
-    }
-    this.$rightItemByValue = this.$rightItems.reduce(function (ac, cr) {
-        ac[cr.itemData.value] = cr;
-        return ac;
-    }, {});
-    this._updateRightSelectedItem();
-};
-
-
-DualSelectBox.prototype._updateViewByValue = function () {
-    this._updateLeftSelectedItem();
-    this._updateRightList();
-
-};
-
 DualSelectBox.prototype.scrollIntoSelected = function () {
     if (!this.isDescendantOf(document.body)) {
         this.domSignal.emit('scrollIntoSelected');
         return;
     }
-    if (this.$leftSelectedItem && this.$leftSelectedItem.isDescendantOf(this.$lists[0])) {
-        this.$leftSelectedItem.scrollIntoView();
+    if (this.cView && this.cView.$leftSelectedItem && this.cView.$leftSelectedItem.isDescendantOf(this.$lists[0])) {
+        this.cView.$leftSelectedItem.scrollIntoView();
     }
-    if (this.$rightSelectedItem && this.$rightSelectedItem.isDescendantOf(this.$lists[1])) {
-        this.$rightSelectedItem.scrollIntoView();
+    if (this.cView && this.cView.$rightSelectedItem && this.cView.$rightSelectedItem.isDescendantOf(this.$lists[1])) {
+        this.cView.$rightSelectedItem.scrollIntoView();
     }
-
 };
 
 DualSelectBox.property = {};
@@ -293,6 +249,9 @@ DualSelectBox.property.items = {
         var self = this;
         items = items || [];
         prepareSearchForList(items);
+        this._items = items;
+
+
         this.holderByValue = items.reduce(function (ac, cr) {
             ac[cr.value] = {
                 item: cr,
@@ -305,20 +264,12 @@ DualSelectBox.property.items = {
             }
             return ac;
         }, {});
-
-        this.$lists[0].clearChild();
-        this.$lists[1].clearChild();
-        this.$leftItems = items.map(function (item) {
-            return self._makeLeftItem(item);
-        });
-        this.$leftItemByValue = this.$leftItems.reduce(function (ac, cr) {
-            ac[cr.itemData.value] = cr;
-            return ac;
-        }, {})
-        this.$lists[0].addChild(this.$leftItems);
         this.estimateSize = this._calcEstimateSize(items);
         this.addStyle('--dual-list-estimate-width', this.estimateSize.width + 'px');
-        this._updateViewByValue();
+        this.searchedView = {};
+        this.cView = new DualSelectView(this, items);
+        this.searchedView['*'] = this.cView;
+        this.cView.toView();
     },
     get: function () {
         return this._items;
@@ -349,7 +300,8 @@ DualSelectBox.property.strictValue = {
         else {
             this.removeClass('as-strict-value');
         }
-        this._updateViewByValue();
+        if (this.cView)
+            this.cView.updateViewByValue();
     },
     get: function () {
         return this.containsClass('as-strict-value');
@@ -363,7 +315,10 @@ DualSelectBox.property.value = {
      */
     set: function (value) {
         this._value = this._implicit(value);
-        this._updateViewByValue();
+        if (this.cView) {
+            this.cView.updateViewByValue();
+            this.cView.toRightList();
+        }
         this.scrollIntoSelected();
     },
     get: function () {
@@ -385,15 +340,17 @@ DualSelectBox.eventHandler = {};
 DualSelectBox.eventHandler.clickLeftItem = function (itemElt, event) {
     var item = itemElt.itemData;
     this._value[0] = item.value;
-    this._updateLeftSelectedItem();
-    this._updateRightList();
-    if (!this.$rightSelectedItem && this.holderByValue[item.value].item && this.holderByValue[item.value].item.items && this.holderByValue[item.value].item.items.length > 0) {
-        this._value[1] = this.holderByValue[item.value].item.items[0].value;
-        this._updateRightSelectedItem();
+    this.cView.updateLeftSelectedItem();
+    this.cView.updateRightList();
+    this.cView.toRightList();
 
+    if (this.cView.$leftItemByValue[item.value] &&this.cView.$leftItemByValue[item.value].itemData
+        && this.cView.$leftItemByValue[item.value].itemData.items &&this.cView.$leftItemByValue[item.value].itemData.items.length > 0) {
+        this._value[1] = this.cView.$leftItemByValue[item.value].itemData.items[0].value;
+        this.cView.updateRightSelectedItem();
     }
-    if (this.$rightSelectedItem) {
-        this.$rightSelectedItem.scrollIntoView();
+    if (this.cView.$rightSelectedItem) {
+        this.cView.$rightSelectedItem.scrollIntoView();
     }
     this._notifyIfChange(event);
 };
@@ -406,10 +363,184 @@ DualSelectBox.eventHandler.clickLeftItem = function (itemElt, event) {
 DualSelectBox.eventHandler.clickRightItem = function (itemElt, event) {
     var item = itemElt.itemData;
     this._value[1] = item.value;
-    this._updateRightSelectedItem();
+    this.cView.updateRightSelectedItem();
     this._notifyIfChange(event);
 };
+
+
+DualSelectBox.prototype.searchItemByText = function (text) {
+    var items = this._items;
+    var queryItem = prepareSearchForItem({ text: text });
+    var maxScore = 0;
+    var holders = items.map(function (item) {
+        var h = {
+            item: item,
+            itemScore: calcItemMatchScore(queryItem, item),
+        };
+        maxScore = Math.max(maxScore, h.itemScore);
+        var childMaxScore = 0;
+        if (item.items && item.items.length > 0) {
+            h.child = item.items.map(function (cItem) {
+                var cItemScore = calcItemMatchScore(queryItem, cItem);
+                maxScore = Math.max(maxScore, cItemScore);
+                childMaxScore = Math.max(childMaxScore, cItemScore);
+                return {
+                    item: cItem,
+                    itemScore: cItemScore
+                };
+            });
+            h.childScore = childMaxScore;
+        }
+
+        return h;
+    });
+
+    holders.sort(function (a, b) {
+        return -Math.max(a.itemScore, a.childScore) + Math.max(b.itemScore, b.childScore)
+    });
+    var midScore = maxScore / 2;
+    holders = holders.filter(function (holder) {
+        return Math.max(holder.itemScore, holder.childScore) >= midScore;
+    });
+
+    return holders.map(function (holder) {
+        var oldItem = holder.item;
+        var item = { text: oldItem.text, value: oldItem.value };
+        var childHolders;
+        if (holder.child) {
+            childHolders = holder.child.slice();
+            childHolders.sort(function (a, b) {
+                return -a.itemScore + b.itemScore;
+            });
+            item.items = childHolders.map(function (cHolder) {
+                return cHolder.item;
+            });
+            item.isSearchItem = true;
+        }
+        return item;
+    });
+};
+
+DualSelectBox.prototype.focus = function () {
+    if (this.enableSearch) {
+        this.$searcTextInput.focus();
+    }
+};
+
+DualSelectBox.prototype.resetSearchState = function () {
+    if (this.$searcTextInput.value.length === 0) return;
+    this.$searcTextInput.value = '';
+    this.eventHandler.searchTextInputModify();
+};
+
+
+/***
+ * @this DualSelectBox
+ */
+DualSelectBox.eventHandler.searchTextInputModify = function () {
+    var query = this.$searcTextInput.value.trim().replace(/\s+/, ' ');
+    if (query.length === 0) query = '*';
+    var view = this.searchedView[query];
+    if (!view) {
+        view = new DualSelectView(this, this.searchItemByText(query));
+        this.searchedView[query] = view;
+    }
+    this.cView = view;
+    this.cView.updateLeftSelectedItem();
+    this.cView.updateRightSelectedItem();
+    view.toView();
+    this.$lists[0].scrollTop = 0;
+    this.$lists[1].scrollTop = 0;
+    if (query === '*') this.scrollIntoSelected();
+};
+
 
 ACore.install(DualSelectBox);
 
 export default DualSelectBox;
+
+/***
+ *
+ * @param {DualSelectBox} box
+ * @param items
+ * @constructor
+ */
+function DualSelectView(box, items) {
+    var self = this;
+    this.box = box;
+    this.items = items;
+
+    this.$leftItems = items.map(function (item) {
+        return self.box._makeLeftItem(item);
+    });
+    this.$leftItemByValue = this.$leftItems.reduce(function (ac, cr) {
+        ac[cr.itemData.value] = cr;
+        return ac;
+    }, {});
+
+    this.$rightItems = [];
+    this.$rightItemByValue = {};
+    this.$leftSelectedItem = null;
+    this.$rightSelectedItem = null;
+    this.updateViewByValue();
+}
+
+DualSelectView.prototype.toView = function () {
+    this.box.$lists[0].clearChild();
+    this.box.$lists[0].addChild(this.$leftItems);
+    this.updateLeftSelectedItem();
+    this.toRightList();
+};
+
+DualSelectView.prototype.toRightList = function () {
+    this.box.$lists[1].clearChild();
+    this.box.$lists[1].addChild(this.$rightItems);
+    this.updateLeftSelectedItem();
+};
+
+
+DualSelectView.prototype.updateViewByValue = function () {
+    this.updateLeftSelectedItem();
+    this.updateRightList();
+};
+
+
+DualSelectView.prototype.updateRightList = function () {
+    var self = this;
+    var leftValue = this.box._value[0];
+    var items = this.$leftItemByValue[leftValue] && this.$leftItemByValue[leftValue].itemData.items;
+    if (items && items.length > 0) {
+        this.$rightItems = items.map(function (item) {
+            return self.box.makeRightItem(item);
+        });
+    }
+    else {
+        this.$rightItems = [];
+    }
+    this.$rightItemByValue = this.$rightItems.reduce(function (ac, cr) {
+        ac[cr.itemData.value] = cr;
+        return ac;
+    }, {});
+    this.updateRightSelectedItem();
+};
+
+DualSelectView.prototype.updateLeftSelectedItem = function () {
+    if (this.$leftSelectedItem) {
+        this.$leftSelectedItem.removeClass('as-selected');
+    }
+    this.$leftSelectedItem = this.$leftItemByValue[this.box._value[0]] || null;
+    if (this.$leftSelectedItem) {
+        this.$leftSelectedItem.addClass('as-selected');
+    }
+};
+
+
+DualSelectView.prototype.updateRightSelectedItem = function () {
+    if (this.$rightSelectedItem) {
+        this.$rightSelectedItem.removeClass('as-selected');
+    }
+    this.$rightSelectedItem = this.$rightItemByValue[this.box._value[1]] || null;
+    if (this.$rightSelectedItem) {
+        this.$rightSelectedItem.addClass('as-selected');
+    }
+};

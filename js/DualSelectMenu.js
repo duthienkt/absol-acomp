@@ -2,6 +2,7 @@ import ACore, {$, _} from "../ACore";
 import DualSelectBox from "./DualSelectBox";
 import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
+import OOP from "absol/src/HTML5/OOP";
 
 
 /***
@@ -25,6 +26,7 @@ function DualSelectMenu() {
     });
     this.$item = $('.absol-selectlist-item', this);
     this.on('click', this.eventHandler.click);
+    OOP.drillProperty(this, this.$box, 'enableSearch');
     /***
      * @name strictValue
      * @type {boolean}
@@ -111,6 +113,7 @@ DualSelectMenu.property.isFocus = {
         else {
             this.removeClass('as-focus');
             this.$box.remove();
+            this.$box.resetSearchState();
             document.removeEventListener('click', self.eventHandler.clickOut);
             setTimeout(function () {
                 self.on('click', self.eventHandler.click);
