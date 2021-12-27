@@ -55,7 +55,7 @@
             style: {},
             props: {
                 value: ['Vietnam', 'Kon Tum'],
-                // enableSearch: true
+                enableSearch: true,
                 followTarget: t1
             },
             on: {
@@ -73,7 +73,9 @@
             tag: 'dualselectmenu',
             props: {
                 value: ['Vietnam', 'Kon Tum'],
-                // enableSearch: true
+                enableSearch: true,
+                //default format: "$0, $1"
+                format:'City: $1, Country: $0'
             },
         });
 
