@@ -15,46 +15,50 @@
             return _(o).addTo(document.body)
         }
 
-        var t0 = render({
-            tag: 'multiselectmenu',
-            style: {
-                left: '0px'
-            },
-            props: {
-                strictValue: true,
-                items: Array(100).fill(null).map(function (u, i) {
-                    return { text: 'item text of ' + i, value: i };
-                }),
-                values: [30]
-            },
-            on: {
-                change: function () {
-                    valueElt.innerHTML = this.value;
+        function withTag(tag) {
+            var t0 = render({
+                tag: tag,
+                style: {
+                    left: '0px'
+                },
+                props: {
+                    strictValue: true,
+                    items: Array(100).fill(null).map(function (u, i) {
+                        return { text: 'item text of ' + i, value: i };
+                    }),
+                    values: [30]
+                },
+                on: {
+                    change: function () {
+                        valueElt.innerHTML = this.value;
+                    }
                 }
-            }
-        });
-        var valueElt = render({
-            tag: 'div',
-            child: { text: '' }
-        });
-
-        var counter = 0;
-        setInterval(function () {
-            counter = (counter + 1) % 20;
-            if (counter === 0) t0.strictValue = true;
-            else if (counter === 10) t0.strictValue = false;
-            var newValues = Array(5).fill(0).map(function () {
-                return Math.random() * 150 >> 0;
             });
-            newValues.sort(function (a, b) {
-                return a - b;
+            var valueElt = render({
+                tag: 'div',
+                child: { text: '' }
             });
-            t0.values = newValues;
-            valueElt.innerHTML = t0.strictValue + ' [' + newValues.join(', ') + '] -> [' + t0.values.join(', ') + '] ';
 
-        }, 1000);
-        render('<span>&nbsp</span>');
+            var counter = 0;
+            setInterval(function () {
+                counter = (counter + 1) % 20;
+                if (counter === 0) t0.strictValue = true;
+                else if (counter === 10) t0.strictValue = false;
+                var newValues = Array(5).fill(0).map(function () {
+                    return Math.random() * 150 >> 0;
+                });
+                newValues.sort(function (a, b) {
+                    return a - b;
+                });
+                t0.values = newValues;
+                valueElt.innerHTML = t0.strictValue + ' [' + newValues.join(', ') + '] -> [' + t0.values.join(', ') + '] ';
 
+            }, 1000);
+            render('<span>&nbsp</span>');
+        }
+
+        withTag('multiselectmenu');
+        withTag('multicheckmenu');
     })();
 </script>
 </body>
