@@ -151,14 +151,16 @@ MultiCheckMenu.property.isFocus = {
                 } else {
                     thisSM.$selectlistBox.focus();
                 }
-                $(document.body).on('mousedown', thisSM.eventHandler.bodyClick);
+                document.addEventListener('mousedown', thisSM.eventHandler.bodyClick);
             }, 100);
             this.$selectlistBox.viewListAtFirstSelected();
         } else {
-            $(document.body).off('mousedown', thisSM.eventHandler.bodyClick);
-            $(document.body).once('mouseup', function(){
-                setTimeout(function (){
+            document.removeEventListener('mousedown', thisSM.eventHandler.bodyClick);
+
+            document.addEventListener('mouseup', function mup() {
+                setTimeout(function () {
                     thisSM.on('click', thisSM.eventHandler.click);
+                    document.removeEventListener('mouseup', mup);
                 }, 5);
             });
             this.$selectlistBox.selfRemove();
