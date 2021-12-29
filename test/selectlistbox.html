@@ -17,13 +17,13 @@
 
         var t0 = render({
             tag: 'selectlistbox',
-            style:{
+            style: {
                 left: '0px'
             },
             props: {
                 strictValue: false,
                 items: Array(100).fill(null).map(function (u, i) {
-                    return {text:'item '+ i, value: i};
+                    return { text: 'item ' + i, value: i };
                 }),
                 values: [1, 10, 1000]
             }
@@ -32,8 +32,8 @@
 
         var t1 = render({
             tag: 'selectlistbox',
-            class:'as-anchor-1',
-            style:{
+            class: 'as-anchor-1',
+            style: {
                 left: '80px'
             },
             props: {
@@ -41,20 +41,41 @@
                 strictValue: true,
                 values: [1, 10, 1000],
                 items: Array(100).fill(null).map(function (u, i) {
-                    return {text:'item '+ i, value: i};
+                    return { text: 'item ' + i, value: i };
                 })
             }
         });
 
-        setInterval(function (){
-            var values = Array(Math.random() * 50 >> 0).fill(0).map(function (){
+
+        var t2 = render({
+            tag: 'SelectTreeBox'.toLowerCase(),
+            class: 'as-anchor-1',
+            style: {
+                left: '180px'
+            },
+            props: {
+                enableSearch: true,
+                strictValue: true,
+                values: [1, 10, 1000],
+                items: Array(10).fill(null).map(function (u, i) {
+                    return {
+                        text: 'item ' + (i * 10), value: i * 10,
+                        items: Array(9).fill(null).map(function (u, j) {
+                            return { text: 'item ' + (i * 10 + j + 1), value: i * 10 + j + 1 };
+                        })
+                    };
+                })
+            }
+        });
+
+        setInterval(function () {
+            var values = Array(Math.random() * 50 >> 0).fill(0).map(function () {
                 return Math.random() * 100 >> 0;
             });
             t0.values = values;
             t1.values = values;
+            t2.values = values;
         }, 100);
-
-        console.log(t0.values, t1.values);
 
 
     })();
