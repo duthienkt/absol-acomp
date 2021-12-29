@@ -235,7 +235,7 @@ SelectMenu.property.selectedIndex = {
 SelectMenu.property.strictValue = {
     set: function (value) {
         if (value) {
-            this.attr('data-strict-value', 'true');
+            this.attr('data-strict-value', null);
         }
         else {
             this.attr('data-strict-value', 'false');
