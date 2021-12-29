@@ -1,16 +1,10 @@
 import '../css/selectmenu.css';
 
-import ACore from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import Dom, {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
-import SelectListBox from "./SelectListBox";
-import AElement from "absol/src/HTML5/AElement";
+import Dom, { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 
-
-/*global absol*/
-var _ = ACore._;
-var $ = ACore.$;
 
 ACore.creator['dropdown-ico'] = function () {
     return _([
@@ -28,8 +22,6 @@ ACore.creator['dropdown-ico'] = function () {
  * @constructor
  */
 function SelectMenu() {
-    var thisSM = this;
-    this._items = [];
     this._value = null;
     this._lastValue = null;
     this.$holderItem = $('.absol-selectmenu-holder-item', this);
@@ -41,7 +33,8 @@ function SelectMenu() {
     this.$selectlistBox = _({
         tag: 'selectlistbox',
         props: {
-            anchor: [1, 6, 2, 5]
+            anchor: [1, 6, 2, 5],
+            strictValue: true
         },
         on: {
             preupdateposition: this.eventHandler.preUpdateListPosition
@@ -50,13 +43,18 @@ function SelectMenu() {
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
-
+    this.strictValue = true;
 
     this._lastValue = "NOTHING_VALUE";
     this._isFocus = false;
     this.isFocus = false;
 
     this.on('mousedown', this.eventHandler.click, true);
+    /***
+     * @name items
+     * @type {[]}
+     * @memberOf SelectMenu#
+     */
 
 }
 
@@ -100,17 +98,30 @@ SelectMenu.prototype.init = function (props) {
 
 
 SelectMenu.prototype.updateItem = function () {
-    var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
+    var value = this._explicit(this._value);
+    var selectedItems = this.$selectlistBox.findDisplayItemsByValue(value);
     if (selectedItems.length >= 1) {
         this.$viewItem.data = selectedItems[0].item;
-    } else {
-        this.$viewItem.data = {text: '', value: null}
+    }
+    else {
+        this.$viewItem.data = { text: '', value: null }
     }
 };
 
 
 SelectMenu.prototype.findItemsByValue = function (value) {
     return this.$selectlistBox.findItemsByValue(value);
+};
+
+
+SelectMenu.prototype._explicit = function (value) {
+    var items = this.$selectlistBox.findItemsByValue(value);
+    if (items.length > 0 || !this.strictValue || this.items.length === 0) {
+        return value;
+    }
+    else {
+        return this.items[0].value;
+    }
 };
 
 
@@ -121,25 +132,7 @@ SelectMenu.property.items = {
         this.$selectlistBox.items = items;
         this.addStyle('--select-list-estimate-width', this.$selectlistBox._estimateWidth + 'px');
         this.addStyle('--select-list-desc-width', this.$selectlistBox._estimateDescWidth + 'px');
-
-        if (items.length === 0) return;
-        var selectedItems = this.$selectlistBox.findDisplayItemsByValue(this._value);
-        if (selectedItems.length === 0) {
-            if (this.attr('data-strict-value') === 'true'){
-                this.value = items[0].value;//true concept
-            }
-            else {
-                if (this._value === null || this._value === undefined) {
-                    this.value = items[0].value;
-                } else {
-                    this.updateItem();
-                }
-            }
-        } else if (selectedItems.length > 1) {
-            console.warn(this, 'has duplicate item value');
-        } else {
-            this.updateItem();
-        }
+        this.updateItem();
     },
     get: function () {
         return this.$selectlistBox.items;
@@ -154,8 +147,7 @@ SelectMenu.property.value = {
         this.updateItem();
     },
     get: function () {
-        return this._value;
-        //todo
+        return this._explicit(this._value);
     }
 };
 
@@ -179,14 +171,16 @@ SelectMenu.property.isFocus = {
             setTimeout(function () {
                 if (thisSM.enableSearch) {
                     thisSM.$selectlistBox.$searchInput.focus();
-                } else {
+                }
+                else {
                     thisSM.$selectlistBox.focus();
                 }
-                $(document.body).on('click', thisSM.eventHandler.bodyClick);
+                document.addEventListener('click', thisSM.eventHandler.bodyClick);
             }, 100);
             this.$selectlistBox.viewListAtFirstSelected();
-        } else {
-            $(document.body).off('click', thisSM.eventHandler.bodyClick);
+        }
+        else {
+            document.removeEventListener('click', thisSM.eventHandler.bodyClick);
             this.$selectlistBox.selfRemove();
             this.$selectlistBox.unfollow();
             this.$selectlistBox.resetSearchState();
@@ -202,7 +196,8 @@ SelectMenu.property.disabled = {
     set: function (value) {
         if (value) {
             this.addClass('as-disabled');
-        } else {
+        }
+        else {
             this.removeClass('as-disabled');
         }
     },
@@ -216,7 +211,8 @@ SelectMenu.property.hidden = {
     set: function (value) {
         if (value) {
             this.addClass('as-hidden');
-        } else {
+        }
+        else {
             this.removeClass('as-hidden');
         }
     },
@@ -234,6 +230,23 @@ SelectMenu.property.selectedIndex = {
         return -1;
     }
 };
+
+
+SelectMenu.property.strictValue = {
+    set: function (value) {
+        if (value) {
+            this.attr('data-strict-value', 'true');
+        }
+        else {
+            this.attr('data-strict-value', 'false');
+        }
+        this.updateItem();
+    },
+    get: function () {
+        return !this.attr('data-strict-value') || (this.attr('data-strict-value') !== 'false' && this.attr('data-strict-value') !== '0');
+    }
+};
+
 
 /**
  * @type {SelectMenu|{}}

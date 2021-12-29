@@ -13,7 +13,6 @@ var $ = ACore.$;
  * @constructor
  */
 function SelectTreeMenu() {
-    var thisSM = this;
     this._items = [];
     this._value = null;
     this._lastValue = null;
