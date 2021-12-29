@@ -1,11 +1,11 @@
 import '../css/selectlistbox.css';
-import {prepareSearchForList, searchListByText} from "./list/search";
+import { prepareSearchForList, searchListByText } from "./list/search";
 import ACore from "../ACore";
 import Follower from "./Follower";
-import {measureListSize, releaseItem, requireItem} from "./SelectList";
+import { measureListSize, releaseItem, requireItem } from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
-import {getScreenSize} from "absol/src/HTML5/Dom";
-import {depthIndexingByValue, indexingByValue} from "./list/listIndexing";
+import { getScreenSize } from "absol/src/HTML5/Dom";
+import { depthIndexingByValue, indexingByValue } from "./list/listIndexing";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -23,6 +23,11 @@ function SelectListBox() {
     this._initControl();
     this._initScroller();
     this._initProperty();
+    /***
+     * @name strictValue
+     * @type {boolean}
+     * @memberOf SelectListBox#
+     */
 }
 
 SelectListBox.tag = 'SelectListBox'.toLowerCase();
@@ -160,7 +165,8 @@ SelectListBox.prototype._updateSelectedItem = function () {
             var value = itemElt.value + '';
             if (valueDict[value]) {
                 itemElt.selected = true;
-            } else {
+            }
+            else {
                 itemElt.selected = false;
             }
         });
@@ -211,7 +217,8 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
     }
     if (this._displayValue == VALUE_HIDDEN) {
         return false;
-    } else if (this._values.length > 0) {
+    }
+    else if (this._values.length > 0) {
         var value = this._values[0];
         var itemHolders = this._displayItemHolderByValue[value + ''];
         if (itemHolders) {
@@ -227,8 +234,10 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
             }.bind(this));
             this.domSignal.emit('scrollIntoSelected');
             return true;
-        } else return false;
-    } else
+        }
+        else return false;
+    }
+    else
         return false;
 };
 
@@ -258,11 +267,11 @@ SelectListBox.prototype.resetSearchState = function () {
 };
 
 SelectListBox.prototype.notifyPressOut = function () {
-    this.emit('pressout', {target: this, type: 'pressout'}, this);
+    this.emit('pressout', { target: this, type: 'pressout' }, this);
 };
 
 SelectListBox.prototype.notifyPressClose = function () {
-    this.emit('pressclose', {target: this, type: 'pressclose'}, this);
+    this.emit('pressclose', { target: this, type: 'pressclose' }, this);
 };
 
 SelectListBox.prototype._findFirstPageIdx = function () {
@@ -322,6 +331,33 @@ SelectListBox.prototype.findDisplayItemsByValue = function (value) {
     return (this._displayItemHolderByValue[value] || []).slice();
 };
 
+
+SelectListBox.prototype._implicit = function (values) {
+    if (!(values instanceof Array)) {
+        if (values === null || values === undefined) values = [];
+        else values = [values];
+    }
+    return values.reduce(function (ac, cr){
+        if (!ac.dict[cr]){
+            ac.dict[cr] = true;
+            ac.result.push(cr);
+        }
+        return ac;
+    }, {result: [], dict: {}}).result;
+};
+
+SelectListBox.prototype._explicit = function (values) {
+    if (this.strictValue) {
+        return values.filter(function (value) {
+            return !!this._itemNodeHolderByValue[value];
+        }.bind(this));
+    }
+    else {
+        return values.slice();
+    }
+};
+
+
 /***
  *
  * @param value
@@ -356,8 +392,7 @@ SelectListBox.property.items = {
 
 SelectListBox.property.values = {
     set: function (values) {
-        values = values || [];
-        values = values.slice();
+        values = this._implicit(values);
         this._values = values;
         this._valueDict = values.reduce(function (ac, cr) {
             ac[cr + ''] = true;
@@ -365,11 +400,25 @@ SelectListBox.property.values = {
         }, {});
         this._updateDisplayItem();
         this.viewListAtCurrentScrollTop();
-        //todo
         if (this._pageOffsets[this.preLoadN] > this._pageOffsets[0]) this._updateSelectedItem();
     },
     get: function () {
-        return this._values;
+        return this._explicit(this._values);
+    }
+};
+
+
+SelectListBox.property.strictValue = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-strict-value');
+        }
+        else {
+            this.removeClass('as-strict-value');
+        }
+    },
+    get: function () {
+        return this.containsClass('as-strict-value');
     }
 };
 
@@ -380,7 +429,8 @@ SelectListBox.property.displayValue = {
         this._updateItemNodeIndex();
         if (value === VALUE_HIDDEN) {
             this.addClass('as-value-hidden');
-        } else {
+        }
+        else {
             this.removeClass('as-value-hidden');
         }
     },

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SelectListBox</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        function render(o) {
+            return _(o).addTo(document.body)
+        }
+
+        var t0 = render({
+            tag: 'selectlistbox',
+            style:{
+                left: '0px'
+            },
+            props: {
+                strictValue: false,
+                items: Array(100).fill(null).map(function (u, i) {
+                    return {text:'item '+ i, value: i};
+                }),
+                values: [1, 10, 1000]
+            }
+        });
+
+
+        var t1 = render({
+            tag: 'selectlistbox',
+            class:'as-anchor-1',
+            style:{
+                left: '80px'
+            },
+            props: {
+                enableSearch: true,
+                strictValue: true,
+                values: [1, 10, 1000],
+                items: Array(100).fill(null).map(function (u, i) {
+                    return {text:'item '+ i, value: i};
+                })
+            }
+        });
+
+        setInterval(function (){
+            var values = Array(Math.random() * 50 >> 0).fill(0).map(function (){
+                return Math.random() * 100 >> 0;
+            });
+            t0.values = values;
+            t1.values = values;
+        }, 100);
+
+        console.log(t0.values, t1.values);
+
+
+    })();
+</script>
+</body>
+</html>
