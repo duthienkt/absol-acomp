@@ -5,10 +5,10 @@ import SelectMenu from "./SelectMenu2";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import PositionTracker from "./PositionTracker";
 import './SelectBoxItem';
-import {VALUE_HIDDEN} from "./SelectListBox";
+import { VALUE_HIDDEN } from "./SelectListBox";
 import OOP from "absol/src/HTML5/OOP";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
-import {releaseItem, requireItem} from "./SelectBox";
+import { releaseItem, requireItem } from "./SelectBox";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -51,6 +51,7 @@ function MultiSelectMenu() {
     this.orderly = true;
     this.itemFocusable = false;
     this._activeValue = undefined;
+    this.strictValue = true;
 }
 
 MultiSelectMenu.tag = 'MultiSelectMenu'.toLowerCase();
@@ -112,7 +113,8 @@ MultiSelectMenu.prototype._getItemsByValues = function (values) {
     if (this.orderly) {
         if (typeof this.orderly === 'function') {
             itemHolders.sort(this.orderly);
-        } else {
+        }
+        else {
             itemHolders.sort(function (a, b) {
                 return a.idx - b.idx;
             });
@@ -168,6 +170,34 @@ MultiSelectMenu.prototype._updateFocusItem = function () {
 
 MultiSelectMenu.prototype.init = SelectMenu.prototype.init;
 
+MultiSelectMenu.prototype._implicit = function (values) {
+    if (values === null || values === undefined) values = [];
+    if (!(values instanceof Array)) {
+        values = [values];
+    }
+    values = values.filter(function (value) {
+        var type = typeof value;
+        return type === 'string' || type === 'number' || type === "boolean" || value === null || value === undefined;
+    }).reduce(function (ac, cr) {
+        if (!ac.dict[cr]) {
+            ac.dict[cr] = true;
+            ac.result.push(cr);
+        }
+        return ac;
+    }, { result: [], dict: {} }).result;
+
+    return values;
+};
+
+MultiSelectMenu.prototype._explicit = function (values) {
+    var selectListBoxElt = this.$selectlistBox;
+    var strictValue = this.strictValue;
+    values = values.filter(function (value) {
+        return !strictValue || selectListBoxElt.findItemsByValue(value).length > 0;
+    })
+    return values;
+};
+
 
 MultiSelectMenu.property.items = {
     set: function (items) {
@@ -183,14 +213,13 @@ MultiSelectMenu.property.items = {
 
 MultiSelectMenu.property.values = {
     set: function (values) {
-        values = values || [];
-        values = (values instanceof Array) ? values : [values];
+        values = this._implicit(values);
         this._values = values;
         this.$selectlistBox.values = values;
         this._updateItems();
     },
     get: function () {
-        return this._values || [];
+        return this._explicit(this._values);
     }
 };
 
@@ -199,7 +228,8 @@ MultiSelectMenu.property.orderly = {
         var needUpdate = this._orderly === this._orderly;
         if (typeof value === 'function') {
             this._orderly;
-        } else
+        }
+        else
             this._orderly = !!value;
         if (needUpdate) {
             this.values = this.values;
@@ -250,6 +280,21 @@ MultiSelectMenu.property.activeValue = {
     }
 };
 
+MultiSelectMenu.property.strictValue = {
+    set: function (value) {
+        if (value){
+            this.attr('data-strict-value', null);
+        }
+        else {
+            this.attr('data-strict-value', 'false');
+        }
+    },
+    get: function () {
+        var data = this.attr('data-strict-value');
+        return !data || (data != 'false' && data !== '0');
+    }
+};
+
 
 MultiSelectMenu.eventHandler = Object.assign({}, SelectMenu.eventHandler);
 
@@ -258,7 +303,8 @@ MultiSelectMenu.eventHandler.attached = function () {
     if (maxHeightStyle.match(/[0-9-]+px/)) {
         this.addStyle('--multi-select-menu-max-height', maxHeightStyle);
         this.addStyle('max-height', 'unset');
-    } else if (maxHeightStyle !== 'none') {
+    }
+    else if (maxHeightStyle !== 'none') {
         console.warn('Can not adapt max-height:', maxHeightStyle);
     }
 };
