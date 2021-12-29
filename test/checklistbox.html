@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SelectListBox</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        function render(o) {
+            return _(o).addTo(document.body)
+        }
+
+        var b0 = render({
+            tag: 'checklistbox',
+            class: 'as-anchor-1',
+            style: { position: 'relative' },
+            props: {
+                enableSearch: true,
+                items: Array(200).fill(0).map(function (u, i) {
+                    return {
+                        text: 'Item text of ' + i,
+                        value: i
+                    }
+                }),
+                values:[5, 10, 300]
+            }
+        });
+
+        var b1 = render({
+            tag: 'checklistbox',
+            class: 'as-anchor-1',
+            style: { position: 'relative' },
+            props: {
+                enableSearch: true,
+                strictValue: true,
+                items: Array(100).fill(0).map(function (u, i) {
+                    return {
+                        text: 'Item text of ' + i,
+                        value: i
+                    }
+                }),
+                values:[5, 10, 300]
+            }
+        });
+
+        var valuesElt = render({ tag: 'p' });
+
+        function showValues() {
+            valuesElt.innerHTML = b0.values.join(', ') + '<br>' + b1.values.join(', ')
+        }
+
+        setInterval(function () {
+            var values = Array(Math.random() * 10 >> 0).fill(0).map(function () {
+                return Math.random() * 200 >> 0;
+            });
+            b0.values = values;
+            b1.values = values;
+            showValues();
+        }, 500);
+
+
+
+        showValues();
+
+    })();
+</script>
+</body>
+</html>

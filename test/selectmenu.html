@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SelectListBox</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        function render(o) {
+            return _(o).addTo(document.body)
+        }
+
+        var t0 = render({
+            tag: 'selectmenu',
+            style: {
+                left: '0px'
+            },
+            props: {
+                strictValue: true,
+                items: Array(100).fill(null).map(function (u, i) {
+                    return { text: 'item text of ' + i, value: i };
+                }),
+                value: 30
+            },
+            on: {
+                change: function () {
+                    valueElt.innerHTML = this.value;
+                }
+            }
+        });
+        var valueElt = render({
+            tag: 'span',
+            child: { text: '30' }
+        });
+        render('<span>&nbsp</span>');
+
+
+        var t1 = render({
+            tag: 'selecttreemenu',
+            style: {
+                left: '0px'
+            },
+            props: {
+                strictValue: true,
+                items: Array(10).fill(null).map(function (u, i) {
+                    return {
+                        text: 'item ' + (i * 10), value: i * 10,
+                        items: Array(9).fill(null).map(function (u, j) {
+                            return { text: 'item text of ' + (i * 10 + j + 1), value: i * 10 + j + 1 };
+                        })
+                    };
+                }),
+                value: 30
+            },
+            on: {
+                change: function () {
+                    valueElt.innerHTML = this.value;
+                }
+            }
+        });
+        var valueElt1 = render({
+            tag: 'span',
+            child: { text: '30' }
+        });
+
+        var counter = 0;
+
+        function tryValue() {
+            counter++;
+            if (counter === 60) t0.strictValue = false;
+            if (counter === 120) {
+                counter = 0;
+                t0.strictValue = true;
+            }
+            var newValue = Math.random() * 200 >> 0;
+            t0.value = newValue;
+            var cValue = t0.value;
+            valueElt.innerHTML = newValue + ' ' + cValue + ' ' + t0.strictValue;
+            if (t0.strictValue) {
+                if (cValue >= 100) {
+                    throw Error('Fail: over value');
+                }
+                else if (newValue < 100 && cValue !== newValue) {
+                    throw Error('Fail: value not match');
+                }
+            }
+            else {
+                if (cValue !== newValue) {
+                    throw Error('Fail');
+                }
+            }
+            setTimeout(tryValue, 200);
+        }
+
+        tryValue();
+
+        var counter1 = 0;
+
+        function tryValue1() {
+            counter1++;
+            if (counter1 === 30) t1.strictValue = false;
+            if (counter1 === 120) {
+                counter1 = 0;
+                t1.strictValue = true;
+            }
+            var newValue = Math.random() * 200 >> 0;
+            t1.value = newValue;
+            var cValue = t1.value;
+            valueElt1.innerHTML = newValue + ' ' + cValue + ' ' + t1.strictValue;
+            if (t1.strictValue) {
+                if (cValue >= 100) {
+                    throw Error('Fail: over value');
+                }
+                else if (newValue < 100 && cValue !== newValue) {
+                    throw Error('Fail: value not match');
+                }
+            }
+            else {
+                if (cValue !== newValue) {
+                    throw Error('Fail');
+                }
+            }
+            setTimeout(tryValue1, 200);
+        }
+
+        tryValue1();
+    })();
+</script>
+</body>
+</html>
