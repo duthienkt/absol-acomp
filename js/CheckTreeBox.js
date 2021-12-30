@@ -18,7 +18,11 @@ function CheckTreeBox() {
     this._initDomHook();
     this._initProperty();
     this._initFooter();
-
+    /***
+     * @name strictValue
+     * @memberOf CheckTreeBox#
+     * @type {boolean}
+     */
 }
 
 CheckTreeBox.tag = 'CheckTreeBox'.toLowerCase();
@@ -355,6 +359,15 @@ CheckTreeBox.prototype.updateCheckedAll = function () {
     this.$checkAll.checked = c === holders.length;
 };
 
+CheckTreeBox.prototype._implicit = function (values) {
+    return values || [];
+};
+
+
+CheckTreeBox.prototype._explicit = function (values) {
+    return values;
+};
+
 CheckTreeBox.property = {};
 
 CheckTreeBox.property.items = {
@@ -387,12 +400,12 @@ CheckTreeBox.property.values = {
      * @param values
      */
     set: function (values) {
-        this._values = values || [];
+        this._values = this._implicit(values);
         this._updateFromValues();
 
     },
     get: function () {
-        return this._values;
+        return this._explicit(this._values);
     }
 };
 
@@ -750,15 +763,18 @@ TreeNodeHolder.prototype.updateUp = function () {
         for (var i = 0; i < this.child.length; ++i) {
             if (this.child[i].selected === 'all') {
                 childSelectAll++;
-            } else if (this.child[i].selected === 'child') {
+            }
+            else if (this.child[i].selected === 'child') {
                 childSelectChild++;
             }
         }
         if (childSelectAll === this.child.length) {
             this.selected = 'all';
-        } else if (childSelectChild + childSelectAll > 0) {
+        }
+        else if (childSelectChild + childSelectAll > 0) {
             this.selected = 'child';
-        } else {
+        }
+        else {
             this.selected = 'none';
         }
         if (this.itemElt) {
@@ -838,7 +854,8 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
             elt.level = this.level;
             elt.status = this.status;
             elt.selected = this.selected;
-        } else {
+        }
+        else {
             this._elt = null;
         }
     },
