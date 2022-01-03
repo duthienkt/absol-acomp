@@ -8,5 +8,10 @@
     --as-context-font-family: Arial, Helvetica, sans-serif;
     --as-disabled-background-color: #ebebe4;
     --as-disabled-text-color: rgb(102, 102, 102);
+    --icon-background-cover-hover: #91e4fb;
+    --as-transparent-button-hover-color: rgba(169, 169, 172, 0.1);
+    --as-transparent-button-focus-color:  rgba(20, 185, 235, 0.3);
+    --as-transparent-button-active-color:  rgba(169, 169, 172, 0.2);
+
 }
 

@@ -99,16 +99,16 @@
 }
 
 .absol-exp-node:hover {
-    background-color: rgba(169, 169, 172, 0.1);
+    background-color: var(--as-transparent-button-hover-color);
 }
 
 .absol-exp-node:focus,
 .absol-exp-node.as-active:focus {
-    background-color: rgba(20, 185, 235, 0.3);
+    background-color: var(--as-transparent-button-focus-color);
 }
 
 .absol-exp-node.as-active {
-    background-color: rgba(169, 169, 172, 0.2);
+    background-color: var(--as-transparent-button-active-color);
 }
 
 
