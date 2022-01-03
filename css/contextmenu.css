@@ -101,7 +101,7 @@
     /** nothing here, to define use system context menu**/
 }
 
-.as-context-menu-ctn{
+.as-context-menu-ctn {
     font-size: var(--as-context-menu-font-size);
     font-family: var(--as-input-font-family);
 }
@@ -139,4 +139,8 @@
     min-width: 70%;
     max-width: calc(100% - 10px);
     max-height: calc(100% - 10px);
+}
+
+.as-quick-menu {
+    font-size: 14px;
 }

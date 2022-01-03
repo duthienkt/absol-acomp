@@ -27,6 +27,11 @@ function Follower() {
     this._scrollTrackEventHandler = undefined;
     this._anchor = Follower.ANCHOR_PRIORITY;
     this.defineEvent(['updateposition', 'preupdateposition']);
+    /***
+     * @name followTarget
+     * @type {AElement}
+     * @memberOf Follower#
+     */
 }
 
 Follower.tag = 'Follower'.toLowerCase();
