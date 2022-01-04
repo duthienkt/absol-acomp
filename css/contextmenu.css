@@ -106,36 +106,44 @@
     font-family: var(--as-input-font-family);
 }
 
-.as-context-menu-ctn.as-anchor-modal {
+.as-context-menu-ctn.as-anchor-modal,
+.absol-context-menu-anchor.as-anchor-modal{
     position: fixed;
     z-index: 8000000;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    left: 0 !important;
+    right: 0 !important;;
+    top: 0 !important;;
+    bottom: 0 !important;;
     box-sizing: border-box;
     text-align: center;
     background-color: rgba(155, 155, 155, 0.3);
 }
 
 .as-context-menu-ctn.as-anchor-modal::before,
-.as-context-menu-ctn.as-anchor-modal > .absol-vmenu {
+.as-context-menu-ctn.as-anchor-modal > .absol-vmenu ,
+.absol-context-menu-anchor.as-anchor-modal::before,
+.absol-context-menu-anchor.as-anchor-modal > .absol-vmenu
+{
     display: inline-block;
     vertical-align: middle;
     white-space: nowrap;
 }
 
-.as-context-menu-ctn.as-anchor-modal > .absol-vmenu {
+.as-context-menu-ctn.as-anchor-modal > .absol-vmenu,
+.absol-context-menu-anchor.as-anchor-modal > .absol-vmenu
+{
     text-align: left;
 }
 
 
-.as-context-menu-ctn.as-anchor-modal::before {
+.as-context-menu-ctn.as-anchor-modal::before,
+.absol-context-menu-anchor.as-anchor-modal::before{
     content: "";
     height: 100%;
 }
 
-.as-context-menu-ctn.as-anchor-modal > .absol-vmenu {
+.as-context-menu-ctn.as-anchor-modal > .absol-vmenu,
+.absol-context-menu-anchor.as-anchor-modal > .absol-vmenu {
     min-width: 70%;
     max-width: calc(100% - 10px);
     max-height: calc(100% - 10px);
