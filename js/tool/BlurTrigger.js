@@ -85,12 +85,15 @@ BlurTrigger.prototype.ev_mouse = function (event) {
 };
 
 BlurTrigger.prototype.ev_blur = function () {
-    var tagName = (document.activeElement && document.activeElement.tagName) || '';
-    tagName = tagName.toLowerCase();
-    if (tagName === 'iframe') {
-        this._release();
-        this._prepareFire();
-    }
+    setTimeout(function () {
+        if (this.state !== STATE_ATTACHED) return;
+        var tagName = (document.activeElement && document.activeElement.tagName) || '';
+        tagName = tagName.toLowerCase();
+        if (tagName === 'iframe') {
+            this._release();
+            this._prepareFire();
+        }
+    }.bind(this), 0);
 };
 
 export default BlurTrigger;
