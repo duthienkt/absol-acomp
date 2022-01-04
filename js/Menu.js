@@ -5,6 +5,7 @@ import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
 import Follower from "./Follower";
+import BlurTrigger from "./tool/BlurTrigger";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -529,6 +530,7 @@ VMenu.prototype._childFromItems = function (items) {
 
 
 export function HMenuItem() {
+    this.blurTrigger = null;
     this.$vmenu = $('vmenu', this);
     this.$dropDown = this;
     this.$button = $('button.absol-hmenu-button', this);
@@ -626,9 +628,9 @@ HMenu.eventHandler.enterItem = function (event) {
 
 
 HMenu.eventHandler.clickSomewhere = function (event) {
-    if (EventEmitter.hitElement(this, event)) return;
+    // if (EventEmitter.hitElement(this, event)) return;
     this.activeTab = -1;
-    window.removeEventListener('blur', this.eventHandler.clickSomewhere);
+    // window.removeEventListener('blur', this.eventHandler.clickSomewhere);
 };
 
 
@@ -665,6 +667,10 @@ HMenu.property.items = {
 
 
 HMenu.property.activeTab = {
+    /***
+     * @this HMenu
+     * @param tabIndex
+     */
     set: function (tabIndex) {
         var lastValue = this._activeTab;
         this._activeTab = tabIndex;
@@ -680,13 +686,18 @@ HMenu.property.activeTab = {
             }
         }
         if (!(lastValue >= 0) && (this._activeTab >= 0)) {
-            setTimeout(function () {
-                $(document.body).on('click', this.eventHandler.clickSomewhere, false);
-                window.addEventListener('blur', this.eventHandler.clickSomewhere);
-            }.bind(this), 100);
+            if (this.blurTrigger){
+                this.blurTrigger.destroy();
+            }
+
+            this.blurTrigger = new BlurTrigger([this], "click", this.eventHandler.clickSomewhere, 100, 10);
+
         }
         else if ((lastValue >= 0) && !(this._activeTab >= 0)) {
-            $(document.body).off('click', this.eventHandler.clickSomewhere, false);
+            if (this.blurTrigger){
+                this.blurTrigger.destroy();
+                this.blurTrigger = null;
+            }
         }
         if (lastValue >= 0) {
             if (tabIndex >= 0 && tabIndex != lastValue) {
