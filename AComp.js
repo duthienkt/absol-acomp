@@ -9,6 +9,7 @@ import Draggable from "./js/Draggable";
 import EmojiChars from "./js/EmojiChars";
 import EmojiAnims from "./js/EmojiAnims";
 import install from "./js/dom/install";
+import BlurTrigger from "./js/tool/BlurTrigger";
 
 var AComp = {
     core: ACore,
@@ -20,7 +21,8 @@ var AComp = {
     Draggable: Draggable,
     EmojiChars: EmojiChars,
     EmojiAnims: EmojiAnims,
-    install: install
+    install: install,
+    BlurTrigger: BlurTrigger
 };
 
 window.runDebugTask = DebugTask.start.bind(DebugTask);

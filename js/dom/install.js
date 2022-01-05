@@ -124,6 +124,8 @@ import CheckTreeLeafOnlyBox from "../CheckTreeLeafOnlyBox";
 import FileListItem from "../FileListItem";
 import DualSelectBox from "../DualSelectBox";
 import DualSelectMenu from "../DualSelectMenu";
+import TOCItem from "../TOCItem";
+import TOCList from "../TOCList";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -271,7 +273,9 @@ export var publicCreators = [
     CheckTreeItem,
     CheckTreeBox,
     MultiCheckTreeMenu,
-    YesNoQuestionDialog
+    YesNoQuestionDialog,
+    TOCItem,
+    TOCList
 ];
 
 /***
