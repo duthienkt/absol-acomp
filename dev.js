@@ -60,7 +60,7 @@ Dom.documentReady.then(function () {
             tag: 'link',
             attr: {
                 rel: 'stylesheet',
-                href: '//cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css'
+                href: '//cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css'
             }
         }).addTo(document.head);
     }
