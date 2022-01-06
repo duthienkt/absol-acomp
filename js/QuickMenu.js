@@ -94,7 +94,7 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
     QuickMenu._session = Math.random() * 10000000000 >> 0;
     followerElt.addTo(document.body);
     Object.assign(menuElt, menuProps);
-    followerElt.anchors = menuAnchors;
+    followerElt.anchor = menuAnchors;
     followerElt.followTarget = element;
     QuickMenu.$element = element;
     QuickMenu.$element.classList.add('as-quick-menu-attached');
