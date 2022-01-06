@@ -126,6 +126,7 @@ import DualSelectBox from "../DualSelectBox";
 import DualSelectMenu from "../DualSelectMenu";
 import TOCItem from "../TOCItem";
 import TOCList from "../TOCList";
+import CKPlaceholder from "../CKPlaceholder";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -275,7 +276,8 @@ export var publicCreators = [
     MultiCheckTreeMenu,
     YesNoQuestionDialog,
     TOCItem,
-    TOCList
+    TOCList,
+    CKPlaceholder
 ];
 
 /***
