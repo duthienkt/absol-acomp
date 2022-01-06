@@ -8,6 +8,82 @@
 </head>
 <body>
 <script>
+
+    function user_chose_variable(){
+        var $ = absol.$;
+        var _ = absol._;
+        return new Promise(function (resolve) {
+
+            var selectMenu = _({
+                tag: 'selectmenu',
+                props: {
+                    items: Array(30).fill(null).map(function (u, i) {
+                        return {text: "variable " + i, value: 'var_' + i};
+                    })
+                }
+            });
+
+
+            var dialog = _({
+                extendEvent: ['action'],
+                class: 'as-message-dialog',
+                child: [
+                    {
+                        class: 'as-message-dialog-header',
+                        child: {
+                            tag: 'span',
+                            class: 'as-message-dialog-title',
+                            child: {text: ''}
+                        }
+                    },
+                    {
+                        class: 'as-message-dialog-body',
+                        child: [
+                            '<label>Chọn biến: </label>',
+                            selectMenu
+                        ]
+                    },
+                    {
+                        class: 'as-message-dialog-footer',
+                        child: [
+                            {
+                                tag: 'flexiconbutton',
+                                class: ['as-message-dialog-no-btn', 'secondary'],
+                                props: {
+                                    text: 'Cancel'
+                                },
+                                on: {
+                                    click: function () {
+                                        modal.remove();
+                                        resolve(null);
+                                    }
+                                }
+                            },
+                            {
+                                tag: 'flexiconbutton',
+                                class: ['as-message-dialog-yes-btn', 'primary'],
+                                props: {
+                                    text: 'ok'
+                                },
+                                on: {
+                                    click: function () {
+                                        modal.remove();
+                                        var item = selectMenu.findItemsByValue(selectMenu.value)[0].item;
+                                        resolve(item);
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            var modal = _({tag: 'modal', child: dialog}).addTo(document.body);
+        });
+
+    }
+
+
     var host = {};
     var ckPlaceHolderElt = absol._({
         tag: 'ckplaceholder',
@@ -24,7 +100,34 @@
         }
     });
 
+    ckPlaceHolderElt.data = "Tôi năm nay <strong>27 tuổi<strong>";
     document.body.appendChild(ckPlaceHolderElt);
+
+    var ckTemplatePlaceHolderElt = absol._({
+        tag: 'cktemplateplaceholder',
+        props:{
+            config: {}//some config of CKEditor
+        },
+        on:{
+            editorcrated: function (){
+                host.ckTemplateEditor = this.editor;
+            },
+            editorready: function (){
+                console.log("Editor đã sẵn sàng");
+            },
+            command_add_variable: function (){
+                var self = this;//is ckTemplatePlaceHolderElt
+                user_chose_variable().then(function (result){
+                   //result:{text:'variable có thể đa ngôn ngữ', value: 'variable_name'}
+                   if (result)  self.insertVariable(result);
+                });
+            }
+        }
+    });
+    ckTemplatePlaceHolderElt.data = "Tôi tên {{my_name}}. Tôi năm nay <strong>27 tuổi<strong>";
+    document.body.appendChild(ckTemplatePlaceHolderElt);
+
+
 
 
 </script>
