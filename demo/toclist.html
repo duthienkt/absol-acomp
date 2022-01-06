@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DRGTreeList</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css">
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        function render(o) {
+            return _(o).addTo(document.body);
+        }
+
+        var nodes = [
+            {
+                name: "Flex BSC",
+                ident: 'flex-bsc',
+                checked: true,
+                icon: 'span.mdi.mdi-format-section',
+                children: [
+                    {
+                        name: 'BSC là gì',
+                        ident: 'bsc-la-gi',
+                        checked: true,
+                        icon: 'span.mdi.mdi-note-outline'
+                    },
+                    {
+                        name: 'Giới thiệu phần mềm BSC',
+                        ident: 'tgpmbsc',
+                        children: [
+                            {
+                                name: "Các chức năng cơ bản",
+                                ident: 'cac-chuc-nang-co-ban',
+                                icon: 'span.mdi.mdi-note-outline'
+                            },
+                            {
+                                name: 'Các chức năng nâng cao',
+                                ident: 'cac-chuc-nang-nang-cao',
+                                icon: 'span.mdi.mdi-note-outline'
+                            }
+                        ],
+                        icon: 'span.mdi.mdi-note-outline'
+                    }
+                ]
+            },
+            {
+                name: "Flex CardDone",
+                ident: 'flex-card-done',
+                icon: 'span.mdi.mdi-format-section',
+                children: [
+                    {
+                        name: 'Giới thiệu phần mềm CardDone',
+                        ident: 'gtpm-carddone',
+                        icon: 'span.mdi.mdi-note-outline'
+                    },
+                    {
+                        name: 'Các khái niệm trong phần mềm',
+                        ident: 'cac-khai-niem',
+                        icon: 'span.mdi.mdi-note-outline'
+                    }
+                ]
+            },
+            {
+                name: 'Flex HR',
+                ident: 'flex-hr',
+                icon: 'span.mdi.mdi-format-section'
+            },
+            {
+                name: 'Flex CRM',
+                icon: 'span.mdi.mdi-format-section',
+                ident: 'flex-crm'
+            }
+        ];
+
+        var mList = render({
+            tag: 'toclist',
+            props: {
+                nodes: nodes
+            },
+            on: {
+                pressnode: function (event) {
+                    event.controller.active();
+                    console.log(event.type, event.controller);
+                },
+                checkednodechange: function (event) {
+                    console.log(event.type, event.controller);
+                },
+                pressnodequickmmenu: function (event) {
+                    console.log(event.type, event.controller, event);
+
+                    var nodeController = event.controller;
+                    event.showMenu({
+                        items: [
+                            { text: 'Thêm', icon: 'span.mdi.mdi-plus', cmd: 'add' },
+                            { text: "Sửa", icon: 'span.mdi.mdi-circle-edit-outline' },
+                            { text: "Xoá", icon: 'span.mdi.mdi-delete-variant' },
+                        ]
+                    }, function (item) {
+                        console.log(item);
+                        switch (item) {
+                            case 'add':
+                                appendNode(nodeController);
+                                break;
+                        }
+                    })
+                },
+                statechange: function () {
+                    localStorage.setItem('tocList_status', JSON.stringify(this.savedState));
+                }
+            }
+        });
+        try {
+            var savedState = JSON.parse(localStorage.getItem('tocList_status'));
+            if (savedState) mList.loadSavedState(savedState);
+        } catch (e) {
+            console.error(e);
+        }
+
+        function appendNode(nodeCtrl) {
+            console.log(nodeCtrl)
+        }
+
+        var searchTextInput = render({
+            tag: 'searchtextinput',
+            style: {
+                marginTop: '10px'
+            }
+        });
+
+        mList.searchInput = searchTextInput;
+
+    })()
+</script>
+</body>
+</html>

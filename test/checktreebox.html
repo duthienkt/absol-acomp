@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SelectListBox</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        function render(o) {
+            return _(o).addTo(document.body)
+        }
+
+        var b0 = render({
+            tag: 'checktreebox',
+            class: 'as-anchor-1',
+            style: { position: 'relative' },
+            props: {
+                strictValue: true,
+                items: Array(10).fill(0).map(function (u, i) {
+                    return {
+                        text: 'item text of ' + (i * 10),
+                        value: i * 10,
+                        items: Array(9).fill(0).map(function (uu, j) {
+                            return {
+                                text: 'item text of ' + (i * 10 + j + 1),
+                                value: i * 10 + j + 1
+                            }
+                        })
+                    }
+                })
+            }
+        });
+
+        var valueText = render('pre');
+        var counter = 0;
+        setInterval(function () {
+            counter = (counter + 1) % 50;
+            if (counter === 0) {
+                b0.strictValue = true;
+            }
+            else if (counter === 1) {
+                b0.strictValue = false;
+            }
+
+            var newValues = Array(10).fill(0).map(function () {
+                return Math.random() * 150 >> 0;
+            });
+            b0.values = newValues;
+            var cValue = b0.values.slice();
+
+            valueText.innerHTML = `[${newValues.join(', ')}] \n[${cValue.join(', ')}]`;
+
+
+
+        }, 500);
+
+    })();
+</script>
+</body>
+</html>

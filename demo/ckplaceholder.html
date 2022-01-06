@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CKPlaceholder</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <script src="https://lab.daithangminh.vn/ckeditor/ckeditor.js"></script>
+</head>
+<body>
+<script>
+    var host = {};
+    var ckPlaceHolderElt = absol._({
+        tag: 'ckplaceholder',
+        props:{
+            config: {}//some config of CKEditor
+        },
+        on:{
+            editorcrated: function (){
+                host.ckEditor = this.editor;
+            },
+            editorready: function (){
+                console.log("Editor đã sẵn sàng");
+            }
+        }
+    });
+
+    document.body.appendChild(ckPlaceHolderElt);
+
+
+</script>
+</body>
+</html>
