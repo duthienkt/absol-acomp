@@ -127,6 +127,7 @@ import DualSelectMenu from "../DualSelectMenu";
 import TOCItem from "../TOCItem";
 import TOCList from "../TOCList";
 import CKPlaceholder from "../CKPlaceholder";
+import CKTemplatePlaceholder from "../CKTemplatePlaceholder";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -277,7 +278,8 @@ export var publicCreators = [
     YesNoQuestionDialog,
     TOCItem,
     TOCList,
-    CKPlaceholder
+    CKPlaceholder,
+    CKTemplatePlaceholder
 ];
 
 /***
