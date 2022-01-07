@@ -80,7 +80,7 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
         menuAnchors = [];
     }
     else {
-        QuickMenu._acceptAnchors = QuickMenu.PRIORITY_ANCHORS;
+        menuAnchors = QuickMenu.PRIORITY_ANCHORS;
     }
 
     if (anchor === 'modal') {
