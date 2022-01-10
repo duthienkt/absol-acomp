@@ -1,16 +1,24 @@
-import ACore, { _ } from "../ACore";
-import '../css/ckplaceholder.css';
+import ACore, { _ } from "../../ACore";
+import '../../css/ckplaceholder.css';
+import { ckInitPlugin, ckMakeDefaultConfig } from "./plugins";
+import { config } from "process";
 
 /***
  * @extends AElement
  * @constructor
  */
 function CKPlaceholder() {
+    ckInitPlugin();
     this.$attachhook = _('attachhook').addTo(this);
-    this.$attachhook.on('attached', this.eventHandler.attached);
+    this.$attachhook.once('attached', this.eventHandler.attached);
     this._pendingData = '';
     this.editor = null;
-    this.config = {};
+    this._config = {};
+    /***
+     * @type {{}}
+     * @name config
+     * @memberOf CKPlaceholder#
+     */
 }
 
 CKPlaceholder.tag = 'CKPlaceholder'.toLowerCase();
@@ -33,7 +41,7 @@ CKPlaceholder.eventHandler = {};
  */
 CKPlaceholder.eventHandler.attached = function () {
     this.$attachhook.remove();
-    this.editor = CKEDITOR.replace(this, this.config);
+    this.editor = CKEDITOR.replace(this, ckMakeDefaultConfig(this.config));
     this.editor.on('instanceReady', this.eventHandler.instanceReady);
     this.emit('editorcreated', { type: 'editorcreated', target: this, editor: this.editor }, this);
     if (this._pendingData.length > 0) {
@@ -64,6 +72,15 @@ CKPlaceholder.property.data = {
         return this._pendingData;
     }
 };
+
+CKPlaceholder.property.config = {
+    set: function (value) {
+        this._config = Object.assign({}, value);
+    },
+    get: function () {
+        return this._config;
+    }
+}
 
 ACore.install(CKPlaceholder);
 
