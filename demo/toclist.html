@@ -92,19 +92,46 @@
                 },
                 pressnodequickmmenu: function (event) {
                     console.log(event.type, event.controller, event);
-
+                    var self = this;
                     var nodeController = event.controller;
                     event.showMenu({
                         items: [
                             { text: 'Thêm', icon: 'span.mdi.mdi-plus', cmd: 'add' },
                             { text: "Sửa", icon: 'span.mdi.mdi-circle-edit-outline' },
-                            { text: "Xoá", icon: 'span.mdi.mdi-delete-variant' },
+                            { text: "Xoá", icon: 'span.mdi.mdi-delete-variant', cmd: 'del' },
+                            { text: 'Thêm ở trước', cmd: 'add_before' },
+                            { text: 'Thêm ở sau', cmd: 'add_after' },
+                            { text: 'Thêm ở đầu', cmd: 'child_first' },
+
                         ]
                     }, function (item) {
-                        console.log(item);
-                        switch (item) {
+                        switch (item.cmd) {
                             case 'add':
                                 appendNode(nodeController);
+                                break;
+                            case 'del':
+                                nodeController.remove();
+                                break;
+                            case 'add_before':
+                                nodeController.parent.addChildBefore(self.makeNodeController({
+                                    name: 'new node ' + (new Date().getTime() % 1e6 / 1000 >> 0),
+                                    ident: '' + (new Date().getTime() % 1e6 / 1000 >> 0),
+                                    icon: 'span.mdi.mdi-note-outline'
+                                }), nodeController);
+                                break;
+
+                                case 'add_after':
+                                nodeController.parent.addChildAfter(self.makeNodeController({
+                                    name: 'new node ' + (new Date().getTime() % 1e6 / 1000 >> 0),
+                                    ident: '' + (new Date().getTime() % 1e6 / 1000 >> 0),
+                                    icon: 'span.mdi.mdi-note-outline'
+                                }), nodeController);
+                                break;
+                            case 'child_first':
+                                nodeController.addChildBefore(self.makeNodeController({
+                                    name: 'new node ' + (new Date().getTime() % 1e6 / 1000 >> 0),
+                                    ident: '' + (new Date().getTime() % 1e6 / 1000 >> 0)
+                                }), nodeController.firstChild);
                                 break;
                         }
                     })
