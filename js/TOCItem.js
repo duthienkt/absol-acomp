@@ -136,6 +136,7 @@ TOCItem.property.icon = {
 
 TOCItem.property.status = {
     set: function (value) {
+        if (['none', 'open', 'close'].indexOf(value) <0) value = 'none';
         this.removeClass('as-status-' + this._status);
         this._status = value;
         this.addClass('as-status-' + value);
