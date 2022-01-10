@@ -3,6 +3,8 @@ import TOCItem from "./TOCItem";
 import QuickMenu from "./QuickMenu";
 import BlurTrigger from "./tool/BlurTrigger";
 import prepareSearchForItem, { searchTreeListByText } from "./list/search";
+import noop from "absol/src/Code/noop";
+import { addElementAfter, addElementsBefore } from "./utils";
 
 
 /***
@@ -200,7 +202,7 @@ TOCList.prototype.search = function (query) {
         searchRoot.openRecursive();
         activeNodeCt = this.findControllerByIdent(this.savedState.active, searchRoot);
         if (activeNodeCt) activeNodeCt.active();
-        this.$searching.addChild(searchRoot.getViewElements());
+        searchRoot.view = this.$searching;
     }
 };
 
@@ -216,7 +218,8 @@ TOCList.property.nodes = {
         this.searchCache = {};
         nodes = nodes || [];
         this.rootController = new TOCVirtualRootController(this, nodes);
-        this.$body.clearChild().addChild(this.rootController.getViewElements());
+        this.rootController.view = this.$body;
+
         this.applySavedState();
     },
     get: function () {
@@ -301,7 +304,7 @@ TOCList.eventHandler.pressNodeQuickMenu = function (nodeController, event) {
  */
 TOCList.eventHandler.searchTextInputModify = function () {
     this.search(this.$searchInput.value);
-}
+};
 
 
 ACore.install(TOCList);
@@ -328,6 +331,12 @@ function TOCVirtualRootController(listElt, nodes) {
     this.children = nodes.map(function (nodeData) {
         return new TOCNodeController(listElt, nodeData, this);
     }.bind(this));
+    this._view = null;
+    /****
+     * @type {AElement}
+     * @name view
+     * @memberOf TOCVirtualRootController#
+     */
 }
 
 
@@ -364,22 +373,102 @@ TOCVirtualRootController.prototype.indexOfChild = function (child) {
     return -1;
 };
 
+/***
+ *
+ * @param {TOCNodeController} controller
+ * @param {TOCNodeController} at
+ * @returns {TOCVirtualRootController}
+ */
 TOCVirtualRootController.prototype.addChildBefore = function (controller, at) {
-    if (controller.parent) controller.remove();
-    var atIdx = this.indexOfChild(at);
+    var atIdx;
+    if (at) {
+        atIdx = this.indexOfChild(at);
+        if (atIdx >= 0) {
+            if (controller.parent) controller.remove();
 
+            this.children.splice(atIdx, 0, controller);
+            controller.__parent__ = this;
+            if (at.nodeElt.parentElement) {
+                addElementsBefore(at.nodeElt.parentElement, controller.getViewElements(), at.nodeElt);
+            }
+            this.updateStatus();
+        }
+        else {
+            throw new Error("The node before which the new node is to be inserted is not a child of this node.");
+
+        }
+    }
+    else {
+        if (controller.parent) controller.remove();
+        this.children.push(controller);
+        if (this.view) this.addChild(controller.getViewElements());
+        this.updateStatus();
+    }
+    controller.setLevelRecursive(this.level + 1);
+    return this;
 };
 
 
+TOCVirtualRootController.prototype.addChild = function (controller) {
+    this.addChildBefore(controller, null);
+    return this;
+};
+
+/***
+ *
+ * @param {TOCNodeController} controller
+ * @param at
+ */
 TOCVirtualRootController.prototype.addChildAfter = function (controller, at) {
-    if (controller.parent) controller.remove();
-    var atIdx = this.indexOfChild(at);
+    var atIdx;
+    var lastElement;
+    if (at) {
+        atIdx = this.indexOfChild(at);
+        if (atIdx === this.children.length) {
+            if (controller.parent) controller.remove();
+            controller.__parent__ = this;
+            this.children.push(controller);
+            if (this.view) this.view.addChild(controller.getViewElements());
+        }
+        else if (atIdx >= 0) {
+            if (controller.parent) controller.remove();
+            controller.__parent__ = this;
+            this.children.splice(atIdx, 0, controller);
+            if (at.nodeElt.parentElement) {
+                lastElement = at.getViewElements().pop();
+                addElementAfter(at.nodeElt.parentElement, controller.getViewElements(), lastElement);
 
-
+            }
+        }
+        else {
+            throw new Error("The node before which the new node is to be inserted is not a child of this node.");
+        }
+    }
+    else {
+        if (controller.parent) controller.remove();
+        controller.__parent__ = this;
+        this.children.unshift(controller);
+        addElementAfter(this.view, controller.getViewElements(), this.view.firstChild);
+    }
+    return this;
 };
 
-TOCVirtualRootController.prototype.removeChild = function (child) {
+TOCVirtualRootController.prototype.updateStatus = noop;
 
+/***
+ * @param {TOCNodeController} child
+ * @returns {TOCVirtualRootController|TOCNodeController}
+ */
+TOCVirtualRootController.prototype.removeChild = function (child) {
+    var idx = this.children.indexOf(child);
+    if (idx >= 0) {
+        this.children.splice(idx, 1);
+        child.getViewElements().forEach(function (elt) {
+            elt.remove();
+        });
+        this.updateStatus();
+    }
+    return this;
 };
 
 
@@ -393,6 +482,46 @@ TOCVirtualRootController.prototype.traverse = function (callback) {
     });
 };
 
+
+Object.defineProperties(TOCVirtualRootController.prototype, {
+    firstChild: {
+        get: function () {
+            return this.children[0] || null;
+        }
+    },
+    lastChild: {
+        get: function () {
+            return this.children[this.children.length - 1] || null;
+        }
+    },
+    view: {
+        /***
+         * @this TOCVirtualRootController
+         * @param view
+         */
+        set: function (view) {
+            view = view || null;
+            if (view === this._view) return;
+            if (this._view) {
+                this._view.clearChild();
+
+                this._view.rootController = null;
+                this._view = null;
+            }
+            if (view) {
+                if (view.rootController) {
+                    view.rootController.view = null;
+                }
+                view.rootController = this;
+                this._view = view;
+                this._view.addChild(this.getViewElements());
+            }
+        },
+        get: function () {
+            return this._view;
+        }
+    }
+});
 
 /***
  *
@@ -450,7 +579,18 @@ function TOCNodeController(listElt, nodeData, parent) {
     }
 }
 
+TOCNodeController.prototype.indexOfChild = TOCVirtualRootController.prototype.indexOfChild;
+
 TOCNodeController.prototype.traverse = TOCVirtualRootController.prototype.traverse;
+
+TOCNodeController.prototype.updateStatus = function () {
+    if (this.children.length === 0 && this.nodeElt.status !== 'none') {
+        this.nodeElt.status = 'none';
+    }
+    else if (this.children.length > 0 && this.nodeElt.status === 'none') {
+        this.nodeElt.status = 'close';
+    }
+};
 
 TOCNodeController.prototype.deactivateRecursive = function () {
     this.nodeElt.removeClass('as-active');
@@ -459,12 +599,54 @@ TOCNodeController.prototype.deactivateRecursive = function () {
     });
 };
 
-TOCNodeController.prototype.removeChild = function () {
-
-};
+TOCNodeController.prototype.removeChild = TOCVirtualRootController.prototype.removeChild;
 
 TOCNodeController.prototype.remove = function () {
     this.parent.removeChild(this);
+};
+
+
+/***
+ *
+ * @param {TOCNodeController} controller
+ * @param {TOCNodeController} at
+ * @returns {TOCNodeController}
+ */
+TOCNodeController.prototype.addChildBefore = function (controller, at) {
+    var atIdx;
+    if (at) {
+        atIdx = this.indexOfChild(at);
+        if (atIdx >= 0) {
+            if (controller.parent) controller.remove();
+            this.children.splice(atIdx, 0, controller);
+            controller.__parent__ = this;
+            if (this.status === 'open') {
+                addElementsBefore(this.nodeElt.parentElement, controller.getViewElements(), at.nodeElt);
+            }
+            controller.setLevelRecursive(this.level + 1);
+            this.updateStatus();
+        }
+        else {
+            throw new Error("The node before which the new node is to be inserted is not a child of this node.");
+        }
+    }
+    else {
+        if (controller.parent) controller.remove();
+        this.children.push(controller);
+        this.updateStatus();
+        if (this.status === "open") {
+            addElementsBefore(this.nodeElt.parentElement, controller.getViewElements(), at.nodeElt);
+        }
+
+    }
+    return this;
+};
+
+TOCNodeController.prototype.addChild = TOCVirtualRootController.prototype.addChild;
+
+TOCNodeController.prototype.addChildAfter = function (controller, at){
+
+    throw new Error("Not implement!");
 };
 
 
@@ -505,7 +687,7 @@ TOCNodeController.prototype.close = function () {
 
 
 TOCNodeController.prototype.getViewElements = function (ac) {
-    ac = ac || [];
+    if (ac === undefined) ac = [];
     ac.push(this.nodeElt);
     if (this.status === 'open' && this.children.length > 0) {
         this.children.forEach(function (ct) {
@@ -585,68 +767,77 @@ TOCNodeController.prototype.active = function (isActive) {
     }
 };
 
-Object.defineProperty(TOCNodeController.prototype, 'status', {
-    get: function () {
-        return this.nodeElt.status;
+
+Object.defineProperties(TOCNodeController.prototype, {
+    /***
+     * @memberOf TOCNodeController#
+     * @name status
+     * @type {"open"|"close"|"none"}
+     */
+    status: {
+        get: function () {
+            return this.nodeElt.status;
+        },
+        set: function (value) {
+            if (value === 'open' && this.nodeElt.status === 'close') this.open();
+            else if (value === 'close' && this.nodeElt.status === 'open') this.close();
+        }
     },
-    set: function (value) {
-        if (value === 'open' && this.nodeElt.status === 'close') this.open();
-        else if (value === 'close' && this.nodeElt.status === 'open') this.close();
-    }
-});
-
-Object.defineProperty(TOCNodeController.prototype, 'root', {
-    get: function () {
-        return this.parent ? this.parent.root : this;
-    }
-});
-
-Object.defineProperty(TOCNodeController.prototype, 'checked', {
-    get: function () {
-        return !!this.nodeElt.nodeData.checked;
+    root: {
+        get: function () {
+            return this.parent ? this.parent.root : this;
+        }
     },
-    set: function (value) {
-        this.nodeElt.checked = !!value;
-        this.nodeElt.nodeData.checked = !!value;
-    }
-});
-
-Object.defineProperty(TOCNodeController.prototype, 'name', {
-    set: function (value) {
-        value = value || '';
-        this.nodeElt.name = value;
-        this.nodeElt.nodeData.name = value;
+    checked: {
+        get: function () {
+            return !!this.nodeElt.nodeData.checked;
+        },
+        set: function (value) {
+            this.nodeElt.checked = !!value;
+            this.nodeElt.nodeData.checked = !!value;
+        }
     },
-    get: function () {
-        return this.nodeElt.nodeData.name;
-    }
-});
-
-
-Object.defineProperty(TOCNodeController.prototype, 'ident', {
-    get: function () {
-        return this.nodeElt.nodeData.ident;
+    name: {
+        set: function (value) {
+            value = value || '';
+            this.nodeElt.name = value;
+            this.nodeElt.nodeData.name = value;
+        },
+        get: function () {
+            return this.nodeElt.nodeData.name;
+        }
     },
-    set: function (value) {
-        this.nodeElt.nodeData.ident = value;
-    }
-});
-
-Object.defineProperty(TOCNodeController.prototype, 'nodeData', {
-    get: function () {
-        return this.nodeElt.nodeData;
+    ident: {
+        get: function () {
+            return this.nodeElt.nodeData.ident;
+        },
+        set: function (value) {
+            this.nodeElt.nodeData.ident = value;
+        }
     },
-    set: function (value) {
-        this.nodeElt.nodeData = value;
+    nodeData: {
+        get: function () {
+            return this.nodeElt.nodeData;
+        },
+        set: function (value) {
+            this.nodeElt.nodeData = value;
+        }
+    },
+    parent: {
+        get: function () {
+            return this.__parent__;
+        }
+    },
+    firstChild: {
+        get: function () {
+            return this.children[0] || null;
+        }
+    },
+    lastChild: {
+        get: function () {
+            return this.children[this.children.length - 1] || null;
+        }
     }
 });
-
-
-Object.defineProperty(TOCNodeController.prototype, 'parent', {
-    get: function () {
-        return this.__parent__;
-    }
-});
-
 
 export default TOCList;
