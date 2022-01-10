@@ -10,7 +10,8 @@ export function insertTextAtCursor(text) {
             range.deleteContents();
             range.insertNode(document.createTextNode(text));
         }
-    } else if (document.selection && document.selection.createRange) {
+    }
+    else if (document.selection && document.selection.createRange) {
         document.selection.createRange().text = text;
     }
 }
@@ -25,7 +26,8 @@ export function contenteditableTextOnly(element, processText) {
             var text = e.clipboardData.getData("text/plain");
             if (processText) text = processText(text)
             document.execCommand("insertHTML", false, text);
-        } else if (window.clipboardData && window.clipboardData.getData) {
+        }
+        else if (window.clipboardData && window.clipboardData.getData) {
             var text = window.clipboardData.getData("Text");
             if (processText) text = processText(text)
             insertTextAtCursor(text);
@@ -43,7 +45,8 @@ export function getSelectionText() {
         (typeof activeEl.selectionStart == "number")
     ) {
         text = activeEl.value.slice(activeEl.selectionStart, activeEl.selectionEnd);
-    } else if (window.getSelection) {
+    }
+    else if (window.getSelection) {
         text = window.getSelection().toString();
     }
     return text;
@@ -59,16 +62,20 @@ export function positiveIntMod(num, maxVal) {
     if (maxVal <= 0) return 0;
     if (num >= 0 && num < maxVal) {
         return Math.floor(num);
-    } else if (num === Infinity) {
+    }
+    else if (num === Infinity) {
         if (maxVal === Infinity)
             return Infinity;
         else
             return 0;
-    } else if (num < 0) {
+    }
+    else if (num < 0) {
         return (num + (Math.ceil(-num / maxVal) * maxVal)) % maxVal;
-    } else if (num >= maxVal) {
+    }
+    else if (num >= maxVal) {
         return Math.floor(num) % maxVal
-    } else return 0;
+    }
+    else return 0;
 
 }
 
@@ -91,7 +98,8 @@ export function getCaretPosition(oField) {
         var oSel = document.selection.createRange();
         oSel.moveStart('character', -oField.value.length);
         iCaretPos = oSel.text.length;
-    } else if (oField.selectionStart || oField.selectionStart == '0')
+    }
+    else if (oField.selectionStart || oField.selectionStart == '0')
         iCaretPos = oField.selectionDirection == 'backward' ? oField.selectionStart : oField.selectionEnd;
     return iCaretPos;
 }
@@ -116,7 +124,8 @@ export function preventNotNumberInput(elt) {
         if (e.clipboardData && e.clipboardData.getData) {
             text = e.clipboardData.getData("text/plain");
 
-        } else if (window.clipboardData && window.clipboardData.getData) {
+        }
+        else if (window.clipboardData && window.clipboardData.getData) {
             text = window.clipboardData.getData("Text");
         }
         var matched = text.match(/[+-]?([0-9]*[.])?[0-9]+/);
@@ -130,7 +139,8 @@ export function preventNotNumberInput(elt) {
             if (key.match(/[0-9.\-\+]/)) {
                 if (key == '.' && this.value.indexOf('.') >= 0) event.preventDefault();
                 if ((key == '+' || key == '-') && (this.value.indexOf('+') >= 0 || this.value.indexOf('-') >= 0 || getCaretPosition(this) > 0)) event.preventDefault();
-            } else event.preventDefault();
+            }
+            else event.preventDefault();
         }
     });
 }
@@ -174,12 +184,14 @@ export function openFileDialog(props, unSafe) {
                 accept: 'image/*',
                 capture: 'camera'
             }
-        } else if (props === 'microphone') {
+        }
+        else if (props === 'microphone') {
             props = {
                 accept: 'audio/*',
                 capture: "microphone"
             }
-        } else if (props === 'camcorder') {
+        }
+        else if (props === 'camcorder') {
             props = {
                 accept: 'video/*',
                 capture: 'camcorder'
@@ -191,7 +203,8 @@ export function openFileDialog(props, unSafe) {
                 input.attr('accept', props.accept.join(','));
             else
                 input.attr('accept', props.accept);
-        } else {
+        }
+        else {
             input.attr('accept', null);
         }
 
@@ -200,7 +213,8 @@ export function openFileDialog(props, unSafe) {
         }
         if (props.multiple) {
             input.attr('multiple', 'true');
-        } else {
+        }
+        else {
             input.attr('multiple');
         }
         input.value = null;
@@ -622,11 +636,13 @@ export function fileAccept(pattern, typeString) {
                 '.au', '.awb', '.dss', '.flac', '.gsm', '.m4a', '.m4b', '.m4p', '.mp3', '.mpc', '.ogg, .oga, .mogg'
                 , '.opus', '.ra', '.rm', '.raw', '.rf64', '.sln', '.tta', '.voc', '.vox', '.wav', '.wma', '.wv', '.webm',
                 '.8svx', '.cda'].indexOf(ext) >= 0;
-        } else if (part === 'video/*') {
+        }
+        else if (part === 'video/*') {
             return mineType === 'video' || ['.webm', '.mkv', '.flv', '.flv', '.vob', '.drc', '.gif', '.gifv', '.mng',
                 '.avi', '.wmv', '.yuv', '.rm', '.rmvb', '.viv', '.asf', '.amv', '.m4v', '.svi',
                 '.3gp', '.3g2', '.mxf', '.roq', '.nsv'].indexOf(ext) >= 0;
-        } else if (part === 'image/*') {
+        }
+        else if (part === 'image/*') {
             return mineType === 'video' || [
                 "ase", "art", "bmp", "blp", "cd5", "cit", "cpt", "cr2", "cut", "dds", "dib", "djvu", "egt", "exif", "gif", "gpl",
                 "grf", "icns", "ico", "iff", "jng", "jpeg", "jpg", "jfif", "jp2", "jps", "lbm", "max", "miff", "mng", "msp", "nef",
@@ -637,10 +653,47 @@ export function fileAccept(pattern, typeString) {
                 "jxr", "hdp", "wdp", "cur", "ecw", "iff", "lbm", "liff", "nrrd", "pam", "pcx", "pgf", "sgi", "rgb", "rgba", "bw", "int",
                 "inta", "sid", "ras", "sun", "tga", "heic", "heif"
             ].indexOf(ext) >= 0;
-        } else if (part.startsWith('.')) {
+        }
+        else if (part.startsWith('.')) {
             return '.' + ext === part;
-        } else {
+        }
+        else {
             return part === ext || part === mineType;
         }
     });
+}
+
+
+export function addElementsBefore(inElement, elements, at) {
+    for (var i = 0; i < elements.length; ++i) {
+        (inElement.addChildBefore || inElement.insertBefore).call(inElement, elements[i], at);
+    }
+}
+
+export function addElementAfter(inElement, elements, at) {
+    var atIdx;
+    var before;
+    var i;
+    if (at) {
+        atIdx = Array.prototype.indexOf.call(inElement.childNodes, at);
+        if (at && atIdx <= 0) throw new Error("The node before which the new node is to be inserted is not a child of this node.");
+        before = inElement.childNodes[atIdx + 1];
+        if (before) {
+            for (i = 0; i < elements.length; ++i) {
+                (inElement.addChildBefore || inElement.insertBefore).call(inElement, elements[i], before);
+            }
+        }
+        else {
+            for (i = 0; i < elements.length; ++i) {
+                (inElement.addChild || inElement.appendChild)(elements[i]);
+            }
+        }
+
+    }
+    else {
+        before = inElement.firstChild;
+        for (i = 0; i < elements.length; ++i) {
+            (inElement.addChildBefore || inElement.insertBefore)(elements[i], before);
+        }
+    }
 }
