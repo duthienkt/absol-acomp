@@ -1,0 +1,58 @@
+:root {
+    --as-vertical-timeline-item-height: 65px;
+}
+
+.as-vertical-timeline {
+    display: inline-block;
+    color: white;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+    padding: 5px;
+}
+
+.as-vertical-timeline-item {
+    height: var(--as-vertical-timeline-item-height);
+    white-space: nowrap;
+}
+
+.as-vertical-timeline-item.as-inactive {
+    color: rgba(200, 200, 200, 0.5);
+}
+
+.as-vertical-timeline-item.as-active .as-vertical-timeline-tile {
+    text-shadow: 1px 0 0 currentColor;
+}
+
+.as-vertical-timeline-item:not(:first-child) .as-vertical-timeline-icon-ctn::before {
+    content: "";
+    display: inline-block;
+    height: calc(var(--as-vertical-timeline-item-height) - 40px);
+    border-left: 2px solid currentColor;
+    position: absolute;
+    left: calc(50% - 1px);
+    bottom: calc(100% + 8px);
+}
+
+
+.as-vertical-timeline-icon-ctn {
+    display: inline-block;
+    margin-right: 20px;
+    position: relative;
+    vertical-align: middle;
+
+}
+
+.as-vertical-timeline-icon-ctn span {
+    font-size: 24px;
+}
+
+
+.as-vertical-timeline-tile {
+    display: inline-block;
+    vertical-align: middle;
+
+}
+
+
+/*//check-circle*/
