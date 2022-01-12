@@ -1,18 +1,19 @@
 import ckContentStyleText from './ckcontentstyle.css.tpl';
 import { stringToBlob } from "absol/src/Converter/file";
 import { _ } from "../../ACore";
-import bullet_circle_tpl from '../../assets/icon/bullet_circle.tpl';
-import { buildCss } from "../utils";
-import { arrayRemoveNone, arrayUnique, uniqueArray } from "absol/src/DataStructure/Array";
+import { arrayUnique } from "absol/src/DataStructure/Array";
+import VariableExtension from "./ExpressionExtension";
 
 var ckContentStyleUrl;
 var ckPluginInitialized = false;
 
-export var CKASPluginStyles = {
-    init: function (editor) {
-        console.log(editor.stylesSet)
-    }
-};
+export var CKExtensions = [VariableExtension];
+
+export var CKExtensionDict = CKExtensions.reduce(function (ac, cr) {
+    ac[cr.name] = cr;
+    return ac;
+}, {});
+
 
 export var CKStylesSetDefault = [
     {
@@ -45,7 +46,7 @@ export var CKStylesSetDefault = [
     }
 ];
 
-export function ckInitPlugin() {
+export function ckInit() {
     if (!window.CKEDITOR) return;
     if (ckPluginInitialized) return;
     var styleCode = ckContentStyleText;
@@ -54,13 +55,16 @@ export function ckInitPlugin() {
     document.head.appendChild(_('<link rel="stylesheet" href="' + ckContentStyleUrl + '">'));
     console.log('<link rel="stylesheet" href="' + ckContentStyleUrl + '">')
     CKEDITOR.stylesSet.add('as_styles_set_default', CKStylesSetDefault);
-
+    CKExtensions.forEach(function (e) {
+        if (e.plugin) {
+            CKEDITOR.plugins.add(e.name, e.plugin)
+        }
+    })
 }
 
-export function ckMakeDefaultConfig(config) {
-    ckInitPlugin();
+export function ckMakeDefaultConfig(config, extensions) {
+    ckInit();
     config = config || {};
-    console.log()
     config.stylesSet = ['as_styles_set_default'].concat(arrayUnique((config.stylesSet || '').trim().split(/\s*,\s*/)))
         .filter(function (c) {
             return !!c;
@@ -83,10 +87,22 @@ export function ckMakeDefaultConfig(config) {
             { name: 'tools', items: ['Maximize', 'ShowBlocks'] },
             { name: 'editing', items: ['Find', 'Replace'] },
             // { name: "linkdb", items: ['LinkDB'] },
-            { name: "note", items: ['Note'] },
+            {
+                name: "extensions", items: extensions.map(function (eName) {
+                    if (CKExtensionDict[eName] && CKExtensionDict[eName].command) {
+                        return CKExtensionDict[eName].command;
+                    }
+                }).filter(function (u) {
+                    return !!u;
+                })
+            },
             { name: 'document', items: ['Source'] }
         ];
     }
+
+    config.toolbar = config.toolbar.filter(function (i) {
+        return i.items && i.items.length > 0;
+    })
 
     if (!config.height) {
         config.height = '500px';
@@ -114,9 +130,27 @@ export function ckMakeDefaultConfig(config) {
     }
     config.contentsCss = contentsCss;
 
+    var extraPlugins = [];
+    if (typeof config.extraPlugins === 'string') {
+        extraPlugins.push.apply(extraPlugins, config.extraPlugins.trim().split(/\s*,\s*/));
+    }
+    else if (extraPlugins instanceof Array) {
+        extraPlugins.push.apply(extraPlugins, config.extraPlugins)
+    }
+
+    extraPlugins = extraPlugins.filter(function (c) {
+        return typeof c === 'string' && !!c;
+    });
+    CKExtensions.forEach(function (e) {
+        if (extensions.indexOf(e.name) >= 0) extraPlugins.push(e.name);
+    });
+    extraPlugins = arrayUnique(extraPlugins);
+    config.extraPlugins = extraPlugins.join(',');
+    config.allowedContent = true;//false: you must add button ui => bug
+
     Object.assign(config, {
         //style
-        // allowedContent: true,
+
         // htmlEncodeOutput: false,
         // entities: false,
         // basicEntities: false,
