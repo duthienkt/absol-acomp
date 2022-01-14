@@ -13,8 +13,8 @@ function CKPlaceholder() {
     this.$attachhook.once('attached', this.eventHandler.attached);
     this._pendingData = '';
     this.editor = null;
-    this._config = {};
     this._extensions = [];
+    this._config = this._makeInitConfig();
     /***
      * @type {{}}
      * @name config
@@ -31,11 +31,12 @@ CKPlaceholder.tag = 'CKPlaceholder'.toLowerCase();
 
 CKPlaceholder.render = function () {
     return _({
-        extendEvent: ['editorcreated', 'editorready', 'change', 'command'],
+        extendEvent: ['editorcreated', 'editorready', 'change', 'command', 'focus'],
         class: 'as-ck-placeholder'
     });
 };
 
+CKPlaceholder.prototype.mode = 'replace';
 
 /**
  *
@@ -46,7 +47,7 @@ CKPlaceholder.render = function () {
 CKPlaceholder.prototype._implicit = function (data) {
     if (typeof data !== "string") data = '';
     var self = this;
-    return this._extensions.reduce(function (ac, cr) {
+    return this._extensions.reverse().reduce(function (ac, cr) {
         var extension = CKExtensionDict[cr];
         if (extension.implicit) {
             ac = extension.implicit(ac, self);
@@ -65,12 +66,19 @@ CKPlaceholder.prototype._explicit = function (data) {
     var self = this;
     return this._extensions.reduce(function (ac, cr) {
         var extension = CKExtensionDict[cr];
-        if (extension.explicit) {
+        if (extension && extension.explicit) {
             ac = extension.explicit(ac, self);
         }
         return ac;
     }, data);
+};
 
+/***
+ * @returns {{}}
+ * @protected
+ */
+CKPlaceholder.prototype._makeInitConfig = function () {
+    return {};
 };
 
 /***
@@ -84,10 +92,15 @@ CKPlaceholder.eventHandler = {};
  */
 CKPlaceholder.eventHandler.attached = function () {
     this.$attachhook.remove();
-    this.editor = CKEDITOR.replace(this, ckMakeDefaultConfig(this.config, this.extensions));
+    this.editor = this.mode === 'replace' ? CKEDITOR.replace(this, ckMakeDefaultConfig(this.config, this.extensions)) : CKEDITOR.inline(this, ckMakeDefaultConfig(this.config, this.extensions));
     this.editor.placeHolderElt = this;
     this.editor.on('instanceReady', this.eventHandler.instanceReady);
     this.editor.on('change', this.eventHandler.change);
+    if (this.mode === 'replace'){
+        this.editor.on('focus', function (event){
+            this.emit('focus', {target: this, type:'focus', originalEvent: event});
+        }.bind(this));
+    }
     this._extensions.forEach(function (name) {
         var e = CKExtensionDict[name];
         if (e && e.extendMethods) {
@@ -148,7 +161,7 @@ CKPlaceholder.property.config = {
         if (this.editor) {
             throw  new Error("Can not set config after the CKEditor created");
         }
-        this._config = Object.assign({}, value);
+        this._config = Object.assign(this._makeInitConfig(), value);
     },
     get: function () {
         return this._config;
