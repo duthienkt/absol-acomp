@@ -6,7 +6,7 @@ var command = 'insert_expression';
 
 function init(editor) {
     editor.widgets.add(name, {
-        button: 'Create a simple box',
+        button: 'Create Expression',
         template:
             '<span class="as-ck-widget-expression">&#0123;&#0123; expression &#0125;&#0125;</span>',
         allowedContent: 'span(!as-ck-widget-expression)',
@@ -46,13 +46,12 @@ function explicit(data, placeHolderElt) {
 
 function implicit(data, placeHolderElt) {
     var template = TemplateString.parse(data);
-    var res = template.parts.slice().map(function (part) {
+    return template.parts.slice().map(function (part) {
         if (part.type === 1) {
             return '<span class="as-ck-widget-expression">&#0123;&#0123; ' + part.data.trim() + ' &#0125;&#0125;</span>'
         }
         else return part.data;
     }).join('');
-    return res;
 }
 
 
@@ -74,6 +73,16 @@ export default {
          */
         insertExpression: function (expression) {
             this.editor.insertHtml('<span class="as-ck-widget-expression">&#0123;&#0123; ' + expression.trim() + ' &#0125;&#0125;</span>')
+        },
+        getSelectedExpression: function () {
+            var sel = this.editor.getSelection();
+            if (!sel) return null;
+            var elt = sel.getSelectedElement();
+            if (!elt) return null;
+            if (!elt.hasClass('cke_widget_wrapper_as-ck-widget-expression')) return null;
+            var exp = elt.getText();
+            exp = exp.replace(/&#0123;|&#0125;|\{|\}/g, '').trim();
+            return exp;
         }
     }
 }
