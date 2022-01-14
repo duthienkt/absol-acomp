@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CKEditor Dynamic Link</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <script src="https://absol.cf/ckeditor/ckeditor.js"></script>
+</head>
+<body>
+<script>
+    function render(o) {
+        return absol._(o).addTo(document.body);
+    }
+</script>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        var pages = {
+            'google-com': { text: 'Tìm kiếm trên google.com', href: 'https://google.com.vn' },
+            'gmail-com': { text: 'Mở mail google', href: 'https://gmail.com' },
+            'yahoo-123': { text: 'Yahoo Chat', href: 'https://chat.yahoo.com' },
+            'hr': { text: 'Lab-HR', href: 'https://lab.daithangminh.vn/home_co/hr/' }
+        }
+
+
+        function user_chose_page(currentId) {
+            var $ = absol.$;
+            var _ = absol._;
+            console.log(currentId)
+            return new Promise(function (resolve) {
+                var input = _({
+                    tag: 'selectmenu',
+                    props: {
+                        items: Object.keys(pages).map(function (id) {
+                            return { text: pages[id].text, value: id };
+                        })
+                    }
+                });
+                if (currentId)
+                    input.value = currentId;
+                var dialog = _({
+                    extendEvent: ['action'],
+                    class: 'as-message-dialog',
+                    child: [
+                        {
+                            class: 'as-message-dialog-header',
+                            child: {
+                                tag: 'span',
+                                class: 'as-message-dialog-title',
+                                child: { text: '' }
+                            }
+                        },
+                        {
+                            class: 'as-message-dialog-body',
+                            child: [
+                                '<label>Tên biến: </label>',
+                                input
+                            ]
+                        },
+                        {
+                            class: 'as-message-dialog-footer',
+                            child: [
+                                {
+                                    tag: 'flexiconbutton',
+                                    class: ['as-message-dialog-no-btn', 'secondary'],
+                                    props: {
+                                        text: 'Cancel'
+                                    },
+                                    on: {
+                                        click: function () {
+                                            modal.remove();
+                                            resolve(null);
+                                        }
+                                    }
+                                },
+                                {
+                                    tag: 'flexiconbutton',
+                                    class: ['as-message-dialog-yes-btn', 'primary'],
+                                    props: {
+                                        text: 'ok'
+                                    },
+                                    on: {
+                                        click: function () {
+                                            modal.remove();
+                                            if (input.value.trim().length > 0)
+                                                resolve({ pageId: input.value.trim() });
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                });
+
+                var modal = _({ tag: 'modal', child: dialog }).addTo(document.body);
+            });
+        }
+
+
+        var editor = render({
+            tag: 'ckplaceholder',
+            props: {
+                extensions: ['dynamic_link'],
+                dynamicLinks: pages
+            },
+            on: {
+                command: function (event) {
+                    var self = this;
+                    switch (event.command) {
+                        case 'insert_dynamic_link':
+                            var selectedLink = this.getSelectedDynamicLink();
+                            user_chose_page(selectedLink).then(function (result) {
+                                if (result) {
+                                    self.insertDynamicLink(result.pageId);
+                                }
+                            })
+                            break;
+                    }
+                }
+            }
+        });
+
+        editor.data = 'Link mở HR: <a class="as-ck-widget-dynamic-link" data-link-id="hr"></a>';//không nhất thiết phải có href và text bên trong vì nó sẽ tự điền thêm vào
+    })();
+</script>
+</body>
+</html>

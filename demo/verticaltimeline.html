@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>VerticalTimeline</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+
+<body>
+<style>
+    .kv-document-2-site {
+        display: flex;
+        align-content: stretch;
+    }
+
+    .kv-document-2-site-left {
+
+        background-color: rgb(61, 29, 154);
+    }
+
+    .kv-document-2-site-right {
+        flex-grow: 1;
+
+    }
+
+    .kv-document-2-site-left-header {
+        font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+        padding: 25px 20px;
+
+    }
+
+    .kv-document-2-site-left-header-logo {
+        height: 65px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .kv-document-2-site-left-header-text {
+        font-weight: bold;
+        font-size: 30px;
+        display: inline-block;
+        vertical-align: middle;
+        color: #26afa8;
+    }
+
+    .kv-document-2-site-left .as-vertical-timeline {
+        padding: 5px 20px;
+    }
+
+
+    /* For Document page */
+    .kv-document-page {
+        flex-direction: column;
+        display: flex;
+    }
+
+    .kv-document-page-header {
+        position: relative;
+        text-align: right;
+        padding: 10px 10px 10px 0;
+    }
+
+    .kv-document-circle-btn {
+        background-color: transparent;
+        border-radius: 50%;
+        height: 30px;
+        width: 30px;
+        padding: 0;
+        border: 1px solid currentColor;
+        color: rgb(255, 50, 50);
+        font-size: 20px;
+    }
+
+    .kv-document-circle-btn:hover {
+        background-color: rgba(169, 169, 170, 0.1);
+    }
+
+    .kv-document-circle-btn:active {
+        background-color: rgba(169, 169, 170, 0.1);
+    }
+
+
+    .kv-document-page-content {
+        flex-grow: 1;
+        overflow: auto;
+        padding: 10px 20px 10px 20px;
+    }
+
+    .kv-document-page-footer {
+        position: relative;
+        padding: 30px 20px 10px 0;
+
+    }
+
+    .kv-document-page-footer .kv-document-link:last-child {
+        float: right;
+    }
+
+    .kv-document-link {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        color: rgb(120, 120, 120);
+        cursor: pointer;
+        height: 30px;
+        padding: 0 20px;
+        white-space: normal;
+        border-radius: 3px;
+    }
+
+    .kv-document-link > span,
+    .kv-document-link::before {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+    .kv-document-link::before {
+        content: "";
+        height: 100%;
+    }
+
+
+    .kv-document-link.kv-variant-primary {
+        color: white;
+        background-color: rgb(26, 146, 255);
+    }
+
+
+</style>
+
+<script>
+    function render(o) {
+        return absol._(o).addTo(document.body);
+    }
+
+    (function () {
+        var _ = absol._;
+        var $c = absol.$;
+        var vTimeline = _({
+            tag: 'verticaltimeline',
+            props: {
+                items: [
+                    { text: 'Welcome aboard' },
+                    { text: 'About company' },
+                    { text: 'Profile & Forms' },
+                    { text: 'Company policies & handbook' },
+                    { text: 'Require Documents' },
+                    { text: 'Confirm' }
+
+                ],
+                current: 2//value: -1..6
+            }
+        });
+
+        setInterval(function () {
+            vTimeline.current = -1 + (vTimeline.current + 2) % 8;
+            absol.require('snackbar').show('current = ' + vTimeline.current);
+        }, 5000)
+
+        render({
+            class: 'kv-document-2-site',
+            style: {
+                //your custom
+                width: '90vw',
+                height: '90vh',
+                boxShadow: '0px 2px 7px 0px rgba(0,0,0,0.18)'
+            },
+            child: [
+                {
+                    class: 'kv-document-2-site-left',
+                    child: [
+                        {
+                            class: 'kv-document-2-site-left-header',
+                            child: [
+                                {
+                                    tag: 'img',
+                                    class: 'kv-document-2-site-left-header-logo',
+                                    props: {
+                                        src: 'https://raw.githubusercontent.com/duthienkt/absol/master/logo.svg?sanitize=true'
+                                    }
+                                },
+                                {
+                                    tag: 'span',
+                                    class: 'kv-document-2-site-left-header-text',
+                                    child: { text: 'ABSOL.JS' }
+                                },
+                            ]
+                        },
+                        vTimeline
+                    ]
+                },
+                {
+                    class: ['kv-document-2-site-right', 'kv-document-page'],
+                    child: [
+                        {
+                            class: 'kv-document-page-header',
+                            child: [{
+                                tag: 'button',
+                                class: 'kv-document-circle-btn',
+                                child: 'span.mdi.mdi-close'
+                            }]
+                        },
+                        {
+                            class: 'kv-document-page-content',
+                            child: Array(1000).fill("<p>Content .........</p>")
+
+                        },
+                        {
+                            class: 'kv-document-page-footer',
+                            child: [
+                                {
+                                    tag: 'a',
+                                    class: 'kv-document-link',
+                                    child: {
+                                        tag: 'span',
+                                        child: { text: 'PREVIOUS STEP' }
+                                    }
+                                },
+                                {
+                                    tag: 'a',
+                                    class: ['kv-document-link', 'kv-variant-primary'],
+                                    child: {
+                                        tag: 'span',
+                                        child: { text: 'NEXT →' }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+            ]
+        });
+
+    })();
+
+
+</script>
+
+</body>
+
+</html>

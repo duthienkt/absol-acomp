@@ -4,26 +4,31 @@
     <meta charset="UTF-8">
     <title>CKPlaceholder</title>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
-    <script src="https://lab.daithangminh.vn/ckeditor/ckeditor.js"></script>
+    <script src="https://absol.cf/ckeditor/ckeditor.js"></script>
 </head>
 <body>
+<div id="ck"></div>
+<script>
+    function render(o) {
+        return absol._(o).addTo(document.body);
+    }
+</script>
+
 <script>
 
-    function user_chose_variable(){
+    function user_chose_variable(currentExpression) {
         var $ = absol.$;
         var _ = absol._;
         return new Promise(function (resolve) {
-
-            var selectMenu = _({
+            var input = _({
                 tag: 'selectmenu',
                 props: {
                     items: Array(30).fill(null).map(function (u, i) {
-                        return {text: "variable " + i, value: 'var_' + i};
+                        return { text: 'var_' + i, value: 'var_' + i };
                     })
                 }
             });
-
-
+            input.value = currentExpression || '';
             var dialog = _({
                 extendEvent: ['action'],
                 class: 'as-message-dialog',
@@ -33,14 +38,14 @@
                         child: {
                             tag: 'span',
                             class: 'as-message-dialog-title',
-                            child: {text: ''}
+                            child: { text: '' }
                         }
                     },
                     {
                         class: 'as-message-dialog-body',
                         child: [
-                            '<label>Chọn biến: </label>',
-                            selectMenu
+                            '<label>Tên biến: </label>',
+                            input
                         ]
                     },
                     {
@@ -68,8 +73,8 @@
                                 on: {
                                     click: function () {
                                         modal.remove();
-                                        var item = selectMenu.findItemsByValue(selectMenu.value)[0].item;
-                                        resolve(item);
+                                        if (input.value.trim().length > 0)
+                                            resolve({ value: input.value.trim() });
                                     }
                                 }
                             }
@@ -78,57 +83,267 @@
                 ]
             });
 
-            var modal = _({tag: 'modal', child: dialog}).addTo(document.body);
+            var modal = _({ tag: 'modal', child: dialog }).addTo(document.body);
         });
-
     }
 
-
-    var host = {};
-    var ckPlaceHolderElt = absol._({
-        tag: 'ckplaceholder',
-        props:{
-            config: {}//some config of CKEditor
+    render('<h2>CK Inline Short Text(Variable)</h2>')
+    var shortExpressionInput = absol._({
+        tag: 'ckinlineshorttext',
+        props: {
+            extensions: ['variable']
         },
-        on:{
-            editorcrated: function (){
-                host.ckEditor = this.editor;
+        on: {
+            focus: function () {
+                // lastFocusHolder = this;
+                // bt.disabled = false;
             },
-            editorready: function (){
-                console.log("Editor đã sẵn sàng");
+            change: function () {
+                // textInput.value = this.data;
+            },
+            command: function (event) {
+                var ck = this;//ckplaceholder
+                switch (event.command) {
+                    case 'insert_variable':
+                        user_chose_variable(this.getSelectedVariable()).then(function (result) {
+                            if (result) {
+                                ck.insertVariable(result.value);//expression
+                            }
+                        });
+                        break;
+                }
             }
         }
     });
+    var te = render('');
 
-    ckPlaceHolderElt.data = "Tôi năm nay <strong>27 tuổi<strong>";
-    document.body.appendChild(ckPlaceHolderElt);
 
-    var ckTemplatePlaceHolderElt = absol._({
-        tag: 'cktemplateplaceholder',
-        props:{
-            config: {}//some config of CKEditor
+    function user_chose_expression(currentExpression) {
+        var $ = absol.$;
+        var _ = absol._;
+        return new Promise(function (resolve) {
+            var input = _('input');
+            input.value = currentExpression || '';
+            var dialog = _({
+                extendEvent: ['action'],
+                class: 'as-message-dialog',
+                child: [
+                    {
+                        class: 'as-message-dialog-header',
+                        child: {
+                            tag: 'span',
+                            class: 'as-message-dialog-title',
+                            child: { text: '' }
+                        }
+                    },
+                    {
+                        class: 'as-message-dialog-body',
+                        child: [
+                            '<label>Biểu thức: </label>',
+                            input
+                        ]
+                    },
+                    {
+                        class: 'as-message-dialog-footer',
+                        child: [
+                            {
+                                tag: 'flexiconbutton',
+                                class: ['as-message-dialog-no-btn', 'secondary'],
+                                props: {
+                                    text: 'Cancel'
+                                },
+                                on: {
+                                    click: function () {
+                                        modal.remove();
+                                        resolve(null);
+                                    }
+                                }
+                            },
+                            {
+                                tag: 'flexiconbutton',
+                                class: ['as-message-dialog-yes-btn', 'primary'],
+                                props: {
+                                    text: 'ok'
+                                },
+                                on: {
+                                    click: function () {
+                                        modal.remove();
+                                        if (input.value.trim().length > 0)
+                                            resolve({ value: input.value.trim() });
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            var modal = _({ tag: 'modal', child: dialog }).addTo(document.body);
+        });
+    }
+
+    var lastFocusHolder = null;
+    var bt = render({
+        tag: 'flexiconbutton',
+        style: { height: '30px' },
+        props: {
+            text: 'Insert Expression',
+            icon: 'span.mdi.mdi-code-json',
+            disabled: true
         },
-        on:{
-            editorcrated: function (){
-                host.ckTemplateEditor = this.editor;
-            },
-            editorready: function (){
-                console.log("Editor đã sẵn sàng");
-            },
-            command_add_variable: function (){
-                var self = this;//is ckTemplatePlaceHolderElt
-                user_chose_variable().then(function (result){
-                   //result:{text:'variable có thể đa ngôn ngữ', value: 'variable_name'}
-                   if (result)  self.insertVariable(result);
+        on: {
+            click: function () {
+                var current = lastFocusHolder;
+                var selectedExpression = current.getSelectedExpression();
+
+                user_chose_expression(selectedExpression).then(function (result) {
+                    if (result) {
+                        current.insertExpression(result.value);//expression
+                    }
                 });
             }
         }
     });
-    ckTemplatePlaceHolderElt.data = "Tôi tên {{my_name}}. Tôi năm nay <strong>27 tuổi<strong>";
-    document.body.appendChild(ckTemplatePlaceHolderElt);
+
+    render('<h2>CK Inline Short Text(Expression)</h2>');
+    var t = render('div');
+    var shortInput = absol._({
+        tag: 'ckinlineshorttext',
+        props: {
+            extensions: ['expression']
+        },
+        on: {
+            focus: function () {
+                lastFocusHolder = this;
+                bt.disabled = false;
+            },
+            change: function () {
+                textInput.value = this.data;
+            },
+            command: function (event) {
+                var ck = this;//ckplaceholder
+                switch (event.command) {
+                    case 'insert_expression':
+                        user_chose_expression(this.getSelectedExpression()).then(function (result) {
+                            if (result) {
+                                ck.insertExpression(result.value);//expression
+                            }
+                        });
+                        break;
+                }
+            }
+        }
+    });
+
+    var textInput = render({
+        tag: 'input',
+        style: {
+            width: '100%',
+            boxSizing: 'border-box',
+            'margin-top': '10px'
+        }
+    });
+
+    shortInput.data = 'Tôi là {{ my_name}}, năm nay tôi {{ year_old }}';
+
+    setTimeout(function () {
+        //don't care it, to prevent ckeditor trigger after html loaded
+        te.selfReplace(shortExpressionInput);
+        t.selfReplace(shortInput);
+    }, 100)
+
+    var myInfo = {
+        name: "Phạm Hùng Quốc",
+    };
 
 
+    render('<h2>CK Placeholder</h2>');
 
+    var host = {};
+    var ckPlaceHolderElt = absol._({
+        tag: 'ckplaceholder',
+        props: {
+            // config: {}//some config of CKEditor
+            extensions: ['expression']
+        },
+        on: {
+            focus: function () {
+                lastFocusHolder = this;
+                bt.disabled = false;
+            },
+            editorcreated: function () {
+                var editor = this.editor;
+                host.ckEditor = editor;
+
+            },
+            editorready: function () {
+
+                console.log("Editor đã sẵn sàng");
+            },
+            change: function () {
+                preview.innerHTML = this.data;
+            },
+            command: function (event) {
+                var ck = this;//ckplaceholder
+                switch (event.command) {
+                    case 'insert_expression':
+                        user_chose_expression(ck.getSelectedExpression()).then(function (result) {
+                            if (result) {
+                                ck.insertExpression(result.value);//expression
+                            }
+                        })
+                        break;
+                }
+            }
+        }
+    });
+
+
+    ckPlaceHolderElt.data = "Tôi năm nay <strong>{{ old }}<strong>";
+    document.body.appendChild(ckPlaceHolderElt);
+    var preview = absol._({
+        class: 'cke_contents_ltr'
+    });
+    document.body.appendChild(preview);
+
+
+</script>
+
+<script>
+
+    // CKEDITOR.stylesSet.add( 'default', [
+    //     // Block Styles
+    //     { name: 'Normal',       element: 'p',      styles: { } },
+    //     { name: 'Note',       element: 'p',      styles: { 'color': 'Blue', padding:'5px', "background-color":'rgba(255, 100, 100, 0.5)', 'border-radius': '3px' } }
+    // ] );
+    //
+    // CKEDITOR.config.format_tags = 'p;h1;h2;h3;h4;h5;h6;pre;address;div;blockquote';
+    // CKEDITOR.config.format_blockquote = { element: 'blockquote', attributes: { 'class': 'editorCode' } };
+    //
+    //
+    // CKEDITOR.addCss( '.cke_editable .note-background { background-color: #feddd6; padding: 15px }' );
+    // CKEDITOR.plugins.add( 'notehighlight', {
+    //     icons: 'notehighlight',
+    //     init: function( editor ) {
+    //         editor.addCommand( 'formatNoteHighlight', {
+    //             exec: function( editor ) {
+    //                 var style = new CKEDITOR.style( { element: 'p', attributes: { 'class': 'note-background' } } );
+    //
+    //                 if (style.checkActive( editor.elementPath(), editor )) {
+    //                     editor.removeStyle( style );
+    //                 } else {
+    //                     editor.applyStyle( style );
+    //                 }
+    //
+    //             }
+    //         });
+    //         editor.ui.addButton( 'NoteHighlight', {
+    //             label: 'Highlight Note',
+    //             command: 'formatNoteHighlight',
+    //             toolbar: 'document'
+    //         });
+    //     }
+    // });
 
 </script>
 </body>
