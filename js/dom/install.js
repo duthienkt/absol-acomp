@@ -126,8 +126,9 @@ import DualSelectBox from "../DualSelectBox";
 import DualSelectMenu from "../DualSelectMenu";
 import TOCItem from "../TOCItem";
 import TOCList from "../TOCList";
-import CKPlaceholder from "../CKPlaceholder";
-import CKTemplatePlaceholder from "../CKTemplatePlaceholder";
+import CKPlaceholder from "../ckeditor/CKPlaceholder";
+import CKInlineShortText from "../ckeditor/CKInlineShortText";
+import VerticalTimeline from "../VerticalTimeline";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -279,7 +280,8 @@ export var publicCreators = [
     TOCItem,
     TOCList,
     CKPlaceholder,
-    CKTemplatePlaceholder
+    CKInlineShortText,
+    VerticalTimeline
 ];
 
 /***

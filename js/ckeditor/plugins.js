@@ -2,12 +2,15 @@ import ckContentStyleText from './ckcontentstyle.css.tpl';
 import { stringToBlob } from "absol/src/Converter/file";
 import { _ } from "../../ACore";
 import { arrayUnique } from "absol/src/DataStructure/Array";
-import VariableExtension from "./ExpressionExtension";
+import ExpressionExtension from "./ExpressionExtension";
+import SimpleTextExtension from "./SimpleTextExtension";
+import VariableExtension from "./VariableExtension";
+import DynamicLinkExtension from "./DynamicLinkExtension";
 
 var ckContentStyleUrl;
 var ckPluginInitialized = false;
 
-export var CKExtensions = [VariableExtension];
+export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension];
 
 export var CKExtensionDict = CKExtensions.reduce(function (ac, cr) {
     ac[cr.name] = cr;
@@ -142,7 +145,7 @@ export function ckMakeDefaultConfig(config, extensions) {
         return typeof c === 'string' && !!c;
     });
     CKExtensions.forEach(function (e) {
-        if (extensions.indexOf(e.name) >= 0) extraPlugins.push(e.name);
+        if (extensions.indexOf(e.name) >= 0 && e.plugin) extraPlugins.push(e.name);
     });
     extraPlugins = arrayUnique(extraPlugins);
     config.extraPlugins = extraPlugins.join(',');
