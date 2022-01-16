@@ -3,6 +3,7 @@ import "absol/src/absol";
 import './js/adapter/MaterialDesignIconsAdapter';
 import AComp from "./AComp";
 import * as string from 'absol/src/String/stringMatching';
+import './css/keeview.css';
 
 import QuickMenu from "./js/QuickMenu";
 import ChromeCalendar from "./js/ChromeCalendar";

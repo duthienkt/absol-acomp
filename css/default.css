@@ -12,6 +12,9 @@
     --as-transparent-button-hover-color: rgba(169, 169, 172, 0.1);
     --as-transparent-button-focus-color:  rgba(20, 185, 235, 0.3);
     --as-transparent-button-active-color:  rgba(169, 169, 172, 0.2);
+    --as-transparent-button-text-color: rgb(139, 139, 140);
+    --as-transparent-button-text-hover-color: rgb(107, 107, 107);
+    --as-transparent-button-text-active-color: rgb(0, 0, 0);
 
 }
 
