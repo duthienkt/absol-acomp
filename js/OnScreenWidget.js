@@ -1,9 +1,9 @@
 import '../css/onscreenwidget.css';
 import ACore from "../ACore";
 import Hanger from "./Hanger";
-import {getScreenSize, waitImageLoaded} from "absol/src/HTML5/Dom";
+import { getScreenSize, waitImageLoaded } from "absol/src/HTML5/Dom";
 import Vec2 from "absol/src/Math/Vec2";
-import {randomIdent} from "absol/src/String/stringGenerate";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -37,9 +37,9 @@ OnScreenWidget.render = function () {
     return _({
         tag: 'hanger',
         extendEvent: 'click',
-        class: 'as-onscreen-widget',
-        style: {
-            visibility: 'hidden'
+        class: ['as-onscreen-widget', 'as-size-loading'],
+        props:{
+            hangOn: 3
         }
     });
 };
@@ -91,7 +91,7 @@ OnScreenWidget.prototype._updateCSSSize = function () {
         '--client-height': bound.height + 'px',
         '--client-width': bound.width + 'px'
     });
-    this.removeStyle('visibility');
+    this.removeClass('as-size-loading');
 };
 
 /***

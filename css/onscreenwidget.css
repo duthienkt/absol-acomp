@@ -11,3 +11,6 @@
     user-select: none;
 }
 
+.as-onscreen-widget.as-size-loading {
+    visibility: hidden;
+}
