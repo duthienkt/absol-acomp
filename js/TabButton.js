@@ -1,14 +1,19 @@
 import '../css/tabview.css';
 import ACore from "../ACore";
-import {randomIdent} from "absol/src/String/stringGenerate";
+import { randomIdent } from "absol/src/String/stringGenerate";
 import Dom from "absol/src/HTML5/Dom";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/***
+ * @extends AElement
+ * @constructor
+ */
 function TabButton() {
     var thisTB = this;
+    this._icon = null;
+    this.$extIconCtn = $('.as-tab-bar-button-ext-icon-ctn', this);
     this.$close = $('.absol-tabbar-button-close', this)
     this.$iconCtn = $('.absol-tabbar-button-icon-container', this).on('click', function (event) {
         event.tabButtonEventName = 'delete';
@@ -31,7 +36,7 @@ function TabButton() {
 }
 
 
-TabButton.tag = 'TabButton';
+TabButton.tag = 'TabButton'.toLowerCase();
 
 TabButton.render = function () {
     return _({
@@ -39,9 +44,13 @@ TabButton.render = function () {
         class: 'absol-tabbar-button',
         extendEvent: ['close', 'active'],
         id: randomIdent(20),
-        child: [{
-            class: 'absol-tabbar-button-text',
-        },
+        child: [
+            {
+                class: 'as-tab-bar-button-ext-icon-ctn'
+            },
+            {
+                class: 'absol-tabbar-button-text',
+            },
             {
                 class: 'absol-tabbar-button-icon-container',
                 child: [
@@ -101,6 +110,20 @@ TabButton.property.desc = {
         return this.attr('title');
     }
 };
+
+TabButton.property.icon = {
+    set: function (value) {
+        value = value || null;
+        this._icon = value;
+        this.$extIconCtn.clearChild();
+        if (this._icon) {
+            this.$extIconCtn.addChild(_(value));
+        }
+    },
+    get: function () {
+        return this._icon;
+    }
+}
 
 
 TabButton.property.modified = {

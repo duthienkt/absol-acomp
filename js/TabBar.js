@@ -24,7 +24,7 @@ function TabBar() {
 
 TabBar.tag = 'tabbar';
 
-TabBar.render = function (){
+TabBar.render = function () {
     return _('hscroller.absol-tabbar');
 };
 
@@ -44,8 +44,6 @@ TabBar.prototype.getAllTabButtons = function () {
 TabBar.prototype.getButtonByIdent = function (ident) {
     return $('tabbutton#tabbuton-' + ident, this);
 };
-
-
 
 
 TabBar.property = {};
@@ -83,6 +81,9 @@ TabBar.prototype.addTab = function (value) {
         }
         if (value.desc)
             props.desc = value.desc;
+        if (value.tabIcon) {
+            props.icon = value.tabIcon;
+        }
     }
 
 

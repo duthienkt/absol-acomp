@@ -57,7 +57,31 @@
     border: none;
     outline: none;
     font-size: 1em;
+    white-space: nowrap;
 }
+
+
+.as-tab-bar-button-ext-icon-ctn:empty {
+    display: none
+}
+
+.as-tab-bar-button-ext-icon-ctn{
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 0.35em;
+    margin-left: -0.5em;
+}
+
+.absol-tabbar-button-text{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-tab-bar-button-ext-icon-ctn span{
+    font-size: 1.2em;
+}
+
+
 
 .absol-tabbar .absol-tabbar-button-active {
     background-color: rgb(30, 30, 30);
@@ -72,8 +96,7 @@
 }
 
 .absol-tabbar-button .absol-tabbar-button-close,
-.absol-tabbar-button .absol-tabbar-button-close-circle
-{
+.absol-tabbar-button .absol-tabbar-button-close-circle {
     visibility: hidden;
     color: rgb(190, 190, 190);
 }
@@ -85,13 +108,10 @@
 }
 
 
-
-
 .absol-tabbar-button:hover .absol-tabbar-button-close,
 .absol-tabbar-button-active .absol-tabbar-button-close,
 .absol-tabbar-button:hover .absol-tabbar-button-close-circle,
-.absol-tabbar-button-active .absol-tabbar-button-close-circle
-{
+.absol-tabbar-button-active .absol-tabbar-button-close-circle {
     visibility: visible;
     color: red;
 }
@@ -110,8 +130,7 @@
 .absol-tabbar-button:not(.absol-tabbar-button-modified) .absol-tabbar-button-icon-container:not(:hover) .absol-tabbar-button-close-circle,
 .absol-tabbar-button:not(.absol-tabbar-button-modified) .absol-tabbar-button-icon-container:hover .absol-tabbar-button-close,
 .absol-tabbar-button.absol-tabbar-button-modified .absol-tabbar-button-close-circle,
-.absol-tabbar-button.absol-tabbar-button-modified .absol-tabbar-button-icon-container:not(:hover) .absol-tabbar-button-close
-{
+.absol-tabbar-button.absol-tabbar-button-modified .absol-tabbar-button-icon-container:not(:hover) .absol-tabbar-button-close {
     display: none;
 }
 
@@ -250,8 +269,7 @@
     line-height: 18px;
 }
 
-.absol-tabview.xp-tiny .absol-tabbar-button-icon-container
-{
+.absol-tabview.xp-tiny .absol-tabbar-button-icon-container {
     display: none;
 }
 
