@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DualSelectMenu</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<style>
+    body {
+        min-height: 100vh;
+    }
+</style>
+<script>
+
+    (function () {
+        var OverviewPage = absol.OverviewPage;
+        var OOP = absol.OOP;
+
+        function ChatPage(host) {
+            OverviewPage.call(this, host);
+
+        }
+
+        OOP.mixClass(ChatPage, OverviewPage);
+
+        Object.defineProperty(ChatPage.prototype, 'name', {
+            get: function () {
+                return "Phản hồi";//đa ngôn ngữ
+            }
+        });
+
+        ChatPage.prototype.tabIcon = 'span.mdi.mdi-chat-outline';
+
+        ChatPage.prototype.createView = function () {
+            this.$view = _({
+                class: 'abc-def',
+                child: { tag: 'span', child: { text: 'Đây là mục phản hồi' } }
+            });
+        };
+
+        ChatPage.prototype.onResume = function () {
+            this.interval = setInterval(function () {
+                this.counter = Math.random() * 20 >> 0;
+            }.bind(this), 1000)
+        };
+
+        ChatPage.prototype.onPause = function () {
+            clearInterval(this.interval);
+        };
+
+
+        var _ = absol._;
+        var $ = absol.$;
+        var host = {};//something
+        var mWidget = new absol.OverviewWidget(host, [new ChatPage(host), new OverviewPage(host), new OverviewPage(host)]);
+        mWidget.start();
+
+    })();
+</script>
+</body>
+</html>
