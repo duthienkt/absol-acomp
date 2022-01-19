@@ -208,9 +208,10 @@ TabView.prototype.addChild = function () {
         var id = elt.attr('id');
         var desc = elt.attr('desc') || undefined;
         var name = elt.attr('name') || 'NoName';
+        var tabIcon = elt.tabIcon;
         var modified = elt.modified;
 
-        var tabButton = self.$tabbar.addTab({ name: name, id: id, desc: desc, modified: modified });
+        var tabButton = self.$tabbar.addTab({ name: name, id: id, desc: desc, modified: modified, tabIcon: tabIcon });
         containerElt.addChild(elt);
         elt.notifyAttached(self);
         var holder = {};
