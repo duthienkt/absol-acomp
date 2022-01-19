@@ -26,6 +26,8 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Dom from "absol/src/HTML5/Dom";
 import CPUViewer from "./js/CPUViewer";
 import ListDictionary from "./js/list/ListDictionary";
+import OverviewWidget from "./js/keeview/OverviewWidget";
+import OverviewPage from "./js/keeview/OverviewPage";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -72,3 +74,6 @@ materializeIconTrigger();
 absol.MaterialDesignIconsNameMap = MaterialDesignIconsNameMap;
 absol.openFileDialog = openFileDialog;
 absol.CPUViewer = CPUViewer;
+
+absol.OverviewWidget = OverviewWidget;
+absol.OverviewPage = OverviewPage;
