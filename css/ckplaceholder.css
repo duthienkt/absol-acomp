@@ -28,3 +28,7 @@ span.cke_button_icon.cke_button__as-expression-box-ico_icon {
 .as-ck-inline-short-text p::after{
     content: "";
 }
+
+.cke.cke_browser_webkit {
+    z-index: 2000000;
+}
