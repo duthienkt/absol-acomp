@@ -880,7 +880,7 @@ DateTimeInput.eventHandler.clickOKBtn = function (event) {
 DateTimeInput.eventHandler.timePick = function (event) {
     var hour = event.hour;
     var minute = event.minute;
-    var tkDict = this._makeTokenDict(this.$text.value);
+    var tkDict = this._makeTokenDict(this.share.pickedValeText);
     if (tkDict.h) {
         tkDict.h.value = 1 + ((hour + 11) % 12);
         if (tkDict.a) {
