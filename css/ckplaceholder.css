@@ -10,7 +10,7 @@ span.cke_button_icon.cke_button__as-expression-box-ico_icon {
 }
 
 
-.as-ck-inline-short-text {
+div.as-ck-inline-short-text {
     border: 1px solid #dddddd;
     height: 30px;
     line-height: 28px;
@@ -19,16 +19,31 @@ span.cke_button_icon.cke_button__as-expression-box-ico_icon {
     padding-left: var(--as-input-horizontal-padding);
     padding-right: var(--as-input-horizontal-padding);
     outline: none;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
-.as-ck-inline-short-text p{
+.as-ck-inline-short-text p {
     padding: 0;
     margin: 0;
 }
-.as-ck-inline-short-text p::after{
+
+.as-ck-inline-short-text p::after {
     content: "";
+}
+
+.as-ck-inline-short-text .cke_reset.cke_widget_drag_handler_container {
+    visibility: hidden;
+    opacity: 0;
+    display: none;
 }
 
 .cke.cke_browser_webkit {
     z-index: 2000000 !important;
+}
+
+.cke.cke_browser_webkit.as-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
