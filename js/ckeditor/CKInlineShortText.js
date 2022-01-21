@@ -1,10 +1,11 @@
-import ACore, { _ } from "../../ACore";
+import ACore, { _, $ } from "../../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import CKPlaceholder from "./CKPlaceholder";
 import { arrayRemoveNone, arrayUnique } from "absol/src/DataStructure/Array";
 import { CKExtensionDict } from "./plugins";
-import Dom from "absol/src/HTML5/Dom";
+import Dom, { traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import { blobToFile, dataURItoBlob } from "absol/src/Converter/file";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 /***
  * @extends CKPlaceholder
@@ -12,8 +13,9 @@ import { blobToFile, dataURItoBlob } from "absol/src/Converter/file";
  */
 function CKInlineShortText() {
     CKPlaceholder.call(this);
-    this.on('editorcreated', this.eventHandler.afterEditorCreated)
+    this.once('editorcreated', this.eventHandler.afterEditorCreated)
         .on('paste', this.eventHandler.paste, true)
+        .once('editorready', this.eventHandler.afterEditorReady);
 
 }
 
@@ -28,6 +30,7 @@ CKInlineShortText.render = function () {
     return _({
         class: 'as-ck-inline-short-text',
         extendEvent: ['editorcreated', 'editorready', 'change', 'command'],
+        id: randomIdent(8),
         attr: {
             contenteditable: 'true'
         }
@@ -37,7 +40,7 @@ CKInlineShortText.render = function () {
 CKInlineShortText.prototype.mode = 'inline';
 
 CKInlineShortText.prototype._makeInitConfig = function () {
-    return {
+    var config = {
         toolbar: [
             {
                 name: 'extension',
@@ -53,6 +56,7 @@ CKInlineShortText.prototype._makeInitConfig = function () {
             [CKEDITOR.SHIFT + 13 /* Shift + Enter */, 'blur']
         ]
     };
+    return config;
 };
 
 CKInlineShortText.property.extensions = Object.assign({}, CKPlaceholder.property.extensions,
@@ -67,11 +71,39 @@ CKInlineShortText.property.extensions = Object.assign({}, CKPlaceholder.property
     });
 
 
+CKInlineShortText.prototype._hookScroll = function () {
+    this.$scrollers = [];
+    var c = this.parentElement;
+    while (c) {
+        this.$scrollers.push(c);
+        c = c.parentElement;
+    }
+    this.$scrollers.push(document);
+    this.$scrollers.forEach(function (elt) {
+        elt.addEventListener('scroll', this.eventHandler.scroll);
+    }.bind(this))
+};
+
+CKInlineShortText.prototype._unhookScroll = function () {
+    this.$scrollers.forEach(function (elt) {
+        elt.removeEventListener('scroll', this.eventHandler.scroll);
+    }.bind(this))
+};
+
+
 CKInlineShortText.eventHandler.afterEditorCreated = function () {
     this.editor.on('paste', function (evt) {
         evt.cancel();
     });
 };
+
+CKInlineShortText.eventHandler.afterEditorReady = function (){
+    this.$toolbarElt = this.$toolbarElt || $('#cke_' + this.attr('id'));
+    this['removeToolbar'] = this.removeToolbar;
+    this._hookScroll();
+    setTimeout(this.eventHandler.tick, 5000);
+}
+
 
 CKInlineShortText.eventHandler.paste = function (event) {
     var self = this;
@@ -102,7 +134,70 @@ CKInlineShortText.eventHandler.paste = function (event) {
 
         }
     }
+};
+
+CKInlineShortText.eventHandler.tick = function () {
+    if (!this.isDescendantOf(document.body)) {
+        this._unhookScroll();
+        return;
+    }
+    setTimeout(this.eventHandler.tick, 5000);
 }
+
+/***
+ * @this CKInlineShortText
+ */
+CKInlineShortText.eventHandler.scroll = function () {
+    // If we don't have any active instance of CKEDITOR - return
+    if (!CKEDITOR.currentInstance) {
+        return;
+    }
+    if (CKEDITOR.currentInstance.element.$ !== this) return;
+    // Save the elements we need to work with
+    if (!this.isDescendantOf(document.body)) {
+        this._unhookScroll();
+        return;
+    }
+    this.$toolbarElt = this.$toolbarElt || $('#cke_' + this.attr('id'));
+    var toolbarElt = this.$toolbarElt;
+    if (!toolbarElt) return;
+    var bound = this.getBoundingClientRect();
+    var toolBound = toolbarElt.getBoundingClientRect();
+    var outbound = traceOutBoundingClientRect(this);
+    var left = Math.max(0, bound.left);
+    var top = bound.top - toolBound.height;
+    if (outbound.top > bound.bottom ||
+        outbound.bottom < bound.top) {
+        top = -1000;
+    }
+    else if (bound.top < toolBound.height) {
+        top = bound.bottom;
+    }
+    toolbarElt.addStyle({
+        top: top + 'px',
+        left: left + 'px'
+    });
+};
+
+
+CKInlineShortText.property.removeToolbar = {
+    set: function (value) {
+        this._removeToolbar = !!value;
+        if (this.$toolbarElt) {
+            if (this._removeToolbar) {
+                this.$toolbarElt.addClass('as-hidden');
+                console.log(this.$toolbarElt)
+            }
+            else {
+                this.$toolbarElt.addStyle('as-hidden');
+            }
+        }
+    },
+    get: function () {
+        return !this._removeToolbar;
+    }
+};
+
 
 ACore.install(CKInlineShortText);
 
