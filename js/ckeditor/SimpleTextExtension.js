@@ -10,7 +10,9 @@ function explicit(data, placeHolderElt) {
 }
 
 function implicit(data, placeHolderElt) {
-    return data.replace(/</g, '&lt;').replace(/</g, '&gt;').replace(/"/g, '&quot;').replace(/&/g, '&amp;').replace(/[\r\n]/g, '');
+    return data
+        //.replace(/</g, '&lt;').replace(/</g, '&gt;').replace(/"/g, '&quot;').replace(/&/g, '&amp;')
+        .replace(/[\r\n]/g, '');
 }
 
 

@@ -8,7 +8,7 @@ function init(editor) {
     editor.widgets.add(name, {
         button: 'Create Variable',
         template:
-            '<span class="as-ck-widget-variable">variable</span>',
+            '<span class="as-ck-widget-variable" title="variable">variable</span>',
         allowedContent: 'span(!as-ck-widget-variable)',
         requiredContent: 'span(as-ck-widget-variable)',
         upcast: function (element) {
@@ -43,14 +43,18 @@ function explicit(data, placeHolderElt) {
     return parserDiv.innerHTML;
 }
 
+var tokenRgx = /("([^\\"]|(\\.))*")|([a-zA-Z_$A-Z]([a-zA-Z_$A-Z0-9]*))/g;
+
 function implicit(data, placeHolderElt) {
-    var template = TemplateString.parse(data);
-    return template.parts.slice().map(function (part) {
-        if (part.type === 1) {
-            return '<span class="as-ck-widget-variable">' + part.data.trim()+'</span>'
+    data = (data || '') + '';
+    data = data.replace(tokenRgx, function (full, isString, u1, u2, isIdent) {
+        if (isIdent && placeHolderElt.variables && placeHolderElt.variables[isIdent]) {
+            return placeHolderElt.makeVariableHtml(isIdent);
         }
-        else return part.data;
-    }).join('');
+        else return full;
+    });
+    return data;
+
 }
 
 
@@ -64,14 +68,22 @@ export default {
         init: init
     },
     extendMethods: {
+        makeVariableHtml: function (variable, text) {
+            variable = variable.trim();
+            if (this.variables && this.variables[variable]) {
+                text = this.variables[variable].text;
+            }
+            text = text || variable;
+            return '<span class="as-ck-widget-variable"  title="' + text + '">' + variable.trim() + '</span>';
+        },
         /***
          * @this CKPlaceholder
          * @memberOf CKPlaceholder#
          * @param variable
          *
          */
-        insertVariable: function (variable) {
-            this.editor.insertHtml('<span class="as-ck-widget-variable">' + variable.trim() + '</span>')
+        insertVariable: function (variable, text) {
+            this.editor.insertHtml(this.makeVariableHtml(variable, text));
         },
         getSelectedVariable: function () {
             var sel = this.editor.getSelection();
@@ -85,3 +97,9 @@ export default {
         }
     }
 }
+
+/***
+ * @name variables
+ * @type {{}}
+ * @memberOf CKPlaceholder#
+ */
