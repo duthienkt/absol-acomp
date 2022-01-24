@@ -186,7 +186,6 @@ CKInlineShortText.property.removeToolbar = {
         if (this.$toolbarElt) {
             if (this._removeToolbar) {
                 this.$toolbarElt.addClass('as-hidden');
-                console.log(this.$toolbarElt)
             }
             else {
                 this.$toolbarElt.addStyle('as-hidden');
