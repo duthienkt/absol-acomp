@@ -188,12 +188,12 @@ CKInlineShortText.property.removeToolbar = {
                 this.$toolbarElt.addClass('as-hidden');
             }
             else {
-                this.$toolbarElt.addStyle('as-hidden');
+                this.$toolbarElt.removeClass('as-hidden');
             }
         }
     },
     get: function () {
-        return !this._removeToolbar;
+        return this._removeToolbar;
     }
 };
 
