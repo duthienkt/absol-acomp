@@ -697,3 +697,14 @@ export function addElementAfter(inElement, elements, at) {
         }
     }
 }
+
+
+/***
+ *
+ * @param {AElement|HTMLElement} element
+ * @param {number} padding
+ */
+export function isScrolledToBottom(element, padding){
+    if (!isRealNumber(padding)) padding = 0;
+    return (element.scrollHeight - element.scrollTop - padding<= element.clientHeight);
+}

@@ -17,6 +17,7 @@ import install from "./js/dom/install";
 import SearchTextInput from "./js/Searcher";
 import {MaterialDesignIconsNameMap} from "./js/adapter/MaterialDesignIconsAdapter";
 import {openFileDialog, vScrollIntoView} from "./js/utils";
+import * as utils from "./js/utils";
 import materializeIconTrigger from "./js/materializeIconTrigger";
 import VariantColors from "./js/VariantColors";
 import ToolTip from "./js/Tooltip";
@@ -68,6 +69,8 @@ Dom.documentReady.then(function () {
         }).addTo(document.head);
     }
 });
+
+Object.assign(absol.$, utils);
 
 materializeIconTrigger();
 
