@@ -483,10 +483,12 @@ SelectListBox.eventHandler.searchModify = function () {
 SelectListBox.eventHandler.scroll = function () {
     var scrollerBound = this.$listScroller.getBoundingClientRect();
     var topIdx = this._findFirstPageIdx();
+    if (!this.$listPages[topIdx]) return;
     var screenSize = getScreenSize();
     var maxItem = Math.ceil(Math.max(window.screen.height, screenSize.height) / this.itemHeight);
     var topBound = this.$listPages[topIdx].getBoundingClientRect();
     var botIdx = this._findLastPageIdx();
+    if (!this.$listPages[botIdx]) return;
     var botBound;
     botBound = this.$listPages[botIdx].getBoundingClientRect();
     if (topBound.top > scrollerBound.top || topBound.bottom < scrollerBound.bottom) {

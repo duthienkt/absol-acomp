@@ -18,8 +18,9 @@
     outline: none;
 }
 
-.absol-follower.as-select-list-box {
-    z-index: 1000000;
+
+div.absol-follower.as-select-list-box {
+    z-index: 4000000;
 }
 
 .as-select-list-box .as-select-list-box {
