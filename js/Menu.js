@@ -6,6 +6,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
 import Follower from "./Follower";
 import BlurTrigger from "./tool/BlurTrigger";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -144,6 +145,7 @@ Dropdown.property.show = {
     set: function (value) {
         if (value) {
             this.removeClass('absol-drop-hidden');
+            ResizeSystem.update();
             if (this.$container.lastChild && this.$container.lastChild.$items) {
                 this.$container.lastChild.$items.forEach(function (itemElt) {
                     if (itemElt.autoFixParrentSize) {
