@@ -60,11 +60,11 @@ DateInYearInput.prototype.share = {
 DateInYearInput.prototype._preparePicker = function () {
     if (this.share.$picker) return;
     this.share.$picker = _({
-        tag: DateInYearPicker.tag,
-        class:'as-date-in-year-follower'
+        tag: DateInYearPicker.tag
     });
     this.share.$follower = _({
         tag: Follower.tag,
+        class:'as-date-in-year-follower',
         child: this.share.$picker
     });
 };
