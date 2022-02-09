@@ -1,0 +1,9 @@
+.absol-autocomplete-input-item.as-place-search-auto-complete-item:not(:last-child) {
+    border-bottom: 1px solid #dddddd;
+
+}
+
+.absol-autocomplete-input-item.as-place-search-auto-complete-item {
+    padding: 3px 5px;
+    height: auto;
+}
