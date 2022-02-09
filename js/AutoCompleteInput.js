@@ -10,6 +10,11 @@ import EventEmitter from 'absol/src/HTML5/EventEmitter';
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ *
+ * @extends {AElement}
+ * @constructor
+ */
 function AutoCompleteInput() {
     this.$input = $('input', this)
         .on('keyup', this.eventHandler.keyup)
@@ -27,10 +32,9 @@ function AutoCompleteInput() {
     this._cache = {};
     OOP.drillProperty(this, this.$input, 'value');
 
-    return this;
 }
 
-AutoCompleteInput.tag = 'AutoCompleteInput';
+AutoCompleteInput.tag = 'AutoCompleteInput'.toLowerCase();
 
 AutoCompleteInput.render = function () {
     return _({
@@ -84,14 +88,15 @@ AutoCompleteInput.eventHandler.keyup = function (event) {
 
 
 AutoCompleteInput.eventHandler.blur = function () {
+    if (!this.containsClass('focus')) return;
     this.removeClass('focus');
+    $(document.body).off('mousedown', this.eventHandler.clickOut);
 };
 
 AutoCompleteInput.eventHandler.focus = function () {
+    if (this.containsClass('focus')) return;
     this.addClass('focus');
     $(document.body).on('mousedown', this.eventHandler.clickOut);
-
-    //todo
 }
 
 AutoCompleteInput.eventHandler.clickOut = function (event) {
@@ -388,6 +393,12 @@ AutoCompleteInput.property.adapter = {
     }
 };
 
+AutoCompleteInput.property.selectedItem = {
+    get: function (){
+        return ( this._currentData  && this._currentData[this._selectedIndex]) || null;
+    }
+};
+
 AutoCompleteInput.property.disabled = {
     set: function (value) {
         if (value) {
@@ -421,7 +432,7 @@ AutoCompleteInput.attribute.disabled = {
 };
 
 
-ACore.install('AutoCompleteInput'.toLowerCase(), AutoCompleteInput);
+ACore.install( AutoCompleteInput);
 
 
 export default AutoCompleteInput;
