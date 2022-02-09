@@ -129,6 +129,7 @@ import TOCList from "../TOCList";
 import CKPlaceholder from "../ckeditor/CKPlaceholder";
 import CKInlineShortText from "../ckeditor/CKInlineShortText";
 import VerticalTimeline from "../VerticalTimeline";
+import LocationView from "../LocationView";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -281,7 +282,9 @@ export var publicCreators = [
     TOCList,
     CKPlaceholder,
     CKInlineShortText,
-    VerticalTimeline
+    VerticalTimeline,
+
+    LocationView
 ];
 
 /***
