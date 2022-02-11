@@ -145,7 +145,7 @@ Dropdown.property.show = {
     set: function (value) {
         if (value) {
             this.removeClass('absol-drop-hidden');
-            ResizeSystem.update();
+            // ResizeSystem.update();
             if (this.$container.lastChild && this.$container.lastChild.$items) {
                 this.$container.lastChild.$items.forEach(function (itemElt) {
                     if (itemElt.autoFixParrentSize) {
