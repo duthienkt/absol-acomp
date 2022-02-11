@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DualSelectMenu</title>
+    <title>OverViewWidget</title>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
 </head>
 <body>
@@ -33,9 +33,32 @@
         ChatPage.prototype.tabIcon = 'span.mdi.mdi-chat-outline';
 
         ChatPage.prototype.createView = function () {
+            var self = this;
+
             this.$view = _({
                 class: 'abc-def',
-                child: { tag: 'span', child: { text: 'Đây là mục phản hồi' } }
+                child: [{ tag: 'span', child: { text: 'Nhấn hiện modal' } },
+                    {
+                        tag: 'flexiconbutton', props: { text: 'click me' }, on: {
+                            click: function () {
+                                self.showModal({
+                                    title: 'Đây là tiêu đề',
+                                    content: 'Đây là nội dung content, có thể là string, absol-dom-param hoặc array của absol-dom-param',
+                                    buttons: [
+                                        {
+                                            text: 'OK', onclick: function (event, modal, caller) {
+                                                modal.remove();
+                                                console.log(event, modal, caller);
+                                            }
+                                        },
+                                        { text: 'CANCEL' }
+                                    ],
+                                    host: { desc: 'host' }
+                                });
+                            }
+                        }
+                    }
+                ]
             });
         };
 
