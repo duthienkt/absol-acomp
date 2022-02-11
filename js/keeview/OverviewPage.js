@@ -3,6 +3,7 @@ import OOP from "absol/src/HTML5/OOP";
 import { _ } from "../../ACore";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import { isRealNumber } from "../utils";
+import context from "absol/src/AppPattern/Context";
 
 /***
  * @extends Fragment
@@ -27,6 +28,11 @@ OverviewPage.prototype.createView = function () {
     return _({
         child: { tag: 'span', child: { text: 'OverviewPage' } }
     });
+};
+
+OverviewPage.prototype.showModal = function (opt) {
+    if (this.parent && this.parent.showModal)
+        return this.parent.showModal(opt, this);
 };
 
 Object.defineProperty(OverviewPage.prototype, 'counter', {

@@ -60,6 +60,7 @@
     padding-top: 5px;
     background-color: white;
     height: calc(100% - 35px);
+    position: relative;
 }
 
 .kv-overview-widget-body > .absol-tabview > .absol-tabbar .absol-hscroller-viewport {

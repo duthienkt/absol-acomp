@@ -10,6 +10,7 @@ import { getScreenSize } from "absol/src/HTML5/Dom";
 import OnScreenWidget from "../OnScreenWidget";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import OWModalManager from "./OWModalManager";
 
 
 /***
@@ -36,6 +37,7 @@ function OverviewWidget(host, children) {
     this.children.forEach(function (fg) {
         fg.attach(this);
     }.bind(this));
+    this.modalMng = new OWModalManager();
 }
 
 OOP.mixClass(OverviewWidget, Fragment);
@@ -44,7 +46,7 @@ OverviewWidget.prototype.createView = function () {
     this.$title = _({
         tag: 'span',
         class: 'kv-overview-widget-title',
-        child: { text: 'Phản hồi' }
+        child: { text: '...' }
     });
     this.$tabs = this.children.map(function (fg) {
         return _({
@@ -101,7 +103,8 @@ OverviewWidget.prototype.createView = function () {
                         activetab: this.ev_activeTab.bind(this)
                     }
                 }
-            }
+            },
+            this.modalMng.getView()
         ]
     });
     this._updateViewPosition();
@@ -278,6 +281,11 @@ OverviewWidget.prototype._updateViewPosition = function () {
         '--x': x + 'px',
         '--y': y + 'px'
     });
+};
+
+
+OverviewWidget.prototype.showModal = function (opt){
+    return this.modalMng.showModal(opt, this);
 };
 
 
