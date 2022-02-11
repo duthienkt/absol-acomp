@@ -3,7 +3,6 @@ import OOP from "absol/src/HTML5/OOP";
 import { _ } from "../../ACore";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import { isRealNumber } from "../utils";
-import context from "absol/src/AppPattern/Context";
 
 /***
  * @extends Fragment
