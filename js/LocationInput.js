@@ -135,6 +135,10 @@ LocationInput.property.value = {
     set: function (value) {
         value = value || null;
         var lat, lng;
+        if (typeof value === "string") {
+            this.$text.value = value;
+            return;
+        }
         if (value instanceof Array) {
             lat = value[0];
             lng = value[1];
