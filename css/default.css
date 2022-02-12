@@ -4,6 +4,8 @@
     --as-input-font-family: Arial, Helvetica, sans-serif;
     --as-input-vertical-padding: 0.3571em;
     --as-input-horizontal-padding: 0.5em;
+    --as-input-border-color: #ddd;
+    --as-input-border-radius: 3px;
     --as-context-menu-font-size: 14px;
     --as-context-font-family: Arial, Helvetica, sans-serif;
     --as-disabled-background-color: #ebebe4;
