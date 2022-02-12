@@ -216,6 +216,7 @@ LocationPicker.prototype.selectPlace = function (place, panTo) {
         this.selectedMarker.setMap(null);
     }
     this.$okBtn.disabled = !this.selectedPlace;
+    if (!place) return;
     var latlng = place.geometry && place.geometry.location;
     if (!latlng) return;
 
