@@ -131,6 +131,7 @@ import CKInlineShortText from "../ckeditor/CKInlineShortText";
 import VerticalTimeline from "../VerticalTimeline";
 import LocationView from "../LocationView";
 import PlaceSearchAutoCompleteInput from "../PlaceSearchAutoCompleteInput";
+import LocationPicker from "../LocationPicker";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -286,6 +287,7 @@ export var publicCreators = [
     VerticalTimeline,
 
     LocationView,
+    LocationPicker,
     PlaceSearchAutoCompleteInput
 ];
 
