@@ -61,7 +61,7 @@ LocationView.property.value = {
             this.marker.setMap(null);
             this.marker = null;
         }
-        if (latlng) {
+        if (latlng && value) {
             this.marker = new google.maps.Marker({
                 map: this.map,
                 position: latlng,
