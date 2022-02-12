@@ -132,6 +132,7 @@ import VerticalTimeline from "../VerticalTimeline";
 import LocationView from "../LocationView";
 import PlaceSearchAutoCompleteInput from "../PlaceSearchAutoCompleteInput";
 import LocationPicker from "../LocationPicker";
+import LocationInput from "../LocationInput";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -288,6 +289,7 @@ export var publicCreators = [
 
     LocationView,
     LocationPicker,
+    LocationInput,
     PlaceSearchAutoCompleteInput
 ];
 
