@@ -102,8 +102,8 @@ function LocationPicker() {
 
     this.$bottomLeftCtn = _({
         class: ['as-location-picker-control-ctn', 'as-transparent'],
-        style:{
-          paddingBottom: '5px'
+        style: {
+            paddingBottom: '5px'
         },
         child: [this.$okBtn, this.$cancelBtn]
     });
@@ -212,17 +212,17 @@ LocationPicker.prototype.clearSearchingMarkers = function () {
 LocationPicker.prototype.selectPlace = function (place, panTo) {
     if (arguments.length === 1) panTo = true;
     this.selectedPlace = place || null;
-    this.$okBtn.disabled = !this.selectedPlace;
-    var latlng = place.geometry && place.geometry.location;
-    if (!latlng) return;
     if (this.selectedMarker) {
         this.selectedMarker.setMap(null);
     }
+    this.$okBtn.disabled = !this.selectedPlace;
+    var latlng = place.geometry && place.geometry.location;
+    if (!latlng) return;
 
     var zoom = panTo && (place.geometry.bounds || place.geometry.viewport) ? this.getBoundsZoomLevel(place.geometry.bounds || place.geometry.viewport) : 18;
     if (panTo) {
         this.map.setZoom(zoom);
-        this.map.setCenter(latlng);
+        this.map.panTo(latlng);
     }
 
     this.selectedMarker = new google.maps.Marker({
@@ -272,21 +272,27 @@ LocationPicker.prototype.showSearchPlaces = function (places) {
  * @param {string} placeId
  * @param {boolean=} panTo
  */
-LocationPicker.prototype.selectPlaceId = function (placeId, panTo){
+LocationPicker.prototype.selectPlaceId = function (placeId, panTo) {
     if (arguments.length === 1) panTo = true;
-    this.placeService.getDetails({
-        placeId: placeId,
-        fields: ["name", "formatted_address", "place_id", "geometry"]
-    }, function (place, status) {
-        if (
-            status === google.maps.places.PlacesServiceStatus.OK &&
-            place &&
-            place.geometry &&
-            place.geometry.location
-        ) {
-            this.selectPlace(place, panTo);
-        }
-    }.bind(this));
+    return new Promise(function (resolve) {
+        this.placeService.getDetails({
+            placeId: placeId,
+            fields: ["name", "formatted_address", "place_id", "geometry"]
+        }, function (place, status) {
+            if (
+                status === google.maps.places.PlacesServiceStatus.OK &&
+                place &&
+                place.geometry &&
+                place.geometry.location
+            ) {
+                this.selectPlace(place, panTo);
+                resolve(true);
+            }
+            else {
+                resolve(false);
+            }
+        }.bind(this));
+    }.bind(this))
 };
 
 /***
@@ -294,20 +300,21 @@ LocationPicker.prototype.selectPlaceId = function (placeId, panTo){
  * @param latLng
  * @param {boolean=} panTo
  */
-LocationPicker.prototype.selectLocation = function (latLng, panTo){
+LocationPicker.prototype.selectLocation = function (latLng, panTo) {
     if (arguments.length === 1) panTo = true;
-    this.geocoder
+    return this.geocoder
         .geocode({ location: latLng })
         .then(function (response) {
             if (response.results[0]) {
-                this.selectPlaceId(response.results[0].place_id, panTo);
+                return this.selectPlaceId(response.results[0].place_id, panTo);
             }
             else {
-                //  window.alert("No results found");
+                return false;
             }
         }.bind(this))
         .catch(function (e) {
             safeThrow(e);
+            return false;
         });
 };
 
@@ -329,10 +336,10 @@ LocationPicker.prototype.watchMyLocation = function (location) {
     var id;
     if (navigator.geolocation.watchPosition && navigator.geolocation.watchPosition) {
         id = navigator.geolocation.watchPosition(function (props) {
-            if (!this.isDescendantOf(document.body)){
+            if (!this.isDescendantOf(document.body)) {
                 navigator.geolocation.clearWatch(id);
             }
-        this.myLocationMarker.setPosition(new google.maps.LatLng(props.coords.latitude, props.coords.longitude));
+            this.myLocationMarker.setPosition(new google.maps.LatLng(props.coords.latitude, props.coords.longitude));
         }.bind(this), function () {
         }, {
             enableHighAccuracy: false,
@@ -459,7 +466,7 @@ LocationPicker.eventHandler.clickMarker = function (marker, place) {
 };
 
 LocationPicker.eventHandler.clickMap = function (event) {
-    if (event.placeId){
+    if (event.placeId) {
         this.selectPlaceId(event.placeId);
     }
     else if (event.latLng) {
