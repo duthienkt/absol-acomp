@@ -79,7 +79,7 @@
 }
 
 .absol-context-menu-anchor.absol-active {
-    z-index: 100000000;
+    z-index: 100000000 !important;
     opacity: 1;
     visibility: visible;
 }
