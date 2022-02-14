@@ -12,7 +12,13 @@ function LocationInput() {
 
 
     /***
-     * @type {{latitude: number, longitude: number} | number}
+     * @type {{latitude: number, longitude: number}}
+     * @name latLng
+     * @memberOf LocationInput#
+     */
+
+    /***
+     * @type {string}
      * @name value
      * @memberOf LocationInput#
      */
@@ -72,7 +78,7 @@ LocationInput.prototype._attachPicker = function () {
     setTimeout(function () {
         document.addEventListener('click', this.eventHandler.clickOut);
     }.bind(this), 100);
-    var value = this.value;
+    var value = this.latLng;
     if (value) {
         value = new google.maps.LatLng(value.latitude, value.longitude);
     }
@@ -168,6 +174,23 @@ LocationInput.property.value = {
             lat = Math.max(-90, Math.min(90, lat));
             if (lng < 180 && lng > 180)
                 lng = (lng + 180 + 360 * Math.ceil(Math.abs(lng) / 360 + 2)) % 360 - 180;
+            return [lat, lng].join(', ');
+        }
+        else {
+            return '';
+        }
+    }
+};
+
+LocationInput.property.latLng = {
+    get: function () {
+        var nums = this.$text.value.split(/\s*,\s*/);
+        var lat = parseFloat(nums[0]);
+        var lng = parseFloat(nums[1]);
+        if (isRealNumber(lat) && isRealNumber(lng)) {
+            lat = Math.max(-90, Math.min(90, lat));
+            if (lng < 180 && lng > 180)
+                lng = (lng + 180 + 360 * Math.ceil(Math.abs(lng) / 360 + 2)) % 360 - 180;
             return { latitude: lat, longitude: lng };
         }
         else {
@@ -176,6 +199,35 @@ LocationInput.property.value = {
     }
 };
 
+LocationInput.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+        this.$text.readOnly = !!value;
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
+LocationInput.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+        this.$text.disabled = !!value;
+    },
+    get: function () {
+        return this.hasClass('as-disabled');
+    }
+};
 
 ACore.install(LocationInput);
 

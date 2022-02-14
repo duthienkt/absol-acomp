@@ -45,7 +45,16 @@ LocationView.property.value = {
     set: function (value) {
         value = value || null;
         var latlng = null;
-        if (value instanceof google.maps.LatLng) {
+        var nums;
+        if (typeof value === "string") {
+            nums = value.split(/\s*,\s*/).map(function (t) {
+                return parseFloat(t);
+            });
+            if (isRealNumber(nums[0]) && isRealNumber(nums[1])) {
+                latlng = new google.maps.LatLng(nums[0], nums[1]);
+            }
+        }
+        else if (value instanceof google.maps.LatLng) {
             latlng = value;
         }
         else if (value && isRealNumber(value.latitude) && isRealNumber(value.longitude)) {
@@ -54,6 +63,7 @@ LocationView.property.value = {
         else if ((value instanceof Array) && isRealNumber(value[0]) && isRealNumber(value[1])) {
             latlng = new google.maps.LatLng(value[0], value[1]);
         }
+        console.log(latlng)
         latlng = latlng || new google.maps.LatLng(21.018755, 105.839729);
         this.map.setCenter(latlng || new google.maps.LatLng(21.018755, 105.839729));
         this._value = value;

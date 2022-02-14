@@ -134,6 +134,16 @@
     font: inherit;
 }
 
+.as-location-input.as-disabled{
+    background-color: var(--as-disabled-background-color);
+    pointer-events: none;
+}
+
+
+.as-location-input.as-read-only .as-location-input-icon-ctn{
+    background-color: transparent;
+    pointer-events: none;
+}
 
 .as-location-input-text {
     outline: none;
