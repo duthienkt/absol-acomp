@@ -149,7 +149,7 @@ LocationInput.property.value = {
             lat = value[0];
             lng = value[1];
         }
-        else if (typeof value === 'object') {
+        else if (value && typeof value === 'object') {
             if (('latitude' in value) && ('longitude' in value)) {
                 lat = value.latitude;
                 lng = value.longitude;
