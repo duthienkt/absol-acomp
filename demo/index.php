@@ -1,7 +1,16 @@
+<?php
+if (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === "off") {
+    $location = 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+    header('HTTP/1.1 301 Moved Permanently');
+    header('Location: ' . $location);
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html>
 
 <head>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <title>Explore</title>
     <style type="text/css">
         .ae-block {
@@ -69,7 +78,10 @@
                $iconSrc = "/exticons/square-o/folder.svg";
             }
             else{
+            if(function_exists("explode"))
                 $namep = explode(".", strtolower($name));
+            else
+                $namep = split("[\.]", strtolower($name));
                 $iconSrc = "/exticons/square-o/". $namep[count($namep) - 1].".svg";
             }
 
