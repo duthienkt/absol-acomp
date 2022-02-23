@@ -373,17 +373,31 @@ VMenuItem.property.items = {
     }
 };
 
-VMenuItem.property.disable = {
+VMenuItem.property.disabled = {
     set: function (value) {
         if (value) {
-            this.addClass('absol-menu-item-disable');
+            this.addClass('absol-menu-item-disabled');
         }
         else {
-            this.removeClass('absol-menu-item-disable');
+            this.removeClass('absol-menu-item-disabled');
         }
     },
     get: function () {
-        return this.containsClass('absol-menu-item-disable');
+        return this.containsClass('absol-menu-item-disabled');
+    }
+};
+
+VMenuItem.property.hidden = {
+    set: function (value) {
+        if (value) {
+            this.addClass('absol-menu-item-hidden');
+        }
+        else {
+            this.removeClass('absol-menu-item-hidden');
+        }
+    },
+    get: function () {
+        return this.hasClass('absol-menu-item-hidden');
     }
 };
 
@@ -416,9 +430,9 @@ VMenu.property.activeTab = {
         if (this.$items) {
             for (var i = 0; i < this.$items.length; ++i) {
                 var item = this.$items[i];
-                item.show = i == tabIndex && !item.disable;
+                item.show = i == tabIndex && !item.disabled;
                 item.activeTab = -1;
-                if (i == tabIndex && !item.disable) {
+                if (i == tabIndex && !item.disabled) {
                     item.$button && item.items && item.items.length > 0 && item.$button.addClass('absol-vmenu-button-hover');
                 }
                 else {
@@ -578,9 +592,10 @@ HMenuItem.eventHandler.pressItem = function (event) {
     this.emit('press', EventEmitter.copyEvent(event, { target: this }), this);
 };
 
-HMenuItem.prototype = {};
+HMenuItem.property = {};
 
-HMenuItem.prototype.disable = VMenuItem.prototype.disable;
+HMenuItem.property.disabled = VMenuItem.property.disabled;
+HMenuItem.property.hidden = VMenuItem.property.hidden;
 
 
 HMenuItem.prototype.init = function (props) {
@@ -678,9 +693,9 @@ HMenu.property.activeTab = {
         this._activeTab = tabIndex;
         for (var i = 0; i < this.$items.length; ++i) {
             var item = this.$items[i];
-            item.show = i == tabIndex && !item.disable;
+            item.show = i == tabIndex && !item.disabled;
             item.activeTab = -1;
-            if (i == tabIndex && !item.disable) {
+            if (i == tabIndex && !item.disabled) {
                 item.$button && item.items && item.items.length > 0 && item.$button.addClass('absol-hmenu-button-hover');
             }
             else {

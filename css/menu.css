@@ -75,7 +75,7 @@
 }
 
 .absol-drop-hidden > .absol-dropright-content *,
-.absol-drop-hidden > .absol-dropdown-content *{
+.absol-drop-hidden > .absol-dropdown-content * {
     visibility: hidden;
 }
 
@@ -214,7 +214,7 @@ img.absol-vmenu-button-icon[src] {
     vertical-align: middle;
 }
 
-.absol-menu-item-disable .absol-vmenu-arrow {
+.absol-menu-item-disabled .absol-vmenu-arrow {
     display: none;
 }
 
@@ -223,10 +223,10 @@ img.absol-vmenu-button-icon[src] {
     background-color: rgb(214, 214, 217);
 }
 
-.absol-menu-item-disable .absol-vmenu-button:hover,
-.absol-menu-item-disable .absol-vmenu .absol-vmenu-button-hover,
-.absol-menu-item-disable .absol-hmenu-button:hover,
-.absol-menu-item-disable .absol-hmenu .absol-hmenu-button-hover {
+.absol-menu-item-disabled .absol-vmenu-button:hover,
+.absol-menu-item-disabled .absol-vmenu .absol-vmenu-button-hover,
+.absol-menu-item-disabled .absol-hmenu-button:hover,
+.absol-menu-item-disabled .absol-hmenu .absol-hmenu-button-hover {
     background-color: transparent;
 }
 
@@ -240,14 +240,18 @@ img.absol-vmenu-button-icon[src] {
     background-color: rgb(97, 97, 97);
 }
 
-.absol-menu-item-disable {
+.absol-menu-item-disabled {
 }
 
-.absol-menu-item-disable button {
+.absol-menu-item-hidden {
+    display: none;
+}
+
+.absol-menu-item-disabled button {
     color: rgb(155, 155, 159);
 }
 
-.dark .absol-menu-item-disable button {
+.dark .absol-menu-item-disabled button {
     color: rgb(100, 100, 100);
 }
 
