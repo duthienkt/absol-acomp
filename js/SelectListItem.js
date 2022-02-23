@@ -30,14 +30,14 @@ SelectListItem.render = function () {
             {
                 tag: 'span',
                 class: 'absol-selectlist-item-text',
-                child: {text: ''}
+                child: { text: '' }
             },
             {
                 class: 'absol-selectlist-item-desc-container',
                 child: {
                     tag: 'span',
                     class: 'absol-selectlist-item-desc',
-                    child: {text: ''}
+                    child: { text: '' }
                 }
             }
         ]
@@ -91,7 +91,9 @@ SelectListItem.property.data = {
             this.lastInGroup = false;
             this.isLeaf = false;
             this.selected = false;
-        } else {
+            this.disabled = false;
+        }
+        else {
             this.$textValue.data = value.text || '';
             this.$descValue.data = value.desc || '';
             this.level = value.level || 0;
@@ -101,12 +103,27 @@ SelectListItem.property.data = {
             this.lastInGroup = !!(value.lastInGroup);
             this.isLeaf = !!(value.isLeaf);
             this.selected = !!(value.selected);
+            this.disabled = value.disabled;
         }
     },
     get: function () {
         return this._data;
     }
 };
+
+SelectListItem.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-disabled');
+    }
+}
 
 SelectListItem.property.value = {
     get: function () {
@@ -143,7 +160,8 @@ SelectListItem.property.lastInGroup = {
     set: function (value) {
         if (value) {
             this.addClass('as-last-in-group');
-        } else {
+        }
+        else {
             this.removeClass('as-last-in-group');
         }
     },
@@ -156,7 +174,8 @@ SelectListItem.property.isLeaf = {
     set: function (value) {
         if (value) {
             this.addClass('as-is-leaf');
-        } else {
+        }
+        else {
             this.removeClass('as-is-leaf');
         }
     },
@@ -169,7 +188,8 @@ SelectListItem.property.selected = {
     set: function (value) {
         if (value) {
             this.addClass('as-selected');
-        } else {
+        }
+        else {
             this.removeClass('as-selected');
         }
     },
@@ -188,21 +208,26 @@ export function getTextOfListItem(item) {
     if (item) {
         if (item.match) {
 
-        } else if (item.text && item.text.match) {
+        }
+        else if (item.text && item.text.match) {
             return item.text;
-        } else return '';
-    } else return '';
+        }
+        else return '';
+    }
+    else return '';
 }
 
 export function getValueOfListItem(item) {
     if (item) {
         if (item.match) {
             return item;
-        } else if (typeof item === "object")
+        }
+        else if (typeof item === "object")
             return item.value;
         else
             return item;
-    } else return item;
+    }
+    else return item;
 }
 
 export function getDescriptionOfListItem(item) {

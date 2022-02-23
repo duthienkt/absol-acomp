@@ -21,11 +21,18 @@
 }
 
 
-.absol-selectlist:not(.as-searching)>.absol-selectlist-item.as-last-in-group:not(:last-child) {
+.absol-selectlist-item.as-disabled,
+.absol-selectlist-item.as-disabled * {
+    color: var(--as-disabled-text-color);
+    pointer-events: none;
+}
+
+
+.absol-selectlist:not(.as-searching) > .absol-selectlist-item.as-last-in-group:not(:last-child) {
     border-bottom: 1px solid #dddddd;
 }
 
-.absol-selectlist-item>span {
+.absol-selectlist-item > span {
     line-height: 20px;
     white-space: pre;
     padding-left: var(--as-input-horizontal-padding);
