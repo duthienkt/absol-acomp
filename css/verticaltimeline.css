@@ -1,5 +1,5 @@
 :root {
-    --as-vertical-timeline-item-height: 65px;
+    --as-vertical-timeline-item-height: 40px;
 }
 
 .as-vertical-timeline {
@@ -27,11 +27,11 @@
 .as-vertical-timeline-item:not(:first-child) .as-vertical-timeline-icon-ctn::before {
     content: "";
     display: inline-block;
-    height: calc(var(--as-vertical-timeline-item-height) - 40px);
+    height: calc(var(--as-vertical-timeline-item-height) - 30px);
     border-left: 2px solid currentColor;
     position: absolute;
     left: calc(50% - 1px);
-    bottom: calc(100% + 8px);
+    bottom: calc(100% + 2px);
 }
 
 
