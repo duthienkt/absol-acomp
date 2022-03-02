@@ -43,6 +43,7 @@ function SelectMenu() {
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
+    OOP.drillProperty(this, this, 'selectedvalue', 'value');
     this.strictValue = true;
 
     this._lastValue = "NOTHING_VALUE";
@@ -86,7 +87,9 @@ SelectMenu.prototype.init = function (props) {
     Object.keys(props).forEach(function (key) {
         if (props[key] === undefined) delete props[key];
     });
-
+    if ('selectedvalue' in props){
+        props.value = props.selectedvalue;
+    }
     if (!('value' in props)) {
         if (props.items && props.items.length > 0) props.value = typeof props.items[0] == 'string' ? props.items[0] : props.items[0].value;
     }
