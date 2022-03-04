@@ -1,0 +1,102 @@
+:root {
+    --control-horizontal-distance-2: 10px;
+}
+
+.mk-nav {
+    position: relative;
+    --mk-nav-line-top: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+}
+
+.mk-nav::after {
+    content: "";
+    position: absolute;
+    transition: top 0.2s;
+    top: var(--mk-nav-line-top);
+    height: 40px;
+    border-right: 4px solid rgb(20, 100, 246);
+    right: -3px;
+}
+
+.mk-nav.mk-has-draggable .mk-nav-item {
+    padding-left: 30px;
+}
+
+.mk-nav-item {
+    height: 40px;
+    line-height: 40px;
+    padding-left: var(--control-horizontal-distance-2);
+    padding-right: 10px;
+    min-width: 100px;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    overflow: visible;
+    display: flex;
+}
+
+.mk-nav-item:hover {
+    background-color: rgb(169, 169, 172, 0.3);
+}
+
+.mk-nav-item-text-ctn {
+    flex-grow: 1;
+    padding-right: var(--control-horizontal-distance-2);
+    padding-left: var(--control-horizontal-distance-2)
+}
+
+
+.mk-nav-item-switch-ctn {
+
+}
+
+/*
+.mk-nav-item::after {
+    content: "";
+    border: 1px solid #ddd;
+    z-index: 2;
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: -1px;
+}
+
+.mk-nav-item:hover::after,
+.mk-nav-item.mk-current::after{
+    border-color: rgb(20, 100, 246);
+    z-index: 3;
+}
+*/
+
+
+.mk-nav-item.mk-current {
+    color: rgb(20, 100, 246);
+    text-shadow: 1px 0 0 currentColor;
+}
+
+.mk-nav-item-drag-zone {
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 30px;
+}
+
+.mk-nav-item-drag-zone::before {
+    content: "";
+    height: 100%;
+}
+
+.mk-nav-item-drag-zone::before,
+.mk-nav-item-drag-zone i {
+    display: inline-block;
+    vertical-align: middle;
+}

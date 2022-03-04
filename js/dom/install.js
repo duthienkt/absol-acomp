@@ -133,6 +133,7 @@ import LocationView from "../LocationView";
 import PlaceSearchAutoCompleteInput from "../PlaceSearchAutoCompleteInput";
 import LocationPicker from "../LocationPicker";
 import LocationInput from "../LocationInput";
+import MKNavigator from "../MKNavigator";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -290,7 +291,8 @@ export var publicCreators = [
     LocationView,
     LocationPicker,
     LocationInput,
-    PlaceSearchAutoCompleteInput
+    PlaceSearchAutoCompleteInput,
+    MKNavigator
 ];
 
 /***
