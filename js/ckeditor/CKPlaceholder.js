@@ -12,6 +12,7 @@ function CKPlaceholder() {
     this.$attachhook = _('attachhook').addTo(this);
     this.$attachhook.once('attached', this.eventHandler.attached);
     this._pendingData = '';
+    this.isReady = false;
     this.editor = null;
     this._extensions = [];
     this._config = this._makeInitConfig();
@@ -81,6 +82,20 @@ CKPlaceholder.prototype._makeInitConfig = function () {
     return {};
 };
 
+
+CKPlaceholder.prototype.selectNext = function () {
+    var editor = this.editor;
+    if (!editor) return;
+    var ranges = editor.getSelection().getRanges();
+    console.log(ranges[0])
+    // var startIndex = editor.element.getHtml().indexOf(findString);
+    // if (startIndex != -1)  {
+    //     ranges[0].setStart(element.getFirst(), startIndex);
+    //     ranges[0].setEnd(element.getFirst(), startIndex + findString.length);
+    //     sel.selectRanges([ranges[0]]);
+    // }
+};
+
 /***
  * @memberOf CKPlaceholder#
  * @type {{}}
@@ -96,9 +111,9 @@ CKPlaceholder.eventHandler.attached = function () {
     this.editor.placeHolderElt = this;
     this.editor.on('instanceReady', this.eventHandler.instanceReady);
     this.editor.on('change', this.eventHandler.change);
-    if (this.mode === 'replace'){
-        this.editor.on('focus', function (event){
-            this.emit('focus', {target: this, type:'focus', originalEvent: event});
+    if (this.mode === 'replace') {
+        this.editor.on('focus', function (event) {
+            this.emit('focus', { target: this, type: 'focus', originalEvent: event });
         }.bind(this));
     }
     this._extensions.forEach(function (name) {
@@ -108,14 +123,17 @@ CKPlaceholder.eventHandler.attached = function () {
         }
     }.bind(this));
     this.emit('editorcreated', { type: 'editorcreated', target: this, editor: this.editor }, this);
-    if (this._pendingData.length > 0) {
-        this.editor.setData(this._implicit(this._pendingData));
-        this._pendingData = null;
-    }
+
 };
 
 CKPlaceholder.eventHandler.instanceReady = function () {
+    this.isReady = true;
+    if (this._pendingData && this._pendingData.length > 0) {
+        this.editor.setData(this._implicit(this._pendingData));
+        this._pendingData = null;
+    }
     this.emit('editorready', { type: 'editorready', target: this, editor: this.editor }, this);
+
 };
 
 CKPlaceholder.eventHandler.change = function () {
@@ -132,7 +150,7 @@ CKPlaceholder.property.data = {
      */
     set: function (data) {
         if (typeof data !== "string") data = '';
-        if (this.editor) {
+        if (this.isReady) {
             this.editor.setData(this._implicit(data));
         }
         else {
@@ -144,7 +162,7 @@ CKPlaceholder.property.data = {
      * @returns {string}
      */
     get: function () {
-        if (this.editor) return this._explicit(this.editor.getData());
+        if (this.isReady) return this._explicit(this.editor.getData());
         return this._pendingData;
     }
 };
@@ -184,7 +202,7 @@ CKPlaceholder.property.extensions = {
     get: function () {
         return this._extensions;
     }
-}
+};
 
 ACore.install(CKPlaceholder);
 
