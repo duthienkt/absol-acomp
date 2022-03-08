@@ -1,9 +1,8 @@
-import ACore, {_, $} from "../ACore";
-import {ExpNode} from "./ExpTree";
-import {getDescriptionOfListItem, getTextOfListItem} from "./SelectListItem";
+import ACore, { _, $ } from "../ACore";
+import { ExpNode } from "./ExpTree";
+import { getDescriptionOfListItem, getTextOfListItem } from "./SelectListItem";
 import '../css/checktreeitem.css';
-import TextMeasurement from "./tool/TextMeasurement";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 
 /***
@@ -49,6 +48,7 @@ CheckTreeItem.property.level = ExpNode.property.level;
 CheckTreeItem.property.desc = ExpNode.property.desc;
 CheckTreeItem.property.status = ExpNode.property.status;
 
+
 CheckTreeItem.property.data = {
     set: function (itemData) {
         this._itemData = itemData;
@@ -59,6 +59,10 @@ CheckTreeItem.property.data = {
         if (itemData && itemData.icon) {
             this.icon = itemData.icon;
         }
+        else {
+            this.icon = null;
+        }
+        this.noSelect = itemData.noSelect;
     },
     get: function () {
         return this._itemData;
@@ -72,13 +76,16 @@ CheckTreeItem.property.selected = {
             this.$checkbox.removeClass('as-has-minus')
                 .removeClass('as-has-minus');
             this.$checkbox.checked = true;
-        } else if (value === 'child') {
+        }
+        else if (value === 'child') {
             this.$checkbox.checked = false;
             this.$checkbox.addClass('as-has-minus');
-        } else if (value === 'empty') {
+        }
+        else if (value === 'empty') {
             this.$checkbox.removeClass('as-has-minus')
             this.$checkbox.checked = false;
-        } else {
+        }
+        else {
             this.$checkbox.removeClass('as-has-minus');
             this.$checkbox.checked = false;
         }
@@ -86,13 +93,29 @@ CheckTreeItem.property.selected = {
     get: function () {
         if (this.$checkbox.checked) {
             return 'all';
-        } else {
+        }
+        else {
             if (this.$checkbox.containsClass('as-has-minus')) {
                 return 'child';
-            } else {
+            }
+            else {
                 return 'none';
             }
         }
+    }
+};
+
+CheckTreeItem.property.noSelect = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-no-select');
+        }
+        else {
+            this.removeClass('as-no-select');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-no-select');
     }
 };
 
@@ -112,14 +135,16 @@ CheckTreeItem.eventHandler.click = function (event) {
     var tBound;
     if (this.status === 'open' || this.status === 'close') {
         tBound = this.$toggleIcon.getBoundingClientRect();
-        if (event.clientX <= tBound.right) {
-            this.emit('presstoggle', {type: 'presstoggle', target: this, originalEvent: event}, this);
-        } else if (!hitElement(this.$checkbox, event)) {
+        if (event.clientX <= tBound.right || this.noSelect) {
+            this.emit('presstoggle', { type: 'presstoggle', target: this, originalEvent: event }, this);
+        }
+        else if (!hitElement(this.$checkbox, event)) {
             this.$checkbox.checked = !this.$checkbox.checked;
             this.eventHandler.checkboxChange(event);
         }
-    } else {
-        if (!hitElement(this.$checkbox, event)) {
+    }
+    else {
+        if (!hitElement(this.$checkbox, event) && !this.noSelect) {
             this.$checkbox.checked = !this.$checkbox.checked;
             this.eventHandler.checkboxChange(event);
         }

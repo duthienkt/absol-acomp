@@ -15,3 +15,12 @@
 .as-check-tree-item .as-checkbox-input {
     margin-right: 0.35em;
 }
+
+.as-check-tree-item.as-no-select .as-checkbox-input {
+    pointer-events: none;
+}
+
+.as-check-tree-item.as-no-select .as-checkbox-input .bound {
+    stroke: #929292;
+    fill: #ebebe4;
+}
