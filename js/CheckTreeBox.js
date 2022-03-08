@@ -288,7 +288,7 @@ CheckTreeBox.prototype._calcEstimateSize = function () {
         this.estimateSize.width = longestHolder.calcWidth();
         this.estimateSize.height = this.itemHeight * n;
     }
-    this.addStyle('--select-list-estimate-width', this.estimateSize.width + 'px');
+    this.addStyle('--select-list-estimate-width', Math.max(145, this.estimateSize.width) + 'px');
 
 };
 

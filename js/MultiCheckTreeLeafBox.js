@@ -1,19 +1,19 @@
-import ACore, {_, $} from '../ACore';
+import ACore, { _, $ } from '../ACore';
 import Follower from "./Follower";
 import ExpTree from "./ExpTree";
 import '../css/selecttreeleafmenu.css';
 import SelectListBox from "./SelectListBox";
-import prepareSearchForItem, {calcItemMatchScore, prepareSearchForList} from "./list/search";
-import {estimateWidth14} from "./utils";
+import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
+import { estimateWidth14 } from "./utils";
 import CheckboxInput from "./CheckBoxInput";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 function isBranchStatus(status) {
     return status === 'open' || status === 'close';
 }
 
 function invertStatus(status) {
-    return {open: 'close', close: 'open'}[status] || 'none';
+    return { open: 'close', close: 'open' }[status] || 'none';
 }
 
 
@@ -35,7 +35,7 @@ function MultiCheckTreeLeafBox() {
 
     this.$content = $('.as-select-tree-leaf-box-content', this);
     this._savedStatus = {};
-    this.estimateSize = {width: 0, height: 0};
+    this.estimateSize = { width: 0, height: 0 };
 }
 
 
@@ -81,6 +81,7 @@ MultiCheckTreeLeafBox.prototype.resetSearchState = function () {
             this._updateSelectedItems();
         }
     }
+    this.updatePosition();
 };
 
 
@@ -117,6 +118,9 @@ MultiCheckTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
         tag: ExpTree.tag, class: 'as-select-tree-leaf-item', props: {
             name: item.text, desc: item.desc, icon: item.icon, status: status,
             itemData: item
+        },
+        on: {
+            'statuschange': this.updatePosition.bind(this)
         }
     });
     var nodeElt = treeElt.getNode().on({
@@ -124,7 +128,9 @@ MultiCheckTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
             if (isBranchStatus(treeElt.status)) {
                 treeElt.status = invertStatus(treeElt.status)
                 savedStatus[item.value] = treeElt.status;
-            } else if (isLeaf) {
+                self.updatePosition();
+            }
+            else if (isLeaf) {
                 if (!hitElement(checkboxElt, event)) {
                     var checked = !checkboxElt.checked;
                     checkboxElt.checked = checked;
@@ -133,7 +139,8 @@ MultiCheckTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
                     if (checked && idx < 0) {
                         changed = true;
                         self._values.push(item.value);
-                    } else if (!checked && idx >= 0) {
+                    }
+                    else if (!checked && idx >= 0) {
                         changed = true;
                         self._values.splice(idx, 1);
                     }
@@ -161,7 +168,8 @@ MultiCheckTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
                         changed = true;
 
                         self._values.push(item.value);
-                    } else if (!checked && idx >= 0) {
+                    }
+                    else if (!checked && idx >= 0) {
                         changed = true;
 
                         self._values.splice(idx, 1);
@@ -294,6 +302,7 @@ MultiCheckTreeLeafBox.property.items = {
         this.estimateSize = this._calcEstimateSize(items);
         this.addStyle('--select-list-estimate-width', this.estimateSize.width + 'px');
         this._updateSelectedItems();
+        this.updatePosition();
     }, get: function () {
         return this._items;
     }
@@ -321,7 +330,7 @@ MultiCheckTreeLeafBox.property.enableSearch = SelectListBox.property.enableSearc
 
 MultiCheckTreeLeafBox.prototype._search = function (query) {
     var self = this;
-    var queryItem = prepareSearchForItem({text: query});
+    var queryItem = prepareSearchForItem({ text: query });
     var minScore = Infinity;
     var maxScore = -Infinity;
 
@@ -356,7 +365,8 @@ MultiCheckTreeLeafBox.prototype._search = function (query) {
                 if (holder.childrenScore >= midScore) {
                     savedStatus[item.value] = 'open';
                     item.items = filterTree(holder.children, false);
-                } else {
+                }
+                else {
                     savedStatus[item.value] = 'close';
                     item.items = filterTree(holder.children, true);
                 }
@@ -389,6 +399,7 @@ MultiCheckTreeLeafBox.eventHandler.searchModify = function () {
         this.$dislayItemByValue = this.$itemByValue;
         this.$dislayItems = this.$items;
         this._updateSelectedItems();
+        this.updatePosition();
         return;
     }
     if (!this._searchCache[query]) {
@@ -408,6 +419,7 @@ MultiCheckTreeLeafBox.eventHandler.searchModify = function () {
     this.$dislayItemByValue = searchData.dict;
     this.$dislayItems = searchData.$items;
     this._updateSelectedItems();
+    this.updatePosition();
 };
 
 

@@ -1,17 +1,18 @@
-import ACore, {_, $} from '../ACore';
+import ACore, { _, $ } from '../ACore';
 import Follower from "./Follower";
 import ExpTree from "./ExpTree";
 import '../css/selecttreeleafmenu.css';
 import SelectListBox from "./SelectListBox";
-import prepareSearchForItem, {calcItemMatchScore, prepareSearchForList} from "./list/search";
-import {estimateWidth14} from "./utils";
+import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
+import { estimateWidth14 } from "./utils";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 function isBranchStatus(status) {
     return status === 'open' || status === 'close';
 }
 
 function invertStatus(status) {
-    return {open: 'close', close: 'open'}[status] || 'none';
+    return { open: 'close', close: 'open' }[status] || 'none';
 }
 
 
@@ -34,7 +35,7 @@ function SelectTreeLeafBox() {
 
     this.$content = $('.as-select-tree-leaf-box-content', this);
     this._savedStatus = {};
-    this.estimateSize = {width: 0, height: 0};
+    this.estimateSize = { width: 0, height: 0 };
 }
 
 
@@ -107,6 +108,9 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
         tag: ExpTree.tag, class: 'as-select-tree-leaf-item', props: {
             name: item.text, desc: item.desc, icon: item.icon, status: status,
             itemData: item
+        },
+        on: {
+           'statuschange': this.updatePosition.bind(this)
         }
     });
     nodeElt.getNode().on({
@@ -114,8 +118,10 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
             if (isBranchStatus(nodeElt.status)) {
                 nodeElt.status = invertStatus(nodeElt.status)
                 savedStatus[item.value] = nodeElt.status;
-            } else if (isLeaf) {
-                self.emit('pressitem', {item: item, target: self, itemElt: nodeElt, originalEvent: event}, self);
+                self.updatePosition();
+            }
+            else if (isLeaf) {
+                self.emit('pressitem', { item: item, target: self, itemElt: nodeElt, originalEvent: event }, self);
             }
         }
     });
@@ -236,6 +242,7 @@ SelectTreeLeafBox.property.items = {
             }
         }
         this._updateSelectedItem();
+        self.updatePosition();
     }, get: function () {
         return this._items;
     }
@@ -254,7 +261,7 @@ SelectTreeLeafBox.property.enableSearch = SelectListBox.property.enableSearch;
 
 SelectTreeLeafBox.prototype._search = function (query) {
     var self = this;
-    var queryItem = prepareSearchForItem({text: query});
+    var queryItem = prepareSearchForItem({ text: query });
     var minScore = Infinity;
     var maxScore = -Infinity;
 
@@ -289,7 +296,8 @@ SelectTreeLeafBox.prototype._search = function (query) {
                 if (holder.childrenScore >= midScore) {
                     savedStatus[item.value] = 'open';
                     item.items = filterTree(holder.children, false);
-                } else {
+                }
+                else {
                     savedStatus[item.value] = 'close';
                     item.items = filterTree(holder.children, true);
                 }
@@ -322,6 +330,7 @@ SelectTreeLeafBox.eventHandler.searchModify = function () {
         this.$dislayItemByValue = this.$itemByValue;
         this.$dislayItems = this.$items;
         this._updateSelectedItem();
+        this.updatePosition();
         return;
     }
     if (!this._searchCache[query]) {
@@ -341,6 +350,7 @@ SelectTreeLeafBox.eventHandler.searchModify = function () {
     this.$dislayItemByValue = searchData.dict;
     this.$dislayItems = searchData.$items;
     this._updateSelectedItem();
+    this.updatePosition();
 };
 
 

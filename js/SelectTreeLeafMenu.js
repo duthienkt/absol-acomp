@@ -19,7 +19,6 @@ function SelectTreeLeafMenu() {
         }
     });
     OOP.drillProperty(this, this.$selectBox, 'enableSearch');
-    this.$selectBox.followTarget = this;
     this.$holderItem = $('selectlistitem', this);
     this.on('click', this.eventHandler.click.bind(this));
 }
@@ -126,10 +125,14 @@ SelectTreeLeafMenu.property.isFocus = {
             bound = this.getBoundingClientRect();
             this.$selectBox.addStyle('min-width', bound.width + 'px');
             document.body.appendChild(this.$selectBox);
+            this.$selectBox.addStyle('visibility', 'hidden');
+            this.$selectBox.followTarget = this;
             this.$selectBox.updatePosition();
             this.off('click', this.eventHandler.click);
             setTimeout(function () {
                 document.addEventListener('click', this.eventHandler.clickOut);
+                this.$selectBox.removeStyle('visibility');
+
             }.bind(this), 5);
             this.$selectBox.viewToSelected();
         } else {

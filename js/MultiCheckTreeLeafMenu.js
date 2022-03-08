@@ -1,4 +1,4 @@
-import ACore, {_, $} from '../ACore';
+import ACore, { _, $ } from '../ACore';
 import MultiCheckTreeLeafBox from "./MultiCheckTreeLeafBox";
 import SelectTreeLeafMenu from "./SelectTreeLeafMenu";
 import SelectBoxItem from "./SelectBoxItem";
@@ -15,7 +15,7 @@ function MultiCheckTreeLeafMenu() {
             change: this.eventHandler.selectBoxChange
         }
     });
-    this.$selectBox.followTarget = this;
+
     this.on('click', this.eventHandler.click);
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
 }
@@ -93,7 +93,7 @@ MultiCheckTreeLeafMenu.property = {};
 MultiCheckTreeLeafMenu.property.items = {
     set: function (items) {
         this.$selectBox.items = items;
-        this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.width + 'px');
+        this.addStyle('--select-list-estimate-width', Math.max(145 + 20, this.$selectBox.estimateSize.width) + 'px');
         this._updateSelectedItems();
     },
     get: function () {
@@ -115,7 +115,7 @@ MultiCheckTreeLeafMenu.property.values = {
 
 MultiCheckTreeLeafMenu.property.isFocus = SelectTreeLeafMenu.property.isFocus;
 
-MultiCheckTreeLeafMenu.property.disabled =  MultiSelectMenu.property.disabled;
+MultiCheckTreeLeafMenu.property.disabled = MultiSelectMenu.property.disabled;
 
 MultiCheckTreeLeafMenu.eventHandler = {};
 
@@ -129,7 +129,7 @@ MultiCheckTreeLeafMenu.eventHandler.click = function (event) {
 
 MultiCheckTreeLeafMenu.eventHandler.selectBoxChange = function () {
     this._updateSelectedItems();
-    this.emit('change', {type: 'change', target: this}, this);
+    this.emit('change', { type: 'change', target: this }, this);
 };
 
 MultiCheckTreeLeafMenu.eventHandler.itemPressClose = function (itemElt, event) {
@@ -138,7 +138,7 @@ MultiCheckTreeLeafMenu.eventHandler.itemPressClose = function (itemElt, event) {
         return value !== item.value;
     });
     this._updateSelectedItems();
-    this.emit('change', {type: 'change', target: this}, this);
+    this.emit('change', { type: 'change', target: this }, this);
 };
 
 ACore.install(MultiCheckTreeLeafMenu);
