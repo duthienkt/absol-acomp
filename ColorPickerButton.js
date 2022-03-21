@@ -78,7 +78,7 @@ ColorPickerButton.prototype.openPicker = function () {
         document.addEventListener('click', this.eventHandler.clickBody);
     }.bind(this), 100)
     this._lastValue = this.value;
-    this.$ColorPicker.hasOpacity = this.mode !== 'RGB' || this.mode !== 'HEX6' || this.mode !== 'HEX3';
+    this.$ColorPicker.hasOpacity = this.mode !== 'RGB' && this.mode !== 'HEX6' && this.mode !== 'HEX3';
     ColorPickerButton.$ColorPicker.value = this.value;
     setTimeout(function () {
         thisBt.$follower.removeStyle('visibility');
