@@ -51,7 +51,8 @@ ColorPickerButton.eventHandler.submit = function (event) {
 ColorPickerButton.prototype.togglePicker = function () {
     if (this.containsClass('as-color-picker-selecting')) {
         this.closePicker();
-    } else {
+    }
+    else {
         this.openPicker();
     }
 };
@@ -77,7 +78,7 @@ ColorPickerButton.prototype.openPicker = function () {
         document.addEventListener('click', this.eventHandler.clickBody);
     }.bind(this), 100)
     this._lastValue = this.value;
-    this.$ColorPicker.hasOpacity = this.mode !== 'RGB';
+    this.$ColorPicker.hasOpacity = this.mode !== 'RGB' || this.mode !== 'HEX6' || this.mode !== 'HEX3';
     ColorPickerButton.$ColorPicker.value = this.value;
     setTimeout(function () {
         thisBt.$follower.removeStyle('visibility');
@@ -97,20 +98,21 @@ ColorPickerButton.prototype.closePicker = function () {
         .off('submit', this.eventHandler.submit);
     document.removeEventListener('click', this.eventHandler.clickBody);
     if (this.value !== this._lastValue) {
-        this.emit('stopchange', {target: this, value: this.value}, this);
+        this.emit('stopchange', { target: this, value: this.value }, this);
     }
 };
 
 ColorPickerButton.prototype.prepare = function () {
     if (!ColorPickerButton.$ColorPicker) {
         if (isMobile) {
-            ColorPickerButton.$follower = _('modal').on('click', function (event){
-                if (event.tagert === this){
+            ColorPickerButton.$follower = _('modal').on('click', function (event) {
+                if (event.tagert === this) {
                     if (ColorPickerButton.lastOpen) ColorPickerButton.lastOpen.closePicker();
 
                 }
             });
-        } else {
+        }
+        else {
             ColorPickerButton.$follower = _('follower.as-color-picker-button-follower');
         }
 
@@ -146,10 +148,13 @@ ColorPickerButton.property.value = {
         this._value = value;
         if (this._value) {
             this.$innerValue.addStyle("background-color", value);
-        } else {
+        }
+        else {
         }
     },
     get: function () {
+        if (!this._value) return  this._value;
+        if (this.mode.match(/HEX4|HEX6|HEX8/)) return this._value.toString(this.mode);
         return this._value;
     }
 };
