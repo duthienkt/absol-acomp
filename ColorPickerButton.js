@@ -8,11 +8,26 @@ var $ = CPCore.$;
 
 var isMobile = BrowserDetector.isMobile;
 
+
+/***
+ * @extends AElement
+ * @constructor
+ */
 function ColorPickerButton() {
-    this.mode = 'RGBA';
+    this.mode = 'OBJECT';
     this.$innerValue = $('.as-color-picker-button-inner-value', this);
     this.prepare();
     this.on('click', this.eventHandler.click);
+    /***
+     * @name value
+     * @type {string|Color}
+     * @memberOf ColorPickerButton#
+     */
+    /***
+     * @name hasOpacity
+     * @type {boolean}
+     * @memberOf ColorPickerButton#
+     */
 }
 
 ColorPickerButton.tag = 'ColorPickerButton'.toLowerCase();
@@ -25,6 +40,9 @@ ColorPickerButton.prototype._isClickMenu = function (event) {
     }
     return false;
 };
+
+ColorPickerButton.prototype.supportedModes = ['OBJECT', 'RGBA', 'RGB', 'HEX8', 'HEX6', 'HEX4', 'HEX3'];
+ColorPickerButton.prototype.hasOpacityModes = ['OBJECT', 'RGBA', 'HEX8', 'HEX4'];
 
 ColorPickerButton.eventHandler = {};
 
@@ -76,9 +94,9 @@ ColorPickerButton.prototype.openPicker = function () {
     this.$follower.followTarget = this;
     setTimeout(function () {
         document.addEventListener('click', this.eventHandler.clickBody);
-    }.bind(this), 100)
+    }.bind(this), 100);
     this._lastValue = this.value;
-    this.$ColorPicker.hasOpacity = this.mode !== 'RGB' && this.mode !== 'HEX6' && this.mode !== 'HEX3';
+    this.$ColorPicker.hasOpacity = this.hasOpacity;
     ColorPickerButton.$ColorPicker.value = this.value;
     setTimeout(function () {
         thisBt.$follower.removeStyle('visibility');
@@ -153,9 +171,28 @@ ColorPickerButton.property.value = {
         }
     },
     get: function () {
-        if (!this._value) return  this._value;
+        if (!this._value) return this._value;
         if (this.mode.match(/HEX4|HEX6|HEX8/)) return this._value.toString(this.mode);
         return this._value;
+    }
+};
+
+ColorPickerButton.property.mode = {
+    set: function (value) {
+        value = value || 'OBJECT';
+        value = value.toUpperCase();
+        if (this.supportedModes.indexOf(value) < 0) value = 'OBJECT';
+        this._mode = value;
+    },
+    get: function () {
+        return this._mode;
+    }
+};
+
+
+ColorPickerButton.property.hasOpacity = {
+    get: function () {
+        return this.hasOpacityModes.indexOf(this._mode) >= 0;
     }
 };
 
