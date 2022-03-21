@@ -101,7 +101,7 @@ SolidColorPicker.render = function () {
             tabindex: '1'
         },
         extendEvent: ['change', 'sizechange', 'submit'],
-        class: ['as-solid-color-picker', 'as-solid-color-picker-mode-swatches'],
+        class: ['as-solid-color-picker', 'as-solid-color-picker-mode-swatches', 'as-has-opacity'],
         child: [
             {
                 class: 'as-solid-color-picker-header',
@@ -530,6 +530,20 @@ SolidColorPicker.property.mode = {
     }
 };
 
+
+SolidColorPicker.property.hasOpacity = {
+    set: function (value){
+        if (value){
+            this.addClass('as-has-opacity');
+        }
+        else {
+            this.removeClass('as-has-opacity');
+        }
+    },
+    get: function (){
+        return this.hasClass('as-has-opacity');
+    }
+}
 
 /**
  * @type {SolidColorPicker}

@@ -9,6 +9,7 @@ var $ = CPCore.$;
 var isMobile = BrowserDetector.isMobile;
 
 function ColorPickerButton() {
+    this.mode = 'RGBA';
     this.$innerValue = $('.as-color-picker-button-inner-value', this);
     this.prepare();
     this.on('click', this.eventHandler.click);
@@ -68,6 +69,7 @@ ColorPickerButton.prototype.openPicker = function () {
     this.$ColorPicker.on('change', this.eventHandler.changeColor)
         .on('submit', this.eventHandler.submit);
     this.$ColorPicker.reloadSetting();
+
     this.$follower.addStyle('visibility', 'hidden');
     this.$follower.addTo(document.body);
     this.$follower.followTarget = this;
@@ -75,6 +77,7 @@ ColorPickerButton.prototype.openPicker = function () {
         document.addEventListener('click', this.eventHandler.clickBody);
     }.bind(this), 100)
     this._lastValue = this.value;
+    this.$ColorPicker.hasOpacity = this.mode !== 'RGB';
     ColorPickerButton.$ColorPicker.value = this.value;
     setTimeout(function () {
         thisBt.$follower.removeStyle('visibility');
