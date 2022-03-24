@@ -1,0 +1,80 @@
+:root {
+    --as-process-l-bar-active-color: rgb(255, 160, 0);
+    --as-process-l-bar-item-width: 60px;
+}
+
+.as-process-l-bar {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+    --as-process-l-bar-item-min-width: 0;
+}
+
+
+.as-process-l-bar-step-ctn {
+    white-space: nowrap;
+
+}
+
+.as-process-l-bar-col:not(:last-child) {
+    margin-right: 10px;
+}
+
+.as-process-l-bar-col {
+    vertical-align: top;
+    display: inline-block;
+}
+
+.as-process-l-bar-step {
+    width: var(--as-process-l-bar-item-width);
+    min-width: var(--as-process-l-bar-item-min-width);
+    height: 15px;
+    background-color: white;
+    border: 1px solid #dddddd;
+    transition: background-color 0.2s;
+    position: relative;
+}
+
+.as-process-l-bar-step.as-active {
+    background-color: var(--as-process-l-bar-active-color);
+}
+
+.as-process-l-bar-step::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+
+.as-process-l-bar-step:hover::before {
+    background-color: rgba(169, 169, 172, 0.3);
+}
+
+.as-process-l-bar-step.as-active,
+.as-process-l-bar-step:hover {
+    background-color: var(--as-process-l-bar-active-color);
+}
+
+
+.as-process-l-bar-col .as-process-l-bar-step:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+.as-process-l-bar-step-name {
+    position: absolute;
+    left: 0;
+    top: 24px;
+    font-weight: bold;
+}
+
+
+.as-process-l-bar.as-col-layout .as-process-l-bar-step-name {
+    position: relative;
+    left: initial;
+    top: unset;
+}

@@ -134,6 +134,7 @@ import PlaceSearchAutoCompleteInput from "../PlaceSearchAutoCompleteInput";
 import LocationPicker from "../LocationPicker";
 import LocationInput from "../LocationInput";
 import MKNavigator from "../MKNavigator";
+import ProcessLBar from "../ProcessLBar";
 
 export var publicCreators = [
     AutoCompleteInput,
@@ -292,7 +293,8 @@ export var publicCreators = [
     LocationPicker,
     LocationInput,
     PlaceSearchAutoCompleteInput,
-    MKNavigator
+    MKNavigator,
+    ProcessLBar
 ];
 
 /***
