@@ -21,7 +21,8 @@ function MKNavigator() {
 
     this.$header = $('.mk-nav-header', this);
     this.$body = $('.mk-nav-body', this)
-        .on('orderchange', this.eventHandler.bodyOrderChange);
+        .on('orderchange', this.eventHandler.bodyOrderChange)
+        .on('dragitemstart', this.eventHandler.dragItemStart);
     this.$footer = $('.mk-nav-footer', this);
     /***
      * @type {MKNavigatorItemData[]}
@@ -60,13 +61,13 @@ MKNavigator.render = function () {
 
 MKNavigator.prototype.updateValue = function () {
     var value = this._value;
-    for (var iValue in this.$itemByValue){
-        if (iValue+'' !== value+''){
+    for (var iValue in this.$itemByValue) {
+        if (iValue + '' !== value + '') {
             this.$itemByValue[iValue].removeClass('mk-current');
         }
     }
     var order = this.order;
-    if (this.$itemByValue[value]){
+    if (this.$itemByValue[value]) {
         this.$itemByValue[value].addClass('mk-current');
     }
     else if (order.length > 0) {
@@ -79,6 +80,13 @@ MKNavigator.prototype.updateValue = function () {
     else {
         this.removeStyle('--mk-nav-line-top');
     }
+};
+
+MKNavigator.prototype.setTextOfItem = function (value, text) {
+    var itemElt = this.$itemByValue[value];
+    if (!itemElt) return;
+    itemElt.data.text = text;
+    itemElt.updateText();
 };
 
 MKNavigator.prototype.mkItem = function (data) {
@@ -199,8 +207,22 @@ MKNavigator.eventHandler = {};
 
 MKNavigator.eventHandler.bodyOrderChange = function (event) {
     this.updateValue();
+    this._items.splice(0, this._items.length);
+    $$(MKNavigatorItem.tag, this).reduce(function (ac, cr) {
+        ac.push(cr.data);
+        return ac;
+    }, this._items);
     this.emit('orderchange', { type: 'orderchange', target: this }, this);
 };
+
+/***
+ * @memberOf MKNavigator#
+ * @type {{}}
+ */
+MKNavigator.eventHandler.dragItemStart = function (event) {
+    var bound = this.getBoundingClientRect();
+    this.addStyle('--mk-navigator-bound-left', bound.left + 'px');
+}
 
 
 ACore.install(MKNavigator);
