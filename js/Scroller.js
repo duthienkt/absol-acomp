@@ -195,7 +195,10 @@ VScroller.eventHandler.scrollScrollbar = function (event) {
     this.$viewport.scrollTop = this.$vscrollbar.innerOffset;
 };
 
-
+/***
+ * @extends AElement
+ * @constructor
+ */
 export function HScroller() {
     var thisHS = this;
     this.$attachHook = $('attachhook', this)
