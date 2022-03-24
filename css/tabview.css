@@ -198,6 +198,9 @@
     overflow-y: hidden;
     border-bottom: 1px solid #ccc;
     box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    right: 0;
 }
 
 .absol-tabview .absol-tabbar-button-active {
