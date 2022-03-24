@@ -37,6 +37,7 @@ function MultiCheckTreeMenu() {
     this.enableSearch = false;
 
     /**
+     * parent will be selected if all off leaf selected
      * @name leafOnly
      * @type {boolean}
      * @memberOf MultiCheckTreeMenu#

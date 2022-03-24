@@ -5,6 +5,7 @@ import SelectBoxItem from "./SelectBoxItem";
 import MultiSelectMenu from "./MultiSelectMenu";
 
 /****
+ * Only leafs have checkbox
  * @extends AElement
  * @constructor
  */
