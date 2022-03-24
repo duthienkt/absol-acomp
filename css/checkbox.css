@@ -1,8 +1,13 @@
 /** align middle in table cell **/
-.KPIsimpletableclass  td > .absol-checkbox:first-child:last-child,
-.KPIsimpletableclass  td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input{
+.KPIsimpletableclass td > .absol-checkbox:first-child:last-child,
+.KPIsimpletableclass td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input
+ {
     display: block;
     margin: auto;
+}
+
+.cardsimpletableclass > table > tbody > tr > td > .absol-checkbox:first-child:last-child{
+    display: block;
 }
 
 .absol-checkbox {
@@ -53,4 +58,21 @@
 
 .absol-checkbox.as-disabled .absol-checkbox-label {
     color: #777;
+}
+
+
+.absol-checkbox.as-wrap-text {
+    white-space: nowrap;
+}
+
+.absol-checkbox.as-wrap-text .absol-checkbox-label {
+    white-space: normal;
+}
+
+.absol-checkbox.as-wrap-text > * {
+    vertical-align: top;
+}
+
+.absol-checkbox.as-wrap-text .absol-checkbox-label {
+    max-width: calc(100% - 24px);
 }
