@@ -1,7 +1,8 @@
 import CPCore from "./CPCore";
-import {MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches} from "./SwatchesTable";
+import { MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches } from "./SwatchesTable";
 import QuickMenu from "absol-acomp/js/QuickMenu";
 import Color from "absol/src/Color/Color";
+
 var _ = CPCore._;
 var $ = CPCore.$;
 
@@ -16,11 +17,11 @@ function SolidColorPicker() {
     this._hue = 0;
     this._sat = 1;
     this._brightness = 1;
-    this._swatchesNames = ['Moqups Classic', 'Material Design', 'Bootstrap', 'iOS'];
-    this._swatchesShortName = ['moqups', 'material', 'bootstrap', 'ios'];
+    this._swatchesNames = ['Material Design', 'Moqups Classic', 'Bootstrap', 'iOS'];
+    this._swatchesShortName = [ 'material', 'moqups','bootstrap', 'ios'];
     this._swatchesIcons = ['span.mdi.mdi-palette', 'span.mdi.mdi-material-design', 'span.mdi.mdi-bootstrap', 'span.mdi.mdi-apple-ios'];
 
-    this._swatchesData = [MoqupsClassicSwathes, MaterialSwatches, BootstrapSwatches, iOsSwatches];
+    this._swatchesData = [MaterialSwatches, MoqupsClassicSwathes, BootstrapSwatches, iOsSwatches];
 
     this._mode = 'swatches';
     this.$mode = $('.as-solid-color-picker-mode', this)
@@ -125,7 +126,7 @@ SolidColorPicker.render = function () {
                 class: 'as-solid-color-picker-body',
                 child: [
                     {
-                        class: ['as-solid-color-picker-swatches-select-ctn',],
+                        class: ['as-solid-color-picker-swatches-select-ctn'],
                         child: [
                             {
                                 tag: 'span',
@@ -136,7 +137,7 @@ SolidColorPicker.render = function () {
                             {
                                 class: 'as-solid-color-picker-swatches-name',
                                 tag: 'a',
-                                child: { text: 'Moqups Classic' }
+                                child: { text: 'Material Design' }
                             },
                             'span.mdi.mdi-menu-down'
                         ]
@@ -147,7 +148,7 @@ SolidColorPicker.render = function () {
                         child: {
                             tag: 'swatchestable',
                             props: {
-                                data: MoqupsClassicSwathes
+                                data: MaterialSwatches
                             }
                         }
                     },
@@ -532,15 +533,15 @@ SolidColorPicker.property.mode = {
 
 
 SolidColorPicker.property.hasOpacity = {
-    set: function (value){
-        if (value){
+    set: function (value) {
+        if (value) {
             this.addClass('as-has-opacity');
         }
         else {
             this.removeClass('as-has-opacity');
         }
     },
-    get: function (){
+    get: function () {
         return this.hasClass('as-has-opacity');
     }
 }
