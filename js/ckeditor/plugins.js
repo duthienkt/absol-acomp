@@ -6,11 +6,12 @@ import ExpressionExtension from "./ExpressionExtension";
 import SimpleTextExtension from "./SimpleTextExtension";
 import VariableExtension from "./VariableExtension";
 import DynamicLinkExtension from "./DynamicLinkExtension";
+import ImageFileExtension from "./ImageFileExtension";
 
 var ckContentStyleUrl;
 var ckPluginInitialized = false;
 
-export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension];
+export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension];
 
 export var CKExtensionDict = CKExtensions.reduce(function (ac, cr) {
     ac[cr.name] = cr;
@@ -52,11 +53,11 @@ export var CKStylesSetDefault = [
 export function ckInit() {
     if (!window.CKEDITOR) return;
     if (ckPluginInitialized) return;
-    var styleCode = ckContentStyleText;
+    var styleCode = ckContentStyleText
+        .replace(/\$basePath/g, CKEDITOR.basePath);
     ckContentStyleUrl = URL.createObjectURL(stringToBlob(styleCode, 'css'));
     ckPluginInitialized = true;
     document.head.appendChild(_('<link rel="stylesheet" href="' + ckContentStyleUrl + '">'));
-    console.log('<link rel="stylesheet" href="' + ckContentStyleUrl + '">')
     CKEDITOR.stylesSet.add('as_styles_set_default', CKStylesSetDefault);
     CKExtensions.forEach(function (e) {
         if (e.plugin) {
@@ -65,14 +66,51 @@ export function ckInit() {
     })
 }
 
-export function ckMakeDefaultConfig(config, extensions) {
+export function ckMakeDefaultConfig(config, extensions, holderElt) {
     ckInit();
+    var userImageFileDialog = !!(window.contentModule && window.contentModule.chooseFile);
+
+    /*
+    * if (!this.attributes.directUpload && window.contentModule && window.contentModule.chooseFile) {
+        window.contentModule.chooseFile({ type: "image_file" }).then(function (result) {
+            if (result) {
+                this.attributes.value = result;
+            }
+        }.bind(this));
+    }
+    * */
     config = config || {};
     config.stylesSet = ['as_styles_set_default'].concat(arrayUnique((config.stylesSet || '').trim().split(/\s*,\s*/)))
         .filter(function (c) {
             return !!c;
         }).join(',');
-    if (!config.toolbar) {
+    if (extensions && extensions.indexOf(VariableExtension.name) >= 0) {
+        config.title = false;
+    }
+    if (config.toolbar === 'SIMPLE') {
+        config.toolbar = [
+            {
+                name: 'basicstyles',
+                items: ['Bold', 'Italic', 'Underline', 'TextColor', 'BGColor', 'NumberedList', 'BulletedList',
+                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+                    userImageFileDialog ? 'image_mgn_dialog' : 'Image']
+            },
+            { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+            {
+                name: "extensions", items: extensions.map(function (eName) {
+                    if (CKExtensionDict[eName] && CKExtensionDict[eName].command) {
+                        return CKExtensionDict[eName].command;
+                    }
+                }).filter(function (u) {
+                    return !!u;
+                })
+            },
+            {
+                name: 'tools', items: ['Maximize']
+            }
+        ];
+    }
+    else if (!config.toolbar || config.toolbar === "ADVANCED") {
         config.toolbar = [
             { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'] },
             { name: 'colors', items: ['TextColor', 'BGColor'] },
@@ -85,11 +123,10 @@ export function ckMakeDefaultConfig(config, extensions) {
             { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
             {
                 name: 'insert',
-                items: ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']
+                items: [ userImageFileDialog ? 'image_mgn_dialog' : 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']
             },
             { name: 'tools', items: ['Maximize', 'ShowBlocks'] },
             { name: 'editing', items: ['Find', 'Replace'] },
-            // { name: "linkdb", items: ['LinkDB'] },
             {
                 name: "extensions", items: extensions.map(function (eName) {
                     if (CKExtensionDict[eName] && CKExtensionDict[eName].command) {
@@ -101,6 +138,7 @@ export function ckMakeDefaultConfig(config, extensions) {
             },
             { name: 'document', items: ['Source'] }
         ];
+
     }
 
     config.toolbar = config.toolbar.filter(function (i) {
@@ -133,7 +171,7 @@ export function ckMakeDefaultConfig(config, extensions) {
     }
     config.contentsCss = contentsCss;
 
-    var extraPlugins = [];
+    var extraPlugins = ['image_mgn'];
     if (typeof config.extraPlugins === 'string') {
         extraPlugins.push.apply(extraPlugins, config.extraPlugins.trim().split(/\s*,\s*/));
     }
