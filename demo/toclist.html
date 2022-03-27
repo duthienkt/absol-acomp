@@ -84,8 +84,22 @@
             },
             on: {
                 pressnode: function (event) {
-                    event.controller.active();
-                    console.log(event.type, event.controller);
+                        if (event.ctrlKey){
+                            event.controller.active(!event.controller.activated, true);
+                        }
+                        else {
+                            if (!event.controller.activated) {
+                                event.controller.active(true);
+                            }
+                            else {
+                                if (this.getActivatedNodes().length > 1){
+                                    event.controller.active(true);
+                                }
+                                else {
+                                    event.controller.nodeElt.rename();
+                                }
+                            }
+                        }
                 },
                 checkednodechange: function (event) {
                     console.log(event.type, event.controller);

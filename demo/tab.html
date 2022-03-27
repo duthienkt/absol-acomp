@@ -22,16 +22,16 @@
             border: solid 1px rgb(30, 30, 32);
         }
 
-        .absol-static-tabbar.bold .absol-static-tabbar-button{
+        .absol-static-tabbar.bold .absol-static-tabbar-button {
             color: #2a64f7;
         }
 
-        .absol-static-tabbar.bold .absol-static-tabbar-button.active{
+        .absol-static-tabbar.bold .absol-static-tabbar-button.active {
 
             text-shadow: 1px 0 0 currentColor;
         }
 
-        .absol-static-tabbar.bold .absol-static-tabbar-hline{
+        .absol-static-tabbar.bold .absol-static-tabbar-hline {
             display: none;
         }
     </style>
@@ -39,80 +39,80 @@
 
 <body>
 
-    <h1>Tabbar</h1>
+<h1>Tabbar</h1>
 
-    <h2>Static tabbar</h2>
-    <div id="static-tabbar-demo">
-        <div class="light bg"></div>
-        <div class="dark bg"></div>
-        <div class="normal bg"></div>
-    </div>
-    <script class="viewable">
-        var frameView = absol._({
-            tag: 'frameview',
-            style: {
-                height: '300px'
-            },
-            child: [
-                {
-                    tag: 'singlepage',
-                    id: 'frame-problems',
-                    child: [
-                        {
-                            class: 'absol-single-page-header',
-                            child: {
-                                style: {
-                                    padding: '10px',
-                                    'background-color': 'white',
-                                    'border-bottom': '1px solid #ddd'
-                                },
-                                child: Array(30).fill('<button style="margin:5px;">Random Button</button>')
-                            }
-                        },
-                        {
-                            tag: 'div',
-                            child: {
-                                tag: 'span',
-                                style: {
-                                    margin: '10px'
-                                },
-                                child: { text: 'PROBLEMS' }
-                            }
-                        }
-                        ,
-                        {
-                            class: 'absol-single-page-footer',
+<h2>Static tabbar</h2>
+<div id="static-tabbar-demo">
+    <div class="light bg"></div>
+    <div class="dark bg"></div>
+    <div class="normal bg"></div>
+</div>
+<script class="viewable">
+    var frameView = absol._({
+        tag: 'frameview',
+        style: {
+            height: '300px'
+        },
+        child: [
+            {
+                tag: 'singlepage',
+                id: 'frame-problems',
+                child: [
+                    {
+                        class: 'absol-single-page-header',
+                        child: {
                             style: {
-                                'text-align': 'right'
+                                padding: '10px',
+                                'background-color': 'white',
+                                'border-bottom': '1px solid #ddd'
                             },
-                            child: { text: 'single-page-footer' }
+                            child: Array(30).fill('<button style="margin:5px;">Random Button</button>')
                         }
-                    ]
-                },
-                {
-                    tag: 'singlepage',
-                    id: 'frame-output',
-                    child: [
-                        {
-                            class: 'absol-single-page-header',
-                            child: {
-                                style: {
-                                    padding: '10px',
-                                    'background-color': 'white',
-                                    'border-bottom': '1px solid #ddd'
-                                },
-                                child: Array(30).fill('<button style="margin:5px;">Random Button</button>')
-                            }
-                        },
-                        {
-                            tag: 'div',
-                            child: [{
-                                tag: 'span',
-                                style: {
-                                    margin: '10px'
-                                },
-                                child: { text: 'PROBLEMS' }
+                    },
+                    {
+                        tag: 'div',
+                        child: {
+                            tag: 'span',
+                            style: {
+                                margin: '10px'
                             },
+                            child: { text: 'PROBLEMS' }
+                        }
+                    }
+                    ,
+                    {
+                        class: 'absol-single-page-footer',
+                        style: {
+                            'text-align': 'right'
+                        },
+                        child: { text: 'single-page-footer' }
+                    }
+                ]
+            },
+            {
+                tag: 'singlepage',
+                id: 'frame-output',
+                child: [
+                    {
+                        class: 'absol-single-page-header',
+                        child: {
+                            style: {
+                                padding: '10px',
+                                'background-color': 'white',
+                                'border-bottom': '1px solid #ddd'
+                            },
+                            child: Array(30).fill('<button style="margin:5px;">Random Button</button>')
+                        }
+                    },
+                    {
+                        tag: 'div',
+                        child: [{
+                            tag: 'span',
+                            style: {
+                                margin: '10px'
+                            },
+                            child: { text: 'PROBLEMS' }
+                        },
                             {
                                 style: {
                                     height: '500px',
@@ -125,219 +125,232 @@
                                     'background-color': 'darkgray'
                                 }
                             }
-                            ]
-                        }
-                        ,
-                        {
-                            class: 'absol-single-page-footer',
-                            style: {
-                                'text-align': 'right',
-                                'background-color': 'rgb(230,230,255)'
-                            },
-                            child: { text: 'single-page-footer' }
-                        }
-                    ]
+                        ]
+                    }
+                    ,
+                    {
+                        class: 'absol-single-page-footer',
+                        style: {
+                            'text-align': 'right',
+                            'background-color': 'rgb(230,230,255)'
+                        },
+                        child: { text: 'single-page-footer' }
+                    }
+                ]
+            },
+            {
+                tag: 'frame',
+                id: 'frame-debug-console',
+                child: {
+                    tag: 'h1',
+                    child: { text: 'DEBUG_CONSOLE' }
+                }
+            },
+            {
+                tag: 'frame',
+                id: 'frame-terminal',
+                child: {
+                    tag: 'h1',
+                    child: { text: 'TERMINAL' }
+                }
+            }
+        ]
+    }).addTo(absol.$('#static-tabbar-demo'));
+
+    frameView.activeFrameById('frame-terminal');
+
+    var statictabParams = {
+        tag: 'statictabbar',
+        attr: {
+            'data-group': 'group1'
+        },
+        props: {
+            items: [
+                {
+                    text: 'PROBLEMS',
+                    value: 'problems'
                 },
                 {
-                    tag: 'frame',
-                    id: 'frame-debug-console',
-                    child: {
-                        tag: 'h1',
-                        child: { text: 'DEBUG_CONSOLE' }
-                    }
+                    text: 'OUTPUT',
+                    value: 'output'
                 },
                 {
-                    tag: 'frame',
-                    id: 'frame-terminal',
-                    child: {
-                        tag: 'h1',
-                        child: { text: 'TERMINAL' }
-                    }
+                    text: 'DEBUG_CONSOLE',
+                    value: 'debug-console'
+                },
+                {
+                    text: 'TERMINAL',
+                    value: 'terminal'
                 }
-            ]
-        }).addTo(absol.$('#static-tabbar-demo'));
-
-        frameView.activeFrameById('frame-terminal');
-
-        var statictabParams = {
-            tag: 'statictabbar',
-            attr: {
-                'data-group': 'group1'
-            },
-            props: {
-                items: [
-                    {
-                        text: 'PROBLEMS',
-                        value: 'problems'
-                    },
-                    {
-                        text: 'OUTPUT',
-                        value: 'output'
-                    },
-                    {
-                        text: 'DEBUG_CONSOLE',
-                        value: 'debug-console'
-                    },
-                    {
-                        text: 'TERMINAL',
-                        value: 'terminal'
+            ],
+            value: 'terminal'
+        },
+        on: {
+            change: function () {
+                var self = this;
+                frameView.activeFrameById('frame-' + this.value);
+                absol.$('statictabbar[data-group="group1"]', false, function (e) {
+                    if (e != self) {
+                        e.value = self.value;
                     }
-                ],
-                value: 'terminal'
-            },
-            on: {
-                change: function () {
-                    var self = this;
-                    frameView.activeFrameById('frame-' + this.value);
-                    absol.$('statictabbar[data-group="group1"]', false, function (e) {
-                        if (e != self) {
-                            e.value = self.value;
-                        }
-                        return false;
-                    })
+                    return false;
+                })
+            }
+        }
+    };
+    absol._(statictabParams).addTo(absol.$('#static-tabbar-demo .light.bg'));
+    absol._(statictabParams).addClass('dark').addTo(absol.$('#static-tabbar-demo .dark.bg'));
+    absol._(statictabParams).addClass('bold').addTo(absol.$('#static-tabbar-demo .normal.bg'));
+
+</script>
+
+
+<h1>Tabview</h1>
+<div id="demo"></div>
+<script class="viewable">
+    var demoTabItems = Array(5).fill(0).map(function (u, i) {
+        return { name: 'Tab ' + i, desc: 'This is tab ' + i, ident: i };
+    })
+
+    var frame1 = absol._('tabframe').attr({
+        'name': 'Material-design-icon',
+        id: 'matd',
+        desc: 'Material Design Icon',
+    }).addChild(absol._({
+        tag: 'iframe',
+        style: {
+            width: '100%',
+            height: '100%'
+        },
+        attr: {
+            src: "https://absol.cf/css/materialdesignicons/preview.html"
+        }
+    }));
+    var frame2 = absol._('tabframe').attr({
+        'name': 'vchart',
+        id: 'matd2',
+        desc: 'Dual chart demo'
+    }).addChild(absol._({
+        tag: 'iframe',
+        style: {
+            width: '100%',
+            height: '100%'
+        },
+        attr: {
+            src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
+        }
+    }));
+    var tabview1 = absol._({
+        tag: 'tabview',
+        style: {
+            height: '800px'
+        },
+        child: [frame1, frame2].concat(Array(20).fill(0).map(function (u, i) {
+            return {
+                tag: 'tabframe', props: { name: 'Tab ' + i, desc: 'Descript of Tab ' + i }, child: {
+                    tag: 'h1',
+                    child: { text: 'Content of Tab ' + i }
                 }
             }
-        };
-        absol._(statictabParams).addTo(absol.$('#static-tabbar-demo .light.bg'));
-        absol._(statictabParams).addClass('dark').addTo(absol.$('#static-tabbar-demo .dark.bg'));
-        absol._(statictabParams).addClass('bold').addTo(absol.$('#static-tabbar-demo .normal.bg'));
-
-    </script>
-
-
-    <h1>Tabview</h1>
-    <div id="demo"></div>
-    <script class="viewable">
-        var demoTabItems = Array(5).fill(0).map(function (u, i) {
-            return { name: 'Tab ' + i, desc: 'This is tab ' + i, ident: i };
-        })
-
-        var frame1 = absol._('tabframe').attr({
-            'name': 'Material-design-icon',
-            id: 'matd',
-            desc: 'Material Design Icon',
-        }).addChild(absol._({
-            tag: 'iframe',
-            style: {
-                width: '100%',
-                height: '100%'
-            },
-            attr: {
-                src: "https://absol.cf/css/materialdesignicons/preview.html"
-            }
-        }));
-        var frame2 = absol._('tabframe').attr({
-            'name': 'vchart',
-            id: 'matd2',
-            desc: 'Dual chart demo'
-        }).addChild(absol._({
-            tag: 'iframe',
-            style: {
-                width: '100%',
-                height: '100%'
-            },
-            attr: {
-                src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
-            }
-        }));
-        var tabview1 = absol._({
-            tag: 'tabview',
-            style: {
-                height: '800px'
-            },
-            child: [frame1, frame2].concat(Array(20).fill(0).map(function (u, i) {
-                return {
-                    tag: 'tabframe', props: { name: 'Tab ' + i, desc: 'Descript of Tab ' + i }, child: {
-                        tag: 'h1',
-                        child: { text: 'Content of Tab ' + i }
-                    }
+        })), on: {
+            // closeTab
+            removetab: function (event) {
+                if (this.getAllChild().length === 0) {
+                    console.log("remove all");
                 }
-            }))
-        }).addTo(absol.$('#demo'));
-
-
-        var frame3 = absol._('tabframe').attr({
-            'name': 'Material-design-icon',
-            id: 'matd',
-            desc: 'Material Design Icon',
-        }).addChild(absol._({
-            tag: 'iframe',
-            style: {
-                width: '100%',
-                height: '100%'
-            },
-            attr: {
-                src: "https://absol.cf/css/materialdesignicons/preview.html"
+                else {
+                    console.log('removetab')
+                }
             }
-        }));
-        var frame4 = absol._('tabframe').attr({
-            'name': 'vchart',
-            id: 'matd2',
-            desc: 'Dual chart demo'
-        }).addChild(absol._({
-            tag: 'iframe',
-            style: {
-                width: '100%',
-                height: '100%'
-            },
-            attr: {
-                src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
-            }
-        }));
+        }
 
-        var tabview2= absol._({
-            tag: 'tabview',
-            class:'as-without-close-button',
-            style: {
-                height: '800px'
-            },
-            child: [frame3, frame4]
-        }).addTo(absol.$('#demo'));
+    }
+
+    ).addTo(absol.$('#demo'));
 
 
-    </script>
-    <script class="viewable">
-        var demoTabItemsXP = Array(5).fill(0).map(function (u, i) {
-            return { name: 'Tab ' + i, desc: 'This is tab ' + i, ident: i };
-        })
+    var frame3 = absol._('tabframe').attr({
+        'name': 'Material-design-icon',
+        id: 'matd',
+        desc: 'Material Design Icon',
+    }).addChild(absol._({
+        tag: 'iframe',
+        style: {
+            width: '100%',
+            height: '100%'
+        },
+        attr: {
+            src: "https://absol.cf/css/materialdesignicons/preview.html"
+        }
+    }));
+    var frame4 = absol._('tabframe').attr({
+        'name': 'vchart',
+        id: 'matd2',
+        desc: 'Dual chart demo'
+    }).addChild(absol._({
+        tag: 'iframe',
+        style: {
+            width: '100%',
+            height: '100%'
+        },
+        attr: {
+            src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
+        }
+    }));
 
-        var frame1XP = absol._('tabframe').attr({
-            'name': 'Material-design-icon',
-            id: 'matd',
-            desc: 'Material Design Icon',
-        }).addChild(absol._({
-            tag: 'iframe',
-            style: {
-                width: '100%',
-                height: '100%'
-            },
-            attr: {
-                src: "https://absol.cf/css/materialdesignicons/preview.html"
-            }
-        }));
-        var frame2XP = absol._('tabframe').attr({
-            'name': 'vchart',
-            id: 'matd2',
-            desc: 'Dual chart demo'
-        }).addChild(absol._({
-            tag: 'iframe',
-            style: {
-                width: '100%',
-                height: '100%'
-            },
-            attr: {
-                src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
-            }
-        }));
-        var tabviewXP = absol._({
-            tag: 'tabview',
-            class: 'xp-tiny',
-            style: {
-                height: '800px'
-            },
-            child: [frame1XP, frame2XP]
-        }).addTo(absol.$('#demo'));
-    </script>
+    var tabview2 = absol._({
+        tag: 'tabview',
+        class: 'as-without-close-button',
+        style: {
+            height: '800px'
+        },
+        child: [frame3, frame4]
+    }).addTo(absol.$('#demo'));
+
+
+</script>
+<script class="viewable">
+    var demoTabItemsXP = Array(5).fill(0).map(function (u, i) {
+        return { name: 'Tab ' + i, desc: 'This is tab ' + i, ident: i };
+    })
+
+    var frame1XP = absol._('tabframe').attr({
+        'name': 'Material-design-icon',
+        id: 'matd',
+        desc: 'Material Design Icon',
+    }).addChild(absol._({
+        tag: 'iframe',
+        style: {
+            width: '100%',
+            height: '100%'
+        },
+        attr: {
+            src: "https://absol.cf/css/materialdesignicons/preview.html"
+        }
+    }));
+    var frame2XP = absol._('tabframe').attr({
+        'name': 'vchart',
+        id: 'matd2',
+        desc: 'Dual chart demo'
+    }).addChild(absol._({
+        tag: 'iframe',
+        style: {
+            width: '100%',
+            height: '100%'
+        },
+        attr: {
+            src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
+        }
+    }));
+    var tabviewXP = absol._({
+        tag: 'tabview',
+        class: 'xp-tiny',
+        style: {
+            height: '800px'
+        },
+        child: [frame1XP, frame2XP]
+    }).addTo(absol.$('#demo'));
+</script>
 
 <!--    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>-->
 

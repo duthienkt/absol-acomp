@@ -98,22 +98,32 @@
                         },
                         {
                             class: 'kv-document-page-footer',
-                            child: [
+                            child:[
                                 {
-                                    tag: 'a',
-                                    class: 'kv-document-link',
-                                    child: {
-                                        tag: 'span',
-                                        child: { text: 'PREVIOUS STEP' }
-                                    }
+                                    class:'kv-document-page-footer-left',
+                                    child:[
+                                        {
+                                            tag: 'a',
+                                            class: 'kv-document-link',
+                                            child: {
+                                                tag: 'span',
+                                                child: { text: 'PREVIOUS STEP' }
+                                            }
+                                        }
+                                    ]
                                 },
                                 {
-                                    tag: 'a',
-                                    class: ['kv-document-link', 'kv-variant-primary'],
-                                    child: {
-                                        tag: 'span',
-                                        child: { text: 'NEXT →' }
-                                    }
+                                    class:'kv-document-page-footer-right',
+                                    child:[
+                                        {
+                                            tag: 'a',
+                                            class: ['kv-document-link', 'kv-variant-primary'],
+                                            child: {
+                                                tag: 'span',
+                                                child: { text: 'NEXT →' }
+                                            }
+                                        }
+                                    ]
                                 }
                             ]
                         }

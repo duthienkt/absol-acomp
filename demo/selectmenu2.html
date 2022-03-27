@@ -14,7 +14,8 @@
     items.forEach((it, i) => {
         it.value = i;
         // it.desc = absol.string.randomPhrase(56);
-        it.lastInGroup = Math.random() < 1 / 10
+        it.lastInGroup = Math.random() < 1 / 10;
+        it.disabled = Math.random() < 0.2;
     });
     _({
         style: {

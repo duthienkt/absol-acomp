@@ -15,7 +15,7 @@
     var listDataAsync = fetch('./demo_tree_list_with_icon.js').then(function (res) {
         return res.text();
     }).then(function (text) {
-        var module = {exports: {}};
+        var module = { exports: {} };
         var factor = new Function('module', 'exports', text + '\nreturn module.exports;');
         return factor(module, module.exports);
     });
@@ -49,17 +49,37 @@
         // box.viewToSelected();
 
 
-        var menu = _({
+        var menu = {
             tag: 'selecttreeleafmenu',
             props: {
                 items: items2,
                 enableSearch: true
             },
-            on:{
-                change: function (){
-                    absol.require('snackbar').show('change : '+ this.value);
+            on: {
+                change: function () {
+                    absol.require('snackbar').show('change : ' + this.value);
                 }
             }
+        };
+
+        _({
+            tag: 'modal',
+            child: {
+                style: {
+                    minWidth: '50vw',
+                    height: '95vh',
+                    padding: '10px',
+                    border: '1px solid black',
+                    overflow: 'auto'
+                },
+                child: [
+                    {style: {height: '80vh'}},
+                    menu,
+                    {style: {height: '80vh'}},
+
+                ]
+            }
+
         }).addTo(document.body);
 
 

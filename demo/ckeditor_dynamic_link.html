@@ -114,6 +114,7 @@
                             user_chose_page(selectedLink).then(function (result) {
                                 if (result) {
                                     self.insertDynamicLink(result.pageId);
+                                    self.selectNext();
                                 }
                             })
                             break;
@@ -123,6 +124,36 @@
         });
 
         editor.data = 'Link mở HR: <a class="as-ck-widget-dynamic-link" data-link-id="hr"></a>';//không nhất thiết phải có href và text bên trong vì nó sẽ tự điền thêm vào
+
+
+        var editor1 = render({
+            tag: 'ckplaceholder',
+            props: {
+                extensions: ['dynamic_link'],
+                dynamicLinks: pages,
+                config: {
+                    toolbar: 'SIMPLE'
+                }
+            },
+            on: {
+                command: function (event) {
+                    var self = this;
+                    switch (event.command) {
+                        case 'insert_dynamic_link':
+                            var selectedLink = this.getSelectedDynamicLink();
+                            user_chose_page(selectedLink).then(function (result) {
+                                if (result) {
+                                    self.insertDynamicLink(result.pageId);
+                                    self.selectNext();
+                                }
+                            })
+                            break;
+                    }
+                }
+            }
+        });
+
+        editor1.data = 'Link mở HR: <a class="as-ck-widget-dynamic-link" data-link-id="hr"></a>';
     })();
 </script>
 </body>

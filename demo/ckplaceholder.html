@@ -7,10 +7,27 @@
     <script src="https://absol.cf/ckeditor/ckeditor.js"></script>
 </head>
 <body>
+<style>
+    html, body {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    #ck {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+    }
+</style>
 <div id="ck"></div>
 <script>
+    var ck = absol.$('#ck');
+
     function render(o) {
-        return absol._(o).addTo(document.body);
+        return absol._(o).addTo(ck);
     }
 </script>
 
@@ -23,9 +40,12 @@
             var input = _({
                 tag: 'selectmenu',
                 props: {
-                    items: Array(30).fill(null).map(function (u, i) {
-                        return { text: 'var_' + i, value: 'var_' + i };
-                    })
+                    items: [
+                        { text: "Tên", value: 'first_name' },
+                        { text: "Họ", value: 'last_name' },
+                        { text: 'Tuổi', value: 'old' },
+                        { text: 'Địa chỉ', value: 'address' }
+                    ]
                 }
             });
             input.value = currentExpression || '';
@@ -84,14 +104,23 @@
             });
 
             var modal = _({ tag: 'modal', child: dialog }).addTo(document.body);
-        });
+        })
+            ;
     }
 
-    render('<h2>CK Inline Short Text(Variable)</h2>')
+    render('<h2>CK Inline Short Text(Variable)</h2>');
+
     var shortExpressionInput = absol._({
         tag: 'ckinlineshorttext',
         props: {
-            extensions: ['variable']
+            extensions: ['variable'],
+            variables: {
+                first_name: { text: "Tên" },
+                last_name: { text: "Họ" },
+                old: { text: 'Tuổi' },
+                address: { text: 'Địa chỉ' }
+            },
+            removeToolbar: true
         },
         on: {
             focus: function () {
@@ -99,7 +128,7 @@
                 // bt.disabled = false;
             },
             change: function () {
-                // textInput.value = this.data;
+                absol.require('snackbar').show(this.data);
             },
             command: function (event) {
                 var ck = this;//ckplaceholder
@@ -115,6 +144,10 @@
             }
         }
     });
+
+    shortExpressionInput.data = 'last_name + " "+ first_name + ", năm nay " + old + "tuổi"';
+
+
     var te = render('');
 
 
@@ -300,11 +333,11 @@
 
 
     ckPlaceHolderElt.data = "Tôi năm nay <strong>{{ old }}<strong>";
-    document.body.appendChild(ckPlaceHolderElt);
+    ck.appendChild(ckPlaceHolderElt);
     var preview = absol._({
         class: 'cke_contents_ltr'
     });
-    document.body.appendChild(preview);
+    ck.appendChild(preview);
 
 
 </script>
