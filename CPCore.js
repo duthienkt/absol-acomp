@@ -1,5 +1,6 @@
 import Dom from 'absol/src/HTML5/Dom';
-import AComp from "absol-acomp/AComp";
+import install from "absol-acomp/js/dom/install";
 
-var CPCore = new Dom({ creator: Object.assign({}, AComp.creator) });
+var CPCore = new Dom();
+install(CPCore)
 export default CPCore;
