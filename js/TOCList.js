@@ -5,6 +5,7 @@ import BlurTrigger from "./tool/BlurTrigger";
 import prepareSearchForItem, { searchTreeListByText } from "./list/search";
 import noop from "absol/src/Code/noop";
 import { addElementAfter, addElementsBefore } from "./utils";
+import { copyEvent } from "absol/src/HTML5/EventEmitter";
 
 
 /***
@@ -18,7 +19,7 @@ function TOCList() {
 
     this.rootController = new TOCVirtualRootController(this, [], this.$body);
     this.searchCache = {};
-    this.savedState = { active: null, status: {} };
+    this.savedState = { active: [], status: {} };
     /***
      * @name nodes
      * @type {{}[]}
@@ -54,9 +55,12 @@ TOCList.prototype.applySavedState = function () {
     }
 
     visitArr(this.rootController.children);
-
-    var activeCt = this.findControllerByIdent(this.savedState.active);
-    if (activeCt) activeCt.active();
+    if (this.savedState.active) {
+        this.savedState.active.forEach(function (ident) {
+            var activeCt = this.findControllerByIdent(ident);
+            if (activeCt) activeCt.active();
+        }.bind(this));
+    }
 };
 
 TOCList.prototype.resetSavedState = function () {
@@ -65,7 +69,7 @@ TOCList.prototype.resetSavedState = function () {
 
 TOCList.prototype.saveState = function () {
     var oldState = this.savedState;
-    var savedState = { active: null, status: {} };
+    var savedState = { active: [], status: {} };
     var changed = false;
 
     function visitArr(arr) {
@@ -73,13 +77,18 @@ TOCList.prototype.saveState = function () {
             savedState.status[ct.ident] = ct.status;
             changed = changed || savedState.status[ct.ident] !== oldState.status[ct.ident];
             if (ct.nodeElt.containsClass('as-active')) {
-                savedState.active = ct.ident;
+                savedState.active.push(ct.ident);
             }
             visitArr(ct.children);
         });
     }
 
-    changed = changed || (oldState.active !== savedState.active);
+    var oldActive = (oldState.active || []).slice();
+    oldActive.sort();
+    var newActive = (savedState.active || []).slice();
+    newActive.sort();
+
+    changed = changed || (oldActive.join('/') !== newActive.join('/'));
 
     visitArr(this.rootController.children);
     this.savedState = savedState;
@@ -92,8 +101,9 @@ TOCList.prototype.notifySavedStateChange = function () {
 
 TOCList.prototype.loadSavedState = function (savedState) {
     savedState = savedState || {};
+    if (typeof savedState.active === 'string') savedState.active = [savedState.active];
     this.savedState = {
-        active: savedState.active || null,
+        active: savedState.active || [],
         status: savedState.status || {}
     };
     this.applySavedState();
@@ -124,6 +134,16 @@ TOCList.prototype.activeNode = function (ident) {
     var nodeCt = this.findControllerByIdent(ident);
     if (nodeCt) nodeCt.active();
     return nodeCt;
+};
+
+TOCList.prototype.getActivatedNodes = function () {
+    var res = [];
+    this.rootController.traverse(function (node) {
+        if (node.activated) {
+            res.push(node);
+        }
+    });
+    return res;
 };
 
 /***
@@ -257,13 +277,13 @@ TOCList.eventHandler = {};
 
 
 TOCList.eventHandler.pressNode = function (nodeController, event) {
-    var newEvent = {
+    var newEvent = copyEvent(event.originalEvent || event, {
         type: 'pressnode', target: this,
         originalEvent: event.originalEvent || event,
         controller: nodeController,
         nodeData: nodeController.nodeElt.nodeData,
         nodeElt: nodeController.nodeElt,
-    };
+    });
     this.emit('pressnode', newEvent, this);
 };
 
@@ -644,7 +664,7 @@ TOCNodeController.prototype.addChildBefore = function (controller, at) {
 
 TOCNodeController.prototype.addChild = TOCVirtualRootController.prototype.addChild;
 
-TOCNodeController.prototype.addChildAfter = function (controller, at){
+TOCNodeController.prototype.addChildAfter = function (controller, at) {
 
     throw new Error("Not implement!");
 };
@@ -729,6 +749,10 @@ TOCNodeController.prototype.ev_pressQuickMenu = function (event) {
     this.listElt.eventHandler.pressNodeQuickMenu(this, event);
 };
 
+TOCNodeController.prototype.ev_renameFinish = function (event){
+
+};
+
 TOCNodeController.prototype.closeRecursive = function () {
     if (this.status === 'open') {
         this.close();
@@ -738,32 +762,52 @@ TOCNodeController.prototype.closeRecursive = function () {
     });
 };
 
+TOCNodeController.prototype.rename = function (){
+
+};
+
 /***
  *
  * @param {boolean=true} isActive default: true
+ * @param {boolean=false} append default: false
  */
-TOCNodeController.prototype.active = function (isActive) {
+TOCNodeController.prototype.active = function (isActive, append) {
     var self = this;
     if (arguments.length === 0) isActive = true;
-    //todo: notify savedState change
+    append = !!append;
+    var idx = this.listElt.savedState.active ? this.listElt.savedState.active.indexOf(this.ident) : -1;
     if (isActive) {
         this.root.traverse(function (ct) {
             if (ct === self) {
                 ct.nodeElt.addClass('as-active');
             }
-            else
+            else if (!append)
                 ct.nodeElt.removeClass('as-active');
         });
-        if (this.listElt.savedState.active !== this.ident) {
-            this.listElt.savedState.active = this.ident;
+        if (idx < 0) {
+            this.listElt.savedState.active = this.listElt.savedState.active || [];
+            if (append) {
+                this.listElt.savedState.active.push(this.ident);
+            }
+            else {
+                this.listElt.savedState.active = [this.ident];
+            }
             this.listElt.notifySavedStateChange();
         }
     }
     else {
-        if (this.listElt.savedState.active === this.ident) {
-            this.listElt.savedState.active = this.ident;
+        if (idx >= 0) {
+            if (append) {
+                this.listElt.savedState.active.splice(idx, 1);
+                this.nodeElt.removeClass('as-active');
+            }
+            else {
+                this.listElt.savedState.active = [];
+                this.root.traverse(function (ct) {
+                    ct.nodeElt.removeClass('as-active');
+                });
+            }
         }
-        this.nodeElt.removeClass('as-active');
     }
 };
 
@@ -836,6 +880,11 @@ Object.defineProperties(TOCNodeController.prototype, {
     lastChild: {
         get: function () {
             return this.children[this.children.length - 1] || null;
+        }
+    },
+    activated: {
+        get: function () {
+            return this.nodeElt.containsClass('as-active');
         }
     }
 });
