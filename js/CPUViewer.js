@@ -111,7 +111,6 @@ CPUViewer.start = function () {
         this.state = "RUNNING";
         Dom.documentReady.then(function () {
             document.body.appendChild(this.instance);
-            console.log(this.instance)
         }.bind(this));
     }
     this.instance.start();
