@@ -123,7 +123,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
             { name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
             {
                 name: 'insert',
-                items: [ userImageFileDialog ? 'image_mgn_dialog' : 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']
+                items: [userImageFileDialog ? 'image_mgn_dialog' : 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe']
             },
             { name: 'tools', items: ['Maximize', 'ShowBlocks'] },
             { name: 'editing', items: ['Find', 'Replace'] },
@@ -138,12 +138,18 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
             },
             { name: 'document', items: ['Source'] }
         ];
-
     }
 
     config.toolbar = config.toolbar.filter(function (i) {
         return i.items && i.items.length > 0;
-    })
+    });
+
+    config.toolbar = [config.toolbar.reduce(function (ac, cr) {
+        if (ac.items.length > 0)
+            ac.items.push('-');
+        ac.items.push.apply(ac.items, cr.items);
+        return ac;
+    }, { name: 'nogroup', items: [] })];
 
     if (!config.height) {
         config.height = '500px';
