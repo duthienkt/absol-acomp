@@ -3,7 +3,7 @@ import '../css/toclist.css';
 import CheckBoxInput from "./CheckBoxInput";
 import Dom from "absol/src/HTML5/Dom";
 import { measureText } from "./utils";
-import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { copyEvent, hitElement } from "absol/src/HTML5/EventEmitter";
 
 
 /***
@@ -66,7 +66,7 @@ TOCItem.tag = 'TOCItem'.toLowerCase();
 TOCItem.render = function () {
     return _({
         class: 'as-toc-item',
-        extendEvent: ['presstoggle', 'checkedchange', 'pressquickmenu', 'press'],
+        extendEvent: ['presstoggle', 'checkedchange', 'pressquickmenu', 'press', 'renamefinish'],
         child: [
             {
                 class: 'as-toc-item-toggle-ico-ctn',
@@ -136,7 +136,7 @@ TOCItem.property.icon = {
 
 TOCItem.property.status = {
     set: function (value) {
-        if (['none', 'open', 'close'].indexOf(value) <0) value = 'none';
+        if (['none', 'open', 'close'].indexOf(value) < 0) value = 'none';
         this.removeClass('as-status-' + this._status);
         this._status = value;
         this.addClass('as-status-' + value);
@@ -192,10 +192,32 @@ TOCItem.prototype.rename = function () {
     this.$nameInput.value = name;
     this.$nameInput.focus();
     this.$nameInput.select();
-    this.$nameInput.once('blur', function () {
+    this.$nameInput.once('blur', function (event) {
+        var event1;
         if (this.$nameInput.value !== name) {
-            //todo
-            this.name = this.$nameInput.value;
+            event1 = copyEvent(event, {
+                originalEvent: event,
+                type: 'renamefinish',
+                newName: this.$nameInput.value,
+                __promise__: Promise.resolve(true),
+                waitFor: function (promise) {
+                    if (promise && promise.then) {
+                        this.__promise__ = promise;
+                    }
+                    else {
+                        this.__promise__ = Promise.resolve(promise);
+                    }
+                }
+            });
+            this.emit('renamefinish', event1, this);
+            event1.__promise__.then(function (result) {
+                if (result === true) {
+                    this.name = event1.newName;
+                }
+                else if (typeof result === 'string') {
+                    this.name = result;
+                }
+            }.bind(this));
         }
         this.removeClass('as-renaming');
     }.bind(this));
