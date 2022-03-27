@@ -1,12 +1,12 @@
-import ACore, {_, $} from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
-import {isDateTimeFormatToken, zeroPadding} from "./utils";
-import {daysInMonth, formatDateTime} from "absol/src/Time/datetime";
+import { isDateTimeFormatToken, zeroPadding } from "./utils";
+import { daysInMonth, formatDateTime } from "absol/src/Time/datetime";
 import ChromeTimePicker from "./ChromeTimePicker";
 import ChromeCalendar from "./ChromeCalendar";
 import Follower from "./Follower";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 
 var STATE_NEW = 1;
@@ -162,7 +162,8 @@ DateTimeInput.prototype._autoSelect = function () {
         if (tokenEnd.idx === token.idx) {
             this.$text.setSelectionRange(token.idx, token.idx + token.length);
             this._editingData.state = STATE_NEW;
-        } else {
+        }
+        else {
             this.$text.select();
             this._editingData.state = STATE_NONE;
         }
@@ -258,17 +259,18 @@ DateTimeInput.prototype._makeTokenDict = function (s) {
  */
 DateTimeInput.prototype._makeValueDict = function (date) {
     var res = {};
-    res.d = {value: date.getDate()};
-    res.y = {value: date.getFullYear()};
-    res.M = {value: date.getMonth() + 1};
-    res.m = {value: date.getMinutes()};
-    res.h = {value: date.getHours()};
+    res.d = { value: date.getDate() };
+    res.y = { value: date.getFullYear() };
+    res.M = { value: date.getMonth() + 1 };
+    res.m = { value: date.getMinutes() };
+    res.h = { value: date.getHours() };
     if (res.h.value < 12) {
         if (res.h.value === 0) res.h.value = 12;
-        res.a = {value: "AM"};
-    } else {
+        res.a = { value: "AM" };
+    }
+    else {
         if (res.h.value > 12) res.h.value -= 12;
-        res.a = {value: "PM"};
+        res.a = { value: "PM" };
     }
     return res;
 };
@@ -282,16 +284,19 @@ DateTimeInput.prototype._applyTokenDict = function (format, dict, debug) {
             var ident = tokenMap[g1];
             if (ident === 'a') {
                 return (dict.a && dict.a.value) || 'a';
-            } else {
+            }
+            else {
                 if (dict[ident] && !isNaN(dict[ident].value)) {
                     var numberText = dict[ident].value + '';
                     while (numberText.length < g1.length) numberText = '0' + numberText;
                     return numberText;
-                } else {
+                }
+                else {
                     return full;
                 }
             }
-        } else
+        }
+        else
             return full;
     });
 
@@ -302,13 +307,15 @@ DateTimeInput.prototype._loadValueFromInput = function () {
     var H = NaN;
     if (tkDict.a.value === 'AM') {
         H = tkDict.h.value % 12;
-    } else if (tkDict.a.value === 'PM') {
+    }
+    else if (tkDict.a.value === 'PM') {
         H = tkDict.h.value + (tkDict.h.value === 12 ? 0 : 12);
     }
     var date = new Date(tkDict.y.value, tkDict.M.value - 1, tkDict.d.value, H, tkDict.m.value);
     if (isNaN(date.getTime())) {
         this._value = null;
-    } else {
+    }
+    else {
         this._value = date;
     }
 };
@@ -319,7 +326,8 @@ DateTimeInput.prototype.clear = function () {
         this.value = formatDateTime(
             new Date(Math.max(this.min.getTime(), Math.min(this.max.getTime(), new Date().getTime()))),
             this.format);
-    } else {
+    }
+    else {
         this.value = null;
     }
 
@@ -348,7 +356,8 @@ DateTimeInput.prototype._correctingInput = function () {
         tkDict.y.value = Math.max(this._min.getFullYear(), Math.min(this._max.getFullYear(), tkDict.y.value));
         equalMin = tkDict.y.value === this._min.getFullYear();
         equalMax = tkDict.y.value === this._max.getFullYear();
-    } else {
+    }
+    else {
         equalMin = false;
         equalMax = false;
     }
@@ -364,7 +373,8 @@ DateTimeInput.prototype._correctingInput = function () {
             tkDict.M.value = Math.min(this._max.getMonth() + 1, tkDict.M.value);
             equalMax = this._max.getMonth() + 1;
         }
-    } else {
+    }
+    else {
         equalMin = false;
         equalMax = false;
     }
@@ -385,7 +395,8 @@ DateTimeInput.prototype._correctingInput = function () {
             tkDict.d.value = Math.min(this._max.getDate(), tkDict.d.value);
             equalMax = tkDict.d.value === this._max.getDate();
         }
-    } else {
+    }
+    else {
         equalMin = false;
         equalMax = false;
     }
@@ -395,7 +406,8 @@ DateTimeInput.prototype._correctingInput = function () {
         if (equalMin) {
 
         }
-    } else {
+    }
+    else {
         equalMin = false;
         equalMax = false;
     }
@@ -412,7 +424,8 @@ DateTimeInput.prototype._correctingCurrentToken = function () {
         if (token.text !== 'a' && token.text !== 'AM' && token.text !== 'PM') {
             token.replace('a', false);
         }
-    } else {
+    }
+    else {
         value = parseInt(token.text);
         var rqMin = {
             d: 1, dd: 1,
@@ -435,7 +448,8 @@ DateTimeInput.prototype._correctingCurrentToken = function () {
                     token.replace(zeroPadding(value, token.ident.length), false);
                     this._editingData.d = value;
                 }
-            } else if (token.text !== token.ident) {
+            }
+            else if (token.text !== token.ident) {
                 token.replace(token.ident, false);
             }
         }
@@ -464,7 +478,8 @@ DateTimeInput.property.disabled = {
         this.$text.disabled = !!value;
         if (value) {
             this.addClass('as-disabled');
-        } else {
+        }
+        else {
             this.removeClass('as-disabled');
         }
     },
@@ -478,7 +493,8 @@ DateTimeInput.property.format = {
         var dict;
         if (this._value) {
             dict = this._makeValueDict(this._value);
-        } else {
+        }
+        else {
             dict = this._makeTokenDict(this.$text.value);
         }
         this._format = value;
@@ -496,12 +512,14 @@ DateTimeInput.property.value = {
         var dict;
         if (this._value) {
             dict = this._makeValueDict(this._value);
-        } else {
+        }
+        else {
             dict = this._makeTokenDict(this.$text.value);
         }
         if (value) {
             this.$text.value = this._applyTokenDict(this._format, dict, true);
-        } else {
+        }
+        else {
             this.$text.value = this.format;
         }
         this._lastEmitValue = this._value;
@@ -586,7 +604,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.d = event.key === 'ArrowUp' ? 1 : 31;
-                        } else {
+                        }
+                        else {
                             this._editingData.d = 1 + (value + (event.key === 'ArrowUp' ? 0 : 29)) % 31;
                         }
                         newTokenText = '' + this._editingData.d;
@@ -598,7 +617,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         value = parseInt(token.text) - 1;
                         if (isNaN(value)) {
                             this._editingData.M = event.key === 'ArrowUp' ? 0 : 11;
-                        } else {
+                        }
+                        else {
                             this._editingData.M = (value + (event.key === 'ArrowUp' ? 1 : 11)) % 12;
                         }
                         newTokenText = '' + (this._editingData.M + 1);
@@ -609,7 +629,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.y = new Date().getFullYear();
-                        } else {
+                        }
+                        else {
                             this._editingData.y = Math.max(1890, Math.min(2089, value + (event.key === 'ArrowUp' ? 1 : -1)));
                         }
 
@@ -622,7 +643,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.h = event.key === 'ArrowUp' ? 1 : 12;
-                        } else {
+                        }
+                        else {
                             this._editingData.h = 1 + (value + (event.key === 'ArrowUp' ? 0 : 10)) % 12;
                         }
                         newTokenText = this._editingData.h + '';
@@ -634,7 +656,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.m = event.key === 'ArrowUp' ? 0 : 59;
-                        } else {
+                        }
+                        else {
                             this._editingData.m = (value + (event.key === 'ArrowUp' ? 1 : 59)) % 60;
                         }
                         newTokenText = this._editingData.m + '';
@@ -650,18 +673,21 @@ DateTimeInput.eventHandler.keydown = function (event) {
                 }
                 break;
         }
-    } else if (event.key === "Delete" || event.key === 'Backspace') {
+    }
+    else if (event.key === "Delete" || event.key === 'Backspace') {
         event.preventDefault();
         if (endToken.idx !== token.idx) {
             if (this.notNull) {
                 this.$text.value = formatDateTime(
                     new Date(Math.max(this.min.getTime(), Math.min(this.max.getTime(), new Date().getTime()))),
                     this.format);
-            } else {
+            }
+            else {
                 this.$text.value = this._format;
             }
             this.$text.select();
-        } else {
+        }
+        else {
             if (this.notNull) {
                 switch (token.ident) {
                     case 'HH':
@@ -692,17 +718,20 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         break;
 
                 }
-            } else {
+            }
+            else {
                 token.replace(token.ident, true);
             }
             if (event.key === "Delete") this._editNextToken();
             else this._editPrevToken();
         }
-    } else if (event.key === "Enter" || event.key === 'Tab') {
+    }
+    else if (event.key === "Enter" || event.key === 'Tab') {
         this._correctingInput();
         this._loadValueFromInput();
         this._notifyIfChange(event);
-    } else if (event.ctrlKey) {
+    }
+    else if (event.ctrlKey) {
         switch (event.key) {
             case 'a':
             case 'A':
@@ -721,7 +750,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
             default:
                 event.preventDefault();
         }
-    } else if (event.key.match(/^[0-9]$/g)) {
+    }
+    else if (event.key.match(/^[0-9]$/g)) {
         event.preventDefault();
         var dVal = parseInt(event.key);
         if (this._editingData.state === STATE_NEW) {
@@ -768,7 +798,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
                     break;
 
             }
-        } else {
+        }
+        else {
             switch (token.ident) {
                 case 'dd':
                 case 'd':
@@ -794,7 +825,8 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         // dVal = Math.max(1890, Math.min(2089, dVal));
                         token.replace(zeroPadding(dVal, token.ident.length), true);
                         this._editNextToken();
-                    } else {
+                    }
+                    else {
                         token.replace(zeroPadding(dVal, token.ident.length), true);
                     }
                     break;
@@ -816,17 +848,20 @@ DateTimeInput.eventHandler.keydown = function (event) {
                     break;
             }
         }
-    } else if (event.key.match(/^[aApPSCsc]$/) && token.ident === 'a') {
+    }
+    else if (event.key.match(/^[aApPSCsc]$/) && token.ident === 'a') {
         event.preventDefault();
         if (event.key.match(/^[aAsS]$/)) {
             token.replace('AM', true);
             this._editingData.a = "AM";
-        } else {
+        }
+        else {
             token.replace('PM', true);
             this._editingData.a = "PM";
         }
         this._editNextToken();
-    } else {
+    }
+    else {
         event.preventDefault();
     }
 
@@ -920,12 +955,12 @@ DateTimeInput.prototype._preparePicker = function () {
         this.share.$cancelBtn = _({
             tag: 'button',
             class: 'as-date-time-input-picker-btn',
-            child: {text: 'CANCEL'}
+            child: { text: 'CANCEL' }
         });
         this.share.$okBtn = _({
             tag: 'button',
             class: 'as-date-time-input-picker-btn',
-            child: {text: 'OK'}
+            child: { text: 'OK' }
         });
         this.share.$follower = _({
             tag: Follower.tag,
@@ -973,16 +1008,19 @@ DateTimeInput.prototype._attachPicker = function () {
     if (tkDict.h && !isNaN(tkDict.h.value)) {
         if (tkDict.a && tkDict.a.value === 'PM') {
             this.share.$timePicker.hour = 12 + tkDict.h.value % 12;
-        } else {
+        }
+        else {
             this.share.$timePicker.hour = tkDict.h.value % 12;
         }
-    } else {
+    }
+    else {
         this.share.$timePicker.hour = null;
     }
 
     if (tkDict.m && !isNaN(tkDict.m.value)) {
         this.share.$timePicker.minute = tkDict.m.value;
-    } else {
+    }
+    else {
         this.share.$timePicker.minute = null;
     }
     this.share.$timePicker.scrollIntoSelected();
@@ -997,26 +1035,31 @@ DateTimeInput.prototype._attachPicker = function () {
     if (date) {
         this.share.$calendar.selectedDates = [date];
         this.share.$calendar.viewDate = date;
-    } else {
+    }
+    else {
         this.share.$calendar.selectedDates = [];
         var viewDate = null;
         if (tkDict.y && !isNaN(tkDict.y.value)) {
             if (tkDict.M && !isNaN(tkDict.M.value)) {
                 if (tkDict.d && !isNaN(tkDict.d.value)) {
                     viewDate = new Date(tkDict.y.value, tkDict.M.value - 1, tkDict.d.value);
-                } else {
+                }
+                else {
                     viewDate = new Date(tkDict.y.value, tkDict.M.value - 1, 1);
 
                 }
-            } else {
+            }
+            else {
                 viewDate = new Date(tkDict.y.value, 0, 1);
             }
-        } else {
+        }
+        else {
             viewDate = new Date();
         }
         if (viewDate && !isNaN(viewDate.getTime())) {
             this.share.$calendar.viewDate = viewDate;
-        } else {
+        }
+        else {
             this.share.$calendar.viewDate = new Date();
         }
     }

@@ -135,3 +135,7 @@
 .as-date-time-input:hover .as-time-input-clear-btn {
     visibility: visible;
 }
+
+.as-date-time-input.as-must-not-null .as-time-input-clear-btn {
+    display: none;
+}
