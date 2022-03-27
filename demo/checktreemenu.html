@@ -150,7 +150,7 @@
                     change: function () {
                         var values = this.values;
                         var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
-                      absol.require('snackbar').show(text);
+                        absol.require('snackbar').show(text);
                     }
                 }
             }).addTo(demo2);
@@ -179,6 +179,21 @@
                     }
                 }
             }).addTo(demo2);
+
+            var m5 = _({
+                tag: 'multichecktreemenu',
+                style: {
+                    marginBottom: '12em',
+                    width: '80vw'
+                },
+                props: {
+                    items: JSON.parse(JSON.stringify(items)).map(function visit(item) {
+                        item.noSelect = Math.random() < 0.3;
+                        if (item.items) item.items.map(visit);
+                        return item;
+                    })
+                }
+            }).addTo(document.body);
 
         });
 
