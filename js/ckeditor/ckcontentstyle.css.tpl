@@ -67,3 +67,8 @@
 {
     color: #144f25;
 }
+
+
+.cke_button__image_mgn_dialog_icon {
+    background: url($basePath/plugins/icons.png) no-repeat 0 -960px !important;
+}

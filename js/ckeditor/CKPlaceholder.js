@@ -87,7 +87,6 @@ CKPlaceholder.prototype.selectNext = function () {
     var editor = this.editor;
     if (!editor) return;
     var ranges = editor.getSelection().getRanges();
-    console.log(ranges[0])
     // var startIndex = editor.element.getHtml().indexOf(findString);
     // if (startIndex != -1)  {
     //     ranges[0].setStart(element.getFirst(), startIndex);
@@ -107,7 +106,7 @@ CKPlaceholder.eventHandler = {};
  */
 CKPlaceholder.eventHandler.attached = function () {
     this.$attachhook.remove();
-    this.editor = this.mode === 'replace' ? CKEDITOR.replace(this, ckMakeDefaultConfig(this.config, this.extensions)) : CKEDITOR.inline(this, ckMakeDefaultConfig(this.config, this.extensions));
+    this.editor = this.mode === 'replace' ? CKEDITOR.replace(this, ckMakeDefaultConfig(this.config, this.extensions, this)) : CKEDITOR.inline(this, ckMakeDefaultConfig(this.config, this.extensions, this));
     this.editor.placeHolderElt = this;
     this.editor.on('instanceReady', this.eventHandler.instanceReady);
     this.editor.on('change', this.eventHandler.change);
