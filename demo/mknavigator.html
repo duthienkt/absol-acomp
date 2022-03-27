@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MK Navigator</title>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+
+<body>
+<div id="demo"></div>
+<script>
+    var demo1 = absol.$('#demo');
+
+    function render(o) {
+        return absol._(o).addTo(demo1);
+    }
+
+</script>
+<script class="viewable">
+    render('<h2>Thu gọn</h2>');
+    render({
+        tag: 'mknavigator',
+        style: {
+            display:'inline-block'// or 'block'
+        },
+        props: {
+            items: [
+                { text: 'Thông tin chung', value: 0 },
+                { text: 'Chào mừng', value: 1 },
+                { text: 'Giới thiệu công ty', value: 2 },
+                { text: 'Chính sách và quy định', value: 3},
+                { text: 'Công việc', value: 4, },
+                { text: 'Hướng dẫn sử dụng', value: 5 },
+                { text: 'Hỗ trợ', value: 6 },
+                { text: 'Kết thúc', value: 7 }
+            ],
+            value: 3
+        },
+        on: {
+            orderchange: function (event) {
+                console.log(this.order);
+            },
+            checkedchange: function (event) {
+                console.log(event.itemData, event.checked);
+            },
+            press: function (event) {
+                console.log(event.itemData, this.value);
+            }
+        }
+    });
+
+    render('<h2>Đầy đủ</h2>');
+    render('<h3>block</h3>');
+    render({
+        tag: 'mknavigator',
+        style: {},
+        props: {
+            items: [
+                { text: 'Thông tin chung', value: 0 },
+                { text: 'Chào mừng', value: 1, draggable: true, checked: false },
+                { text: 'Giới thiệu công ty', draggable: true, value: 2, checked: true },
+                { text: 'Chính sách và quy định', draggable: true, value: 3, checked: true },
+                { text: 'Công việc', value: 4, draggable: true, checked: false },
+                { text: 'Hướng dẫn sử dụng', value: 5, draggable: true, checked: false },
+                { text: 'Hỗ trợ', value: 6, draggable: true, checked: false },
+                { text: 'Kết thúc', value: 7 }
+            ],
+            value: 3
+        },
+        on: {
+            orderchange: function (event) {
+                console.log(this.order);
+            },
+            checkedchange: function (event) {
+                console.log(event.itemData, event.checked);
+            },
+            press: function (event) {
+                console.log(event.itemData, this.value);
+            }
+        }
+    });
+    render('<h3>inline block</h3>');
+
+    render({
+        tag: 'mknavigator',
+        style: {
+            display: 'inline-block'
+        },
+        props: {
+            items: [
+                { text: 'Thông tin chung', value: 0 },
+                { text: 'Chào mừng', value: 1, draggable: true, checked: false },
+                { text: 'Giới thiệu công ty', draggable: true, value: 2, checked: true },
+                { text: 'Chính sách và quy định', draggable: true, value: 3, checked: true },
+                { text: 'Công việc', value: 4, draggable: true, checked: false },
+                { text: 'Hướng dẫn sử dụng', value: 5, draggable: true, checked: false },
+                { text: 'Hỗ trợ', value: 6, draggable: true, checked: false },
+                { text: 'Kết thúc', value: 7 }
+            ],
+            value: 3
+        },
+        on: {
+            orderchange: function (event) {
+                console.log(this.order);
+            },
+            checkedchange: function (event) {
+                console.log(event.itemData, event.checked);
+            },
+            press: function (event) {
+                console.log(event.itemData, this.value);
+            }
+        }
+    });
+
+</script>
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+</body>
+
+</html>

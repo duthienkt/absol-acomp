@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html class="absol-bscroller">
+
+<head>
+    <title>Process L Bar</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/css/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <style>
+        .dark.bg {
+            background-color: rgba(30, 30, 32, 1);
+            /* background-color: white; */
+
+        }
+
+        .bg {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            border: solid 1px rgb(30, 30, 32);
+        }
+
+    </style>
+</head>
+<body>
+<div id="demo"></div>
+<script>
+    var demoElt = absol.$('#demo');
+    function render(o) {
+        return absol._(o).addTo(demoElt);
+    }
+
+</script>
+<script class="viewable">
+
+    function randomColor() {
+        return new absol.Color([Math.random() / 2 + 0.3, Math.random() / 2 + 0.3, Math.random() / 2 + 0.3, 1]).toString('HEX6');
+    }
+
+    render({
+        tag: 'processlbar',
+        props: {
+            // lHeight: 3,//default = 3
+            items: [
+                {
+                    name: 'Bắt đầu',
+                    value: 0,
+                    color: randomColor()
+                },
+                {
+                    name: 'Bước 1',
+                    value: 1,
+                    color: randomColor()
+                }, {
+                    name: 'Bước 2',
+                    value: 2,
+                    color: randomColor()
+                }, {
+                    name: 'Bước 3',
+                    value: 3,
+                    color: randomColor()
+                }, {
+                    name: 'Bước 4',
+                    value: 4,
+                    color: randomColor()
+                },
+                {
+                    name: 'Thành công',
+                    value: 'success',
+                    color: 'green'
+                },
+                {
+                    name: 'Thất bại',
+                    value: 'fail',
+                    color: 'red'
+                },
+                {
+                    name: 'Huỷ thực  hiện',
+                    value: 'cancel',
+                    // color: 'gray'
+                }
+            ],
+            value: 4
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(JSON.stringify(this.value))
+            }
+        }
+    });
+
+</script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+</body>
+
+</html>
