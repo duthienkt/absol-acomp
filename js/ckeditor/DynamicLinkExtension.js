@@ -45,7 +45,6 @@ function implicit(data, placeHolderElt) {
     $$('.as-ck-widget-dynamic-link', parserDiv).forEach(function (elt) {
         var id = elt.getAttribute('data-link-id');
         var info = placeHolderElt.dynamicLinks && placeHolderElt.dynamicLinks[id];
-        console.log(info)
         if (info){
             elt.setAttribute('href', info.href);
             elt.innerHTML = info.text || info.href;
