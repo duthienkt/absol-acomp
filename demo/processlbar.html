@@ -91,6 +91,58 @@
         }
     });
 
+    render({
+        tag: 'processlbar',
+        props: {
+            disabled: true,
+            // lHeight: 3,//default = 3
+            items: [
+                {
+                    name: 'Bắt đầu',
+                    value: 0,
+                    color: randomColor()
+                },
+                {
+                    name: 'Bước 1',
+                    value: 1,
+                    color: randomColor()
+                }, {
+                    name: 'Bước 2',
+                    value: 2,
+                    color: randomColor()
+                }, {
+                    name: 'Bước 3',
+                    value: 3,
+                    color: randomColor()
+                }, {
+                    name: 'Bước 4',
+                    value: 4,
+                    color: randomColor()
+                },
+                {
+                    name: 'Thành công',
+                    value: 'success',
+                    color: 'green'
+                },
+                {
+                    name: 'Thất bại',
+                    value: 'fail',
+                    color: 'red'
+                },
+                {
+                    name: 'Huỷ thực  hiện',
+                    value: 'cancel',
+                    // color: 'gray'
+                }
+            ],
+            value: 4
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(JSON.stringify(this.value))
+            }
+        }
+    });
 </script>
     <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 </body>
