@@ -1,6 +1,5 @@
 import { $, _ } from "../ACore";
 import '../css/processlbar.css';
-import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { measureText } from "./utils";
 
 /***
@@ -106,6 +105,7 @@ ProcessLBar.prototype._makeItem = function (item) {
         },
         on: {
             click: function (event) {
+                if (self.disabled) return;
                 var value = this._value;
                 if (item.value === value) return;
                 self.value = item.value;
@@ -157,7 +157,21 @@ ProcessLBar.property.lHeight = {
     get: function () {
         return this._lHeight;
     }
-}
+};
+
+ProcessLBar.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-disabled');
+    }
+};
 
 
 export default ProcessLBar;

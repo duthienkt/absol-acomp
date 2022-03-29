@@ -31,11 +31,13 @@
     width: var(--as-process-l-bar-item-width);
     min-width: var(--as-process-l-bar-item-min-width);
     height: 15px;
-    background-color: white;
-    border: 1px solid #dddddd;
+    background-color: #ebebeb;
+    border: solid 1px #bfbfbf;
     transition: background-color 0.2s;
     position: relative;
 }
+
+
 
 .as-process-l-bar-step.as-active {
     background-color: var(--as-process-l-bar-active-color);
@@ -61,6 +63,9 @@
     bottom: 0;
 }
 
+.as-process-l-bar.as-disabled .as-process-l-bar-step::before{
+    display: none;
+}
 
 .as-process-l-bar-step:hover::before {
     background-color: rgba(169, 169, 172, 0.3);
