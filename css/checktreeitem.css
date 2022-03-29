@@ -16,11 +16,27 @@
     margin-right: 0.35em;
 }
 
-.as-check-tree-item.as-no-select .as-checkbox-input {
+.as-check-tree-item.as-no-select .as-checkbox-input,
+.absol-checkbox.as-no-select {
     pointer-events: none;
+    opacity: 0.3;
 }
 
-.as-check-tree-item.as-no-select .as-checkbox-input .bound {
+.as-check-tree-item.as-no-select .as-checkbox-input .bound,
+.absol-checkbox.as-no-select .bound {
     stroke: #929292;
     fill: #ebebe4;
+}
+
+.as-check-tree-item.as-no-select .as-checkbox-input .tick,
+.as-check-tree-item.as-no-select .as-checkbox-input .minus,
+.absol-checkbox.as-no-select .tick,
+.absol-checkbox.as-no-select .minus {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.absol-checkbox.as-no-select{
+    visibility: hidden;
 }

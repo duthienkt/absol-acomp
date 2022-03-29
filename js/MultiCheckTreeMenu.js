@@ -37,11 +37,16 @@ function MultiCheckTreeMenu() {
     this.enableSearch = false;
 
     /**
-     * parent will be selected if all off leaf selected
+     * parent will be selected if all off leaf selected, sub tree can not select if had no leaf
      * @name leafOnly
      * @type {boolean}
      * @memberOf MultiCheckTreeMenu#
      */
+
+    /***
+     * todo: TREE has noSelect
+     */
+
 }
 
 
@@ -252,7 +257,87 @@ MultiCheckTreeMenu.prototype._implicit = function (values) {
 
 
 MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
-    return (values || []).slice();
+    var valueDict = values.reduce(function (ac, cr) {
+        ac[cr] = true;
+        return ac;
+    }, {});
+
+    function scanMerge(node) {
+        var selected = valueDict[node.value];
+        if (selected) {
+            return {
+                s: true,
+                v: [node.value]
+            };
+        }
+        var childRes;
+        if (node.items && node.items.length > 0) {
+            childRes = node.items.map(function (node) {
+                return scanMerge(node);
+            });
+        }
+        else {
+            return null;
+        }
+
+        var all = childRes.every(function (res) {
+            return res && res.s;
+        });
+        var res = null;
+        if (all) {
+            res = {
+                s: 'A',
+                v: [node.value]
+            }
+        }
+        else {
+            res = {
+                v: childRes.reduce(function (ac, cr) {
+                    if (cr && cr.v.length > 0)
+                        ac = ac.concat(cr.v);
+                    return ac;
+                }, [])
+            };
+            if (res.v.length === 0) res = null;
+        }
+
+        return res;
+    }
+
+
+    var merged = this._items.map(function (node) {
+        return scanMerge(node);
+    }).reduce(function (ac, cr) {
+        if (cr && cr.v.length > 0)
+            ac = ac.concat(cr.v);
+        return ac;
+    }, []);
+
+    var mergedDict =  merged.reduce(function (ac, cr) {
+        ac[cr] = true;
+        return ac;
+    }, {});
+
+    var res = [];
+    function noSelectScan(node, selected){
+         selected =selected || mergedDict[node.value];
+        if (!node.noSelect && selected){
+            res.push(node.value);
+        }
+        else {
+            if (node.items && node.items.length >0){
+                node.items.forEach(function (item){
+                    noSelectScan(item, selected);
+                })
+            }
+        }
+    }
+
+    this._items.forEach(function (item){
+        noSelectScan(item, false);
+    });
+
+    return res;
 };
 
 
@@ -329,7 +414,7 @@ MultiCheckTreeMenu.prototype.commitView = function () {
 
 MultiCheckTreeMenu.prototype.cancelView = function () {
     this.$checkTreeBox.values = this._values;
-    this.viewValues(this._values)
+    this.viewValues(this._normalExplicit(this._values));
 };
 
 MultiCheckTreeMenu.prototype.init = function (props) {
@@ -425,7 +510,7 @@ MultiCheckTreeMenu.property.values = {
         this.$checkTreeBox.values = values;
         this._values = values;
         values = this.$checkTreeBox.values.slice();//correct wrong item
-        this.viewValues(values);
+        this.viewValues(this._normalExplicit(values));
     },
     /***
      * @this MultiCheckTreeMenu
@@ -486,7 +571,7 @@ MultiCheckTreeMenu.eventHandler.click = function (event) {
  * @param event
  */
 MultiCheckTreeMenu.eventHandler.boxChange = function (event) {
-    this.viewValues(this.$checkTreeBox.values);
+    this.viewValues(this._normalExplicit(this.$checkTreeBox.values));
     ResizeSystem.update();
 };
 
@@ -512,6 +597,7 @@ MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
     var newValues = this._viewValues.filter(function (v) {
         return v !== value;
     });
+
     if (this.isFocus) {
         this.viewValues(newValues);
     }

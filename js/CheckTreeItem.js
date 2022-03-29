@@ -54,6 +54,7 @@ CheckTreeItem.property.data = {
         this._itemData = itemData;
         var text = getTextOfListItem(itemData);
         this.text = text;
+        this.attr('title', itemData.value + '')
         var desc = getDescriptionOfListItem(itemData);
         this.desc = desc;
         if (itemData && itemData.icon) {
@@ -138,13 +139,13 @@ CheckTreeItem.eventHandler.click = function (event) {
         if (event.clientX <= tBound.right || this.noSelect) {
             this.emit('presstoggle', { type: 'presstoggle', target: this, originalEvent: event }, this);
         }
-        else if (!hitElement(this.$checkbox, event)) {
+        else if (!hitElement(this.$checkbox, event) && !this.$checkbox.disabled) {
             this.$checkbox.checked = !this.$checkbox.checked;
             this.eventHandler.checkboxChange(event);
         }
     }
     else {
-        if (!hitElement(this.$checkbox, event) && !this.noSelect) {
+        if (!hitElement(this.$checkbox, event) && !this.noSelect && !this.$checkbox.disabled) {
             this.$checkbox.checked = !this.$checkbox.checked;
             this.eventHandler.checkboxChange(event);
         }
