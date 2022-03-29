@@ -8,10 +8,17 @@
 <body>
 <h2>Check Tree Item</h2>
 <div id="demo-0"></div>
+
+<h2 id="check-tree-box-h-x">Check Tree Box(with no select)</h2>
+<div id="demo-x" style="height: 10em"></div>
+
 <h2 id="check-tree-box-h">Check Tree Box</h2>
 <div id="demo-1" style="height: 10em"></div>
 <h2>Multi Check Tree Menu</h2>
 <div id="demo-2" style="min-height: 30em"></div>
+
+<h2>Multi Check Tree Menu(with noSelect)</h2>
+<div id="demo-3" style="min-height: 30em"></div>
 
 
 <script>
@@ -29,7 +36,7 @@
                         desc: Math.random() < 0.5 ? strings.randomPhrase(30) : undefined,
                         icon: Math.random() < 0.8 ? {
                             tag: 'img',
-                            props: {src: 'https://absol.cf/vivid_exticons/asx.svg'}
+                            props: { src: 'https://absol.cf/vivid_exticons/asx.svg' }
                         } : null
                     },
                     status: Math.random() < 0.5 ? (Math.random() < 0.5 ? 'close' : 'open') : 'none',
@@ -43,7 +50,7 @@
         var listDataAsync = fetch('./demo_tree_list.js').then(function (res) {
             return res.text();
         }).then(function (text) {
-            var module = {exports: {}};
+            var module = { exports: {} };
             var factor = new Function('module', 'exports', text + '\nreturn module.exports;');
             return factor(module, module.exports);
         }).then(function (items) {
@@ -69,6 +76,27 @@
             }).addTo(document.body);
         });
 
+        listDataAsync.then(function (items) {
+            items = JSON.parse(JSON.stringify(items));
+            var noSelectValues = [3571, 3584, 3572, 2025];
+            items.forEach(function visit(item) {
+                if (noSelectValues.indexOf(item.value) >= 0) {
+                    item.noSelect = true;
+                }
+                if (item.items && item.items.length > 0) item.items.forEach(visit);
+            })
+            var ctm = _({
+                tag: 'checktreebox',
+                style: {},
+                props: {
+                    followTarget: $('#check-tree-box-h-x'),
+                    items: items,
+                    values: [2027, 3547, 3550, 2028, 2057]
+                }
+            }).addTo(document.body);
+        });
+
+
         var demo2 = $('#demo-2');
         listDataAsync.then(function (items) {
             var mn1 = _({
@@ -87,9 +115,10 @@
                         var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
                         var t = _({
                             tag: 'div',
-                            child: {text: text}
+                            child: { text: text }
                         });
-                        demo2.addChildAfter(this, t);
+
+                        demo2.addChildAfter( t, this);
                     }
                 }
             }).addTo(demo2);
@@ -101,7 +130,8 @@
                     item.icon = 'span.mdi.mdi-domain';
                 else if (!item.isLeaf) {
                     item.icon = 'span.mdi.mdi-account-group-outline';
-                } else {
+                }
+                else {
                     item.icon = 'span.mdi.mdi-alpha-' + c + '-circle-outline';
                 }
 
@@ -127,9 +157,9 @@
                         var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
                         var t = _({
                             tag: 'div',
-                            child: {text: text}
+                            child: { text: text }
                         });
-                        demo2.addChildAfter(this, t);
+                        demo2.addChildAfter(t, this);
                     }
                 }
             }).addTo(demo2);
@@ -173,7 +203,7 @@
                         var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
                         var t = _({
                             tag: 'div',
-                            child: {text: text}
+                            child: { text: text }
                         });
                         demo2.addChildAfter(this, t);
                     }
@@ -196,6 +226,38 @@
             }).addTo(document.body);
 
         });
+
+        var demo3 = $('#demo-3');
+        listDataAsync.then(function (items) {
+            items = JSON.parse(JSON.stringify(items));
+            var noSelectValues = [3571, 3584, 3572, 2025];
+            items.forEach(function visit(item) {
+                if (noSelectValues.indexOf(item.value) >= 0) {
+                    item.noSelect = true;
+                }
+                if (item.items && item.items.length > 0) item.items.forEach(visit);
+            })
+            var ctm = _({
+                tag: 'multichecktreemenu',
+                style: {},
+                props: {
+                    items: items,
+                    values: [2027, 3547, 3550, 2028, 2057]
+                },
+                on: {
+                    change: function (){
+                        var values = this.values;
+                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
+                        var t = _({
+                            tag: 'div',
+                            child: { text: text }
+                        });
+                        demo3.addChildAfter(this, t);
+                    }
+                }
+            }).addTo(demo3);
+        });
+
 
     })();
 </script>
