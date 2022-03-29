@@ -14,5 +14,6 @@
  * @property {*} icon
  * @property {SelectionItem[]|undefined} items
  * @property {SelectionItem|undefined} ref
+ * @property {boolean} noSelect
  * @module SelectionItem
 */
