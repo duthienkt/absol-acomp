@@ -80,13 +80,57 @@
             tag: 'locationinput',
             props: {
                 value: { latitude: 10.799956, longitude: 106.710672 },//default type //or
+                value: { lat: 37.772, lng: -122.214 },
                 readOnly: true
+            }
+        });
+
+
+        render('<h3>Location View - Polylines</h3>');
+        var viewer = render({
+            tag: 'locationview',
+            style: {
+                height: '700px',
+                margin: '50px'
+            },
+            props: {
+                polylines: [
+                    {
+                        id: "sabc1",
+                        path: Array(36).fill(null).map(function (u, i) {
+                            return {
+                                lat: 10.8258993 + Math.sin(i * Math.PI / 18) * (0.15 + Math.random() / 5),
+                                lng: 106.7122713 + Math.cos(i * Math.PI / 18) * (0.15 + Math.random() / 5)
+                            }
+                        }),
+                        //default: color: 'red'
+                    },
+                    {
+                        id: "sabc2",
+                        path: Array(36).fill(null).map(function (u, i) {
+                            return {
+                                lat: 10.8258993 + Math.sin(i * Math.PI / 18) * (0.5 + Math.random() / 5),
+                                lng: 106.7122713 + Math.cos(i * Math.PI / 18) * (0.5 + Math.random() / 5)
+                            }
+                        }),
+                        // color: 'green'//default: red
+                    },
+                    {
+                        id: "sabc3",
+                        path: Array(36).fill(null).map(function (u, i) {
+                            return {
+                                lat: 10.8258993 + Math.sin(i * Math.PI / 18) * (0.5 + Math.random() / 5),
+                                lng: 106.7122713 + Math.cos(i * Math.PI / 18) * (0.5 + Math.random() / 5)
+                            }
+                        }),
+                        // color: 'green'//default: red
+                    }
+                ],
             }
         });
     }
 </script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDa-kTQGK37BDMeN4knEHbHayDrbkee6uU&libraries=places&callback=initMap">
+<script src="data:application/javascript;base64,ZG9jdW1lbnQud3JpdGVsbignPHNjcmlwdCBhc3luYyBkZWZlclxuJyArCiAgICAnICAgICAgICBzcmM9Imh0dHBzOi8vbWFwcy5nb29nbGVhcGlzLmNvbS9tYXBzL2FwaS9qcz9rZXk9QUl6YVN5RGEta1RRR0szN0JETWVONGtuRUhiSGF5RHJia2VlNnVVJmxpYnJhcmllcz1wbGFjZXMmY2FsbGJhY2s9aW5pdE1hcCI+PC9zY3JpcHQ+Jyk7">
 </script>
 </body>
 </html>
