@@ -1,6 +1,6 @@
-import ACore, {_, $} from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import Follower from "./Follower";
-import SelectListBox, {VALUE_HIDDEN} from "./SelectListBox";
+import SelectListBox, { VALUE_HIDDEN } from "./SelectListBox";
 import CheckListItem from "./CheckListItem";
 import '../css/checklistbox.css'
 import noop from "absol/src/Code/noop";
@@ -24,7 +24,8 @@ export function requireItem($parent) {
     var item;
     if (itemPool.length > 0) {
         item = itemPool.pop();
-    } else {
+    }
+    else {
         item = makeItem();
     }
     item.$parent = $parent;
@@ -56,7 +57,7 @@ CheckListBox.tag = 'CheckListBox'.toLowerCase();
 CheckListBox.render = function () {
     return _({
         tag: Follower.tag,
-        extendEvent: ['change', 'cancel'],
+        extendEvent: ['change', 'cancel', 'close'],
         attr: {
             tabindex: 0
         },
@@ -88,11 +89,17 @@ CheckListBox.render = function () {
                     },
                     {
                         class: 'as-select-list-box-footer-right',
-                        child: {
-                            tag: 'a',
-                            class: 'as-select-list-box-cancel-btn',
-                            child: {text: 'Cancel'}
-                        }
+                        child: [
+                            {
+                                tag: 'a',
+                                class: 'as-select-list-box-cancel-btn',
+                                child: { text: 'Cancel' }
+                            },
+                            {
+                                tag: 'a',
+                                class: 'as-select-list-box-close-btn',
+                                child: { text: 'Close' }
+                            }]
                     }
                 ]
             },
@@ -113,6 +120,9 @@ CheckListBox.prototype._initFooter = function () {
         .on('change', this.eventHandler.checkAllChange);
     this.$cancelBtn = $('.as-select-list-box-cancel-btn', this)
         .on('click', this.eventHandler.clickCancelBtn);
+    this.$closeBtn = $('.as-select-list-box-close-btn', this)
+        .on('click', this.eventHandler.clickCloseBtn);
+
 };
 
 
@@ -158,7 +168,8 @@ CheckListBox.prototype.viewListAtValue = function (value) {
         }.bind(this));
         this.domSignal.emit('scrollIntoValue');
         return true;
-    } else return false;
+    }
+    else return false;
 
 };
 
@@ -185,7 +196,8 @@ CheckListBox.eventHandler.checkAllChange = function (event) {
             ac[value + ''] = true;
             return ac;
         }, {});
-    } else {
+    }
+    else {
         this._values = [];
         this._valueDict = {};
     }
@@ -212,12 +224,14 @@ CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
     if (selected) {
         this._values.push(value);
         this._valueDict[value + ''] = true;
-    } else {
+    }
+    else {
         idx = this._values.indexOf(value);
         delete this._valueDict[value + ''];
         if (idx >= 0) {
             this._values.splice(idx, 1);
-        } else {
+        }
+        else {
             console.error("Violation data");
         }
     }
@@ -237,7 +251,15 @@ CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
  * @param event
  */
 CheckListBox.eventHandler.clickCancelBtn = function (event) {
-    this.emit('cancel', {type: 'cancel', target: this, originalEvent: event}, this);
+    this.emit('cancel', { type: 'cancel', target: this, originalEvent: event }, this);
+};
+
+/***
+ * @this CheckListBox
+ * @param event
+ */
+CheckListBox.eventHandler.clickCloseBtn = function (event) {
+    this.emit('close', { type: 'close', target: this, originalEvent: event }, this);
 };
 
 ACore.install(CheckListBox);

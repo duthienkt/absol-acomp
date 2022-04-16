@@ -26,7 +26,8 @@ function MultiCheckMenu() {
         on: {
             preupdateposition: this.eventHandler.preUpdateListPosition,
             change: this.eventHandler.selectListBoxChange,
-            cancel: this.eventHandler.selectListBoxCancel
+            cancel: this.eventHandler.selectListBoxCancel,
+            close: this.eventHandler.selectListBoxClose
         }
     });
 
@@ -77,7 +78,7 @@ MultiCheckMenu.eventHandler.bodyClick = function (event) {
         && (!isRemovedItem)
         && (!hitElement(this.$itemCtn, event) || event.target === this.$itemCtn)
     ) {
-        this.eventHandler.selectListBoxPressItem(event);
+        this.eventHandler.selectListBoxPressItem(event);//to notify something remove, add
         this.isFocus = false;
     }
 };
@@ -121,6 +122,11 @@ MultiCheckMenu.eventHandler.selectListBoxCancel = function (event) {
     this.viewItemsByValues(this._values);
     this.isFocus = false;
     this.$selectlistBox.values = this._values;
+};
+
+MultiCheckMenu.eventHandler.selectListBoxClose = function (event) {
+    this.eventHandler.selectListBoxPressItem(event);//to notify something remove, add
+    this.isFocus = false;
 };
 
 

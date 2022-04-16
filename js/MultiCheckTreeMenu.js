@@ -27,7 +27,8 @@ function MultiCheckTreeMenu() {
             change: this.eventHandler.boxChange,
             preupdateposition: this.eventHandler.preUpdateListPosition,
             toggleitem: this.eventHandler.boxToggleItem,
-            cancel: this.eventHandler.boxCancel
+            cancel: this.eventHandler.boxCancel,
+            close: this.eventHandler.boxClose
         }
     });
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
@@ -126,7 +127,8 @@ MultiCheckTreeMenu.prototype._switchLeafMode = function () {
                 change: this.eventHandler.boxChange,
                 preupdateposition: this.eventHandler.preUpdateListPosition,
                 toggleitem: this.eventHandler.boxToggleItem,
-                cancel: this.eventHandler.boxCancel
+                cancel: this.eventHandler.boxCancel,
+                close: this.eventHandler.boxClose
             }
         });
         this._explicit = this._leafOnlyExplicit;
@@ -139,7 +141,8 @@ MultiCheckTreeMenu.prototype._switchLeafMode = function () {
                 change: this.eventHandler.boxChange,
                 preupdateposition: this.eventHandler.preUpdateListPosition,
                 toggleitem: this.eventHandler.boxToggleItem,
-                cancel: this.eventHandler.boxCancel
+                cancel: this.eventHandler.boxCancel,
+                close: this.eventHandler.boxClose
             }
         });
         this._explicit = this._normalExplicit;
@@ -313,27 +316,28 @@ MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
         return ac;
     }, []);
 
-    var mergedDict =  merged.reduce(function (ac, cr) {
+    var mergedDict = merged.reduce(function (ac, cr) {
         ac[cr] = true;
         return ac;
     }, {});
 
     var res = [];
-    function noSelectScan(node, selected){
-         selected =selected || mergedDict[node.value];
-        if (!node.noSelect && selected){
+
+    function noSelectScan(node, selected) {
+        selected = selected || mergedDict[node.value];
+        if (!node.noSelect && selected) {
             res.push(node.value);
         }
         else {
-            if (node.items && node.items.length >0){
-                node.items.forEach(function (item){
+            if (node.items && node.items.length > 0) {
+                node.items.forEach(function (item) {
                     noSelectScan(item, selected);
                 })
             }
         }
     }
 
-    this._items.forEach(function (item){
+    this._items.forEach(function (item) {
         noSelectScan(item, false);
     });
 
@@ -479,7 +483,8 @@ MultiCheckTreeMenu.property.isFocus = {
                 }, 5)
             }
 
-            document.addEventListener('mouseup', waitMouseUp);
+            // document.addEventListener('mouseup', waitMouseUp);why?
+            setTimeout(waitMouseUp, 100);
         }
         CPUViewer.release();
     },
@@ -552,6 +557,15 @@ MultiCheckTreeMenu.eventHandler.clickOut = function (event) {
         this.commitView();
         this.isFocus = false;
     }
+};
+
+/***
+ * @this MultiCheckTreeMenu
+ * @param event
+ */
+MultiCheckTreeMenu.eventHandler.boxClose = function (event) {
+    this.commitView();
+    this.isFocus = false;
 };
 
 

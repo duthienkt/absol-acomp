@@ -35,7 +35,7 @@
 }
 
 .as-select-list-box-footer > *:not(:last-child) {
-    margin-right: 60px;
+    margin-right: 90px;
 }
 
 .as-select-list-box-footer .absol-checkbox-label.as-right {
@@ -51,6 +51,7 @@
 
 .as-select-list-box-footer a {
     cursor: pointer;
+    margin-left: 15px;
 }
 
 .as-select-list-box-footer a:hover {

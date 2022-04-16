@@ -1,5 +1,5 @@
-import ACore, {_} from "../ACore";
-import CheckTreeBox, {TreeNodeHolder} from "./CheckTreeBox";
+import ACore, { _ } from "../ACore";
+import CheckTreeBox, { TreeNodeHolder } from "./CheckTreeBox";
 import CheckTreeItem from "./CheckTreeItem";
 import OOP from "absol/src/HTML5/OOP";
 
@@ -19,7 +19,7 @@ CheckTreeLeafOnlyBox.tag = 'CheckTreeLeafOnlyBox'.toLowerCase();
 CheckTreeLeafOnlyBox.render = function () {
     return _({
         tag: 'follower',
-        extendEvent: ['change', 'toggleitem', 'cancel'],
+        extendEvent: ['change', 'toggleitem', 'cancel', 'close'],
         class: ['as-check-tree-leaf-only-box', 'as-check-tree-box', 'as-select-list-box', 'as-anchor-1'],
         child: [
             {
@@ -46,11 +46,18 @@ CheckTreeLeafOnlyBox.render = function () {
                     },
                     {
                         class: 'as-select-list-box-footer-right',
-                        child: {
-                            tag: 'a',
-                            class: 'as-select-list-box-cancel-btn',
-                            child: {text: 'Cancel'}
-                        }
+                        child: [
+                            {
+                                tag: 'a',
+                                class: 'as-select-list-box-cancel-btn',
+                                child: { text: 'Cancel' }
+                            },
+                            {
+                                tag: 'a',
+                                class: 'as-select-list-box-close-btn',
+                                child: { text: 'Close' }
+                            }
+                        ]
                     }
                 ]
             }
@@ -107,7 +114,8 @@ CheckTreeLeafOnlyBox.prototype.depthIndexing = function (items, arr, rootArr) {
             arr && arr.push(node);
             if (root) {
                 root.child.push(node);
-            } else if (rootArr) {
+            }
+            else if (rootArr) {
                 rootArr.push(node);
             }
             if (res[value].length > 1) {
@@ -118,7 +126,8 @@ CheckTreeLeafOnlyBox.prototype.depthIndexing = function (items, arr, rootArr) {
             if (item.isLeaf) {
                 if (!item.items || item.items.length === 0) {
                     node.leafCount = 1;
-                } else {
+                }
+                else {
                     console.error("Invalid item", item);
                 }
             }
@@ -150,24 +159,29 @@ CheckTreeLeafOnlyBox.prototype._updateFromValues = function () {
         var value = node.item.value;
         if (valueDict[value]) {
             node.selectAll(true);
-        } else {
+        }
+        else {
             for (var i = 0; i < node.child.length; ++i) {
                 cNode = node.child[i];
                 visit(cNode);
                 if (cNode.selected === 'all') {
                     selectedAllCount++;
-                } else if (cNode.selected === 'child') {
+                }
+                else if (cNode.selected === 'child') {
                     selectedChildCount++;
-                } else if (cNode.selected === 'empty') {
+                }
+                else if (cNode.selected === 'empty') {
                     emptyChildCount++;
                 }
             }
 
             if (node.child > 0 && selectedAllCount > 0 && selectedAllCount + emptyChildCount === node.child.length) {
                 node.selected = 'all';
-            } else if (selectedAllCount + selectedChildCount > 0) {
+            }
+            else if (selectedAllCount + selectedChildCount > 0) {
                 node.selected = 'child';
-            } else if (node.selected !== 'empty') {
+            }
+            else if (node.selected !== 'empty') {
                 node.selected = 'none';
             }
 
@@ -176,7 +190,6 @@ CheckTreeLeafOnlyBox.prototype._updateFromValues = function () {
     });
     this.updateCheckedAll();
 };
-
 
 
 ACore.install(CheckTreeLeafOnlyBox);
@@ -223,20 +236,25 @@ TreeLeafOnlyNodeHolder.prototype.updateUp = function () {
         for (var i = 0; i < this.child.length; ++i) {
             if (this.child[i].selected === 'all') {
                 childSelectAll++;
-            } else if (this.child[i].selected === 'child') {
+            }
+            else if (this.child[i].selected === 'child') {
                 childSelectChild++;
-            } else if (this.child[i].selected === 'empty') {
+            }
+            else if (this.child[i].selected === 'empty') {
                 childEmpty++;
             }
         }
         if (childEmpty === this.child.length) {
 
             this.selected = 'empty';
-        } else if (childSelectAll + childEmpty === this.child.length) {
+        }
+        else if (childSelectAll + childEmpty === this.child.length) {
             this.selected = 'all';
-        } else if (childSelectChild + childSelectAll > 0) {
+        }
+        else if (childSelectChild + childSelectAll > 0) {
             this.selected = 'child';
-        } else {
+        }
+        else {
             this.selected = 'none';
         }
         if (this.itemElt) {

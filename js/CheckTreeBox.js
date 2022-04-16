@@ -88,13 +88,15 @@ CheckTreeBox.prototype._initFooter = function () {
         .on('change', this.eventHandler.checkAllChange);
     this.$cancelBtn = $('.as-select-list-box-cancel-btn', this)
         .on('click', this.eventHandler.clickCancelBtn);
+    this.$cancelBtn = $('.as-select-list-box-close-btn', this)
+        .on('click', this.eventHandler.clickCloseBtn);
 };
 
 
 CheckTreeBox.render = function () {
     return _({
         tag: 'follower',
-        extendEvent: ['change', 'toggleitem', 'cancel'],
+        extendEvent: ['change', 'toggleitem', 'cancel', 'close'],
         class: ['as-check-tree-box', 'as-select-list-box', 'as-anchor-1'],
         child: [
             {
@@ -121,11 +123,17 @@ CheckTreeBox.render = function () {
                     },
                     {
                         class: 'as-select-list-box-footer-right',
-                        child: {
-                            tag: 'a',
-                            class: 'as-select-list-box-cancel-btn',
-                            child: { text: 'Cancel' }
-                        }
+                        child: [
+                            {
+                                tag: 'a',
+                                class: 'as-select-list-box-cancel-btn',
+                                child: { text: 'Cancel' }
+                            },
+                            {
+                                tag: 'a',
+                                class: 'as-select-list-box-close-btn',
+                                child: { text: 'Close' }
+                            }]
                     }
                 ]
             }
@@ -652,6 +660,10 @@ CheckTreeBox.eventHandler.checkAllChange = function (event) {
 
 CheckTreeBox.eventHandler.clickCancelBtn = function (event) {
     this.emit('cancel', { type: 'cancel', target: this, originalEvent: event }, this);
+};
+
+CheckTreeBox.eventHandler.clickCloseBtn = function (event) {
+    this.emit('close', { type: 'close', target: this, originalEvent: event }, this);
 };
 
 ACore.install(CheckTreeBox);
