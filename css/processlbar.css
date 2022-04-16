@@ -13,9 +13,9 @@
 }
 
 
+
 .as-process-l-bar-step-ctn {
     white-space: nowrap;
-
 }
 
 .as-process-l-bar-col:not(:last-child) {
@@ -93,4 +93,21 @@
     position: relative;
     left: initial;
     top: unset;
+}
+
+
+.as-process-l-bar.as-single-line .as-process-l-bar-step-ctn {
+    white-space: normal;
+}
+
+
+.as-process-l-bar.as-single-line  .as-process-l-bar-col {
+    margin-bottom: 10px;
+}
+
+.as-process-l-bar.as-single-line .as-process-l-bar-step-name {
+    position: relative;
+    display: block;
+    left: 0 !important;
+    top: 0!important;
 }

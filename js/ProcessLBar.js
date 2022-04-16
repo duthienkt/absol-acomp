@@ -152,6 +152,12 @@ ProcessLBar.property.value = {
 ProcessLBar.property.lHeight = {
     set: function (value) {
         this._lHeight = value;
+        if (value === 1){
+            this.addClass('as-single-line');
+        }
+        else {
+            this.removeClass('as-single-line');
+        }
         this._updateCol();
     },
     get: function () {
