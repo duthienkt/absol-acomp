@@ -506,7 +506,7 @@ var propertyFilter =
         "_azar_extendEvents", "__azar_force", "_azar_extendAttributes", "_azar_extendTags",
         "findAvailablePosition", "$container", "autoFixParrentSize", "sync", "$dropper", "$vmenu",
         "$button", "$text", "$key", "$arrow", "$iconCtn", "_textMarginRight", "_tabIndex",
-        '$icon', '_icon', '$textNode', '$primaryBtn', '$extendBtn', '_menuHolder', '_items'].reduce(function (ac, cr) {
+        '$icon', '_icon', '$textNode', '$primaryBtn', '$extendBtn', '_menuHolder', '_items', 'hasClass'].reduce(function (ac, cr) {
         ac[cr] = true;
         return ac;
     }, {});
@@ -704,7 +704,90 @@ export function addElementAfter(inElement, elements, at) {
  * @param {AElement|HTMLElement} element
  * @param {number} padding
  */
-export function isScrolledToBottom(element, padding){
+export function isScrolledToBottom(element, padding) {
     if (!isRealNumber(padding)) padding = 0;
-    return (element.scrollHeight - element.scrollTop - padding<= element.clientHeight);
+    return (element.scrollHeight - element.scrollTop - padding <= element.clientHeight);
 }
+
+export function implicitLatLng(value) {
+    var latlng = null;
+    var nums;
+    if (typeof value === "string") {
+        nums = value.split(/\s*,\s*/).map(function (t) {
+            return parseFloat(t);
+        });
+        if (isRealNumber(nums[0]) && isRealNumber(nums[1])) {
+            latlng = new google.maps.LatLng(nums[0], nums[1]);
+        }
+    }
+    else if (value instanceof google.maps.LatLng) {
+        latlng = value;
+    }
+    else if (value && isRealNumber(value.latitude) && isRealNumber(value.longitude)) {
+        latlng = new google.maps.LatLng(value.latitude, value.longitude);
+    }
+    else if (value && isRealNumber(value.lat) && isRealNumber(value.lng)) {
+        latlng = new google.maps.LatLng(value.lat, value.lng);
+    }
+    else if ((value instanceof Array) && isRealNumber(value[0]) && isRealNumber(value[1])) {
+        latlng = new google.maps.LatLng(value[0], value[1]);
+    }
+    return latlng;
+}
+
+export function getMapZoomLevel(mapDim, bounds) {
+    var WORLD_DIM = { height: 256, width: 256 };
+    var ZOOM_MAX = 21;
+
+    function latRad(lat) {
+        var sin = Math.sin(lat * Math.PI / 180);
+        var radX2 = Math.log((1 + sin) / (1 - sin)) / 2;
+        return Math.max(Math.min(radX2, Math.PI), -Math.PI) / 2;
+    }
+
+    function zoom(mapPx, worldPx, fraction) {
+        return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
+    }
+
+    var ne = bounds.getNorthEast();
+    var sw = bounds.getSouthWest();
+
+    var latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
+
+    var lngDiff = ne.lng() - sw.lng();
+    var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+    var latZoom = zoom(mapDim.height, WORLD_DIM.height, latFraction);
+    var lngZoom = zoom(mapDim.width, WORLD_DIM.width, lngFraction);
+
+    return Math.min(latZoom, lngZoom, ZOOM_MAX);
+}
+
+
+/***
+ *
+ * @param p0
+ * @param p1
+ * @returns {number}
+ */
+export function latLngDistance(p0, p1) {
+    var lat0 = p0.lat();
+    var lat1 = p1.lat();
+    var lng0 = p0.lng();
+    var lng1 = p1.lng();
+
+    var toRad = function (value) {
+        return value * Math.PI / 180;
+    };
+    var R = 6371;
+    var dLat = toRad(lat1 - lat0);
+    var dLng = toRad(lng1 - lng0);
+    lat0 = toRad(lat0);
+    lat1 = toRad(lat1);
+
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.sin(dLng / 2) * Math.sin(dLng / 2) * Math.cos(lat0) * Math.cos(lat1);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    return d;
+};
