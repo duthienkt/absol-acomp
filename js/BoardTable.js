@@ -95,7 +95,7 @@ BoardTable.prototype.addChild = function (elt) {
         var holder = {
             elt: elt,
         };
-        elt.on('sizechange', holder.onsizechange);
+        // elt.on('sizechange', holder.onsizechange);
         this._childHolders.push(holder);
     }
     else {
@@ -109,7 +109,7 @@ BoardTable.prototype.removeChild = function (elt) {
     var holderIndex = this.findChildHolderIndex(elt);
     if (holderIndex >= 0) {
         var holder = this._childHolders[holderIndex];
-        holder.elt.off('sizechange', holder.onsizechange);
+        // holder.elt.off('sizechange', holder.onsizechange);
         this._childHolders.splice(holderIndex, 1);
         holder.elt.remove();
     }
