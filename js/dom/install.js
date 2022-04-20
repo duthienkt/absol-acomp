@@ -89,7 +89,7 @@ import SnackBar from "../Snackbar";
 import MultiSelectMenu from "../MultiSelectMenu";
 import CountdownClock from "../CountdownClock";
 import Toast from "../Toast";
-import {SpinnerIco} from "../Icons";
+import { MdiStoreMarkerOutline, SpinnerIco } from "../Icons";
 import EmojiPickerTooltip from "../EmojiPickerTooltip";
 import PageIndicator from "../PageIndicator";
 import EmojiCounter from "../EmojiCounter";
@@ -135,8 +135,11 @@ import LocationPicker from "../LocationPicker";
 import LocationInput from "../LocationInput";
 import MKNavigator from "../MKNavigator";
 import ProcessLBar from "../ProcessLBar";
+import KVCommentItem from "../KVCommentItem";
+import DynamicTable from "../dynamictable/DynamicTable";
 
 export var publicCreators = [
+    MdiStoreMarkerOutline,
     AutoCompleteInput,
     BoardTable,
     Board,
@@ -294,7 +297,9 @@ export var publicCreators = [
     LocationInput,
     PlaceSearchAutoCompleteInput,
     MKNavigator,
-    ProcessLBar
+    ProcessLBar,
+    KVCommentItem,
+    DynamicTable
 ];
 
 /***
