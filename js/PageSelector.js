@@ -1,4 +1,4 @@
-import  '../css/pageselector.css';
+import '../css/pageselector.css';
 import ACore from "../ACore";
 
 
@@ -27,7 +27,7 @@ function PageSelector() {
 
 PageSelector.tag = 'PageSelector'.toLowerCase();
 
-PageSelector.render = function (){
+PageSelector.render = function () {
     return _({
         class: ['absol-page-selector'],
         extendEvent: ['change'],
@@ -40,9 +40,9 @@ PageSelector.render = function (){
                         child: { text: "Page" }
                     },
                         {
-                            tag:'input',
-                            attr:{
-                                type:'text'
+                            tag: 'input',
+                            attr: {
+                                type: 'text'
                             }
                         }]
                 },
@@ -73,7 +73,7 @@ PageSelector.render = function (){
 
 PageSelector.eventHandler = {};
 
-PageSelector.eventHandler.pressEnterKey = function(event){
+PageSelector.eventHandler.pressEnterKey = function (event) {
     if (event.keyCode != 13) return;
     var index = parseInt(this.$pageInput.value.trim(), 10);
     if ((index < 1) || (index > this._pageCount)) {
@@ -112,7 +112,7 @@ PageSelector.prototype._createButton = function (index) {
         class: 'absol-page-number',
         child: {
             tag: 'a',
-            attr: {  'data-index': index },
+            attr: { 'data-index': index },
             child: { text: '' + index }
         },
         on: {
@@ -140,10 +140,10 @@ PageSelector.prototype.setStartPage = function (index) {
 
 PageSelector.prototype.selectPage = function (index, userActive) {
     if (index == this._selectedIndex) this.setStartPage(index - parseInt(this._pageRange / 2));
-    if (index > this._selectedIndex){
+    if (index > this._selectedIndex) {
         if (index == (this._pageOffset + this._pageRange - 1)) this.setStartPage(index - parseInt(this._pageRange / 2));
     }
-    if (index < this._selectedIndex){
+    if (index < this._selectedIndex) {
         if (index == this._pageOffset) this.setStartPage(index - parseInt(this._pageRange / 2));
     }
 
@@ -175,6 +175,16 @@ PageSelector.prototype.setPageCount = function (count) {
 };
 
 PageSelector.property = {};
+
+PageSelector.property.selectedIndex = {
+    set: function (value) {
+        this._selectedIndex = value;
+        this.selectPage(value, false);
+    },
+    get: function () {
+        return this._selectedIndex;
+    }
+}
 
 PageSelector.prototype.init = function (props) {
     props = props || {};
