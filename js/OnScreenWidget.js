@@ -38,7 +38,7 @@ OnScreenWidget.render = function () {
         tag: 'hanger',
         extendEvent: 'click',
         class: ['as-onscreen-widget', 'as-size-loading'],
-        props:{
+        props: {
             hangOn: 3
         }
     });
@@ -52,9 +52,8 @@ OnScreenWidget.prototype._genConfig = function () {
     return {
         cx: (this._widgetBound.left + this._widgetBound.width / 2) * 100 / screenSize.width,
         cy: (this._widgetBound.top + this._widgetBound.height / 2) * 100 / screenSize.height
-    }
-
-}
+    };
+};
 
 OnScreenWidget.prototype._saveConfig = function () {
     var id = this.id || '';

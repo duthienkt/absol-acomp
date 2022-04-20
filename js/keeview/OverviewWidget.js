@@ -114,7 +114,9 @@ OverviewWidget.prototype.createView = function () {
         class: 'kv-overview-widget-bubble',
         id: 'overview_widget_bubble',
         style: {
-            visibility: 'hidden'
+            // visibility: 'hidden'
+            '--cx': '0.02',
+            '--cy': '0.96'
         },
         child: [
             '<svg class="kv-overview-widget-bubble-background"  viewBox="0 0 24 24">\n' +
@@ -126,7 +128,7 @@ OverviewWidget.prototype.createView = function () {
             }
         ],
         on: {
-            click: this.maximize.bind(this)
+            click: this.toggle.bind(this)
         }
     });
     this.$tabview = $('.kv-overview-widget-tab-view', this.$view);
@@ -284,7 +286,7 @@ OverviewWidget.prototype._updateViewPosition = function () {
 };
 
 
-OverviewWidget.prototype.showModal = function (opt){
+OverviewWidget.prototype.showModal = function (opt) {
     return this.modalMng.showModal(opt, this);
 };
 
@@ -318,7 +320,7 @@ Object.defineProperty(OverviewWidget.prototype, 'position', {
 
 OverviewWidget.prototype.minimize = function () {
     this.$view.addStyle('visibility', 'hidden');
-    this.$bubble.removeStyle('visibility');
+    // this.$bubble.removeStyle('visibility');
     this.setting.minimize = true;
     this.saveSetting();
     var activeTabId = this.$tabview.getActiveTabId();
@@ -327,12 +329,22 @@ OverviewWidget.prototype.minimize = function () {
 
 
 OverviewWidget.prototype.maximize = function () {
-    this.$bubble.addStyle('visibility', 'hidden');
+    // this.$bubble.addStyle('visibility', 'hidden');
     this.$view.removeStyle('visibility');
     this.setting.minimize = false;
     this.saveSetting();
     var activeTabId = this.$tabview.getActiveTabId();
     this.childrenById[activeTabId].start();
+};
+
+OverviewWidget.prototype.toggle = function () {
+    if (this.setting.minimize) {
+        this.maximize();
+    }
+    else {
+        this.minimize();
+
+    }
 };
 
 
