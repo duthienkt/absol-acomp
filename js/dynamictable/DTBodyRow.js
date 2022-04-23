@@ -17,6 +17,9 @@ function DTBodyRow(head, data) {
 
 
 DTBodyRow.prototype.renderCells = function () {
+    /***
+     * @type {DTBodyCell[]}
+     */
     this.cells = this.data.cells.map(function (cellData) {
         return new DTBodyCell(this, cellData);
     }.bind(this));
@@ -24,5 +27,15 @@ DTBodyRow.prototype.renderCells = function () {
         return cell.elt;
     }));
 };
+
+
+Object.defineProperty(DTBodyRow.prototype, 'innerText', {
+    get: function (){
+        return this.cells.map(function (cell){
+            return cell.innerText;
+        }).join(' ');
+    }
+});
+
 
 export default DTBodyRow;

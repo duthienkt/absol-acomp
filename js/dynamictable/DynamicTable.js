@@ -10,6 +10,11 @@ import PageSelector from "../PageSelector";
 function DynamicTable() {
     /***
      *
+     * @type {SearchTextInput|null}
+     */
+    this.$searchInput = null;
+    /***
+     *
      * @type {AElement}
      */
     this.$table = $('.as-dynamic-table', this);
@@ -72,6 +77,21 @@ DynamicTable.render = function () {
 };
 
 
+DynamicTable.prototype.attachSearchInput = function (inputElt) {
+    if (this.$searchInput) {
+        this.$searchInput.off('stoptyping', this.eventHandler.searchModify);
+    }
+    this.$searchInput = inputElt;
+    if (this.$searchInput) {
+        if (this.$searchInput.$table) {
+            this.$searchInput.off('stoptyping', this.$searchInput.$list.eventHandler.searchModify);
+        }
+        this.$searchInput.$table = this;
+        this.$searchInput.on('stoptyping', this.eventHandler.searchModify);
+    }
+};
+
+
 DynamicTable.property = {};
 
 DynamicTable.property.adapter = {
@@ -97,9 +117,20 @@ DynamicTable.property.adapter = {
 DynamicTable.eventHandler = {};
 
 
-DynamicTable.eventHandler.pageSelectorChange= function (event){
-    this.table.offset = (this.$pageSelector.selectedIndex - 1) * this.adapter.rowsPerPage;
-}
+DynamicTable.eventHandler.pageSelectorChange = function (event) {
+    this.table.body.selectPage(this.$pageSelector.selectedIndex - 1, event);
+};
+
+/***
+ * @this DynamicTable#
+ * @param event
+ */
+DynamicTable.eventHandler.searchModify = function (event) {
+    var query = this.$searchInput.value;
+    query = query.trim().replace(/\s+/, ' ');
+    this.table.body.searchFor(query);
+
+};
 
 
 ACore.install(DynamicTable);

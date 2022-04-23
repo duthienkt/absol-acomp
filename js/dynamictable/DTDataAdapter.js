@@ -53,9 +53,6 @@ DTDataAdapter.prototype.getHeadRowData = function () {
 
 DTDataAdapter.prototype.render = function () {
     this.tableElt.table = new DTTable(this.tableElt, this.data);
-    this.tableElt.$pageSelector.pageCount = this.data.body.rows.length;
-    this.tableElt.$pageSelector.selectedIndex = 1;
-    this.tableElt.$pageSelector.pageOffset = 1;
 };
 
 DTDataAdapter.prototype.renderHeadCell = function (elt, data, controller) {
