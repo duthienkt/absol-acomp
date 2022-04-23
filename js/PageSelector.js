@@ -5,6 +5,10 @@ import ACore from "../ACore";
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function PageSelector() {
     this.$pageInput = $('.absol-page-number-input input', this);
     this.$pageInput.on('keyup', this.eventHandler.pressEnterKey);
@@ -51,19 +55,30 @@ PageSelector.render = function () {
                     tag: 'ul',
                     class: 'absol-page-number-buttons',
                     child: [
-                        ' <li class="page-first">\
-                        <a aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="absol-page-link">First</a>\
-                    </li>',
-                        ' <li class="page-previous">\
-                        <a aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="absol-page-link">Previous</a>\
-                    </li>',
-
-                        '<li class="page-next" >\
-                        <a aria-controls="dtBasicExample" data-dt-idx="7" tabindex="0" class="absol-page-link">Next</a>\
-                    </li>',
-                        ' <li class="page-last">\
-                        <a aria-controls="dtBasicExample" data-dt-idx="0" tabindex="0" class="absol-page-link">Last</a>\
-                    </li>',
+                        {
+                            tag: 'li',
+                            class: "page-first",
+                            attr: { title: 'First' },
+                            child: 'a.mdi.mdi-chevron-double-left'
+                        },
+                        {
+                            tag: 'li',
+                            attr: { title: 'Previous' },
+                            class: 'page-previous',
+                            child: 'a.mdi.mdi-chevron-left'
+                        },
+                        {
+                            tag: 'li',
+                            attr: { title: 'Next' },
+                            class: 'page-next',
+                            child: 'a.mdi.mdi-chevron-right'
+                        },
+                        {
+                            tag: 'li',
+                            attr: { title: 'Last' },
+                            class: 'page-last',
+                            child: 'a.mdi.mdi-chevron-double-right'
+                        }
                     ]
                 }
             ]
@@ -125,9 +140,12 @@ PageSelector.prototype._createButton = function (index) {
 
 PageSelector.prototype.setPageRange = function (pageCount) {
     this._pageRange = pageCount;
-    if (this._buttons.length > 0) throw new Error("Not implement change pageCount");
     while (this._buttons.length < pageCount) {
         this._buttons.push(this._createButton(this._buttons.length));
+
+    }
+    while (this._buttons.length > pageCount) {
+        this._buttons.pop().remove();
     }
 };
 
@@ -178,13 +196,40 @@ PageSelector.property = {};
 
 PageSelector.property.selectedIndex = {
     set: function (value) {
-        this._selectedIndex = value;
         this.selectPage(value, false);
     },
     get: function () {
         return this._selectedIndex;
     }
+};
+
+PageSelector.property.pageCount = {
+    set: function (value) {
+        this.setPageCount(value);
+    },
+    get: function () {
+        return this._pageCount;
+    }
+};
+
+PageSelector.property.pageOffset = {
+    set: function (value) {
+        this.setStartPage(value);
+    },
+    get: function () {
+        return this._pageOffset;
+    }
+};
+
+PageSelector.property.pageRange = {
+    set: function (value) {
+        this.setPageRange(value);
+    },
+    get: function () {
+        return this._pageRange;
+    }
 }
+
 
 PageSelector.prototype.init = function (props) {
     props = props || {};
@@ -197,6 +242,11 @@ PageSelector.prototype.init = function (props) {
     this.setPageRange(props.pageRange);
     this.setStartPage(props.pageOffset);
     this.selectPage(props.selectedIndex);
+    props = Object.assign({}, props);
+    delete props.pageOffset;
+    delete props.pageRange;
+    delete props.pageCount;
+    delete props.selectedIndex;
 };
 
 
