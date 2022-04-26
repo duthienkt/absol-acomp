@@ -10,6 +10,7 @@ var $ = ACore.$;
  * @constructor
  */
 function PageSelector() {
+    this.$pageCount = $('.absol-page-count', this);
     this.$pageInput = $('.absol-page-number-input input', this);
     this.$pageInput.on('keyup', this.eventHandler.pressEnterKey);
     this.$prevBtn = $('li.page-previous', this);
@@ -48,7 +49,16 @@ PageSelector.render = function () {
                             attr: {
                                 type: 'text'
                             }
-                        }]
+                        },
+                        {
+                            tag: 'span', child: { text: '/ ' }
+                        },
+                        {
+                            tag: 'span',
+                            class: 'absol-page-count',
+                            child: { text: '1' }
+                        }
+                    ]
                 },
 
                 {
@@ -190,6 +200,7 @@ PageSelector.prototype.getSelectedPage = function () {
 
 PageSelector.prototype.setPageCount = function (count) {
     this._pageCount = count;
+    this.$pageCount.firstChild.data = '' + count;
 };
 
 PageSelector.property = {};
