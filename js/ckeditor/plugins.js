@@ -145,12 +145,15 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
     });
 
     config.toolbar = [config.toolbar.reduce(function (ac, cr) {
-        if (ac.items.length > 0)
-            ac.items.push('-');
-        ac.items.push.apply(ac.items, cr.items);
+        // if (ac.items.length > 0)
+        //     ac.items.push('-');
+        var items = cr.items.filter(function (it) {
+            return it !== '-';
+        });
+        ac.items.push.apply(ac.items, items);
         return ac;
     }, { name: 'nogroup', items: [] })];
-
+    console.log(config.toolbar);
     if (!config.height) {
         config.height = '500px';
     }
