@@ -606,6 +606,11 @@ export function isRealNumber(value) {
     return (isFinite(value) && (typeof value === "number"));
 }
 
+export function isNaturalNumber(value) {
+    return (isFinite(value) && (typeof value === "number") && Math.floor(value) === value && value >= 0);
+}
+
+
 /***
  *
  * @param {String} text

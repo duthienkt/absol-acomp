@@ -46,6 +46,7 @@ DynamicTable.tag = 'DynamicTable'.toLowerCase();
 
 DynamicTable.render = function () {
     return _({
+        extendEvent: ['orderchange'],
         class: 'as-dynamic-table-wrapper',
         child: [
             {
@@ -76,6 +77,41 @@ DynamicTable.render = function () {
     });
 };
 
+
+DynamicTable.prototype.addRowBefore = function (rowData, bf) {
+    return this.table.body.addRowBefore(rowData, bf);
+};
+
+
+DynamicTable.prototype.addRowAfter = function (rowData, at) {
+    return this.table.body.addRowAfter(rowData, at);
+};
+
+
+DynamicTable.prototype.addRow = function (rowData, idx) {
+    return this.table.body.addRow(rowData, idx);
+};
+
+DynamicTable.prototype.removeRow = function (row) {
+    return this.table.body.removeRow(row);
+};
+
+DynamicTable.prototype.rowAt = function (idx) {
+    return this.table.body.rowAt(idx);
+};
+
+
+DynamicTable.prototype.getRows = function () {
+    return this.table.body.rows;
+};
+
+DynamicTable.prototype.requireRows = function (start, end){
+    return this.table.body.requireRows(start, end);
+};
+
+DynamicTable.prototype.viewIntoRow = function (row) {
+    this.table.body.viewIntoRow(row);
+};
 
 DynamicTable.prototype.attachSearchInput = function (inputElt) {
     if (this.$searchInput) {

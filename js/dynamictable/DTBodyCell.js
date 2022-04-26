@@ -14,7 +14,9 @@ function DTBodyCell(row, data) {
 }
 
 DTBodyCell.prototype.render = function () {
-    this.row.head.table.adapter.renderBodyCell(this.elt, this.data, this);
+    if (this.data.attr) this.elt.attr(data.attr);
+    if (this.data.class) this.elt.addClass(this.data.class);
+    this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
 };
 
 Object.defineProperty(DTBodyCell.prototype, 'innerText', {
@@ -22,10 +24,10 @@ Object.defineProperty(DTBodyCell.prototype, 'innerText', {
         var res = [];
 
         function visit(node) {
-            if (node.nodeType === 3 && node.data){
+            if (node.nodeType === 3 && node.data) {
                 res.push(node.data);
             }
-            else if (node.childNodes && node.childNodes.length >0){
+            else if (node.childNodes && node.childNodes.length > 0) {
                 Array.prototype.forEach.call(node.childNodes, visit);
             }
         }

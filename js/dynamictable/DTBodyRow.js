@@ -1,18 +1,28 @@
-import { _ } from "../../ACore";
+import { $, _ } from "../../ACore";
 import DTHeadCell from "./DTHeadCell";
 import DTBodyCell from "./DTBodyCell";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 /***
  *
- * @param {DTBody} head
+ * @param {DTBody} body
  * @param data
  * @constructor
  */
-function DTBodyRow(head, data) {
-    this.head = head;
+function DTBodyRow(body, data) {
+    this.body = body;
     this.data = data;
     this.elt = _({ tag: 'tr', class: 'as-dt-body-row' });
+    this.elt.dtBodyRow = this;
+    if ('id' in data) {
+        this.id = data.id;
+        this.elt.attr('data-id', data.id + '')
+    }
+    else {
+        this.id = randomIdent(8);
+    }
     this.renderCells();
+    this.draggable = !!$('.as-drag-zone', this.elt);
 }
 
 
@@ -28,10 +38,17 @@ DTBodyRow.prototype.renderCells = function () {
     }));
 };
 
+DTBodyRow.prototype.remove = function () {
+    this.body.removeRow(this);
+};
+
+DTBodyRow.prototype.viewInto = function () {
+    return this.body.viewIntoRow(this);
+};
 
 Object.defineProperty(DTBodyRow.prototype, 'innerText', {
-    get: function (){
-        return this.cells.map(function (cell){
+    get: function () {
+        return this.cells.map(function (cell) {
             return cell.innerText;
         }).join(' ');
     }

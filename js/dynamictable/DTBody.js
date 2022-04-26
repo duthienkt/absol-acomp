@@ -1,5 +1,7 @@
 import DTBodyRow from "./DTBodyRow";
 import prepareSearchForItem, { searchListByText } from "../list/search";
+import DTRowDragController from "./DTRowDragController";
+import { isNaturalNumber, isRealNumber } from "../utils";
 
 
 /***
@@ -13,8 +15,6 @@ function SearchingMode(body) {
 }
 
 SearchingMode.prototype.start = function () {
-
-
     this.body.table.elt.addClass('as-searching');
     this.body.requireRows();
     this.searchingCache = {};
@@ -51,6 +51,13 @@ SearchingMode.prototype.render = function () {
     }
 };
 
+SearchingMode.prototype.onRowSplice = function (idx) {
+
+};
+
+SearchingMode.prototype.viewIntoRow = function (row) {
+
+};
 
 SearchingMode.prototype.searchFor = function (query) {
     this.searchingCache[query] = this.searchingCache[query] || searchListByText(query, this.searchingItems);
@@ -75,7 +82,14 @@ function NormalMode(body) {
 }
 
 NormalMode.prototype.start = function () {
-    var pageCount = Math.max(1,Math.ceil(this.body.rows.length / this.body.table.adapter.rowsPerPage));
+    if (isNaturalNumber(this.body.table.adapter.rowsPerPage)) {
+        this.body.table.elt.removeClass('as-no-paging');
+    }
+    else {
+        this.body.table.elt.addClass('as-no-paging');
+    }
+
+    var pageCount = Math.max(1, Math.ceil(this.body.rows.length / this.body.table.adapter.rowsPerPage));
     this.body.table.elt.$pageSelector.pageCount = pageCount;
     this.body.table.elt.$pageSelector.pageRange = Math.min(pageCount, 5);
     this.body.table.elt.$pageSelector.pageOffset = this.offset + 1;
@@ -109,6 +123,34 @@ NormalMode.prototype.render = function () {
 };
 
 
+NormalMode.prototype.onRowSplice = function (idx) {
+    var rowsPerPage = this.body.table.adapter.rowsPerPage;
+    if (!isNaturalNumber(rowsPerPage)) rowsPerPage = Infinity;
+    if (this.offset <= idx && this.offset + rowsPerPage > idx) this.render();
+
+    var pageCount;
+    if (rowsPerPage !== Infinity) {
+        pageCount = Math.max(1, Math.ceil(this.body.rows.length / this.body.table.adapter.rowsPerPage));
+        if (this.body.table.elt.$pageSelector.pageCount !== pageCount) {
+            this.body.table.elt.$pageSelector.pageCount = pageCount;
+            if (this.body.table.elt.$pageSelector.selectedIndex + 1 >= pageCount) {
+                this.body.table.elt.$pageSelector.selectPage(Math.min(this.body.table.elt.$pageSelector.selectedIndex, pageCount), false);//to show last page
+            }
+        }
+    }
+};
+
+
+NormalMode.prototype.viewIntoRow = function (row) {
+    if (!isNaturalNumber(this.body.table.adapter.rowsPerPage)) return;
+    var idx = this.body.rowIndexOf(row);
+    if (idx <= 0) return;
+    var pageIdx = Math.floor(idx / this.body.table.adapter.rowsPerPage);
+    if (this.body.table.elt.$pageSelector.selectedIndex !== pageIdx + 1) {
+        this.body.table.elt.$pageSelector.selectedIndex = pageIdx + 1;
+    }
+};
+
 /***
  *
  * @param {DTTable} table
@@ -125,6 +167,7 @@ function DTBody(table, data) {
     this.data = data;
 
     this.rows = Array(this.data.rows.length).fill(null);
+    this.rowDragCtrl = new DTRowDragController(this);
 
     this.modes = {
         normal: new NormalMode(this),
@@ -154,30 +197,91 @@ DTBody.prototype.requireRows = function (start, end) {
         if (!this.rows[i])
             this.rows[i] = new DTBodyRow(this, this.data.rows[i]);
     }
+    return this.rows.slice(start, end);
+};
+
+DTBody.prototype.onRowSplice = function (idx) {
+    this.curentMode.onRowSplice(idx);
+}
+
+DTBody.prototype.rowIndexOf = function (o) {
+    var n = this.rows.length;
+    for (var i = 0; i < n; ++i) {
+        if (o === this.rows[i]) return i;
+        if (o === this.data.rows[i]) return i;
+        if (o === this.data.rows[i].id) return i;
+    }
+    return -1;
+};
+
+DTBody.prototype.addRowBefore = function (rowData, bf) {
+    var idx;
+    if (bf === null || bf === undefined) {
+        return this.addRow(rowData);
+    }
+    else {
+        idx = this.rowIndexOf(bf);
+        if (idx < 0) throw new Error("$bf not is a row in table");
+        return this.addRow(rowData, idx);
+    }
+};
+
+DTBody.prototype.addRowAfter = function (rowData, at) {
+    var idx;
+    if (at === null || at === undefined) {
+        return this.addRow(rowData, 0);
+    }
+    else {
+        idx = this.rowIndexOf(at);
+        if (idx < 0) throw new Error("$bf not is a row in table");
+        return this.addRow(rowData, idx + 1);
+    }
+};
+
+DTBody.prototype.addRow = function (rowData, idx) {
+    if (!isNaturalNumber(idx) || idx >= this.rows.length) {
+        idx = this.rows.length;
+    }
+    var res;
+    if (idx >= this.rows.length) {
+        this.data.rows.push(rowData);
+        res = new DTBodyRow(this, rowData)
+        this.rows.push(res);
+        this.onRowSplice(this.rows.length - 1);
+    }
+    else {
+        res = new DTBodyRow(this, rowData);
+        this.rows.splice(idx, 0, res);
+        this.data.rows.splice(idx, 0, rowData);
+        this.onRowSplice(idx);
+    }
+
+    return res;
+};
+
+DTBody.prototype.removeRow = function (row) {
+    var idx = this.rowIndexOf(row);
+    if (idx < 0) return;
+    this.rows.splice(idx, 1);
+    this.data.rows.splice(idx, 1);
+    this.onRowSplice(idx);
+};
+
+DTBody.prototype.rowAt = function (idx) {
+    if (this.rows[idx]) return this.rows[idx];
+    var rowData = this.data.rows[idx];
+    if (rowData) {
+        this.rows[idx] = new DTBodyRow(this, rowData);
+    }
+    else return null;
+};
+
+DTBody.prototype.viewIntoRow = function (row) {
+    return this.curentMode.viewIntoRow(row);
 };
 
 DTBody.prototype.selectPage = function (pageIdx, userAction) {
     this.curentMode.selectPage(pageIdx);
-};
-
-DTBody.prototype.renderRows = function () {
-    this.renderCurrentOffset();
-};
-
-
-DTBody.prototype.renderCurrentOffset = function () {
-
-};
-
-DTBody.prototype.renderSearchingOffset = function () {
-
-};
-
-DTBody.prototype._onSearchingStart = function () {
-
-};
-
-DTBody.prototype._onSearchingEnd = function () {
 
 };
 

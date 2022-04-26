@@ -41,16 +41,6 @@ function DTDataAdapter(tableElt, opt) {
 
 }
 
-DTDataAdapter.prototype.getBodyRowData = function (index) {
-    // return this.data && this.data.head.
-};
-
-
-DTDataAdapter.prototype.getHeadRowData = function () {
-
-};
-
-
 DTDataAdapter.prototype.render = function () {
     this.tableElt.table = new DTTable(this.tableElt, this.data);
 };
