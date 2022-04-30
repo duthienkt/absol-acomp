@@ -25,14 +25,19 @@ function CheckBox() {
     );
     this.$labels = $$('span', this);
     this.on('click', this.eventHandler.click);
-    OOP.drillProperty(this, this.$input, ['checked'])
+    OOP.drillProperty(this, this.$input, ['checked']);
+    /***
+     * @type {boolean}
+     * @name checked
+     * @memberOf CheckBox#
+     */
 }
 
 CheckBox.tag = 'checkbox';
 
 CheckBox.render = function () {
     return _({
-        class: ['absol-checkbox','as-no-label'],
+        class: ['absol-checkbox', 'as-no-label'],
         child: [
             {
                 tag: 'span',
@@ -75,19 +80,21 @@ CheckBox.attribute = {
     },
     disabled: {
         set: function (value) {
-            if (value === 'false' || value === null) {
-                this.disabled = false;
-            }
-            else {
-                this.disabled = true;
-            }
-
+            this.disabled = !(value === 'false' || value === null);
         },
         get: function () {
-            return this.disabled ? 'true' : 'false'
+            return this.disabled ? 'true' : 'false';
         },
         remove: function () {
             this.disabled = false;
+        }
+    },
+    readonly: {
+        set: function (value) {
+            this.readOnly = !(value === 'false' || value === null);
+        },
+        get: function () {
+            return this.readOnly ? 'true' : 'false'
         }
     }
 };
@@ -96,14 +103,14 @@ CheckBox.attribute = {
 CheckBox.property = {};
 CheckBox.property.text = {
     get: function () {
-        return  this._text;
+        return this._text;
     },
     set: function (value) {
         value = value || '';
-        if (value.length === 0){
+        if (value.length === 0) {
             this.addClass('as-no-label');
         }
-        else{
+        else {
             this.removeClass('as-no-label');
         }
         this._text = value;
@@ -114,13 +121,13 @@ CheckBox.property.text = {
 
 
 CheckBox.property.disabled = {
-    get: function (){
-        return    this.$input.disabled;
+    get: function () {
+        return this.$input.disabled;
     },
-    set: function (value){
+    set: function (value) {
         value = !!value;
         this.$input.disabled = value;
-        if (value){
+        if (value) {
             this.addClass('as-disabled');
         }
         else {
@@ -129,6 +136,21 @@ CheckBox.property.disabled = {
     }
 };
 
+CheckBox.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+            this.$input.readOnly = true;
+        }
+        else {
+            this.addClass('as-read-only');
+            this.$input.readOnly = false;
+        }
+    },
+    get: function () {
+        return this.$input.readOnly;
+    }
+}
 
 
 /***
@@ -137,8 +159,8 @@ CheckBox.property.disabled = {
  */
 CheckBox.eventHandler = {};
 
-CheckBox.eventHandler.click = function (event){
-    if (!EventEmitter.hitElement(this.$input, event)){
+CheckBox.eventHandler.click = function (event) {
+    if (!EventEmitter.hitElement(this.$input, event) && !this.readOnly) {
         this.$input.click();
     }
 };

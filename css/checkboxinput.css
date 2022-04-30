@@ -18,8 +18,8 @@ label.as-checkbox-input {
     margin: 0; /*fix boostrap override*/
 }
 
-label.as-checkbox-input:hover .bound,
-.absol-checkbox:hover .bound {
+label.as-checkbox-input:hover:not(.as-read-only) .bound,
+.absol-checkbox:hover:not(.as-read-only) .bound {
     fill: var(--candy-hover-background-color);
 }
 
