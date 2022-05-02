@@ -5,6 +5,7 @@ import ACore from "./ACore";
 
 import DebugTask from "./js/DebugTask";
 import "./css/debugtask.css";
+import "./css/common.css";
 import Draggable from "./js/Draggable";
 import EmojiChars from "./js/EmojiChars";
 import EmojiAnims from "./js/EmojiAnims";

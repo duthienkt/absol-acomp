@@ -1,0 +1,17 @@
+.as-text-input {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: var(--as-input-border-radius);
+    border-color: var(--as-input-border-color);
+    outline: none;
+    height: var(--as-input-height);
+    padding-left: var(--as-input-vertical-padding);
+    font-size: inherit;
+    box-sizing: border-box;
+}
+
+.as-text-input[readonly].as-border-none{
+    border: none;
+    padding-left: 0;
+    padding-right: 0;
+}
