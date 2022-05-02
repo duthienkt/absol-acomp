@@ -1,13 +1,12 @@
 import '../css/calendarinput.css';
 import ACore from "../ACore";
-import {formatDateString} from "absol/src/Time/datetime";
+import { formatDateString } from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
-
 
 
 /**
@@ -87,6 +86,21 @@ CalendarInput.property.disabled = {
     }
 };
 
+CalendarInput.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
+
 CalendarInput.attribute = {
     disabled: {
         set: function (value) {
@@ -137,13 +151,13 @@ CalendarInput.prototype.formatDateString = function (date) {
 
 ACore.install(CalendarInput);
 
-export function OldCalendarInput(){
+export function OldCalendarInput() {
 
 }
 
 OldCalendarInput.tag = 'calendar-input';
 
-OldCalendarInput.render = function(data){
+OldCalendarInput.render = function (data) {
     return _({
         tag: 'calendarinput',
         extendEvent: 'changed',
