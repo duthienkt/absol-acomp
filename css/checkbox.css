@@ -82,3 +82,7 @@
 .absol-checkbox.as-read-only .as-checkbox-input {
     pointer-events: none;
 }
+
+.absol-checkbox.as-read-only.as-border-none .bound{
+display: none;
+}

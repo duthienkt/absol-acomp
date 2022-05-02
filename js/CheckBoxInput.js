@@ -27,6 +27,7 @@ function CheckboxInput() {
         .on('change', this.notifyChange.bind(this));
     this.checked = false;
     this.disabled = false;
+    this.readOnly = false;
     this.on('click', this.eventHandler.click);
     this.onchange = null;
 }
@@ -57,14 +58,15 @@ CheckboxInput.render = function (data) {
  * as normal, change event will be fired when checkbox change by system
  */
 CheckboxInput.prototype.notifyChange = function () {
-    var event = {checked: this.checked};
+    var event = { checked: this.checked };
     this.emit('change', event, this);
 };
 
 CheckboxInput.prototype._updateCheckedClass = function () {
     if (this.checked) {
         this.addClass('as-checked');
-    } else {
+    }
+    else {
         this.removeClass('as-checked');
     }
 };
@@ -76,7 +78,8 @@ CheckboxInput.property.disabled = {
     set: function (value) {
         if (value) {
             this.addClass('as-disabled');
-        } else {
+        }
+        else {
             this.removeClass('as-disabled');
         }
         this.$input.disabled = !!value;
@@ -85,6 +88,20 @@ CheckboxInput.property.disabled = {
         return this.$input.disabled;
     }
 };
+
+CheckboxInput.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+}
 
 /***
  *
@@ -105,7 +122,8 @@ CheckboxInput.attribute = {
         set: function (value) {
             if (value === 'false' || value === null) {
                 this.checked = false;
-            } else {
+            }
+            else {
                 this.checked = true;
             }
         },
@@ -120,7 +138,8 @@ CheckboxInput.attribute = {
         set: function (value) {
             if (value === 'false' || value === null) {
                 this.disabled = false;
-            } else {
+            }
+            else {
                 this.disabled = true;
             }
         },
@@ -139,7 +158,10 @@ CheckboxInput.attribute = {
  */
 CheckboxInput.eventHandler = {};
 
-CheckboxInput.eventHandler.click = function () {
+CheckboxInput.eventHandler.click = function (event) {
+    if (this.readOnly) {
+        event.preventDefault();
+    }
     this._updateCheckedClass();
 };
 
@@ -176,11 +198,14 @@ CheckboxInput.autoReplace = function () {
                     }
                     return style;
                 }, style);
-            } else if (attrName == 'class') {
+            }
+            else if (attrName == 'class') {
                 classList = attrValue.trim().split(/\s+/);
-            } else if (attrName == 'onchange') {
+            }
+            else if (attrName == 'onchange') {
                 props.onchange = new Function('event', 'sender', attrValue);
-            } else {
+            }
+            else {
                 attrs[attrName] = attrValue;
             }
         }

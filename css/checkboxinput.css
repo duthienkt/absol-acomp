@@ -9,7 +9,6 @@ label.as-checkbox-input {
     position: relative;
     width: calc(1em + 2px);
     height: calc(1em + 2px);
-    cursor: pointer;
     font-size: inherit;
     box-sizing: border-box;
     vertical-align: middle;
@@ -17,6 +16,11 @@ label.as-checkbox-input {
     padding: 0;
     margin: 0; /*fix boostrap override*/
 }
+
+.as-checkbox-input:not(.as-read-only):not(.as-disabled){
+    cursor: pointer;
+}
+
 
 label.as-checkbox-input:hover:not(.as-read-only) .bound,
 .absol-checkbox:hover:not(.as-read-only) .bound {
@@ -78,3 +82,6 @@ label.as-checkbox-input.as-disabled:hover > svg .bound {
     height: 100%;
 }
 
+.as-checkbox-input.as-read-only.as-border-none .bound{
+    display: none;
+}
