@@ -32,6 +32,11 @@
 }
 
 
+.as-toast-list.as-sc {
+    bottom: 10px;
+    left: calc(50% - 177px);
+}
+
 .as-toast-list:empty {
     visibility: hidden;
 }
@@ -41,6 +46,7 @@
     margin-bottom: 5px;
 }
 
+.as-toast-list.as-sc > .as-toast,
 .as-toast-list.as-se > .as-toast,
 .as-toast-list.as-sw > .as-toast {
     margin-top: 5px;

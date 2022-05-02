@@ -205,6 +205,7 @@ Toast.$toastList4Pos = {
     sw: _('.as-toast-list.as-sw.as-bscroller'),
     nw: _('.as-toast-list.as-nw.as-bscroller'),
     ne: _('.as-toast-list.as-ne.as-bscroller'),
+    sc: _('.as-toast-list.as-sc.as-bscroller'),
 };
 
 Dom.documentReady.then(function () {
@@ -212,16 +213,18 @@ Dom.documentReady.then(function () {
     Toast.$toastList4Pos.sw.addTo(document.body);
     Toast.$toastList4Pos.nw.addTo(document.body);
     Toast.$toastList4Pos.ne.addTo(document.body);
+    Toast.$toastList4Pos.sc.addTo(document.body);
 });
 
 /***
  *
  * @param {AbsolConstructDescriptor|{}} aObject,
- * @param {"se"|"sw"|"ne"|"nw" } [pos="se"]
+ * @param {"se"|"sw"|"ne"|"nw"|"sc" } [pos="se"]
  * @return {AElementNS|AElement|Text}
  */
 Toast.make = function (aObject, pos) {
-    pos = pos || 'se';
+    if (!Toast.$toastList4Pos[pos]) pos = "se";
+
     aObject = aObject || {};
     if (typeof aObject !== "object") throw  new Error("param must be AbsolConstructDescriptor object!");
 
