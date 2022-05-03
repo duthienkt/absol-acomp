@@ -194,10 +194,22 @@ DTBody.prototype.requireRows = function (start, end) {
     if (typeof end !== "number") end = Infinity;
     end = Math.min(end, this.data.rows.length);
     for (var i = start; i < end; ++i) {
-        if (!this.rows[i])
+        if (!this.rows[i]) {
             this.rows[i] = new DTBodyRow(this, this.data.rows[i]);
+            this.rows[i].idx = i;
+        }
     }
     return this.rows.slice(start, end);
+};
+
+DTBody.prototype.reindexRows = function (start, end) {
+    if (typeof start !== "number") start = 0;
+    if (typeof end !== "number") end = Infinity;
+    end = Math.min(end, this.data.rows.length);
+    for (var i = start; i < end; ++i) {
+        if (this.rows[i])
+            this.rows[i].idx = i;
+    }
 };
 
 DTBody.prototype.onRowSplice = function (idx) {
@@ -213,6 +225,7 @@ DTBody.prototype.rowIndexOf = function (o) {
     }
     return -1;
 };
+
 
 DTBody.prototype.addRowBefore = function (rowData, bf) {
     var idx;
@@ -244,17 +257,21 @@ DTBody.prototype.addRow = function (rowData, idx) {
     }
     var res;
     if (idx >= this.rows.length) {
+        idx = this.rows.length;
         this.data.rows.push(rowData);
         res = new DTBodyRow(this, rowData)
+        res.idx = idx;
         this.rows.push(res);
         this.onRowSplice(this.rows.length - 1);
     }
     else {
         res = new DTBodyRow(this, rowData);
+        res.idx = idx;
         this.rows.splice(idx, 0, res);
         this.data.rows.splice(idx, 0, rowData);
         this.onRowSplice(idx);
     }
+    this.reindexRows(idx + 1);
 
     return res;
 };
@@ -264,6 +281,7 @@ DTBody.prototype.removeRow = function (row) {
     if (idx < 0) return;
     this.rows.splice(idx, 1);
     this.data.rows.splice(idx, 1);
+    this.reindexRows(idx);
     this.onRowSplice(idx);
 };
 
@@ -272,9 +290,17 @@ DTBody.prototype.rowAt = function (idx) {
     var rowData = this.data.rows[idx];
     if (rowData) {
         this.rows[idx] = new DTBodyRow(this, rowData);
+        this.rows[idx].idx = idx;
     }
     else return null;
 };
+
+
+DTBody.prototype.rowOf = function (o) {
+    var idx = this.rowIndexOf(o);
+    return this.rowAt(idx);
+};
+
 
 DTBody.prototype.viewIntoRow = function (row) {
     return this.curentMode.viewIntoRow(row);

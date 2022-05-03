@@ -37,6 +37,7 @@ function DTDataAdapter(tableElt, opt) {
      * @type {null|DTDataTable}
      */
     this.data = null;
+    this.rowsPerPage = 20;
     Object.assign(this, opt);
 
 }
@@ -58,6 +59,7 @@ DTDataAdapter.prototype.renderHeadCell = function (elt, data, controller) {
     }
 };
 
+
 DTDataAdapter.prototype.renderBodyCell = function (elt, data, controller) {
     if (data.child) {
         if (data.child.map) {
@@ -68,6 +70,9 @@ DTDataAdapter.prototype.renderBodyCell = function (elt, data, controller) {
         else {
             elt.addChild(_(data.child));
         }
+    }
+    if (data.render) {
+        data.render.call(null, elt, data, controller);
     }
     if (data.style) {
         elt.addStyle(data.style);

@@ -100,12 +100,16 @@ DynamicTable.prototype.rowAt = function (idx) {
     return this.table.body.rowAt(idx);
 };
 
+DynamicTable.prototype.rowOf = function (o) {
+    return this.table.body.rowOf(o);
+};
+
 
 DynamicTable.prototype.getRows = function () {
     return this.table.body.rows;
 };
 
-DynamicTable.prototype.requireRows = function (start, end){
+DynamicTable.prototype.requireRows = function (start, end) {
     return this.table.body.requireRows(start, end);
 };
 
@@ -120,13 +124,17 @@ DynamicTable.prototype.attachSearchInput = function (inputElt) {
     this.$searchInput = inputElt;
     if (this.$searchInput) {
         if (this.$searchInput.$table) {
-            this.$searchInput.off('stoptyping', this.$searchInput.$list.eventHandler.searchModify);
+            this.$searchInput.off('stoptyping', this.$searchInput.$table.eventHandler.searchModify);
         }
         this.$searchInput.$table = this;
         this.$searchInput.on('stoptyping', this.eventHandler.searchModify);
     }
 };
 
+
+DynamicTable.prototype.notifyRowsChange = function (){
+
+};
 
 DynamicTable.property = {};
 

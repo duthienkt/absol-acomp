@@ -158,7 +158,12 @@ DTRowDragController.prototype.ev_dragEnd = function (event) {
         }
         dragData.row.elt.removeClass('as-dragging').removeStyle('transform');
         this.body.rows.splice(fromIdx, 1);
-        this.body.rows.splice(toIdx, 0, dragData.row.data);
+        this.body.rows.splice(toIdx, 0, dragData.row);
+
+        this.body.data.rows.splice(fromIdx, 1);
+        this.body.data.rows.splice(toIdx, 0, dragData.row.data);
+        this.body.reindexRows(Math.min(fromIdx, toIdx), Math.max(fromIdx, toIdx) + 1);
+
         var eventData = {
             type: 'otherchange',
             target: dragData.row,

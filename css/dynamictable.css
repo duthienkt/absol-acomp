@@ -3,7 +3,7 @@
     position: relative;
 }
 
-.as-dynamic-table-wrapper.as-no-paging .absol-page-selector{
+.as-dynamic-table-wrapper.as-no-paging .absol-page-selector {
     display: none;
 }
 
@@ -21,6 +21,7 @@
 .as-dt-header-cell {
     font-weight: bold;
     padding: 10px;
+    border: 1px solid #ddd;
 }
 
 .as-dt-body-row:nth-child(odd) {
@@ -41,7 +42,7 @@
 }
 
 
-.as-dt-body-row.as-dragging{
+.as-dt-body-row.as-dragging {
     position: relative;
     z-index: 1000000;
     -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
@@ -50,14 +51,14 @@
     opacity: 0.8;
 }
 
-.as-dt-body-row.as-drag-neighbor{
+.as-dt-body-row.as-drag-neighbor {
     position: relative;
     z-index: 1;
     transition: transform 0.05s;
 
 }
 
-.as-dt-body-row.as-dragging.as-homing{
+.as-dt-body-row.as-dragging.as-homing {
     transition: transform 0.06s;
 }
 
@@ -73,15 +74,24 @@
     pointer-events: none;
 }
 
-.as-dynamic-table-wrapper .as-drag-zone{
+.as-dynamic-table-wrapper .as-drag-zone {
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
 }
 
-.as-dt-insert-line{
+.as-dt-insert-line {
     position: absolute;
     left: 0;
     right: 0;
     border-top: 2px solid blue;
+}
+
+.as-dt-body-cell > .absol-checkbox:last-child:first-child {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-dt-row-index::before {
+    content: attr(data-idx);
 }

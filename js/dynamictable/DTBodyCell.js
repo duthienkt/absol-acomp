@@ -8,19 +8,27 @@ import { _ } from "../../ACore";
  */
 function DTBodyCell(row, data) {
     this.row = row;
-    this.elt = _({ tag: 'td', class: 'as-dt-body-cell' });
+    this._elt = null;
     this.data = data;
-    this.render();
 }
 
-DTBodyCell.prototype.render = function () {
-    if (this.data.attr) this.elt.attr(data.attr);
-    if (this.data.class) this.elt.addClass(this.data.class);
-    this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
-};
+
+Object.defineProperty(DTBodyCell.prototype, 'elt', {
+    get: function () {
+        if (!this._elt) {
+            this._elt = _({ tag: 'td', class: 'as-dt-body-cell' });
+            if (this.data.attr) this.elt.attr(data.attr);
+            if (this.data.class) this.elt.addClass(this.data.class);
+            this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
+        }
+        return this._elt;
+    }
+});
 
 Object.defineProperty(DTBodyCell.prototype, 'innerText', {
     get: function () {
+        if (this.data.innerText) return this.data.innerText;
+        if (this.data.getInnerText) return this.data.getInnerText;
         var res = [];
 
         function visit(node) {
