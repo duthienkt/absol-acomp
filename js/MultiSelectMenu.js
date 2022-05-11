@@ -151,6 +151,7 @@ MultiSelectMenu.property = {};
 MultiSelectMenu.property.disabled = SelectMenu.property.disabled;
 MultiSelectMenu.property.hidden = SelectMenu.property.hidden;
 MultiSelectMenu.property.isFocus = SelectMenu.property.isFocus;
+MultiSelectMenu.property.readOnly = SelectMenu.property.readOnly;
 
 
 MultiSelectMenu.prototype.init = function (props) {

@@ -61,7 +61,7 @@ MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
 
 
 MultiCheckMenu.eventHandler.click = function (event) {
-    if ((event.target === this || event.target === this.$itemCtn) && !this.isFocus) {
+    if ((event.target === this || event.target === this.$itemCtn) && !this.isFocus && !this.readOnly) {
         this.isFocus = true;
     }
 };
@@ -179,7 +179,8 @@ MultiCheckMenu.property.readOnly = {
     set: function (value) {
         if (value) {
             this.addClass('as-read-only');
-        }else {
+        }
+        else {
             this.removeClass('as-read-only');
         }
     },

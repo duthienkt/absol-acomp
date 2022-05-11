@@ -250,6 +250,20 @@ SelectMenu.property.strictValue = {
     }
 };
 
+SelectMenu.property.readOnly = {
+    set: function (value){
+        if (value){
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function (){
+        return this.hasClass('as-read-only');
+    }
+}
+
 
 /**
  * @type {SelectMenu|{}}

@@ -117,13 +117,15 @@ MultiCheckTreeLeafMenu.property.values = {
 MultiCheckTreeLeafMenu.property.isFocus = SelectTreeLeafMenu.property.isFocus;
 
 MultiCheckTreeLeafMenu.property.disabled = MultiSelectMenu.property.disabled;
+MultiCheckTreeLeafMenu.property.readOnly = MultiSelectMenu.property.readOnly;
+
 
 MultiCheckTreeLeafMenu.eventHandler = {};
 
 MultiCheckTreeLeafMenu.eventHandler.clickOut = SelectTreeLeafMenu.eventHandler.clickOut;
 
 MultiCheckTreeLeafMenu.eventHandler.click = function (event) {
-    if (event.target === this || event.target === this.$itemCtn) {
+    if (!this.readOnly&&(event.target === this || event.target === this.$itemCtn)) {
         this.isFocus = true;
     }
 };
