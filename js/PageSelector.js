@@ -168,6 +168,7 @@ PageSelector.prototype.setStartPage = function (index) {
 
 PageSelector.prototype.selectPage = function (index, userActive) {
     if (index == this._selectedIndex) this.setStartPage(index - parseInt(this._pageRange / 2));
+    if (index >= this._pageOffset + this._pageRange) this.setStartPage(index - parseInt(this._pageRange / 2));
     if (index > this._selectedIndex) {
         if (index == (this._pageOffset + this._pageRange - 1)) this.setStartPage(index - parseInt(this._pageRange / 2));
     }
@@ -179,6 +180,7 @@ PageSelector.prototype.selectPage = function (index, userActive) {
     if (index <= (parseInt(this._pageRange / 2))) this.setStartPage(1);
 
     var pageOffset = this._pageOffset;
+
     this._buttons.forEach(function (e, i) {
         if (i + pageOffset == index) {
             e.addClass('active');
@@ -201,6 +203,7 @@ PageSelector.prototype.getSelectedPage = function () {
 PageSelector.prototype.setPageCount = function (count) {
     this._pageCount = count;
     this.$pageCount.firstChild.data = '' + count;
+    this.attr('data-page-count', count);
 };
 
 PageSelector.property = {};
