@@ -132,7 +132,7 @@
                             console.log("disappeared");
                         }
                     }
-                }, ["se", "sw", "ne", "nw"][Math.floor(Math.random() * 4)]);
+                }, ["se", "sw", "ne", "nw", 'sc'][idx % 5]);
             }
         }
     });
@@ -190,7 +190,7 @@
                             console.log("disappeared", this);
                         }
                     }
-                },["se","sw","ne","nw"][Math.floor(Math.random()*4)]);
+                }, ["se", "sw", "ne", "nw", 'sc'][idx % 5]);
             }
         }
     });
