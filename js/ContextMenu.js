@@ -6,7 +6,7 @@ import Vec2 from 'absol/src/Math/Vec2';
 import './Menu';
 import AElement from "absol/src/HTML5/AElement";
 import BoardTable from "./BoardTable";
-import {getSelectionText} from "./utils";
+import { getSelectionText } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
@@ -78,10 +78,10 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItem) {
     var self = this;
     var anchor = _('.as-context-menu-ctn.absol-context-menu-anchor' + (isMobile ? '.as-anchor-modal' : '')).addTo(document.body);
     var finish = function (event) {
-        (document.body).off('click', finish)
-            .off('touchcancel', finish)
-            .off('touchend', finish)
-            .off('contextmenu', finish);
+        document.removeEventListener('click', finish);
+        document.removeEventListener('touchcancel', finish);
+        document.removeEventListener('touchend', finish);
+        document.removeEventListener('contextmenu', finish);
         anchor.off('click', touchModal);
 
 
@@ -91,11 +91,12 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItem) {
         }, 10);
     };
 
-    function touchModal(event){
-        if (event.target.classList && event.target.classList.contains('as-anchor-modal')){
+    function touchModal(event) {
+        if (event.target.classList && event.target.classList.contains('as-anchor-modal')) {
             finish(event);
         }
     }
+
     var vmenu = _({
         tag: 'vmenu',
         props: props,
@@ -127,8 +128,8 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItem) {
 
 
     setTimeout(function () {
-        $(document.body).on('click', finish)
-            .on('contextmenu', finish);
+        document.addEventListener('click', finish)
+        document.addEventListener('contextmenu', finish);
         self.on('requestcontextmenu', finish);
         anchor.on('click', touchModal);
     }, 10)
@@ -251,9 +252,9 @@ ContextCaptor.eventHandler.mousedown = function (event) {
         this._touchId = touchId;
         this._posCurrent = posCurrent;
         this._posStart = posCurrent;
-        $(document.body).on('touchmove', thisCT.eventHandler.mousemove)
-            .on('touchend', thisCT.eventHandler.mousefinish)
-            .on('touchcancel', thisCT.eventHandler.mousefinish);
+        document.addEventListener('touchmove', thisCT.eventHandler.mousemove);
+        document.addEventListener('touchend', thisCT.eventHandler.mousefinish);
+        document.addEventListener('touchcancel', thisCT.eventHandler.mousefinish);
 
     }
     else {
@@ -271,9 +272,9 @@ ContextCaptor.eventHandler.mousedown = function (event) {
             this.moveTo(this._posCurrent);
             this.active(true);
 
-            $(document.body).on('mousemove', this.eventHandler.mousemove)
-                .on('mouseup', this.eventHandler.mousefinish)
-                .on('mouseleave', this.eventHandler.mousefinish);
+            document.addEventListener('mousemove', this.eventHandler.mousemove);
+            document.addEventListener('mouseup', this.eventHandler.mousefinish);
+            document.addEventListener('mouseleave', this.eventHandler.mousefinish);
         }
     }
 };
@@ -338,18 +339,18 @@ ContextCaptor.eventHandler.mousefinish = function (event) {
     }
     if (touchId != this._touchId) return;
     if (isTouch) {
-        $(document.body).off('touchmove', this.eventHandler.mousemove)
-            .off('touchend', this.eventHandler.mousefinish)
-            .off('touchcancel', this.eventHandler.mousefinish);
+        document.removeEventListener('touchmove', this.eventHandler.mousemove);
+        document.removeEventListener('touchend', this.eventHandler.mousefinish);
+        document.removeEventListener('touchcancel', this.eventHandler.mousefinish);
         if (this._longPressTimeout > 0) {
             clearTimeout(this._longPressTimeout);
             this._longPressTimeout = -1;
         }
     }
     else {
-        $(document.body).off('mousemove', this.eventHandler.mousemove)
-            .off('mouseup', this.eventHandler.mousefinish)
-            .off('mouseleave', this.eventHandler.mousefinish);
+        document.removeEventListener('mousemove', this.eventHandler.mousemove);
+        document.removeEventListener('mouseup', this.eventHandler.mousefinish);
+        document.removeEventListener('mouseleave', this.eventHandler.mousefinish);
     }
 
     this._touchId = -100;
