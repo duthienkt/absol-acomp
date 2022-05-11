@@ -57,6 +57,12 @@ DTDataAdapter.prototype.renderHeadCell = function (elt, data, controller) {
             elt.addChild(_(data.child));
         }
     }
+    if (data.render) {
+        data.render.call(null, elt, data, controller);
+    }
+    if (data.style) {
+        elt.addStyle(data.style);
+    }
 };
 
 

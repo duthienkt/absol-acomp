@@ -2,6 +2,8 @@ import ACore, { $, _ } from "../../ACore";
 import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import PageSelector from "../PageSelector";
+import DTWaitingViewController from "./DTWaitingViewController";
+import noop from "absol/src/Code/noop";
 
 /***
  * @extends AElement
@@ -30,6 +32,8 @@ function DynamicTable() {
     this.$tbody = $('.as-dynamic-table>tbody', this.$table);
     this.$pageSelector = $('pageselector', this)
         .on('change', this.eventHandler.pageSelectorChange);
+
+    this.$filterInputs = [];
     //controller
     this.table = null;
     /***
@@ -38,6 +42,7 @@ function DynamicTable() {
      */
     this.adapter = null;
 
+    this.waitingCtl = new DTWaitingViewController(this);
 
 }
 
@@ -92,6 +97,10 @@ DynamicTable.prototype.addRow = function (rowData, idx) {
     return this.table.body.addRow(rowData, idx);
 };
 
+DynamicTable.prototype.addRows = function (rowsData, idx) {
+    return this.table.body.addRows(rowsData, idx);
+};
+
 DynamicTable.prototype.removeRow = function (row) {
     return this.table.body.removeRow(row);
 };
@@ -120,21 +129,83 @@ DynamicTable.prototype.viewIntoRow = function (row) {
 DynamicTable.prototype.attachSearchInput = function (inputElt) {
     if (this.$searchInput) {
         this.$searchInput.off('stoptyping', this.eventHandler.searchModify);
+        this.$searchInput.off('keyup', this.eventHandler.searchKeyUp);
     }
     this.$searchInput = inputElt;
     if (this.$searchInput) {
         if (this.$searchInput.$table) {
             this.$searchInput.off('stoptyping', this.$searchInput.$table.eventHandler.searchModify);
+            this.$searchInput.off('keyup', this.$searchInput.$table.eventHandler.searchKeyUp);
+
         }
         this.$searchInput.$table = this;
         this.$searchInput.on('stoptyping', this.eventHandler.searchModify);
+        this.$searchInput.on('keyup', this.eventHandler.searchKeyUp);
     }
 };
 
+DynamicTable.prototype.filter = function (filter) {
+    var query = {};
+    var queryText = (this.$searchInput && this.$searchInput.value) || '';
+    queryText = queryText.trim().replace(/\s\s+/g, ' ');
+    var i;
+    if (filter) {
+        for (i in filter) {
+            query.filter = filter;
+            break;
+        }
+    }
 
-DynamicTable.prototype.notifyRowsChange = function (){
-
+    if (queryText && queryText.length > 0)
+        query.text = queryText;
+    for (i in query) {
+        this.query(query);
+        return;
+    }
+    this.query(null);
 };
+
+
+DynamicTable.prototype.makeQuery = function () {
+    var query = {};
+    var textQuery = this.$searchInput.value.trim().replace(/\s\s+/, ' ');
+    if (textQuery.length > 0) query.text = textQuery;
+    var i;
+    var filter = this.$filterInputs.reduce(function (ac, elt) {
+        if (elt.exportFilter) {
+            elt.exportFilter(ac);
+        }
+        else if (elt.name) {
+            ac[elt.name] = elt.value;
+        }
+        return ac;
+    }, {});
+
+    for (i in filter) {
+        query.filter = filter;
+        break;
+    }
+
+
+    for (i in query) {
+        return query;
+    }
+    return null;
+};
+
+
+DynamicTable.prototype.requestQuery = function () {
+    var query = this.makeQuery();
+    this.query(query);
+};
+
+
+DynamicTable.prototype.query = function (query) {
+    this.table.body.query(query);
+}
+
+
+DynamicTable.prototype.notifyRowsChange = noop();
 
 DynamicTable.property = {};
 
@@ -153,6 +224,22 @@ DynamicTable.property.adapter = {
         return this._adapterData;
     }
 };
+DynamicTable.property.filterInputs = {
+    set: function (inputs) {
+        inputs = inputs || [];
+        this.$filterInputs.forEach(function (elt) {
+            elt.off('change', this.eventHandler.searchModify);
+        }.bind(this));
+        this.$filterInputs = inputs;
+        this.$filterInputs.forEach(function (elt) {
+            elt.on('change', this.eventHandler.searchModify);
+        }.bind(this));
+    },
+    get: function () {
+        return this.$filterInputs;
+    }
+};
+
 
 /***
  * @memberOf {DynamicTable#}
@@ -170,10 +257,22 @@ DynamicTable.eventHandler.pageSelectorChange = function (event) {
  * @param event
  */
 DynamicTable.eventHandler.searchModify = function (event) {
-    var query = this.$searchInput.value;
-    query = query.trim().replace(/\s+/, ' ');
-    this.table.body.searchFor(query);
+    this.requestQuery();
 
+
+};
+
+/***
+ * @this DynamicTable#
+ * @param event
+ */
+DynamicTable.eventHandler.searchKeyUp = function (event) {
+    setTimeout(function () {
+        var query = this.$searchInput.value;
+        query = query.trim().replace(/\s+/, ' ');
+        if (query.length)
+            this.table.body.startSearchingIfNeed();
+    }.bind(this), 30);
 };
 
 

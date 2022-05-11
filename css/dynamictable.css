@@ -7,6 +7,10 @@
     display: none;
 }
 
+.as-dynamic-table-wrapper  .absol-page-selector[data-page-count="1"]{
+    display: none;
+}
+
 .as-dynamic-table {
     font-size: 1rem;
     font-family: Arial, Helvetica, sans-serif;
