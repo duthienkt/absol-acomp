@@ -83,6 +83,10 @@
     box-shadow: none;
 }
 
+.as-location-picker.as-read-only .as-location-picker-cancel-btn,
+.as-location-picker.as-read-only .as-location-picker-search-input {
+    display: none;
+}
 
 .as-location-input {
     height: var(--as-input-height);
@@ -134,16 +138,11 @@
     font: inherit;
 }
 
-.as-location-input.as-disabled{
+.as-location-input.as-disabled {
     background-color: var(--as-disabled-background-color);
     pointer-events: none;
 }
 
-
-.as-location-input.as-read-only .as-location-input-icon-ctn{
-    background-color: transparent;
-    pointer-events: none;
-}
 
 .as-location-input-text {
     outline: none;

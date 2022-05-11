@@ -90,7 +90,7 @@ function LocationPicker() {
 
     this.$cancelBtn = _({
             tag: FlexiconButton.tag,
-            class: 'secondary',
+            class: ['as-location-picker-cancel-btn', 'secondary'],
             props: {
                 text: 'CANCEL'
             },
@@ -122,6 +122,11 @@ function LocationPicker() {
     /***
      * @type {LatLng}
      * @name value
+     * @memberOf LocationPicker#
+     */
+    /***
+     * @type {boolean}
+     * @name readOnly
      * @memberOf LocationPicker#
      */
 }
@@ -337,7 +342,11 @@ LocationPicker.prototype.selectMyLocation = function () {
                 location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             if (location) {
                 this.watchMyLocation(location);
-                this.selectLocation(location);
+                if (!this.readOnly)
+                    this.selectLocation(location);
+                else {
+                    this.map.setCenter(location)
+                }
             }
 
         }.bind(this), function () {
@@ -379,6 +388,20 @@ LocationPicker.property.center = {
     },
     get: function () {
         return this.map.getCenter();
+    }
+};
+
+LocationPicker.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
     }
 };
 
@@ -439,17 +462,20 @@ LocationPicker.eventHandler.search = function () {
 };
 
 LocationPicker.eventHandler.clickMarker = function (marker, place) {
+    if (this.readOnly) return;
     this.selectPlace(place, false);
 };
 
 LocationPicker.eventHandler.clickMap = function (event) {
+    if (this.readOnly) return;
     if (event.placeId) {
         this.selectPlaceId(event.placeId);
     }
     else if (event.latLng) {
         this.selectLocation(event.latLng, false);
     }
-};
+}
+;
 
 LocationPicker.eventHandler.clickAction = function (action, event) {
     this.emit('action', { type: 'action', action: action, originalEvent: event, target: this }, this);

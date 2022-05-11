@@ -22,6 +22,11 @@ function LocationInput() {
      * @name value
      * @memberOf LocationInput#
      */
+    /***
+     * @type {boolean}
+     * @name readOnly
+     * @memberOf LocationInput#
+     */
 }
 
 LocationInput.tag = 'LocationInput'.toLowerCase();
@@ -75,6 +80,7 @@ LocationInput.prototype._attachPicker = function () {
     document.body.appendChild(this.share.$modal);
     this.share.$picker.on('action', this.eventHandler.pickerAction);
     this.share.$picker.$searchInput.value = '';
+    this.share.$picker.readOnly = this.readOnly;
     setTimeout(function () {
         document.addEventListener('click', this.eventHandler.clickOut);
     }.bind(this), 100);
@@ -85,8 +91,6 @@ LocationInput.prototype._attachPicker = function () {
     if (value)
         this.share.$picker.selectLocation(value, true);
     else this.share.$picker.selectPlace(null);
-
-
 };
 
 
@@ -107,7 +111,7 @@ LocationInput.prototype._releasePicker = function () {
 LocationInput.eventHandler = {};
 
 LocationInput.eventHandler.pickerAction = function (event) {
-    if (event.action === 'OK' && this.share.$picker.selectedPlace && this.share.$picker.selectedPlace.geometry && this.share.$picker.selectedPlace.geometry.location) {
+    if (!this.readOnly &&event.action === 'OK' && this.share.$picker.selectedPlace && this.share.$picker.selectedPlace.geometry && this.share.$picker.selectedPlace.geometry.location) {
         this.$text.value = [this.share.$picker.selectedPlace.geometry.location.lat(), this.share.$picker.selectedPlace.geometry.location.lng()].join(', ');
         this.emit('change', { type: 'change', originalEvent: event.originalEvent || event, target: this }, this);
     }
