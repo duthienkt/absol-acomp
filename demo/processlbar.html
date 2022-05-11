@@ -90,12 +90,15 @@
             }
         }
     });
-
+    render('br');
     render({
         tag: 'processlbar',
+        style:{
+            width: '300px'
+        },
         props: {
-            disabled: true,
-            // lHeight: 3,//default = 3
+            // disabled: true,
+            lHeight: 1,//default = 3
             items: [
                 {
                     name: 'Bắt đầu',
