@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Comment Item</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <script class="viewable">
+
+
+        absol._({
+            tag: 'kvcommentitem',
+            style:{
+                paddingTop: '5px',
+                paddingBottom: '5px'
+            },
+            props: {
+                text:  "Nguuyen Van A da phan hoi xyz ".repeat(15),
+                unread: true,
+                quickmenu: {
+                    props: {
+                        extendClasses: 'cd-context-menu',
+                        items: [
+                            {
+                                text: 'Trạng thái',
+                                extendClasses: "bsc-quickmenu",
+                                icon: {
+                                    tag: "i",
+                                    class: "material-icons",
+                                    child: { text: "info" }
+                                },
+                                cmd: 'status'
+                            },
+                            {
+                                text: 'Di chuyển',
+                                extendClasses: "bsc-quickmenu",
+                                icon: {
+                                    tag: "i",
+                                    class: "material-icons",
+                                    child: { text: "open_with" }
+                                },
+                                cmd: 'move'
+                            },
+                            {
+                                text: 'Sửa',
+                                extendClasses: "bsc-quickmenu",
+                                icon: {
+                                    tag: "i",
+                                    class: "material-icons",
+                                    child: { text: "mode_edit" }
+                                },
+                                cmd: 'edit'
+                            },
+                            {
+                                text: 'Xóa',
+                                extendClasses: "bsc-quickmenu red",
+                                icon: {
+                                    tag: "i",
+                                    class: "material-icons",
+                                    child: { text: "delete" }
+                                },
+                                cmd: 'delete'
+                            },
+                            {
+                                text: 'Lưu trữ',
+                                extendClasses: "bsc-quickmenu",
+                                icon: {
+                                    tag: "i",
+                                    class: "material-icons",
+                                    child: { text: "turned_in_not" }
+                                },
+                                cmd: 'store'
+                            }
+                        ]
+                    },
+                    onSelect: function (item) {
+                        console.log(item)
+                        // console.log('cmd: ', item.cmd);
+                    }
+                }
+            }
+        }).addTo(document.body);
+
+
+        absol._({
+            tag: 'kvcommentitem',
+            props: {
+                text:  "Nguuyen Van A da phan hoi xyz ".repeat(15),
+                unread: false,
+                avatar:'https://avatars.githubusercontent.com/u/9133017?s=400&v=4'
+            }
+        }).addTo(document.body);
+    </script>
+    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+</body>
+
+</html>
