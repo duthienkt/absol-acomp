@@ -72,8 +72,7 @@
 
 
 .absol-selectmenu.as-disabled,
-.as-select-menu.as-disabled
-{
+.as-select-menu.as-disabled {
     pointer-events: none;
     background-color: var(--as-disabled-background-color);
     color: var(--as-disabled-text-color);
@@ -88,16 +87,34 @@
     border: solid 1px #d6d6d6;
     border-radius: 2px;
     box-sizing: border-box;
-    cursor: pointer;
     font-size: 14px;
     outline: none;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     background-color: white;
 }
 
-/* .absol-selectmenu:hover {
-    border: solid 1px black;
-} */
+.absol-selectmenu.as-border-none {
+    border: none;
+}
+
+.absol-selectmenu.as-border-none .absol-selectlist-item span {
+    padding-left: 0;
+    user-select: inherit;
+    -ms-user-select: inherit;
+    -webkit-user-select: inherit;
+}
+
+.absol-selectmenu:not(.as-read-only) {
+    cursor: pointer;
+}
+
+.absol-selectmenu.as-read-only .absol-selectlist-item span {
+    user-select: inherit;
+    -moz-user-select: inherit;
+    -webkit-user-select: inherit;
+    -ms-user-select: inherit;
+}
+
 
 .absol-selectmenu-btn {
     position: absolute;
@@ -121,7 +138,11 @@
     fill: #929292;
 }
 
-.absol-selectmenu:hover svg.dropdown {
+.absol-selectmenu.as-read-only svg.dropdown {
+    display: none;
+}
+
+.absol-selectmenu:not(.as-read-only):hover svg.dropdown {
     width: 10px;
     height: 10px;
     fill: black;
@@ -137,7 +158,7 @@
     white-space: nowrap;
 }
 
-.absol-selectmenu-holder-item::before{
+.absol-selectmenu-holder-item::before {
     content: "";
     height: 100%;
     display: inline-block;
@@ -145,7 +166,7 @@
 }
 
 
-.absol-selectmenu-holder-item>.absol-selectlist-item{
+.absol-selectmenu-holder-item > .absol-selectlist-item {
     display: inline-block;
     width: 100%;
     vertical-align: middle;

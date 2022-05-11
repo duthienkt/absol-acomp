@@ -1,9 +1,9 @@
 import MultiSelectMenu from "./MultiSelectMenu";
-import ACore, {_, $} from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import CheckListBox from "./CheckListBox";
-import EventEmitter, {hitElement} from "absol/src/HTML5/EventEmitter";
-import {getValueOfListItem} from "./SelectListItem";
+import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
+import { getValueOfListItem } from "./SelectListItem";
 import AElement from "absol/src/HTML5/AElement";
 
 
@@ -58,8 +58,6 @@ MultiCheckMenu.render = MultiSelectMenu.render;
 Object.assign(MultiCheckMenu.prototype, MultiSelectMenu.prototype);
 MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
-
-
 
 
 MultiCheckMenu.eventHandler.click = function (event) {
@@ -130,8 +128,6 @@ MultiCheckMenu.eventHandler.selectListBoxClose = function (event) {
 };
 
 
-
-
 MultiCheckMenu.property.isFocus = {
     set: function (value) {
         if (!this._isFocus && value) {
@@ -154,13 +150,15 @@ MultiCheckMenu.property.isFocus = {
             setTimeout(function () {
                 if (thisSM.enableSearch) {
                     thisSM.$selectlistBox.$searchInput.focus();
-                } else {
+                }
+                else {
                     thisSM.$selectlistBox.focus();
                 }
                 document.addEventListener('mousedown', thisSM.eventHandler.bodyClick);
             }, 100);
             this.$selectlistBox.viewListAtFirstSelected();
-        } else {
+        }
+        else {
             document.removeEventListener('mousedown', thisSM.eventHandler.bodyClick);
 
             document.addEventListener('mouseup', function mup() {
@@ -176,6 +174,19 @@ MultiCheckMenu.property.isFocus = {
     },
     get: MultiSelectMenu.property.isFocus.get
 };
+
+MultiCheckMenu.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+}
 
 /***
  * call after close checklistbox
@@ -250,7 +261,8 @@ MultiCheckMenu.eventHandler.pressCloseItem = function (item, event) {
         this.$selectlistBox.values = currentValues;
         this.$selectlistBox.updatePosition();
         this.viewItemsByValues(this.$selectlistBox.values);
-    } else {
+    }
+    else {
         index = this._values.indexOf(value);
         if (index >= 0) {
             this._values.splice(index, 1);
@@ -289,7 +301,8 @@ MultiCheckMenu.eventHandler.pressItem = function (item, event) {
                 activeValue: value
             }, this);
         }
-    } else if (this.isFocus) {
+    }
+    else if (this.isFocus) {
         this.$selectlistBox.viewListAtValue(value);
     }
 };

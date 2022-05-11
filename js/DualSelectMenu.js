@@ -1,7 +1,7 @@
-import ACore, {$, _} from "../ACore";
+import ACore, { $, _ } from "../ACore";
 import DualSelectBox from "./DualSelectBox";
-import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 import OOP from "absol/src/HTML5/OOP";
 
 
@@ -29,6 +29,12 @@ function DualSelectMenu() {
     OOP.drillProperty(this, this.$box, 'enableSearch');
     /***
      * @name strictValue
+     * @type {boolean}
+     * @memberOf DualSelectMenu#
+     */
+
+    /***
+     * @name readOnly
      * @type {boolean}
      * @memberOf DualSelectMenu#
      */
@@ -80,8 +86,8 @@ DualSelectMenu.prototype._updateViewValue = function () {
     var text = format.replace('$0', firstToken)
         .replace('$1', secToken);
     this.$item.clearChild().addChild(_({
-        tag:'span',
-        child:{text: text}
+        tag: 'span',
+        child: { text: text }
     }));
 
 
@@ -99,7 +105,7 @@ DualSelectMenu.property.isFocus = {
         value = !!value;
         if (this.containsClass('as-focus') === value) return;
         if (value) {
-            this._prevValue = (this.$box.value||[null, null]).join('//');
+            this._prevValue = (this.$box.value || [null, null]).join('//');
             this.addClass('as-focus');
             this.off('click', this.eventHandler.click);
             this.$box.followTarget = this;
@@ -118,9 +124,9 @@ DualSelectMenu.property.isFocus = {
             setTimeout(function () {
                 self.on('click', self.eventHandler.click);
             }, 10);
-            if ((this.$box.value||[null, null]).join('//') !==  this._prevValue ){
+            if ((this.$box.value || [null, null]).join('//') !== this._prevValue) {
                 this._updateViewValue();
-                this.emit('change', {type: 'change', target: this}, this);
+                this.emit('change', { type: 'change', target: this }, this);
             }
         }
     },
@@ -179,6 +185,35 @@ DualSelectMenu.property.format = {
     get: function () {
         return this._format;
     }
+};
+
+DualSelectMenu.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
+DualSelectMenu.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-disabled');
+    }
 }
 
 
@@ -186,6 +221,7 @@ DualSelectMenu.property.format = {
  * @this DualSelectMenu
  */
 DualSelectMenu.eventHandler.click = function () {
+    if (this.readOnly) return;
     this.isFocus = true;
 };
 

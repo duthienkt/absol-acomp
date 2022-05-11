@@ -67,3 +67,26 @@
 .as-multi-select-menu.as-multi-check-tree-leaf-menu {
     min-width: calc(var(--select-list-estimate-width) + 14px);
 }
+
+
+.as-multi-select-menu.as-read-only .absol-selectbox-item-close,
+.as-multi-select-menu.as-read-only .as-multi-select-menu-toggle-btn {
+    display: none;
+}
+
+.as-multi-select-menu.as-read-only .absol-selectbox-item-text {
+    padding-right: 10px;
+}
+
+.as-multi-select-menu.as-read-only {
+    padding-right: 0;
+}
+
+.as-multi-select-menu.as-border-none {
+    border: none;
+}
+
+.as-multi-select-menu.as-border-none .as-multi-select-menu-item-ctn {
+    max-height: unset;
+    overflow-y: auto;
+}
