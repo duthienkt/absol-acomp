@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DynamicTable</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <style>
+        html {
+            font-size: 14px;
+        }
+
+        .as-flexicon-button {
+            height: 30px;
+        }
+
+        body.loading > button {
+            display: none !important;
+        }
+    </style>
+</head>
+
+<body class="loading">
+<script class="viewable">
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        function render(o) {
+            return _(o).addTo(document.body);
+        }
+
+        render("<h2>Paging - Search - Sort</h2>");
+        //without optimize: 4040ms
+        var now = new Date().getTime();
+
+        function makeRowData(i, id) {
+            var name = '[' + i + ']' + absol.string.randomPhrase(60).replace(/(^|\s)[a-z]/g, function (all) {
+                return all.toUpperCase();
+            });
+            var sid = 'M' + absol.$.zeroPadding(Math.random() * 1e7 >> 0, 7);
+            var clss = 'A' + (Math.floor(Math.random() * 7) + 1);
+            var editBtn;
+            var okBtn;
+            var nameInput;
+            var nameText;
+            var checkbox;
+            var removeBtn;
+            var goodAt = ['Toán', 'Lý', 'Hoá', 'Văn', 'Sử', 'Địa', 'Anh Văn'].reduce(function (ac, x) {
+                if (Math.random() < 0.2) ac.push(x);
+                return ac;
+            }, []);
+
+            var rowData = {
+                id: id,
+                attr: {},
+                keys: {//for filter
+                    class: clss,
+                    goodAt: goodAt
+                },
+                cells: [
+                    {
+                        innerText: '',
+                        style: {
+                            textAlign: 'center',
+                            width: '40px'
+                        },
+                        //for child: [checkbox]
+                        render: function (tdElt) {
+                            checkbox = _({ tag: 'checkbox' });
+                            tdElt.addChild(checkbox);
+                        }
+                    },
+                    {
+                        innerText: '',
+                        style: {
+                            textAlign: 'center',
+                            'vertical-align': 'middle',
+                            width: '50px'
+                        },
+                        child: 'span.as-dt-row-index'
+                    },
+                    {
+                        innerText: sid,
+                        child: { text: sid }
+                    },
+                    {
+                        //for child: [nameInput, nameText]//data is itself
+                        innerText: name,
+                        someThingForRender: {},
+                        render: function (tdElt, data, controller) {
+                            nameInput = _({
+                                tag: 'input',
+                                attr: { type: 'text' },
+                                style: {
+                                    display: 'none',
+                                    width: '300px'
+                                },
+                                on: {
+                                    change: function () {
+                                        data.innerText = this.value;//for quick search
+                                        name = this.value;
+                                        nameText.clearChild().addChild(_({ text: name }));
+                                    }
+                                },
+                                props: {
+                                    value: name
+                                }
+                            });
+                            nameText = _({ tag: 'span', child: [{ text: name }] });
+                            tdElt.addChild(nameInput);
+                            tdElt.addChild(nameText);
+                        }
+                    },
+                    {
+                        innerText: clss,
+                        child: { text: clss }
+                    },
+                    {
+                        innerText: goodAt.join(', '),
+                        child: { text: goodAt.join(', ') }
+                    },
+                    {
+                        innerText: '',
+                        style: { width: '90px' },
+                        //for child: [editBtn, okBtn],
+                        render: function (tdElt, data, cellController) {
+                            editBtn = _({
+                                tag: 'flexiconbutton',
+                                style: { height: '25px' },
+                                props: {
+                                    icon: 'span.mdi.mdi-account-edit-outline'
+                                },
+                                on: {
+                                    click: function () {
+                                        editBtn.addStyle('display', 'none');
+                                        nameText.addStyle('display', 'none');
+                                        okBtn.removeStyle('display');
+                                        var bound = nameInput.parentElement.getBoundingClientRect();
+                                        nameInput.removeStyle('display')
+                                            .addStyle('max-width', bound.width - 30 + 'px');
+                                    }
+                                }
+                            });
+                            okBtn = _({
+                                tag: 'flexiconbutton',
+                                style: { height: '25px', display: 'none' },
+                                props: {
+                                    icon: 'span.mdi.mdi-check-all'
+                                },
+                                on: {
+                                    click: function () {
+                                        nameInput.addStyle('display', 'none');
+                                        okBtn.addStyle('display', 'none');
+                                        editBtn.removeStyle('display');
+                                        nameText.removeStyle('display');
+                                    }
+                                }
+                            });
+                            tdElt.addChild(editBtn);
+                            removeBtn = _({
+                                tag: 'flexiconbutton',
+                                style: { marginLeft: '5px', height: '25px' },
+                                class: 'warning',
+                                props: {
+                                    variant: 'delete',
+                                    icon: 'span.mdi.mdi-delete'
+                                },
+                                on: {
+                                    click: function () {
+                                        var row = table0.rowOf(rowData);
+                                        row.remove();
+                                    }
+                                }
+                            });
+                            tdElt.addChild(removeBtn);
+
+
+                        }
+                    }
+                ]
+            };
+
+
+            return rowData;
+        }
+
+        var addBtn1 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'addRowBefore(data, null)',
+                icon: 'span.mdi.mdi-table-row-plus-before'
+            },
+            on: {
+                click: function () {
+                    var i = table0.adapter.data.body.rows.length;
+                    var id = 'row_' + i;
+                    var newRowData = makeRowData(i, id);
+                    var newRow = table0.addRowBefore(newRowData, null);
+                    newRow.viewInto();
+                    //or
+                    // table0.viewIntoRow(id);
+                    // table0.viewIntoRow(newRowData);
+                    // table0.viewIntoRow(newRow);
+                    //
+                    //
+                }
+            }
+        });
+
+        var addBtn2 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'addRowBefore(data, id)',
+                icon: 'span.mdi.mdi-table-row-plus-before'
+            },
+            on: {
+                click: function () {
+                    var i = table0.adapter.data.body.rows.length;
+                    var id = 'row_' + i;
+                    var newRowData = makeRowData(i, id);
+                    var newRow = table0.addRowBefore(newRowData, 'row_5');
+                    newRow.viewInto();
+                }
+            }
+        });
+
+        var addBtn3 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'addRowBefore(data, rowData)',
+                icon: 'span.mdi.mdi-table-row-plus-before'
+            },
+            on: {
+                click: function () {
+                    var i = table0.adapter.data.body.rows.length;
+                    var id = 'row_' + i;
+                    var newRowData = makeRowData(i, id);
+                    var newRow = table0.addRowBefore(newRowData, table0.adapter.data.body.rows[5]);
+                    newRow.viewInto();
+                }
+            }
+        });
+
+        var addBtn4 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'addRowBefore(data, rowObject)',
+                icon: 'span.mdi.mdi-table-row-plus-before'
+            },
+            on: {
+                click: function () {
+                    var i = table0.adapter.data.body.rows.length;
+                    var id = 'row_' + i;
+                    var newRowData = makeRowData(i, id);
+                    var newRow = table0.addRowBefore(newRowData, table0.rowAt(5));//table0.table.body.rows[5] is a DTBodyRow class
+                    newRow.viewInto();
+                }
+            }
+        });
+
+        var addBtn5 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'addRow(data)',
+                icon: 'span.mdi.mdi-table-row-plus-after'
+            },
+            on: {
+                click: function () {
+                    var i = table0.adapter.data.body.rows.length;
+                    var id = 'row_' + i;
+                    var newRowData = makeRowData(i, id);
+                    var newRow = table0.addRow(newRowData);
+                    newRow.viewInto();
+                }
+            }
+        });
+        var addBtn6 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'addRow(data, idx)',
+                icon: 'span.mdi.mdi-table-row-plus-after'
+            },
+            on: {
+                click: function () {
+                    var i = table0.adapter.data.body.rows.length;
+                    var id = 'row_' + i;
+                    var newRowData = makeRowData(i, id);
+                    var newRow = table0.addRow(newRowData, 20);
+                    newRow.viewInto();
+                }
+            }
+        });
+
+        var removeBtn0 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'row.remove()',
+                icon: 'span.mdi.mdi-table-row-remove'
+            },
+            on: {
+                click: function () {
+                    var row = table0.rowAt(2);
+                    row.remove();//
+                    //or table0.remove(row);
+                }
+            }
+        });
+
+        var removeBtn1 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'remove last row',
+                icon: 'span.mdi.mdi-table-row-remove'
+            },
+            on: {
+                click: function () {
+                    var rows = table0.getRows();//get row array without render
+                    var row = table0.requireRows(rows.length - 1)[0];//safety to get last row
+                    if (row)
+                        row.remove();
+                    //
+                    //or table0.remove(row);
+                }
+            }
+        });
+
+
+        var classFilter = _({
+            tag: 'selectmenu',
+            props: {
+                items: ['all', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7'].map(function (value) {
+                    return { text: value === 'all' ? 'Tất cả' : value, value: value }
+                }),
+                value: 'all',
+
+            }
+        });
+
+
+        classFilter.exportFilter = function (filter) {
+            if (this.value !== 'all') filter.class = this.value;
+            //else don't filter by this
+        };
+
+        var goodAtFilter = _({
+            tag: 'selectmenu',
+            props: {
+                items: ['none', 'Toán', 'Lý', 'Hoá', 'Văn', 'Sử', 'Địa', 'Anh Văn'].map(function (value) {
+                    return { text: value === 'none' ? 'Không xét' : value, value: value }
+                }),
+                value: 'none'
+
+            }
+        });
+
+        goodAtFilter.exportFilter = function (filter) {
+            if (this.value !== 'none') filter.goodAt = this.value;
+            //else don't filter by this
+        };
+
+        render({
+            style: { margin: '5px' },
+            child: ['<label>Lớp: </label>', classFilter]
+        });
+        render({
+            child: ['<label>Giỏi môn: </label>', goodAtFilter]
+        });
+
+
+        var searchInput = render('searchtextinput')
+            .addStyle('margin', '10px');
+        var table0 = render({
+            tag: 'dynamictable',
+            props: {
+                filterInputs: [classFilter, goodAtFilter],
+                adapter: {
+                    // rowsPerPage: 15,//default: 20
+                    data: {
+                        head: {
+                            rows: [
+                                {
+                                    cells: [
+                                        {},
+                                        { child: absol._({ text: "STT" }) },
+                                        { child: absol._({ text: "MSSV" }) },
+                                        { child: { text: 'Tên' } },
+                                        {
+                                            child: { text: 'Lớp' },
+                                            on: {
+                                                someEvent: function (event) {
+
+                                                }
+                                            }
+                                        },
+                                        {
+                                            child: { text: 'Giỏi' }
+                                        },
+                                        {}
+                                    ]
+                                }
+                            ]
+                        },
+                        body: {
+                            rows: Array(1000).fill(0).map(function (u, i) {
+                                var id = 'row_' + i;
+                                return makeRowData(i, id);
+                            })
+
+                        }
+                    }
+                }
+            }
+        });
+        var rowCount = 1000;
+        var rowLoadingTK = table0.waitingCtl.begin();//to show loading in search input
+        function addRows() {
+            var rowsData = Array(1000).fill(0).map(function (u, i) {
+                rowCount++;
+                return makeRowData(rowCount, 'row_' + rowCount);
+            });
+            table0.addRows(rowsData);
+            if (rowCount < 100000) {
+                setTimeout(addRows, 150);
+            }
+            else {
+                document.body.classList.remove('loading');
+                table0.waitingCtl.end(rowLoadingTK);
+            }
+        }
+
+        setTimeout(addRows, 800);
+
+        table0.attachSearchInput(searchInput)
+
+
+        /**  ,**/
+    })();
+
+</script>
+<!--    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>-->
+
+</body>
+
+<noscript>
+    render("<h2>Draggable</h2>");
+
+    function makeRowData1(i, id, draggable) {
+
+    var name = absol.string.randomPhrase(30).replace(/(^|\s)[a-z]/g, function (all) {
+    return all.toUpperCase();
+    });
+    var editBtn = _({
+    tag: 'flexiconbutton',
+    style: { height: '25px' },
+    props: {
+    icon: 'span.mdi.mdi-account-edit-outline'
+    },
+    on: {
+    click: function () {
+    editBtn.addStyle('display', 'none');
+    nameText.addStyle('display', 'none');
+    okBtn.removeStyle('display');
+    var bound = nameInput.parentElement.getBoundingClientRect();
+    nameInput.removeStyle('display')
+    .addStyle('max-width', bound.width - 30 + 'px');
+    }
+    }
+    });
+    var okBtn = _({
+    tag: 'flexiconbutton',
+    style: { height: '25px', display: 'none' },
+    props: {
+    icon: 'span.mdi.mdi-check-all'
+    },
+    on: {
+    click: function () {
+    nameInput.addStyle('display', 'none');
+    okBtn.addStyle('display', 'none');
+    editBtn.removeStyle('display');
+    nameText.removeStyle('display');
+    }
+    }
+    });
+    var nameInput = _({
+    tag: 'input',
+    attr: { type: 'text' },
+    style: {
+    display: 'none',
+    width: '300px'
+    },
+    on: {
+    change: function () {
+    name = this.value;
+    nameText.clearChild().addChild(_({ text: name }));
+    }
+    },
+    props: {
+    value: name
+    }
+    });
+    var nameText = _({ tag: 'span', child: [{ text: name }] });
+
+    return {
+    id: id,
+    attr: {},
+    cells: [
+    {
+    style: {
+    width: '30px',
+    textAlign: 'center',
+    fontSize: '25px'
+    },
+    class: draggable ? 'as-drag-zone' : [],
+    child: draggable ? 'span.mdi.mdi-drag' : 'span'
+    },
+    {
+    style: {
+    textAlign: 'center',
+    width: '50px'
+    },
+    child: 'span.as-dt-row-index'
+    },
+    { child: { text: 'M' + absol.$.zeroPadding(Math.random() * 1e7 >> 0, 7) } },
+    {
+    child: [nameInput, nameText]
+    },
+    { child: { text: 'A' + Math.ceil(Math.random() * 7) } },
+    {
+    style: { width: '40px' },
+    child: [editBtn, okBtn]
+    }
+    ],
+    on: {
+    orderchange: function (event) {//we can listen event in each row
+    console.log('row listener', event);
+    }
+    }
+    };
+    }
+
+    var addBtn7 = render({
+    tag: 'flexiconbutton',
+    style: { 'margin': '10px' },
+    props: {
+    text: 'addRowBefore(data, row_you_want_to)',
+    icon: 'span.mdi.mdi-table-row-plus-before'
+    },
+    on: {
+    click: function () {
+    var rows = table1.requireRows();
+    var bf = null;
+    for (var j = rows.length - 1; j >= 0; --j) {
+    if (rows[j].draggable) {
+    break;
+    }
+    else {
+    bf = rows[j];
+    }
+    }
+    var i = table1.getRows().length;
+    var id = 'row_' + i;
+    var newRowData = makeRowData1(i, id, true);
+    var newRow = table1.addRowBefore(newRowData, bf);
+    newRow.viewInto();
+    newRow.elt.scrollIntoView();
+    //or
+    // table0.viewIntoRow(id);
+    // table0.viewIntoRow(newRowData);
+    // table0.viewIntoRow(newRow);
+    //
+    //
+    }
+    }
+    });
+
+    var searchInput1 = render('searchtextinput')
+    .addStyle('margin', '10px');
+    var table1 = render({
+    tag: 'dynamictable',
+    props: {
+    adapter: {
+    rowsPerPage: Infinity,//no paging
+    data: {
+    head: {
+    rows: [
+    {
+    cells: [
+    {},
+    { child: absol._({ text: "STT" }) },
+    { child: absol._({ text: "MSSV" }) },
+    { child: { text: 'Tên' } },
+    {
+    child: { text: 'Lớp' },
+    on: {
+    someEvent: function (event) {
+
+    }
+    }
+    },
+    {}
+    ]
+    }
+    ]
+    },
+    body: {
+    rows: Array(10).fill(0).map(function (u, i) {
+    return makeRowData1(i + 1, 'row_' + i, i >= 5 && i <= 45);
+    })
+
+    }
+    }
+    }
+    },
+    on: {
+    orderchange: function (event) {
+    console.log('table listener', event);
+    }
+    }
+    });
+
+</noscript>
+
+</html>
