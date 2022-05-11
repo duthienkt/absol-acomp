@@ -1184,7 +1184,7 @@ ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calenda
     };
 
     var clickHandler = function () {
-
+        if (element.hasClass('as-read-only')) return;
         if (ChromeCalendar._session == res.currentSession) return;
 
         res.currentSession = ChromeCalendar.show(res.element, res.calendarProps, res.anchor, res.calendarPickListener, res.darkTheme);

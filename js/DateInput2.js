@@ -14,8 +14,8 @@ import DateInput from "./DateInput";
 import AElement from "absol/src/HTML5/AElement";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import DateTimeInput from "./DateTimeInput";
-import {zeroPadding} from "./utils";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { zeroPadding } from "./utils";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
@@ -83,7 +83,7 @@ DateInput2.render = function () {
             class: 'as-date-input-clear-btn',
             child: 'span.mdi.mdi-close-circle'
         }, {
-            tag:'button',
+            tag: 'button',
             class: 'as-date-input-icon-ctn',
             child: 'span.mdi.mdi-calendar'
         }]
@@ -109,13 +109,13 @@ DateInput2.prototype._verifyFormat = function (text) {
 DateInput2.prototype._notifyIfChange = function (event) {
     if (!this._lastValue !== !this._value || (this._lastValue && compareDate(this._lastValue, this._value)) !== 0) {
         this._lastValue = this._value;
-        this.emit('change', {type: 'change', target: this, value: this._value, originEvent: event}, this);
+        this.emit('change', { type: 'change', target: this, value: this._value, originEvent: event }, this);
     }
 };
 
 DateInput2.prototype.notifyChange = function () {
     this._lastValue = this._value;
-    this.emit('change', {type: 'change', target: this, value: this._value}, this);
+    this.emit('change', { type: 'change', target: this, value: this._value }, this);
 };
 
 DateInput2.prototype.focus = function () {
@@ -139,7 +139,8 @@ DateInput2.prototype._applyValue = function (value) {
     this._value = value;
     if (!value) {
         this.$input.value = this.format;
-    } else {
+    }
+    else {
         this.$input.value = formatDateTime(this._value, this._format);
     }
     this._updateNullClass();
@@ -149,7 +150,8 @@ DateInput2.prototype._updateNullClass = function () {
     var value = this._value;
     if (!value) {
         this.addClass('as-value-null');
-    } else {
+    }
+    else {
         this.removeClass('as-value-null');
     }
 };
@@ -173,7 +175,8 @@ DateInput2.prototype._correctingInput = function () {
         tkDict.y.value = Math.max(min.getFullYear(), Math.min(max.getFullYear(), tkDict.y.value));
         equalMin = tkDict.y.value === min.getFullYear();
         equalMax = tkDict.y.value === max.getFullYear();
-    } else {
+    }
+    else {
         equalMin = false;
         equalMax = false;
     }
@@ -189,7 +192,8 @@ DateInput2.prototype._correctingInput = function () {
             tkDict.M.value = Math.min(max.getMonth() + 1, tkDict.M.value);
             equalMax = max.getMonth() + 1;
         }
-    } else {
+    }
+    else {
         equalMin = false;
         equalMax = false;
     }
@@ -244,14 +248,17 @@ DateInput2.prototype._correctingCurrentToken = function () {
                 value = Math.max(rqMin, Math.min(rqMax, value));
                 token.replace(zeroPadding(value, token.ident.length), false);
             }
-        } else if (this.notNull) {
+        }
+        else if (this.notNull) {
             if (token.ident.startsWith('y')) {
                 value = new Date().getFullYear();
-            } else {
+            }
+            else {
                 value = rqMin;
             }
             token.replace(zeroPadding(value, token.ident.length), false);
-        } else if (token.text !== token.ident) {
+        }
+        else if (token.text !== token.ident) {
             token.replace(token.ident, false);
         }
     }
@@ -274,16 +281,19 @@ DateInput2.prototype._normalizeValue = function (date) {
             temp = parseDateTime(date, this._format);
         }
         date = temp;
-    } else if (typeof date === 'number') {
+    }
+    else if (typeof date === 'number') {
         date = new Date(date);
     }
     if (date.getTime && date.getHours) {
         if (isNaN(date.getTime())) {
             return null;
-        } else {
+        }
+        else {
             return beginOfDay(date);
         }
-    } else {
+    }
+    else {
         return null;
     }
 };
@@ -296,7 +306,8 @@ DateInput2.prototype._loadValueFromInput = function () {
     var date = new Date(y, m, d);
     if (isNaN(date.getTime())) {
         this._value = null;
-    } else {
+    }
+    else {
         this._value = date;
     }
     this._updateNullClass();
@@ -310,10 +321,12 @@ DateInput2.prototype._applyTokenDict = function (format, dict, debug) {
             var ident = tokenMap[g1];
             if (dict[ident] && !isNaN(dict[ident].value)) {
                 return zeroPadding(dict[ident].value, g1.length);
-            } else {
+            }
+            else {
                 return full;
             }
-        } else
+        }
+        else
             return full;
     });
     return res;
@@ -342,6 +355,12 @@ DateInput2.eventHandler = {};
 
 
 DateInput2.eventHandler.keydown = function (event) {
+    if (this.readOnly){
+        if (!event.ctrlKey || event.key !== 'c'){
+            event.preventDefault();
+        }
+        return;
+    }
     var token = this._tokenAt(this.$text.selectionStart);
     var endToken = this._tokenAt(this.$text.selectionEnd);
     if (!token) {
@@ -375,7 +394,8 @@ DateInput2.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.d = event.key === 'ArrowUp' ? 1 : 31;
-                        } else {
+                        }
+                        else {
                             this._editingData.d = 1 + (value + (event.key === 'ArrowUp' ? 0 : 29)) % 31;
                         }
                         newTokenText = '' + this._editingData.d;
@@ -387,7 +407,8 @@ DateInput2.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.w = event.key === 'ArrowUp' ? 1 : 54;
-                        } else {
+                        }
+                        else {
                             this._editingData.w = 1 + (value + (event.key === 'ArrowUp' ? 0 : 52)) % 54;
                         }
                         newTokenText = zeroPadding(this._editingData.w, token.ident.length);
@@ -398,7 +419,8 @@ DateInput2.eventHandler.keydown = function (event) {
                         value = parseInt(token.text) - 1;
                         if (isNaN(value)) {
                             this._editingData.M = event.key === 'ArrowUp' ? 0 : 11;
-                        } else {
+                        }
+                        else {
                             this._editingData.M = (value + (event.key === 'ArrowUp' ? 1 : 11)) % 12;
                         }
                         newTokenText = '' + (this._editingData.M + 1);
@@ -409,7 +431,8 @@ DateInput2.eventHandler.keydown = function (event) {
                         value = parseInt(token.text);
                         if (isNaN(value)) {
                             this._editingData.y = new Date().getFullYear();
-                        } else {
+                        }
+                        else {
                             this._editingData.y = Math.max(1890, Math.min(2089, value + (event.key === 'ArrowUp' ? 1 : -1)));
                         }
 
@@ -420,16 +443,19 @@ DateInput2.eventHandler.keydown = function (event) {
 
                 }
         }
-    } else if (event.key === "Delete" || event.key === 'Backspace') {
+    }
+    else if (event.key === "Delete" || event.key === 'Backspace') {
         event.preventDefault();
         if (endToken.idx !== token.idx) {
             if (this.notNull) {
                 this.$text.value = formatDateTime(new Date(Math.min(this.max.getTime(), Math.max(this.min.getTime(), new Date().getTime()))), this._format);
-            } else {
+            }
+            else {
                 this.$text.value = this._format;
             }
             this.$text.select();
-        } else {
+        }
+        else {
             if (this.notNull) {
                 switch (token.ident) {
                     case 'y':
@@ -449,17 +475,20 @@ DateInput2.eventHandler.keydown = function (event) {
                     default:
                         token.replace(token.ident, true);
                 }
-            } else {
+            }
+            else {
                 token.replace(token.ident, true);
             }
             if (event.key === "Delete") this._editNextToken();
             else this._editPrevToken();
         }
-    } else if (event.key === "Enter" || event.key === 'Tab') {
+    }
+    else if (event.key === "Enter" || event.key === 'Tab') {
         this._correctingInput();
         this._loadValueFromInput();
         this._notifyIfChange(event);
-    } else if (event.ctrlKey) {
+    }
+    else if (event.ctrlKey) {
         switch (event.key) {
             case 'a':
             case 'A':
@@ -478,7 +507,8 @@ DateInput2.eventHandler.keydown = function (event) {
             default:
                 event.preventDefault();
         }
-    } else if (event.key.match(/^[0-9]$/g)) {
+    }
+    else if (event.key.match(/^[0-9]$/g)) {
         event.preventDefault();
         var dVal = parseInt(event.key);
         if (this._editingData.state === STATE_NEW) {
@@ -517,7 +547,8 @@ DateInput2.eventHandler.keydown = function (event) {
                     this._editingData.state_num = 1;
                     break;
             }
-        } else {
+        }
+        else {
             switch (token.ident) {
                 case 'dd':
                 case 'd':
@@ -551,13 +582,15 @@ DateInput2.eventHandler.keydown = function (event) {
                         // dVal = Math.max(1890, Math.min(2089, dVal));
                         token.replace(zeroPadding(dVal, token.ident.length), true);
                         this._editNextToken();
-                    } else {
+                    }
+                    else {
                         token.replace(zeroPadding(dVal, token.ident.length), true);
                     }
                     break;
             }
         }
-    } else {
+    }
+    else {
         event.preventDefault();
     }
 };
@@ -575,6 +608,7 @@ DateInput2.eventHandler.calendarSelect = function (value) {
 };
 
 DateInput2.eventHandler.clickCalendarBtn = function () {
+    if (this.readOnly) return;
     this._attachCalendar();
 };
 
@@ -639,6 +673,23 @@ DateInput2.property.disabled = {
     }
 };
 
+DateInput2.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+            this.$input.readOnly = true;
+        }
+        else {
+            this.removeClass('as-read-only');
+            this.$input.readOnly = false;
+
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
 /***
  * @memberOf DateInput2
  * @name calendarLevel
@@ -678,7 +729,8 @@ DateInput2.property.notNull = {
         if (value) {
             this.addClass('as-must-not-null');
             if (!this.value) this.value = new Date();
-        } else {
+        }
+        else {
             this.removeClass('as-must-not-null');
         }
     },

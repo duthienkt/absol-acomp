@@ -1,9 +1,9 @@
-import ACore, {$, _} from "../ACore";
+import ACore, { $, _ } from "../ACore";
 import DateInYearPicker from "./DateInYearPicker";
 import Follower from "./Follower";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
-import {isRealNumber, zeroPadding} from "./utils";
-import {compareDate, DATE_TIME_TOKEN_RGX, nextMonth} from "absol/src/Time/datetime";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { isRealNumber, zeroPadding } from "./utils";
+import { compareDate, DATE_TIME_TOKEN_RGX, nextMonth } from "absol/src/Time/datetime";
 
 /***
  * @extends AElement
@@ -64,7 +64,7 @@ DateInYearInput.prototype._preparePicker = function () {
     });
     this.share.$follower = _({
         tag: Follower.tag,
-        class:'as-date-in-year-follower',
+        class: 'as-date-in-year-follower',
         child: this.share.$picker
     });
 };
@@ -73,7 +73,7 @@ DateInYearInput.prototype.clear = function (userAction, event) {
     var pValue = this.value;
     this.value = null;
     if (pValue) {
-        this.emit('change', {type: 'change', action: 'clear', target: this, originalEvent: event}, this)
+        this.emit('change', { type: 'change', action: 'clear', target: this, originalEvent: event }, this)
     }
 };
 
@@ -109,7 +109,7 @@ DateInYearInput.prototype._releasePicker = function () {
     }
     if (changed) {
         this._value = value;
-        this.emit('change', {type: 'change', value: nValue, target: this}, this);
+        this.emit('change', { type: 'change', value: nValue, target: this }, this);
     }
 };
 
@@ -148,12 +148,14 @@ DateInYearInput.prototype._updateValueText = function () {
                     return full;
             }
         });
-    } else {
+    }
+    else {
         this.$input.value = this._format;
     }
     if (this.$input.value === this._format) {
         this.addClass('as-empty');
-    } else {
+    }
+    else {
         this.removeClass('as-empty');
     }
 };
@@ -175,7 +177,8 @@ DateInYearInput.property.notNull = {
     set: function (value) {
         if (value) {
             this.addClass('as-must-not-null');
-        } else {
+        }
+        else {
             this.removeClass('as-must-not-null');
         }
     },
@@ -189,13 +192,31 @@ DateInYearInput.property.disabled = {
         if (value) {
             this.addClass('as-disabled');
             this.$input.disabled = true;
-        } else {
+        }
+        else {
             this.removeClass('as-disabled');
             this.$input.disabled = false;
         }
     },
     get: function () {
         return this.containsClass('as-disabled');
+    }
+};
+
+
+DateInYearInput.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+            this.$input.readOnly = true;
+        }
+        else {
+            this.removeClass('as-read-only');
+            this.$input.readOnly = false;
+        }
+    },
+    get: function () {
+        return this.containsClass('as-read-only');
     }
 };
 
@@ -210,7 +231,7 @@ DateInYearInput.eventHandler = {};
  * @param event
  */
 DateInYearInput.eventHandler.click = function (event) {
-    if (hitElement(this.$clearBtn, event)) return;
+    if (this.readOnly || hitElement(this.$clearBtn, event)) return;
     this._attachPicker();
 };
 

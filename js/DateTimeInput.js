@@ -7,6 +7,7 @@ import ChromeTimePicker from "./ChromeTimePicker";
 import ChromeCalendar from "./ChromeCalendar";
 import Follower from "./Follower";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
 
 
 var STATE_NEW = 1;
@@ -549,14 +550,30 @@ DateTimeInput.property.max = {
 };
 
 
+DateTimeInput.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass(('as-read-only'));
+        }
+        else {
+            this.removeClass(('as-read-only'));
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+}
+
 DateTimeInput.eventHandler = {};
 
 DateTimeInput.eventHandler.mouseUpInput = function () {
-    this.domSignal.emit('request_auto_select');
+    if (!this.readOnly) {
+        this.domSignal.emit('request_auto_select');
+    }
 };
 
 DateTimeInput.eventHandler.mouseDownInput = function () {
-    if (document.activeElement === this.$text) {
+    if (!this.readOnly && document.activeElement === this.$text) {
         this._correctingCurrentToken();
     }
 }
@@ -570,6 +587,14 @@ DateTimeInput.eventHandler.dblclickInput = function (event) {
  * @param {KeyboardEvent} event
  */
 DateTimeInput.eventHandler.keydown = function (event) {
+    var kbId = keyboardEventToKeyBindingIdent(event);
+    if (this.readOnly) {
+        if (!kbId.match(/^arrow/)
+            && !kbId.match(/^ctrl-[ca]/)) {
+            event.preventDefault();
+        }
+        return;
+    }
     var token = this._tokenAt(this.$text.selectionStart);
     var endToken = this._tokenAt(this.$text.selectionEnd);
     if (!token) {

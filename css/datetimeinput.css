@@ -136,6 +136,27 @@
     visibility: visible;
 }
 
-.as-date-time-input.as-must-not-null .as-time-input-clear-btn {
+.as-date-time-input.as-must-not-null .as-time-input-clear-btn,
+.as-date-time-input.as-read-only .as-time-input-clear-btn {
     display: none;
+}
+
+
+.as-date-time-input.as-read-only .as-date-time-input-icon-btn {
+    pointer-events: none;
+}
+
+
+.as-date-time-input.as-border-none {
+    border: none;
+}
+
+
+.as-date-time-input.as-border-none .as-date-time-input-icon-btn {
+    display: none;
+}
+
+.as-date-time-input.as-border-none input {
+    width: 100%;
+    padding-left: 0;
 }
