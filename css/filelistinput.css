@@ -10,6 +10,20 @@
     min-height: 42px;
 }
 
+.as-file-list-input.as-border-none {
+    border: none;
+    padding: 0;
+}
+
+.as-file-list-input.as-disabled {
+    background-color: var(--as-disabled-background-color);
+}
+
+.as-file-list-input.as-disabled > * {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
 .as-file-list-input-upload-overlay {
     position: absolute;
     left: 0;

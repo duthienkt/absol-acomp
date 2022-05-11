@@ -1,11 +1,11 @@
-import ACore, {_, $} from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import FileListItem from "./FileListItem";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import ContextCaptor from "./ContextMenu";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
-import {saveAs} from "absol/src/Network/FileSaver";
+import { saveAs } from "absol/src/Network/FileSaver";
 import DropZone from "./DropZone";
-import {fileAccept} from "./utils";
+import { fileAccept } from "./utils";
 import FileInputBox from "./FileInputBox";
 
 
@@ -43,6 +43,11 @@ function FileListInput() {
      */
     /***
      * @name readOnly
+     * @memberOf FileListInput#
+     * @type {boolean}
+     */
+    /***
+     * @name disabled
      * @memberOf FileListInput#
      * @type {boolean}
      */
@@ -106,16 +111,19 @@ FileListInput.prototype.updateSize = function () {
     var requireWidth = this.getComputedStyleValue('--item-require-width') || '300px';
     if (requireWidth.match(/%$/)) {
         this.addStyle('--item-width', requireWidth);
-    } else if (requireWidth.match(/px$/)) {
+    }
+    else if (requireWidth.match(/px$/)) {
         bound = this.getBoundingClientRect();
         px = parseFloat(requireWidth.replace('px', ''));
         if (!isNaN(px) && px > 0) {
             n = Math.max(1, Math.floor((bound.width - 10 - 2) / px));
             this.addStyle('--item-width', Math.floor(100 / n) + '%');
-        } else {
+        }
+        else {
             this.removeStyle('--item-width');
         }
-    } else {
+    }
+    else {
         this.removeStyle('--item-width');
     }
 };
@@ -131,7 +139,8 @@ FileListInput.prototype._makeFileItem = function (file) {
     fileElt.on('mousedown', this.eventHandler.mouseDownItem.bind(this, fileElt));
     if (file instanceof File || file instanceof Blob || typeof file === 'string') {
         fileElt.value = file;
-    } else if (typeof file === 'object') {
+    }
+    else if (typeof file === 'object') {
         if (file.value || file.url) fileElt.value = file.value || file.url;
         if (file.fileName || file.name) fileElt.fileName = file.fileName || file.name;
     }
@@ -149,7 +158,8 @@ FileListInput.prototype.add = function (file) {
 FileListInput.prototype._updateCountClass = function () {
     if (this._files.length > 0) {
         this.removeClass('as-empty');
-    } else {
+    }
+    else {
         this.addClass('as-empty');
     }
 };
@@ -172,9 +182,11 @@ FileListInput.prototype.downloadFileItemElt = function (fileElt) {
     var file;
     if (fileData instanceof File || fileData instanceof Blob) {
         file = fileData;
-    } else if (typeof fileData === 'object') {
+    }
+    else if (typeof fileData === 'object') {
         if (fileData.url) file = fileData.url;
-    } else if (typeof fileData === "string") {
+    }
+    else if (typeof fileData === "string") {
         file = fileData;
     }
     if (file) {
@@ -237,7 +249,8 @@ FileListInput.property.readOnly = {
         value = !!value;
         if (value) {
             this.addClass('as-read-only');
-        } else {
+        }
+        else {
             this.removeClass('as-read-only');
         }
         this.$fileItems.forEach(function (fileElt) {
@@ -254,7 +267,8 @@ FileListInput.property.droppable = {
         value = !!value;
         if (value) {
             this.addClass('as-droppable');
-        } else {
+        }
+        else {
             this.removeClass('as-droppable');
         }
         this.$fileItems.forEach(function (fileElt) {
@@ -286,6 +300,20 @@ FileListInput.property.accept = {
     }
 };
 
+FileListInput.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-disabled');
+    }
+};
+
 ACore.install(FileListInput);
 
 /***
@@ -302,7 +330,7 @@ FileListInput.eventHandler.clickAdd = function (event) {
     for (var i = 0; i < files.length; ++i) {
         this.add(files[i]);
     }
-    this.emit('change', {files: files, type: 'change', target: this, originalEvent: event, action: 'add'}, this);
+    this.emit('change', { files: files, type: 'change', target: this, originalEvent: event, action: 'add' }, this);
 };
 
 /***
@@ -316,7 +344,7 @@ FileListInput.eventHandler.mouseDownItem = function (itemElt, event) {
 
 
 FileListInput.eventHandler.input_fileDrop = function (event) {
-    if (this.readOnly || !this.droppable) return;
+    if (this.readOnly || this.disabled) return;
     var self = this;
     var files = Array.prototype.slice.call(event.files);
     if (files.length === 0) return;
@@ -330,7 +358,7 @@ FileListInput.eventHandler.input_fileDrop = function (event) {
         files.forEach(function (file) {
             self.add(file);
         });
-        this.emit('change', {type: 'change', files: files, target: this, action: 'drop'}, this);
+        this.emit('change', { type: 'change', files: files, target: this, action: 'drop' }, this);
     }
 };
 
@@ -340,6 +368,7 @@ FileListInput.eventHandler.input_fileDrop = function (event) {
  * @param event
  */
 FileListInput.eventHandler.itemContext = function (event) {
+    if (this.disabled) return;
     var self = this;
     var itemElt = this._findFileItemElt(event.target);
     var menuItems = [];
@@ -375,12 +404,17 @@ FileListInput.eventHandler.itemContext = function (event) {
                     break;
                 case 'delete':
                     self.deleteFileItemElt(itemElt);
-                    self.emit('change', {type: 'change', item: itemElt.fileData, target: this, action: 'delete'}, this);
+                    self.emit('change', {
+                        type: 'change',
+                        item: itemElt.fileData,
+                        target: this,
+                        action: 'delete'
+                    }, this);
                     break;
                 case 'delete_all':
                     files = self.files;
                     self.files = [];
-                    self.emit('change', {type: 'change', items: files, target: this, action: 'delete_all'}, this);
+                    self.emit('change', { type: 'change', items: files, target: this, action: 'delete_all' }, this);
                     break;
             }
         });
