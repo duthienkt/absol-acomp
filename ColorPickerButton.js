@@ -168,11 +168,13 @@ ColorPickerButton.property.value = {
             this.$innerValue.addStyle("background-color", value);
         }
         else {
+            this.$innerValue.addStyle("background-color", 'transparent');
+
         }
     },
     get: function () {
         if (!this._value) return this._value;
-        if (this.mode.match(/HEX4|HEX6|HEX8/)) return this._value.toString(this.mode);
+        if (this.mode.match(/HEX4|HEX6|HEX8|RGB|RGBA/)) return this._value.toString(this.mode);
         return this._value;
     }
 };
