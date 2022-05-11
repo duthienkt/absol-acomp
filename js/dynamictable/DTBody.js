@@ -182,7 +182,7 @@ SearchingMode.prototype.end = function () {
 };
 
 SearchingMode.prototype.selectPage = function (pageIdx) {
-    if (this.renderingHash === -1){
+    if (this.renderingHash === -1) {
         this.body.modes.normal.selectPage(pageIdx);
         return;
     }
@@ -206,7 +206,7 @@ SearchingMode.prototype.render = function () {
     while (cChildren.length > 0 && nChildren.length > 0) {
         cC = cChildren[0];
         nC = nChildren[0];
-        if (cC === nC){
+        if (cC === nC) {
             cChildren.shift();
             nChildren.shift();
         }
@@ -214,19 +214,19 @@ SearchingMode.prototype.render = function () {
             break;
         }
     }
-    cChildren.forEach(function (elt){
+    cChildren.forEach(function (elt) {
         elt.remove();
     });
     elt.addChild(nChildren);
 };
-SearchingMode.prototype.onRowSplice = function (idx){
+SearchingMode.prototype.onRowSplice = function (idx) {
     this.render();
 }
 
-SearchingMode.prototype.onRowRemoved = function (idx,n) {
+SearchingMode.prototype.onRowRemoved = function (idx, n) {
     n = n || 1;
-    this.resultItems =  this.resultItems.reduce(function (ac, cr) {
-        if (cr > idx) {
+    this.resultItems = this.resultItems.reduce(function (ac, cr) {
+        if (cr >= idx + n) {
             ac.push(cr - n);
         }
         else if (cr < idx) {
@@ -237,9 +237,9 @@ SearchingMode.prototype.onRowRemoved = function (idx,n) {
     this._updatePageSelector();
 };
 
-SearchingMode.prototype.onRowAdded = function (idx, n){
+SearchingMode.prototype.onRowAdded = function (idx, n) {
     n = n || 1;
-    this.resultItems =  this.resultItems.reduce(function (ac, cr) {
+    this.resultItems = this.resultItems.reduce(function (ac, cr) {
         if (cr >= idx) {
             ac.push(cr + n);
         }
@@ -546,6 +546,15 @@ DTBody.prototype.removeRow = function (row) {
         this.curentMode.onRowRemoved(idx);
     this.onRowSplice(idx);
 };
+
+DTBody.prototype.clearRows = function () {
+    var n = this.rows.length;
+    this.rows.splice(0);
+    this.data.rows.splice(0);
+    if (this.curentMode.onRowRemoved)
+        this.curentMode.onRowRemoved(0, n);
+}
+
 
 DTBody.prototype.rowAt = function (idx) {
     if (this.rows[idx]) return this.rows[idx];

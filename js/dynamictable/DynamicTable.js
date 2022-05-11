@@ -205,7 +205,7 @@ DynamicTable.prototype.query = function (query) {
 }
 
 
-DynamicTable.prototype.notifyRowsChange = noop();
+DynamicTable.prototype.notifyRowsChange = noop;
 
 DynamicTable.property = {};
 
