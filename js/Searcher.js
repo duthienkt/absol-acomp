@@ -2,6 +2,7 @@ import '../css/searcher.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
+import { SpinnerIco } from "./Icons";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -43,9 +44,9 @@ function SearchTextInput() {
     this.$button = $('button', this);
     this.$input = $('input', this);
 
-    ['keyup', 'keydown', 'focus', 'blur'].forEach(function (evName){
+    ['keyup', 'keydown', 'focus', 'blur'].forEach(function (evName) {
         thisSTI.defineEvent(evName);
-        thisSTI.$input.on(evName, function (event){
+        thisSTI.$input.on(evName, function (event) {
             thisSTI.emit(evName, event, thisSTI);
         });
     });
@@ -83,7 +84,7 @@ SearchTextInput.render = function () {
                     class: 'absol-search-text-button-container',
                     child: {
                         tag: 'button',
-                        child: ['find-ico', 'times-circle-ico']
+                        child: ['find-ico', 'times-circle-ico', SpinnerIco.tag]
                     }
                 }
             ]
@@ -118,6 +119,22 @@ SearchTextInput.property = {
         }
     }
 };
+
+SearchTextInput.property.waiting = {
+    set: function (value) {
+        value = value || false;
+        this._waiting = value;
+        if (value) {
+            this.addClass('as-waiting');
+        }
+        else {
+            this.removeClass('as-waiting');
+        }
+    },
+    get: function () {
+        return this._waiting || false;
+    }
+}
 
 SearchTextInput.prototype.focus = function () {
     this.$input.focus();

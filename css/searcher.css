@@ -37,7 +37,7 @@
     font-size: 1em;
 }
 
-.absol-search-text-button-container button>svg {
+.absol-search-text-button-container button > svg {
     height: 1.14285714286em;
     width: 1.14285714286em;
     fill: rgb(132, 132, 132);
@@ -54,14 +54,24 @@
     padding-left: 0.6em;
 }
 
-.absol-search-text-input:not(.searching) svg.times{
+.absol-search-text-input:not(.searching) svg.times {
     display: none;
 }
 
-.absol-search-text-input.searching svg.find{
+.absol-search-text-input.searching svg.find {
     display: none;
 }
 
-.absol-search-text-input-container input::-webkit-search-cancel-button{
+.absol-search-text-input .as-spinner-ico{
+    width: 2em;
+    height: 2em;
+}
+
+.absol-search-text-input:not(.as-waiting) svg.as-spinner-ico,
+.absol-search-text-input.as-waiting svg:not(.as-spinner-ico) {
+    display: none;
+}
+
+.absol-search-text-input-container input::-webkit-search-cancel-button {
     display: none;
 }
