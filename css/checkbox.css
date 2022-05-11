@@ -12,12 +12,12 @@
 .absol-checkbox {
     display: inline-block;
     vertical-align: middle;
-    user-select: none;
     line-height: 16px;
 }
 
 .absol-checkbox:not(.as-read-only):not(.as-disabled) {
     cursor: pointer;
+    user-select: none;
 }
 
 .absol-checkbox.right > .absol-checkbox-label.as-right {
@@ -83,6 +83,6 @@
     pointer-events: none;
 }
 
-.absol-checkbox.as-read-only.as-border-none .bound{
-display: none;
+.absol-checkbox.as-read-only.as-border-none .bound {
+    display: none;
 }
