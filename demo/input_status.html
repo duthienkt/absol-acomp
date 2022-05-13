@@ -101,7 +101,32 @@
                 }
             },
             {
+                tag:'TextArea2'.toLowerCase(),
+                props:{
+                    value: "abc 123"
+                }
+            },
+            {
+                tag: 'flexiconinput',
+                style: {
+                    'font-family': "'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif",
+                    margin: '0.2em',
+                    width: '3.9em'
+                },
+                props: {
+                    value: '20',
+                    unit: '℃'// only 1 character
+                }
+            },
+            {
                 tag: 'checkbox',
+                props: {
+                    checked: true,
+                    text: 'selected'
+                }
+            },
+            {
+                tag: 'switch',
                 props: {
                     checked: true,
                     text: 'selected'
@@ -140,7 +165,23 @@
                 }
             },
             {
+                tag: 'time24input',
+                props: {
+                    // format:'HH:mm',
+                    value: 0
+                }
+            },
+            {
                 tag: 'dualselectmenu'
+            },
+            {
+                tag: 'selectmenu',
+                props: {
+                    items: Array(1600).fill(null).map(function (u, i) {
+                        return { text: `[${i}] ${absol.string.randomPhrase(15)}`, value: i };
+                    }),
+                    values: [1, 2, 3, 4, 56, 7, 89]
+                }
             },
             {
                 tag: 'filelistinput',
@@ -169,11 +210,34 @@
                     }),
                     values: [1, 2, 3, 4, 56, 7, 89]
                 }
+            }, {
+                tag: 'multiselectmenu',
+                props: {
+                    items: Array(1600).fill(null).map(function (u, i) {
+                        return { text: `[${i}] ${absol.string.randomPhrase(15)}`, value: i };
+                    }),
+                    values: [1, 2, 3, 4, 56, 7, 89]
+                }
             },
             {
                 tag: 'multichecktreeleafmenu',
                 props: {
                     enableSearch: true,
+                }
+            },
+            {
+                tag: 'multichecktreemenu'
+            },
+            {
+                tag:'trackbar',
+                props:{
+                    value: 0.3
+                }
+            },
+            {
+                tag:'trackbarinput',
+                props:{
+                    value: 0.3
                 }
             }
         ];
@@ -215,6 +279,20 @@
                 }
             }
         }).addTo(document.body);
+
+
+        fetch('./demo_tree_list_with_icon.js').then(function (res) {
+            return res.text();
+        }).then(function (text) {
+            var module = { exports: {} };
+            var factor = new Function('module', 'exports', text + '\nreturn module.exports;');
+            return factor(module, module.exports);
+        }).then(function (result) {
+            $$('multichecktreemenu').forEach(function (elt) {
+                elt.items = JSON.parse(JSON.stringify(result));
+                elt.values = [-17, 15];
+            });
+        });
     })();
 </script>
 </body>
