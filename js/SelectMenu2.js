@@ -87,7 +87,7 @@ SelectMenu.prototype.init = function (props) {
     Object.keys(props).forEach(function (key) {
         if (props[key] === undefined) delete props[key];
     });
-    if ('selectedvalue' in props){
+    if ('selectedvalue' in props) {
         props.value = props.selectedvalue;
     }
     if (!('value' in props)) {
@@ -251,15 +251,15 @@ SelectMenu.property.strictValue = {
 };
 
 SelectMenu.property.readOnly = {
-    set: function (value){
-        if (value){
+    set: function (value) {
+        if (value) {
             this.addClass('as-read-only');
         }
         else {
             this.removeClass('as-read-only');
         }
     },
-    get: function (){
+    get: function () {
         return this.hasClass('as-read-only');
     }
 }
@@ -272,6 +272,7 @@ SelectMenu.eventHandler = {};
 
 
 SelectMenu.eventHandler.click = function (event) {
+    if (this.readOnly) return;
     if (EventEmitter.isMouseRight(event)) return;
     if (EventEmitter.hitElement(this.$selectlistBox, event)) return;
     this.isFocus = !this.isFocus;

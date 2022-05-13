@@ -1,7 +1,7 @@
 import '../css/trackbar.css';
 import ACore from "../ACore";
 import Hanger from "./Hanger";
-import {map} from "absol/src/Math/int";
+import { map } from "absol/src/Math/int";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -41,7 +41,7 @@ TrackBar.prototype._updateValue = function () {
 TrackBar.eventHandler = {};
 
 TrackBar.eventHandler.predrag = function (event) {
-    if (event.target === this) {
+    if (event.target === this || this.readOnly) {
         event.cancel();
     }
     else {
@@ -122,6 +122,20 @@ TrackBar.property.disabled = {
         else {
             this.removeClass('as-disabled');
         }
+    }
+};
+
+TrackBar.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
     }
 };
 

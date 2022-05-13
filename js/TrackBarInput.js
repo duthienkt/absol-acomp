@@ -139,6 +139,23 @@ TrackBarInput.property.disabled = {
     }
 };
 
+TrackBarInput.property.readOnly = {
+    set: function (value){
+        value = !!value;
+        if (value){
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+        this.$input.readOnly = value;
+        this.$trackbar.readOnly = value;
+    },
+    get: function (){
+        return this.hasClass('as-read-only');
+    }
+}
+
 TrackBarInput.eventHandler = {};
 
 

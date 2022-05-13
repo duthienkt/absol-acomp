@@ -544,6 +544,9 @@ MultiCheckTreeMenu.property.leafOnly = {
 
 
 MultiCheckTreeMenu.property.disabled = MultiSelectMenu.property.disabled;
+MultiCheckTreeMenu.property.readOnly = MultiSelectMenu.property.readOnly;
+
+
 
 
 MultiCheckTreeMenu.eventHandler = {};
@@ -574,7 +577,7 @@ MultiCheckTreeMenu.eventHandler.boxClose = function (event) {
  * @param event
  */
 MultiCheckTreeMenu.eventHandler.click = function (event) {
-    if (event.target === this || event.target === this.$itemCtn) {
+    if (!this.readOnly && (event.target === this || event.target === this.$itemCtn)) {
         this.isFocus = true;
     }
 };

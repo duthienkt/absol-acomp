@@ -38,3 +38,7 @@
 .absol-trackbar-input input {
     color: inherit;
 }
+
+.absol-trackbar-input.as-border-none .as-flexicon-input {
+    border: none;
+}

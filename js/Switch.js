@@ -1,6 +1,7 @@
 import '../css/switch.css';
 import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
+import CheckBoxInput from "./CheckBoxInput";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -14,6 +15,9 @@ function Switch() {
     });
     OOP.drillProperty(this, this.$input, 'checked');
     OOP.drillProperty(this, this.$input, 'isOn', 'checked');
+    this.on('click', function (event){
+        if (this.readOnly) event.preventDefault();
+    }, true);
 }
 
 
@@ -83,7 +87,8 @@ Switch.property = {
         get: function () {
             return this.$input.disabled;
         }
-    }
+    },
+    readOnly: CheckBoxInput.property.readOnly
 };
 
 ACore.install('switch', Switch);

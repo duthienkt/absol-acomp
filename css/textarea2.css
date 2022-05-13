@@ -3,4 +3,10 @@
     resize: none;
     box-sizing: border-box;
     height: 1.425em;
-} 
+    font: inherit;
+}
+
+.absol-textarea2.as-border-none{
+    border: none;
+    outline: none;
+}

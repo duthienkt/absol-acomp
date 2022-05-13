@@ -22,6 +22,18 @@
     display: none;
 }
 
+.ac-time-input.as-read-only.as-border-none {
+    border: none;
+}
+
+.ac-time-input.as-read-only.as-border-none .as-time-input-icon-btn {
+    display: none;
+}
+
+.ac-time-input.as-read-only.as-border-none input {
+    padding-left: 0;
+}
+
 .ac-time-input input {
     font: inherit;
     outline: none;
@@ -52,6 +64,10 @@
     border-radius: 0;
     font-size: inherit;
     color: inherit;
+}
+
+.ac-time-input.as-read-only .as-time-input-icon-btn {
+    pointer-events: none;
 }
 
 

@@ -12,9 +12,12 @@
     height: 0;
 }
 
+.absol-switch:not(.as-read-only) .absol-switch-slider{
+    cursor: pointer;
+}
+
 .absol-switch-slider {
     position: absolute;
-    cursor: pointer;
     top: 0;
     left: 0;
     right: 0;

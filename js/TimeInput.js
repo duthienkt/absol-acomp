@@ -1,11 +1,17 @@
 import '../css/timeinput.css';
 import ACore from "../ACore";
-import {MILLIS_PER_HOUR, MILLIS_PER_MINUTE, MILLIS_PER_DAY, beginOfDay, formatDateTime} from "absol/src/Time/datetime";
+import {
+    MILLIS_PER_HOUR,
+    MILLIS_PER_MINUTE,
+    MILLIS_PER_DAY,
+    beginOfDay,
+    formatDateTime
+} from "absol/src/Time/datetime";
 import ChromeTimePicker from "./ChromeTimePicker";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import DateTimeInput from "./DateTimeInput";
-import {zeroPadding} from "./utils";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { zeroPadding } from "./utils";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
@@ -357,6 +363,18 @@ TimeInput.property.notNull = {
         return this.containsClass('as-must-not-null');
     }
 };
+
+TimeInput.property.readOnly = {
+    set: function (value) {
+        value = !!value;
+        if (value) this.addClass('as-read-only');
+        else this.removeClass('as-read-only');
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
 
 TimeInput.eventHandler = {};
 

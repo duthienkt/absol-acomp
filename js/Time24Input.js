@@ -3,6 +3,7 @@ import ChromeTime24Picker from "./ChromeTime24Picker";
 import {beginOfDay, formatDateTime, MILLIS_PER_DAY} from "absol/src/Time/datetime";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
 import {isRealNumber} from "./utils";
+import TimeInput from "./TimeInput";
 
 /**
  * @extends AElement
@@ -198,6 +199,7 @@ Time24Input.property.disabled = {
     }
 };
 
+Time24Input.property.readOnly  = TimeInput.property.readOnly;
 
 Time24Input.property.format = {
     set: function (value) {

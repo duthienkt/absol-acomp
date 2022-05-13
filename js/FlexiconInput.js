@@ -109,6 +109,22 @@ FlexiconInput.property.disabled = {
     }
 };
 
+FlexiconInput.property.readOnly = {
+    set: function (value) {
+        value = !!value;
+        this.$input.readOnly = value;
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
 ACore.install(FlexiconInput);
 
 export default FlexiconInput;

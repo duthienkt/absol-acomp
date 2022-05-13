@@ -13,10 +13,19 @@
     vertical-align: middle;
     height: 2em;
     font-size: 14px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     box-sizing: border-box;
     border-radius: 3px;
     text-align: left;
     white-space: nowrap;
+}
+
+.as-flexicon-input.as-border-none {
+    border: none;
+}
+
+.as-flexicon-input.as-disabled {
+    background-color: var(--as-disabled-background-color);
 }
 
 .as-flexicon-input::before {
@@ -33,7 +42,7 @@
 }
 
 
-.as-flexicon-input:not(.as-flexicon-input-has-icon) input{
+.as-flexicon-input:not(.as-flexicon-input-has-icon) input {
     padding-left: 0.3em;
 }
 
@@ -60,13 +69,13 @@
 
 .as-flexicon-input input {
     border: none;
-    font-size: 1em;
+    font-size: inherit;
+    font-family: inherit;
     outline: none;
     height: 100%;
     background-color: transparent;
     box-sizing: border-box;
     width: 100%;
-    font-family: inherit;
     padding-left: 0;
     padding-right: 0;
     display: inline-block;
@@ -79,7 +88,7 @@
     width: calc(100% - 1.5em);
 }
 
-.as-flexicon-input.as-flexicon-input-has-unit input{
+.as-flexicon-input.as-flexicon-input-has-unit input {
     text-align: right;
 }
 
