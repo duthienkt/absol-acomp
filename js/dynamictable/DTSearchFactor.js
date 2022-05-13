@@ -352,7 +352,6 @@ function DTSearchFactor(global) {
         function tick() {
             if (self.taskSession !== session) return;
             if (self.itemVersion !== itemVersion) {
-                console.log('cancel', itemVersion);
                 return;
             }
             if (its.length >= items.length) {
@@ -364,9 +363,9 @@ function DTSearchFactor(global) {
             var i = its.length;
             var n = items.length
             while (k-- && i < n) {
-                if (!items[i]){
-                    console.log(items, i);
-                }
+                // if (!items[i]){
+                //     console.log(items, i);
+                // }
                 if (!filter || matchFilter(items[i], filter)) {
                     its.push({
                         i: i,
@@ -412,7 +411,6 @@ function DTSearchFactor(global) {
     /******************************************************************************************************************/
     var data = {};
 
-    var now;
     global.transferTask = function (id, taskData) {
         slaves[id] = slaves[id] || new SearchingSlave(id);
         slaves[id] && slaves[id].receiveTask(taskData);
@@ -421,30 +419,6 @@ function DTSearchFactor(global) {
     global.transferSearchItems = function (id, n, start, end, items, version) {
         slaves[id] = slaves[id] || new SearchingSlave(id);
         slaves[id].onReceiveItems(n, start, end, items, version);
-
-        return;
-
-        if (start === 0) now = new Date().getTime();
-        if (!data[id]) {
-            data[id] = {
-                items: [],
-            };
-        }
-        var sessionItems = data[id].items;
-        if (sessionItems.length < n) {
-            // sessionItems
-            sessionItems.push(null);
-        }
-        if (sessionItems.length > n) {
-            sessionItems.splice(sessionItems.length - n);
-        }
-        for (var i = start; i < end; ++i) {
-            sessionItems[i] = prepareSearchForItem(items[i - start]);
-        }
-        if (end === n) {
-            console.log('finish', new Date().getTime() - now);
-        }
-        return start;
     };
 
     global.search = function (session, query) {
@@ -485,7 +459,6 @@ function DTSearchFactor(global) {
                     setTimeout(tick, 3);
                 }
                 else {
-                    console.log('calc score', new Date().getTime() - now);
                     setTimeout(sortScore, 3);
                 }
             }
@@ -502,7 +475,6 @@ function DTSearchFactor(global) {
             var result = likeSort(its).map(function (it) {
                 return it.i;
             });
-            console.log('resolve')
             resolve(result);
         }
 

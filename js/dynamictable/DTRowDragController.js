@@ -146,7 +146,6 @@ DTRowDragController.prototype.ev_dragEnd = function (event) {
             this.body.elt.addChildBefore(dragData.row.elt, dragData.range[dragData.beforeIdx].elt);
             if (dragData.beforeIdx <= dragData.rowIdx) {
                 toIdx = dragData.rangeDataOffset + dragData.beforeIdx;
-                console.log(toIdx, dragData.beforeIdx);
             }
             else {
                 toIdx = dragData.rangeDataOffset + dragData.beforeIdx - 1;

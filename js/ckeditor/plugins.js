@@ -153,7 +153,6 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
         ac.items.push.apply(ac.items, items);
         return ac;
     }, { name: 'nogroup', items: [] })];
-    console.log(config.toolbar);
     if (!config.height) {
         config.height = '500px';
     }
