@@ -10,52 +10,68 @@
     min-height: 1.4em; */
 }
 
-.absol-onscreen-window-content {
-    position: relative;
+
+.absol-onscreen-window > .as-window-box {
     width: 100%;
     height: 100%;
+}
+
+.as-window-box {
+    position: relative;
+
     background: white;
     -webkit-box-shadow: 2px 2px 17px -1px rgba(0, 0, 0, 0.54);
     -moz-box-shadow: 2px 2px 17px -1px rgba(0, 0, 0, 0.54);
     box-shadow: 2px 2px 17px -1px rgba(0, 0, 0, 0.54);
 }
 
-.absol-onscreen-window-head-bar {
-    height: 1.4em;
+.as-window-box-header {
+    display: flex;
+    min-height: 1.4em;
     position: relative;
     background-color: rgba(169, 169, 169, 0.15);
     padding: 0.2em;
     box-sizing: border-box;
+    align-items: center;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
-.absol-onscreen-window-head-bar-icon{
+.as-window-box-header-icon-ctn:empty{
+    display: none;
+}
+
+.as-window-box-header-title {
+    flex-grow: 1;
+    padding-left: 0.2em;
+}
+
+.as-window-box-header-button-ctn {
+}
+
+.as-window-box-header-icon{
     margin-right: 0.2em;
     font-size: inherit;
 }
 
-span.absol-onscreen-window-head-bar-icon {
+span.as-window-box-header-icon {
     line-height: 1.2em;
 }
 
-svg.absol-onscreen-window-head-bar-icon{
+svg.as-window-box-header-icon{
     width: 1.2em;
     height: 1.2em;
 }
 
-span.absol-onscreen-window-head-bar-title {
+span.as-window-box-header-title {
     line-height: 1.2em;
     font-size: 1em;
     color: rgb(33, 33, 34);
 }
 
-.absol-onscreen-window-head-bar-buttons {
-    position: absolute;
-    right: 0.1em;
-    top: 0.1em;
-    bottom: 0.1em;
-}
 
-.absol-onscreen-window-head-bar-buttons>button {
+.as-window-box-header-button-ctn>button {
     height: 100%;
     width: 1em;
     font-size: 1em;
@@ -66,19 +82,19 @@ span.absol-onscreen-window-head-bar-title {
     outline: none;
 }
 
-.absol-onscreen-window-head-bar-buttons>button:hover {
+.as-window-box-header-button-ctn>button:hover {
     color: rgb(103, 103, 103);
 }
 
-.absol-onscreen-window-head-bar-buttons>button:active {
+.as-window-box-header-button-ctn>button:active {
     color: rgb(33, 33, 34);
 }
 
-.absol-onscreen-window-head-bar-buttons>button:hover>.mdi-close {
+.as-window-box-header-button-ctn>button:hover>.mdi-close {
     color: rgb(255, 59, 59);
 }
 
-.absol-onscreen-window-head-bar-buttons>button>span {
+.as-window-box-header-button-ctn>button>span {
     vertical-align: middle;
 }
 
@@ -97,7 +113,7 @@ span.absol-onscreen-window-head-bar-title {
     right: 1px;
     top: 1px;
     bottom: 1px;
-    z-index: 100006;
+    z-index: 1000000006;
 }
 
 .absol-onscreen-window-resizer {
