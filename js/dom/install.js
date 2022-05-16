@@ -137,6 +137,7 @@ import MKNavigator from "../MKNavigator";
 import ProcessLBar from "../ProcessLBar";
 import KVCommentItem from "../KVCommentItem";
 import DynamicTable from "../dynamictable/DynamicTable";
+import WindowBox from "../WindowBox";
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -291,6 +292,7 @@ export var publicCreators = [
     CKPlaceholder,
     CKInlineShortText,
     VerticalTimeline,
+    WindowBox,
 
     LocationView,
     LocationPicker,
