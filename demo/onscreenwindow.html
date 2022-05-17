@@ -34,35 +34,43 @@
         tag: 'windowbox',
         child: [
             {
-                tag:'iframe',
-                style:{
-                    width:'100%',
+                tag: 'iframe',
+                style: {
+                    width: '100%',
                     height: '500px',
                     border: 'none',
-                    boxSizing:'border-box'
+                    boxSizing: 'border-box'
                 },
-                props:{
-                    src:'./onscreenwindow.html'
+                props: {
+                    src: './onscreenwindow.html'
                 }
             }
         ],
-        props:{
+        props: {
             windowTitle: 'demo',
             windowIcon: 'span.mdi.mdi-paw',
-            windowActions:[
+            windowActions: [
                 {
                     class: 'as-window-box-header-button-minimize',
-                    icon: 'span.mdi.mdi-window-minimize'
+                    icon: 'span.mdi.mdi-window-minimize',
+                    name: 'minimize'
                 },
                 {
                     class: 'as-window-box-header-button-dock',
-                    icon: 'span.mdi.mdi-dock-window'
+                    icon: 'span.mdi.mdi-dock-window',
+                    name: 'maximize'
                 },
                 {
                     class: 'as-window-box-header-button-close',
-                    icon: 'span.mdi.mdi-close'
+                    icon: 'span.mdi.mdi-close',
+                    name: 'close'
                 }
             ]
+        },
+        on: {
+            action: function (event) {
+                console.log(event.actionData)
+            }
         }
     }).addTo(document.body);
 
