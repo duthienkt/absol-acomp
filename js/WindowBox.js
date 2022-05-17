@@ -43,6 +43,7 @@ WindowBox.tag = 'WindowBox'.toLowerCase();
 WindowBox.render = function () {
     return _({
         class: 'as-window-box',
+        extendEvent: ['action'],
         child: [
             {
                 class: 'as-window-box-header',
@@ -109,13 +110,19 @@ WindowBox.property.windowIcon = {
 
 WindowBox.property.windowActions = {
     set: function (actions) {
+        var self = this;
         this._windowActions = actions || [];
         this.$windowActionButtonCtn.clearChild();
         var buttons = this._windowActions.map(function (action) {
             return _({
                 tag: 'button',
                 class: action.class || [],
-                child: action.icon
+                child: action.icon,
+                on: {
+                    click: function (event) {
+                        self.emit('action', { type: 'action', target: self, actionData: action, originalEvent: event });
+                    }
+                }
             });
         });
         this.$windowActionButtonCtn.addChild(buttons);

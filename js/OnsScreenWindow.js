@@ -13,7 +13,7 @@ var $ = ACore.$;
  * @constructor
  */
 function OnScreenWindow() {
-    var res = this;
+    var self = this;
     this._lastSize = {
         width: 0,
         height: 0
@@ -27,6 +27,9 @@ function OnScreenWindow() {
     OOP.drillProperty(this, this.$windowBox, 'windowTitle');
     OOP.drillProperty(this, this.$windowBox, 'windowActions');
     OOP.drillProperty(this, this.$windowBox, 'windowIcon');
+    this.$windowBox.on('action', function (event){
+        self.emit('action', event, self);
+    });
 
     this.$header = _({ tag: Hanger.tag, elt: this.$windowBox.$header });
     this.$header.on('dragstart', this.eventHandler.dragStart.bind(this, this.$header, 'move'));
@@ -71,7 +74,7 @@ OnScreenWindow.tag = 'OnScreenWindow'.toLowerCase();
 
 OnScreenWindow.render = function () {
     return _({
-        extendEvent: ['sizechange', 'drag', 'relocation'],
+        extendEvent: ['sizechange', 'drag', 'relocation', 'action'],
         class: 'absol-onscreen-window',
         child: [
             {
