@@ -92,6 +92,13 @@ DynamicTable.prototype.addRowAfter = function (rowData, at) {
     return this.table.body.addRowAfter(rowData, at);
 };
 
+DynamicTable.prototype.replaceRow = function (rowData, rp) {
+    var row = this.rowOf(rp);
+    if (row) {
+        row.updateData(rowData);
+    }
+};
+
 
 DynamicTable.prototype.addRow = function (rowData, idx) {
     return this.table.body.addRow(rowData, idx);

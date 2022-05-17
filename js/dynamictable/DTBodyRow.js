@@ -38,6 +38,33 @@ DTBodyRow.prototype.viewInto = function () {
     return this.body.viewIntoRow(this);
 };
 
+DTBodyRow.prototype.updateData = function (data) {
+    var rowIdx = this.body.rowIndexOf(this.data);
+    this.body.data.rows[rowIdx] = data;
+    this.data = data;
+    if ('id' in data) {
+        this.id = data.id;
+    }
+    else {
+        this.id = randomIdent(8);
+    }
+    this.cells = this.data.cells.map(function (cellData) {
+        return new DTBodyCell(this, cellData);
+    }.bind(this));
+
+    if (this._elt) {
+        this._elt.attr('data-id', this.id + '');
+        this._elt.clearChild().addChild(this.cells.map(function (cell) {
+            return cell.elt;
+        }));
+        this.$idx = $('.as-dt-row-index', this._elt);
+        this.draggable = !!$('.as-drag-zone', this._elt);
+        if (this.$idx)
+            this.$idx.attr('data-idx', this._idx + 1 + '');
+    }
+};
+
+
 Object.defineProperty(DTBodyRow.prototype, 'elt', {
     get: function () {
         if (!this._elt) {
@@ -60,7 +87,7 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
 Object.defineProperty(DTBodyRow.prototype, 'innerText', {
     get: function () {
         if (this.data.innerText) return this.data.innerText;
-        if (this.data.getInnerText) return  this.data.getInnerText();
+        if (this.data.getInnerText) return this.data.getInnerText();
         return this.cells.map(function (cell) {
             return cell.innerText;
         }).join(' ');
