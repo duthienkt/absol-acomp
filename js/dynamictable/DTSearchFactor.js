@@ -237,7 +237,7 @@ function DTSearchFactor(global) {
         for (i = 0; i < n; ++i) {
             item = items[i];
             v = item.score;
-            if (v < midValue) continue;
+            if (v < midValue || v === 0) continue;
             if (v >= maxValue) segments[segments.length - 1].push(item)
             else {
                 k = ((v - midValue) / d) >> 0;
