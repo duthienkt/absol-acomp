@@ -9,6 +9,7 @@ import { _ } from "../../ACore";
 function DTBodyCell(row, data) {
     this.row = row;
     this._elt = null;
+    this._idx = null;
     this.data = data;
 }
 
@@ -19,6 +20,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
             this._elt = _({ tag: 'td', class: 'as-dt-body-cell' });
             if (this.data.attr) this.elt.attr(data.attr);
             if (this.data.class) this.elt.addClass(this.data.class);
+            if (this._idx !== null) this._elt.attr('data-col-idx', this._idx + '');
             this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
         }
         return this._elt;
@@ -44,6 +46,18 @@ Object.defineProperty(DTBodyCell.prototype, 'innerText', {
         return res.join(' ');
     }
 });
+
+
+Object.defineProperty(DTBodyCell.prototype, 'idx', {
+    set: function (value) {
+        this._idx = value;
+        if (this._elt)
+            this._elt.attr('data-col-idx', value + '');
+    },
+    get: function () {
+        return this._idx;
+    }
+})
 
 
 export default DTBodyCell;

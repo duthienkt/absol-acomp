@@ -19,8 +19,10 @@ function DTHeadRow(head, data) {
 
 
 DTHeadRow.prototype.renderCells = function (event) {
-    this.cells = this.data.cells.map(function (cellData) {
-        return new DTHeadCell(this, cellData);
+    this.cells = this.data.cells.map(function (cellData, i) {
+        var cell = new DTHeadCell(this, cellData);
+        cell.idx = i;
+        return cell;
     }.bind(this));
     this.elt.addChild(this.cells.map(function (cell) {
         return cell.elt;

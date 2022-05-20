@@ -4,12 +4,27 @@ import '../../css/dynamictable.css';
 import PageSelector from "../PageSelector";
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
+import { buildCss } from "../utils";
+
+var loadStyleSheet = function (){
+    var dynamicStyleSheet = {};
+    var key = Array(20).fill(0).map((u, i) => [
+        '.as-dynamic-table-wrapper.as-hide-col-' + i + ' td[data-col-idx="' + i + '"]',
+        '.as-dynamic-table-wrapper.as-hide-col-' + i + ' th[data-col-idx="' + i + '"]'
+    ].join(', ')).join(',\n');
+    dynamicStyleSheet[key] = { display: 'none' };
+    buildCss(dynamicStyleSheet);
+    loadStyleSheet = noop;
+}
+
 
 /***
  * @extends AElement
  * @constructor
  */
 function DynamicTable() {
+    loadStyleSheet();
+    this._hiddenColumns = [];
     /***
      *
      * @type {SearchTextInput|null}
@@ -246,6 +261,24 @@ DynamicTable.property.filterInputs = {
         return this.$filterInputs;
     }
 };
+
+
+DynamicTable.property.hiddenColumns = {
+    set: function (value) {
+        value = value || [];
+        this._hiddenColumns.forEach(function (idxV) {
+            this.removeClass('as-hide-col-' + idxV);
+        }.bind(this));
+        this._hiddenColumns = value;
+
+        this._hiddenColumns.forEach(function (idxV) {
+            this.addClass('as-hide-col-' + idxV);
+        }.bind(this));
+    },
+    get: function () {
+        return this._hiddenColumns;
+    }
+}
 
 
 /***
