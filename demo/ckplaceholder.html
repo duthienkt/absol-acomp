@@ -4,17 +4,13 @@
     <meta charset="UTF-8">
     <title>CKPlaceholder</title>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
-    <script src="https://absol.cf/ckeditor/ckeditor.js"></script>
+    <script src="https://absol.cf/vendor/ckeditor5/ckeditor.js"></script>
+
+
 </head>
 <body>
 <style>
-    html, body {
-        padding: 0;
-        margin: 0;
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-    }
+
 
     #ck {
         width: 100%;
@@ -109,7 +105,7 @@
     }
 
     render('<h2>CK Inline Short Text(Variable)</h2>');
-
+/*
     var shortExpressionInput = absol._({
         tag: 'ckinlineshorttext',
         props: {
@@ -146,7 +142,7 @@
     });
 
     shortExpressionInput.data = 'last_name + " "+ first_name + ", năm nay " + old + "tuổi"';
-
+*/
 
     var te = render('');
 
@@ -240,6 +236,7 @@
 
     render('<h2>CK Inline Short Text(Expression)</h2>');
     var t = render('div');
+    /*
     var shortInput = absol._({
         tag: 'ckinlineshorttext',
         props: {
@@ -288,7 +285,7 @@
     var myInfo = {
         name: "Phạm Hùng Quốc",
     };
-
+*/
 
     render('<h2>CK Placeholder</h2>');
 
@@ -314,6 +311,7 @@
                 console.log("Editor đã sẵn sàng");
             },
             change: function () {
+                console.log(this.data)
                 preview.innerHTML = this.data;
             },
             command: function (event) {

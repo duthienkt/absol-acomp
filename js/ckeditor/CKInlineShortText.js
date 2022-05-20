@@ -91,7 +91,8 @@ CKInlineShortText.prototype._unhookScroll = function () {
 };
 
 
-CKInlineShortText.eventHandler.afterEditorCreated = function () {
+CKInlineShortText.eventHandler.afterEditorCreated = function (editor) {
+    // this.editor =
     this.editor.on('paste', function (evt) {
         evt.cancel();
     });

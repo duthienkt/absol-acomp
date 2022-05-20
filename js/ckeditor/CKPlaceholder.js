@@ -1,21 +1,49 @@
-import ACore, { _ } from "../../ACore";
+import ACore, { $, _ } from "../../ACore";
 import '../../css/ckplaceholder.css';
 import { CKExtensionDict, CKExtensions, ckInit, ckMakeDefaultConfig } from "./plugins";
 import { config } from "process";
+import XLoader from "absol/src/Network/XLoader";
+
+
+var ckeditor5Sync = null;
+
+function loadCKEditor5Lib() {
+    if (!ckeditor5Sync) {
+        if (window.CKEDITOR5) ckeditor5Sync = Promise.resolve(window.CKEDITOR5);
+        else {
+            ckeditor5Sync = new Promise(function (resolve) {
+                XLoader.loadScript('/vendor/ckeditor5/ckeditor.js').then(function () {
+                }, function (e) {
+                    if (location.origin.indexOf('keeview') >= 0) {
+                        XLoader.loadScript('/vendor/ckeditor5/ckeditor.js').then(resolve);
+                    }
+                    else {
+                        XLoader.loadScript('https://absol.cf/vendor/ckeditor5/ckeditor.js').then(resolve);
+                    }
+                })
+            });
+        }
+    }
+    return ckeditor5Sync;
+}
+
 
 /***
  * @extends AElement
  * @constructor
  */
 function CKPlaceholder() {
+    this.sync = loadCKEditor5Lib();
     ckInit();
+    this.$textarea = $('textarea', this);
     this.$attachhook = _('attachhook').addTo(this);
     this.$attachhook.once('attached', this.eventHandler.attached);
     this._pendingData = '';
-    this.isReady = false;
-    this.editor = null;
     this._extensions = [];
+
+    this.editor = null;
     this._config = this._makeInitConfig();
+
     /***
      * @type {{}}
      * @name config
@@ -33,7 +61,12 @@ CKPlaceholder.tag = 'CKPlaceholder'.toLowerCase();
 CKPlaceholder.render = function () {
     return _({
         extendEvent: ['editorcreated', 'editorready', 'change', 'command', 'focus'],
-        class: 'as-ck-placeholder'
+        class: 'as-ck-placeholder',
+        child: [
+            {
+                tag: 'textarea'
+            }
+        ]
     });
 };
 
@@ -106,36 +139,58 @@ CKPlaceholder.eventHandler = {};
  */
 CKPlaceholder.eventHandler.attached = function () {
     this.$attachhook.remove();
-    this.editor = this.mode === 'replace' ? CKEDITOR.replace(this, ckMakeDefaultConfig(this.config, this.extensions, this)) : CKEDITOR.inline(this, ckMakeDefaultConfig(this.config, this.extensions, this));
-    this.editor.placeHolderElt = this;
-    this.editor.on('instanceReady', this.eventHandler.instanceReady);
-    this.editor.on('change', this.eventHandler.change);
-    if (this.mode === 'replace') {
-        this.editor.on('focus', function (event) {
-            this.emit('focus', { target: this, type: 'focus', originalEvent: event });
-        }.bind(this));
-    }
-    this._extensions.forEach(function (name) {
-        var e = CKExtensionDict[name];
-        if (e && e.extendMethods) {
-            Object.assign(this, e.extendMethods);
-        }
-    }.bind(this));
-    this.emit('editorcreated', { type: 'editorcreated', target: this, editor: this.editor }, this);
+    this.sync = this.sync.then(()=>{
+        var EditorClass = this.mode === 'replace' ? CKEDITOR5.ClassicEditor : CKEDITOR5.InlineEditor;
+        return EditorClass.create(this.$textarea, {
+            // plugins: [/* 'Paragraph', 'Bold', 'Italic', 'Alignment'*/].map(function (x){
+            //     return CKEDITOR5.plugins[x];
+            // }),
+            // toolbar: [ 'bold', 'italic', 'alignment' ]
+            autosave: {
+                save: this.eventHandler.change,
+                // waitingTime: 500,
+            }
+        })
+            .then(this.eventHandler.instanceReady);
+
+    });
+
+
+    // this.editor = this.mode === 'replace' ? CKEDITOR.replace(this, ckMakeDefaultConfig(this.config, this.extensions, this)) : CKEDITOR.inline(this, ckMakeDefaultConfig(this.config, this.extensions, this));
+    // this.editor.placeHolderElt = this;
+    // this.editor.on('instanceReady', this.eventHandler.instanceReady);
+
 
 };
 
-CKPlaceholder.eventHandler.instanceReady = function () {
-    this.isReady = true;
-    if (this._pendingData && this._pendingData.length > 0) {
-        this.editor.setData(this._implicit(this._pendingData));
-        this._pendingData = null;
-    }
-    this.emit('editorready', { type: 'editorready', target: this, editor: this.editor }, this);
+
+CKPlaceholder.eventHandler.instanceReady = function (editor) {
+    this.editor = editor;
+    this.editor.on('change', this.eventHandler.change);
+    // if (this.mode === 'replace') {
+    //     this.editor.on('focus', function (event) {
+    //         this.emit('focus', { target: this, type: 'focus', originalEvent: event });
+    //     }.bind(this));
+    // }
+    // this._extensions.forEach(function (name) {
+    //     var e = CKExtensionDict[name];
+    //     if (e && e.extendMethods) {
+    //         Object.assign(this, e.extendMethods);
+    //     }
+    // }.bind(this));
+    // this.emit('editorcreated', { type: 'editorcreated', target: this, editor: this.editor }, this);
+
+    // this.isReady = true;
+    // if (this._pendingData && this._pendingData.length > 0) {
+    //     this.editor.setData(this._implicit(this._pendingData));
+    //     this._pendingData = null;
+    // }
+    // this.emit('editorready', { type: 'editorready', target: this, editor: this.editor }, this);
 
 };
 
 CKPlaceholder.eventHandler.change = function () {
+    console.log(this.editor.getData())
     this.emit('change', { type: 'change', target: this, editor: this.editor }, this);
 };
 
@@ -202,6 +257,12 @@ CKPlaceholder.property.extensions = {
         return this._extensions;
     }
 };
+
+CKPlaceholder.property.isReady = {
+    get: function () {
+        return !!this.editor;
+    }
+}
 
 ACore.install(CKPlaceholder);
 

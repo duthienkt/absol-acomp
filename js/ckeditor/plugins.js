@@ -7,6 +7,7 @@ import SimpleTextExtension from "./SimpleTextExtension";
 import VariableExtension from "./VariableExtension";
 import DynamicLinkExtension from "./DynamicLinkExtension";
 import ImageFileExtension from "./ImageFileExtension";
+import makeCKEditor4Compatible from "./CKEditor4Adapter";
 
 var ckContentStyleUrl;
 var ckPluginInitialized = false;
@@ -51,8 +52,10 @@ export var CKStylesSetDefault = [
 ];
 
 export function ckInit() {
+       makeCKEditor4Compatible();
     if (!window.CKEDITOR) return;
     if (ckPluginInitialized) return;
+    return;//todo
     var styleCode = ckContentStyleText
         .replace(/\$basePath/g, CKEDITOR.basePath);
     ckContentStyleUrl = URL.createObjectURL(stringToBlob(styleCode, 'css'));
