@@ -75,6 +75,9 @@
 .absol-tabbar-button-text{
     display: inline-block;
     vertical-align: middle;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .as-tab-bar-button-ext-icon-ctn span{
@@ -90,7 +93,7 @@
 
 .absol-tabbar-button-text,
 .absol-tabbar-button-icon-container > span {
-    display: inline;
+    display: inline-block;
     vertical-align: middle;
     font-size: 1em;
 }
