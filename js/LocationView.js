@@ -5,6 +5,9 @@ import { randomIdent } from "absol/src/String/stringGenerate";
 import Color from "absol/src/Color/Color";
 import MarkerClusterer from "./MarkerClusterer";
 
+var MARKER_RADIUS = 10;
+var MARKER_BORDER_COLOR = '#4945C8';
+
 function generateColor(id) {
     id = id + '';
     var rgb = [0, 0, 0];
@@ -65,11 +68,11 @@ function LVPolyline(viewerElt, data) {
             map: this.map,
             icon: {
                 path: google.maps.SymbolPath.CIRCLE,
-                scale: 8,
+                scale: MARKER_RADIUS,
                 fillColor: this.polylineData.strokeColor,
                 fillOpacity: 1,
                 strokeWeight: 2,
-                strokeColor: 'white'
+                strokeColor: MARKER_BORDER_COLOR
             },
         });
         mkr.setMap(this.map);
@@ -157,11 +160,11 @@ function LVPoints(viewerElt, data) {
         // map: this.map,
         icon: {
             path: google.maps.SymbolPath.CIRCLE,
-            scale: 8,
+            scale: MARKER_RADIUS,
             fillColor: data.color || generateColor(this.id).toString(),
             fillOpacity: 1,
             strokeWeight: 2,
-            strokeColor: 'white'
+            strokeColor:  MARKER_BORDER_COLOR
         },
     });
     // this.marker.setMap(this.map);
