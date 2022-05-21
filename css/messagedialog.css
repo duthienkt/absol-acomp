@@ -15,6 +15,7 @@
     border-bottom: 1px solid #e9ecef;
 }
 
+
 .as-message-dialog-title {
     font-size: 1.25em;
     font-weight: 500;
@@ -29,6 +30,12 @@
     padding: 5px 20px;
     border-top: 1px solid #e9ecef;
 }
+
+.as-message-dialog-footer:empty,
+.as-message-dialog-header:empty{
+    display: none;
+}
+
 
 .as-message-dialog-footer button {
     height: 30px;

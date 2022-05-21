@@ -138,6 +138,7 @@ import ProcessLBar from "../ProcessLBar";
 import KVCommentItem from "../KVCommentItem";
 import DynamicTable from "../dynamictable/DynamicTable";
 import WindowBox from "../WindowBox";
+import MessageDialog from "../MessageDialog";
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -286,6 +287,7 @@ export var publicCreators = [
     CheckTreeItem,
     CheckTreeBox,
     MultiCheckTreeMenu,
+    MessageDialog,
     YesNoQuestionDialog,
     TOCItem,
     TOCList,
