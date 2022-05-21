@@ -18,19 +18,54 @@
             },
             on: {
                 action: function (event) {
-                    console.log(event.action);
                     var modal = _({
                         tag: 'modal',
                         child: {
                             tag: 'yesnoquestiondialog',
                             props: {
                                 dialogTitle: "Nhắc lại",
-                                message: "Có phải bạn vừa chọn " + event.action + ' không?',
-                                textYes:"Đúng",
-                                textNo:"Không phải"
+                                message: "Có phải bạn vừa chọn " + event.action.text + ' không?',
+                                textYes: "Đúng",
+                                textNo: "Không phải"
                             },
-                            on:{
-                                action: function (){
+                            on: {
+                                action: function (event) {
+                                    console.log(event.action)
+                                    modal.remove();
+                                }
+                            }
+                        }
+                    }).addTo(document.body)
+                }
+            }
+        }).addTo(document.body);
+
+        var quest1 = _({
+            tag: 'messagedialog',
+            style: {
+                display: 'inline-block'
+            },
+            props: {
+                dialogTitle: 'Chú ý'
+            },
+            child: [
+                '<div>Đây là nội dung bất kì của dialog</div>'
+            ],
+
+            on: {
+                action: function (event) {
+                    var modal = _({
+                        tag: 'modal',
+                        child: {
+                            tag: 'yesnoquestiondialog',
+                            props: {
+                                dialogTitle: "Nhắc lại",
+                                message: "Có phải bạn vừa chọn " + event.action.text + ' không?',
+                                textYes: "Đúng",
+                                textNo: "Không phải"
+                            },
+                            on: {
+                                action: function () {
                                     modal.remove();
                                 }
                             }
