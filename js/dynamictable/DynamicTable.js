@@ -6,7 +6,7 @@ import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
 import { buildCss } from "../utils";
 
-var loadStyleSheet = function (){
+var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
     var key = Array(20).fill(0).map((u, i) => [
         '.as-dynamic-table-wrapper.as-hide-col-' + i + ' td[data-col-idx="' + i + '"]',
@@ -224,7 +224,26 @@ DynamicTable.prototype.requestQuery = function () {
 
 DynamicTable.prototype.query = function (query) {
     this.table.body.query(query);
-}
+};
+
+DynamicTable.prototype.addFilter = function (inputElt) {
+    if (inputElt.$dynamicTable) {
+        inputElt.$dynamicTable.removeFilter(inputElt);
+    }
+
+    inputElt.$dynamicTable = this;
+    inputElt.on('change', this.eventHandler.searchModify);
+    this.$filterInputs.push(inputElt);
+};
+
+DynamicTable.prototype.removeFilter = function (inputElt) {
+    if (inputElt.$dynamicTable !== this) return;
+    inputElt.$dynamicTable = null;
+    inputElt.off('change', this.eventHandler.searchModify);
+    var idx = this.$filterInputs.indexOf(inputElt);
+    if (idx >= 0)
+        this.$filterInputs.splice(idx, 1);
+};
 
 
 DynamicTable.prototype.notifyRowsChange = noop;
@@ -249,13 +268,11 @@ DynamicTable.property.adapter = {
 DynamicTable.property.filterInputs = {
     set: function (inputs) {
         inputs = inputs || [];
-        this.$filterInputs.forEach(function (elt) {
-            elt.off('change', this.eventHandler.searchModify);
-        }.bind(this));
-        this.$filterInputs = inputs;
-        this.$filterInputs.forEach(function (elt) {
-            elt.on('change', this.eventHandler.searchModify);
-        }.bind(this));
+        this.$filterInputs.slice().forEach(input => {
+            this.removeFilter(input);
+        });
+
+        inputs.forEach(input => this.addFilter(input));
     },
     get: function () {
         return this.$filterInputs;
