@@ -95,7 +95,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
                     'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
                     userImageFileDialog ? 'image_mgn_dialog' : 'Image']
             },
-            { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
+            // { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
             {
                 name: "extensions", items: extensions.map(function (eName) {
                     if (CKExtensionDict[eName] && CKExtensionDict[eName].command) {
