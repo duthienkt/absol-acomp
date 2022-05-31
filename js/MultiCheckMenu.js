@@ -59,6 +59,10 @@ Object.assign(MultiCheckMenu.prototype, MultiSelectMenu.prototype);
 MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
 
+MultiCheckMenu.prototype.findItemsByValue = function (value){
+    return this.$selectlistBox.findItemsByValue(value);
+};
+
 
 MultiCheckMenu.eventHandler.click = function (event) {
     if ((event.target === this || event.target === this.$itemCtn) && !this.isFocus && !this.readOnly) {
