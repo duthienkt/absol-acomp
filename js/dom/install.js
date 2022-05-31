@@ -139,6 +139,7 @@ import KVCommentItem from "../KVCommentItem";
 import DynamicTable from "../dynamictable/DynamicTable";
 import WindowBox from "../WindowBox";
 import MessageDialog from "../MessageDialog";
+import ObjectMergeTool from "../objectmergetool/ObjectMergeTool";
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -303,7 +304,8 @@ export var publicCreators = [
     MKNavigator,
     ProcessLBar,
     KVCommentItem,
-    DynamicTable
+    DynamicTable,
+    ObjectMergeTool
 ];
 
 /***

@@ -1,0 +1,136 @@
+.as-omt {
+    display: block;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.as-omt-node {
+
+}
+
+
+.as-omt-field {
+    --level: 0;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+
+.as-omt-field.as-hover::before {
+    border-color: rgb(30, 101, 234);
+    border-width: 2px;
+}
+
+.as-omt-field::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 15px;
+    right: 0;
+    bottom: 0;
+    border: 1px solid rgb(170, 170, 200);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.as-omt-field-header {
+    padding-left: 10px;
+    line-height: 2;
+}
+
+
+.as-omt-field-body {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+
+.as-omt-field-raw-ctn,
+.as-omt-field.as-mode-raw > .as-omt-field-body {
+    display: none;
+}
+
+.as-omt-field.as-mode-raw > .as-omt-field-raw-ctn {
+    display: block;
+}
+
+
+.as-omt-field-command-ctn {
+    position: absolute;
+    z-index: 20;
+    right: 10px;
+    top: 20px;
+    background-color: white;
+    height: 30px;
+    display: none;
+}
+
+
+.as-omt-field.as-hover > .as-omt-field-command-ctn {
+    display: block;
+}
+
+.as-omt-field-command-ctn > button {
+    height: 30px;
+}
+
+.as-omt-field-command-ctn > button:not(:first-child) {
+    margin-left: 5px;
+}
+
+.as-omt-field-command-ctn > button span {
+    font-size: 24px;
+}
+
+.as-omt-field-name {
+    font-weight: bold;
+    background-color: white;
+    display: inline-block;
+    z-index: 3;
+    position: relative;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-right: 10px;
+}
+
+
+.as-omt-field-body > .as-omt-field:first-child {
+    margin-top: 10px;
+}
+
+.as-omt-field code {
+    white-space: pre-wrap;
+}
+
+.as-omt-field-raw-ctn {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.as-omt-field.as-type-struct > .as-omt-field-body {
+    padding-left: 20px;
+}
+
+img.as-omt-field-value {
+    max-width: 150px;
+    max-height: 100px;
+}
+
+.as-omt-dialog .as-message-dialog-body {
+    max-height: calc(90vh - 50px);
+    max-width: calc(90vw - 50px);
+    overflow: auto;
+}
+
+.as-omt-option-row {
+    display: flex;
+    align-items: center;
+}
+
+.as-omt-option-row:not(:first-child) {
+    margin-top: 5px;
+}
+
+.as-omt-field-raw-ctn > div > .as-omt-field-name {
+    display: none;
+}
