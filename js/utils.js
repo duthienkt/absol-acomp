@@ -704,6 +704,9 @@ export function fileInfoOf(fi) {
     };
     handle(fi);
 
+    if (res.name){
+        res.name = res.name.replace(/\.upload$/, '')
+    }
     if (!res.type && res.name) {
         res.type = res.name.split('.').slice(1).pop();
     }
