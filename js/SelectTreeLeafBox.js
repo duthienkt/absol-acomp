@@ -49,7 +49,10 @@ SelectTreeLeafBox.render = function () {
             class: 'as-select-list-box-search-ctn', child: 'searchtextinput'
         }, {
             class: ['as-bscroller', 'as-select-list-box-scroller', 'as-select-tree-leaf-box-content'], child: []
-        }, 'attachhook.as-dom-signal']
+        }, 'attachhook.as-dom-signal'],
+        props:{
+            anchor: [1, 6, 2, 5]
+        }
     });
 };
 

@@ -61,7 +61,10 @@ CheckTreeLeafOnlyBox.render = function () {
                     }
                 ]
             }
-        ]
+        ],
+        props:{
+            anchor: [1, 6, 2, 5]
+        }
     });
 };
 
