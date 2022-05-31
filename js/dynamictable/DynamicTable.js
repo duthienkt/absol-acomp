@@ -190,8 +190,8 @@ DynamicTable.prototype.filter = function (filter) {
 
 DynamicTable.prototype.makeQuery = function () {
     var query = {};
-    var textQuery = this.$searchInput.value.trim().replace(/\s\s+/, ' ');
-    if (textQuery.length > 0) query.text = textQuery;
+    var textQuery = this.$searchInput && this.$searchInput.value.trim().replace(/\s\s+/, ' ');
+    if (textQuery && textQuery.length > 0) query.text = textQuery;
     var i;
     var filter = this.$filterInputs.reduce(function (ac, elt) {
         if (elt.exportFilter) {
