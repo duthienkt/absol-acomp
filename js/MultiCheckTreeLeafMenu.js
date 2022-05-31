@@ -3,6 +3,7 @@ import MultiCheckTreeLeafBox from "./MultiCheckTreeLeafBox";
 import SelectTreeLeafMenu from "./SelectTreeLeafMenu";
 import SelectBoxItem from "./SelectBoxItem";
 import MultiSelectMenu from "./MultiSelectMenu";
+import OOP from "absol/src/HTML5/OOP";
 
 /****
  * Only leafs have checkbox
@@ -16,6 +17,8 @@ function MultiCheckTreeLeafMenu() {
             change: this.eventHandler.selectBoxChange
         }
     });
+
+    OOP.drillProperty(this, this.$selectBox, 'enableSearch');
 
     this.on('click', this.eventHandler.click);
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
