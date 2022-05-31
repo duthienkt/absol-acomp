@@ -1,5 +1,4 @@
 import ACore from "../ACore";
-import AElement from "absol/src/HTML5/AElement";
 
 export function insertTextAtCursor(text) {
     var sel, range;
@@ -668,6 +667,53 @@ export function fileAccept(pattern, typeString) {
     });
 }
 
+
+/***
+ *
+ * @param {File|Blob|string|{url:string}} fi
+ */
+export function fileInfoOf(fi) {
+    var res = {};
+    var handle = o => {
+        if (typeof o === "string") {
+            res.name = (o.split('/').pop() || '').replace(/%([\dA-Fa-f][\dA-Fa-f]+)/, (all, g1) => {
+                var n = parseInt(g1, 16);
+                if (typeof n === "string") {
+                    return String.fromCharCode(n);
+                }
+                return all;
+            }).replace(/\?.+$/, '');
+            if (!res.url && isURLAddress(o) ) res.url = o;
+        }
+        else if ((typeof o === "object") && o) {
+            if (o instanceof Blob) {
+                res.mimeType = o.type;
+            }
+            if (!res.name && (typeof o.name === "string")) {
+                res.name = o.name;
+            }
+            if (!res.size && (typeof o.size === "number")) {
+                res.size = o.size;
+            }
+            if (typeof o.url === "string") {
+                res.url = o.url;
+                handle(o.url);
+            }
+
+        }
+    };
+    handle(fi);
+
+    if (!res.type && res.name) {
+        res.type = res.name.split('.').slice(1).pop();
+    }
+
+    for (var k in res) {
+        if (res[k] === undefined) delete res[k];
+    }
+
+    return res;
+}
 
 export function addElementsBefore(inElement, elements, at) {
     for (var i = 0; i < elements.length; ++i) {
