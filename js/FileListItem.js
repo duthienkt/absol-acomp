@@ -2,7 +2,7 @@ import ACore, {$, _} from "../ACore";
 import '../css/filelistinput.css';
 import ExtIcons from "../assets/exticons/catalog.json";
 import MessageInput from "./MessageInput";
-import {isURLAddress} from "./utils";
+import { fileInfoOf, isURLAddress } from "./utils";
 
 /***
  * @extends AElement
@@ -70,23 +70,10 @@ FileListItem.property.fileName = {
 FileListItem.property.value = {
     set: function (value) {
         value = value || null;
-        var type = null;
-        var size = null;
-        var name = null;
-        if ((value instanceof File) || (value instanceof Blob)) {
-            size = value.size;
-            name = value.name;
-            type = name.split('.').pop().toLowerCase();
-
-        } else if (isURLAddress(value)) {
-            type = value.replace(/\.upload$/, '').split('.').pop();
-            name = value.split('/').pop().replace(/%20/g, ' ');
-            this.attr('title', value);
-        } else if (value && value.name && value.url) {//keeview file format
-            this.attr('title', value.url);
-            name = value.name;
-            type = name.split('.').pop().toLowerCase();
-        }
+        var info = fileInfoOf(value);
+        var type = info.type ||null;
+        var size = info.size || null;
+        var name = info.name || null;
         this._value = value;
         this.fileSize = size;
         this.fileName = name;
