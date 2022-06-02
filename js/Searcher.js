@@ -84,7 +84,7 @@ SearchTextInput.render = function () {
                     class: 'absol-search-text-button-container',
                     child: {
                         tag: 'button',
-                        child: ['find-ico', 'times-circle-ico', SpinnerIco.tag]
+                        child: ['find-ico', 'times-circle-ico', { tag:SpinnerIco.tag, style:{margin: 0} }]
                     }
                 }
             ]
