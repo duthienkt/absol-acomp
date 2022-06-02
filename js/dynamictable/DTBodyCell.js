@@ -31,8 +31,10 @@ Object.defineProperty(DTBodyCell.prototype, 'innerText', {
     get: function () {
         if (this.data.innerText) return this.data.innerText;
         if (this.data.getInnerText) return this.data.getInnerText();
-        if ('innerText' in this.data) return this.data.innerText ||'';
+        // if ('innerText' in this.data)
+        return this.data.innerText || '';
         var res = [];
+
         function visit(node) {
             if (node.nodeType === 3 && node.data) {
                 res.push(node.data);

@@ -279,7 +279,7 @@ function DTSearchFactor(global) {
     }
 
     SearchingSlave.prototype.onReceiveItems = function (n, start, end, items, version) {
-        if (this.scoredHolders.length > start){
+        if (this.scoredHolders.length > start) {
             this.scoredHolders.splice(start);
         }
         var cItems = this.items;
@@ -294,7 +294,7 @@ function DTSearchFactor(global) {
         this.itemVersion = version;
 
         for (var i = start; i < end; ++i) {
-            cItems[i] = prepareSearchForItem(items[i - start]);
+            cItems[i] = items[i - start];
         }
 
 
@@ -360,13 +360,15 @@ function DTSearchFactor(global) {
             }
 
             var k = benchmark * 5;
+            if (!queryTextItem) k *= 30;
             var i = its.length;
             var n = items.length
             while (k-- && i < n) {
-                // if (!items[i]){
-                //     console.log(items, i);
-                // }
                 if (!filter || matchFilter(items[i], filter)) {
+                    if (!items[i].prepare && queryTextItem) {
+                        items[i].prepare = true;
+                        prepareSearchForItem(items[i]);
+                    }
                     its.push({
                         i: i,
                         item: items[i],
