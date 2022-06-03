@@ -511,7 +511,12 @@ MultiCheckTreeMenu.property.values = {
      * @param values
      */
     set: function (values) {
-        values = this._implicit(values || []);
+        if (this.items.length > 0) {
+            values = this._implicit(values || []);
+        }
+        else {
+            values = values || [];
+        }
         this.$checkTreeBox.values = values;
         this._values = values;
         values = this.$checkTreeBox.values.slice();//correct wrong item
