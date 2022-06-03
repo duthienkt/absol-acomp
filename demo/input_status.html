@@ -226,7 +226,10 @@
                 }
             },
             {
-                tag: 'multichecktreemenu'
+                tag: 'multichecktreemenu',
+                props:{
+                    values:[-17, 15]
+                }
             },
             {
                 tag:'trackbar',
@@ -290,7 +293,7 @@
         }).then(function (result) {
             $$('multichecktreemenu').forEach(function (elt) {
                 elt.items = JSON.parse(JSON.stringify(result));
-                elt.values = [-17, 15];
+                console.log('values',elt.values);
             });
         });
     })();
