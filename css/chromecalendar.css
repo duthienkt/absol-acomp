@@ -1,7 +1,7 @@
 .absol-chrome-calendar {
     display: inline-block;
-    font-family: Arial;
-    font-size: 14px;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 1rem;
     padding: 0.6em;
     border: solid 1px rgb(191, 191, 191);
     box-shadow: 1px 1px 2px rgb(240, 240, 240);
@@ -313,7 +313,7 @@ button.absol-chrome-calendar-button-disabled,
     z-index: 1000000;
     /*width: 100%;*/
     /*height: 100%; */
-    width: calc(196px + 17px);
+    width: calc(100% + 17px);
     box-sizing: border-box;
     height: 100%;
     background-color: white;
