@@ -3,7 +3,7 @@
     height: 2em;
     border-radius: 0.3em;
     border: solid 1px #a9a9a9;
-    font-size: 14px;
+    font-size: 1rem;
     background-color: white;
 }
 
@@ -38,8 +38,8 @@
 }
 
 .absol-search-text-button-container button > svg {
-    height: 1.14285714286em;
-    width: 1.14285714286em;
+    height: calc(16em / 14);
+    width: calc(16em / 14);
     fill: rgb(132, 132, 132);
 }
 
