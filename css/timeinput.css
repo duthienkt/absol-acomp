@@ -72,7 +72,7 @@
 
 
 .as-time-input-icon-btn > span {
-    font-size: 1.14em;
+    font-size: calc(16em / 14);
 }
 
 
