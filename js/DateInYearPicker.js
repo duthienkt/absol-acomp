@@ -152,11 +152,12 @@ DateInYearPicker.prototype.scrollIntoSelected = function () {
     var dy;
     var y;
     var ly, hy;
+    var lineHeight = this.getFontSize() * 2;
     if (this._month !== null) {
         for (var k = 0; k < 3; ++k) {
-            y = this._month * 28 + 28 * 12 * k;
+            y = this._month * lineHeight + lineHeight * 12 * k;
             ly = this.$monthScroller.scrollTop;
-            hy = ly + 112 - 28;
+            hy = ly + lineHeight * 4 - lineHeight;
             if (ly <= y && hy >= y) {
                 dy = 0;
                 break;
@@ -208,7 +209,8 @@ DateInYearPicker.eventHandler.monthPressUp = function () {
 DateInYearPicker.eventHandler.monthTick = function () {
     if (!this._monthScrollDy) return;
     var d = this._monthScrollDy;
-    if (this.$monthScroller.scrollTop + d < 0) d += 28 * 12;
+    var fontSize = this.getFontSize();
+    if (this.$monthScroller.scrollTop + d < 0) d += fontSize * 2 * 12;
     this.$monthScroller.scrollTop += d;
     setTimeout(this.eventHandler.monthTick, 30);
 };
@@ -223,10 +225,11 @@ DateInYearPicker.eventHandler.monthRelease = function () {
  */
 DateInYearPicker.eventHandler.monthScroll = function () {
     var scrollTop = this.$monthScroller.scrollTop;
-    if (scrollTop < 28 * 12) {
-        this.$monthScroller.scrollTop += 28 * 12;
-    } else if (scrollTop > 28 * 12 * 2) {
-        this.$monthScroller.scrollTop -= 28 * 12;
+    var fontSize = this.getFontSize();
+    if (scrollTop < fontSize * 2 * 12) {
+        this.$monthScroller.scrollTop += fontSize * 2 * 12;
+    } else if (scrollTop > fontSize * 2 * 12 * 2) {
+        this.$monthScroller.scrollTop -= fontSize * 2 * 12;
     }
 };
 

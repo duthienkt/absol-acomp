@@ -1,8 +1,8 @@
 .as-date-time-input {
     border: 1px solid #ddd;
     border-radius: 3px;
-    height: 30px;
-    width: calc(12em + 30px);
+    height: calc(2em + 2px);
+    width: calc(14em + 2px);
     box-sizing: border-box;
     display: inline-block;
     vertical-align: middle;
@@ -18,8 +18,9 @@
 
 
 .as-date-time-input input {
+    font-size: inherit;
     outline: none;
-    width: calc(100% - 29px);
+    width: calc(100% - 2em - 1px);
     height: 100%;
     border: none;
     display: block;
@@ -42,7 +43,7 @@
     border-left: 1px solid #ddd;
     position: absolute;
     right: 0;
-    width: 29px;
+    width: calc(2em + 1px);
     box-sizing: border-box;
     top: 0;
     bottom: 0;
@@ -50,10 +51,11 @@
     cursor: pointer;
     border-radius: 0;
     color: inherit;
+    font-size: inherit;
 }
 
 .as-date-time-input-icon-btn > span {
-    font-size: 16px;
+    font-size: calc(16em / 14);
 }
 
 

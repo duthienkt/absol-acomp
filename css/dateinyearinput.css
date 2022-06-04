@@ -3,13 +3,13 @@
 }
 
 .as-date-in-year-picker {
-    font-size: 14px;
+    font-size: 1rem;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-    width: 276px;
+    /*width: 20em;*/
     box-sizing: border-box;
     border: 1px solid #dddddd;
     display: inline-block;
-    padding: 10px 5px;
+    padding: calc(10em / 14) calc(5rem / 14);
     box-shadow: 1px 1px 2px rgb(240, 240, 240);
     background-color: white;
 }
@@ -41,21 +41,21 @@
 
 .as-date-in-year-picker-month-col {
     position: relative;
-    padding-top: 25px;
-    padding-bottom: 25px;
+    padding-top: calc(25em / 14);
+    padding-bottom: calc(25em / 14);
     display: inline-block;
     vertical-align: middle;
 }
 
 .as-date-in-year-picker-month-viewport {
-    width: 50px;
+    width: calc(50em / 14);
     overflow: hidden;
 
 }
 
 .as-date-in-year-picker-month-scroller {
-    width: 70px;
-    height: 112px;
+    width: calc(100% + 17px);
+    height: 8em;
     overflow-y: scroll;
     box-sizing: border-box;
 }
@@ -63,8 +63,8 @@
 
 button.as-date-in-year-picker-month {
     font-size: inherit;
-    height: 28px;
-    width: 50px;
+    height: 2em;
+    width: calc(50em / 14);
     padding: 0;
     border: none;
     background-color: transparent;
@@ -80,7 +80,7 @@ button.as-date-in-year-picker-month.as-selected {
 }
 
 button.as-date-in-year-picker-month > span {
-    font-size: 16px;
+    font-size: calc(16rem / 14);
 }
 
 
@@ -94,8 +94,8 @@ button.as-date-in-year-picker-month > span {
     position: absolute;
     left: 0;
     font-size: inherit;
-    height: 20px;
-    width: 50px;
+    height: calc(20em / 14);
+    width: calc(50em / 14);
     padding: 0;
     border: none;
     background-color: transparent;
@@ -137,8 +137,8 @@ button.as-date-in-year-picker-month > span {
 .as-date-in-year-picker-day {
     display: table-cell;
     text-align: right;
-    padding: 5px;
-    line-height: 20px;
+    padding: calc(5em / 14);
+    line-height: calc(20em / 14);
     font-size: inherit;
     user-select: none;
     -moz-user-select: none;
@@ -157,7 +157,7 @@ button.as-date-in-year-picker-month > span {
 
 
 .as-date-time-input.as-date-in-year-input {
-    width: calc(6em + 30px);
+    width: calc(8em + 2px);
 }
 
 .as-date-in-year-input.as-must-not-null .as-time-input-clear-btn,
