@@ -1,13 +1,13 @@
 .kv-overview-widget {
     background-color: rgb(212, 227, 252);
-    padding: 0 5px 0 5px;
+    padding: 0 5px 5px 5px;
     border-radius: 3px;
     box-sizing: border-box;
     display: inline-block;
-    width: 350px;
-    height: 550px;
+    width: 25em;
+    height: 40em;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 1rem;
     position: fixed;
     --x: 0;
     --y: 0;
@@ -17,8 +17,8 @@
 }
 
 .kv-overview-widget-header {
-    height: 30px;
-    padding-left: 10px;
+    height: 2em;
+    padding-left: calc(10em / 14);
     user-select: none;
     position: relative;
 }
@@ -26,8 +26,8 @@
 .kv-overview-widget-header-window-action {
     position: absolute;
     right: 5px;
-    top: calc(50% - 10px);
-    height: 20px;
+    top: calc(50% - 10em / 14);
+    height: calc(20em / 14);
     display: inline-block;
 }
 
@@ -52,14 +52,14 @@
 .kv-overview-widget-title {
     font-weight: bold;
     display: inline-block;
-    line-height: 30px;
+    line-height: 2em;
 }
 
 .kv-overview-widget-body {
     box-sizing: border-box;
     padding-top: 5px;
     background-color: white;
-    height: calc(100% - 35px);
+    height: calc(100% - 2em);
     position: relative;
 }
 

@@ -1,5 +1,5 @@
 .as-message-dialog {
-    font-size: 14px;
+    font-size: 1rem;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     box-sizing: border-box;
     background-color: white;
@@ -11,7 +11,7 @@
 }
 
 .as-message-dialog-header {
-    padding: 5px 1em;
+    padding: calc(5em / 14) 1em;
     border-bottom: 1px solid #e9ecef;
 }
 
@@ -38,8 +38,7 @@
 
 
 .as-message-dialog-footer button {
-    height: 30px;
-    margin-left: 20px;
+    margin-left: 1.5em;
 }
 
 
