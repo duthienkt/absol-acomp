@@ -3,6 +3,7 @@
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
+    font-size: 1rem;
 }
 
 .absol-page-selector > ul{
@@ -25,7 +26,7 @@
 .absol-page-number-buttons > li.page-last
 {
     display: inline-block;
-    height: 30px;
+    height:  calc(2em + 2px);;
     padding-left: 10px;
     padding-right: 10px;
     text-align: center;
@@ -35,13 +36,18 @@
 }
 
 .absol-page-number-buttons > li.absol-page-number{
+    font-size: inherit;
     display: inline-block;
-    height: 30px;
-    width: 40px;
+    height: calc(2em + 2px);
+    width: 3em;
     text-align: center;
     transition: all .3s linear;
     background-color: transparent;
     cursor: pointer;
+}
+
+li.absol-page-number>a{
+    font-size: inherit;
 }
 
 
@@ -58,7 +64,7 @@
 }
 
 .absol-page-number-buttons > li> a{
-    line-height: 30px;
+    line-height: calc(2em + 2px);
     text-decoration:none;
     outline: none;
 }
@@ -74,13 +80,13 @@
 }
 
 .absol-page-selector .absol-page-number-input  input[type="text"]{
+    font-size: inherit;
     width: 3em;
-    margin-left: 5px; 
-    margin-right: 10px;
+    margin-left: 0.3em;
+    margin-right: 0.3em;
     text-align: center;
-    height: 26px;
-    border: none;
-    border: solid 1px #ccc; 
+    height: 1.8em;
+    border: solid 1px #ccc;
     border-radius: 2px;
 
 }

@@ -1,5 +1,4 @@
 .absol-tabbar {
-    white-space: normal;
     height: 2em;
     white-space: nowrap;
 }
@@ -184,6 +183,11 @@
     margin: 0;
 }
 
+.absol-frame>iframe{
+    border: none;
+    box-sizing: border-box;
+}
+
 .absol-tabview .absol-tabbar-button {
     border-radius: 10px 10px 0 0;
     height: 2em;
@@ -227,18 +231,17 @@
 /************** Mini version - like window form ***********************/
 
 .absol-tabview.xp-tiny .absol-tabbar {
-    height: 22px;
+    height: 1.5em;
     border-bottom: none;
 }
 
 .absol-tabview.xp-tiny .absol-tabbar-button {
-    height: 20px;
+    height: 1.4em;
     padding-left: 5px;
     padding-right: 5px;
     border-radius: 0;
-    margin: 0;
     vertical-align: bottom;
-    margin-top: 2px;
+    margin: 0.1em 0 0 0;
     background-color: rgb(242, 242, 242);
     color: black;
     position: relative;
@@ -247,7 +250,7 @@
 .absol-tabview.xp-tiny::before {
     content: "";
     position: absolute;
-    top: 18px;
+    top: calc(1.5em - 4px);
     z-index: 0;
     left: 0;
     right: 0;
@@ -257,7 +260,7 @@
 }
 
 .absol-tabview.xp-tiny .absol-tabbar-button.absol-tabbar-button-active {
-    height: 22px;
+    height: 1.5em;
     margin-top: 0;
     background-color: white;
     border-top-color: #ccc;
@@ -272,7 +275,7 @@
 }
 
 .absol-tabview.absol-tabview.xp-tiny .absol-tabbar-button-close {
-    line-height: 18px;
+    line-height: 1.4em;
 }
 
 .absol-tabview.xp-tiny .absol-tabbar-button-icon-container {
@@ -280,7 +283,7 @@
 }
 
 .absol-tabview.xp-tiny .absol-tabview-container {
-    top: 22px;
+    top: 1.5em;
 }
 
 .absol-tabview.xp-tiny .absol-tab-absol {
@@ -298,6 +301,7 @@
 .absol-tabview.as-without-close-button > .absol-tabbar .absol-tabbar-button {
     padding-right: 1em;
 }
+
 
 /************************ Like Metro theme *********************/
 
