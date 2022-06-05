@@ -1,7 +1,7 @@
 .as-omt {
     display: block;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-    font-size: 14px;
+    font-size: 1rem;
 }
 
 .as-omt-node {
@@ -112,13 +112,13 @@
 }
 
 img.as-omt-field-value {
-    max-width: 150px;
-    max-height: 100px;
+    max-width: calc(100vw - 5em);
+    max-height: 10em;
 }
 
 .as-omt-dialog .as-message-dialog-body {
-    max-height: calc(90vh - 50px);
-    max-width: calc(90vw - 50px);
+    max-height: calc(90vh - 5em);
+    max-width: calc(90vw - 5em);
     overflow: auto;
 }
 
