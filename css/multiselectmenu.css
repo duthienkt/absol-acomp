@@ -3,7 +3,7 @@
 }
 
 .as-multi-select-menu {
-    --list-min-width: 40px;
+    --list-min-width: 3em;
     display: inline-block;
     vertical-align: middle;
     position: relative;

@@ -1,6 +1,6 @@
 .as-check-list-item {
     padding-left: 0.35em;
-    height: 25px;
+    height: calc(25rem / 14);
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -14,9 +14,9 @@
 .absol-selectlist-item.as-check-list-item > span {
     display: inline-block;
     vertical-align: middle;
-    line-height: 25px;
+    line-height: calc(25rem / 14);
 }
 
 .absol-selectlist-item.as-check-list-item .absol-selectlist-item-desc {
-    line-height: 25px;
+    line-height: calc(25rem / 14);
 }

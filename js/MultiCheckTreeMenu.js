@@ -1,13 +1,13 @@
 import CheckTreeBox from "./CheckTreeBox";
-import ACore, { _, $, $$ } from "../ACore";
+import ACore, {_, $, $$} from "../ACore";
 import CPUViewer from "./CPUViewer";
-import OOP from "absol/src/HTML5/OOP";
 import SelectBoxItem from "./SelectBoxItem";
-import { hitElement } from "absol/src/HTML5/EventEmitter";
+import {hitElement} from "absol/src/HTML5/EventEmitter";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
-import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
+import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import MultiSelectMenu from "./MultiSelectMenu";
 import CheckTreeLeafOnlyBox from "./CheckTreeLeafOnlyBox";
+import {rootTreeValues2CheckedValues} from "./utils";
 
 
 /***
@@ -133,8 +133,7 @@ MultiCheckTreeMenu.prototype._switchLeafMode = function () {
         });
         this._explicit = this._leafOnlyExplicit;
 
-    }
-    else {
+    } else {
         this.$checkTreeBox = _({
             tag: CheckTreeBox.tag,
             on: {
@@ -179,8 +178,7 @@ MultiCheckTreeMenu.prototype._implicit = function (values) {
         leafScan = function (node) {
             if (node.isLeaf) {
                 leafCount[node.value] = 1;
-            }
-            else {
+            } else {
                 leafCount[node.value] = 0;
             }
             if (node.items && node.items.length > 0) {
@@ -189,8 +187,7 @@ MultiCheckTreeMenu.prototype._implicit = function (values) {
                     leafCount[node.value] = node.items.reduce(function (ac, cr) {
                         return ac + (leafCount[cr.value] || 0);
                     }, 0);
-                }
-                else {
+                } else {
                     console.error("Invalid item:", node);
                 }
             }
@@ -209,16 +206,14 @@ MultiCheckTreeMenu.prototype._implicit = function (values) {
             })) {
                 depthRemoveValueDict(node);
                 return true;
-            }
-            else {
+            } else {
                 node.items.forEach(function (nd, i) {
                     if (cs[i] && leafCount[nd.value] > 0) resDict[nd.value] = nd;
                 });
                 return false;
             }
         };
-    }
-    else {
+    } else {
         scan = function scan(node) {
             if (valueDict[node.value]) {
                 depthRemoveValueDict(node);
@@ -231,8 +226,7 @@ MultiCheckTreeMenu.prototype._implicit = function (values) {
             })) {
                 depthRemoveValueDict(node);
                 return true;
-            }
-            else {
+            } else {
                 node.items.forEach(function (nd, i) {
                     if (cs[i]) resDict[nd.value] = nd;
                 });
@@ -278,8 +272,7 @@ MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
             childRes = node.items.map(function (node) {
                 return scanMerge(node);
             });
-        }
-        else {
+        } else {
             return null;
         }
 
@@ -292,8 +285,7 @@ MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
                 s: 'A',
                 v: [node.value]
             }
-        }
-        else {
+        } else {
             res = {
                 v: childRes.reduce(function (ac, cr) {
                     if (cr && cr.v.length > 0)
@@ -327,8 +319,7 @@ MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
         selected = selected || mergedDict[node.value];
         if (!node.noSelect && selected) {
             res.push(node.value);
-        }
-        else {
+        } else {
             if (node.items && node.items.length > 0) {
                 node.items.forEach(function (item) {
                     noSelectScan(item, selected);
@@ -412,7 +403,7 @@ MultiCheckTreeMenu.prototype.commitView = function () {
     }
     if (changed) {
         this._values = views.slice();
-        this.emit('change', { type: 'change', target: this }, this);
+        this.emit('change', {type: 'change', target: this}, this);
     }
 };
 
@@ -469,8 +460,7 @@ MultiCheckTreeMenu.property.isFocus = {
                 this._focusTimeout = -1;
             }.bind(this));
 
-        }
-        else {
+        } else {
             this.removeClass('as-focus');
             this.$checkTreeBox.selfRemove();
             this.$checkTreeBox.resetSearchState();
@@ -513,8 +503,7 @@ MultiCheckTreeMenu.property.values = {
     set: function (values) {
         if (this.items.length > 0) {
             values = this._implicit(values || []);
-        }
-        else {
+        } else {
             values = values || [];
         }
         this.$checkTreeBox.values = values;
@@ -530,14 +519,21 @@ MultiCheckTreeMenu.property.values = {
     }
 };
 
+MultiCheckTreeMenu.property.checkedValues = {
+    get: function () {
+        var values = this.values;
+        var items = this.items;
+        return rootTreeValues2CheckedValues(items, values);
+    }
+};
+
 MultiCheckTreeMenu.property.leafOnly = {
     set: function (value) {
         if (!!value === this.containsClass('as-leaf-only'))
             return;
         if (value) {
             this.addClass('as-leaf-only');
-        }
-        else {
+        } else {
             this.removeClass('as-leaf-only');
         }
         this._switchLeafMode();
@@ -550,8 +546,6 @@ MultiCheckTreeMenu.property.leafOnly = {
 
 MultiCheckTreeMenu.property.disabled = MultiSelectMenu.property.disabled;
 MultiCheckTreeMenu.property.readOnly = MultiSelectMenu.property.readOnly;
-
-
 
 
 MultiCheckTreeMenu.eventHandler = {};
@@ -622,10 +616,9 @@ MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
 
     if (this.isFocus) {
         this.viewValues(newValues);
-    }
-    else {
+    } else {
         this.values = newValues;
-        this.emit('change', { type: 'change', target: this }, this);
+        this.emit('change', {type: 'change', target: this}, this);
     }
 };
 
@@ -665,8 +658,4 @@ MultiCheckTreeMenu.property.enableSearch = {
 ACore.install(MultiCheckTreeMenu);
 
 export default MultiCheckTreeMenu;
-
-// MultiCheckTreeMenu.prototype.
-
-
 

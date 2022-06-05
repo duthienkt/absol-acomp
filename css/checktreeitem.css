@@ -1,7 +1,7 @@
 .as-check-tree-item {
-    font-size: 14px;
+    font-size: inherit;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
-    height: 28px;
+    height: 2em;
 }
 
 .as-check-tree-item:focus {

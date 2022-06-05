@@ -1,11 +1,11 @@
 import '../css/selectlistbox.css';
-import { prepareSearchForList, searchListByText } from "./list/search";
+import {prepareSearchForList, searchListByText} from "./list/search";
 import ACore from "../ACore";
 import Follower from "./Follower";
-import { measureListSize, releaseItem, requireItem } from "./SelectList";
+import {measureListSize, releaseItem, requireItem} from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
-import { getScreenSize } from "absol/src/HTML5/Dom";
-import { depthIndexingByValue, indexingByValue } from "./list/listIndexing";
+import {getScreenSize} from "absol/src/HTML5/Dom";
+import {depthIndexingByValue, indexingByValue} from "./list/listIndexing";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -56,7 +56,7 @@ SelectListBox.render = function () {
             },
             'attachhook.as-dom-signal'
         ],
-        props:{
+        props: {
             anchor: [1, 6, 2, 5]
         }
     });
@@ -168,8 +168,7 @@ SelectListBox.prototype._updateSelectedItem = function () {
             var value = itemElt.value + '';
             if (valueDict[value]) {
                 itemElt.selected = true;
-            }
-            else {
+            } else {
                 itemElt.selected = false;
             }
         });
@@ -204,7 +203,7 @@ SelectListBox.prototype.viewListAt = function (offset) {
         pageElt = this.$listPages[pageIndex];
 
 
-        pageElt.addStyle('top', this._pageOffsets[pageIndex] * this.itemHeight + 'px');
+        pageElt.addStyle('top', this._pageOffsets[pageIndex] * this.itemHeight/14 + 'em');
         this._requireItem(pageElt, nItem);
         this._assignItems(pageElt, sIdx);
         pageBound = pageElt.getBoundingClientRect();
@@ -220,8 +219,7 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
     }
     if (this._displayValue == VALUE_HIDDEN) {
         return false;
-    }
-    else if (this._values.length > 0) {
+    } else if (this._values.length > 0) {
         var value = this._values[0];
         var itemHolders = this._displayItemHolderByValue[value + ''];
         if (itemHolders) {
@@ -237,10 +235,8 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
             }.bind(this));
             this.domSignal.emit('scrollIntoSelected');
             return true;
-        }
-        else return false;
-    }
-    else
+        } else return false;
+    } else
         return false;
 };
 
@@ -270,11 +266,11 @@ SelectListBox.prototype.resetSearchState = function () {
 };
 
 SelectListBox.prototype.notifyPressOut = function () {
-    this.emit('pressout', { target: this, type: 'pressout' }, this);
+    this.emit('pressout', {target: this, type: 'pressout'}, this);
 };
 
 SelectListBox.prototype.notifyPressClose = function () {
-    this.emit('pressclose', { target: this, type: 'pressclose' }, this);
+    this.emit('pressclose', {target: this, type: 'pressclose'}, this);
 };
 
 SelectListBox.prototype._findFirstPageIdx = function () {
@@ -307,7 +303,7 @@ SelectListBox.prototype._updateDisplayItem = function () {
     this._displayItems = this._filterDisplayItems(this._preDisplayItems);
     this._updateDisplayItemIndex();
     this.$content.addStyle({
-        'height': this._displayItems.length * this.itemHeight + 'px'
+        'height': this._displayItems.length * this.itemHeight/14 + 'em'
     });
 
 };
@@ -317,11 +313,12 @@ SelectListBox.prototype._updateItems = function () {
     this._preDisplayItems = this._itemsToNodeList(this._items);
     this._searchCache = {};
     var estimateSize = measureListSize(this._itemNodeList);
+
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
     this._estimateDescWidth = estimateSize.descWidth;
-    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, estimateSize.width) + 'px');
-    this.addStyle('--select-list-desc-width', estimateSize.descWidth + 'px')
+    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, estimateSize.width)/14 + 'em');
+    this.addStyle('--select-list-desc-width', (estimateSize.descWidth)/14 + 'em')
     this._updateDisplayItem();
 };
 
@@ -340,8 +337,8 @@ SelectListBox.prototype._implicit = function (values) {
         if (values === null || values === undefined) values = [];
         else values = [values];
     }
-    return values.reduce(function (ac, cr){
-        if (!ac.dict[cr]){
+    return values.reduce(function (ac, cr) {
+        if (!ac.dict[cr]) {
             ac.dict[cr] = true;
             ac.result.push(cr);
         }
@@ -354,8 +351,7 @@ SelectListBox.prototype._explicit = function (values) {
         return values.filter(function (value) {
             return !!this._itemNodeHolderByValue[value];
         }.bind(this));
-    }
-    else {
+    } else {
         return values.slice();
     }
 };
@@ -415,8 +411,7 @@ SelectListBox.property.strictValue = {
     set: function (value) {
         if (value) {
             this.addClass('as-strict-value');
-        }
-        else {
+        } else {
             this.removeClass('as-strict-value');
         }
     },
@@ -432,8 +427,7 @@ SelectListBox.property.displayValue = {
         this._updateItemNodeIndex();
         if (value === VALUE_HIDDEN) {
             this.addClass('as-value-hidden');
-        }
-        else {
+        } else {
             this.removeClass('as-value-hidden');
         }
     },
@@ -474,7 +468,7 @@ SelectListBox.eventHandler.searchModify = function () {
     this._preDisplayItems = this._itemsToNodeList(searchedItems);
     this._displayItems = this._filterDisplayItems(this._preDisplayItems);
     this.$content.addStyle({
-        'height': this._displayItems.length * this.itemHeight + 'px'
+        'height': this._displayItems.length * this.itemHeight/14 + 'em'
     });
     this._updateItemNodeIndex();
     this.viewListAt(0);
@@ -484,18 +478,19 @@ SelectListBox.eventHandler.searchModify = function () {
 
 
 SelectListBox.eventHandler.scroll = function () {
+    var itemHeight = this.itemHeight*$(document.body).getFontSize()/14;
     var scrollerBound = this.$listScroller.getBoundingClientRect();
     var topIdx = this._findFirstPageIdx();
     if (!this.$listPages[topIdx]) return;
     var screenSize = getScreenSize();
-    var maxItem = Math.ceil(Math.max(window.screen.height, screenSize.height) / this.itemHeight);
+    var maxItem = Math.ceil(Math.max(window.screen.height, screenSize.height) / itemHeight);
     var topBound = this.$listPages[topIdx].getBoundingClientRect();
     var botIdx = this._findLastPageIdx();
     if (!this.$listPages[botIdx]) return;
     var botBound;
     botBound = this.$listPages[botIdx].getBoundingClientRect();
     if (topBound.top > scrollerBound.top || topBound.bottom < scrollerBound.bottom) {
-        this.viewListAt(Math.floor(this.$listScroller.scrollTop / this.itemHeight))
+        this.viewListAt(Math.floor(this.$listScroller.scrollTop /itemHeight))
         return;
     }
 
@@ -508,7 +503,7 @@ SelectListBox.eventHandler.scroll = function () {
             this._requireItem(this.$listPages[topIdx], this._pageOffsets[topIdx + 1] - this._pageOffsets[topIdx]);
             this._assignItems(this.$listPages[topIdx], this._pageOffsets[topIdx]);
             this._updateSelectedItem();
-            this.$listPages[topIdx].addStyle('top', this._pageOffsets[topIdx] * this.itemHeight + 'px');
+            this.$listPages[topIdx].addStyle('top', this._pageOffsets[topIdx] * itemHeight + 'px');
         }
     }
 
@@ -517,7 +512,7 @@ SelectListBox.eventHandler.scroll = function () {
             this._pageOffsets.push(this._pageOffsets.shift());
             this.$listPages.push(this.$listPages.shift());
             this._pageOffsets[botIdx + 1] = Math.min(this._displayItems.length, this._pageOffsets[botIdx] + maxItem);
-            this.$listPages[botIdx].addStyle('top', this._pageOffsets[botIdx] * this.itemHeight + 'px');
+            this.$listPages[botIdx].addStyle('top', this._pageOffsets[botIdx] *itemHeight + 'px');
             this._requireItem(this.$listPages[botIdx], this._pageOffsets[botIdx + 1] - this._pageOffsets[botIdx]);
             this._assignItems(this.$listPages[botIdx], this._pageOffsets[botIdx]);
             this._updateSelectedItem();

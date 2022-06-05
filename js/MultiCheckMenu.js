@@ -5,6 +5,7 @@ import CheckListBox from "./CheckListBox";
 import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getValueOfListItem } from "./SelectListItem";
 import AElement from "absol/src/HTML5/AElement";
+import {map} from "absol/src/Math/int";
 
 
 /***
@@ -114,7 +115,7 @@ MultiCheckMenu.eventHandler.selectListBoxChange = function (event) {
     setTimeout(function () {
         this.viewItemsByValues(this._tempValues);
         var bound = this.getBoundingClientRect();
-        this.$selectlistBox.addStyle('min-width', bound.width + 'px');
+        this.$selectlistBox.addStyle('min-width', Math.max(bound.width,  this.$selectlistBox.getFontSize()* 15.5) + 'px');
         this.$selectlistBox.refollow();
         this.$selectlistBox.updatePosition();
     }.bind(this), 1);
@@ -148,7 +149,7 @@ MultiCheckMenu.property.isFocus = {
             document.body.appendChild(this.$selectlistBox);
             this.$selectlistBox.domSignal.$attachhook.emit('attached');
             var bound = this.getBoundingClientRect();
-            this.$selectlistBox.addStyle('min-width', bound.width + 'px');
+            this.$selectlistBox.addStyle('min-width', Math.max(bound.width,this.$selectlistBox.getFontSize() * 15.5 )  + 'px');
             this.$selectlistBox.refollow();
             this.$selectlistBox.updatePosition();
             setTimeout(function () {

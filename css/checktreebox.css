@@ -10,9 +10,9 @@
 
 
 .as-check-tree-box.as-select-list-box.as-enable-search .as-select-list-box-scroller {
-    max-height: calc(var(--max-height) - 38px - 29px);
+    max-height: calc(var(--max-height) - 2em - 10px - 2em - 1px);
 }
 
 .as-check-tree-box.as-select-list-box .as-select-list-box-scroller {
-    max-height: calc(var(--max-height) - 29px);
+    max-height: calc(var(--max-height) - 2em - 1px);
 }

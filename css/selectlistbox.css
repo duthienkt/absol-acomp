@@ -5,7 +5,7 @@
     top: 10px;
     left: 10px;
     width: calc(var(--select-list-estimate-width) + 2px + 5px + 7px);
-    font-size: 14px;
+    font-size: 1rem;
     font-family: Arial, Helvetica, sans-serif;
     border: solid 1px rgb(100, 100, 255);
     box-sizing: border-box;
@@ -40,12 +40,12 @@ div.absol-follower.as-select-list-box {
 
 .as-select-list-box.as-enable-search.as-anchor-6,
 .as-select-list-box.as-enable-search.as-anchor-5 {
-    padding-bottom: 38px;
+    padding-bottom: calc(2em + 10px);
 }
 
 .as-select-list-box.as-enable-search.as-anchor-1,
 .as-select-list-box.as-enable-search.as-anchor-2 {
-    padding-top: 38px;
+    padding-top: calc(2em + 10px);
 }
 
 .as-select-list-box.as-enable-search.as-anchor-1 .as-select-list-box-search-ctn,
@@ -63,7 +63,7 @@ div.absol-follower.as-select-list-box {
 }
 
 .as-select-list-box.as-enable-search .as-select-list-box-scroller {
-    max-height: calc(var(--max-height) - 38px);
+    max-height: calc(var(--max-height) - 2em - 10px);
 }
 
 .as-select-list-box-content {

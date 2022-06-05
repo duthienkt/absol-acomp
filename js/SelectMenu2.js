@@ -133,8 +133,8 @@ SelectMenu.property.items = {
     set: function (items) {
         items = items || [];
         this.$selectlistBox.items = items;
-        this.addStyle('--select-list-estimate-width', this.$selectlistBox._estimateWidth + 'px');
-        this.addStyle('--select-list-desc-width', this.$selectlistBox._estimateDescWidth + 'px');
+        this.addStyle('--select-list-estimate-width', (this.$selectlistBox._estimateWidth)/14 + 'em');
+        this.addStyle('--select-list-desc-width', (this.$selectlistBox._estimateDescWidth)/14 + 'em');
         this.updateItem();
     },
     get: function () {
