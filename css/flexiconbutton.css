@@ -8,6 +8,8 @@
     overflow: hidden;
     display: inline-block;
     vertical-align: middle;
+    height: var(--as-input-height);
+    font-size: 1rem;
 }
 
 .as-flexicon-button:disabled {
