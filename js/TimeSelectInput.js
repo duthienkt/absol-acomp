@@ -85,7 +85,7 @@ TimeSelectInput.prototype._makeTimeList = function (start, end, step) {
         });
     }
     this.$selectlistBox.items = items;
-    this.addStyle('--list-min-width', this.$selectlistBox._estimateWidth + 'px');
+    this.addStyle('--list-min-width', this.$selectlistBox._estimateWidth/14 + 'em');
 };
 
 TimeSelectInput.prototype.textRegx = /^((1[0-2])|[1-9]):([0-5][0-9]) (AM|PM)$/;

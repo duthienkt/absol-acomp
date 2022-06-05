@@ -4,7 +4,7 @@
     width: 9em;
     border: solid 1px #d6d6d6;
     border-radius: 2px;
-    font-size: 14px;
+    font-size: 1rem;
     outline: none;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     display: inline-block;
@@ -37,7 +37,7 @@
 .ac-time-input input {
     font: inherit;
     outline: none;
-    width: calc(100% - 30px);
+    width: calc(100% - 2em - 2px);
     height: 100%;
     border: none;
     display: block;
@@ -46,6 +46,7 @@
     user-select: auto;
     -webkit-user-drag: none;
     color: inherit;
+    box-sizing: border-box;
 }
 
 .as-time-input-icon-btn {
