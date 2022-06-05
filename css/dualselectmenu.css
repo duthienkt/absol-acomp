@@ -25,12 +25,12 @@
 
 .as-dual-select-box.as-enable-search.as-anchor-6,
 .as-dual-select-box.as-enable-search.as-anchor-5 {
-    padding-bottom: 38px;
+    padding-bottom: calc(2rem + 10px);
 }
 
 .as-dual-select-box.as-enable-search.as-anchor-1,
 .as-dual-select-box.as-enable-search.as-anchor-2 {
-    padding-top: 38px;
+    padding-top: calc(2rem + 10px);
 }
 
 .as-dual-select-box.as-enable-search.as-anchor-1 .as-dual-select-box-search-ctn,
@@ -58,7 +58,7 @@
 }
 
 .as-dual-select-box.as-enable-search .as-dual-select-box-list {
-    max-height: calc(var(--max-height) - 38px);
+    max-height: calc(var(--max-height) - calc(2rem + 10px));
 }
 
 .as-dual-select-box-arrow-ctn {
@@ -89,6 +89,6 @@
 }
 
 .as-dual-select-menu.absol-selectmenu {
-    min-width: calc(var(--dual-list-estimate-text-width) + 10px + 30px);
+    min-width: calc(var(--dual-list-estimate-text-width) + 5.5em);
     --dual-list-estimate-text-width: 20px;
 }

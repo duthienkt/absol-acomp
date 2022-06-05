@@ -187,6 +187,7 @@ DualSelectBox.prototype.makeRightItem = function (item) {
 
 
 DualSelectBox.prototype._calcEstimateSize = function (items) {
+    var fontSize = $(document.body).getFontSize();
     var longestItem = null;
     var longestE14 = 0;
     var e14, i, j;
@@ -218,9 +219,9 @@ DualSelectBox.prototype._calcEstimateSize = function (items) {
     var rightTextWidth = longestItem ? measureText(longestItem.text, '14px arial').width : 0;
 
     return {
-        width: 7 + leftTextWidth + 7 + 5 + 7 + 1 + 17 + 1 + 7 + rightTextWidth + 7 + 5 + 7 + 20,
-        height: maxN * 20,
-        textWidth: leftTextWidth + rightTextWidth + 12
+        width: (7 + leftTextWidth + 7 + 5 + 7 + 1 + 17 + 1 + 7 + rightTextWidth + 7 + 5 + 7 + 20)* fontSize/14,
+        height: maxN * 20* fontSize/14,
+        textWidth: (leftTextWidth + rightTextWidth + 12)* fontSize/14
     }
 };
 
