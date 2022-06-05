@@ -1,6 +1,7 @@
 .as-conversation-box {
     display: flex;
     flex-direction: column;
+    font-size: 1rem;
 }
 
 .as-conversation-box-message-ctn {
@@ -14,9 +15,9 @@
 .as-message-input {
     position: relative;
     box-sizing: border-box;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    padding-left: 5px;
+    padding-top: calc(5em  / 14);
+    padding-bottom: calc(5em  / 14);
+    padding-left: calc(5em  / 14);
     overflow: visible;
     --plugin-buttons-width: 0px;
     font-size: var(--as-input-font-size);
@@ -29,8 +30,9 @@
 
 
 .as-message-input-plugin-btn {
-    width: 40px;
-    height: 40px;
+    font-size: inherit;
+    width: calc(40em / 14);
+    height: calc(40em / 14);
     padding: 0;
     border: none;
     color: rgb(122, 122, 122);
@@ -53,37 +55,37 @@
 
 
 .as-message-input-plugin-btn span {
-    font-size: 24px;
+    font-size: calc(24em / 14);
 }
 
 
 .as-message-input-right {
     position: absolute;
-    bottom: 10px;
-    right: 5px;
+    bottom: calc(10em / 14);
+    right: calc(5em / 14);
     z-index: 0;
     white-space: nowrap;
 }
 
 .as-message-input-right .as-message-input-plugin-btn {
-    margin-left: 10px;
+    margin-left: calc(10em / 14);
 }
 
 
 .as-message-input-emoji-btn-ctn {
     position: absolute;
-    left: 5px;
-    bottom: 5px;
+    left: calc(5em / 14);
+    bottom:calc(5em / 14);
 }
 
 
 .as-message-input-pre-ctn {
     position: relative;
-    width: calc(100% - 55px - var(--plugin-buttons-width));
-    border-radius: 25px;
+    width: calc(100% - 4em - var(--plugin-buttons-width));
+    border-radius: 1.8em;
     box-sizing: border-box;
     transition: width 0.1s;
-    padding: 10px 20px 10px 50px;
+    padding: calc(10em / 14) calc(20em / 14) calc(10em / 14) 3.57em;
     background-color: rgb(241, 241, 244);
 }
 
@@ -91,7 +93,7 @@
 .as-message-input-pre-ctn::after {
     display: inline-block;
     content: "";
-    height: 30px;
+    height: calc(2em + 2px);
     vertical-align: middle;
 }
 
@@ -99,7 +101,7 @@
 .as-message-input.as-has-text .as-message-input-pre-ctn,
 .as-message-input.as-has-quote .as-message-input-pre-ctn,
 .as-message-input.as-has-attachment .as-message-input-pre-ctn {
-    width: calc(100% - 55px);
+    width: calc(100% - 4em);
 }
 
 
@@ -122,7 +124,7 @@
 
 .as-message-input-pre:before {
     content: "";
-    line-height: 30px;
+    line-height: calc(2em + 2px);
     display: inline;
     vertical-align: middle;
 }
@@ -151,7 +153,7 @@
 }
 
 .as-message-input-plugin-btn.as-message-input-plugin-send span {
-    font-size: 20px;
+    font-size: calc(20em / 14);
 }
 
 .as-message-input-plugin-btn.as-message-input-plugin-send:hover {
@@ -239,11 +241,11 @@
 }
 
 .as-message-quote-sym {
-    width: 25px;
+    width: 1.8em;
 }
 
 .as-message-quote-sym > span {
-    font-size: 25px;
+    font-size: 1.8em;
     color: rgb(169, 169, 172);
 }
 
@@ -266,7 +268,7 @@
 }
 
 .as-message-quote-text {
-    font-size: 1.14em;
+    font-size: calc(16em / 14);
     line-height: 1.75;
     font-style: italic;
     color: rgb(43, 44, 51);

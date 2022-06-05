@@ -1,5 +1,5 @@
 .as-emoji-picker {
-    font-size: 12px;
+    font-size: calc(12em / 14);
     border: 1px solid #dddddd;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
@@ -8,8 +8,8 @@
 .as-emoji-picker-preview {
     display: inline-block;
     vertical-align: top;
-    width: 80px;
-    height: 110px;
+    width: 5.7em;
+    height: calc(8em + 30px);
     border-right: 1px solid #dddddd;
     text-align: center;
 
@@ -38,8 +38,8 @@
     display: inline-block;
     vertical-align: top;
     overflow-y: auto;
-    width: calc(100% - 81px);
-    height: 110px;
+    width: calc(100% - 5.7em - 1px);
+    height: calc(8em + 30px);
     padding: 5px;
     box-sizing: border-box;
 }
@@ -48,10 +48,10 @@
 .as-emoji-picker-item {
     display: inline-block;
     padding: 5px;
-    width: 30px;
-    height: 30px;
+    width: 2em;
+    height: 2em;
     box-sizing: border-box;
-    border-radius: 6px;
+    border-radius: 0.4em;
 }
 
 .as-emoji-picker-item:hover {

@@ -492,7 +492,7 @@ MessageInput.prototype.notifySizeChange = function () {
 MessageInput.prototype.addPlugin = function (option) {
     var plugin = new this.PluginConstructor(this, option);
     this._plugins.push(plugin);
-    this.addStyle('--plugin-buttons-width', this._plugins.length * 45 + 'px');
+    this.addStyle('--plugin-buttons-width', (this._plugins.length * 45)/14 + 'em');
     return plugin;
 };
 
