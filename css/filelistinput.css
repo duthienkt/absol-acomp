@@ -72,10 +72,10 @@
 
 .as-file-list-input-add {
     border: none;
-    width: 50px;
+    width: 3.5em;
     border-radius: 5px;
     background-color: rgba(235, 235, 235, 0.2);
-    height: 30px;
+    height: calc(2em + 2px);
     padding-bottom: 10px;
     box-sizing: border-box;
     display: inline-block;
@@ -83,6 +83,7 @@
     position: relative;
     vertical-align: middle;
     margin-right: 5px;
+    font-size: inherit;
 }
 
 
@@ -132,11 +133,11 @@
 
 .as-file-list-item {
     position: relative;
-    height: 30px;
-    font-size: 14px;
+    height: calc(2em + 2px);
+    font-size: 1rem;
     font-family: Arial, Helvetica, sans-serif;
     width: calc(var(--item-width) - 5px);
-    padding-left: 32px;
+    padding-left: 2.3em;
     white-space: nowrap;
     box-sizing: border-box;
     user-select: none;
@@ -147,10 +148,10 @@
 .as-file-list-item-icon {
     position: absolute;
     left: 0;
-    top: calc(50% - 15px);
+    top: calc(50% - 1em - 1px);
     bottom: 0;
-    width: 30px;
-    height: 30px;
+    width: calc(2em + 2px);
+    height: calc(2em + 2px);
 }
 
 
