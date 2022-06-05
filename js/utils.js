@@ -676,9 +676,9 @@ export function fileInfoOf(fi) {
     var res = {};
     var handle = o => {
         if (typeof o === "string") {
-            res.name = (o.split('/').pop() || '').replace(/%([\dA-Fa-f][\dA-Fa-f]+)/, (all, g1) => {
+            res.name = (o.split('/').pop() || '').replace(/%([\dA-Fa-f][\dA-Fa-f])/g, (all, g1) => {
                 var n = parseInt(g1, 16);
-                if (typeof n === "string") {
+                if (typeof n === "number") {
                     return String.fromCharCode(n);
                 }
                 return all;
@@ -750,6 +750,54 @@ export function addElementAfter(inElement, elements, at) {
             (inElement.addChildBefore || inElement.insertBefore)(elements[i], before);
         }
     }
+}
+
+
+export function checkedValues2RootTreeValues(items, values) {
+    var keyOf = (x) => (typeof x) + x;
+    var dict = values.reduce((ac, cr) => {
+        ac[keyOf(cr)] = true;
+        return ac;
+    }, {});
+    var checkScan = item => {
+        if (dict[keyOf(item.value)]) return true;
+        if (item.items && item.items.length > 0) {
+            item.items.forEach(sItem => checkScan(sItem));
+            dict[keyOf(item.value)] = item.items.every(sItem => dict[keyOf(sItem.value)]);
+        }
+        return dict[keyOf(item.value)];
+    }
+
+    var res = [];
+    var scan = item => {
+        if (dict[keyOf(item.value)]) {
+            res.push(item.value);
+        } else if (item.items && item.items.length > 0) {
+            item.items.forEach(sItem => scan(sItem));
+        }
+    }
+
+    items.forEach(sItem => scan(sItem));
+    return res;
+}
+
+
+export function rootTreeValues2CheckedValues(items, values) {
+    var keyOf = (x) => (typeof x) + x;
+    var dict = values.reduce((ac, cr) => {
+        ac[keyOf(cr)] = true;
+        return ac;
+    }, {});
+    var res = [];
+    var visit = (item, checked) => {
+        if (checked) res.push(item.value);
+        if (item.items && item.items.length > 0) {
+            item.items.forEach(cr => visit(cr, checked || dict[keyOf(cr.value)]));
+        }
+    }
+
+    items.forEach(cr => visit(cr, dict[keyOf(cr.value)]))
+    return res;
 }
 
 
