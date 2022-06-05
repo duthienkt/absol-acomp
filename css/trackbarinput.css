@@ -6,6 +6,7 @@
     min-width: 13.5em;
     height: 2em;
     --input-width: 4em;
+    font-size: 1rem;
 }
 
 .absol-trackbar-input::after {
@@ -37,6 +38,7 @@
 
 .absol-trackbar-input input {
     color: inherit;
+    font-size: inherit;
 }
 
 .absol-trackbar-input.as-border-none .as-flexicon-input {
