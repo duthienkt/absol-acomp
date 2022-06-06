@@ -9,6 +9,10 @@ import "./type/OMTArray";
 import "./type/OMTEnumSet";
 import "./type/OMTFile";
 import "./type/OMTFileArray";
+import "./type/OMTColor";
+import "./type/OMTBool";
+import "./type/OMTHtml";
+import "./type/OMDateTime";
 
 
 /***
@@ -48,7 +52,6 @@ ObjectMergeTool.render = function () {
                 class: 'as-omt-body'
             }
         ]
-
     });
 };
 

@@ -2,7 +2,6 @@ import OMTBaseType from "./OMTBaseType";
 import OOP from "absol/src/HTML5/OOP";
 import { _ } from "../../../ACore";
 import OMTFile from "./OMTFile";
-import { fileInfoOf } from "../../utils";
 
 /***
  * @extends OMTBaseType
