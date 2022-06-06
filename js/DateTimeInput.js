@@ -562,7 +562,13 @@ DateTimeInput.property.readOnly = {
     get: function () {
         return this.hasClass('as-read-only');
     }
-}
+};
+
+DateTimeInput.property.text = {
+    get: function (){
+        return this.$text.value;
+    }
+};
 
 DateTimeInput.eventHandler = {};
 
