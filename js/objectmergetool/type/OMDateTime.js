@@ -22,7 +22,7 @@ OMTDateTime.prototype.render = function () {
     OMTBaseType.prototype.render.call(this);
     this.$value = _({
         tag: DateTimeInput.tag,
-        class:'as-border-none',
+        class: 'as-border-none',
         props: {
             readOnly: true
         }
@@ -36,13 +36,13 @@ OMTDateTime.prototype.assign = function (o) {
     this.$value.value = o;
 };
 
-OMTDateTime.prototype.getRaw = function (){
-    return  {
+OMTDateTime.prototype.getRaw = function () {
+    return {
         child: [
             {
                 tag: 'span',
                 class: 'as-omt-field-name',
-                child: { text: (this.descriptor.displayName || this.descriptor.name || "ROOT") + ': ' }
+                child: {text: (this.descriptor.displayName || this.descriptor.name || "ROOT") + ': '}
             },
             {
                 tag: 'span',

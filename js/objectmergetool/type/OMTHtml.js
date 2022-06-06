@@ -27,7 +27,6 @@ OMTHtml.prototype.assign = function (o) {
         }
     });
     this.$body.addChild(this.$value);
-
 };
 
 OMTHtml.prototype.getRaw = function () {
