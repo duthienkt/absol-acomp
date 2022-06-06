@@ -1,6 +1,7 @@
 import '../css/selectlist.css';
 import ACore from "../ACore";
 import CheckboxButton from "./CheckboxButton";
+import OOP from "absol/src/HTML5/OOP";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -21,6 +22,7 @@ function SelectListItem() {
     res._extendStyle = {};
     res._data = "";
     res._level = 0;
+    OOP.drillProperty(this, this, 'noSelect', 'disabled');
 }
 
 SelectListItem.render = function () {
@@ -30,14 +32,14 @@ SelectListItem.render = function () {
             {
                 tag: 'span',
                 class: 'absol-selectlist-item-text',
-                child: { text: '' }
+                child: {text: ''}
             },
             {
                 class: 'absol-selectlist-item-desc-container',
                 child: {
                     tag: 'span',
                     class: 'absol-selectlist-item-desc',
-                    child: { text: '' }
+                    child: {text: ''}
                 }
             }
         ]
@@ -103,7 +105,7 @@ SelectListItem.property.data = {
             this.lastInGroup = !!(value.lastInGroup);
             this.isLeaf = !!(value.isLeaf);
             this.selected = !!(value.selected);
-            this.disabled = value.disabled;
+            this.disabled = value.disabled || value.noSelect;
         }
     },
     get: function () {
@@ -115,15 +117,15 @@ SelectListItem.property.disabled = {
     set: function (value) {
         if (value) {
             this.addClass('as-disabled');
-        }
-        else {
+        } else {
             this.removeClass('as-disabled');
         }
     },
     get: function () {
         return this.hasClass('as-disabled');
     }
-}
+};
+
 
 SelectListItem.property.value = {
     get: function () {
@@ -160,8 +162,7 @@ SelectListItem.property.lastInGroup = {
     set: function (value) {
         if (value) {
             this.addClass('as-last-in-group');
-        }
-        else {
+        } else {
             this.removeClass('as-last-in-group');
         }
     },
@@ -174,8 +175,7 @@ SelectListItem.property.isLeaf = {
     set: function (value) {
         if (value) {
             this.addClass('as-is-leaf');
-        }
-        else {
+        } else {
             this.removeClass('as-is-leaf');
         }
     },
@@ -188,8 +188,7 @@ SelectListItem.property.selected = {
     set: function (value) {
         if (value) {
             this.addClass('as-selected');
-        }
-        else {
+        } else {
             this.removeClass('as-selected');
         }
     },
@@ -208,26 +207,23 @@ export function getTextOfListItem(item) {
     if (item) {
         if (item.match) {
 
-        }
-        else if (item.text && item.text.match) {
-            return item.text;
-        }
-        else return '';
-    }
-    else return '';
+        } else
+            if (item.text && item.text.match) {
+                return item.text;
+            } else return '';
+    } else return '';
 }
 
 export function getValueOfListItem(item) {
     if (item) {
         if (item.match) {
             return item;
-        }
-        else if (typeof item === "object")
-            return item.value;
-        else
-            return item;
-    }
-    else return item;
+        } else
+            if (typeof item === "object")
+                return item.value;
+            else
+                return item;
+    } else return item;
 }
 
 export function getDescriptionOfListItem(item) {
