@@ -71,7 +71,6 @@ FileListItem.property.value = {
     set: function (value) {
         value = value || null;
         var info = fileInfoOf(value);
-        console.log(value, info);
         var type = info.type ||null;
         var size = info.size || null;
         var name = info.name || null;
