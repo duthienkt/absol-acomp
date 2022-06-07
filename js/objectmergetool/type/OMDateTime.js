@@ -27,7 +27,7 @@ OMTDateTime.prototype.render = function () {
             readOnly: true
         }
     });
-
+    if (this.descriptor.format) this.$value.format = this.descriptor.format;
     this.$body.addChild(this.$value);
 };
 

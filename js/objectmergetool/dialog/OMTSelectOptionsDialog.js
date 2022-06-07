@@ -42,7 +42,7 @@ OMTSelectOptionsDialog.prototype.assignResult = function () {
     if (this.curHash !== this.selectedHash) {
         this.node.assign(this.selectedOption);
         this.node.updateRaw();
-        this.node.tool.notifyChange();
+        this.node.notifyChange();
     }
 };
 

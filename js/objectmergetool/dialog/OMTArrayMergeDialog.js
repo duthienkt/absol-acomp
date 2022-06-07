@@ -70,7 +70,7 @@ OMTArrayMergeDialog.prototype.assignResult = function () {
     if (this.curHash === hashArr && arrayUnique(this.curHash.concat(hashArr)).length === this.curHash.length) return;
     this.node.assign(itemArr);
     this.node.updateRaw();
-    this.node.tool.notifyChange();
+    this.node.notifyChange();
 };
 
 

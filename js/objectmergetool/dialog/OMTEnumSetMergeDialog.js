@@ -44,7 +44,7 @@ OMTEnumSetMergeDialog.prototype.assignResult = function () {
     var selectedValues = this._getCurrent();
     if (selectedValues.length > 0) {
         this.node.assign(this.currentValues.concat(selectedValues));
-        this.node.tool.notifyChange();
+        this.node.notifyChange();
     }
 };
 
