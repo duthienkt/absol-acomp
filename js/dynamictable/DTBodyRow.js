@@ -94,8 +94,8 @@ Object.defineProperty(DTBodyRow.prototype, 'innerText', {
         if (this.data.getInnerText) return this.data.getInnerText();
         if ('innerText' in this.data) return this.data.innerText || '';
         return this.cells.map(function (cell) {
-            return cell.innerText;
-        }).join(' ');
+            return cell.innerText.trim();
+        }).filter(text=>!!text).join(' ');
     }
 });
 

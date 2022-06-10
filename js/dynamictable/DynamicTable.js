@@ -144,6 +144,10 @@ DynamicTable.prototype.requireRows = function (start, end) {
     return this.table.body.requireRows(start, end);
 };
 
+DynamicTable.prototype.clearRows = function (){
+    return this.table.body.clearRows();
+};
+
 DynamicTable.prototype.viewIntoRow = function (row) {
     this.table.body.viewIntoRow(row);
 };

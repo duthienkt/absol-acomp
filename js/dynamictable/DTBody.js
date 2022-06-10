@@ -1,12 +1,10 @@
 import DTBodyRow from "./DTBodyRow";
 import DTRowDragController from "./DTRowDragController";
-import { isNaturalNumber, isRealNumber } from "../utils";
+import  { isNaturalNumber, isRealNumber , calcDTQueryHash} from "../utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Thread from "absol/src/Network/Thread";
 import DTSearchFactor from "./DTSearchFactor";
 import { randomIdent } from "absol/src/String/stringGenerate";
-import calcDTQueryHash from "./calcDTQueryHash";
-
 
 /***
  *

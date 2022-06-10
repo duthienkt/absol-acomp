@@ -1,4 +1,5 @@
 import ACore from "../ACore";
+import {stringHashCode} from "absol/src/String/stringUtils";
 
 export function insertTextAtCursor(text) {
     var sel, range;
@@ -893,3 +894,23 @@ export function latLngDistance(p0, p1) {
     var d = R * c;
     return d;
 };
+
+
+export function jsStringOf(x) {
+    if (x === null) return 'null';
+    if (x === undefined) return 'undefined';
+    var type = typeof x;
+    if (type === 'string' || type === 'number') return JSON.stringify(x);
+    if (x instanceof Date) return 'new Date(' + x.getTime() + ')';
+    var keys;
+    keys = Object.keys(x);
+    keys.sort();
+    return '{' + keys.map(function (key) {
+        return JSON.stringify(key) + ':' + jsStringOf(x[key]);
+    }).join(',') + '}';
+}
+
+export function calcDTQueryHash(o) {
+    var  s = jsStringOf(o);
+    return stringHashCode(s);
+}
