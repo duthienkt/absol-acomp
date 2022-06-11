@@ -96,7 +96,7 @@ CheckTreeItem.property.selected = {
             return 'all';
         }
         else {
-            if (this.$checkbox.containsClass('as-has-minus')) {
+            if (this.$checkbox.hasClass('as-has-minus')) {
                 return 'child';
             }
             else {
