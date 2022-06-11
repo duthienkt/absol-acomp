@@ -59,6 +59,15 @@ function DynamicTable() {
 
     this.waitingCtl = new DTWaitingViewController(this);
 
+    var checkAlive = () => {
+        if (this.isDescendantOf(document.body)) {
+            setTimeout(checkAlive, 5000);
+        }
+        else {
+            this.revokeResource();
+        }
+    };
+    setTimeout(checkAlive, 30000);
 }
 
 
@@ -97,6 +106,12 @@ DynamicTable.render = function () {
     });
 };
 
+
+DynamicTable.prototype.revokeResource = function () {
+    this.table && this.table.revokeResource();
+    this.attachSearchInput(null);
+    this.filterInputs = [];
+};
 
 DynamicTable.prototype.addRowBefore = function (rowData, bf) {
     return this.table.body.addRowBefore(rowData, bf);
@@ -144,7 +159,7 @@ DynamicTable.prototype.requireRows = function (start, end) {
     return this.table.body.requireRows(start, end);
 };
 
-DynamicTable.prototype.clearRows = function (){
+DynamicTable.prototype.clearRows = function () {
     return this.table.body.clearRows();
 };
 

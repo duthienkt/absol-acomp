@@ -156,6 +156,7 @@ function DTSearchFactor(global) {
 
     function calcItemMatchScore(queryItem, item) {
         var score = 0;
+        if (!item.text) return 0;
         if (item.__text__ == queryItem.__text__)
             score += EQUAL_MATCH_SCORE * queryItem.__text__.length;
 

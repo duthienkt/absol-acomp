@@ -26,6 +26,9 @@ DTTable.prototype.clearView = function () {
     this.elt.$thead.clearChild();
 };
 
+DTTable.prototype.revokeResource = function () {
+    this.body.revokeResource();
+};
 
 Object.defineProperty(DTTable.prototype, 'offset', {
     set: function (value) {

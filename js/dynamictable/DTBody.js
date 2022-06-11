@@ -1,10 +1,10 @@
 import DTBodyRow from "./DTBodyRow";
 import DTRowDragController from "./DTRowDragController";
-import  { isNaturalNumber, isRealNumber , calcDTQueryHash} from "../utils";
+import {isNaturalNumber, isRealNumber, calcDTQueryHash} from "../utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Thread from "absol/src/Network/Thread";
 import DTSearchFactor from "./DTSearchFactor";
-import { randomIdent } from "absol/src/String/stringGenerate";
+import {randomIdent} from "absol/src/String/stringGenerate";
 
 /***
  *
@@ -30,10 +30,14 @@ function SearchingMaster(body) {
 SearchingMaster.prototype.destroy = function () {
     this.share.thread.invoke('destroySlave', this.id);
     this.share.instances[this.id] = null;
+    this.transferSession = "DIE";
     delete this.share.instances[this.id];
 };
 
 SearchingMaster.prototype.transferFrom = function (offset) {
+    if (this.transferSession === "DIE") {
+        return;
+    }
     this.outputCache = {};
 
     if (offset < this.transferred) {
@@ -90,6 +94,9 @@ SearchingMaster.prototype.onFinishTransfer = function () {
 };
 
 SearchingMaster.prototype.sendTask = function (query) {
+    if (this.transferSession === "DIE") {
+        return;
+    }
     this.lastTaskIdx++;
     var taskData = {
         idx: this.lastTaskIdx,
@@ -406,7 +413,7 @@ function DTBody(table, data) {
     this.curentMode.start();
     this.curentMode.render();
 
-    this.master = this.master = new SearchingMaster(this);
+    this.master = new SearchingMaster(this);
     this.master.transferFrom(0);
     /***
      * @name offset
@@ -414,6 +421,10 @@ function DTBody(table, data) {
      * @memberOf DTBody#
      */
 }
+
+DTBody.prototype.revokeResource = function () {
+    this.master.destroy();
+};
 
 DTBody.prototype.requireRows = function (start, end) {
     if (typeof start !== "number") start = 0;
@@ -551,7 +562,8 @@ DTBody.prototype.clearRows = function () {
     this.data.rows.splice(0);
     if (this.curentMode.onRowRemoved)
         this.curentMode.onRowRemoved(0, n);
-}
+    this.onRowSplice(0);
+};
 
 
 DTBody.prototype.rowAt = function (idx) {

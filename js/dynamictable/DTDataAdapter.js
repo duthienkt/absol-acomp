@@ -43,6 +43,7 @@ function DTDataAdapter(tableElt, opt) {
 }
 
 DTDataAdapter.prototype.render = function () {
+    if (this.tableElt.table) this.tableElt.table.revokeResource();
     this.tableElt.table = new DTTable(this.tableElt, this.data);
 };
 
