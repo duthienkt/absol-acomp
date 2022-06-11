@@ -128,6 +128,9 @@ OMTSelectOptionsDialog.prototype.createView = function () {
 
     this.$modal = _({
         tag: Modal.tag,
+        style:{
+          zIndex: 1000000,
+        },
         child: this.$view
     });
 };
