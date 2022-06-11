@@ -59,6 +59,7 @@ LocationInput.prototype._preparePicker = function () {
     });
     this.share.$modal = _({
         tag: 'modal',
+        class:'as-location-input-modal',
         child: {
             class: 'as-location-input-modal-window',
             child: this.share.$picker
