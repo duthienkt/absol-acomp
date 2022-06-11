@@ -192,9 +192,45 @@
     background-color: rgba(169, 169, 172, 0.1);
 }
 
+.as-file-list-item:hover {
+    padding-right: 2.3em;
+}
 
-.as-file-list-item.as-active {
+.as-file-list-item-quick-btn {
+    position: absolute;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    border-radius: 3px;
+    height: 2em;
+    width: 2em;
+    font-size: inherit;
+    padding: 0;
+    right: 5px;
+    top: calc(50% - 1em);
+    display: none;
+}
+
+.as-file-list-input .as-file-list-item:hover .as-file-list-item-quick-btn,
+.as-file-list-item-quick-btn.as-quick-menu-attached{
+    display: block;
+}
+
+.as-file-list-item-quick-btn > span {
+    font-size: 1.2em;
+}
+
+
+.as-file-list-item-quick-btn.as-active {
     background-color: rgba(20, 185, 235, 0.3);
 }
 
+.as-file-list-item-quick-btn:hover {
+    background-color: #91e4fb77;
+}
+
+.as-file-list-item-quick-btn:active {
+    background-color: #91e4fb;
+
+}
 
