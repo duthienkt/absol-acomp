@@ -63,6 +63,9 @@ MultiCheckTreeLeafBox.render = function () {
 };
 
 
+MultiCheckTreeLeafBox.prototype.focus = SelectListBox.prototype.focus;
+
+
 MultiCheckTreeLeafBox.prototype._initControl = function () {
     this.$searchInput = $('searchtextinput', this)
         .on('stoptyping', this.eventHandler.searchModify);

@@ -4,6 +4,7 @@ import '../css/dualselectmenu.css';
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
 import { estimateWidth14, measureText, vScrollIntoView } from "./utils";
 import DomSignal from "absol/src/HTML5/DomSignal";
+import SelectListBox from "./SelectListBox";
 
 /***
  * @extends Follower
@@ -239,6 +240,8 @@ DualSelectBox.prototype.scrollIntoSelected = function () {
     }
 };
 
+DualSelectBox.prototype.focus = SelectListBox.prototype.focus;
+
 DualSelectBox.property = {};
 
 DualSelectBox.property.items = {
@@ -288,7 +291,7 @@ DualSelectBox.property.enableSearch = {
         }
     },
     get: function () {
-        return this.containsClass('as-enable-search');
+        return this.hasClass('as-enable-search');
     }
 };
 
@@ -305,7 +308,7 @@ DualSelectBox.property.strictValue = {
             this.cView.updateViewByValue();
     },
     get: function () {
-        return this.containsClass('as-strict-value');
+        return this.hasClass('as-strict-value');
     }
 };
 

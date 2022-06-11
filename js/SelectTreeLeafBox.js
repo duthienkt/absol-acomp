@@ -209,6 +209,8 @@ SelectTreeLeafBox.prototype._updateSelectedItem = function () {
     }
 };
 
+SelectTreeLeafBox.prototype.focus = SelectListBox.prototype.focus;
+
 SelectTreeLeafBox.property = {};
 
 SelectTreeLeafBox.eventHandler = {};

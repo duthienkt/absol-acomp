@@ -177,6 +177,7 @@ CheckListBox.prototype.viewListAtValue = function (value) {
 
 };
 
+CheckListBox.prototype.focus = SelectListBox.prototype.focus;
 
 CheckListBox.property.values = {
     set: function (value) {

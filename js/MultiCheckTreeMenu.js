@@ -442,7 +442,7 @@ MultiCheckTreeMenu.property.isFocus = {
     set: function (value) {
         var self = this;
         value = !!value;
-        var c = this.containsClass('as-focus');
+        var c = this.hasClass('as-focus');
         if (value === c) return;
         CPUViewer.hold();
         if (value) {
@@ -458,7 +458,8 @@ MultiCheckTreeMenu.property.isFocus = {
             this._focusTimeout = setTimeout(function () {
                 document.addEventListener('mousedown', this.eventHandler.clickOut);
                 this._focusTimeout = -1;
-            }.bind(this));
+                this.$checkTreeBox.focus();
+            }.bind(this), 5);
 
         } else {
             this.removeClass('as-focus');
@@ -479,7 +480,7 @@ MultiCheckTreeMenu.property.isFocus = {
         CPUViewer.release();
     },
     get: function () {
-        return this.containsClass('as-focus');
+        return this.hasClass('as-focus');
     }
 };
 
@@ -529,7 +530,7 @@ MultiCheckTreeMenu.property.checkedValues = {
 
 MultiCheckTreeMenu.property.leafOnly = {
     set: function (value) {
-        if (!!value === this.containsClass('as-leaf-only'))
+        if (!!value === this.hasClass('as-leaf-only'))
             return;
         if (value) {
             this.addClass('as-leaf-only');
@@ -539,7 +540,7 @@ MultiCheckTreeMenu.property.leafOnly = {
         this._switchLeafMode();
     },
     get: function () {
-        return this.containsClass('as-leaf-only');
+        return this.hasClass('as-leaf-only');
     }
 };
 

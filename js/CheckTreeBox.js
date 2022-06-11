@@ -6,7 +6,7 @@ import '../css/checktreebox.css';
 import {estimateWidth14, measureText} from "./utils";
 import {prepareSearchForList, searchListByText, searchTreeListByText} from "./list/search";
 import CPUViewer from "./CPUViewer";
-import AElement from "absol/src/HTML5/AElement";
+import SelectListBox from "./SelectListBox";
 
 
 /***
@@ -96,6 +96,7 @@ CheckTreeBox.prototype._initFooter = function () {
         .on('click', this.eventHandler.clickCloseBtn);
 };
 
+CheckTreeBox.prototype.focus = SelectListBox.prototype.focus;
 
 CheckTreeBox.render = function () {
     return _({
@@ -217,7 +218,7 @@ CheckTreeBox.prototype.viewListAt = function (offset) {
 };
 
 CheckTreeBox.prototype.noTransition = function () {
-    if (this.containsClass('as-no-transition')) return;
+    if (this.hasClass('as-no-transition')) return;
     this.addClass('as-no-transition');
     setTimeout(function () {
         this.removeClass('as-no-transition');
@@ -445,7 +446,7 @@ CheckTreeBox.property.enableSearch = {
             this.removeClass('as-enable-search');
     },
     get: function () {
-        return this.containsClass('as-enable-search');
+        return this.hasClass('as-enable-search');
     }
 };
 

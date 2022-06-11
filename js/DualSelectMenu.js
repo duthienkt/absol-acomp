@@ -103,7 +103,7 @@ DualSelectMenu.property.isFocus = {
     set: function (value) {
         var self = this;
         value = !!value;
-        if (this.containsClass('as-focus') === value) return;
+        if (this.hasClass('as-focus') === value) return;
         if (value) {
             this._prevValue = (this.$box.value || [null, null]).join('//');
             this.addClass('as-focus');
@@ -113,6 +113,7 @@ DualSelectMenu.property.isFocus = {
             this.$box.updatePosition();
             this.$box.scrollIntoSelected();
             setTimeout(function () {
+                self.$box.focus();
                 document.addEventListener('click', self.eventHandler.clickOut);
             }, 10);
         }
@@ -131,7 +132,7 @@ DualSelectMenu.property.isFocus = {
         }
     },
     get: function () {
-        return this.containsClass('as-focus');
+        return this.hasClass('as-focus');
     }
 }
 

@@ -172,12 +172,7 @@ SelectMenu.property.isFocus = {
             this.$selectlistBox.refollow();
             this.$selectlistBox.updatePosition();
             setTimeout(function () {
-                if (thisSM.enableSearch) {
-                    thisSM.$selectlistBox.$searchInput.focus();
-                }
-                else {
-                    thisSM.$selectlistBox.focus();
-                }
+                thisSM.$selectlistBox.focus();
                 document.addEventListener('click', thisSM.eventHandler.bodyClick);
             }, 100);
             this.$selectlistBox.viewListAtFirstSelected();
@@ -205,7 +200,7 @@ SelectMenu.property.disabled = {
         }
     },
     get: function () {
-        return this.containsClass('as-disabled');
+        return this.hasClass('as-disabled');
     }
 };
 

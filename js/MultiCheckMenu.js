@@ -153,12 +153,7 @@ MultiCheckMenu.property.isFocus = {
             this.$selectlistBox.refollow();
             this.$selectlistBox.updatePosition();
             setTimeout(function () {
-                if (thisSM.enableSearch) {
-                    thisSM.$selectlistBox.$searchInput.focus();
-                }
-                else {
-                    thisSM.$selectlistBox.focus();
-                }
+                thisSM.$selectlistBox.focus();
                 document.addEventListener('mousedown', thisSM.eventHandler.bodyClick);
             }, 100);
             this.$selectlistBox.viewListAtFirstSelected();
