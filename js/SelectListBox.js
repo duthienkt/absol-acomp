@@ -1,7 +1,6 @@
 import '../css/selectlistbox.css';
 import {prepareSearchForList, searchListByText} from "./list/search";
 import ACore from "../ACore";
-import Follower from "./Follower";
 import {measureListSize, releaseItem, requireItem} from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {getScreenSize} from "absol/src/HTML5/Dom";
@@ -25,6 +24,12 @@ function SelectListBox() {
     this._initProperty();
     /***
      * @name strictValue
+     * @type {boolean}
+     * @memberOf SelectListBox#
+     */
+
+    /***
+     * @name enableSearch
      * @type {boolean}
      * @memberOf SelectListBox#
      */
@@ -203,7 +208,7 @@ SelectListBox.prototype.viewListAt = function (offset) {
         pageElt = this.$listPages[pageIndex];
 
 
-        pageElt.addStyle('top', this._pageOffsets[pageIndex] * this.itemHeight/14 + 'em');
+        pageElt.addStyle('top', this._pageOffsets[pageIndex] * this.itemHeight / 14 + 'em');
         this._requireItem(pageElt, nItem);
         this._assignItems(pageElt, sIdx);
         pageBound = pageElt.getBoundingClientRect();
@@ -219,7 +224,8 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
     }
     if (this._displayValue == VALUE_HIDDEN) {
         return false;
-    } else if (this._values.length > 0) {
+    }
+    else if (this._values.length > 0) {
         var value = this._values[0];
         var itemHolders = this._displayItemHolderByValue[value + ''];
         if (itemHolders) {
@@ -303,9 +309,13 @@ SelectListBox.prototype._updateDisplayItem = function () {
     this._displayItems = this._filterDisplayItems(this._preDisplayItems);
     this._updateDisplayItemIndex();
     this.$content.addStyle({
-        'height': this._displayItems.length * this.itemHeight/14 + 'em'
+        'height': this._displayItems.length * this.itemHeight / 14 + 'em'
     });
 
+};
+
+SelectListBox.prototype.focus = function () {
+    if (this.enableSearch) this.$searchInput.focus();
 };
 
 SelectListBox.prototype.footerMinWidth = 0;
@@ -317,8 +327,8 @@ SelectListBox.prototype._updateItems = function () {
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
     this._estimateDescWidth = estimateSize.descWidth;
-    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, estimateSize.width)/14 + 'em');
-    this.addStyle('--select-list-desc-width', (estimateSize.descWidth)/14 + 'em')
+    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, estimateSize.width) / 14 + 'em');
+    this.addStyle('--select-list-desc-width', (estimateSize.descWidth) / 14 + 'em')
     this._updateDisplayItem();
 };
 
@@ -416,7 +426,7 @@ SelectListBox.property.strictValue = {
         }
     },
     get: function () {
-        return this.containsClass('as-strict-value');
+        return this.hasClass('as-strict-value');
     }
 };
 
@@ -442,7 +452,7 @@ SelectListBox.property.enableSearch = {
         else this.removeClass('as-enable-search');
     },
     get: function () {
-        return this.containsClass('as-enable-search');
+        return this.hasClass('as-enable-search');
     }
 };
 
@@ -468,7 +478,7 @@ SelectListBox.eventHandler.searchModify = function () {
     this._preDisplayItems = this._itemsToNodeList(searchedItems);
     this._displayItems = this._filterDisplayItems(this._preDisplayItems);
     this.$content.addStyle({
-        'height': this._displayItems.length * this.itemHeight/14 + 'em'
+        'height': this._displayItems.length * this.itemHeight / 14 + 'em'
     });
     this._updateItemNodeIndex();
     this.viewListAt(0);
@@ -478,7 +488,7 @@ SelectListBox.eventHandler.searchModify = function () {
 
 
 SelectListBox.eventHandler.scroll = function () {
-    var itemHeight = this.itemHeight*$(document.body).getFontSize()/14;
+    var itemHeight = this.itemHeight * $(document.body).getFontSize() / 14;
     var scrollerBound = this.$listScroller.getBoundingClientRect();
     var topIdx = this._findFirstPageIdx();
     if (!this.$listPages[topIdx]) return;
@@ -490,7 +500,7 @@ SelectListBox.eventHandler.scroll = function () {
     var botBound;
     botBound = this.$listPages[botIdx].getBoundingClientRect();
     if (topBound.top > scrollerBound.top || topBound.bottom < scrollerBound.bottom) {
-        this.viewListAt(Math.floor(this.$listScroller.scrollTop /itemHeight))
+        this.viewListAt(Math.floor(this.$listScroller.scrollTop / itemHeight))
         return;
     }
 
@@ -512,7 +522,7 @@ SelectListBox.eventHandler.scroll = function () {
             this._pageOffsets.push(this._pageOffsets.shift());
             this.$listPages.push(this.$listPages.shift());
             this._pageOffsets[botIdx + 1] = Math.min(this._displayItems.length, this._pageOffsets[botIdx] + maxItem);
-            this.$listPages[botIdx].addStyle('top', this._pageOffsets[botIdx] *itemHeight + 'px');
+            this.$listPages[botIdx].addStyle('top', this._pageOffsets[botIdx] * itemHeight + 'px');
             this._requireItem(this.$listPages[botIdx], this._pageOffsets[botIdx + 1] - this._pageOffsets[botIdx]);
             this._assignItems(this.$listPages[botIdx], this._pageOffsets[botIdx]);
             this._updateSelectedItem();
