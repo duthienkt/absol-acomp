@@ -2,9 +2,8 @@ import OMTBaseType from "./OMTBaseType";
 import OOP from "absol/src/HTML5/OOP";
 import { _ } from "../../../ACore";
 import FileListInput from "../../FileListInput";
-import calcDTQueryHash from "../../dynamictable/calcDTQueryHash";
 import OMTArray from "./OMTArray";
-import { fileInfoOf } from "../../utils";
+import  { fileInfoOf, calcDTQueryHash } from "../../utils";
 
 /***
  * @extends OMTBaseType

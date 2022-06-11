@@ -1,6 +1,6 @@
 import OMTBaseType from "./OMTBaseType";
 import OOP from "absol/src/HTML5/OOP";
-import { _ } from "../../../ACore";
+import {_} from "../../../ACore";
 import OMTArrayMergeDialog from "../dialog/OMTArrayMergeDialog";
 
 /***
@@ -34,10 +34,12 @@ OMTArray.prototype.execCmd = function (commandName) {
 OMTArray.prototype.assign = function (o) {
     this.$body.clearChild();
     this.children = (o || []).map((it, i) => {
-        var res = OMTBaseType.make(this.tool, this, Object.assign({
+        var desc = Object.assign({
             name: i,
             displayName: i + 1 + ''
-        }, this.descriptor.of));
+        }, this.descriptor.of);
+        if (!desc.displayName) desc.displayName = i + 1 + '';
+        var res = OMTBaseType.make(this.tool, this.parent, desc);
         res.assign(it);
         return res;
     });
@@ -54,10 +56,10 @@ OMTArray.prototype.getRaw = function () {
             {
                 tag: 'span',
                 class: 'as-omt-field-name',
-                child: { text: (this.descriptor.displayName || this.descriptor.name || "ROOT") + ': ' }
+                child: {text: (this.descriptor.displayName || this.descriptor.name || "ROOT") + ': '}
             },
             {
-                style: { paddingLeft: '25px' },
+                style: {paddingLeft: '25px'},
                 child: this.children.map((child => child.getRaw()))
             }
         ]

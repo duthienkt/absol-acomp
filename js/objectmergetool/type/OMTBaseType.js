@@ -36,8 +36,7 @@ OMTBaseType.prototype.render = function () {
     var self = this;
     var displayName = 'ROOT';
     if (this.descriptor.displayName !== undefined) displayName = this.descriptor.displayName + '';
-    else
-        if (this.descriptor.name !== undefined) displayName = this.descriptor.name + '';
+    else if (this.descriptor.name !== undefined) displayName = this.descriptor.name + '';
     if (this.descriptor.desc) displayName += this.descriptor.desc;
     this.elt = _({
         class: ['as-omt-field', 'as-type-' + this.type],
@@ -66,6 +65,9 @@ OMTBaseType.prototype.render = function () {
                 class: 'as-omt-field-command-ctn',
                 child: this.commands.map(command => ({
                     tag: FlexiconButton.tag,
+                    attr: {
+                        'data-command': command.name
+                    },
                     props: {
                         icon: command.icon,
                         title: command.title
@@ -92,6 +94,9 @@ OMTBaseType.prototype.render = function () {
     this.$rawCtn = $('.as-omt-field-raw-ctn', this.elt);
     this.$viewModeBtn = _({
         tag: FlexiconButton.tag,
+        attr: {
+            'data-command': 'view_mode'
+        },
         props: {
             icon: 'span.mdi.mdi.mdi-code-braces',//code-braces
             title: 'View Raw'
@@ -102,7 +107,8 @@ OMTBaseType.prototype.render = function () {
                     self.elt.removeClass('as-mode-raw');
                     this.icon = 'span.mdi.mdi-code-braces';
                     this.title = 'View Raw';
-                } else {
+                }
+                else {
                     self.elt.addClass('as-mode-raw');
                     this.icon = 'span.mdi.mdi-view-dashboard-edit-outline';
                     this.title = 'View Guide';

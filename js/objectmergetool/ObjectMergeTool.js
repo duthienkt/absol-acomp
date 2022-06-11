@@ -13,6 +13,8 @@ import "./type/OMTColor";
 import "./type/OMTBool";
 import "./type/OMTHtml";
 import "./type/OMDateTime";
+import "./type/OMDate";
+import "./type/OMTEnumOfPair";
 
 
 /***
