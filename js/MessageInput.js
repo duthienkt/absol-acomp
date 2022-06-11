@@ -175,7 +175,7 @@ MessageInput.render = function (data) {
 
 
 MessageInput.prototype.toggleEmoji = function () {
-    if (this.containsClass('as-message-input-show-emoji'))
+    if (this.hasClass('as-message-input-show-emoji'))
         this.closeEmoji();
     else
         this.showEmoji();
@@ -183,7 +183,7 @@ MessageInput.prototype.toggleEmoji = function () {
 
 
 MessageInput.prototype.showEmoji = function () {
-    if (this.containsClass('as-message-input-show-emoji')) return;
+    if (this.hasClass('as-message-input-show-emoji')) return;
     var value = this.$preInput.value;
     this._lastInputSelectPosion = this.$preInput.getSelectPosition() || {start: value.length, end: value.length};
     this.addClass('as-message-input-show-emoji');
@@ -424,7 +424,7 @@ MessageInput.prototype.addFiles = function (files) {
 
 
 MessageInput.prototype.closeEmoji = function () {
-    if (!this.containsClass('as-message-input-show-emoji')) return;
+    if (!this.hasClass('as-message-input-show-emoji')) return;
     this.removeClass('as-message-input-show-emoji');
     this.removeChild(this.$emojiPickerCtn);
     $(document.body).off('mousedown', this.eventHandler.mousedownOutEmoji);
@@ -761,7 +761,7 @@ MessageInput.property.autoSend = {
         }
     },
     get: function () {
-        return this.containsClass('as-auto-send');
+        return this.hasClass('as-auto-send');
     }
 };
 
@@ -1012,7 +1012,7 @@ MessageQuote.property.removable = {
         }
     },
     get: function () {
-        return this.containsClass('as-removable');
+        return this.hasClass('as-removable');
     }
 };
 
@@ -1025,7 +1025,7 @@ MessageQuote.property.shortenText = {
         }
     },
     get: function () {
-        return this.containsClass('as-shorten-text');
+        return this.hasClass('as-shorten-text');
     }
 };
 

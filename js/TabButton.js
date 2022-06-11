@@ -136,7 +136,7 @@ TabButton.property.modified = {
         }
     },
     get: function () {
-        return this.containsClass('absol-tabbar-button-modified');
+        return this.hasClass('absol-tabbar-button-modified');
     }
 };
 

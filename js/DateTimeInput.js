@@ -485,7 +485,7 @@ DateTimeInput.property.disabled = {
         }
     },
     get: function () {
-        return this.containsClass('as-disabled');
+        return this.hasClass('as-disabled');
     }
 };
 

@@ -377,13 +377,13 @@ SearchList.property.items = {
 
 SearchList.prototype._findItem = function (elt) {
     while (elt) {
-        if (elt.containsClass && elt.containsClass('absol-search-list-item')) {
+        if (elt.hasClass && elt.hasClass('absol-search-list-item')) {
             return elt;
         }
         else {
             elt = elt.parentNode;
         }
-        if (elt == this) return;
+        if (elt === this) return;
     }
     return undefined;
 };
@@ -406,7 +406,7 @@ SearchList.prototype.updateItems = function () {
         itemView.__index__ = index;// item wil hold  the data of itself
 
         self.$dropdown.addChild(itemView);
-        if (itemView == reusedItem) reusedItem = undefined;
+        if (itemView === reusedItem) reusedItem = undefined;
     });
 };
 

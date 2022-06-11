@@ -155,7 +155,7 @@ ResizeBox.property.canMove = {
         }
     },
     get: function () {
-        return this.containsClass('as-can-move');
+        return this.hasClass('as-can-move');
     }
 };
 
@@ -169,7 +169,7 @@ ResizeBox.property.canResize = {
         }
     },
     get: function () {
-        return this.containsClass('as-can-resize');
+        return this.hasClass('as-can-resize');
     }
 };
 
@@ -183,7 +183,7 @@ ResizeBox.property.canClick = {
         }
     },
     get: function () {
-        return this.containsClass('as-can-click');
+        return this.hasClass('as-can-click');
     }
 };
 

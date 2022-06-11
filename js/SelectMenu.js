@@ -431,7 +431,7 @@ SelectMenu.property.disabled = {
         }
     },
     get: function () {
-        return this.containsClass('disabled');
+        return this.hasClass('disabled');
     }
 };
 

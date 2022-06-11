@@ -36,7 +36,7 @@ Modal.property.show = {
             this.addClass('as-hidden');
     },
     get: function () {
-        return !this.containsClass('as-hidden');
+        return !this.hasClass('as-hidden');
     }
 };
 

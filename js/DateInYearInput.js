@@ -183,7 +183,7 @@ DateInYearInput.property.notNull = {
         }
     },
     get: function () {
-        return this.containsClass('as-must-not-null');
+        return this.hasClass('as-must-not-null');
     }
 };
 
@@ -199,7 +199,7 @@ DateInYearInput.property.disabled = {
         }
     },
     get: function () {
-        return this.containsClass('as-disabled');
+        return this.hasClass('as-disabled');
     }
 };
 
@@ -216,7 +216,7 @@ DateInYearInput.property.readOnly = {
         }
     },
     get: function () {
-        return this.containsClass('as-read-only');
+        return this.hasClass('as-read-only');
     }
 };
 

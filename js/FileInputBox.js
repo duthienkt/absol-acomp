@@ -224,7 +224,7 @@ FileInputBox.property.allowUpload = {
         }
     },
     get: function () {
-        return this.containsClass('as-allow-upload');
+        return this.hasClass('as-allow-upload');
     }
 };
 
@@ -237,7 +237,7 @@ FileInputBox.property.downloadable = {
         }
     },
     get: function () {
-        return this.containsClass('as-downloadable');
+        return this.hasClass('as-downloadable');
     }
 };
 
@@ -251,7 +251,7 @@ FileInputBox.property.removable = {
         }
     },
     get: function () {
-        return this.containsClass('as-removable');
+        return this.hasClass('as-removable');
     }
 };
 

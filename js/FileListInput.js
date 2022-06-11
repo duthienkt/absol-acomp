@@ -205,7 +205,7 @@ FileListInput.prototype.deleteFileItemElt = function (fileElt) {
 
 FileListInput.prototype._findFileItemElt = function (target) {
     while (target && target !== this) {
-        if (target.containsClass && target.containsClass('as-file-list-item')) {
+        if (target.hasClass && target.hasClass('as-file-list-item')) {
             return target;
         }
         target = target.parentElement;
@@ -258,7 +258,7 @@ FileListInput.property.readOnly = {
         });
     },
     get: function () {
-        return this.containsClass('as-read-only');
+        return this.hasClass('as-read-only');
     }
 };
 
@@ -276,7 +276,7 @@ FileListInput.property.droppable = {
         });
     },
     get: function () {
-        return this.containsClass('as-droppable');
+        return this.hasClass('as-droppable');
     }
 };
 

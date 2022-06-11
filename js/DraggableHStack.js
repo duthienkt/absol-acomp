@@ -167,7 +167,7 @@ DraggableHStack.prototype._findDirectChild = DraggableVStack.prototype._findDire
 DraggableHStack.prototype._updateDraggingPosition = function () {
     var bound = this.getBoundingClientRect();
     var x, y;
-    if (this.$cloneContainer.containsClass('as-home-going')) {
+    if (this.$cloneContainer.hasClass('as-home-going')) {
         x = this._dragData.eltBound.x - this._dragData.bound.x + bound.left;
         y = this._dragData.eltBound.y - this._dragData.bound.y + bound.top;
     }

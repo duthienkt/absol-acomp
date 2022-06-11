@@ -34,7 +34,7 @@ EmojiCounterList.prototype._updateCounters = function () {
     })
 
     var counterElements = Array.prototype.filter.call(this.childNodes, function (e) {
-        return e.containsClass && e.containsClass('as-emoji-counter');
+        return e.hasClass && e.hasClass('as-emoji-counter');
     });
 
     var newCounterElements = [];

@@ -355,8 +355,8 @@ DateInput2.eventHandler = {};
 
 
 DateInput2.eventHandler.keydown = function (event) {
-    if (this.readOnly){
-        if (!event.ctrlKey || event.key !== 'c'){
+    if (this.readOnly) {
+        if (!event.ctrlKey || event.key !== 'c') {
             event.preventDefault();
         }
         return;
@@ -690,6 +690,12 @@ DateInput2.property.readOnly = {
     }
 };
 
+DateInput2.property.text = {
+    get: function () {
+        return this.$input.value;
+    }
+};
+
 /***
  * @memberOf DateInput2
  * @name calendarLevel
@@ -735,7 +741,7 @@ DateInput2.property.notNull = {
         }
     },
     get: function () {
-        return this.containsClass('as-must-not-null');
+        return this.hasClass('as-must-not-null');
     }
 };
 

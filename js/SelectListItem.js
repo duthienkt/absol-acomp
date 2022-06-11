@@ -167,7 +167,7 @@ SelectListItem.property.lastInGroup = {
         }
     },
     get: function () {
-        return this.containsClass('as-last-in-group');
+        return this.hasClass('as-last-in-group');
     }
 };
 
@@ -180,7 +180,7 @@ SelectListItem.property.isLeaf = {
         }
     },
     get: function () {
-        return this.containsClass('as-is-leaf');
+        return this.hasClass('as-is-leaf');
     }
 };
 
@@ -193,7 +193,7 @@ SelectListItem.property.selected = {
         }
     },
     get: function () {
-        return this.containsClass('as-selected');
+        return this.hasClass('as-selected');
     }
 };
 

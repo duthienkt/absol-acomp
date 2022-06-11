@@ -122,7 +122,7 @@ DropPanel.property.show = {
         }
     },
     get: function () {
-        return this.containsClass('show');
+        return this.hasClass('show');
     }
 };
 

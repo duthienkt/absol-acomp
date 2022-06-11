@@ -321,7 +321,7 @@ ChromeTimePicker.property.s24 = {
         }
     },
     get: function () {
-        return this.containsClass('as-24h-clock');
+        return this.hasClass('as-24h-clock');
     }
 }
 

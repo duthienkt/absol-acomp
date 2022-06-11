@@ -182,7 +182,7 @@ Time24Input.property.notNull = {
         }
     },
     get: function () {
-        return this.containsClass('as-must-not-null');
+        return this.hasClass('as-must-not-null');
     }
 };
 

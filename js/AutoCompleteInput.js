@@ -88,13 +88,13 @@ AutoCompleteInput.eventHandler.keyup = function (event) {
 
 
 AutoCompleteInput.eventHandler.blur = function () {
-    if (!this.containsClass('focus')) return;
+    if (!this.hasClass('focus')) return;
     this.removeClass('focus');
     $(document.body).off('mousedown', this.eventHandler.clickOut);
 };
 
 AutoCompleteInput.eventHandler.focus = function () {
-    if (this.containsClass('focus')) return;
+    if (this.hasClass('focus')) return;
     this.addClass('focus');
     $(document.body).on('mousedown', this.eventHandler.clickOut);
 }
@@ -116,7 +116,7 @@ AutoCompleteInput.eventHandler.clickOut = function (event) {
 
 AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
     var current = event.target;
-    while (current && !current.containsClass('absol-autocomplete-input-item') && current != this.$vscroller) {
+    while (current && !current.hasClass('absol-autocomplete-input-item') && current != this.$vscroller) {
         current = current.parentElement;
     }
 
@@ -133,7 +133,7 @@ AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
 
 AutoCompleteInput.eventHandler.keydown = function (event) {
     var key = event.key;
-    if (key == 'ArrowDown') {
+    if (key === 'ArrowDown') {
         if (this._selectedIndex + 1 < this._currentData.length) {
             if (this.$poolItems[this._selectedIndex]) {
                 this.$poolItems[this._selectedIndex].removeClass('active');
@@ -147,7 +147,7 @@ AutoCompleteInput.eventHandler.keydown = function (event) {
         }
         event.preventDefault();
     }
-    else if (key == 'ArrowUp') {
+    else if (key === 'ArrowUp') {
         if (this._selectedIndex - 1 >= 0) {
             if (this.$poolItems[this._selectedIndex]) {
                 this.$poolItems[this._selectedIndex].removeClass('active');
@@ -161,7 +161,7 @@ AutoCompleteInput.eventHandler.keydown = function (event) {
         }
         event.preventDefault();
     }
-    else if (key == 'Enter') {
+    else if (key === 'Enter') {
         var text;
         if (this._currentData[this._selectedIndex] === undefined) {
             text = this.$input.value;
@@ -409,7 +409,7 @@ AutoCompleteInput.property.disabled = {
         }
     },
     get: function () {
-        return this.containsClass('absol-disabled');
+        return this.hasClass('absol-disabled');
     }
 };
 

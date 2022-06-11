@@ -320,7 +320,7 @@ ChromeCalendar.prototype._fillMonth = function (monthElt, date) {
                 var pickedElt = this.firstChild;
                 var pickDate = this.firstChild.__date__;
                 self.pickDate(pickDate, event);
-                if (pickedElt.containsClass('absol-chrome-calendar-not-in-month')) {
+                if (pickedElt.hasClass('absol-chrome-calendar-not-in-month')) {
                     if (pickDate.getDate() < 15) {
                         self.viewNexMonth();
                     } else {
@@ -340,7 +340,7 @@ ChromeCalendar.prototype._fillMonth = function (monthElt, date) {
                     pickedElt = elt.parentElement.firstChild;
                 }
                 self.pickDate(pickDate, event);
-                if (pickedElt.containsClass('absol-chrome-calendar-not-in-month')) {
+                if (pickedElt.hasClass('absol-chrome-calendar-not-in-month')) {
                     if (pickDate.getDate() < 15) {
                         self.viewNexMonth();
                     } else {
@@ -492,7 +492,7 @@ ChromeCalendar.prototype.viewNexMonth = function () {
             var newMonth = self.$month.cloneNode(true);
             var overlap = 0;
             var j = 41;
-            while (j >= 0 && self.$month.$cells[j].containsClass('absol-chrome-calendar-not-in-month')) {
+            while (j >= 0 && self.$month.$cells[j].hasClass('absol-chrome-calendar-not-in-month')) {
                 overlap += oldBound.height / 6;
                 j -= 7;
             }
@@ -547,7 +547,7 @@ ChromeCalendar.prototype.viewPrevMonth = function () {
             var newMonth = self.$month.cloneNode(true);
             var overlap = 0;
             var j = 0;
-            while (j < 42 && self.$month.$cells[j].containsClass('absol-chrome-calendar-not-in-month')) {
+            while (j < 42 && self.$month.$cells[j].hasClass('absol-chrome-calendar-not-in-month')) {
                 overlap += oldBound.height / 6;
                 j += 7;
             }
@@ -990,7 +990,7 @@ ChromeCalendar.property.multiSelect = {
         }
     },
     get: function () {
-        return this.containsClass('multi-select');
+        return this.hasClass('multi-select');
     }
 };
 

@@ -40,7 +40,7 @@ DropPanelStack.prototype.getFreeHeight = function () {
     var childBound;
     for (var i = 0; i < childNodes.length; ++i) {
         var child = childNodes[i];
-        if (child.containsClass && child.containsClass('absol-drop-panel')) {
+        if (child.hasClass && child.hasClass('absol-drop-panel')) {
             childBound = child.getBoundingClientRect();
             sumHeight += childBound.height;
         }
@@ -51,7 +51,7 @@ DropPanelStack.prototype.getFreeHeight = function () {
 
 DropPanelStack.prototype.addChild = function (child) {
     var self = this;
-    if (child.containsClass('absol-drop-panel')) {
+    if (child.hasClass('absol-drop-panel')) {
         //remove last event listener off other parent
         if (child.__drop_panel_toggle_listener__) {
             child.off('toggle', child.__drop_panel_toggle_listener__);

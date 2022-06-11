@@ -88,7 +88,7 @@ TimeRange24Input.property.disabled = {
         this.$duration.disabled = value;
     },
     get: function () {
-        return this.containsClass('as-disabled');
+        return this.hasClass('as-disabled');
     }
 }
 

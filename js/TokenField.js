@@ -171,7 +171,7 @@ TokenField.property.placeHolder = {
 TokenField.property.items = {
     set: function (items) {
         items = items || [];
-        while (this.firstChild && this.firstChild && this.firstChild.containsClass('as-token-field-item')) {
+        while (this.firstChild && this.firstChild && this.firstChild.hasClass('as-token-field-item')) {
             this.firstChild.remove();
         }
         for (var i = 0; i < items.length; ++i) {
@@ -180,7 +180,7 @@ TokenField.property.items = {
     },
     get: function () {
         return Array.prototype.slice.call(this.childNodes).filter(function (elt) {
-            return elt.containsClass && elt.containsClass('as-token-field-item');
+            return elt.hasClass && elt.hasClass('as-token-field-item');
         }).map(function (elt) {
             return elt.data.value;
         });
@@ -237,7 +237,7 @@ TokenField.eventHandler.inputKeyDown = function (event) {
                 var aboveItem;
                 for (var i = 0; i < this.childNodes.length; ++i) {
                     item = this.childNodes[i];
-                    if (item.containsClass && item.containsClass('as-token-field-item')) {
+                    if (item.hasClass && item.hasClass('as-token-field-item')) {
                         itemBound = item.getBoundingClientRect();
                         if (itemBound.bottom < inputBound.top) {
                             dis = new Vec2(itemBound.left + itemBound.width / 2, itemBound.top + itemBound.height / 2)
@@ -335,7 +335,7 @@ TokenField.eventHandler.itemKeyDown = function (itemElt, event) {
         if (event.key === 'ArrowUp') {
             for (i = 0; i < this.childNodes.length; ++i) {
                 childElt = this.childNodes[i];
-                if (childElt.containsClass && childElt.containsClass('as-token-field-item') || childElt === this.$input) {
+                if (childElt.hasClass && childElt.hasClass('as-token-field-item') || childElt === this.$input) {
                     itemBound = childElt.getBoundingClientRect();
                     if (itemBound.bottom < currentItemBound.top) {
                         dis = new Vec2(itemBound.left + itemBound.width / 2, itemBound.top + itemBound.height / 2)
@@ -352,7 +352,7 @@ TokenField.eventHandler.itemKeyDown = function (itemElt, event) {
         else {
             for (i = 0; i < this.childNodes.length; ++i) {
                 childElt = this.childNodes[i];
-                if (childElt.containsClass && childElt.containsClass('as-token-field-item') || childElt === this.$input) {
+                if (childElt.hasClass && childElt.hasClass('as-token-field-item') || childElt === this.$input) {
                     itemBound = childElt.getBoundingClientRect();
                     if (itemBound.top > currentItemBound.bottom) {
                         dis = new Vec2(itemBound.left + itemBound.width / 2, itemBound.top + itemBound.height / 2)

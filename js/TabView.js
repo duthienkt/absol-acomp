@@ -55,7 +55,7 @@ TabView.prototype.activeTab = function (id, userActive) {
     var needDeactiveHolder = [];
     var needActiveHolder = [];
     this._frameHolders.forEach(function (holder) {
-        if (holder.containerElt.containsClass('absol-tabview-container-hidden')) {
+        if (holder.containerElt.hasClass('absol-tabview-container-hidden')) {
             if (holder.id == id) {
                 needActiveHolder.push(holder);
             }
@@ -135,11 +135,11 @@ TabView.prototype.removeTab = function (id, userActive) {
                         tabButton: holder.tabButton,
                         holder: holder
                     };
-                    if (!holder.containerElt.containsClass('absol-tabview-container-hidden'))
+                    if (!holder.containerElt.hasClass('absol-tabview-container-hidden'))
                         holder.tabFrame.emit('deactive', eventData2, holder.tabFrame);
                     eventData2.type = 'deactivetab';
                     eventData2.target = self;
-                    if (!holder.containerElt.containsClass('absol-tabview-container-hidden'))
+                    if (!holder.containerElt.hasClass('absol-tabview-container-hidden'))
                         self.emit('deactivetab', eventData2, self);
                     self._frameHolders = self._frameHolders.filter(function (x) {
                         return x.id != id;
@@ -269,7 +269,7 @@ TabView.prototype.getActiveTabHolder = function () {
     var holder = null;
     for (var i = 0; i < this._frameHolders.length; ++i) {
         holder = this._frameHolders[i];
-        if (!holder.containerElt.containsClass('absol-tabview-container-hidden')) {
+        if (!holder.containerElt.hasClass('absol-tabview-container-hidden')) {
             return holder;
         }
     }

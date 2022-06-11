@@ -102,7 +102,7 @@ SelectBoxItem.property.active = {
         }
     },
     get: function () {
-        return this.containsClass('as-active');
+        return this.hasClass('as-active');
     }
 };
 

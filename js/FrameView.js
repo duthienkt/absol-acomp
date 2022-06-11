@@ -27,7 +27,7 @@ FrameView.render = function () {
 };
 
 FrameView.prototype.addChild = function (elt) {
-    if (elt.containsClass && elt.containsClass('absol-frame')) {
+    if (elt.hasClass && elt.hasClass('absol-frame')) {
         elt.selfRemove();
         var containerElt = _({
             class: 'absol-frame-view-frame-container',
@@ -84,7 +84,7 @@ FrameView.prototype.getLast = function () {
 };
 
 FrameView.prototype.addChildBefore = function (elt, at) {
-    if (elt.containsClass && elt.containsClass('absol-frame')) {
+    if (elt.hasClass && elt.hasClass('absol-frame')) {
         elt.selfRemove();
         var index = this.childIndexOf(at);
         if (index < 0) {
@@ -110,7 +110,7 @@ FrameView.prototype.addChildBefore = function (elt, at) {
 
 
 FrameView.prototype.addChildAfter = function (elt, at) {
-    if (elt.containsClass && elt.containsClass('absol-frame')) {
+    if (elt.hasClass && elt.hasClass('absol-frame')) {
         elt.selfRemove();
         var index = this.childIndexOf(at);
         if (index < 0) {
@@ -198,14 +198,14 @@ FrameView.prototype.activeFrame = function (frameElt) {
         ctnElt = this.$containers[i];
         elt = ctnElt.__elt__;
         if (frameElt == elt) {
-            if (!ctnElt.containsClass('absol-active')) {
+            if (!ctnElt.hasClass('absol-active')) {
                 ctnElt.addClass('absol-active');
                 this.notifyActiveFrame(elt);
             }
             // else do nothing
         }
         else {
-            if (ctnElt.containsClass('absol-active')) {
+            if (ctnElt.hasClass('absol-active')) {
                 ctnElt.removeClass('absol-active');
                 this.notifyDeactiveFrame(elt);
             }

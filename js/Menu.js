@@ -178,7 +178,7 @@ Dropdown.property.show = {
         }
     },
     get: function () {
-        return !this.containsClass('absol-drop-hidden');
+        return !this.hasClass('absol-drop-hidden');
     }
 };
 
@@ -383,7 +383,7 @@ VMenuItem.property.disabled = {
         }
     },
     get: function () {
-        return this.containsClass('absol-menu-item-disabled');
+        return this.hasClass('absol-menu-item-disabled');
     }
 };
 

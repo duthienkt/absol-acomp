@@ -91,7 +91,7 @@ DVExpTree.property.hasIndex = {
             this.removeClass('as-has-index-input');
     },
     get: function () {
-        return this.containsClass('as-has-index-input');
+        return this.hasClass('as-has-index-input');
     }
 };
 

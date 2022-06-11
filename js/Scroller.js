@@ -330,7 +330,7 @@ Scrollbar.property.hidden = {
         }
     },
     get: function () {
-        return this.containsClass('absol-hidden')
+        return this.hasClass('absol-hidden')
     }
 };
 

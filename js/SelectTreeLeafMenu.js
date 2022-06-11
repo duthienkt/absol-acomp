@@ -105,7 +105,7 @@ SelectTreeLeafMenu.property.strictValue = {
         else this.removeClass('as-strict-value');
     },
     get: function () {
-        return this.containsClass('as-strict-value');
+        return this.hasClass('as-strict-value');
     }
 };
 
@@ -117,7 +117,7 @@ SelectTreeLeafMenu.property.isFocus = {
      */
     set: function (value) {
         value = !!value;
-        var isFocus = this.containsClass('as-focus');
+        var isFocus = this.hasClass('as-focus');
         if (value === isFocus) return;
         var bound;
         if (value) {
@@ -132,8 +132,9 @@ SelectTreeLeafMenu.property.isFocus = {
             setTimeout(function () {
                 document.addEventListener('click', this.eventHandler.clickOut);
                 this.$selectBox.removeStyle('visibility');
-
+                this.$selectBox.focus();
             }.bind(this), 5);
+
             this.$selectBox.viewToSelected();
         } else {
             this.removeClass('as-focus');
@@ -146,7 +147,7 @@ SelectTreeLeafMenu.property.isFocus = {
         }
     },
     get: function () {
-        return this.containsClass('as-focus');
+        return this.hasClass('as-focus');
     }
 };
 

@@ -329,7 +329,7 @@ SelectTable2.property.disableMoveAll = {
             this.removeClass('disable-move-all');
     },
     get: function () {
-        return this.containsClass('disable-move-all');
+        return this.hasClass('disable-move-all');
     }
 };
 
@@ -377,7 +377,7 @@ SelectTable2.property.searching = {
         this.updateScroller();
     },
     get: function () {
-        return this.containsClass('searching');
+        return this.hasClass('searching');
     }
 };
 

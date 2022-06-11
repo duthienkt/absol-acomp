@@ -117,7 +117,7 @@ TreeListItem.property = {
             }
         },
         get: function () {
-            return this.containsClass('active');
+            return this.hasClass('active');
         }
     },
     data: {

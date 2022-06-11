@@ -430,7 +430,7 @@ PreInput.property.value = {
 PreInput.property.disabled = {
     set: function (value) {
         value = !!value;
-        if (value === this.containsClass('as-disabled')) return;
+        if (value === this.hasClass('as-disabled')) return;
         if (value) {
             this.addClass('as-disabled');
             this.attr({
@@ -451,7 +451,7 @@ PreInput.property.disabled = {
         }
     },
     get: function () {
-        return this.containsClass('as-disabled');
+        return this.hasClass('as-disabled');
     }
 }
 

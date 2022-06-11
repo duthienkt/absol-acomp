@@ -151,7 +151,7 @@ TimeSelectInput.property = {};
 
 TimeSelectInput.property.isFocus = {
     get: function () {
-        return this.containsClass('as-focus');
+        return this.hasClass('as-focus');
     },
     set: function (value) {
         value = !!value;
@@ -223,7 +223,7 @@ TimeSelectInput.property.disabled = {
     }
     ,
     get: function () {
-        return this.containsClass('as-disabled');
+        return this.hasClass('as-disabled');
     }
 };
 

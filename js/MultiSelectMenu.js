@@ -250,7 +250,7 @@ MultiSelectMenu.property.disableClickToFocus = {
         }
     },
     get: function () {
-        return this.containsClass('as-disable-click-to-focus');
+        return this.hasClass('as-disable-click-to-focus');
     }
 };
 
@@ -264,7 +264,7 @@ MultiSelectMenu.property.itemFocusable = {
         this._updateFocusItem();
     },
     get: function () {
-        return this.containsClass('as-item-focusable');
+        return this.hasClass('as-item-focusable');
     }
 };
 

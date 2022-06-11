@@ -113,7 +113,7 @@ TrackBar.property.rightValue = {
 
 TrackBar.property.disabled = {
     get: function () {
-        return this.containsClass('as-disabled');
+        return this.hasClass('as-disabled');
     },
     set: function (value) {
         if (value) {
