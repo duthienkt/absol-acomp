@@ -1,6 +1,5 @@
 import ACore from "../ACore";
 import Dom, { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
-import Rectangle from "absol/src/Math/Rectangle";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import './Menu';
 import { cleanMenuItemProperty } from "./utils";
@@ -33,6 +32,159 @@ QuickMenu.render = function () {
 
 
 ACore.install(QuickMenu);
+
+
+/***
+ *
+ * @param {AElement} elt
+ * @param opt
+ * @constructor
+ */
+export function QuickMenuInstance(elt, opt) {
+    this.id = (Math.random() * 10000 >> 0) + '' + new Date().getTime();
+    /***
+     *
+     * @type {"OPEN"|"CLOSE"}
+     */
+    this.state = 'CLOSE';
+    this._willAddClickOut = -1;
+    this.elt = elt;
+    this.opt = opt;
+    for (var key in this) {
+        if (key.startsWith('_on')) {
+            this[key] = this[key].bind(this);
+        }
+    }
+    this._init();
+}
+
+QuickMenuInstance.prototype._init = function () {
+    this.elt.classList.add('as-quick-menu-trigger');
+    this.elt.addEventListener('click', this._onClick, true);
+};
+
+QuickMenuInstance.prototype._deinit = function () {
+    if (this.state === "OPEN") this.close();
+    this.elt.classList.remove('as-quick-menu-trigger');
+    this.elt.removeEventListener('click', this._onClick, true);
+};
+
+QuickMenuInstance.prototype.getMenuProps = function () {
+    var props;
+    if (this.opt.getMenuProps) {
+        props = this.opt.getMenuProps();
+    }
+    else {
+        props = this.opt.menuProps;
+    }
+    return props || {};
+};
+
+QuickMenuInstance.prototype.remove = function () {
+    this._deinit();
+};
+
+QuickMenuInstance.prototype._onClick = function () {
+    this.toggle();
+};
+
+QuickMenuInstance.prototype._onClickOut = function (event) {
+    if (hitElement(this.elt, event)) return;
+    this.close();
+};
+
+QuickMenuInstance.prototype.onSelect = function (item) {
+    if (this.opt.onSelect) this.opt.onSelect(item);
+    this.close();
+}
+
+
+QuickMenuInstance.prototype.open = function () {
+    if (QuickMenu.runningInstance === this) return;
+    if (this.state !== "CLOSE") return;
+    if (QuickMenu.runningInstance) QuickMenu.runningInstance.close();
+    QuickMenu.runningInstance = this;
+    this.state = 'OPEN';
+    this.elt.classList.add('as-quick-menu-attached');
+    this._willAddClickOut = setTimeout(() => {
+        this._willAddClickOut = -1;
+        document.addEventListener('click', this._onClickOut, false);
+        followerElt.updatePosition();
+        menuElt.addStyle('visibility', 'visible');
+    }, isMobile ? 33 : 2);
+
+    var anchor = this.getAnchor();
+    var followerElt = QuickMenu.$follower;
+    var menuElt = QuickMenu.$elt;
+    Object.assign(menuElt, this.getMenuProps());
+    followerElt.addClass('absol-active');
+
+
+    if (anchor === 'modal') {
+        followerElt.addClass('as-anchor-modal');
+        followerElt.anchor = [];
+    }
+    else {
+        followerElt.removeClass('as-anchor-modal');
+        followerElt.anchor = anchor;
+
+    }
+    followerElt.followTarget = this.elt;
+    menuElt.addStyle('visibility', 'hidden');
+    followerElt.addTo(document.body);
+    followerElt.addClass('absol-active');
+};
+
+
+QuickMenuInstance.prototype.close = function () {
+    if (QuickMenu.runningInstance !== this) return;
+    if (this.state !== "OPEN") return;
+    this.state = 'CLOSE';
+    this.elt.classList.remove('as-quick-menu-attached');
+    var followerElt = QuickMenu.$follower;
+    followerElt.addClass('absol-active');
+    followerElt.remove();
+    if (this._willAddClickOut >= 0) {
+        clearTimeout(this._willAddClickOut);
+    }
+    else {
+        document.removeEventListener('click', this._onClickOut, false);
+    }
+    QuickMenu.runningInstance = null;
+
+};
+
+
+QuickMenuInstance.prototype.toggle = function () {
+    if (this.state === "OPEN") {
+        this.close();
+    }
+    else if (this.state === 'CLOSE') {
+        this.open();
+    }
+};
+
+QuickMenuInstance.prototype.getAnchor = function () {
+    var menuAnchors;
+    var anchor = this.opt.getAnchor ? this.opt.getAnchor() : this.opt.anchor;
+
+    if (typeof anchor == 'number') {
+        menuAnchors = [anchor];
+    }
+    else if (anchor instanceof Array) {
+        menuAnchors = anchor;
+    }
+    else if (anchor === 'modal') {
+        menuAnchors = 'modal';
+    }
+    else {
+        menuAnchors = QuickMenu.PRIORITY_ANCHORS;
+    }
+
+    return menuAnchors;
+};
+
+
 QuickMenu.PRIORITY_ANCHORS = [0, 3, 7, 4, 1, 2, 6, 5];
 
 QuickMenu.$elt = _('quickmenu');
@@ -51,116 +203,48 @@ QuickMenu.$follower = _({
             if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
                 QuickMenu.close(QuickMenu._session);
             }
-
         }
     }
 });
 
+/***
+ *
+ * @type {null|QuickMenuInstance}
+ */
+QuickMenu.runningInstance = null;
 
 QuickMenu._session = Math.random() * 10000000000 >> 0;
 QuickMenu._menuListener = undefined;
 
 QuickMenu.$elt.on('press', function (event) {
+    if (QuickMenu.runningInstance) QuickMenu.runningInstance.onSelect(cleanMenuItemProperty(event.menuItem));
     if (QuickMenu._menuListener) QuickMenu._menuListener(cleanMenuItemProperty(event.menuItem));
 });
 
 
 QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) {
-    var menuElt = QuickMenu.$elt;
-    var followerElt = QuickMenu.$follower;
-    var menuAnchors = [];
-
-    if (typeof anchor == 'number') {
-        menuAnchors = [anchor];
-    }
-    else if (anchor instanceof Array) {
-        menuAnchors = anchor;
-    }
-    else if (anchor === 'modal') {
-        menuAnchors = [];
-    }
-    else {
-        menuAnchors = QuickMenu.PRIORITY_ANCHORS;
-    }
-
-    if (anchor === 'modal') {
-        followerElt.addClass('as-anchor-modal');
-    }
-    else {
-        followerElt.removeClass('as-anchor-modal');
-    }
-
-
-    QuickMenu._session = Math.random() * 10000000000 >> 0;
-    followerElt.addTo(document.body);
-    Object.assign(menuElt, menuProps);
-    followerElt.anchor = menuAnchors;
-    followerElt.followTarget = element;
-    QuickMenu.$element = element;
-    QuickMenu.$element.classList.add('as-quick-menu-attached');
-    QuickMenu._menuListener = menuListener;
-
-
-    if (darkTheme) followerElt.addClass('dark');
-    else followerElt.removeClass('dark');
-    menuElt.addStyle('visibility', 'hidden');//for prevent size change blink
-    followerElt.addClass('absol-active');
-
-    setTimeout(function () {
-        followerElt.updatePosition();
-        menuElt.addStyle('visibility', 'visible');
-    }, isMobile ? 33 : 2);
-
-
-    return QuickMenu._session;
+    var instance = new QuickMenuInstance(element, {
+        menuProps: menuProps,
+        anchor: anchor,
+        onSelect: menuListener,
+        darkTheme: darkTheme
+    });
+    instance.open();
 };
 
-QuickMenu.close = function (session) {
-    if (session !== true && session !== QuickMenu._session) return;
-    QuickMenu._session = Math.random() * 10000000000 >> 0;
-    if (QuickMenu.$element)
-        QuickMenu.$element.classList.remove('as-quick-menu-attached');
-    QuickMenu.$element = undefined;
-    QuickMenu._menuListener = undefined;
 
-    QuickMenu.$follower.removeClass('absol-active');
-    QuickMenu.$follower.remove();
+QuickMenu.close = function (session) {
+    if (QuickMenu.runningInstance.id === session) QuickMenu.runningInstance.close();
 };
 
 
 QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, darkTheme) {
-    var res = {
+    return new QuickMenuInstance(element, {
         menuProps: menuProps,
         anchor: anchor,
-        currentSession: undefined,
-        element: element,
-        menuListener: menuListener,
+        onSelect: menuListener,
         darkTheme: darkTheme
-    };
-
-    var clickHandler = function () {
-        if (QuickMenu._session === res.currentSession) return;
-        res.currentSession = QuickMenu.show(res.element, res.menuProps, res.anchor, res.menuListener, res.darkTheme);
-        var finish = function () {
-            document.removeEventListener('click', finish, false);
-            QuickMenu.close(res.currentSession);
-            res.currentSession = undefined;
-        };
-
-        setTimeout(function () {
-            document.addEventListener('click', finish, false);
-        }, 10)
-    };
-
-    res.remove = function () {
-        element.removeEventListener('click', clickHandler, false);
-        element.classList.remove('as-quick-menu-trigger');
-
-    };
-
-    element.addEventListener('click', clickHandler, false);
-    element.classList.add('as-quick-menu-trigger');
-    return res;
+    });
 };
 
 
@@ -183,44 +267,7 @@ QuickMenu.showWhenClick = function (element, menuProps, anchor, menuListener, da
  * @returns {QuickMenuDataHolder}
  */
 QuickMenu.toggleWhenClick = function (trigger, adaptor) {
-    var res = {
-        trigger: trigger,
-        adaptor: adaptor,
-        currentSession: undefined,
-    };
-
-    var clickHandler = function () {
-        if (QuickMenu._session === res.currentSession) return;
-
-        res.currentSession = QuickMenu.show(res.adaptor.getFlowedElement ? res.adaptor.getFlowedElement() : trigger,
-            res.adaptor.getMenuProps ? res.adaptor.getMenuProps() : (adaptor.menuProps || []),
-            res.adaptor.getAnchor ? res.adaptor.getAnchor() : (adaptor.anchor || 'auto'),
-            res.adaptor.onSelect,
-            res.adaptor.isDarkTheme ? res.adaptor.isDarkTheme() : !!res.adaptor.darkTheme);
-        if (res.adaptor.onOpen) res.adaptor.onOpen();
-
-        var finish = function () {
-            document.body.removeEventListener('click', finish, false);
-            QuickMenu.close(res.currentSession);
-            if (adaptor.onClose) adaptor.onClose();
-            res.currentSession = undefined;
-        };
-
-        setTimeout(function () {
-            document.body.addEventListener('click', finish, false);
-        }, 10);
-    };
-
-    res.remove = function () {
-        trigger.removeEventListener('click', clickHandler, false);
-        trigger.classList.remove('as-quick-menu-trigger');
-    };
-
-    trigger.addEventListener('click', clickHandler, false);
-    trigger.classList.add('as-quick-menu-trigger');
-
-    return res;
-
+    return new QuickMenuInstance(trigger, adaptor);
 };
 
 
