@@ -17,7 +17,7 @@ var descriptor = {
             displayName: "Màu yêu thích"
         },
         {
-            type: 'datetime',
+            type: 'date',
             name: 'birthday',
             displayName: 'Ngày sinh'
         },
@@ -170,7 +170,8 @@ objects[2] = {
     contract: {
         address_book: [
             '588 Ngô Đức Kế, p. Thắng Lợi, tp. Kon Tum',
-            '666/64/37 Ba Tháng Hai, q.10, HCM'
+            '666/64/37 Ba Tháng Hai, q.10, HCM',
+            ''
         ],
         phone: '0363844698',
         email: 'bluesky2010@gmail.com'
