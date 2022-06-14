@@ -1,5 +1,5 @@
 import ACore from "../ACore";
-import {stringHashCode} from "absol/src/String/stringUtils";
+import { stringHashCode } from "absol/src/String/stringUtils";
 
 export function insertTextAtCursor(text) {
     var sel, range;
@@ -684,7 +684,7 @@ export function fileInfoOf(fi) {
                 }
                 return all;
             }).replace(/\?.+$/, '');
-            if (!res.url && isURLAddress(o) ) res.url = o;
+            if (!res.url && isURLAddress(o)) res.url = o;
         }
         else if ((typeof o === "object") && o) {
             if (o instanceof Blob) {
@@ -705,11 +705,11 @@ export function fileInfoOf(fi) {
     };
     handle(fi);
 
-    if (res.name){
+    if (res.name) {
         res.name = res.name.replace(/\.upload$/, '')
     }
     if (!res.type && res.name) {
-        res.type = res.name.split('.').slice(1).pop();
+        res.type = res.name.toLowerCase().split('.').slice(1).pop();
     }
 
     for (var k in res) {
@@ -773,7 +773,8 @@ export function checkedValues2RootTreeValues(items, values) {
     var scan = item => {
         if (dict[keyOf(item.value)]) {
             res.push(item.value);
-        } else if (item.items && item.items.length > 0) {
+        }
+        else if (item.items && item.items.length > 0) {
             item.items.forEach(sItem => scan(sItem));
         }
     }
@@ -893,7 +894,30 @@ export function latLngDistance(p0, p1) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c;
     return d;
-};
+}
+
+
+export function keyStringOf(o) {
+    var type = typeof o;
+    var keys;
+    if (o && type === "object") {
+        if (o.getTime) {
+            return 'd(' + o.getTime() + ')';
+        }
+        else if (o.length && o.map) {
+            return 'a(' + o.map(val => keyStringOf(val)).join(',') + ')';
+        }
+        else {
+            keys = Object.keys(o);
+            keys.sort();
+            return 'o(' + keys.map(key => key + ':' + keyStringOf(o[key])).join(',') + ')';
+        }
+
+    }
+    else {
+        return type[0] + '(' + o + ')';
+    }
+}
 
 
 export function jsStringOf(x) {
@@ -911,6 +935,6 @@ export function jsStringOf(x) {
 }
 
 export function calcDTQueryHash(o) {
-    var  s = jsStringOf(o);
+    var s = jsStringOf(o);
     return stringHashCode(s);
 }
