@@ -145,6 +145,29 @@
     -moz-user-select: none;
 }
 
+.as-file-list-item .as-file-list-item-check {
+    display: none;
+    position: absolute;
+    left: 0.1em;
+    top:calc(50% - 1px - 0.5em);
+
+
+}
+
+
+.as-file-list-input.as-show-check .as-file-list-item .as-file-list-item-check {
+    display: block;
+}
+
+.as-file-list-input.as-show-check .as-file-list-item
+{
+    padding-left: 3.5em ;
+}
+
+.as-file-list-input.as-show-check .as-file-list-item .as-file-list-item-icon{
+    left: 1.2em;
+}
+
 .as-file-list-item-icon {
     position: absolute;
     left: 0;
@@ -212,7 +235,7 @@
 }
 
 .as-file-list-input .as-file-list-item:hover .as-file-list-item-quick-btn,
-.as-file-list-item-quick-btn.as-quick-menu-attached{
+.as-file-list-item-quick-btn.as-quick-menu-attached {
     display: block;
 }
 
