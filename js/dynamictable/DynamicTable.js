@@ -264,6 +264,11 @@ DynamicTable.prototype.removeFilter = function (inputElt) {
         this.$filterInputs.splice(idx, 1);
 };
 
+DynamicTable.prototype.notifyRowChange = function (row) {
+    var idx = this.table.body.rowIndexOf(row);
+    if (idx >= 0)
+        this.table.body.onRowSplice(idx)
+};
 
 DynamicTable.prototype.notifyRowsChange = noop;
 

@@ -1,4 +1,6 @@
 import { _ } from "../../ACore";
+import { jsStringOf } from "../utils";
+import { formatDateTime } from "absol/src/Time/datetime";
 
 /***
  *
@@ -29,6 +31,31 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
 
 Object.defineProperty(DTBodyCell.prototype, 'innerText', {
     get: function () {
+        var text = this.data.innerText;
+        if (text === undefined || text === null) text = '';
+        else if (!text) {
+            text = text + '';
+        }
+        else if (text.substring) {
+
+        }
+        else if (typeof text === "number") {
+            text = text + ''
+        }
+        else if (typeof text === "object") {
+            if (text instanceof Date) {
+                return formatDateTime(text, 'dd/MM/yyyy hh:mm a');
+            }
+            else {
+                return jsStringOf(text);
+            }
+        }
+        else if (typeof text === "function"){
+            text = text.call(this.data, this);
+        }
+
+        return text;
+
         if (this.data.innerText) return this.data.innerText;
         if (this.data.getInnerText) return this.data.getInnerText();
         // if ('innerText' in this.data)

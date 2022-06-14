@@ -66,6 +66,7 @@ DTBodyRow.prototype.updateData = function (data) {
         if (this.$idx)
             this.$idx.attr('data-idx', this._idx + 1 + '');
     }
+    this.body.onRowSplice(rowIdx);
 };
 
 
