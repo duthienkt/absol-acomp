@@ -4,6 +4,7 @@ import '../css/locationinput.css';
 import AutoCompleteInput from "./AutoCompleteInput";
 import FlexiconButton from "./FlexiconButton";
 import safeThrow from "absol/src/Code/safeThrow";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 
 ///https://developers.google.com/maps/documentation/javascript/examples/geocoding-place-id
@@ -13,6 +14,9 @@ import safeThrow from "absol/src/Code/safeThrow";
  * @constructor
  */
 function LocationPicker() {
+    if (BrowserDetector.isMobile){
+        this.addClass('as-mobile');
+    }
     this.map = new google.maps.Map(this, {
         zoom: 8,
         center: new google.maps.LatLng(21.018755, 105.839729),
@@ -69,7 +73,7 @@ function LocationPicker() {
 
 
     this.$topLeftCtn = _({
-        class: 'as-location-picker-control-ctn',
+        class: ['as-location-picker-control-ctn', 'as-top'],
         child: [
             this.$searchInput
         ]
@@ -101,7 +105,7 @@ function LocationPicker() {
     );
 
     this.$bottomLeftCtn = _({
-        class: ['as-location-picker-control-ctn', 'as-transparent'],
+        class: ['as-location-picker-control-ctn', 'as-transparent', 'as-bottom'],
         style: {
             paddingBottom: '5px'
         },

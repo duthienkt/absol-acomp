@@ -3,6 +3,7 @@ import LocationPicker from "./LocationPicker";
 import '../css/locationinput.css';
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { isRealNumber } from "./utils";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 function LocationInput() {
     this.$text = $('input', this)
@@ -65,6 +66,9 @@ LocationInput.prototype._preparePicker = function () {
             child: this.share.$picker
         }
     });
+    if (BrowserDetector.isMobile){
+        this.share.$modal.addClass('as-mobile');
+    }
 };
 
 /***

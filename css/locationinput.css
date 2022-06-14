@@ -1,4 +1,4 @@
-.as-location-input-modal{
+.as-location-input-modal {
     z-index: 800001;
 }
 
@@ -94,6 +94,11 @@
     display: none;
 }
 
+.as-location-picker-control-ctn.as-bottom button{
+    box-shadow: 0 0px 2px 4px white;
+    -webkit-box-shadow: 0 0 2px 4px white;
+    -moz-box-shadow: 0 0 2px 4px white;
+}
 
 
 .as-location-input-modal {
@@ -113,13 +118,6 @@
     background-color: white;
 }
 
-@media screen and (max-width: 600px) {
-    .as-location-input-modal-window {
-        max-width: unset;
-        max-height: unset;
-
-    }
-}
 
 .as-location-input-modal-window > .as-location-picker {
     width: 100%;
@@ -229,4 +227,38 @@
 .as-location-input-text:focus + .as-location-input-clear-btn,
 .as-location-input:hover .as-location-input-clear-btn {
     visibility: visible;
+}
+
+
+@media screen and (max-width: 600px) {
+    .as-location-input-modal-window {
+        max-width: unset;
+        max-height: unset;
+
+    }
+}
+
+
+@media screen  and  (max-width: 500px) {
+    .as-location-picker-control-ctn.as-top {
+        margin-top: 60px;
+        width: calc(100% - 20px);
+    }
+
+    .as-location-picker-control-ctn.as-top .as-location-picker-search-input {
+        width: 100%;
+    }
+
+    .as-location-input-modal-window {
+        padding: 0;
+    }
+
+    .as-location-picker-control-ctn.as-bottom button{
+        margin-top: 20px;
+    }
+}
+
+
+.as-location-input-modal.as-mobile .as-location-input-modal-window {
+    height: calc(100vh - 80px);
 }
