@@ -20,6 +20,10 @@ function DualSelectBox() {
     this.$lists = $$('.as-dual-select-box-list', this);
     this.$searcTextInput = $('searchtextinput', this)
         .on('stoptyping', this.eventHandler.searchTextInputModify);
+
+    this.$closeBtn = $('.as-select-list-box-close-btn', this)
+        .on('click', this.eventHandler.clickCloseBtn);
+
     this.cView = new DualSelectView(this, this._items);
     this.searchedView = {
         '*': this.cView
@@ -62,7 +66,7 @@ DualSelectBox.render = function () {
     return _({
         tag: Follower.tag,
         class: 'as-dual-select-box',
-        extendEvent: ['change'],
+        extendEvent: ['change', 'close'],
         child: [
             {
                 class: 'as-dual-select-box-search-ctn',
@@ -100,6 +104,21 @@ DualSelectBox.render = function () {
                                 }
                             };
                         })
+                    }
+                ]
+            },
+            {
+                class: 'as-select-list-box-footer',
+                child: [
+                    {
+                        class: 'as-select-list-box-footer-right',
+                        child: [
+                            {
+                                tag: 'a',
+                                class: 'as-select-list-box-close-btn',
+                                child: { text: 'Close' }
+                            }
+                        ]
                     }
                 ]
             }
@@ -456,6 +475,11 @@ DualSelectBox.eventHandler.searchTextInputModify = function () {
     this.$lists[0].scrollTop = 0;
     this.$lists[1].scrollTop = 0;
     if (query === '*') this.scrollIntoSelected();
+};
+
+
+DualSelectBox.eventHandler.clickCloseBtn = function (event) {
+    this.emit('close', { type: 'close', target: this, originalEvent: event }, this);
 };
 
 

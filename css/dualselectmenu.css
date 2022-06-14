@@ -8,6 +8,8 @@
     width: var(--dual-list-estimate-width);
     z-index: 10000000;
     background-color: white;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 1rem;
 
 }
 
@@ -52,13 +54,13 @@
 .as-dual-select-box-list {
     display: inline-block;
     vertical-align: top;
-    max-height: calc(var(--max-height));
+    max-height: calc(var(--max-height) - 2em - 11px);
     overflow-y: auto;
     box-sizing: border-box;
 }
 
 .as-dual-select-box.as-enable-search .as-dual-select-box-list {
-    max-height: calc(var(--max-height) - calc(2rem + 10px));
+    max-height: calc(var(--max-height) - 4rem - 11px);
 }
 
 .as-dual-select-box-arrow-ctn {

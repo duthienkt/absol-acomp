@@ -92,7 +92,7 @@ CheckTreeBox.prototype._initFooter = function () {
         .on('change', this.eventHandler.checkAllChange);
     this.$cancelBtn = $('.as-select-list-box-cancel-btn', this)
         .on('click', this.eventHandler.clickCancelBtn);
-    this.$cancelBtn = $('.as-select-list-box-close-btn', this)
+    this.$closeBtn = $('.as-select-list-box-close-btn', this)
         .on('click', this.eventHandler.clickCloseBtn);
 };
 

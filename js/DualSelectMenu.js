@@ -21,7 +21,8 @@ function DualSelectMenu() {
         },
         on: {
             preupdateposition: this.eventHandler.preUpdatePosition,
-            change: this.eventHandler.boxChange
+            change: this.eventHandler.boxChange,
+            close: this.eventHandler.boxClose
         }
     });
     this.$item = $('.absol-selectlist-item', this);
@@ -252,6 +253,10 @@ DualSelectMenu.eventHandler.preUpdatePosition = function () {
 
 DualSelectMenu.eventHandler.boxChange = function () {
     this._updateViewValue();
+};
+
+DualSelectMenu.eventHandler.boxClose = function () {
+    this.isFocus = false;
 };
 
 ACore.install(DualSelectMenu);
