@@ -4,6 +4,7 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import './Menu';
 import { cleanMenuItemProperty } from "./utils";
 import Follower from "./Follower";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 var isMobile = BrowserDetector.isMobile;
 var _ = ACore._;
@@ -234,7 +235,7 @@ QuickMenu.show = function (element, menuProps, anchor, menuListener, darkTheme) 
 
 
 QuickMenu.close = function (session) {
-    if (QuickMenu.runningInstance.id === session) QuickMenu.runningInstance.close();
+    if (QuickMenu.runningInstance && QuickMenu.runningInstance.id === session) QuickMenu.runningInstance.close();
 };
 
 
