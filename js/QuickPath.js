@@ -5,6 +5,10 @@ import QuickMenu from "./QuickMenu";
 var _ = ACore._;
 var $ = ACore.$;
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function QuickPath() {
     this._holders = [];
 }
@@ -14,6 +18,10 @@ function QuickPath() {
  */
 QuickPath.eventHandler = {};
 
+/***
+ * @this QuickPath
+ * @param event
+ */
 QuickPath.eventHandler.click = function (event) {
     var button = this._fileButton(event.target)
     if (button) this.pressButton(button);
