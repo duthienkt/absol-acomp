@@ -47,6 +47,11 @@
     -webkit-user-drag: none;
     color: inherit;
     box-sizing: border-box;
+    background-color: transparent;
+}
+
+.ac-time-input.as-disabled{
+    background-color: var(--as-disabled-background-color);
 }
 
 .as-time-input-icon-btn {

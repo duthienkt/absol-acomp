@@ -1,4 +1,4 @@
-.absol-textarea2{
+.absol-textarea2 {
     overflow: hidden;
     resize: none;
     box-sizing: border-box;
@@ -6,7 +6,11 @@
     font: inherit;
 }
 
-.absol-textarea2.as-border-none{
+.absol-textarea2.as-border-none {
     border: none;
     outline: none;
+}
+
+.absol-textarea2:disabled {
+    background-color: var(--as-disabled-background-color);
 }
