@@ -76,7 +76,7 @@ TOCList.prototype.saveState = function () {
         arr.forEach(function (ct) {
             savedState.status[ct.ident] = ct.status;
             changed = changed || savedState.status[ct.ident] !== oldState.status[ct.ident];
-            if (ct.nodeElt.containsClass('as-active')) {
+            if (ct.nodeElt.hasClass('as-active')) {
                 savedState.active.push(ct.ident);
             }
             visitArr(ct.children);
@@ -884,7 +884,7 @@ Object.defineProperties(TOCNodeController.prototype, {
     },
     activated: {
         get: function () {
-            return this.nodeElt.containsClass('as-active');
+            return this.nodeElt.hasClass('as-active');
         }
     }
 });
