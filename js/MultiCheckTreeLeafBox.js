@@ -58,7 +58,10 @@ MultiCheckTreeLeafBox.render = function () {
                 child: []
             },
             'attachhook.as-dom-signal'
-        ]
+        ],
+        props: {
+            anchor: [1, 6, 2, 5]
+        }
     });
 };
 

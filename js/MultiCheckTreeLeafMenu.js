@@ -4,6 +4,7 @@ import SelectTreeLeafMenu from "./SelectTreeLeafMenu";
 import SelectBoxItem from "./SelectBoxItem";
 import MultiSelectMenu from "./MultiSelectMenu";
 import OOP from "absol/src/HTML5/OOP";
+import SelectMenu from "./SelectMenu2";
 
 /****
  * Only leafs have checkbox
@@ -14,9 +15,12 @@ function MultiCheckTreeLeafMenu() {
     this.$selectBox = _({
         tag: MultiCheckTreeLeafBox.tag,
         on: {
-            change: this.eventHandler.selectBoxChange
+            change: this.eventHandler.selectBoxChange,
+            preupdateposition: this.eventHandler.preUpdateListPosition
         }
     });
+
+    this.$selectlistBox = this.$selectBox;
 
     OOP.drillProperty(this, this.$selectBox, 'enableSearch');
 
@@ -126,6 +130,7 @@ MultiCheckTreeLeafMenu.property.readOnly = MultiSelectMenu.property.readOnly;
 MultiCheckTreeLeafMenu.eventHandler = {};
 
 MultiCheckTreeLeafMenu.eventHandler.clickOut = SelectTreeLeafMenu.eventHandler.clickOut;
+MultiCheckTreeLeafMenu.eventHandler.preUpdateListPosition = SelectMenu.eventHandler.preUpdateListPosition;
 
 MultiCheckTreeLeafMenu.eventHandler.click = function (event) {
     if (!this.readOnly&&(event.target === this || event.target === this.$itemCtn)) {
