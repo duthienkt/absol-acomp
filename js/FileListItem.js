@@ -5,18 +5,23 @@ import MessageInput from "./MessageInput";
 import { fileInfoOf, isURLAddress } from "./utils";
 import QuickMenu from "./QuickMenu";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
+import CheckboxInput from "./CheckBoxInput";
+import OOP from "absol/src/HTML5/OOP";
 
 /***
  * @extends AElement
  * @constructor
  */
 function FileListItem() {
+    this.$parent = null;
     this.$icon = $('.as-file-list-item-icon', this);
     this.$name = $('.as-file-list-item-name', this);
     this.$quickMenuBtn = $('.as-file-list-item-quick-btn', this);
+    this.$check = $('.as-file-list-item-check', this);
     this.value = null;
     this.fileType = null;
     this.fileName = '';
+    OOP.drillProperty(this, this.$check, 'checked');
     QuickMenu.toggleWhenClick(this.$quickMenuBtn, {
         getMenuProps: () => {
             var list = this.parentElement;
@@ -72,6 +77,18 @@ function FileListItem() {
             }
         }.bind(this)
     });
+
+    this.$check.on('change', function (event){
+        if (this.$parent){
+            this.$parent.emit('check', {target:this.$parent, elt: this, type:'check'}, this.$parent);
+        }
+    }.bind(this));
+
+    /***
+     * @name checked
+     * @type {boolean}
+     * @memberOf FileListItem#
+     */
 }
 
 FileListItem.tag = 'FileListItem'.toLowerCase();
@@ -81,6 +98,10 @@ FileListItem.render = function () {
     return _({
         class: 'as-file-list-item',
         child: [
+            {
+                tag: CheckboxInput,
+                class: 'as-file-list-item-check'
+            },
             {
                 tag: 'img',
                 class: 'as-file-list-item-icon',
@@ -152,7 +173,7 @@ FileListItem.property.value = {
     get: function () {
         return this._value;
     }
-}
+};
 
 
 ACore.install(FileListItem);

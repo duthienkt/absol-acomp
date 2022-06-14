@@ -5,7 +5,7 @@ import ContextCaptor from "./ContextMenu";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { saveAs } from "absol/src/Network/FileSaver";
 import DropZone from "./DropZone";
-import { fileAccept } from "./utils";
+import { fileAccept, isNaturalNumber } from "./utils";
 import FileInputBox from "./FileInputBox";
 
 
@@ -70,7 +70,7 @@ FileListInput.render = function () {
     return _({
         tag: DropZone.tag,
         class: ['as-file-list-input', 'as-bscroller', 'as-empty', 'as-droppable'],
-        extendEvent: ['change', 'contextmenu'],
+        extendEvent: ['change', 'contextmenu', 'check'],
         child: [
             {
                 tag: 'label',
@@ -106,6 +106,8 @@ FileListInput.render = function () {
     });
 };
 
+FileListInput.prototype.defaultChecked = false;
+
 FileListInput.prototype.updateSize = function () {
     var bound, px, n;
     var requireWidth = this.getComputedStyleValue('--item-require-width') || '300px';
@@ -132,26 +134,34 @@ FileListInput.prototype._makeFileItem = function (file) {
     var fileElt = _({
         tag: FileListItem.tag,
         props: {
+            $parent: this,
             allowUpload: false,
             fileData: file,
+            checked: this.defaultChecked
         }
     });
     fileElt.on('mousedown', this.eventHandler.mouseDownItem.bind(this, fileElt));
-    if (file instanceof File || file instanceof Blob || typeof file === 'string') {
-        fileElt.value = file;
-    }
-    else if (typeof file === 'object') {
-        if (file.value || file.url) fileElt.value = file.value || file.url;
-        if (file.fileName || file.name) fileElt.fileName = file.fileName || file.name;
-    }
+    fileElt.value = file;
     return fileElt;
 };
 
-FileListInput.prototype.add = function (file) {
+FileListInput.prototype.add = function (file, idx) {
+    if (!isNaturalNumber(idx)) idx = Infinity;
+    idx = Math.min(this.$fileItems.length, idx);
     var fileElt = this._makeFileItem(file);
-    this.$fileItems.push(fileElt);
-    this.addChildBefore(fileElt, this.$add);
-    this._files.push(file);
+
+    var bf = this.$fileItems[idx];
+    if (bf) {
+        this.$fileItems.splice(idx, 0, fileElt);
+        this._files.splice(idx, 0, file);
+        this.addChildBefore(fileElt, bf);
+    }
+    else {
+        this.$fileItems.push(fileElt);
+        this._files.push(file);
+        this.addChildBefore(fileElt, this.$add);
+
+    }
     this._updateCountClass();
 };
 
@@ -211,6 +221,10 @@ FileListInput.prototype._findFileItemElt = function (target) {
         target = target.parentElement;
     }
     return null;
+};
+
+FileListInput.prototype.getChildren = function () {
+    return this.$fileItems.slice();
 };
 
 
@@ -313,6 +327,22 @@ FileListInput.property.disabled = {
         return this.hasClass('as-disabled');
     }
 };
+
+FileListInput.property.showCheck = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-show-check');
+
+        }
+        else {
+            this.removeClass('as-show-check');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-show-check');
+    }
+};
+
 
 ACore.install(FileListInput);
 
