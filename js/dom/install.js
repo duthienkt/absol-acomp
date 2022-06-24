@@ -36,7 +36,7 @@ import HRuler from "../HRuler";
 import IconSprite from "../IconSprite";
 import LinearColorBar from "../LinearColorBar";
 import MediaInput from "../MediaInput";
-import MessageInput, {MessageQuote} from "../MessageInput";
+import MessageInput, {MessageQuote} from "../messageinput/MessageInput";
 import NumberInput from "../NumberInput";
 import NumberSpanInput from "../NumberSpanInput";
 import OnScreenWindow from "../OnsScreenWindow";
@@ -140,6 +140,8 @@ import DynamicTable from "../dynamictable/DynamicTable";
 import WindowBox from "../WindowBox";
 import MessageDialog from "../MessageDialog";
 import ObjectMergeTool from "../objectmergetool/ObjectMergeTool";
+import TokenizeHyperInput from "../tokenizeiput/TokenizeHyperInput";
+
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -305,7 +307,9 @@ export var publicCreators = [
     ProcessLBar,
     KVCommentItem,
     DynamicTable,
-    ObjectMergeTool
+    ObjectMergeTool,
+    TokenizeHyperInput
+
 ];
 
 /***
