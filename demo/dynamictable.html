@@ -53,13 +53,16 @@
                 if (Math.random() < 0.2) ac.push(x);
                 return ac;
             }, []);
+            var score = 5 + Math.random() * 5;
+            score = Math.floor(score * 100)/100;
 
             var rowData = {
                 id: id,
                 attr: {},
                 keys: {//for filter
                     class: clss,
-                    goodAt: goodAt
+                    goodAt: goodAt,
+                    score: score
                 },
                 cells: [
                     {
@@ -124,6 +127,10 @@
                         child: { text: goodAt.join(', ') }
                     },
                     {
+                        innerText: score,
+                        child: { text: score.toFixed(2) + '' }
+                    },
+                    {
                         innerText: '',
                         style: { width: '90px' },
                         //for child: [editBtn, okBtn],
@@ -181,6 +188,7 @@
 
                         }
                     }
+
                 ]
             };
 
@@ -370,6 +378,26 @@
             //else don't filter by this
         };
 
+        var rankFilter = _({
+            tag: 'selectmenu',
+            props: {
+                items: [['Tất cả', 0, 10], ['Trung Bình', 5, 7], ['Khá', 7, 8], ['Giỏi', 8, 9], ['Suất sắc', 9, 10]].map(function (value) {
+                    return {
+                        text: value[0],
+                        value: JSON.stringify({ min: value[1], max: value[2] - 1e-7 })
+                    }
+                })
+            }
+        });
+
+        rankFilter.exportFilter = function (filter) {
+            filter.score = JSON.parse(this.value);
+            if (filter.score.min === 0)
+            {
+                delete filter.score;
+            }
+        }
+
         render({
             style: { margin: '5px' },
             child: ['<label>Lớp: </label>', classFilter]
@@ -378,13 +406,16 @@
             child: ['<label>Giỏi môn: </label>', goodAtFilter]
         });
 
+        render({
+            child: ['<label>Xếp loại: </label>', rankFilter]
+        });
 
         var searchInput = render('searchtextinput')
             .addStyle('margin', '10px');
         var table0 = render({
             tag: 'dynamictable',
             props: {
-                filterInputs: [classFilter, goodAtFilter],
+                filterInputs: [classFilter, goodAtFilter, rankFilter],
                 adapter: {
                     // rowsPerPage: 15,//default: 20
                     data: {
@@ -402,10 +433,15 @@
                                                 someEvent: function (event) {
 
                                                 }
-                                            }
+                                            },
+                                            sortKey: 'class'
                                         },
                                         {
                                             child: { text: 'Giỏi' }
+                                        },
+                                        {
+                                            child: { text: 'Điểm TB' },
+                                            sortKey: 'score'
                                         },
                                         {}
                                     ]
@@ -453,183 +489,190 @@
 
 </body>
 
-<noscript>
-    render("<h2>Draggable</h2>");
+<script>
+    (function (){
+        var _ = absol._;
+        function render(o){
+            return _(o).addTo(document.body);
+        }
+        render("<h2>Draggable</h2>");
 
-    function makeRowData1(i, id, draggable) {
+        function makeRowData1(i, id, draggable) {
 
-    var name = absol.string.randomPhrase(30).replace(/(^|\s)[a-z]/g, function (all) {
-    return all.toUpperCase();
-    });
-    var editBtn = _({
-    tag: 'flexiconbutton',
-    style: { height: '25px' },
-    props: {
-    icon: 'span.mdi.mdi-account-edit-outline'
-    },
-    on: {
-    click: function () {
-    editBtn.addStyle('display', 'none');
-    nameText.addStyle('display', 'none');
-    okBtn.removeStyle('display');
-    var bound = nameInput.parentElement.getBoundingClientRect();
-    nameInput.removeStyle('display')
-    .addStyle('max-width', bound.width - 30 + 'px');
-    }
-    }
-    });
-    var okBtn = _({
-    tag: 'flexiconbutton',
-    style: { height: '25px', display: 'none' },
-    props: {
-    icon: 'span.mdi.mdi-check-all'
-    },
-    on: {
-    click: function () {
-    nameInput.addStyle('display', 'none');
-    okBtn.addStyle('display', 'none');
-    editBtn.removeStyle('display');
-    nameText.removeStyle('display');
-    }
-    }
-    });
-    var nameInput = _({
-    tag: 'input',
-    attr: { type: 'text' },
-    style: {
-    display: 'none',
-    width: '300px'
-    },
-    on: {
-    change: function () {
-    name = this.value;
-    nameText.clearChild().addChild(_({ text: name }));
-    }
-    },
-    props: {
-    value: name
-    }
-    });
-    var nameText = _({ tag: 'span', child: [{ text: name }] });
+            var name = absol.string.randomPhrase(30).replace(/(^|\s)[a-z]/g, function (all) {
+                return all.toUpperCase();
+            });
+            var editBtn = _({
+                tag: 'flexiconbutton',
+                style: { height: '25px' },
+                props: {
+                    icon: 'span.mdi.mdi-account-edit-outline'
+                },
+                on: {
+                    click: function () {
+                        editBtn.addStyle('display', 'none');
+                        nameText.addStyle('display', 'none');
+                        okBtn.removeStyle('display');
+                        var bound = nameInput.parentElement.getBoundingClientRect();
+                        nameInput.removeStyle('display')
+                            .addStyle('max-width', bound.width - 30 + 'px');
+                    }
+                }
+            });
+            var okBtn = _({
+                tag: 'flexiconbutton',
+                style: { height: '25px', display: 'none' },
+                props: {
+                    icon: 'span.mdi.mdi-check-all'
+                },
+                on: {
+                    click: function () {
+                        nameInput.addStyle('display', 'none');
+                        okBtn.addStyle('display', 'none');
+                        editBtn.removeStyle('display');
+                        nameText.removeStyle('display');
+                    }
+                }
+            });
+            var nameInput = _({
+                tag: 'input',
+                attr: { type: 'text' },
+                style: {
+                    display: 'none',
+                    width: '300px'
+                },
+                on: {
+                    change: function () {
+                        name = this.value;
+                        nameText.clearChild().addChild(_({ text: name }));
+                    }
+                },
+                props: {
+                    value: name
+                }
+            });
+            var nameText = _({ tag: 'span', child: [{ text: name }] });
 
-    return {
-    id: id,
-    attr: {},
-    cells: [
-    {
-    style: {
-    width: '30px',
-    textAlign: 'center',
-    fontSize: '25px'
-    },
-    class: draggable ? 'as-drag-zone' : [],
-    child: draggable ? 'span.mdi.mdi-drag' : 'span'
-    },
-    {
-    style: {
-    textAlign: 'center',
-    width: '50px'
-    },
-    child: 'span.as-dt-row-index'
-    },
-    { child: { text: 'M' + absol.$.zeroPadding(Math.random() * 1e7 >> 0, 7) } },
-    {
-    child: [nameInput, nameText]
-    },
-    { child: { text: 'A' + Math.ceil(Math.random() * 7) } },
-    {
-    style: { width: '40px' },
-    child: [editBtn, okBtn]
-    }
-    ],
-    on: {
-    orderchange: function (event) {//we can listen event in each row
-    console.log('row listener', event);
-    }
-    }
-    };
-    }
+            return {
+                id: id,
+                attr: {},
+                cells: [
+                    {
+                        style: {
+                            width: '30px',
+                            textAlign: 'center',
+                            fontSize: '25px'
+                        },
+                        class: draggable ? 'as-drag-zone' : [],
+                        child: draggable ? 'span.mdi.mdi-drag' : 'span'
+                    },
+                    {
+                        style: {
+                            textAlign: 'center',
+                            width: '50px'
+                        },
+                        child: 'span.as-dt-row-index'
+                    },
+                    { child: { text: 'M' + absol.$.zeroPadding(Math.random() * 1e7 >> 0, 7) } },
+                    {
+                        child: [nameInput, nameText]
+                    },
+                    { child: { text: 'A' + Math.ceil(Math.random() * 7) } },
+                    {
+                        style: { width: '40px' },
+                        child: [editBtn, okBtn]
+                    }
+                ],
+                on: {
+                    orderchange: function (event) {//we can listen event in each row
+                        console.log('row listener', event);
+                    }
+                }
+            };
+        }
 
-    var addBtn7 = render({
-    tag: 'flexiconbutton',
-    style: { 'margin': '10px' },
-    props: {
-    text: 'addRowBefore(data, row_you_want_to)',
-    icon: 'span.mdi.mdi-table-row-plus-before'
-    },
-    on: {
-    click: function () {
-    var rows = table1.requireRows();
-    var bf = null;
-    for (var j = rows.length - 1; j >= 0; --j) {
-    if (rows[j].draggable) {
-    break;
-    }
-    else {
-    bf = rows[j];
-    }
-    }
-    var i = table1.getRows().length;
-    var id = 'row_' + i;
-    var newRowData = makeRowData1(i, id, true);
-    var newRow = table1.addRowBefore(newRowData, bf);
-    newRow.viewInto();
-    newRow.elt.scrollIntoView();
-    //or
-    // table0.viewIntoRow(id);
-    // table0.viewIntoRow(newRowData);
-    // table0.viewIntoRow(newRow);
-    //
-    //
-    }
-    }
-    });
+        var addBtn7 = render({
+            tag: 'flexiconbutton',
+            style: { 'margin': '10px' },
+            props: {
+                text: 'addRowBefore(data, row_you_want_to)',
+                icon: 'span.mdi.mdi-table-row-plus-before'
+            },
+            on: {
+                click: function () {
+                    var rows = table1.requireRows();
+                    var bf = null;
+                    for (var j = rows.length - 1; j >= 0; --j) {
+                        if (rows[j].draggable) {
+                            break;
+                        }
+                        else {
+                            bf = rows[j];
+                        }
+                    }
+                    var i = table1.getRows().length;
+                    var id = 'row_' + i;
+                    var newRowData = makeRowData1(i, id, true);
+                    var newRow = table1.addRowBefore(newRowData, bf);
+                    newRow.viewInto();
+                    newRow.elt.scrollIntoView();
+                    //or
+                    // table0.viewIntoRow(id);
+                    // table0.viewIntoRow(newRowData);
+                    // table0.viewIntoRow(newRow);
+                    //
+                    //
+                }
+            }
+        });
 
-    var searchInput1 = render('searchtextinput')
-    .addStyle('margin', '10px');
-    var table1 = render({
-    tag: 'dynamictable',
-    props: {
-    adapter: {
-    rowsPerPage: Infinity,//no paging
-    data: {
-    head: {
-    rows: [
-    {
-    cells: [
-    {},
-    { child: absol._({ text: "STT" }) },
-    { child: absol._({ text: "MSSV" }) },
-    { child: { text: 'Tên' } },
-    {
-    child: { text: 'Lớp' },
-    on: {
-    someEvent: function (event) {
+        var searchInput1 = render('searchtextinput')
+            .addStyle('margin', '10px');
+        var table1 = render({
+            tag: 'dynamictable',
+            props: {
+                adapter: {
+                    rowsPerPage: Infinity,//no paging
+                    data: {
+                        head: {
+                            rows: [
+                                {
+                                    cells: [
+                                        {},
+                                        { child: absol._({ text: "STT" }) },
+                                        { child: absol._({ text: "MSSV" }) },
+                                        { child: { text: 'Tên' } },
+                                        {
+                                            child: { text: 'Lớp' },
+                                            on: {
+                                                someEvent: function (event) {
 
-    }
-    }
-    },
-    {}
-    ]
-    }
-    ]
-    },
-    body: {
-    rows: Array(10).fill(0).map(function (u, i) {
-    return makeRowData1(i + 1, 'row_' + i, i >= 5 && i <= 45);
-    })
+                                                }
+                                            }
+                                        },
+                                        {}
+                                    ]
+                                }
+                            ]
+                        },
+                        body: {
+                            rows: Array(10).fill(0).map(function (u, i) {
+                                return makeRowData1(i + 1, 'row_' + i, i >= 5 && i <= 45);
+                            })
 
-    }
-    }
-    }
-    },
-    on: {
-    orderchange: function (event) {
-    console.log('table listener', event);
-    }
-    }
-    });
+                        }
+                    }
+                }
+            },
+            on: {
+                orderchange: function (event) {
+                    console.log('table listener', event);
+                }
+            }
+        });
+    })();
 
-</noscript>
+
+</script>
 
 </html>

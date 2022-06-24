@@ -73,12 +73,16 @@
         var messageCtn = $('.as-conversation-box-message-ctn');
         var messInput = _({
             tag: 'messageinput',
+            data: {
+                v2: true
+            },
             props: {
                 // autoSend: true
             },
             on: {
                 change: function () {
                     syncElt.innerHTML = this.text;
+                   // console.log(this.tagList)
                     // console.log(this.text, this.files, this.images);// files, images : Array<Files> text: String
 
                 },
@@ -162,7 +166,7 @@
                     if (this.mode == 'edit') return;
                     var text = this.text;
                     if (text) {
-                        var message = absol.parseMessage(text);
+                        var message = absol.parseMessage(text, {tagMap: tagMap, lengthLimit: 300, inline: true});
                         var now = new Date();
                         var messElt = _({
                             extendEvent: 'contextmenu',
@@ -202,7 +206,7 @@
                                                 text = messInput.text;
                                                 messInput.clearAllContent();
                                                 messElt.clearChild();
-                                                _({ elt: messElt, child: absol.parseMessage(text) })
+                                                _({ elt: messElt, child: absol.parseMessage(text,  {tagMap: tagMap, lengthLimit: 300, inline: true}) })
                                                 messInput.mode = 'new';
                                             }
 
@@ -223,7 +227,7 @@
                                             messInput.clearAllContent();
                                             messInput.focus();
                                             messInput.text = text;
-                                            setTimeout(function (){
+                                            setTimeout(function () {
 
                                                 messInput.$preInput.applyData(text, text.length)
                                             }, 100)
@@ -262,6 +266,14 @@
                 }
             }
         });
+        // messInput.text = 'Xin chào';
+
+        var tagMap = {
+            8278372: "Nguyễn Văn B",
+            153875: "Lê Văn A"
+        };
+        messInput.tagMap = tagMap;
+
         inputCtn.addChild(messInput);
         messInput.addCommand({
             name: 'haha',
@@ -270,36 +282,38 @@
                 console.log(this, $input, 'haha');
             }
         });
-        messInput.addPlugin({
-            icon: 'span.mdi.mdi-message-plus-outline',
+      messInput.addPlugin({
+            icon: '<span>@</span>',
             id: 'sample_message',
             alwaysVisible: true,
-            createContent: function ($input, _, $) {
+            popupAlign: 'right',
+            order: 0,
+            onOpen: function ($input, _, $) {
                 var thisPlugin = this;
-                return _({
-                    style: {
-                        border: '1px solid #ddd',
-                        padding: '10px'
-                    },
-                    child: {
+                var contentElt = this.contentElt;
+                contentElt.clearChild();
+                var children = Object.keys(tagMap).map(id => {
+                    return _({
                         tag: 'flexiconbutton',
                         style: {
                             height: '30px'
                         },
                         props: {
-                            text: 'close',
-                            icon: 'span.mdi.mdi-close'
+                            text: tagMap[id],
+                            icon: '<span>@<span></span>'
                         },
                         on: {
                             click: function () {
+                                thisPlugin.appendText('@[id:' + id + ']');
                                 thisPlugin.closePopup();
                             }
                         }
-                    }
+                    })
                 });
+                contentElt.addChild(children);
+
             }
         });
-
     })
     ()
 </script>
