@@ -1,7 +1,8 @@
 .as-conversation-box {
     display: flex;
     flex-direction: column;
-    font-size: 1rem;
+    font-size: 4rem;
+    --right-width: 0;
 }
 
 .as-conversation-box-message-ctn {
@@ -19,7 +20,6 @@
     padding-bottom: calc(5em  / 14);
     padding-left: calc(5em  / 14);
     overflow: visible;
-    --plugin-buttons-width: 0px;
     font-size: var(--as-input-font-size);
     font-family: var(--as-input-font-family);
 }
@@ -72,7 +72,7 @@
 }
 
 
-.as-message-input-emoji-btn-ctn {
+.as-message-input-left {
     position: absolute;
     left: calc(5em / 14);
     bottom:calc(5em / 14);
@@ -81,7 +81,7 @@
 
 .as-message-input-pre-ctn {
     position: relative;
-    width: calc(100% - 4em - var(--plugin-buttons-width));
+    width: calc(100% - var(--right-width));
     border-radius: 1.8em;
     box-sizing: border-box;
     transition: width 0.1s;
@@ -97,12 +97,19 @@
     vertical-align: middle;
 }
 
-
-.as-message-input.as-has-text .as-message-input-pre-ctn,
-.as-message-input.as-has-quote .as-message-input-pre-ctn,
-.as-message-input.as-has-attachment .as-message-input-pre-ctn {
-    width: calc(100% - 4em);
+.as-message-input:not(.as-v2)  .as-message-input-pre:before {
+    content: "";
+    line-height: calc(2em + 2px);
+    display: inline;
+    vertical-align: middle;
 }
+
+
+/*.as-message-input.as-has-text.as-text-changed .as-message-input-pre-ctn,*/
+/*.as-message-input.as-has-quote .as-message-input-pre-ctn,*/
+/*.as-message-input.as-has-attachment .as-message-input-pre-ctn {*/
+/*    width: calc(100% - 4em - var(--always-visible-buttons-width));*/
+/*}*/
 
 
 .as-message-input-pre {
@@ -122,12 +129,7 @@
     border: none;
 }
 
-.as-message-input-pre:before {
-    content: "";
-    line-height: calc(2em + 2px);
-    display: inline;
-    vertical-align: middle;
-}
+
 
 .as-message-input-camera-caller,
 .as-message-input-camera-microphone {
@@ -419,10 +421,24 @@
 
 .as-message-input-external-tools-popup {
     position: absolute;
-    left: 0;
+
     max-width: 100%;
     bottom: 100%;
     background-color: white;
+}
+
+.as-message-input-external-tools-popup.as-align-left{
+    left: 0;
+}
+
+
+.as-message-input-external-tools-popup.as-align-right{
+    right: 0;
+}
+
+.as-message-input-external-tools-popup.as-align-fixed{
+    right: 0;
+    left: 0;
 }
 
 img.as-emoji {
