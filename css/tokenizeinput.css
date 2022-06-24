@@ -1,0 +1,32 @@
+.as-tokenize-hyper-input {
+    margin: 0;
+    padding: 0;
+    white-space: pre-wrap;
+    -moz-user-modify: read-write;
+    -webkit-user-modify: read-write;
+    word-break: normal;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+
+.as-emoji-token{
+    font-size: inherit;
+    overflow: hidden;
+    box-sizing: border-box;
+    display: inline;
+    white-space: pre;
+    background-size: 1.2em;
+    background-position:left;
+    background-repeat: no-repeat;
+}
+
+.as-tag-token{
+    font-size: inherit;
+    display: inline;
+    white-space: pre;
+    font-weight: bold;
+    color: #1e1ec8;
+}
+
+
+

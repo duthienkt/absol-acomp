@@ -1,5 +1,44 @@
-import ACore from "../ACore";
+import ACore, { _ } from "../ACore";
 import { stringHashCode } from "absol/src/String/stringUtils";
+
+export function getSelectionRangeDirection(range) {
+    var sel = document.getSelection();
+    var direction = 'forward';
+    var cmpPosition = sel.anchorNode.compareDocumentPosition(sel.focusNode);
+    if (cmpPosition === 4) {
+        direction = 'forward';
+    }
+    else if (cmpPosition === 2) {
+        direction = 'backward'
+    }
+    else if (!cmpPosition && sel.anchorOffset > sel.focusOffset ||
+        cmpPosition === Node.DOCUMENT_POSITION_PRECEDING) {
+        direction = 'backward';
+    }
+    return direction;
+}
+
+/***
+ *
+ * @param {Range} range
+ * @param {boolean=} backward
+ */
+export function setSelectionRange(range, backward) {
+    var sel = document.getSelection();
+    if (backward) {
+        if (typeof sel.extend != "undefined") {
+            var endRange = range.cloneRange();
+            endRange.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(endRange);
+            sel.extend(range.startContainer, range.startOffset);
+        }
+    }
+    else {
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
+}
 
 export function insertTextAtCursor(text) {
     var sel, range;
@@ -147,7 +186,7 @@ export function preventNotNumberInput(elt) {
 
 
 export function buildCss(StyleSheet) {
-    ACore._({
+    return _({
         tag: 'style',
         props: {
             innerHTML: Object.keys(StyleSheet).map(function (key) {
@@ -534,6 +573,24 @@ export function cleanMenuItemProperty(obj) {
         res.items = obj.items;
     }
 
+    return res;
+}
+
+export function getTagListInTextMessage(text) {
+    var rg = /@\[id:(\d+)]/g;
+    var matched = rg.exec(text);
+    var dict = {};
+    var v;
+    var res = [];
+    while (matched) {
+        v = parseInt(matched[1]);
+        if (isNaN(v)) v = matched[1];
+        if (!dict[v]){
+            dict[v] = true;
+            res.push(v);
+        }
+        matched = rg.exec(text);
+    }
     return res;
 }
 
