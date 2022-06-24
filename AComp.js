@@ -1,5 +1,5 @@
 import ACore from "./ACore";
-
+import './js/MultiLanguageCSS';
 
 
 

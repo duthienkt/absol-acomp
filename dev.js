@@ -10,7 +10,7 @@ import ChromeCalendar from "./js/ChromeCalendar";
 import Radio from "./js/Radio";
 import EmojiChars from "./js/EmojiChars";
 import EmojiAnims from "./js/EmojiAnims";
-import MessageInput, {parseMessage} from './js/MessageInput';
+import MessageInput, {parseMessage} from './js/messageinput/MessageInput';
 import EmojiPicker from './js/EmojiPicker';
 import ContextCaptor from './js/ContextMenu';
 import install from "./js/dom/install";
