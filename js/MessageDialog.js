@@ -87,8 +87,18 @@ MessageDialog.property.dialogActions = {
 
 MessageDialog.property.dialogTitle = {
     set: function (value) {
-        value = (value || '') + '';
-        this.$title.firstChild.data = value;
+        this._dialogTitle = value;
+        this.$title.firstChild.data = '';
+        this.$title.attr('data-ml-key', undefined);
+        if (typeof value === "string") {
+            this.$title.firstChild.data = value;
+
+        }
+        else if (value && value.mlKey) {
+            this.$title.firstChild.data = '';
+            this.$title.attr('data-ml-key', value.mlKey);
+        }
+
         if (value && !this.$title.parentElement) {
             this.$header.addChild(this.$title);
         }
@@ -97,7 +107,7 @@ MessageDialog.property.dialogTitle = {
         }
     },
     get: function () {
-        return this.$title.firstChild.data;
+        return this._dialogTitle;
     }
 };
 
