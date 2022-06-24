@@ -5,8 +5,25 @@ import TabButton from "./TabButton";
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/***
+ * @extends HScroller
+ * @constructor
+ */
 function TabBar() {
+    this.$parent = null;
+    this.$addBtn = _({
+        tag: 'button',
+        class: 'as-tab-bar-add-btn',
+        child: 'span.mdi.mdi-plus',
+        on: {
+            click: function () {
+                if (this.$parent) {
+                    this.$parent.emit('pressaddtab', { type: 'pressaddtab', target: this.$parent }, this.$parent);
+                }
+            }.bind(this)
+        }
+    });
+    this.addChild(this.$addBtn);
     this.defineEvent(['active', 'close']);
     this.on('wheel', function (event) {
         var lastLeft = this.$viewport.scrollLeft;
@@ -121,7 +138,8 @@ TabBar.prototype.addTab = function (value) {
                 }
             }
         }
-    }).addTo(this);
+    });
+    this.addChildBefore(tabButton, this.$addBtn)
     if (value.id) tabButton.attr('id', 'tabbuton-' + value.id);
     this._tabs.push(tabButton);
     this.requestUpdateSize();

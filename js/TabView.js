@@ -14,6 +14,7 @@ function TabView() {
      * @type {TabBar}
      */
     this.$tabbar = $('tabbar', this);
+    this.$tabbar.$parent = this;
     this.$tabbar.on({
         close: TabView.eventHandler.closeTab.bind(thisTV),
         active: TabView.eventHandler.activeTab.bind(thisTV)
@@ -27,7 +28,7 @@ TabView.tag = 'TabView'.toLowerCase();
 TabView.render = function () {
     return _({
         class: 'absol-tabview',
-        extendEvent: ['activetab', 'deactivetab', 'removetab', 'requestremovetab'],
+        extendEvent: ['activetab', 'deactivetab', 'removetab', 'requestremovetab', 'pressaddtab'],
         child: [
             'tabbar'
         ]
