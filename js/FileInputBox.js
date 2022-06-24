@@ -4,7 +4,7 @@ import DropZone from "./DropZone";
 import {fileAccept, fileSize2Text, isRealNumber, isURLAddress} from "./utils";
 import ExtIcons from '../assets/exticons/catalog.json';
 import {saveAs} from "absol/src/Network/FileSaver";
-import MessageInput from "./MessageInput";
+import MessageInput from "./messageinput/MessageInput";
 
 /***
  * @extends AElement

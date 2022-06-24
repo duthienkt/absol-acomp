@@ -1,12 +1,13 @@
 import ACore, { $, _ } from "../ACore";
 import '../css/filelistinput.css';
 import ExtIcons from "../assets/exticons/catalog.json";
-import MessageInput from "./MessageInput";
+import MessageInput from "./messageinput/MessageInput";
 import { fileInfoOf, isURLAddress } from "./utils";
 import QuickMenu from "./QuickMenu";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import CheckboxInput from "./CheckBoxInput";
 import OOP from "absol/src/HTML5/OOP";
+import { hitElement, isMouseLeft } from "absol/src/HTML5/EventEmitter";
 
 /***
  * @extends AElement
@@ -22,6 +23,7 @@ function FileListItem() {
     this.fileType = null;
     this.fileName = '';
     OOP.drillProperty(this, this.$check, 'checked');
+    this.on('click', this.eventHandler.click);
     QuickMenu.toggleWhenClick(this.$quickMenuBtn, {
         getMenuProps: () => {
             var list = this.parentElement;
@@ -78,9 +80,9 @@ function FileListItem() {
         }.bind(this)
     });
 
-    this.$check.on('change', function (event){
-        if (this.$parent){
-            this.$parent.emit('check', {target:this.$parent, elt: this, type:'check'}, this.$parent);
+    this.$check.on('change', function (event) {
+        if (this.$parent) {
+            this.$parent.emit('check', { target: this.$parent, elt: this, type: 'check' }, this.$parent);
         }
     }.bind(this));
 
@@ -175,6 +177,20 @@ FileListItem.property.value = {
     }
 };
 
+FileListItem.eventHandler = {};
+
+/***
+ * @this FileListItem
+ * @param event
+ */
+FileListItem.eventHandler.click = function (event) {
+    if (!isMouseLeft(event)) return;
+    if (hitElement(this.$check, event) || hitElement(this.$quickMenuBtn, event)) return;
+    if (this.$parent && this.$parent.showCheck) {
+        this.$check.checked = !this.$check.checked;
+        this.$check.notifyChange();
+    }
+};
 
 ACore.install(FileListItem);
 
