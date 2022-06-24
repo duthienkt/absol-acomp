@@ -241,31 +241,30 @@
         }
     }));
     var tabview1 = absol._({
-        tag: 'tabview',
-        style: {
-            height: '800px'
-        },
-        child: [frame1, frame2].concat(Array(20).fill(0).map(function (u, i) {
-            return {
-                tag: 'tabframe', props: { name: 'Tab ' + i, desc: 'Descript of Tab ' + i }, child: {
-                    tag: 'h1',
-                    child: { text: 'Content of Tab ' + i }
+            tag: 'tabview',
+            style: {
+                height: '800px'
+            },
+            child: [frame1, frame2].concat(Array(20).fill(0).map(function (u, i) {
+                return {
+                    tag: 'tabframe', props: { name: 'Tab ' + i, desc: 'Descript of Tab ' + i }, child: {
+                        tag: 'h1',
+                        child: { text: 'Content of Tab ' + i }
+                    }
+                }
+            })), on: {
+                // closeTab
+                removetab: function (event) {
+                    if (this.getAllChild().length === 0) {
+                        console.log("remove all");
+                    }
+                    else {
+                        console.log('removetab')
+                    }
                 }
             }
-        })), on: {
-            // closeTab
-            removetab: function (event) {
-                if (this.getAllChild().length === 0) {
-                    console.log("remove all");
-                }
-                else {
-                    console.log('removetab')
-                }
-            }
+
         }
-
-    }
-
     ).addTo(absol.$('#demo'));
 
 
@@ -350,6 +349,106 @@
         },
         child: [frame1XP, frame2XP]
     }).addTo(absol.$('#demo'));
+</script>
+<h2>MetroFlat</h2>
+<script>
+    (function () {
+        var demoTabItemsXP = Array(5).fill(0).map(function (u, i) {
+            return { name: 'Tab ' + i, desc: 'This is tab ' + i, ident: i };
+        })
+
+        var frame1XP = absol._('tabframe').attr({
+            'name': 'Material-design-icon',
+            id: 'matd',
+            desc: 'Material Design Icon',
+        }).addChild(absol._({
+            tag: 'iframe',
+            style: {
+                width: '100%',
+                height: '100%'
+            },
+            attr: {
+                src: "https://absol.cf/css/materialdesignicons/preview.html"
+            }
+        }));
+        var frame2XP = absol._('tabframe').attr({
+            'name': 'vchart',
+            id: 'matd2',
+            desc: 'Dual chart demo'
+        }).addChild(absol._({
+            tag: 'iframe',
+            style: {
+                width: '100%',
+                height: '100%'
+            },
+            attr: {
+                src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
+            }
+        }));
+        var tabviewXP = absol._({
+            tag: 'tabview',
+            class: 'metro-flat',
+            style: {
+                height: '800px'
+            },
+            child: [frame1XP, frame2XP]
+        }).addTo(document.body);
+    })()
+
+</script>
+
+
+<h2>RoundOut</h2>
+<script>
+    (function () {
+        var demoTabItemsXP = Array(5).fill(0).map(function (u, i) {
+            return { name: 'Tab ' + i, desc: 'This is tab ' + i, ident: i };
+        })
+
+        var frame1XP = absol._('tabframe').attr({
+            'name': 'Material-design-icon',
+            id: 'matd',
+            desc: 'Material Design Icon',
+        }).addChild(absol._({
+            tag: 'iframe',
+            style: {
+                width: '100%',
+                height: '100%'
+            },
+            attr: {
+                src: "https://absol.cf/css/materialdesignicons/preview.html"
+            }
+        }));
+        var frame2XP = absol._('tabframe').attr({
+            'name': 'vchart',
+            id: 'matd2',
+            desc: 'Dual chart demo'
+        }).addChild(absol._({
+            tag: 'iframe',
+            style: {
+                width: '100%',
+                height: '100%'
+            },
+            attr: {
+                src: "https://absol.cf/libs/absol-vchart/demo/dualchart.html"
+            }
+        }));
+        var tabviewXP = absol._({
+            tag: 'tabview',
+            class: ['cad-dark', 'as-has-add-btn'],
+            style: {
+                height: '800px',
+                backgroundColor: '#222933'
+            },
+            on:{
+                pressaddtab: function (){
+                    alert("Add tab")
+                }
+            },
+            child: [frame1XP, frame2XP]
+        }).addTo(document.body);
+    })()
+
 </script>
 
 <!--    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>-->
