@@ -707,3 +707,8 @@ var EmojiAnims = [
 ];
 
 export default EmojiAnims;
+
+export var EmojiAnimByIdent = EmojiAnims.reduce((ac, cr) => {
+    ac[cr[0]] = cr;
+    return ac;
+}, {});
