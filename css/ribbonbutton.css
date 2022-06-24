@@ -1,7 +1,7 @@
 .as-ribbon-button {
     display: inline-block;
     vertical-align: middle;
-    height: 30px;
+    height: calc(2em + 2);
     padding-left: 0.5em;
     padding-right: 0.5em;
 
@@ -28,7 +28,6 @@
 .as-ribbon-button:active {
     background-color: rgba(169, 168, 169, 0.3);
 }
-
 
 
 .as-ribbon-split-button:active:hover .as-ribbon-split-button-content > button,
@@ -59,6 +58,38 @@ svg.as-ribbon-button-icon {
     font-size: inherit;
 }
 
+.as-ribbon-button-text::before {
+    content: attr(data-text);
+}
+
 .as-ribbon-button.as-no-dropdown .mdi.mdi-chevron-down {
     display: none;
 }
+
+.as-ribbon-button.as-big {
+    width: 5em;
+    height: auto;
+    white-space: nowrap;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.as-ribbon-button.as-big span.as-ribbon-button-icon {
+    font-size: 2em;
+}
+
+.as-ribbon-button.as-big .as-ribbon-button-text{
+    white-space: normal;
+    max-width: calc(100% - 1em);
+}
+
+.as-ribbon-button.as-big svg.as-ribbon-button-icon,
+.as-ribbon-button.as-big img.as-ribbon-button-icon
+{
+    height: 2em;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+

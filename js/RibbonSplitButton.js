@@ -1,7 +1,7 @@
 import '../css/ribbonsplitbutton.css';
 import ACore from "../ACore";
 import QuickMenu from "./QuickMenu";
-import {cleanMenuItemProperty} from "./utils";
+import { cleanMenuItemProperty } from "./utils";
 import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
@@ -16,10 +16,10 @@ function RibbonSplitButton() {
     this.$icon = null;
     this._icon = null;
     this.$text = $('.as-ribbon-split-button-text', this);
-    this.$textNode = this.$text.firstChild;
     this.$primaryBtn = $('.as-ribbon-split-button-primary', this)
         .on('click', this.eventHandler.clickPrimaryBtn);
     this.$extendBtn = $('.as-ribbon-split-button-extend', this);
+    this.$extendText = $('.as-ribbon-split-button-text', this.$extendBtn);
     this._menuHolder = null;
 }
 
@@ -41,7 +41,7 @@ RibbonSplitButton.render = function () {
                         'tabindex': '-1'
                     },
                     class: 'as-ribbon-split-button-primary',
-                    child: { tag: 'span', class: 'as-ribbon-split-button-text', child: { text: '' } }
+                    child: { tag: 'span', class: 'as-ribbon-split-button-text' }
                 },
                 {
                     tag: 'button',
@@ -49,7 +49,7 @@ RibbonSplitButton.render = function () {
                         'tabindex': '-1'
                     },
                     class: 'as-ribbon-split-button-extend',
-                    child: 'span.mdi.mdi-chevron-down'
+                    child: ['span.as-ribbon-split-button-text', 'span.mdi.mdi-chevron-down']
                 }
             ]
         }
@@ -100,10 +100,11 @@ RibbonSplitButton.property.items = {
 RibbonSplitButton.property.text = {
     set: function (value) {
         value = value || '';
-        this.$textNode.data = value;
+        this.$text.attr('data-text', value);
+        if (this.$extendText) this.$extendText.attr('data-text', value);
     },
     get: function () {
-        return this.$textNode.data;
+        return this.$text.attr('data-text') | '';
     }
 };
 
