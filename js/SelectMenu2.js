@@ -257,7 +257,7 @@ SelectMenu.property.readOnly = {
     get: function () {
         return this.hasClass('as-read-only');
     }
-}
+};
 
 
 /**

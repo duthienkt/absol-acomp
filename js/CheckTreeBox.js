@@ -7,6 +7,7 @@ import {estimateWidth14, measureText} from "./utils";
 import {prepareSearchForList, searchListByText, searchTreeListByText} from "./list/search";
 import CPUViewer from "./CPUViewer";
 import SelectListBox from "./SelectListBox";
+import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 
 
 /***
@@ -116,28 +117,32 @@ CheckTreeBox.render = function () {
                 }
             },
             {
-                class: 'as-select-list-box-footer',
+                class: 'as-dropdown-box-footer',
                 child: [
                     {
                         tag: 'checkbox',
                         class: 'as-select-list-box-check-all',
                         props: {
                             checked: false,
-                            text: 'Check All'
+                            text: LanguageSystem.getText('txt_check_all') || LanguageSystem.getText('txt_all') || 'Check All'
                         }
                     },
                     {
-                        class: 'as-select-list-box-footer-right',
+                        class: 'as-dropdown-box-footer-right',
                         child: [
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-cancel-btn',
-                                child: {text: 'Cancel'}
+                                attr:{
+                                    "data-ml-key": 'txt_cancel'
+                                }
                             },
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-close-btn',
-                                child: {text: 'Close'}
+                                attr:{
+                                    "data-ml-key": 'txt_close'
+                                }
                             }]
                     }
                 ]

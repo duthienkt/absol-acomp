@@ -55,7 +55,7 @@
 }
 
 .as-flexicon-button-icon-container:empty,
-.as-flexicon-button-text-container:empty {
+.as-flexicon-button-text-container:empty:not([data-ml-key]) {
     display: none;
 }
 

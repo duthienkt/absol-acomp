@@ -11,49 +11,4 @@
 }
 
 
-.as-select-list-box-footer {
-    height: calc(2em + 1px);
-    border-top: 1px solid #dddddd;
-    box-sizing: border-box;
-    padding-left: 0.35em;
-    white-space: nowrap;
-    position: relative;
-}
 
-.as-select-list-box-footer > *,
-.as-select-list-box-footer::before,
-.as-select-list-box-footer-right::before,
-.as-select-list-box-footer-right > * {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.as-select-list-box-footer-right::before,
-.as-select-list-box-footer::before {
-    content: "";
-    height: 100%;
-}
-
-.as-select-list-box-footer > *:not(:last-child) {
-    margin-right: 6.5em;
-}
-
-.as-select-list-box-footer .absol-checkbox-label.as-right {
-    padding-left: 0.35em;
-}
-
-.as-select-list-box-footer-right {
-    position: absolute;
-    right: 5px;
-    top: 0;
-    height: 100%;
-}
-
-.as-select-list-box-footer a {
-    cursor: pointer;
-    margin-left: 15px;
-}
-
-.as-select-list-box-footer a:hover {
-    color: #1da1ff;
-}

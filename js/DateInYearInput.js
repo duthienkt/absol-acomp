@@ -60,7 +60,8 @@ DateInYearInput.prototype.share = {
 DateInYearInput.prototype._preparePicker = function () {
     if (this.share.$picker) return;
     this.share.$picker = _({
-        tag: DateInYearPicker.tag
+        tag: DateInYearPicker.tag,
+        class:'as-dropdown-box-common-style'
     });
     this.share.$follower = _({
         tag: Follower.tag,

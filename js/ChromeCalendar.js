@@ -1224,7 +1224,7 @@ ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickList
             ChromeCalendar.$ctn = _('.absol-context-hinge-fixed-container');
             ChromeCalendar.$follower = _('follower').addTo(ChromeCalendar.$ctn);
 
-            ChromeCalendar.$calendar = _('chromecalendar')
+            ChromeCalendar.$calendar = _('chromecalendar.as-dropdown-box-common-style')
                 .on('pick', function (event) {
                     if (typeof ChromeCalendar._listener == 'function') {
                         ChromeCalendar._listener(event.value);

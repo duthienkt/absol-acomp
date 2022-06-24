@@ -52,12 +52,25 @@ FlexiconButton.property.icon = {
 };
 
 FlexiconButton.property.text = {
+    /***
+     *
+     * @param {string| {mlKey:string}|*} value
+     */
     set: function (value) {
         value = value || null;
         this._text = value;
         this.$textCtn.clearChild();
-        if (value !== null) {
-            this.$textCtn.addChild(_({ text: value }));
+        this.$textCtn.attr('data-ml-key', undefined);
+        if (value === null || value === undefined) {
+
+        }
+        else if (typeof value === "object") {
+            if (value.mlKey) {
+                this.$textCtn.attr('data-ml-key', value.mlKey);
+            }
+        }
+        else {
+            this.$textCtn.addChild(_({ text: value + '' }));
         }
     },
     get: function () {

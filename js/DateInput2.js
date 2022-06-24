@@ -766,7 +766,7 @@ DateInput2.prototype._prepareCalendar = function () {
 
     this.share.$calendar = _({
         tag: 'chromecalendar',
-        class: 'as-date-input-calendar'
+        class: ['as-date-input-calendar', 'as-dropdown-box-common-style']
     });
     this.share.$follower = _({
         tag: 'follower',

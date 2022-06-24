@@ -116,7 +116,7 @@ MultiCheckTreeLeafMenu.property.values = {
 
     },
     get: function () {
-        return this.$selectBox.values;
+        return this.$selectBox.values.slice();
     }
 };
 

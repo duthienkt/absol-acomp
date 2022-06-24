@@ -616,7 +616,7 @@ TimeInput.prototype._preparePicker = function () {
     if (this.share.$picker) return;
     this.share.$picker = _({
         tag: ChromeTimePicker.tag,
-        class: 'as-time-input-picker'
+        class:[ 'as-time-input-picker', 'as-dropdown-box-common-style']
     });
     this.share.$follower = _({
         tag: 'follower',

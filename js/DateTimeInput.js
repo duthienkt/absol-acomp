@@ -565,7 +565,7 @@ DateTimeInput.property.readOnly = {
 };
 
 DateTimeInput.property.text = {
-    get: function (){
+    get: function () {
         return this.$text.value;
     }
 };
@@ -978,29 +978,24 @@ DateTimeInput.prototype._preparePicker = function () {
             tag: ChromeCalendar.tag,
             class: 'as-date-time-input-date-picker'
         });
-        this.share.$closeBtn = _({
-            tag: 'button',
-            class: 'as-date-time-input-picker-btn',
-            child: 'span.mdi.mdi-close'
-        });
         this.share.$cancelBtn = _({
-            tag: 'button',
-            class: 'as-date-time-input-picker-btn',
-            child: { text: 'CANCEL' }
+            tag: 'a',
+            class: 'as-select-list-box-cancel-btn',
+            attr:{
+                "data-ml-key":'txt_cancel'
+            },
         });
         this.share.$okBtn = _({
-            tag: 'button',
-            class: 'as-date-time-input-picker-btn',
-            child: { text: 'OK' }
+            tag: 'a',
+            class: 'as-select-list-box-ok-btn',
+            attr:{
+                "data-ml-key":'txt_ok'
+            },
         });
         this.share.$follower = _({
             tag: Follower.tag,
-            class: 'as-date-time-input-follower',
+            class: ['as-date-time-input-follower', 'as-dropdown-box-common-style'],
             child: [
-                {
-                    class: 'as-date-time-input-picker-header',
-                    child: this.share.$closeBtn
-                },
                 {
                     class: 'as-date-time-input-picker-ctn',
                     child: [
@@ -1008,10 +1003,14 @@ DateTimeInput.prototype._preparePicker = function () {
                         this.share.$timePicker
                     ]
                 }, {
-                    class: 'as-date-time-input-picker-footer',
-                    child: [
-                        this.share.$okBtn,
-                        this.share.$cancelBtn
+                    class: 'as-dropdown-box-footer',
+                    child: [{
+                        class: 'as-dropdown-box-footer-right',
+                        child: [
+                            this.share.$okBtn,
+                            this.share.$cancelBtn
+                        ]
+                    }
                     ]
                 }
 
@@ -1033,7 +1032,6 @@ DateTimeInput.prototype._attachPicker = function () {
     this.share.$timePicker.on('change', this.eventHandler.timePick);
     this.share.$okBtn.on('click', this.eventHandler.clickOKBtn);
     this.share.$cancelBtn.on('click', this.eventHandler.clickCancelBtn);
-    this.share.$closeBtn.on('click', this.eventHandler.clickCancelBtn);
 
     var tkDict = this._makeTokenDict(this.$text.value);
     if (tkDict.h && !isNaN(tkDict.h.value)) {
@@ -1110,7 +1108,6 @@ DateTimeInput.prototype._releasePicker = function () {
     this.share.$timePicker.off('change', this.eventHandler.timePick);
     this.share.$okBtn.off('click', this.eventHandler.clickOKBtn);
     this.share.$cancelBtn.off('click', this.eventHandler.clickCancelBtn);
-    this.share.$closeBtn.off('click', this.eventHandler.clickCancelBtn);
     document.body.removeEventListener('click', this.eventHandler.clickOut);
     setTimeout(function () {
         this.$pickerBtn.on('click', this.eventHandler.clickPickerBtn);

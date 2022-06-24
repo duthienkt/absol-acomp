@@ -94,7 +94,8 @@ Time24Input.prototype.share = {
 Time24Input.prototype._preparePicker = function () {
     if (this.share.$picker) return;
     this.share.$picker = _({
-        tag: ChromeTime24Picker.tag
+        tag: ChromeTime24Picker.tag,
+        class:'as-dropdown-box-common-style'
     });
     this.share.$follower = _({
         tag: 'follower',

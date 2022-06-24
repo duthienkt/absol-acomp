@@ -90,13 +90,6 @@
     padding-bottom: 5px;
 }
 
-.as-date-time-input-picker-footer {
-    text-align: center;
-}
-
-.as-date-time-input-picker-footer > button {
-    margin: 0 10px;
-}
 
 .as-date-time-input-picker-btn {
     height: 20px;
@@ -116,7 +109,7 @@
 
 
 .as-chrome-time-picker.as-date-time-input-time-picker {
-    height: 166px;
+    height: 11.8em;
     box-sizing: border-box;
 }
 

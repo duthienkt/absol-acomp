@@ -108,10 +108,10 @@ DualSelectBox.render = function () {
                 ]
             },
             {
-                class: 'as-select-list-box-footer',
+                class: 'as-dropdown-box-footer',
                 child: [
                     {
-                        class: 'as-select-list-box-footer-right',
+                        class: 'as-dropdown-box-footer-right',
                         child: [
                             {
                                 tag: 'a',

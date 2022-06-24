@@ -54,13 +54,13 @@
 .as-dual-select-box-list {
     display: inline-block;
     vertical-align: top;
-    max-height: calc(var(--max-height) - 2em - 11px);
+    max-height: calc(var(--max-height) - 2em - 2em - 11px);
     overflow-y: auto;
     box-sizing: border-box;
 }
 
 .as-dual-select-box.as-enable-search .as-dual-select-box-list {
-    max-height: calc(var(--max-height) - 4rem - 11px);
+    max-height: calc(var(--max-height) - 6rem - 11px);
 }
 
 .as-dual-select-box-arrow-ctn {

@@ -4,6 +4,7 @@ import SelectListBox, { VALUE_HIDDEN } from "./SelectListBox";
 import CheckListItem from "./CheckListItem";
 import '../css/checklistbox.css'
 import noop from "absol/src/Code/noop";
+import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 
 
 var itemPool = [];
@@ -77,28 +78,32 @@ CheckListBox.render = function () {
                 ]
             },
             {
-                class: 'as-select-list-box-footer',
+                class: 'as-dropdown-box-footer',
                 child: [
                     {
                         tag: 'checkbox',
                         class: 'as-select-list-box-check-all',
                         props: {
                             checked: false,
-                            text: 'Check All'
+                            text: LanguageSystem.getText('txt_check_all') || LanguageSystem.getText('txt_all') || 'Check All'
                         }
                     },
                     {
-                        class: 'as-select-list-box-footer-right',
+                        class: 'as-dropdown-box-footer-right',
                         child: [
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-cancel-btn',
-                                child: { text: 'Cancel' }
+                                attr:{
+                                    'data-ml-key':'txt_cancel'
+                                }
                             },
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-close-btn',
-                                child: { text: 'Close' }
+                                attr:{
+                                    'data-ml-key':'txt_close'
+                                }
                             }]
                     }
                 ]
