@@ -1,4 +1,4 @@
-import ACore, { $, _ } from "../../ACore";
+import ACore, { $, $$, _ } from "../../ACore";
 import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import PageSelector from "../PageSelector";
@@ -222,15 +222,29 @@ DynamicTable.prototype.makeQuery = function () {
         return ac;
     }, {});
 
+    var sort = $$('th', this.table.header.elt).reduce((ac, cr) => {
+        var key = cr.attr('data-sort-key');
+        var order = cr.attr('data-sort-order');
+        if (key && order && order !== 'none') {
+            ac.push({ key: key, order: order });
+        }
+        return ac;
+    }, []);
+
     for (i in filter) {
         query.filter = filter;
         break;
     }
 
+    if (sort.length > 0){
+        query.sort = sort;
+    }
 
     for (i in query) {
         return query;
     }
+
+
     return null;
 };
 

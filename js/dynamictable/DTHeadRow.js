@@ -14,6 +14,9 @@ function DTHeadRow(head, data) {
         tag: 'tr',
         class: 'as-dt-head-row'
     });
+    if (data.attr){
+        this.elt.attr(data.attr);
+    }
     this.renderCells();
 }
 

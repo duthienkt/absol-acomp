@@ -80,10 +80,10 @@ function DTSearchFactor(global) {
         return Q[map(m, n)];
     }
 
-    var EXTRA_MATCH_SCORE = 7;
-    var UNCASE_MATCH_SCORE = 4;
-    var UVN_MATCH_SCORE = 3;
-    var EQUAL_MATCH_SCORE = 4;
+    var EXTRA_MATCH_SCORE = 7000;
+    var UNCASE_MATCH_SCORE = 4000;
+    var UVN_MATCH_SCORE = 3000;
+    var EQUAL_MATCH_SCORE = 8000;
     var WORD_MATCH_SCORE = 3;
 
     /***
@@ -98,6 +98,7 @@ function DTSearchFactor(global) {
         var __textNoneCase__ = __text__.toLowerCase();
         var __nvnText__ = nonAccentVietnamese(__text__);
         var __nvnTextNoneCase__ = __nvnText__.toLowerCase();
+
 
         Object.defineProperties(item, {
             __text__: {
@@ -157,23 +158,24 @@ function DTSearchFactor(global) {
     function calcItemMatchScore(queryItem, item) {
         var score = 0;
         if (!item.text) return 0;
-        if (item.__text__ == queryItem.__text__)
-            score += EQUAL_MATCH_SCORE * queryItem.__text__.length;
+        if (item.__text__ === queryItem.__text__) {
+            return EQUAL_MATCH_SCORE;
+        }
 
         var extraIndex = item.__text__.indexOf(queryItem.__text__);
 
         if (extraIndex >= 0) {
-            score += EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+            return EXTRA_MATCH_SCORE
         }
 
         extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
         if (extraIndex >= 0) {
-            score += UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+            return UNCASE_MATCH_SCORE;
         }
 
         extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
         if (extraIndex >= 0) {
-            score += UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+            return UNCASE_MATCH_SCORE;
         }
 
         score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * WORD_MATCH_SCORE;
@@ -181,12 +183,34 @@ function DTSearchFactor(global) {
         return score;
     }
 
-    function cmp(a, b) {
+    function scoreCmp(a, b) {
         if (b.score === a.score) {
             if (b.item.__nvnText__ > a.item.__nvnText__) return -1;
             return 1;
         }
         return b.score - a.score;
+    }
+
+    function keyStringOf(o) {
+        var type = typeof o;
+        var keys;
+        if (o && type === "object") {
+            if (o.getTime) {
+                return 'd(' + o.getTime() + ')';
+            }
+            else if (o.length && o.map) {
+                return 'a(' + o.map(val => keyStringOf(val)).join(',') + ')';
+            }
+            else {
+                keys = Object.keys(o);
+                keys.sort();
+                return 'o(' + keys.map(key => key + ':' + keyStringOf(o[key])).join(',') + ')';
+            }
+
+        }
+        else {
+            return type[0] + '(' + o + ')';
+        }
     }
 
 
@@ -200,65 +224,42 @@ function DTSearchFactor(global) {
         return true;
     }
 
+    var logged = false;
+
     function keyCmp(itemKey, filterKey) {
         if (itemKey === filterKey) return true;
         if (!itemKey !== !filterKey) return false;
+        if (!itemKey || !filterKey) return false;
+        var filterKeyString = keyStringOf(filterKey)
 
-        if (!itemKey) return false;
-        if (itemKey.some) {
-            return itemKey.some(function (x) {
-                var res = x === filterKey;
-                if (filterKey && filterKey.some) {
-                    res = res || filterKey.every(function (y) {
-                        return y === x;
+        function withFilter(x) {
+            var xString = keyStringOf(x)
+            var res = xString === filterKeyString;
+            if (!res && (typeof filterKey === "object")) {
+                if (filterKey.some) {
+                    res = filterKey.some(function (y) {
+                        return keyStringOf(y) === x;
                     });
                 }
-                return res;
-            });
+                else if (('min' in filterKey) || ('max' in filterKey)) {
+                    res = true;
+                    if ('min' in filterKey) {
+                        res = res && x >= filterKey.min;
+                    }
+                    if ('max' in filterKey) {
+                        res = res && x <= filterKey.max;
+                    }
+                }
+            }
+            return res;
         }
-        return false;
+
+        if (itemKey.some) {
+            return itemKey.some(withFilter);
+        }
+        else return withFilter(itemKey);
     }
 
-    function likeSort(items) {
-        var minValue = Infinity;
-        var maxValue = -Infinity;
-        var i;
-        var n = items.length;
-        var item;
-        for (i = 0; i < n; ++i) {
-            item = items[i];
-            if (item.score < minValue) minValue = item.score;
-            if (item.score > maxValue) maxValue = item.score;
-        }
-        var segments = [[], [], [], [], [], [], [], []];
-        var midValue = (maxValue - minValue) / 2;
-        var d = (maxValue - midValue) / (segments.length - 1);
-        var v;
-        var k;
-        for (i = 0; i < n; ++i) {
-            item = items[i];
-            v = item.score;
-            if (v < midValue || v === 0) continue;
-            if (v >= maxValue) segments[segments.length - 1].push(item)
-            else {
-                k = ((v - midValue) / d) >> 0;
-                segments[k].push(item);
-            }
-        }
-
-
-        var res = segments.pop();
-        var segment;
-        while (segments.length > 0) {
-            segment = segments.pop();
-            if (segment.length > 0) {
-                if (segment.length + res.length < 1000)
-                    segment.sort(cmp);
-                res = res.concat(segment);
-            }
-        }
-        return res;
-    }
 
     var benchmark = global.calcBenchmark();
 
@@ -321,9 +322,95 @@ function DTSearchFactor(global) {
         var itemVersion = this.itemVersion;
         var queryText = taskData.query.text;
         var filter = taskData.query.filter;
+        var sort = taskData.query.sort;
 
         var queryTextItem = null;
         if (queryText) queryTextItem = prepareSearchForItem({ text: queryText });
+        var sortCmp = (a, b) => {
+            var aKeys = a.item.keys;
+            var bKeys = b.item.keys;
+            var key;
+            var av, bv;
+            var d = 0;
+            if (aKeys && !bKeys) {
+                d = 1;
+            }
+            else if (!aKeys && bKeys) {
+                d = -1;
+            }
+            else if (aKeys && bKeys) {
+                for (var i = 0; i < sort.length; ++i) {
+                    key = sort[i].key;
+                    d = aKeys[key] - bKeys[key];
+                    if (isNaN(d)) {
+                        if (aKeys[key] < bKeys[key]) {
+                            d = -1;
+                        }
+                        else if (aKeys[key] === bKeys[key]) {
+                            d = 0;
+                        }
+                        else {
+                            d = 1;
+                        }
+                    }
+                    if (sort[i].order === 'descending') d = -d;
+                    if (d !== 0) break;
+                }
+            }
+            if (d === 0) {
+                d = a.i - b.i;
+            }
+            return d;
+
+        };
+
+        function likeSort(items) {
+
+            var minValue = Infinity;
+            var maxValue = -Infinity;
+            var i;
+            var n = items.length;
+            var item;
+            for (i = 0; i < n; ++i) {
+                item = items[i];
+                if (item.score < minValue) minValue = item.score;
+                if (item.score > maxValue) maxValue = item.score;
+            }
+            var segments = [[], [], [], [], [], [], [], []];
+            var midValue = (maxValue - minValue) / 2;
+            var d = (maxValue - midValue) / (segments.length - 1);
+            var v;
+            var k;
+            for (i = 0; i < n; ++i) {
+                item = items[i];
+                v = item.score;
+                if (v < midValue || v === 0) continue;
+                if (v >= maxValue) segments[segments.length - 1].push(item)
+                else {
+                    k = ((v - midValue) / d) >> 0;
+                    segments[k].push(item);
+                }
+            }
+
+
+            var res = [];
+            var segment;
+            while (segments.length > 0) {
+                segment = segments.pop();
+                if (segment.length > 0) {
+                    if (sort) {
+                        segment.sort(sortCmp);
+                    }
+                    else {
+                        if (segment.length + res.length < 1000)
+                            segment.sort(scoreCmp);
+                    }
+
+                    res = res.concat(segment);
+                }
+            }
+            return res;
+        }
 
         function sortScore() {
             var result = its;
@@ -334,10 +421,17 @@ function DTSearchFactor(global) {
                 })
             }
 
+            // var now = new Date().getTime();
+
             if (queryTextItem) {
                 result = likeSort(result);
             }
 
+            else if (sort) {
+                result.sort(sortCmp);
+            }
+
+            // console.log("SortTime:", new Date().getTime() - now)
             result = result.map(function (it) {
                 return it.i;
             });
