@@ -80,6 +80,58 @@
             }
         }
     }).addTo($('#demo0'));
+
+    var button02 = _({
+        tag: 'ribbonbutton',
+        class: 'as-big',
+        style: {
+            marginLeft: '20px'
+        },
+        props: {
+            text: 'Upload Picture',
+            icon: '<img src="https://absol.cf/vivid_exticons/flac.svg">',
+            items: [
+                {
+                    style: {
+                        fontWeight: 'bold',
+                        paddingLeft: '10px'
+                    },
+                    child: { tag: 'span', child: { text: 'Upload Picture From' } }
+                },
+                { text: "Dropbox", icon: 'span.mdi.mdi-dropbox' },
+                { text: "Microsoft Onedrive", icon: 'span.mdi.mdi-microsoft-onedrive' },
+                { text: "Google Drive", icon: 'span.mdi.mdi-google-drive' },
+                '-------',
+                {
+                    icon: 'span.mdi.mdi-desktop-classic',
+                    text: 'Your computer'
+                }
+            ]
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+            }
+        }
+    }).addTo($('#demo0'));
+    var button03= _({
+        tag: 'ribbonbutton',
+        class: 'as-big',
+        style: {
+            marginLeft: '20px'
+        },
+        props: {
+            text: 'Upload Picture',
+            icon: '<img src="https://absol.cf/vivid_exticons/flac.svg">',
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+            }
+        }
+    }).addTo($('#demo0'));
 </script>
 
 
@@ -167,10 +219,85 @@
             }
         }
     });
+
+    var button4 = _({
+        tag: 'ribbonsplitbutton',
+        class: 'as-big',
+        style: {
+            marginLeft: '20px',
+        },
+        props: {
+            text: 'Dictate Text',
+            icon: 'span.mdi.mdi-microphone-outline',
+            items: [
+                { text: "Dicate Text", icon: 'span.mdi.mdi-microphone-outline' },
+                '-------',
+                {
+                    icon: 'span.mdi.mdi-google-translate',
+                    text: 'Google Translator'
+                },
+                {
+                    icon: 'span.mdi.mdi-translate',
+                    text: 'Bing Translator'
+                }
+            ]
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+                var item = event.item;
+                this.text = item.text;
+                this.icon = item.icon;
+            },
+            press: function (event) {
+                //click on primary button
+                console.log(event.item);
+            }
+        }
+    });
+    var button5 = _({
+        tag: 'ribbonsplitbutton',
+        class: 'as-big',
+        style: {
+            marginLeft: '20px',
+        },
+        props: {
+            text: 'Dictate Text',
+            icon: '<img src="https://absol.cf/vivid_exticons/flac.svg">',
+            items: [
+                { text: "Dicate Text", icon: 'span.mdi.mdi-microphone-outline' },
+                '-------',
+                {
+                    icon: 'span.mdi.mdi-google-translate',
+                    text: 'Google Translator'
+                },
+                {
+                    icon: 'span.mdi.mdi-translate',
+                    text: 'Bing Translator'
+                }
+            ]
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+                var item = event.item;
+                this.text = item.text;
+                this.icon = item.icon;
+            },
+            press: function (event) {
+                //click on primary button
+                console.log(event.item);
+            }
+        }
+    });
     var demo1Div = $('#demo1');
     demo1Div.addChild(button1)
         .addChild(button2)
-        .addChild(button3);
+        .addChild(button3)
+        .addChild(button4)
+        .addChild(button5);
 </script>
 <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 </body>
