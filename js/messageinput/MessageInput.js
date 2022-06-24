@@ -1,15 +1,18 @@
-import '../css/messageinput.css';
-import ACore from "../ACore";
+import '../../css/messageinput.css';
+import ACore from "../../ACore";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
-import {fileSize2Text, openFileDialog} from "./utils";
+import { fileSize2Text, openFileDialog } from "../utils";
 import XHR from "absol/src/Network/XHR";
-import EmojiAnims from "./EmojiAnims";
-import EmojiPicker from "./EmojiPicker";
-import AElement from "absol/src/HTML5/AElement";
+import { EmojiAnimByIdent } from "../EmojiAnims";
+import EmojiPicker from "../EmojiPicker";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import {randomIdent, randomParagraph} from "absol/src/String/stringGenerate";
+import { randomIdent, randomParagraph } from "absol/src/String/stringGenerate";
 import CMDRunner from "absol/src/AppPattern/CMDRunner";
-import {keyboardEventToKeyBindingIdent, normalizeKeyBindingIdent} from "absol/src/Input/keyboard";
+import { keyboardEventToKeyBindingIdent, normalizeKeyBindingIdent } from "absol/src/Input/keyboard";
+import OOP from "absol/src/HTML5/OOP";
+import { tokenizeMessageText } from "../tokenizeiput/tiutils";
+import MessageInputPlugin from "./MessageInputPlugin";
+import MIEmojiPlugin from "./MIEmojiPlugin";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -40,9 +43,9 @@ function MessageInput() {
     this._editingText = "";
     prepareIcon();
     /**
-     * @type {import('./PreInput').default}
+     * @type {import('../PreInput').default}
      */
-    this.$preInput = $('preinput', this);
+    this.$preInput = $('.as-message-input-pre', this);
 
 
     this.$preInput.on('change', this.eventHandler.preInputChange)
@@ -61,11 +64,11 @@ function MessageInput() {
     this.$quote = $('messagequote.as-message-input-quote', this)
         .on('pressremove', this.eventHandler.clickQuoteRemoveBtn);
 
+    this.$left = $('.as-message-input-left', this);
     this.$right = $('.as-message-input-right', this);
 
     this.$attachmentCtn = $('.as-message-input-attachment-ctn', this);
-    this.$emojiBtn = $('.as-message-input-plugin-emoji', this)
-        .on('click', this.eventHandler.clickEmojiBtn);
+
     this.$fileBtn = $('.as-message-input-plugin-file', this)
         .on('click', this.openFileDialog.bind(this));
     this.$attachmentAddBtn = $('.as-message-input-attachment-add-btn', this)
@@ -76,16 +79,17 @@ function MessageInput() {
     this.$cancelBtn = $('.as-message-input-plugin-cancel', this)
         .on('click', this.notifyCancel.bind(this));
 
-    this.$emojiPickerCtn = _('.as-message-input-external-tools-popup');
-    this.$emojiPicker = _('emojipicker').addTo(this.$emojiPickerCtn)
-        .on('pick', this.eventHandler.pickEmoji);
 
-
-    this.$attachhook = _('attachhook').addTo(this).on('error', this.notifySizeChange.bind(this));
+    this.$attachhook = _('attachhook').addTo(this)
+        .on('attached', this.notifySizeChange.bind(this))
+        .on('attached', this._updateSize.bind(this));
 
 
     this.on('drop', this.eventHandler.drop)
         .on('dragover', this.eventHandler.dragover);
+
+    OOP.drillProperty(this, this.$preInput, 'tagList');
+    OOP.drillProperty(this, this.$preInput, 'tagMap');
 
     this.autoSend = false;
     /***
@@ -93,6 +97,7 @@ function MessageInput() {
      * @type {MessageInputQuote|null}
      */
     this.quote = null;
+    this.addPlugin(new MIEmojiPlugin(this));
 }
 
 MessageInput.MODE_EDIT = MODE_EDIT;
@@ -113,7 +118,7 @@ MessageInput.render = function (data) {
         attr: {
             'data-icon-asset-root': MessageInput.iconAssetRoot
         },
-        class: 'as-message-input',
+        class: ['as-message-input'].concat(data.v2 ? ['as-v2'] : []),
         extendEvent: ['sendtext', 'sendimage', 'sendfile', 'sendquote', 'cancel', 'change', 'sizechange', 'send', 'useraddfile'],
         child: [
             {
@@ -141,12 +146,7 @@ MessageInput.render = function (data) {
                 child: [
                     'messagequote.as-message-input-quote.as-removable.as-shorten-text',
                     {
-                        class: 'as-message-input-emoji-btn-ctn',
-                        child: {
-                            tag: 'button',
-                            class: ['as-message-input-plugin-btn', 'as-message-input-plugin-emoji'],
-                            child: 'span.mdi.mdi-emoticon-happy-outline'
-                        }
+                        class: 'as-message-input-left'
                     },
                     {
                         class: ['as-message-input-attachment-ctn', 'as-bscroller'],
@@ -166,7 +166,7 @@ MessageInput.render = function (data) {
                             ]
                         }]
                     },
-                    'preinput.as-message-input-pre.absol-bscroller'
+                    (data.v2 ? 'tokenizehyperinput' : 'preinput') + '.as-message-input-pre.absol-bscroller'
                 ]
             }
         ]
@@ -174,30 +174,8 @@ MessageInput.render = function (data) {
 };
 
 
-MessageInput.prototype.toggleEmoji = function () {
-    if (this.hasClass('as-message-input-show-emoji'))
-        this.closeEmoji();
-    else
-        this.showEmoji();
-};
-
-
-MessageInput.prototype.showEmoji = function () {
-    if (this.hasClass('as-message-input-show-emoji')) return;
-    var value = this.$preInput.value;
-    this._lastInputSelectPosion = this.$preInput.getSelectPosition() || {start: value.length, end: value.length};
-    this.addClass('as-message-input-show-emoji');
-    this.addChild(this.$emojiPickerCtn);
-    var thisMi = this;
-    setTimeout(function () {
-        $(document.body).on('mousedown', thisMi.eventHandler.mousedownOutEmoji);
-    }, 100);
-    this.$preInput.focus();
-};
-
-
 MessageInput.prototype.notifyChange = function () {
-    this.emit('change', {name: 'change', target: this}, this);
+    this.emit('change', { name: 'change', target: this }, this);
     if (this.autoSend) {
         if (this.files.length > 0 || this.images.length > 0)
             this.notifySend();
@@ -274,7 +252,7 @@ MessageInput.prototype.clearAllContent = function () {
 
 MessageInput.prototype.focus = function () {
     var value = this.$preInput.value;
-    var range = this.$preInput.getSelectPosition() || {start: value.length, end: value.length};
+    var range = this.$preInput.getSelectPosition() || { start: value.length, end: value.length };
     this.$preInput.focus();
     this.$preInput.applyData(value, range);
 };
@@ -287,9 +265,16 @@ MessageInput.prototype.blur = function () {
 MessageInput.prototype._updateAttachmentClass = function () {
     if (this._imageFiles.length + this._files.length) {
         this.addClass("as-has-attachment");
-    } else {
+    }
+    else {
         this.removeClass("as-has-attachment");
     }
+    this._updateSize();
+};
+
+MessageInput.prototype._updateSize = function () {
+    var fs = this.getFontSize() || 14;
+    this.addStyle('--right-width', this.$right.getBoundingClientRect().width / fs + 'em');
 };
 
 MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
@@ -338,11 +323,11 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
                     child: [
                         {
                             class: 'as-message-input-attach-preview-name',
-                            child: {text: file.name}
+                            child: { text: file.name }
                         },
                         {
                             class: 'as-message-input-attach-preview-size',
-                            child: {text: fileSize2Text(file.size)}
+                            child: { text: fileSize2Text(file.size) }
                         }
                     ]
                 }
@@ -364,7 +349,8 @@ MessageInput.prototype.addFiles = function (files) {
             var ext = file.name.split('.').pop().toLowerCase();
             if (ExtensionIcons.indexOf(ext) > 0) {
                 src = MessageInput.iconAssetRoot + '/' + ext + '.svg'
-            } else {
+            }
+            else {
                 src = MessageInput.iconAssetRoot + '/' + 'default' + '.svg'
 
             }
@@ -405,11 +391,11 @@ MessageInput.prototype.addFiles = function (files) {
                         child: [
                             {
                                 class: 'as-message-input-attach-preview-name',
-                                child: {text: file.name}
+                                child: { text: file.name }
                             },
                             {
                                 class: 'as-message-input-attach-preview-size',
-                                child: {text: fileSize2Text(file.size)}
+                                child: { text: fileSize2Text(file.size) }
                             }
                         ]
                     }
@@ -438,9 +424,11 @@ MessageInput.prototype.notifyAddFiles = function (files) {
         resolve: function (result) {
             if (!result) {
                 this.resolvedAsync = Promise.resolve(undefined);
-            } else if (result.then) {
+            }
+            else if (result.then) {
                 this.resolvedAsync = result;
-            } else {
+            }
+            else {
                 this.resolvedAsync = Promise.resolve(result);
             }
         }
@@ -451,7 +439,7 @@ MessageInput.prototype.notifyAddFiles = function (files) {
 
 MessageInput.prototype.openFileDialog = function () {
     var thisMi = this;
-    openFileDialog({multiple: true}).then(function (files) {
+    openFileDialog({ multiple: true }).then(function (files) {
         if (!thisMi.autoSend) thisMi.$preInput.focus();
         thisMi.notifyAddFiles(files).then(function (files) {
             if (files && files.length > 0)
@@ -469,7 +457,8 @@ MessageInput.prototype.handleAddingFileByType = function (files) {
             file = files[i];
             if (!!file.type && file.type.match && file.type.match(/^image\//)) {
                 imageFiles.push(file);
-            } else {
+            }
+            else {
                 otherFiles.push(file);
             }
         }
@@ -485,14 +474,33 @@ MessageInput.prototype.notifySizeChange = function () {
     if (this._latBound.width != bound.width || this._latBound.height != bound.height) {
         this._latBound.width = bound.width;
         this._latBound.height = bound.height;
-        this.emit('sizechange', {name: 'sizechange', bound: bound, target: this}, this);
+        this.emit('sizechange', { name: 'sizechange', bound: bound, target: this }, this);
     }
 };
 
 MessageInput.prototype.addPlugin = function (option) {
-    var plugin = new this.PluginConstructor(this, option);
+    var plugin;
+    if (option.isMessagePlugin) {
+        plugin = option;
+    }
+    else {
+        plugin = new this.PluginConstructor(this, option);
+    }
+    plugin.idx = this._plugins.length  + 1;
     this._plugins.push(plugin);
-    this.addStyle('--plugin-buttons-width', (this._plugins.length * 45)/14 + 'em');
+    this._plugins.sort(function (a, b) {
+        var av = (typeof a.opt.order === "number") ? a.opt.order : a.idx * 1000;
+        var bv = (typeof b.opt.order === "number") ? b.opt.order : b.idx * 1000;
+        console.log(a, av, b, bv);
+        return av - bv;
+    });
+    var plugins = this._plugins.slice();
+    plugins.forEach(pl=> pl.getTriggerButton().remove());
+    this.$left.addChild(plugins.shift().getTriggerButton());
+    while (plugins.length> 0){
+        this.$right.addChildBefore(plugins.shift().getTriggerButton(), this.$right.firstChild);
+    }
+
     return plugin;
 };
 
@@ -523,6 +531,7 @@ MessageInput.prototype._updateQuote = function () {
         this.addClass('as-has-quote');
     else
         this.removeClass('as-has-quote');
+    this._updateSize();
     this.notifySizeChange();
 };
 
@@ -535,16 +544,19 @@ MessageInput.eventHandler.preInputChange = function (event) {
     var text = this.$preInput.value;
     if (text.length > 0) {
         this.addClass('as-has-text');
-    } else {
+    }
+    else {
         this.removeClass('as-has-text');
     }
 
     if (text === this._editingText) {
         this.removeClass('as-text-changed');
-    } else {
+    }
+    else {
         this.addClass('as-text-changed');
 
     }
+    this._updateSize();
     this.notifySizeChange();
     this.notifyChange();
 };
@@ -553,7 +565,8 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
     if (!(event.shiftKey || event.ctrlKey || event.altKey) && event.key === 'Enter') {
         this.notifySend();
         event.preventDefault();
-    } else if ((event.shiftKey || event.ctrlKey || event.altKey) && event.key === 'Enter') {
+    }
+    else if ((event.shiftKey || event.ctrlKey || event.altKey) && event.key === 'Enter') {
         event.preventDefault();
         var text = this.$preInput.value;
         var selectedPos = this.$preInput.getSelectPosition();
@@ -562,7 +575,8 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
         this.$preInput.applyData(newText, selectedPos.start + 1);
         this.notifySizeChange();
         this.$preInput.commitChange(newText, selectedPos.start + 1);
-    } else if (event.key === "Escape" && this._mode === MODE_EDIT) {
+    }
+    else if (event.key === "Escape" && this._mode === MODE_EDIT) {
         this.notifyCancel();
         event.preventDefault();
     }
@@ -576,7 +590,7 @@ MessageInput.eventHandler.preInputKeyDown = function (event) {
 
 MessageInput.eventHandler.preInputKeyUp = function (event) {
     var value = this.$preInput.value;
-    this._lastInputSelectPosion = this.$preInput.getSelectPosition() || {start: value.length, end: value.length};
+    this._lastInputSelectPosion = this.$preInput.getSelectPosition() || { start: value.length, end: value.length };
     this.notifySizeChange();
 };
 
@@ -616,9 +630,10 @@ MessageInput.eventHandler.mousedownOutEmoji = function (event) {
 MessageInput.eventHandler.pickEmoji = function (event) {
     var text = this.$preInput.value;
     var newText = text.substr(0, this._lastInputSelectPosion.start) + event.key + text.substr(this._lastInputSelectPosion.end);
+
     var selected = this._lastInputSelectPosion;
     var newOffset = selected.start + event.key.length;
-    this._lastInputSelectPosion = {start: newOffset, end: newOffset};
+    this._lastInputSelectPosion = { start: newOffset, end: newOffset };
     this.$preInput.focus();
     this.$preInput.applyData(newText, newOffset);
     this.$preInput.commitChange(newText, newOffset);
@@ -641,6 +656,7 @@ MessageInput.eventHandler.dragover = function (event) {
         thisMi.notifySizeChange();
     }, 200);
     //todo:
+    this._updateSize();
 };
 
 MessageInput.eventHandler.drop = function (event) {
@@ -653,18 +669,21 @@ MessageInput.eventHandler.drop = function (event) {
                 file = event.dataTransfer.items[i].getAsFile();
                 if (!file.type && file.size % 4096 == 0) {
                     //todo: folder
-                } else {
+                }
+                else {
                     files.push(file);
                 }
 
             }
         }
-    } else {
+    }
+    else {
         for (var i = 0; i < event.dataTransfer.files.length; i++) {
             file = event.dataTransfer.files[i];
             if (!file.type && file.size % 4096 == 0) {
 
-            } else {
+            }
+            else {
                 files.push(file);
             }
         }
@@ -715,13 +734,15 @@ MessageInput.property.text = {
         this.$preInput.value = '' + text;
         if (text.length > 0) {
             this.addClass('as-has-text');
-        } else {
+        }
+        else {
             this.removeClass('as-has-text');
         }
         if (this._mode === MODE_EDIT) {
             this._editingText = text;
         }
         this.removeClass('as-text-changed');
+        this._updateSize();
     },
     get: function () {
         return this.$preInput.value;
@@ -739,13 +760,15 @@ MessageInput.property.mode = {
             this.addClass('as-mode-edit');
             value = MODE_EDIT;
             this._editingText = this.$preInput.value;
-        } else {
+        }
+        else {
             value = MODE_NEW;
             this._editingText = '';
             this.removeClass('as-mode-edit');
         }
         this.removeClass('as-text-changed');
         this._mode = value;
+        this._updateSize();
     },
     get: function () {
         return this._mode === MODE_EDIT ? 'edit' : 'new';
@@ -756,7 +779,8 @@ MessageInput.property.autoSend = {
     set: function (value) {
         if (value) {
             this.addClass('as-auto-send');
-        } else {
+        }
+        else {
             this.removeClass('as-auto-send');
         }
     },
@@ -783,133 +807,121 @@ export default MessageInput;
 
 var urlRex = /^(firefox|opera|chrome|https|http|wss|ws):\/\/[^\s]+$/;
 
+/***
+ *
+ * @param {string}text
+ * @param {{emojiAssetRoot?:string, staticSize?:number, animSize?:number, tagMap?:{}, lengthLimit?:number, inline?:boolean}=} data
+ * @returns {Array}
+ */
 export function parseMessage(text, data) {
     data = data || {};
     data.emojiAssetRoot = data.emojiAssetRoot || EmojiPicker.assetRoot;
     data.staticSize = data.staticSize || 20;
     data.animSize = data.animSize || 60;
-    var textLines = text.split(/\r?\n/);
-    var lines = textLines.map(function (textLine) {
-        var longTokenTexts = textLine.split(/\s/);
-        var tokenGroups = longTokenTexts.map(function (longTokenText, longTokenIndex) {
-            var tokens = [];
-            if (longTokenIndex > 0) tokens.push({
-                type: 'text',
-                value: ' '
-            });
+    var tagMap = data.tagMap || {};
+    var tokens = tokenizeMessageText(text).reduce((ac, token) => {
+        if (token.type !== 'TEXT') {
+            ac.push(token);
+            return ac;
+        }
+        var urls = token.value.match(/(firefox|opera|chrome|https|http|wss|ws):\/\/[^\s]+/g);
+        var splitter = Math.random() + '';
+        var normals = token.value.replace(/(firefox|opera|chrome|https|http|wss|ws):\/\/[^\s]+/, splitter).split(splitter);
+        for (var i = 0; i < normals.length; ++i) {
+            if (i > 0) {
+                ac.push({
+                    type: 'URL',
+                    value: urls[i - 1]
+                });
+            }
+            ac.push({ type: 'TEXT', value: normals[i] });
+        }
+        return ac;
+    }, []);
 
-            var emojiKey, emojiKeyTemp;
-            var subIndex, subIndexTemp;
-            var leftToken;
-            var found;
-            var emoji;
-            while (longTokenText.length > 0) {
-                found = false;
-                subIndex = 10000000;
-                for (var i = 0; i < EmojiAnims.length; ++i) {
-                    emojiKeyTemp = EmojiAnims[i][0];
-                    subIndexTemp = longTokenText.indexOf(emojiKeyTemp);
-                    if (subIndexTemp >= 0 && subIndexTemp < subIndex) {
-                        subIndex = subIndexTemp;
-                        emojiKey = emojiKeyTemp;
-                        emoji = EmojiAnims[i];
-                        found = true;
-                    }
-                }
-
-                if (found) {
-                    if (subIndex >= 0) {
-                        leftToken = longTokenText.substr(0, subIndex);
-                        longTokenText = longTokenText.substr(subIndex + emojiKey.length);
-                        if (leftToken.length > 0) {
-                            tokens.push({
-                                type: 'text',
-                                value: leftToken
-                            });
-                        }
-                        tokens.push({
-                            type: 'emoji',
-                            value: emoji
-                        });
-                        found = true;
-                    }
-                } else {
-                    tokens.push({
-                        type: 'text',
-                        value: longTokenText
-                    });
-                    longTokenText = '';
-                }
+    if (data.lengthLimit > 0) {
+        tokens = tokens.reduce((ac, token) => {
+            if (ac.l >= data.lengthLimit) {
+                return ac;
+            }
+            switch (token.type) {
+                case 'TAG':
+                    ac.l += ('@' + (tagMap[token.value] ? tagMap[token.value] : '[id:' + token.value + ']')).length;
+                    break;
+                case 'EMOJI':
+                    ac.l += 1;
+                    break;
+                case 'NEW_LINE':
+                    ac.l += 1;
+                    break;
+                default:
+                    ac.l += token.value.length;
             }
 
-            tokens.forEach(function (token) {
-                if (token.type == 'text') {
-                    var urlMatched = token.value.match(urlRex);
-                    if (urlMatched) {
-                        token.type = 'url';
-                        token.protocal = urlMatched[1]
-                    }
+            if (ac.l > data.lengthLimit) {
+                if (token.type === 'TEXT') {
+                    token.value = token.value.substring(0, Math.max(0, token.value.length - (ac.l - data.lengthLimit) - 3)) + '...';
+                    ac.tokens.push(token);
                 }
-            })
-            return tokens;
-        });
-        var tokens = [];
+            }
+            else {
+                ac.tokens.push(token);
+            }
 
-        for (var i = 0; i < tokenGroups.length; ++i) {
-            tokens.push.apply(tokens, tokenGroups[i]);
-        }
-
-        return tokens.reduce(function (ac, token) {
-                if (token.type == 'text' && ac.last.type == 'text') {
-                    ac.last.value += token.value;
-                } else {
-                    ac.last = token;
-                    ac.result.push(token);
-                }
-                return ac;
-            },
-            {result: [], last: {type: 'null'}})
-            .result;
-    });
-    var res = lines.reduce(function (ac, line, lineIndex, lines) {
-        line.reduce(function (ac, token) {
-            if (token.type == 'text') {
+            return ac;
+        }, { l: 0, tokens: [] }).tokens;
+    }
+    var res = tokens.reduce((ac, token) => {
+        switch (token.type) {
+            case 'TAG':
                 ac.push({
                     tag: 'span',
-                    child: {text: token.value}
-                })
-            } else if (token.type == 'url') {
-                ac.push({
-                    tag: 'a',
-                    class: 'as-protocal-' + token.protocal,
-                    child: {text: token.value},
-                    props: {
-                        href: token.value
-                    }
-                })
-            } else if (token.type == 'emoji') {
+                    class: 'as-tag-token',
+                    child: { text: '@' + (tagMap[token.value] ? tagMap[token.value] : '[id:' + token.value + ']') }
+                });
+                break;
+
+            case 'EMOJI':
                 ac.push({
                     tag: 'span',
                     class: 'as-emoji-text',
-                    child: {text: token.value[0]}
+                    child: { text: token.value }
                 });
                 ac.push({
                     tag: 'img',
                     class: 'as-emoji',
                     props: {
-                        src: data.emojiAssetRoot + '/static/x' + data.staticSize + '/' + token.value[1]
+                        src: data.emojiAssetRoot + '/static/x' + data.staticSize + '/' + EmojiAnimByIdent[token.value][1]
                     }
                 })
-            }
-            return ac;
-        }, ac);
-        if (lineIndex < lines.length - 1 || line.length == 0)
-            ac.push('br');
+                break;
+            case 'NEW_LINE':
+                ac.push({ tag: 'br' });
+                break;
+            case 'URL':
+                ac.push({
+                    tag: 'a',
+                    class: 'as-protocal-' + token.value.split(':').shift(),
+                    child: { text: token.value },
+                    props: {
+                        href: token.value,
+                        target: '_blank'
+                    }
+                })
+                break;
+            case 'TEXT':
+            default:
+                ac.push({
+                    tag: 'span',
+                    child: { text: token.value }
+                })
+                break;
+        }
         return ac;
     }, []);
-    if (res.length == 2 && res[1].class == 'as-emoji') {
-        res[1].tag = 'iconsprite',
-            res[1].props.fps = 30;
+    if (!data.inline && res.length === 2 && res[1].class === 'as-emoji') {
+        res[1].tag = 'iconsprite';
+        res[1].props.fps = 30;
         res[1].props.src = res[1].props.src.replace('/static/x' + data.staticSize, '/anim/x' + data.animSize);
     }
     return res;
@@ -927,15 +939,6 @@ export function prepareIcon() {
     }
     return MessageInput.iconSupportAsync;
 }
-
-
-/***
- * @typedef MessageInputPluginOption
- * @property {string} [id]
- * @property {string|Object|AElement} icon
- * @property {function(_thisAdapter: MessageInputPlugin, _:Dom._, Dom.$):AElement} createContent
- * @property {function(_thisAdapter:MessageInputPlugin):void} onPressTrigger
- */
 
 
 export function MessageQuote() {
@@ -987,7 +990,7 @@ MessageQuote.render = function () {
                     },
                     {
                         class: 'as-message-quote-desc',
-                        child: {text: ''}
+                        child: { text: '' }
                     }
                 ]
             },
@@ -1007,7 +1010,8 @@ MessageQuote.property.removable = {
     set: function (val) {
         if (val) {
             this.addClass('as-removable');
-        } else {
+        }
+        else {
             this.removeClass('as-removable');
         }
     },
@@ -1020,7 +1024,8 @@ MessageQuote.property.shortenText = {
     set: function (val) {
         if (val) {
             this.addClass('as-shorten-text');
-        } else {
+        }
+        else {
             this.removeClass('as-shorten-text');
         }
     },
@@ -1037,7 +1042,8 @@ MessageQuote.property.data = {
         if (typeof quote === "string") {
             text = quote;
             desc = ''
-        } else if (quote && (typeof quote === "object")) {
+        }
+        else if (quote && (typeof quote === "object")) {
             text = quote.text;
             desc = quote.desc;
             file = quote.file;
@@ -1050,7 +1056,9 @@ MessageQuote.property.data = {
             this.$desc.firstChild.data = '';
             this.removeClass('as-has-file');
             this.removeClass('as-has-img');
-        } else {
+
+        }
+        else {
             if (file) {
                 file = file.toLowerCase().split('.').pop();
                 MessageInput.iconSupportAsync.then(function (iconSupport) {
@@ -1058,13 +1066,15 @@ MessageQuote.property.data = {
                     this.$img.addStyle('background-image', 'url(' + MessageInput.iconAssetRoot + '/' + file + '.svg)');
                 }.bind(this));
                 this.addClass('as-has-file');
-            } else
+            }
+            else
                 this.removeClass('as-has-file');
 
             if (img) {
                 this.$img.addStyle('background-image', 'url(' + img + ')');
                 this.addClass('as-has-img');
-            } else this.removeClass('as-has-img');
+            }
+            else this.removeClass('as-has-img');
             if (this.shortenText) text = text.split(/\r?\n/).shift();
             var parsedText = parseMessage(text);
             var textEltChain = parsedText.map(function (c) {
@@ -1080,173 +1090,10 @@ MessageQuote.property.data = {
 };
 
 MessageQuote.eventHandler.clickRemoveBtn = function () {
-    this.emit('pressremove', {target: this, type: 'pressclose'}, this);
+    this.emit('pressremove', { target: this, type: 'pressclose' }, this);
 };
 
 ACore.install(MessageQuote);
-
-
-/***
- *
- * @param {MessageInput} inputElt
- * @param {MessageInputPluginOption} option
- * @constructor
- */
-export function MessageInputPlugin(inputElt, option) {
-    this.inputElt = inputElt;
-    this.icon = option.icon;
-    this.id = option.id || randomIdent(16);
-    this.$icon = null;
-    this.$triggerBtn = null;
-    this.$content = null;
-    this.$popup = null;
-    if (option.createContent) this.createContent = option.createContent;
-    if (option.onPressTrigger) this.onPressTrigger = option.onPressTrigger;
-    this.ev_pressTrigger = this.ev_pressTrigger.bind(this);
-    this.ev_pressOut = this.ev_pressOut.bind(this);
-    this.attach();
-}
-
-
-MessageInputPlugin.prototype.attach = function () {
-    this.inputElt.$right.addChildBefore(this.getTriggerButton(), this.inputElt.$right.firstChild);
-};
-
-MessageInputPlugin.prototype.ev_pressTrigger = function (event) {
-    var value = this.inputElt.$preInput.value;
-    this._lastInputSelectPosion = this.inputElt.$preInput.getSelectPosition() || {
-        start: value.length,
-        end: value.length
-    };
-    if (this.onPressTrigger) {
-        this.onPressTrigger(this);
-    } else {
-        if (this.isPopupOpened()) {
-            this.closePopup();
-        } else {
-            this.openPopup();
-        }
-    }
-};
-
-MessageInputPlugin.prototype.insertText = function (itext) {
-    if (!this._lastInputSelectPosion) {
-        throw new Error('Invalid call');
-    }
-
-    var text = this.inputElt.$preInput.value;
-    var newText = text.substr(0, this._lastInputSelectPosion.start) + itext + text.substr(this._lastInputSelectPosion.end);
-    var selected = this._lastInputSelectPosion;
-    var newOffset = selected.start + itext.length;
-    this.inputElt.$preInput.focus();
-    this.inputElt.$preInput.applyData(newText, newOffset);
-    this.inputElt.$preInput.commitChange(newText, newOffset);
-    this.inputElt.notifySizeChange();
-    this.inputElt.$preInput.focus();
-};
-
-
-MessageInputPlugin.prototype.appendText = function (itext) {
-    if (!this._lastInputSelectPosion) {
-        throw new Error('Invalid call');
-    }
-    var text = this.inputElt.$preInput.value;
-    var newText = text + itext;
-    var newOffset = newText.length;
-    this.inputElt.$preInput.focus();
-    this.inputElt.$preInput.applyData(newText, newOffset);
-    this.inputElt.$preInput.commitChange(newText, newOffset);
-    this.inputElt.notifySizeChange();
-    this.inputElt.$preInput.focus();
-}
-
-MessageInputPlugin.prototype.replaceText = function (itext) {
-    if (!this._lastInputSelectPosion) {
-        throw new Error('Invalid call');
-    }
-    var newText = itext;
-    var newOffset = newText.length;
-    this.inputElt.$preInput.focus();
-    this.inputElt.$preInput.applyData(newText, newOffset);
-    this.inputElt.$preInput.commitChange(newText, newOffset);
-    this.inputElt.notifySizeChange();
-    this.inputElt.$preInput.focus();
-}
-
-
-MessageInputPlugin.prototype.ev_pressOut = function (event) {
-    if (EventEmitter.hitElement(this.getTriggerButton(), event)) return;
-    if (EventEmitter.hitElement(this.getPopup(), event)) return;
-    this.closePopup();
-};
-
-
-MessageInputPlugin.prototype.getIconElt = function () {
-    if (!this.$icon)
-        this.$icon = _(this.icon);
-    return this.$icon;
-};
-
-
-MessageInputPlugin.prototype.getTriggerButton = function () {
-    if (!this.$triggerBtn) {
-        this.$triggerBtn = _({
-            tag: 'button',
-            class: ['as-message-input-plugin-btn', 'as-message-input-plugin-' + this.id],
-            child: this.getIconElt(),
-            on: {
-                click: this.ev_pressTrigger
-            }
-        });
-    }
-    return this.$triggerBtn;
-};
-
-MessageInputPlugin.prototype.createContent = function (_thisAdapter, _, $) {
-    throw  new Error("Not implement!");
-};
-
-/***
- *
- * @type {null|function(_thisAdapter:MessageInputPlugin):void}
- */
-MessageInputPlugin.prototype.onPressTrigger = null;
-
-
-MessageInputPlugin.prototype.getContent = function () {
-    if (!this.$content)
-        this.$content = this.createContent(this.inputElt, _, $);
-    return this.$content;
-};
-
-
-MessageInputPlugin.prototype.getPopup = function () {
-    if (!this.$popup) {
-        this.$popup = _({
-            class: 'as-message-input-external-tools-popup',
-            child: this.getContent()
-        });
-    }
-    return this.$popup;
-};
-
-MessageInputPlugin.prototype.openPopup = function () {
-    if (this.isPopupOpened()) return;
-    this.inputElt.appendChild(this.getPopup());
-    document.body.addEventListener('click', this.ev_pressOut);
-};
-
-
-MessageInputPlugin.prototype.closePopup = function () {
-    if (!this.isPopupOpened()) return;
-    this.getPopup().remove();
-    document.body.removeEventListener('click', this.ev_pressOut);
-
-};
-
-MessageInputPlugin.prototype.isPopupOpened = function () {
-    return !!this.getPopup().parentElement;
-};
 
 
 MessageInput.prototype.PluginConstructor = MessageInputPlugin;
