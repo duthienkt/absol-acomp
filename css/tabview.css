@@ -64,14 +64,14 @@
     display: none
 }
 
-.as-tab-bar-button-ext-icon-ctn{
+.as-tab-bar-button-ext-icon-ctn {
     display: inline-block;
     vertical-align: middle;
     padding-right: 0.35em;
     margin-left: -0.5em;
 }
 
-.absol-tabbar-button-text{
+.absol-tabbar-button-text {
     display: inline-block;
     vertical-align: middle;
     max-width: 300px;
@@ -79,10 +79,9 @@
     text-overflow: ellipsis;
 }
 
-.as-tab-bar-button-ext-icon-ctn span{
+.as-tab-bar-button-ext-icon-ctn span {
     font-size: 1.2em;
 }
-
 
 
 .absol-tabbar .absol-tabbar-button-active {
@@ -183,13 +182,13 @@
     margin: 0;
 }
 
-.absol-frame>iframe{
+.absol-frame > iframe {
     border: none;
     box-sizing: border-box;
 }
 
 .absol-tabview .absol-tabbar-button {
-    border-radius: 10px 10px 0 0;
+    border-radius: 0.7em 0.7em 0 0;
     height: 2em;
     box-sizing: border-box;
     border: solid 1px #ccc;
@@ -318,4 +317,77 @@
 
 .absol-tabview.metro-flat > .absol-tabbar {
     box-shadow: 0px -1px 0px 0px #ccc;
+}
+
+/************************ Round Out theme *********************/
+
+/*.absol-tabview.rond-out > .absol-tabbar .absol-tabbar-button*/
+
+.absol-tabview.cad-dark > .absol-tabbar {
+    border-bottom: calc(0.1em + 1px) solid #3B4453;;
+}
+
+.absol-tabview.cad-dark > .absol-tabview-container {
+    top: 2.1em;
+}
+
+.absol-tabview.cad-dark > .absol-tabbar {
+    height: 2.1em;
+}
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active {
+    background-color: #3B4453;
+    color: white;
+}
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button {
+    background-color: #313946;
+    color: rgb(169, 169, 170);
+
+}
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button::before,
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 1em;
+    height: 1em;
+    z-index: 1;
+    background-size: cover;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMTYiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDguNDY2NjY2NCA0LjIzMzMzMzUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIj4KICA8cGF0aCB0cmFuc2Zvcm09Im1hdHJpeCguMTMzOTAzNjQgMCAwIC4yNzU0NTg5MSAtLjAzMjY2NDYxIC0uMDgwNjM0OTIpIiBkPSJNIDMxLjg1ODcxNiwwLjI5MjcyOTQxIFYgMTUuNjYxMDIzIEggMC4yNDM5NDExNyBDIDE1LjI0NzAyOCwxNS43NzU5MjkgMzEuMzU0NDkzLDExLjExODk1NiAzMS44NTg3MTYsMC4yOTI3Mjk0MSBaIiBzdHlsZT0icGFpbnQtb3JkZXI6ZmlsbCBtYXJrZXJzIHN0cm9rZTtmaWxsOiMzMTM5NDYiLz4KICA8cGF0aCB0cmFuc2Zvcm09Im1hdHJpeCgtLjEzMzkwMzY0IDAgMCAuMjc1NDU4OTEgOC40OTkzMzE1IC0uMDgwNjM0OTIpIiBkPSJNIDMxLjg1ODcxNiwwLjI5MjcyOTQxIFYgMTUuNjYxMDIzIEggMC4yNDM5NDExNyBDIDE1LjI0NzAyOCwxNS43NzU5MjkgMzEuMzU0NDkzLDExLjExODk1NiAzMS44NTg3MTYsMC4yOTI3Mjk0MSBaIiBzdHlsZT0icGFpbnQtb3JkZXI6ZmlsbCBtYXJrZXJzIHN0cm9rZTtmaWxsOiMzMTM5NDYiLz4KIDwvZz4KPC9zdmc+Cg==');
+}
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active::before,
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active::after,
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active {
+    z-index: 3;
+}
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active::before,
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button.absol-tabbar-button-active::after {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMTYiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDguNDY2NjY2NCA0LjIzMzMzMzUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIj4KICA8cGF0aCB0cmFuc2Zvcm09Im1hdHJpeCguMTMzOTAzNjQgMCAwIC4yNzU0NTg5MSAtLjAzMjY2NDYxIC0uMDgwNjM0OTIpIiBkPSJNIDMxLjg1ODcxNiwwLjI5MjcyOTQxIFYgMTUuNjYxMDIzIEggMC4yNDM5NDExNyBDIDE1LjI0NzAyOCwxNS43NzU5MjkgMzEuMzU0NDkzLDExLjExODk1NiAzMS44NTg3MTYsMC4yOTI3Mjk0MSBaIiBzdHlsZT0icGFpbnQtb3JkZXI6ZmlsbCBtYXJrZXJzIHN0cm9rZTtmaWxsOiMzQjQ0NTMiLz4KICA8cGF0aCB0cmFuc2Zvcm09Im1hdHJpeCgtLjEzMzkwMzY0IDAgMCAuMjc1NDU4OTEgOC40OTkzMzE1IC0uMDgwNjM0OTIpIiBkPSJNIDMxLjg1ODcxNiwwLjI5MjcyOTQxIFYgMTUuNjYxMDIzIEggMC4yNDM5NDExNyBDIDE1LjI0NzAyOCwxNS43NzU5MjkgMzEuMzU0NDkzLDExLjExODk1NiAzMS44NTg3MTYsMC4yOTI3Mjk0MSBaIiBzdHlsZT0icGFpbnQtb3JkZXI6ZmlsbCBtYXJrZXJzIHN0cm9rZTtmaWxsOiMzQjQ0NTMiLz4KIDwvZz4KPC9zdmc+Cg==');
+}
+
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button {
+    position: relative;
+    margin-right: 0;
+    border: none;
+    border-radius: 0.8em 0.8em 0 0;
+}
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-hscroller-viewport {
+    padding-left: 1.2em;
+}
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button::before {
+    left: -0.98em;
+    background-position: left;
+}
+
+.absol-tabview.cad-dark > .absol-tabbar .absol-tabbar-button::after {
+    right: -0.98em;
+    background-position: right;
+
 }
