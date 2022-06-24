@@ -37,6 +37,7 @@ OMTDate.prototype.assign = function (o) {
     this.$value.value = o;
 };
 
+
 OMTDate.prototype.getRaw = function () {
     return {
         child: [

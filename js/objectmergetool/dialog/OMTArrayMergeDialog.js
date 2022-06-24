@@ -123,17 +123,15 @@ OMTArrayMergeDialog.prototype.createView = function () {
         tag: MessageDialog.tag,
         class: 'as-omt-dialog',
         props: {
-            dialogTitle: 'Options',
+            dialogTitle: {mlKey:'txt_option'},
             dialogActions: [
                 {
-                    class: 'secondary',
-                    text: 'Cancel',
-                    name: 'cancel'
-                },
-                {
-                    class: 'primary',
                     text: 'OK',
                     name: 'ok'
+                },
+                {
+                    text: 'Cancel',
+                    name: 'cancel'
                 }
             ]
         },

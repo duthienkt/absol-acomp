@@ -46,12 +46,7 @@ OMTEnumOfPair.prototype.assign = function (o) {
 
 
 OMTEnumOfPair.prototype.getRaw = function () {
-    var text = '';
-    var holders = this.$value.findItemsByValue(this.export());
-    if (holders && holders.length > 0) {
-        text = holders[0].item.text;
-        if (holders[0].item.desc) text += ' - ' + holders[0].item.desc;
-    }
+    var text =  this.$value.$item && this.$value.$item.innerText;
 
     return {
         child: [

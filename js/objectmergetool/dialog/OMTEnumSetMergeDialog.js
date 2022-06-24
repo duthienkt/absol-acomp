@@ -43,7 +43,7 @@ OMTEnumSetMergeDialog.prototype.onStop = function () {
 OMTEnumSetMergeDialog.prototype.assignResult = function () {
     var selectedValues = this._getCurrent();
     if (selectedValues.length > 0) {
-        this.node.assign(this.currentValues.concat(selectedValues));
+        this.node.assign(arrayUnique(this.currentValues.concat(selectedValues)));
         this.node.notifyChange();
     }
 };
@@ -110,14 +110,12 @@ OMTEnumSetMergeDialog.prototype.createView = function () {
             dialogTitle: 'Merge',
             dialogActions: [
                 {
-                    class: 'secondary',
-                    text: 'Cancel',
-                    name: 'cancel'
-                },
-                {
-                    class: 'primary',
                     text: 'OK',
                     name: 'ok'
+                },
+                {
+                    text: 'Cancel',
+                    name: 'cancel'
                 }
             ],
 

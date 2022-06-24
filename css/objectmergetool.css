@@ -66,8 +66,8 @@
     display: none;
 }
 
-.bsc-white .as-omt-field-command-ctn button[data-command="view_mode"]{
-display: none;
+.bsc-white .as-omt-field-command-ctn button[data-command="view_mode"] {
+    display: none;
 }
 
 
@@ -138,6 +138,10 @@ img.as-omt-field-value {
 
 .as-omt-field-raw-ctn > div > .as-omt-field-name {
     display: none;
+}
+
+.as-omt-option-row > .as-omt-field {
+    flex-grow: 1;
 }
 
 

@@ -5,6 +5,7 @@ import Modal from "../../Modal";
 import OOP from "absol/src/HTML5/OOP";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import RadioButton from "../../RadioButton";
+import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 
 /***
  * @extends Fragment
@@ -92,17 +93,15 @@ OMTSelectOptionsDialog.prototype.createView = function () {
         tag: MessageDialog.tag,
         class: 'as-omt-dialog',
         props: {
-            dialogTitle: 'Options',
+            dialogTitle: {mlKey:'txt_option'},
             dialogActions: [
                 {
-                    class: 'secondary',
-                    text: 'Cancel',
-                    name: 'cancel'
+                    text: {mlKey:'txt_ok'},
+                    name: 'ok'
                 },
                 {
-                    class: 'primary',
-                    text: 'OK',
-                    name: 'ok'
+                    text:  {mlKey:'txt_cancel'},
+                    name: 'cancel'
                 }
             ]
         },
