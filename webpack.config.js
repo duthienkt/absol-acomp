@@ -39,7 +39,7 @@ module.exports = {
             path: require.resolve("path-browserify"),
             buffer: require.resolve("buffer/"),
             "util": false,
-            semver:false,
+            semver: false,
             "assert": require.resolve("assert/")
         }
     },
@@ -49,7 +49,17 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader',
-                options: { presets: [['@babel/preset-env', { modules: false }]] }
+                options: {
+                    presets: [['@babel/preset-env', { modules: false, exclude: ['transform-typeof-symbol'] }]],
+                    "plugins": [
+                        ["@babel/plugin-transform-modules-commonjs",
+                            {
+                                "importInterop": "babel"
+                            },
+                        ],
+                        "@babel/plugin-transform-spread",
+                        '@babel/plugin-transform-exponentiation-operator']
+                }
             },
             {
                 test: /\.(tpl|txt|xml|rels)$/i,
@@ -67,7 +77,8 @@ module.exports = {
     devServer: {
         compress: true,
         disableHostCheck: true,
-        host: '0.0.0.0'
+        host: '0.0.0.0',
+        public: 'https://www.absol.cf'
     },
     performance: {
         hints: false
