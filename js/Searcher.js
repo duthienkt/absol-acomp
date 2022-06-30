@@ -3,6 +3,7 @@ import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
 import { SpinnerIco } from "./Icons";
+import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -76,7 +77,7 @@ SearchTextInput.render = function () {
                         tag: 'input',
                         attr: {
                             type: 'search',
-                            placeholder: 'search...'
+                            placeholder: LanguageSystem.getText('txt_search')|| 'Search...'
                         }
                     }
                 },
