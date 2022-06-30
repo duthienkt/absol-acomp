@@ -1,0 +1,3 @@
+.as-path-menu-item .mdi-chevron-right::before {
+    transition: transform 0.1s;
+}
