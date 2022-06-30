@@ -89,7 +89,6 @@ function MessageInput() {
         .on('dragover', this.eventHandler.dragover);
 
     OOP.drillProperty(this, this.$preInput, 'tagList');
-    OOP.drillProperty(this, this.$preInput, 'tagMap');
 
     this.autoSend = false;
     /***
@@ -486,18 +485,17 @@ MessageInput.prototype.addPlugin = function (option) {
     else {
         plugin = new this.PluginConstructor(this, option);
     }
-    plugin.idx = this._plugins.length  + 1;
+    plugin.idx = this._plugins.length + 1;
     this._plugins.push(plugin);
     this._plugins.sort(function (a, b) {
         var av = (typeof a.opt.order === "number") ? a.opt.order : a.idx * 1000;
         var bv = (typeof b.opt.order === "number") ? b.opt.order : b.idx * 1000;
-        console.log(a, av, b, bv);
         return av - bv;
     });
     var plugins = this._plugins.slice();
-    plugins.forEach(pl=> pl.getTriggerButton().remove());
+    plugins.forEach(pl => pl.getTriggerButton().remove());
     this.$left.addChild(plugins.shift().getTriggerButton());
-    while (plugins.length> 0){
+    while (plugins.length > 0) {
         this.$right.addChildBefore(plugins.shift().getTriggerButton(), this.$right.firstChild);
     }
 
@@ -797,6 +795,17 @@ MessageInput.property.quote = {
     get: function () {
         return this._quote;
     }
+};
+
+MessageInput.property.tagMap = {
+    set: function (value) {
+        this.$preInput.tagMap = value || {};
+        this.$quote.tagMap = value || {};
+
+    },
+    get: function () {
+        return this.$preInput.tagMap;
+    }
 }
 
 
@@ -943,6 +952,7 @@ export function prepareIcon() {
 
 export function MessageQuote() {
     prepareIcon();
+    this._tagMap = {};
     /***
      *
      * @type {null|MessageInputQuote}
@@ -1043,7 +1053,7 @@ MessageQuote.property.data = {
             text = quote;
             desc = ''
         }
-        else if (quote && (typeof quote === "object")) {
+        else if (quote && (typeof quote === "object"))  {
             text = quote.text;
             desc = quote.desc;
             file = quote.file;
@@ -1076,7 +1086,7 @@ MessageQuote.property.data = {
             }
             else this.removeClass('as-has-img');
             if (this.shortenText) text = text.split(/\r?\n/).shift();
-            var parsedText = parseMessage(text);
+            var parsedText = parseMessage(text, { tagMap: this.tagMap });
             var textEltChain = parsedText.map(function (c) {
                 return _(c);
             });
@@ -1085,7 +1095,17 @@ MessageQuote.property.data = {
         }
     },
     get: function () {
-        return this.data;
+        return this._data;
+    }
+};
+
+MessageQuote.property.tagMap = {
+    set: function (value) {
+        this._tagMap = value || {};
+        this.data = this['data'];
+    },
+    get: function () {
+        return this._tagMap;
     }
 };
 
