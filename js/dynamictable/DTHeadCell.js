@@ -33,6 +33,9 @@ function DTHeadCell(row, data) {
     if (data.attr) {
         this.elt.attr(data.attr);
     }
+    if (data.style){
+        this.elt.addStyle(data.style);
+    }
     this._idx = null;
     this.render();
 }

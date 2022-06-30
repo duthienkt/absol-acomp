@@ -80,10 +80,8 @@ function DTSearchFactor(global) {
         return Q[map(m, n)];
     }
 
-    var EXTRA_MATCH_SCORE = 7000;
-    var UNCASE_MATCH_SCORE = 4000;
-    var UVN_MATCH_SCORE = 3000;
-    var EQUAL_MATCH_SCORE = 8000;
+    var EXTRA_MATCH_SCORE = 9;
+    var EQUAL_MATCH_SCORE = 10;
     var WORD_MATCH_SCORE = 3;
 
     /***
@@ -94,70 +92,23 @@ function DTSearchFactor(global) {
     function prepareSearchForItem(item) {
         if (!item.text || !item.text.charAt) item.text = item.text + '';
         var spliter = /\s+/;
-        var __text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
-        var __textNoneCase__ = __text__.toLowerCase();
+        var __text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim().toLowerCase();
         var __nvnText__ = nonAccentVietnamese(__text__);
-        var __nvnTextNoneCase__ = __nvnText__.toLowerCase();
 
+        item.__text__ = __text__;
+        item.__words__ = __text__.split(spliter);
+        item.__words__.sort();
 
-        Object.defineProperties(item, {
-            __text__: {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: __text__
-            },
-            __words__: {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: __text__.split(spliter)
-            },
-            __textNoneCase__: {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: __textNoneCase__
-            },
-            __wordsNoneCase__: {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: __textNoneCase__.split(spliter)
-            },
-            __nvnText__: {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: __nvnText__
-            },
-            __nvnWords__: {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: __nvnText__.split(spliter)
-            },
-            __nvnTextNoneCase__: {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: __nvnTextNoneCase__
-            },
-            __nvnWordsNoneCase__: {
-                configurable: true,
-                enumerable: false,
-                writable: true,
-                value: __nvnTextNoneCase__.split(spliter)
-            }
-        });
-
+        item.__nvnText__ = __nvnText__;
+        item.__nvnWords__ = __nvnText__.split(spliter);
+        item.__nvnWords__.sort();
 
         return item;
     }
 
     function calcItemMatchScore(queryItem, item) {
         var score = 0;
-        if (!item.text) return 0;
+        if (!item.__text__) return 0;
         if (item.__text__ === queryItem.__text__) {
             return EQUAL_MATCH_SCORE;
         }
@@ -165,21 +116,11 @@ function DTSearchFactor(global) {
         var extraIndex = item.__text__.indexOf(queryItem.__text__);
 
         if (extraIndex >= 0) {
-            return EXTRA_MATCH_SCORE
+            return EXTRA_MATCH_SCORE;
         }
 
-        extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
-        if (extraIndex >= 0) {
-            return UNCASE_MATCH_SCORE;
-        }
-
-        extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
-        if (extraIndex >= 0) {
-            return UNCASE_MATCH_SCORE;
-        }
-
-        score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * WORD_MATCH_SCORE;
-        score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * WORD_MATCH_SCORE;
+        var n = Math.max(queryItem.__words__.length + 1, 1);
+        score = Math.max(score, wordsMatch(queryItem.__words__, item.__words__), wordsMatch(queryItem.__nvnWords__, item.__nvnWords__)) / n * 2 * WORD_MATCH_SCORE;
         return score;
     }
 
@@ -377,17 +318,20 @@ function DTSearchFactor(global) {
                 if (item.score > maxValue) maxValue = item.score;
             }
             var segments = [[], [], [], [], [], [], [], []];
-            var midValue = (maxValue - minValue) / 2;
-            var d = (maxValue - midValue) / (segments.length - 1);
+            var threshold = maxValue - (maxValue - minValue) / 4;
+
+
+            if (maxValue < 3) threshold = maxValue - (maxValue - minValue) / 8;
+            var d = (maxValue - threshold) / (segments.length - 1);
             var v;
             var k;
             for (i = 0; i < n; ++i) {
                 item = items[i];
                 v = item.score;
-                if (v < midValue || v === 0) continue;
+                if (v < threshold || v < 0.8) continue;
                 if (v >= maxValue) segments[segments.length - 1].push(item)
                 else {
-                    k = ((v - midValue) / d) >> 0;
+                    k = ((v - threshold) / d) >> 0;
                     segments[k].push(item);
                 }
             }
@@ -409,6 +353,8 @@ function DTSearchFactor(global) {
                     res = res.concat(segment);
                 }
             }
+
+
             return res;
         }
 

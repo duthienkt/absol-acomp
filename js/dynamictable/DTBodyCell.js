@@ -18,10 +18,24 @@ function DTBodyCell(row, data) {
 
 Object.defineProperty(DTBodyCell.prototype, 'elt', {
     get: function () {
+        var self = this;
         if (!this._elt) {
-            this._elt = _({ tag: 'td', class: 'as-dt-body-cell' });
-            if (this.data.attr) this.elt.attr(data.attr);
-            if (this.data.class) this.elt.addClass(this.data.class);
+            this._elt = _({
+                tag: 'td', class: 'as-dt-body-cell',
+                on: {
+                    click: function (event) {
+                        if (self.data.on && self.data.on.click) {
+                            self.data.on.click.call(self.data, event, self);
+                        }
+                    }
+                }
+            });
+
+            if (this.data.attr) this._elt.attr(this.data.attr);
+            if (this.data.class) this._elt.addClass(this.data.class);
+            if (this.data.style) this._elt.addStyle(this.data.style);
+
+            if (this.data.on) this._elt.on(this.data.on);
             if (this._idx !== null) this._elt.attr('data-col-idx', this._idx + '');
             this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
         }
@@ -50,7 +64,7 @@ Object.defineProperty(DTBodyCell.prototype, 'innerText', {
                 return jsStringOf(text);
             }
         }
-        else if (typeof text === "function"){
+        else if (typeof text === "function") {
             text = text.call(this.data, this);
         }
 

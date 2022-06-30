@@ -79,6 +79,17 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
             this._elt.addChild(this.cells.map(function (cell) {
                 return cell.elt;
             }));
+            if (this.data.attr){
+                this._elt.attr(this.data.attr);
+            }
+            if (this.data.style){
+                this._elt.addStyle(this.data.style);
+            }
+            if (this.data.on){
+                this._elt.on(this.data.on);
+            }
+
+
             this.$idx = $('.as-dt-row-index', this._elt);
             this.draggable = !!$('.as-drag-zone', this._elt);
             if (this.$idx)
