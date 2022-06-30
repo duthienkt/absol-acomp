@@ -5,6 +5,7 @@ import './Menu';
 import { cleanMenuItemProperty } from "./utils";
 import Follower from "./Follower";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
+import safeThrow from "absol/src/Code/safeThrow";
 
 var isMobile = BrowserDetector.isMobile;
 var _ = ACore._;
@@ -134,12 +135,26 @@ QuickMenuInstance.prototype.open = function () {
     menuElt.addStyle('visibility', 'hidden');
     followerElt.addTo(document.body);
     followerElt.addClass('absol-active');
+    if (this.opt.onOpen) {
+        try {
+            this.opt.onOpen.call(this);
+        } catch (err) {
+            safeThrow(err);
+        }
+    }
 };
 
 
 QuickMenuInstance.prototype.close = function () {
     if (QuickMenu.runningInstance !== this) return;
     if (this.state !== "OPEN") return;
+    if (this.opt.onClose) {
+        try {
+            this.opt.onClose.call(this);
+        } catch (err) {
+            safeThrow(err);
+        }
+    }
     this.state = 'CLOSE';
     this.elt.classList.remove('as-quick-menu-attached');
     var followerElt = QuickMenu.$follower;
