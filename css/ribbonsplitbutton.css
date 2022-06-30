@@ -71,11 +71,14 @@
     border-color: rgba(169, 168, 169, 0.15);
 }
 
-span.as-ribbon-split-button-icon {
-    font-size: 1.2em;
+.as-ribbon-split-button-icon {
     margin-right: 0.5em;
     display: inline-block;
     vertical-align: middle;
+}
+
+span.as-ribbon-split-button-icon {
+    font-size: 1.2em;
 }
 
 img.as-ribbon-split-button-icon,
@@ -106,12 +109,12 @@ svg.as-ribbon-split-button-icon {
     border-width: 1px 1px 1px 1px;
 }
 
-.as-ribbon-split-button.as-big{
+.as-ribbon-split-button.as-big {
     width: 5em;
     height: auto;
 }
 
-.as-ribbon-split-button.as-big .as-ribbon-split-button-content{
+.as-ribbon-split-button.as-big .as-ribbon-split-button-content {
     height: auto;
 }
 
