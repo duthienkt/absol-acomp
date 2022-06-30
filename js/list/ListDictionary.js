@@ -1,11 +1,10 @@
 /***
- * usage: HR
- */
-/***
  *
- * @param {Array<SelectionItem>} arr
+ * @param {SelectionItem[]} arr
  * @constructor
  */
+import {  keyStringOf } from "../utils";
+
 function ItemDictionary(arr) {
     this.arr = arr;
     this.dict = {};
@@ -16,20 +15,21 @@ function ItemDictionary(arr) {
 ItemDictionary.prototype.update = function () {
     this.dict = {};
     var dict = this.dict;
-    var item;
 
     var dupKeyDict = {};
-
     function scan(arr) {
+        var item;
+        var key;
         for (var i = 0; i < arr.length; ++i) {
             item = arr[i];
-            if (dict[item.value]) {
-                dict[item.value].dupItems = dict[item.value].dupItems || [];
-                dict[item.value].dupItems.push(item);
-                dupKeyDict[item.value] = 1;
+            key = keyStringOf(item.value);
+            if (dict[key]) {
+                dict[key].dupItems = dict[key].dupItems || [];
+                dict[key].dupItems.push(item);
+                dupKeyDict[key] = 1;
             }
             else {
-                dict[item.value] = {
+                dict[key] = {
                     idx: i,
                     item: item
                 };
@@ -50,7 +50,7 @@ ItemDictionary.prototype.update = function () {
  * @returns {SelectionItem | null}
  */
 ItemDictionary.prototype.getItemByValue = function (value) {
-    var iDict = this.dict[value];
+    var iDict = this.dict[keyStringOf(value)];
     if (iDict) return iDict.item;
     return null;
 };
@@ -61,8 +61,9 @@ ItemDictionary.prototype.getItemByValue = function (value) {
  * @returns {Array<SelectionItem> }
  */
 ItemDictionary.prototype.getAllItemByValue = function (value) {
-    var iDict = this.dict[value];
-    if (iDict) return [iDict.item].concat(iDict.dupItems || []);
+    var key = keyStringOf(value);
+    var iDict = this.dict[key];
+    if (iDict) return [iDict.item].concat(iDict.dupItems[key] || []);
     return [];
 };
 
