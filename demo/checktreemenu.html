@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
     <title>CheckTreeBox</title>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
 </head>
 <body>
 <style>
-    h2,  #demo-0,#demo-1, #demo-2{
+    h2,  #demo-0,#demo-1, #demo-2x{
         display: none;
     }
 </style>
@@ -189,6 +190,7 @@
                     }
                 }
             }).addTo(demo2);
+            console.log(mn3)
 
             var mn4 = _({
                 tag: 'multichecktreemenu',
