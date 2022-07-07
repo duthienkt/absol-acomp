@@ -1,3 +1,24 @@
+:root {
+    --as-path-menu-max-text-width: 150px;
+}
+
+.am-mobile-theme{
+    --as-path-menu-max-text-width: 100px;
+}
+
+
 .as-path-menu-item .mdi-chevron-right::before {
     transition: transform 0.1s;
+}
+
+.as-path-menu .as-ribbon-split-button-text {
+    max-width: var(--as-path-menu-max-text-width);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.as-path-menu-item.as-has-no-item .as-ribbon-split-button-extend {
+    display: none;
 }

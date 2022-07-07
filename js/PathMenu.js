@@ -135,6 +135,9 @@ PathMenu.prototype._makeItem = function (data, idx) {
             }
         });
     }
+    else {
+        button.addClass('as-has-no-item');
+    }
 
     return button;
 };
