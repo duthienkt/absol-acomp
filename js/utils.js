@@ -585,7 +585,7 @@ export function getTagListInTextMessage(text) {
     while (matched) {
         v = parseInt(matched[1]);
         if (isNaN(v)) v = matched[1];
-        if (!dict[v]){
+        if (!dict[v]) {
             dict[v] = true;
             res.push(v);
         }
@@ -788,7 +788,7 @@ export function addElementAfter(inElement, elements, at) {
     var i;
     if (at) {
         atIdx = Array.prototype.indexOf.call(inElement.childNodes, at);
-        if (at && atIdx <= 0) throw new Error("The node before which the new node is to be inserted is not a child of this node.");
+        if (at && atIdx < 0) throw new Error("The node before which the new node is to be inserted is not a child of this node.");
         before = inElement.childNodes[atIdx + 1];
         if (before) {
             for (i = 0; i < elements.length; ++i) {
@@ -797,7 +797,7 @@ export function addElementAfter(inElement, elements, at) {
         }
         else {
             for (i = 0; i < elements.length; ++i) {
-                (inElement.addChild || inElement.appendChild)(elements[i]);
+                (inElement.addChild || inElement.appendChild).call(inElement, elements[i]);
             }
         }
 
@@ -805,7 +805,7 @@ export function addElementAfter(inElement, elements, at) {
     else {
         before = inElement.firstChild;
         for (i = 0; i < elements.length; ++i) {
-            (inElement.addChildBefore || inElement.insertBefore)(elements[i], before);
+            (inElement.addChildBefore || inElement.insertBefore).call(inElement, elements[i], before);
         }
     }
 }
@@ -857,6 +857,21 @@ export function rootTreeValues2CheckedValues(items, values) {
 
     items.forEach(cr => visit(cr, dict[keyOf(cr.value)]))
     return res;
+}
+
+/***
+ *
+ * @param {SelectionItem[]} items
+ * @returns {SelectionItem[]}
+ */
+export function copySelectionItemArray(items) {
+    return items.map(item => {
+        var newItem = Object.assign({}, item);
+        if (item.items) {
+            newItem.items = copySelectionItemArray(item.items);
+        }
+        return newItem;
+    });
 }
 
 

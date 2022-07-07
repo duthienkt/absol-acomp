@@ -17,5 +17,7 @@
     --as-transparent-button-text-color: rgb(139, 139, 140);
     --as-transparent-button-text-hover-color: rgb(107, 107, 107);
     --as-transparent-button-text-active-color: rgb(0, 0, 0);
+
+    --modal-margin-top: 10vh;
 }
 

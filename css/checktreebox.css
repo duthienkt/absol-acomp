@@ -2,9 +2,12 @@
     width: 100%;
 }
 
+.as-check-tree-box {
+    min-width: 18em;
+}
 
-.as-check-tree-box.as-no-transition label.as-checkbox-input .minus ,
-.as-check-tree-box.as-no-transition label.as-checkbox-input .tick{
+.as-check-tree-box.as-no-transition label.as-checkbox-input .minus,
+.as-check-tree-box.as-no-transition label.as-checkbox-input .tick {
     transition: none;
 }
 
@@ -15,4 +18,153 @@
 
 .as-check-tree-box.as-select-list-box .as-select-list-box-scroller {
     max-height: calc(var(--max-height) - 2em - 1px);
+}
+
+/***********************************************************************************************************************/
+
+.am-check-tree-box .as-dropdown-box-footer {
+    min-width: 18em;
+}
+
+.am-check-tree-box-list {
+    --text-width: 100%;
+    --desc-width: 0;
+}
+
+.am-check-tree-box:not(.as-enable-search) .absol-search-text-input {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.am-check-tree-box.as-has-desc {
+    --text-width: 50%;
+    --desc-width: 50%;
+}
+
+
+.am-check-tree-box-body {
+    overflow-y: auto;
+    max-height: calc(80vh - 2em);
+}
+
+.am-check-tree-bo.as-enable-search .am-check-tree-box-body {
+    max-height: calc(80vh - 4em - 10px);
+}
+
+.am-check-tree-item {
+    display: block;
+    white-space: nowrap;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    --level: 0;
+    --icon-width: 0px;
+}
+
+
+.am-check-tree-item.as-has-icon {
+    --icon-width: 2.7em;
+}
+
+
+.am-check-tree-item-toggle-ctn,
+.am-check-tree-item-icon-ctn,
+.am-check-tree-item-checkbox-ctn {
+    position: absolute;
+    white-space: nowrap;
+    top: 0;
+    bottom: 0;
+}
+
+.am-check-tree-item-toggle-ctn {
+    left: calc(2em * var(--level) + 0.2em);
+    width: 1.5em;
+    text-align: center;
+}
+
+.am-check-tree-item-toggle-ctn > svg {
+    width: 0.7em;
+    height: 0.7em;
+}
+
+
+.am-check-tree-item-icon-ctn {
+    left: calc(2em * var(--level) + 3.2em);
+}
+
+.am-check-tree-item-checkbox-ctn {
+    left: calc(2em * var(--level) + 1.7em)
+}
+
+.am-check-tree-item-icon-ctn > svg {
+    display: inline-block;
+    vertical-align: middle;
+
+}
+
+
+.am-check-tree-item.as-status-open svg .toggle-close,
+.am-check-tree-item.as-status-close svg .toggle-open,
+.am-check-tree-item:not(.as-status-close):not(.as-status-open) .am-check-tree-item-toggle-ctn {
+    display: none;
+}
+
+.am-check-tree-item-icon-ctn::before,
+.am-check-tree-item-toggle-ctn::before,
+.am-check-tree-item-checkbox-ctn::before {
+    content: "";
+    height: 100%;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.am-check-tree-item-icon-ctn:empty {
+    display: none;
+}
+
+.am-check-tree-item-icon-ctn > span {
+    font-size: 1.8em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+.am-check-tree-item-icon-ctn img,
+.am-check-tree-item-icon-ctn svg {
+    width: 1.8em;
+    height: 1.8em;
+    display: inline-block;
+}
+
+
+.am-check-tree-item-text {
+    width: var(--text-width);
+    box-sizing: border-box;
+    padding: 0.3em 0.5em 0.3em calc(2.5em + 2em * var(--level) + var(--icon-width));
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1.5;
+    white-space: normal;
+}
+
+
+.am-check-tree-item-desc {
+    display: none;
+    vertical-align: middle;
+}
+
+
+.am-check-tree-box-list.as-has-desc .am-check-tree-item-desc {
+    display: inline-block;
+}
+
+.am-check-tree-box.as-leaf-only .am-check-tree-item:not(.as-has-leaf) .as-checkbox-input {
+    pointer-events: none;
+    opacity: 0.2;
+}
+
+
+.am-check-tree-box.as-leaf-only:not(.as-has-leaf) .as-select-list-box-check-all {
+    pointer-events: none;
 }
