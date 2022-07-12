@@ -5,297 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
     <title>CheckTreeBox</title>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
 </head>
 <body>
 <style>
-    h2,  #demo-0,#demo-1, #demo-2x{
-        display: none;
+    .break-page {
+        margin: 20px;
+        display: block;
+        height: 3px;
+        box-sizing: border-box;
+        border-top: solid 1px #65676d;
+        border-bottom: solid 1px #65676d;
+    }
+
+    body > a {
+        display: block;
+        padding: 5px;
     }
 </style>
-<h2>Check Tree Item</h2>
-<div id="demo-0"></div>
-
-<h2 id="check-tree-box-h-x">Check Tree Box(with no select)</h2>
-<div id="demo-x" style="height: 10em"></div>
-
-<h2 id="check-tree-box-h">Check Tree Box</h2>
-<div id="demo-1" style="height: 10em"></div>
-<h2>Multi Check Tree Menu</h2>
-<div id="demo-2" style="min-height: 30em"></div>
-
-<h2>Multi Check Tree Menu(with noSelect)</h2>
-<div id="demo-3" style="min-height: 30em"></div>
-
-
 <script>
+    function render(o) {
+        return absol._(o).addTo(document.body);
+    }
+
+</script>
+
+<script class="viewable">
     (function () {
-        var _ = absol._;
-        var $ = absol.$;
-        var strings = absol.string;
-        var demo0 = $('#demo-0');
-        Array(15).fill(null).forEach(function (u, i) {
-            var itemElt = _({
-                tag: 'checktreeitem',
-                props: {
-                    data: {
-                        text: '[' + i + ']' + strings.randomPhrase(30),
-                        desc: Math.random() < 0.5 ? strings.randomPhrase(30) : undefined,
-                        icon: Math.random() < 0.8 ? {
-                            tag: 'img',
-                            props: {src: 'https://absol.cf/vivid_exticons/asx.svg'}
-                        } : null
-                    },
-                    status: Math.random() < 0.5 ? (Math.random() < 0.5 ? 'close' : 'open') : 'none',
-                    level: i % 5,
-                    selected: ['all', 'none', 'child'][Math.random() * 3 << 0]
+        render('<h2>Basic (auto: desktop/mobile)</h2>');
+        var menu = render({
+            tag: 'multichecktreemenu',
+            props: {
+                values: [-100037, -100034, -100000],
+                enableSearch: true
+            },
+            on: {
+                change: function () {
+                    absol.require('snackbar').show(JSON.stringify(this.values))
                 }
-            }).addTo(demo0);
-            _('br').addTo(demo0);
+            }
+        });
+        absol.remoteNodeRequireAsync('./sampledata/com_tree.js').then((items) => {
+            menu.items = items;
         });
 
-        var listDataAsync = fetch('./demo_tree_list.js').then(function (res) {
-            return res.text();
-        }).then(function (text) {
-            var module = {exports: {}};
-            var factor = new Function('module', 'exports', text + '\nreturn module.exports;');
-            return factor(module, module.exports);
-        }).then(function (items) {
+        render({
+            tag: 'a',
+            props: { href: './sampledata/com_tree.js', target: '__blank' },
+            child: { text: 'view items' }
+        });
+        render('.break-page');
+    })();
+</script>
+
+<script class="viewable">
+    (function () {
+        render('<h2>leafOnly = true</h2>');
+        var menu = render({
+            tag: 'multichecktreemenu',
+            props: {
+                values: ['duthien1', -100010],
+                leafOnly: true
+            },
+            on: {
+                change: function () {
+                    absol.require('snackbar').show(JSON.stringify(this.values))
+                }
+            }
+        });
+        absol.remoteNodeRequireAsync('./sampledata/com_tree.js').then((items) => {
             items.forEach(function visit(item) {
-                var isGroup = (item.items && item.items.length > 0) || (item.text.toUpperCase() === item.text);
-                item.icon = item.icon || (isGroup ? 'span.mdi.mdi-account-group-outline' : 'span.mdi.mdi-account-outline');
-                item.isLeaf = !isGroup;
-                if (item.items && item.items.length > 0) {
-                    item.items.forEach(visit);
+                if (item.icon.class.indexOf("mdi-account") >= 0) {
+                    item.isLeaf = true;
                 }
+                if (item.items) item.items.forEach(visit);
+                if (item.value === 29) item.noSelect = true;
             });
-            return items;
-        });
-        // listDataAsync.then(function (items) {
-        //     var ctm = _({
-        //         tag: 'checktreebox',
-        //         style: {},
-        //         props: {
-        //             followTarget: $('#check-tree-box-h'),
-        //             items: items,
-        //             values: [2027, 3547, 3550, 2028, 2057]
-        //         }
-        //     }).addTo(document.body);
-        // });
+            menu.items = items;
 
-        // listDataAsync.then(function (items) {
-        //     items = JSON.parse(JSON.stringify(items));
-        //     var noSelectValues = [3571, 3584, 3572, 2025];
-        //     items.forEach(function visit(item) {
-        //         if (noSelectValues.indexOf(item.value) >= 0) {
-        //             item.noSelect = true;
-        //         }
-        //         if (item.items && item.items.length > 0) item.items.forEach(visit);
-        //     })
-        //     var ctm = _({
-        //         tag: 'checktreebox',
-        //         style: {},
-        //         props: {
-        //             followTarget: $('#check-tree-box-h-x'),
-        //             items: items,
-        //             values: [2027, 3547, 3550, 2028, 2057]
-        //         }
-        //     }).addTo(document.body);
-        // });
-
-
-        var demo2 = $('#demo-2');
-        listDataAsync.then(function (items) {
-            var mn1 = _({
-                tag: 'multichecktreemenu',
-                style: {
-                    marginBottom: '2em',
-                    width: '80vw'
-                },
-                props: {
-                    items: items,
-                    values: [2027, 3547, 3550, 2028, 2057]
-                },
-                on: {
-                    change: function () {
-                        var values = this.values;
-                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
-                        var t = _({
-                            tag: 'div',
-                            child: {text: text}
-                        });
-
-                        demo2.addChildAfter(t, this);
-                    }
-                }
-            }).addTo(demo2);
-            var items2 = JSON.parse(JSON.stringify(items));
-            items2.forEach(function visit(item) {
-                var text = absol.string.nonAccentVietnamese(item.text).toLowerCase();
-                var c = text[0].toLowerCase();
-                if (text === 'cong ty')
-                    item.icon = 'span.mdi.mdi-domain';
-                else if (!item.isLeaf) {
-                    item.icon = 'span.mdi.mdi-account-group-outline';
-                }
-                else {
-                    item.icon = 'span.mdi.mdi-alpha-' + c + '-circle-outline';
-                }
-
-                if (item.items) {
-                    item.items.forEach(visit);
-                }
-            });
-
-            var mn2 = _({
-                tag: 'multichecktreemenu',
-                style: {
-                    marginBottom: '2em',
-                    width: '80vw'
-                },
-                props: {
-                    items: items2,
-                    values: [2027, 3547, 3550, 2028, 2057],
-                    enableSearch: true
-                },
-                on: {
-                    change: function () {
-                        var values = this.values;
-                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
-                        var t = _({
-                            tag: 'div',
-                            child: {text: text}
-                        });
-                        demo2.addChildAfter(t, this);
-                    }
-                }
-            }).addTo(demo2);
-            var mn3 = _({
-                tag: 'multichecktreemenu',
-                style: {
-                    marginBottom: '2em',
-                    width: '80vw',
-                    borderColor: 'red'
-                },
-                props: {
-                    leafOnly: true,
-                    items: items2,
-                    values: [2085, 2061, 2089, 2072],
-                    enableSearch: true
-                },
-                on: {
-                    change: function () {
-                        var values = this.values;
-                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
-                        absol.require('snackbar').show(text);
-                    }
-                }
-            }).addTo(demo2);
-            console.log(mn3)
-
-            var mn4 = _({
-                tag: 'multichecktreemenu',
-                style: {
-                    marginBottom: '2em',
-                    width: '80vw'
-                },
-                props: {
-                    items: items2,
-                    values: [2027, 3547, 3550, 2028, 2057],
-                    enableSearch: true,
-                    disabled: true,
-                },
-                on: {
-                    change: function () {
-                        var values = this.values;
-                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
-                        var t = _({
-                            tag: 'div',
-                            child: {text: text}
-                        });
-                        demo2.addChildAfter(this, t);
-                    }
-                }
-            }).addTo(demo2);
-
-            var m5 = _({
-                tag: 'multichecktreemenu',
-                style: {
-                    marginBottom: '12em',
-                    width: '80vw'
-                },
-                props: {
-                    items: JSON.parse(JSON.stringify(items)).map(function visit(item) {
-                        item.noSelect = Math.random() < 0.3;
-                        if (item.items) item.items.map(visit);
-                        return item;
-                    })
-                }
-            }).addTo(document.body);
-
+            items_url.href =  URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)],  { type: 'text/plain;charset=utf-8;' }))
         });
 
-        var demo3 = $('#demo-3');
-        listDataAsync.then(function (items) {
-            items = JSON.parse(JSON.stringify(items));
-            var noSelectValues = [3571, 3584, 3572, 2025];
-            items.forEach(function visit(item) {
-                if (noSelectValues.indexOf(item.value) >= 0) {
-                    item.noSelect = true;
-                }
-                if (item.items && item.items.length > 0) item.items.forEach(visit);
-            })
-            var ctm = _({
-                tag: 'multichecktreemenu',
-                style: {},
-                props: {
-                    enableSearch: true
-                    // items: items,
-                    // values: [2027, 3547, 3550, 2028, 2057]
-                },
-                on: {
-                    change: function () {
-                        var values = this.values;
-                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
-                        var t = _({
-                            tag: 'div',
-                            child: {text: text}
-                        });
-                        demo3.addChildAfter(t, this);
-                    }
-                }
-            }).addTo(demo3);
-
-            var ctm1 = _({
-                tag: 'multichecktreemenu',
-                style: {},
-                props: {
-                    enableSearch: true
-                    // items: items,
-                    // values: [2027, 3547, 3550, 2028, 2057]
-                },
-                on: {
-                    change: function () {
-                        var values = this.values;
-                        var text = new Date().toLocaleTimeString() + ' ' + JSON.stringify(values);
-                        var t = _({
-                            tag: 'div',
-                            child: {text: text}
-                        });
-                        demo3.addChildAfter(t, this);
-                    }
-                }
-            }).addTo(demo3);
-            absol.remoteNodeRequireAsync('./multi_select_tree_with_no_select_ex.js').then((items) => {
-                ctm.items = items;
-                ctm.values = [25, 17];
-                ctm1.items = items;
-                ctm1.values = [];
-            });
+        var items_url = render({
+            tag: 'a',
+            props: {  target: '__blank' },
+            child: { text: 'view items' }
         });
-
+        render('.break-page');
 
     })();
 </script>
+
+<script class="viewable">
+    (function () {
+        (function () {
+            render('<h2>noSelect</h2>');
+            var menu = render({
+                tag: 'multichecktreemenu',
+                props: {
+                    values: [-100037, -100034, -100000],
+                    enableSearch: true
+                },
+                on: {
+                    change: function () {
+                        absol.require('snackbar').show(JSON.stringify(this.values))
+                    }
+                }
+            });
+            absol.remoteNodeRequireAsync('./sampledata/com_tree_no_select.js').then((items) => {
+                menu.items = items;
+            });
+
+            render({
+                tag: 'a',
+                props: { href: './sampledata/com_tree_no_select.js', target: '__blank' },
+                child: { text: 'view items' }
+            });
+            render('.break-page');
+        })();
+    })();
+</script>
+
+
+<script class="viewable">
+    (function () {
+        render('<h2>leafOnly = true, noSelect</h2>');
+        var menu = render({
+            tag: 'multichecktreemenu',
+            props: {
+                values: ['duthien1', -100010],
+                leafOnly: true
+            },
+            on: {
+                change: function () {
+                    absol.require('snackbar').show(JSON.stringify(this.values))
+                }
+            }
+        });
+        absol.remoteNodeRequireAsync('./sampledata/com_tree_no_select.js').then((items) => {
+            items.forEach(function visit(item) {
+                if (item.icon.class.indexOf("mdi-account") >= 0) {
+                    item.isLeaf = true;
+                }
+                if (item.items) item.items.forEach(visit);
+                if (item.value === 29) item.noSelect = true;
+            });
+            menu.items = items;
+
+            items_url.href =  URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)],  { type: 'text/plain;charset=utf-8;' }))
+        });
+
+        var items_url = render({
+            tag: 'a',
+            props: {  target: '__blank' },
+            child: { text: 'view items' }
+        });
+        render('.break-page');
+
+    })();
+</script>
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
 </html>
