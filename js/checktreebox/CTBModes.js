@@ -61,7 +61,21 @@ CTBModeNormal.prototype.onStop = function () {
 };
 
 CTBModeNormal.prototype.updateUp = function () {
-    MCTBItemHolder.prototype.updateUp.call(this);
+    var selected = { child: 0, all: 0, none: 0, /*dont: 0*/ };
+    var childN = this.children.length;
+    this.children.reduce((ac, child) => {
+        ac[child.selected]++;
+        return ac;
+    }, selected);
+    if (childN === selected.all) {
+        this.selected = 'all';
+    }
+    else if (childN === selected.none) {
+        this.selected = "none";
+    }
+    else {
+        this.selected = 'child';
+    }
     this.elt.$chekAll.checked = this.selected === 'all';
 };
 
@@ -114,6 +128,18 @@ CTBModeNormal.prototype.getValues = function () {
     return values;
 };
 
+CTBModeNormal.prototype.getViewValues = function (){
+    var values = [];
+    this.children.forEach(function visit(node) {
+        if (node.selected === 'all' && !node.hasNoSelect) {
+            values.push(node.data.value);
+        }
+        else if (node.children) {
+            node.children.forEach(visit);
+        }
+    });
+    return values;
+};
 
 /***
  *
