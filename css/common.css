@@ -20,3 +20,31 @@ input[type="text"].as-text-input:disabled,
 textarea.as-text-input:disabled {
     background-color: var(--as-disabled-background-color);
 }
+
+
+.as-blink-text {
+    --blink-duration: 1s;
+    --text-color: black;
+    animation-name: as-anim-text-blink-1-1;
+    animation-duration: var(--blink-duration);
+    animation-iteration-count: infinite;
+}
+
+
+@keyframes as-anim-text-blink-1-1 {
+    0% {
+        color: var(--text-color);
+    }
+    49% {
+        color: var(--text-color);
+    }
+    50% {
+        color: transparent;
+    }
+    99% {
+        color: transparent;
+    }
+    100% {
+        color: var(--text-color);
+    }
+}
