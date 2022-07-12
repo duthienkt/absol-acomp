@@ -1,3 +1,11 @@
+.as-dynamic-table-wrapper.as-inline {
+    display: inline-block;
+}
+
+.as-dynamic-table-wrapper.as-inline .as-dynamic-table {
+    width: auto;
+}
+
 
 .as-dynamic-table-wrapper {
     position: relative;
@@ -60,7 +68,7 @@
     color: #007bff;
 }
 
-.as-dt-sort-btn span{
+.as-dt-sort-btn span {
     position: absolute;
     display: inline-block;
     left: 0;
@@ -68,12 +76,12 @@
 
 }
 
-.as-dt-sort-btn .mdi-menu-up{
+.as-dt-sort-btn .mdi-menu-up {
     bottom: 0.18em;
 }
 
 
-.as-dt-sort-btn .mdi-menu-down{
+.as-dt-sort-btn .mdi-menu-down {
     top: 0.18em;
 }
 
