@@ -3,9 +3,9 @@ import { $, _ } from "../../ACore";
 import CTBPropHandlers from "./CTBPropHandlers";
 import MCTBItemListController from "./MCTBItemListController";
 import SearchTextInput from "../Searcher";
-import MCheckTreeItem from "./MCheckTreeItem";
 import { CTBModeNormal, CTBModeSearch } from "./CTBModes";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 
 /***
@@ -27,13 +27,23 @@ function MCheckTreeBox() {
         .on('click', function () {
             this.emit('cancel', { type: 'cancel', target: this }, this);
         }.bind(this));
-    this.$closeBtn = $('.as-select-list-box-close-btn', this)
-        .on('click', function () {
+    this.$closeBtn = $('.as-select-list-box-close-btn', this);
+    this.$boxCloseBtn = $('.am-dropdown-box-close-btn', this);
+    this.on('click', function (event) {
+        if (event.target === this || hitElement(this.$closeBtn, event) || hitElement(this.$boxCloseBtn, event)) {
             this.emit('close', { type: 'close', target: this }, this);
-        }.bind(this));
+        }
+    }.bind(this));
+
     this.pendingValues = null;
-    this.modes = {};
-    this.mode = null;
+    this.modes = {
+        normal: new CTBModeNormal(this, [])
+    };
+    /***
+     *
+     * @type {CTBModeNormal | CTBModeSearch}
+     */
+    this.mode = this.modes.normal;
     this.itemListCtrl = new MCTBItemListController(this);
 }
 
@@ -103,8 +113,20 @@ MCheckTreeBox.render = function () {
     });
 };
 
-MCheckTreeBox.prototype.findHolderByValue = function (value) {
+MCheckTreeBox.prototype.getHolderByValue = function (value) {
     return this.modes.normal.getHolderByValue(value);
+};
+
+MCheckTreeBox.prototype.select = function (value, flag) {
+    var holder = this.modes.normal.getHolderByValue(value);
+    if (holder){
+        holder.select(flag);
+        if (this.mode !== this.modes.normal){
+            this.mode.updateSelectedFromRef();
+        }
+        return true;
+    }
+    return false;
 };
 
 
@@ -162,3 +184,15 @@ MCheckTreeBox.property = CTBPropHandlers;
 
 
 export default MCheckTreeBox;
+
+/*********************************** ADAPT OLD VERSION ***************************************************************/
+
+MCheckTreeBox.prototype.findItemHoldersByValue = function (value) {
+    var holder = this.getHolderByValue(value);
+    if (holder) {
+        return [holder];
+    }
+    else {
+        return [];
+    }
+};

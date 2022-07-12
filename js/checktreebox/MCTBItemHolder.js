@@ -1,5 +1,5 @@
 import { _ } from "../../ACore";
-import MCheckTreeItem from "./MCheckTreeItem";
+import CheckTreeItem from "./CheckTreeItem";
 import { addElementAfter } from "../utils";
 
 /***
@@ -50,7 +50,7 @@ Object.defineProperty(MCTBItemHolder.prototype, 'elt', {
     get: function () {
         if (!this._elt) {
             this._elt = _({
-                tag: MCheckTreeItem,
+                tag: CheckTreeItem,
                 props: {
                     data: this.data,
                     level: this.level,
@@ -207,3 +207,11 @@ MCTBItemHolder.prototype.getRoot = function () {
 
 
 export default MCTBItemHolder;
+
+/*********************************** ADAPT OLD VERSION ***************************************************************/
+
+Object.defineProperty(MCTBItemHolder.prototype, 'item', {
+    get: function (){
+        return this.data;
+    }
+});
