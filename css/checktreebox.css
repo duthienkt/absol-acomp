@@ -167,4 +167,10 @@
 
 .am-check-tree-box.as-leaf-only:not(.as-has-leaf) .as-select-list-box-check-all {
     pointer-events: none;
+    color:var(--as-disabled-text-color);
+}
+
+.am-check-tree-box.as-leaf-only:not(.as-has-leaf) .as-select-list-box-check-all label.as-checkbox-input .bound{
+    stroke: #929292;
+    fill: #ebebe4;
 }
