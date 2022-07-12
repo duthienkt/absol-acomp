@@ -63,7 +63,7 @@ export var isText = node => {
     return node && node.nodeType === Node.TEXT_NODE;
 }
 
-export var isNewLine = node =>{
+export var isNewLine = node => {
     return node && node.tagName === 'BR';
 }
 
@@ -135,7 +135,7 @@ export function findPrevTextNode(root, current) {
 }
 
 
-export function text2ContentElements(text){
+export function text2ContentElements(text, opt) {
     return tokenizeMessageText(text).map((token) => {
         var textOfTag;
         switch (token.type) {
@@ -152,7 +152,7 @@ export function text2ContentElements(text){
                     child: { text: EMPTY_2_SPACES }
                 })
             case 'TAG':
-                textOfTag = this.elt.tagMap && this.elt.tagMap[token.value];
+                textOfTag = opt.tagMap && opt.tagMap[token.value];
                 return _({
                     tag: 'span',
                     class: 'as-tag-token',
