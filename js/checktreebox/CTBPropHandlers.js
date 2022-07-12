@@ -35,6 +35,11 @@ CTBPropHandlers.values = {
     }
 };
 
+CTBPropHandlers.viewValues =  {
+    get: function (){
+        return this.modes.normal.getViewValues();
+    }
+};
 
 CTBPropHandlers.enableSearch = {
     /***
