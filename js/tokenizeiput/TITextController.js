@@ -29,7 +29,7 @@ function TITextController(elt) {
 
 TITextController.prototype.setText = function (text) {
     this.elt.clearChild();
-    this.elt.addChild(text2ContentElements(text));
+    this.elt.addChild(text2ContentElements(text, { tagMap: this.elt.tagMap }));
     this.elt.addChild(this.elt.$br);
 };
 
@@ -149,7 +149,7 @@ TITextController.prototype.insertText = function (text) {
     range.deleteContents();
     this.elt.selectionCtrl.onSelect();
     range = document.getSelection().getRangeAt(0);
-    var eltChain = text2ContentElements(text);
+    var eltChain = text2ContentElements(text, { tagMap: this.elt.tagMap });
     var startCtn = range.startContainer;
     var at;
     if (isTokenText(startCtn)) {
@@ -166,7 +166,7 @@ TITextController.prototype.insertText = function (text) {
             this.elt.addChildBefore(newNode, this.elt.firstChild);
             at = newNode;
         }
-        else if (isText(at) && isText(newNode)){
+        else if (isText(at) && isText(newNode)) {
             at.data += newNode.data;
         }
         else {
