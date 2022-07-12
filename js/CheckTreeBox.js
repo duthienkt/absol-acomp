@@ -1,10 +1,10 @@
-import ACore, {_, $, $$} from "../ACore";
+import ACore, { _, $, $$ } from "../ACore";
 import DomSignal from "absol/src/HTML5/DomSignal";
-import {getScreenSize} from "absol/src/HTML5/Dom";
+import { getScreenSize } from "absol/src/HTML5/Dom";
 import CheckTreeItem from "./CheckTreeItem";
 import '../css/checktreebox.css';
-import {estimateWidth14, measureText} from "./utils";
-import {prepareSearchForList, searchListByText, searchTreeListByText} from "./list/search";
+import { estimateWidth14, measureText } from "./utils";
+import { prepareSearchForList, searchTreeListByText } from "./list/search";
 import CPUViewer from "./CPUViewer";
 import SelectListBox from "./SelectListBox";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
@@ -133,14 +133,14 @@ CheckTreeBox.render = function () {
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-cancel-btn',
-                                attr:{
+                                attr: {
                                     "data-ml-key": 'txt_cancel'
                                 }
                             },
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-close-btn',
-                                attr:{
+                                attr: {
                                     "data-ml-key": 'txt_close'
                                 }
                             }]
@@ -176,7 +176,8 @@ CheckTreeBox.prototype.depthIndexing = function (items, arr, rootArr) {
             arr && arr.push(node);
             if (root) {
                 root.child.push(node);
-            } else if (rootArr) {
+            }
+            else if (rootArr) {
                 rootArr.push(node);
             }
             if (res[value].length > 1) {
@@ -212,10 +213,11 @@ CheckTreeBox.prototype.viewListAt = function (offset) {
         if (cOffset < itemN) {
             this.$pages[i].__viewOffset__ = cOffset;
             this.$pages[i].removeStyle('display')
-                .addStyle('top', cOffset * this.itemHeight/14 + 'em');
+                .addStyle('top', cOffset * this.itemHeight / 14 + 'em');
             this._fillPage(this.$pages[i], Math.min(this.itemInPage, itemN - cOffset));
             this._assignItems(this.$pages[i], cOffset);
-        } else {
+        }
+        else {
             this.$pages[i].__viewOffset__ = -1;
             this.$pages[i].addStyle('display', 'none');
         }
@@ -241,7 +243,7 @@ CheckTreeBox.prototype._releaseItem = function (item) {
 };
 
 CheckTreeBox.prototype._requestItem = function () {
-    return this._pool.pop() || _({
+    var res = this._pool.pop() || _({
         tag: CheckTreeItem.tag,
         props: {
             menuElt: this
@@ -255,6 +257,8 @@ CheckTreeBox.prototype._requestItem = function () {
             }
         }
     });
+    res.menuElt = this;
+    return res;
 };
 
 CheckTreeBox.prototype._fillPage = function (pageElt, n) {
@@ -289,7 +293,7 @@ CheckTreeBox.prototype.resetSearchState = function () {
 };
 
 CheckTreeBox.prototype._calcEstimateSize = function () {
-    this.estimateSize = {width: 0, height: 0};
+    this.estimateSize = { width: 0, height: 0 };
     var holders = this.holders.slice();
     var n = holders.length;
     var holder;
@@ -314,7 +318,7 @@ CheckTreeBox.prototype._calcEstimateSize = function () {
 };
 
 CheckTreeBox.prototype.updateContentSize = function () {
-    this.$content.addStyle('height', this.viewHolders.length * this.itemHeight/14+ 'em');
+    this.$content.addStyle('height', this.viewHolders.length * this.itemHeight / 14 + 'em');
 };
 
 CheckTreeBox.prototype._updateToValues = function () {
@@ -322,7 +326,8 @@ CheckTreeBox.prototype._updateToValues = function () {
     this.rootHolders.forEach(function visit(node) {
         if (node.selected === 'all') {
             values.push(node.item.value);
-        } else if (node.selected === 'child') {
+        }
+        else if (node.selected === 'child') {
             node.child.forEach(visit);
         }
     });
@@ -343,22 +348,26 @@ CheckTreeBox.prototype._updateFromValues = function () {
         var value = node.item.value;
         if (valueDict[value]) {
             node.selectAll(true);
-        } else {
+        }
+        else {
             for (var i = 0; i < node.child.length; ++i) {
                 cNode = node.child[i];
                 visit(cNode);
                 if (cNode.selected === 'all') {
                     selectedAllCount++;
-                } else if (cNode.selected === 'child') {
+                }
+                else if (cNode.selected === 'child') {
                     selectedChildCount++;
                 }
             }
             if (node.child > 0 && selectedAllCount === node.child.length) {
                 node.selected = 'all';
 
-            } else if (selectedAllCount + selectedChildCount > 0) {
+            }
+            else if (selectedAllCount + selectedChildCount > 0) {
                 node.selected = 'child';
-            } else {
+            }
+            else {
                 node.selected = 'none';
             }
 
@@ -383,7 +392,8 @@ CheckTreeBox.prototype.updateCheckedAll = function () {
     this.$checkAll.checked = c === holders.length;
     if (noSelect) {
         this.$checkAll.addClass('as-no-select');
-    } else {
+    }
+    else {
         this.$checkAll.removeClass('as-no-select');
     }
 };
@@ -462,7 +472,8 @@ CheckTreeBox.eventHandler.toggleItem = function (item, event) {
     var nodeHolder = item.nodeHolder;
     if (!nodeHolder) {
         console.error("Load error, item was not assigned TreeNodeHolder!")
-    } else
+    }
+    else
         nodeHolder.toggle();
 };
 
@@ -479,7 +490,8 @@ CheckTreeBox.eventHandler.selectItem = function (item, event) {
     var selected = item.selected;
     if (selected === 'all') {
         targetNode.selectAll();
-    } else {
+    }
+    else {
         targetNode.unselectAll();
     }
     if (ref) {
@@ -487,7 +499,7 @@ CheckTreeBox.eventHandler.selectItem = function (item, event) {
     }
     this._updateToValues();
     this.updateCheckedAll();
-    this.emit('change', {type: 'change', target: this}, this);
+    this.emit('change', { type: 'change', target: this }, this);
     CPUViewer.release();
 };
 
@@ -496,14 +508,15 @@ CheckTreeBox.eventHandler.selectItem = function (item, event) {
  */
 CheckTreeBox.eventHandler.scroll = function () {
     CPUViewer.hold();
-    var itemHeight = this.itemHeight * this.getFontSize()/14;
+    var itemHeight = this.itemHeight * this.getFontSize() / 14;
     var scrollTop = this.$scroller.scrollTop;
     var scrollBottom = scrollTop + this.$scroller.clientHeight;
     var startOffset = this.$pages[0].__viewOffset__;
     var endOffset = this.$pages[this.$pages.length - 1].__viewOffset__;
     if (endOffset === -1) {
         endOffset = this.viewHolders.length;
-    } else {
+    }
+    else {
         endOffset += this.$pages[this.$pages.length - 1].childNodes.length;
     }
 
@@ -523,7 +536,8 @@ CheckTreeBox.eventHandler.scroll = function () {
         this._assignItems(page2Load, page2Load.__viewOffset__);
         page2Load.removeStyle('display');
         page2Load.addStyle('top', page2Load.__viewOffset__ * itemHeight + 'px');
-    } else if (needLoad > 0) {
+    }
+    else if (needLoad > 0) {
         for (var i = 0; i < this.$pages.length; ++i) {
             if (this.$pages[i].__viewOffset__ === -1) {
                 page2Load = this.$pages[i];
@@ -559,7 +573,8 @@ CheckTreeBox.eventHandler.searchModify = function () {
     var searchData;
     if (this.cache[text]) {
         searchData = this.cache[text];
-    } else {
+    }
+    else {
         searchData = {};
         searchData.items = searchTreeListByText(text, this._items);
         searchData.rootViewHolders = [];
@@ -570,7 +585,8 @@ CheckTreeBox.eventHandler.searchModify = function () {
             if (it.ref.items && it.ref.items.length > 0 && (!it.items || it.items.length === 0)) {
                 it.items = it.ref.items;
                 it.doNotInitOpen = true;
-            } else if (it.items && it.items.length > 0) {
+            }
+            else if (it.items && it.items.length > 0) {
                 it.items.forEach(visit);
             }
         });
@@ -581,7 +597,8 @@ CheckTreeBox.eventHandler.searchModify = function () {
             if (temp1[0].item === temp2[0].item) {
                 searchData.viewHolders.push(temp2.shift());
                 temp1.shift();
-            } else {
+            }
+            else {
                 temp2.shift();
             }
         }
@@ -634,7 +651,8 @@ CheckTreeBox.eventHandler.checkAllChange = function (event) {
                 holder.selectAll();
                 changed = true;
             }
-        } else {
+        }
+        else {
             if (holder.selected !== 'none') {
                 holder.unselectAll();
                 changed = true;
@@ -649,7 +667,7 @@ CheckTreeBox.eventHandler.checkAllChange = function (event) {
 
     if (changed) {
         this._updateToValues();
-        this.emit('change', {type: 'change', target: this}, this);
+        this.emit('change', { type: 'change', target: this }, this);
     }
 
     CPUViewer.release();
@@ -657,11 +675,11 @@ CheckTreeBox.eventHandler.checkAllChange = function (event) {
 
 
 CheckTreeBox.eventHandler.clickCancelBtn = function (event) {
-    this.emit('cancel', {type: 'cancel', target: this, originalEvent: event}, this);
+    this.emit('cancel', { type: 'cancel', target: this, originalEvent: event }, this);
 };
 
 CheckTreeBox.eventHandler.clickCloseBtn = function (event) {
-    this.emit('close', {type: 'close', target: this, originalEvent: event}, this);
+    this.emit('close', { type: 'close', target: this, originalEvent: event }, this);
 };
 
 ACore.install(CheckTreeBox);
@@ -707,9 +725,11 @@ TreeNodeHolder.prototype.findIdxInView = function () {
         holderIdx = holders[mid].idx;
         if (holderIdx < idx) {
             start = mid + 1;
-        } else if (holderIdx > idx) {
+        }
+        else if (holderIdx > idx) {
             end = mid - 1;
-        } else {
+        }
+        else {
             return mid;
         }
     }
@@ -737,7 +757,8 @@ TreeNodeHolder.prototype.toggle = function () {
             nodeHolder: this,
             status: 'open'
         }, this.boxElt);
-    } else if (status === 'open') {
+    }
+    else if (status === 'open') {
         this.itemElt.status = 'close';
         this.status = 'close';
         var l = 0;
@@ -797,15 +818,18 @@ TreeNodeHolder.prototype.updateUp = function () {
         for (var i = 0; i < this.child.length; ++i) {
             if (this.child[i].selected === 'all') {
                 childSelectAll++;
-            } else if (this.child[i].selected === 'child') {
+            }
+            else if (this.child[i].selected === 'child') {
                 childSelectChild++;
             }
         }
         if (childSelectAll === this.child.length) {
             this.selected = 'all';
-        } else if (childSelectChild + childSelectAll > 0) {
+        }
+        else if (childSelectChild + childSelectAll > 0) {
             this.selected = 'child';
-        } else {
+        }
+        else {
             this.selected = 'none';
         }
         if (this.itemElt) {
@@ -885,7 +909,8 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
             elt.level = this.level;
             elt.status = this.status;
             elt.selected = this.selected;
-        } else {
+        }
+        else {
             this._elt = null;
         }
     },

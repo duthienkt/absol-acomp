@@ -51,14 +51,14 @@ CheckTreeLeafOnlyBox.render = function () {
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-cancel-btn',
-                                attr:{
+                                attr: {
                                     "data-ml-key": 'txt_cancel'
                                 }
                             },
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-close-btn',
-                                attr:{
+                                attr: {
                                     "data-ml-key": 'txt_close'
                                 }
                             }
@@ -67,7 +67,7 @@ CheckTreeLeafOnlyBox.render = function () {
                 ]
             }
         ],
-        props:{
+        props: {
             anchor: [1, 6, 2, 5]
         }
     });
@@ -82,7 +82,7 @@ CheckTreeLeafOnlyBox.prototype._pool = [];
 
 
 CheckTreeLeafOnlyBox.prototype._requestItem = function () {
-    return this._pool.pop() || _({
+    var res = this._pool.pop() || _({
         tag: CheckTreeItem.tag,
         class: 'as-check-tree-leaf-only-item',
         props: {
@@ -97,6 +97,9 @@ CheckTreeLeafOnlyBox.prototype._requestItem = function () {
             }
         }
     });
+
+    res.menuElt = this;
+    return res;
 };
 
 CheckTreeLeafOnlyBox.prototype.HolderClass = TreeLeafOnlyNodeHolder;
