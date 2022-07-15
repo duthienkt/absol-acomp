@@ -12,7 +12,11 @@ export function CTBModeNormal(elt, items) {
     this.selected = 'none';
     this.elt = elt;
     this.$list = this.elt.$list;
-    this.children = items.map(item => new MCTBItemHolder(elt, this, item));
+    /***
+     *
+     * @type {MCTBItemHolder[]}
+     */
+    this.children = items.map(item => new this.elt.classes.ItemHolder(elt, this, item));
     this.hasLeaf = this.children.some(holder => holder.hasLeaf);
     this.hasNoSelect = this.children.some(holder => holder.hasNoSelect);
     if (this.hasLeaf) {
@@ -128,7 +132,7 @@ CTBModeNormal.prototype.getValues = function () {
     return values;
 };
 
-CTBModeNormal.prototype.getViewValues = function (){
+CTBModeNormal.prototype.getViewValues = function () {
     var values = [];
     this.children.forEach(function visit(node) {
         if (node.selected === 'all' && !node.hasNoSelect) {
@@ -152,7 +156,7 @@ export function CTBModeSearch(elt, items) {
     this.selected = 'none';
     this.elt = elt;
     this.$list = this.elt.$list;
-    this.children = items.map(item => new MCTBItemHolder(elt, this, item));
+    this.children = items.map(item => new this.elt.classes.ItemHolder(elt, this, item));
 }
 
 

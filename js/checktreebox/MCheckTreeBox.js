@@ -6,6 +6,8 @@ import SearchTextInput from "../Searcher";
 import { CTBModeNormal, CTBModeSearch } from "./CTBModes";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
+import MCTBItemHolder from "./MCTBItemHolder";
+import CheckTreeItem from "./CheckTreeItem";
 
 
 /***
@@ -37,15 +39,23 @@ function MCheckTreeBox() {
 
     this.pendingValues = null;
     this.modes = {
-        normal: new CTBModeNormal(this, [])
+        normal: new this.classes.ModeNormal(this, [])
     };
     /***
      *
      * @type {CTBModeNormal | CTBModeSearch}
      */
     this.mode = this.modes.normal;
-    this.itemListCtrl = new MCTBItemListController(this);
+    this.itemListCtrl = new this.classes.ListController(this);
 }
+
+MCheckTreeBox.prototype.classes = {
+    ListController: MCTBItemListController,
+    ModeSearch: CTBModeSearch,
+    ModeNormal: CTBModeNormal,
+    ItemHolder: MCTBItemHolder,
+    ItemElement: CheckTreeItem
+};
 
 
 MCheckTreeBox.tag = 'MCheckTreeBox'.toLowerCase();
@@ -119,9 +129,9 @@ MCheckTreeBox.prototype.getHolderByValue = function (value) {
 
 MCheckTreeBox.prototype.select = function (value, flag) {
     var holder = this.modes.normal.getHolderByValue(value);
-    if (holder){
+    if (holder) {
         holder.select(flag);
-        if (this.mode !== this.modes.normal){
+        if (this.mode !== this.modes.normal) {
             this.mode.updateSelectedFromRef();
         }
         return true;

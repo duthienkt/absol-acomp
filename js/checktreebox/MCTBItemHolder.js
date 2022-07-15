@@ -50,7 +50,7 @@ Object.defineProperty(MCTBItemHolder.prototype, 'elt', {
     get: function () {
         if (!this._elt) {
             this._elt = _({
-                tag: CheckTreeItem,
+                tag: this.boxElt.classes.ItemElement,
                 props: {
                     data: this.data,
                     level: this.level,
