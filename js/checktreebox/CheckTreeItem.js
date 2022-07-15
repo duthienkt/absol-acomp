@@ -66,20 +66,32 @@ CheckTreeItem.prototype._updateData = function () {
     else {
         this.removeClass('as-has-icon');
     }
+
+    if (this._data && this._data.isLeaf) {
+        this.addClass('as-is-leaf');
+    }
+    else {
+        this.removeClass('as-is-leaf');
+    }
 };
 
 CheckTreeItem.eventHandler = {};
 
 CheckTreeItem.eventHandler.click = function (event) {
     if (hitElement(this.$checkbox, event)) return;
-    var checkboxBound;
-    var canCheck = this.$checkbox.getComputedStyleValue('pointer-events') !== 'none' && !this.$checkbox.disabled;
+    var  checkboxBound = this.$checkbox.getBoundingClientRect();
+    var canCheck = this.$checkbox.getComputedStyleValue('pointer-events') !== 'none' && !this.$checkbox.disabled && checkboxBound.width > 0;
     if (this.status === 'none' && canCheck) {
         this.$checkbox.checked = !this.$checkbox.checked;
         this.$checkbox.notifyChange();
     }
-    else if (this.status !== 'none'){
-        checkboxBound = this.$checkbox.getBoundingClientRect();
+    else if (this.status !== 'none') {
+        if (!checkboxBound.width) {
+            checkboxBound = this.$iconCtn.getBoundingClientRect();
+        }
+        if (!checkboxBound.width) {
+            checkboxBound = { left: this.getBoundingClientRect().left + parseFloat(this.$text.parentElement.getComputedStyleValue('padding-left').replace('px')) };
+        }
         if (event.clientX < checkboxBound.left || !canCheck) {
             this.status = this.status === 'open' ? 'close' : 'open';
             this.emit('statuschange', { type: 'statuschange', target: this }, this);
