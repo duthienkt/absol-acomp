@@ -155,6 +155,18 @@
 }
 
 
+.am-check-tree-leaf-item:not(.as-is-leaf) .am-check-tree-item-checkbox-ctn {
+    display: none;
+}
+
+.am-check-tree-leaf-item:not(.as-is-leaf) .am-check-tree-item-text {
+    padding: 0.3em 0.5em 0.3em calc(2em * var(--level) + var(--icon-width) + 1em);
+}
+
+.am-check-tree-leaf-item:not(.as-is-leaf) .am-check-tree-item-icon-ctn {
+    left: calc(2em * var(--level) + 1.5em);
+}
+
 .am-check-tree-box-list.as-has-desc .am-check-tree-item-desc {
     display: inline-block;
 }
@@ -167,10 +179,10 @@
 
 .am-check-tree-box.as-leaf-only:not(.as-has-leaf) .as-select-list-box-check-all {
     pointer-events: none;
-    color:var(--as-disabled-text-color);
+    color: var(--as-disabled-text-color);
 }
 
-.am-check-tree-box.as-leaf-only:not(.as-has-leaf) .as-select-list-box-check-all label.as-checkbox-input .bound{
+.am-check-tree-box.as-leaf-only:not(.as-has-leaf) .as-select-list-box-check-all label.as-checkbox-input .bound {
     stroke: #929292;
     fill: #ebebe4;
 }
