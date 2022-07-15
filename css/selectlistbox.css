@@ -19,6 +19,10 @@
 }
 
 
+.as-select-list-box.as-enable-search {
+    min-width: 10em;
+}
+
 div.absol-follower.as-select-list-box {
     z-index: 4000000;
 }
@@ -111,3 +115,6 @@ div.absol-follower.as-select-list-box {
 .as-select-list-box.as-value-hidden .absol-selectlist-item.as-selected.as-is-leaft {
     display: none;
 }
+
+
+/**********************************************************************************************************************/
