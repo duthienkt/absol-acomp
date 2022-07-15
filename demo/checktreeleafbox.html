@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+    <meta charset="UTF-8">
+    <title>CheckTreeBox</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<style>
+    :root {
+        font-size: 14px;
+    }
+</style>
+
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+        var strings = absol.string;
+        absol.remoteNodeRequireAsync('./sampledata/com_tree.js').then(items => {
+            items.forEach(function visit(item) {
+                if (item.icon.class.indexOf("mdi-account") >= 0) {
+                    item.isLeaf = true;
+                }
+                if (item.items) item.items.forEach(visit);
+            });
+            _({
+                tag: 'mchecktreeleafbox',
+                props: {
+                    items: items,
+                    enableSearch: true,
+                    values: [],
+                },
+                on: {
+                    change: function () {
+                        var values = this.values;
+                        var texts = values.map(value => this.getItemByValue(value).text);
+                        console.log(texts)
+                    }
+                }
+            }).addTo(document.body);
+        });
+    })();
+</script>
+
+</body>
+</html>

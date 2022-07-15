@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PathMenu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        function render(o) {
+            return _(o).addTo(document.body);
+        }
+
+        render({
+            tag: 'pathmenu',
+            on: {
+                change: function (event) {
+                    absol.require('snackbar').show(event.item.name);
+                    console.log(event.pathItem, event.item)
+                },
+                press: function (event){
+                    console.log(event.pathItem);
+                    absol.require('snackbar').show(event.pathItem.name);
+
+                }
+            },
+            props: {
+                path: [
+                    {
+                        icon: 'span.mdi.mdi-laptop',
+                        items: [
+                            {
+                                name: "C",
+                                icon: 'span.mdi.mdi-harddisk'
+                            },
+                            {
+                                name: "D",
+                                icon: 'span.mdi.mdi-harddisk'
+                            },
+                            {
+                                someThingYouWantTo: 12345,
+                                name: 'Dropbox Device',
+                                icon: 'span.mdi.mdi-dropbox'
+                            },
+                            '===============',
+                            {
+                                name: 'Document',
+                                icon: 'span.mdi.mdi-folder-multiple-image'
+                            },
+                            {
+                                name: 'Picture',
+                                icon: "span.mdi.mdi-folder-pound-outline"
+                            }
+                        ]
+                    },
+                    {
+                        icon: 'span.mdi.mdi-harddisk',
+                        name: 'D',
+                        items: [
+                            {
+                                someThingYouWantTo: 12345,
+                                name: 'WorkSpace',
+                                iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                            },
+                            {
+                                name: 'Games',
+                                iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                            },
+                        ]
+                    },
+                    {
+                        iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                        name: "WorkSpace",
+                        items: [
+                            {
+                                someThingYouWantTo: 12345,
+                                name: 'absol',
+                                iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                            },
+                            {
+                                name: 'absol-acomp',
+                                iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                            },
+                            {
+                                name: 'absol-vchart',
+                                iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                            }
+                        ]
+                    },
+                    {
+                        iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                        name: "absol-js",
+                        items: [
+                            {
+                                someThingYouWantTo: 12345,
+                                name: 'js',
+                                iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                            },
+                            {
+                                name: 'css',
+                                iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                            },
+                            {
+                                name: 'webpack.config.js',
+                                iconSrc: 'https://absol.cf/vivid_exticons/js.svg',
+                            }
+                        ]
+                    },
+                    {
+                        iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                        name: "js",
+                        items: [
+                            {
+                                someThingYouWantTo: 12345,
+                                name: 'core',
+                                iconSrc: 'https://absol.cf/vivid_exticons/folder.svg',
+                            },
+                            {
+                                name: 'index.js',
+                                iconSrc: 'https://absol.cf/vivid_exticons/js.svg',
+                            }
+                        ]
+                    }
+                ]
+            }
+        })
+
+    })();
+</script>
+</body>
+</html>
