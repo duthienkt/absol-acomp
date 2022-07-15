@@ -3,6 +3,7 @@ import MCheckTreeBox from "../checktreebox/MCheckTreeBox";
 import CTLBPropHandlers from "./CTLBPropHandlers";
 import OOP from "absol/src/HTML5/OOP";
 import CheckTreeLeafItem from "./CheckTreeLeafItem";
+import { CTLBModeNormal } from "./CTLBModes";
 
 /***
  * @extends MCheckTreeBox
@@ -19,7 +20,8 @@ OOP.mixClass(MCheckTreeLeafBox, MCheckTreeBox);
 MCheckTreeLeafBox.tag = 'MCheckTreeLeafBox'.toLowerCase();
 
 MCheckTreeLeafBox.prototype.classes = Object.assign({}, MCheckTreeBox.prototype.classes, {
-    ItemElement: CheckTreeLeafItem
+    ItemElement: CheckTreeLeafItem,
+    ModeNormal: CTLBModeNormal
 });
 
 MCheckTreeLeafBox.render = function () {

@@ -25,7 +25,7 @@ MCTBItemListController.prototype.setItems = function (items) {
 };
 
 MCTBItemListController.prototype.update = function () {
-    this.elt.modes.normal = new CTBModeNormal(this.elt, this.items);
+    this.elt.modes.normal = new this.elt.classes.ModeNormal(this.elt, this.items);
     this.hasDesc = this.elt.modes.normal.children.some(holder => holder.hasDesc);
     this.hasIcon = this.elt.modes.normal.children.some(holder => holder.hasIcon);
     if (this.hasDesc) {
@@ -95,7 +95,7 @@ MCTBItemListController.prototype.makeSearch = function (query) {
         return ac;
     }, { items: [], status: {} });
     var normalMode = this.elt.modes.normal;
-    result.mode = new CTBModeSearch(this.elt, result.items);
+    result.mode = new this.elt.classes.ModeSearch(this.elt, result.items);
     result.resetAndGet = function () {
         this.mode.children && this.mode.children.forEach(function resetVisit(holder) {
             var key = keyStringOf(holder.data.value);
