@@ -1,8 +1,8 @@
-import ACore, {_, $} from '../ACore';
+import ACore, { _, $ } from '../ACore';
 import SelectTreeLeafBox from "./SelectTreeLeafBox";
 import OOP from "absol/src/HTML5/OOP";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
-import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import SelectMenu from "./SelectMenu2";
 
 
@@ -75,8 +75,9 @@ SelectTreeLeafMenu.property.items = {
         this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.width + 'px');
         if (this.$selectBox.$selectedItem) {
             this.$holderItem.data = this.$selectBox.$selectedItem.itemData;
-        } else {
-            this.$holderItem.data = {text:''};
+        }
+        else {
+            this.$holderItem.data = { text: '' };
         }
     },
     get: function () {
@@ -89,8 +90,9 @@ SelectTreeLeafMenu.property.value = {
         this.$selectBox.value = value;
         if (this.$selectBox.$selectedItem) {
             this.$holderItem.data = this.$selectBox.$selectedItem.itemData;
-        } else {
-            this.$holderItem.data = {text:''};
+        }
+        else {
+            this.$holderItem.data = { text: '' };
         }
     },
     get: function () {
@@ -136,7 +138,8 @@ SelectTreeLeafMenu.property.isFocus = {
             }.bind(this), 5);
 
             this.$selectBox.viewToSelected();
-        } else {
+        }
+        else {
             this.removeClass('as-focus');
             document.removeEventListener('click', this.eventHandler.clickOut);
             this.$selectBox.remove();
@@ -163,7 +166,8 @@ SelectTreeLeafMenu.eventHandler.clickOut = function (event) {
 
 
 SelectTreeLeafMenu.eventHandler.click = function (event) {
-    this.isFocus = true;
+    if (!this.disabled)
+        this.isFocus = true;
 };
 
 SelectTreeLeafMenu.eventHandler.pressItem = function (event) {
