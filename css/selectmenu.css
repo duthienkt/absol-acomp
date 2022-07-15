@@ -229,3 +229,9 @@
     width: calc(var(--select-list-estimate-width) + 32px);
     min-width: calc(var(--select-list-estimate-width) + 32px);
 }
+
+/***********************************************************************************************************************/
+
+.as-select-menu {
+
+}
