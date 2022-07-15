@@ -3,20 +3,24 @@
  * @param {SelectionItem[]} arr
  * @constructor
  */
-import {  keyStringOf } from "../utils";
+import { keyStringOf } from "../utils";
 
-function ItemDictionary(arr) {
+function ItemDictionary(arr, opt) {
+    this.opt = Object.assign({ depth: true }, opt || {});
     this.arr = arr;
     this.dict = {};
     this.dupKeys = [];
     this.update();
 }
 
+
 ItemDictionary.prototype.update = function () {
     this.dict = {};
     var dict = this.dict;
+    var depth = this.opt.depth;
 
     var dupKeyDict = {};
+
     function scan(arr) {
         var item;
         var key;
@@ -34,8 +38,8 @@ ItemDictionary.prototype.update = function () {
                     item: item
                 };
             }
-            if (item.items  && item.items.length > 0){
-                scan( item.items);
+            if (depth && item.items && item.items.length > 0) {
+                scan(item.items);
             }
         }
     }
