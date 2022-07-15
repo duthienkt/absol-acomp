@@ -10,7 +10,7 @@ import MCTMTokenController from "./MCTMTokenController";
  */
 function MultiCheckTreeMenu() {
     this.$box = _({
-        tag: MCheckTreeBox
+        tag: this.classes.Box
     });
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.boxCtrl = new MMCTMBoxController(this);
@@ -18,6 +18,10 @@ function MultiCheckTreeMenu() {
 }
 
 MultiCheckTreeMenu.tag = 'MultiCheckTreeMenu'.toLowerCase();
+
+MultiCheckTreeMenu.prototype.classes = {
+    Box: MCheckTreeBox
+};
 
 MultiCheckTreeMenu.render = function () {
     return _({
