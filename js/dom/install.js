@@ -4,14 +4,14 @@ import BoardTable from "../BoardTable";
 import Board from "../Board";
 import BScroller from "../BScroller";
 import ButtonArray from "../ButtonArray";
-import CalendarInput, {OldCalendarInput} from "../CalendarInput";
+import CalendarInput, { OldCalendarInput } from "../CalendarInput";
 import CheckboxInput from "../CheckBoxInput";
 import CheckBox from "../CheckBox";
 import ChromeCalendar from "../ChromeCalendar";
 import CircleSectionLabel from "../CircleSectionLabel";
-import {HScrollbar, HScroller, Scrollbar, VScrollbar, VScroller} from "../Scroller";
+import { HScrollbar, HScroller, Scrollbar, VScrollbar, VScroller } from "../Scroller";
 import ContextCaptor from "../ContextMenu";
-import {Dropdown, Dropright, HMenu, HMenuItem, MenuButton, VMenu, VMenuItem, VMenuLine, VRootMenu} from "../Menu";
+import { Dropdown, Dropright, HMenu, HMenuItem, MenuButton, VMenu, VMenuItem, VMenuLine, VRootMenu } from "../Menu";
 import DateInput2 from "../DateInput2";
 import DraggableHStack from "../DraggableHStack";
 import DraggableVStack from "../DraggableVStack";
@@ -21,7 +21,7 @@ import DropPanelStack from "../DropPanelStack";
 import EditableText from "../EditableText";
 import EmojiPicker from "../EmojiPicker";
 import Sprite from "../Sprite";
-import ExpTree, {ExpGroup, ExpNode} from "../ExpTree";
+import ExpTree, { ExpGroup, ExpNode } from "../ExpTree";
 import FlexiconButton from "../FlexiconButton";
 import FlexiconInput from "../FlexiconInput";
 import Follower from "../Follower";
@@ -36,7 +36,7 @@ import HRuler from "../HRuler";
 import IconSprite from "../IconSprite";
 import LinearColorBar from "../LinearColorBar";
 import MediaInput from "../MediaInput";
-import MessageInput, {MessageQuote} from "../messageinput/MessageInput";
+import MessageInput, { MessageQuote } from "../messageinput/MessageInput";
 import NumberInput from "../NumberInput";
 import NumberSpanInput from "../NumberSpanInput";
 import OnScreenWindow from "../OnsScreenWindow";
@@ -95,7 +95,7 @@ import PageIndicator from "../PageIndicator";
 import EmojiCounter from "../EmojiCounter";
 import EmojiCounterList from "../EmojiCounterList";
 import RotatedText from "../RotatedText";
-import VerticalTreeDiagram, {VerticalTreeDiagramNode} from "../VerticalTreeDiagram";
+import VerticalTreeDiagram, { VerticalTreeDiagramNode } from "../VerticalTreeDiagram";
 import TokenField from "../TokenField";
 import DateTimeInput from "../DateTimeInput";
 import ChromeTimePicker from "../ChromeTimePicker";
@@ -141,6 +141,13 @@ import WindowBox from "../WindowBox";
 import MessageDialog from "../MessageDialog";
 import ObjectMergeTool from "../objectmergetool/ObjectMergeTool";
 import TokenizeHyperInput from "../tokenizeiput/TokenizeHyperInput";
+import SelectListBoxV2 from "../selectlistbox/SelectListBox";
+import MCheckTreeBox from "../checktreebox/MCheckTreeBox";
+import PathMenu from "../PathMenu";
+import MultiCheckTreeMenuV2 from '../multichecktreemenu/MultiCheckTreeMenu';
+import MultiCheckTreeLeafMenuV2 from '../multichecktreeleafmenu/MultiCheckTreeLeafMenu';
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import MCheckTreeLeafBox from "../checktreeleafbox/MCheckTreeLeafBox";
 
 
 export var publicCreators = [
@@ -234,6 +241,7 @@ export var publicCreators = [
     QuickListButton,
     QuickMenu,
     QuickPath,
+    PathMenu,
     Radio,
     RadioButton,
     RadioInput,
@@ -250,7 +258,7 @@ export var publicCreators = [
     SelectBox,
     MultiSelectMenu,
     MultiCheckTreeLeafBox,
-    MultiCheckTreeLeafMenu,
+    BrowserDetector.isMobile ? MultiCheckTreeLeafMenuV2 : MultiCheckTreeLeafMenu,
     SelectBoxItem,
 
     DualSelectBox,
@@ -289,7 +297,7 @@ export var publicCreators = [
     MultiCheckMenu,
     CheckTreeItem,
     CheckTreeBox,
-    MultiCheckTreeMenu,
+    BrowserDetector.isMobile ? MultiCheckTreeMenuV2 : MultiCheckTreeMenu,
     MessageDialog,
     YesNoQuestionDialog,
     TOCItem,
@@ -308,8 +316,10 @@ export var publicCreators = [
     KVCommentItem,
     DynamicTable,
     ObjectMergeTool,
-    TokenizeHyperInput
-
+    TokenizeHyperInput,
+    SelectListBoxV2,
+    MCheckTreeBox,
+    MCheckTreeLeafBox
 ];
 
 /***
