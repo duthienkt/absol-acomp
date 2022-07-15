@@ -425,10 +425,7 @@ function DTSearchFactor(global) {
 
             setTimeout(tick, 5);
         }
-
         tick();
-
-        // console.log(this.pendingTask);
     };
 
 
