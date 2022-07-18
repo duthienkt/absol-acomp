@@ -48,3 +48,18 @@ textarea.as-text-input:disabled {
         color: var(--text-color);
     }
 }
+
+.as-mti-star {
+    font-family: 'Material Icons';
+    color: #ffa834;
+    font-size: var(--icon-font-size);
+    -webkit-font-smoothing: antialiased;
+}
+
+.as-mti-star::before {
+    content: "star";
+}
+
+.as-cursor-pointer {
+    cursor: pointer;
+}
