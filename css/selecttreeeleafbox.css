@@ -1,0 +1,123 @@
+.am-select-tree-leaf-box {
+    min-width: 10em;
+}
+
+.am-select-tree-leaf-box-body {
+    overflow-y: auto;
+    max-height: calc(80vh - 2em);
+}
+
+.am-select-tree-leaf-box.as-enable-search .am-select-tree-leaf-box-body {
+    max-height: calc(80vh - 4em - 10px);
+}
+
+
+.am-select-tree-leaf-item {
+    display: block;
+    white-space: nowrap;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    --level: 0;
+    --icon-width: 0px;
+}
+
+.am-select-tree-leaf-item:active {
+    background-color: #efefef;
+}
+
+.am-select-tree-leaf-item.as-selected {
+    background-color: #dfdfdf;
+}
+
+
+.am-select-tree-leaf-item.as-has-icon {
+    --icon-width: 2.7em;
+}
+
+
+.am-select-tree-leaf-item-toggle-ctn,
+.am-select-tree-leaf-item-icon-ctn,
+.am-select-tree-leaf-item-checkbox-ctn {
+    position: absolute;
+    white-space: nowrap;
+    top: 0;
+    bottom: 0;
+}
+
+.am-select-tree-leaf-item-toggle-ctn {
+    left: calc(2em * var(--level) + 0.2em);
+    width: 1.5em;
+    text-align: center;
+}
+
+.am-select-tree-leaf-item-toggle-ctn > svg {
+    width: 0.7em;
+    height: 0.7em;
+}
+
+
+.am-select-tree-leaf-item-icon-ctn {
+    left: calc(2em * var(--level) + 1.7em);
+}
+
+
+.am-select-tree-leaf-item-icon-ctn > svg {
+    display: inline-block;
+    vertical-align: middle;
+
+}
+
+.am-select-tree-leaf-item-icon-ctn {
+
+}
+
+.am-select-tree-leaf-item.as-status-open svg .toggle-close,
+.am-select-tree-leaf-item.as-status-close svg .toggle-open,
+.am-select-tree-leaf-item:not(.as-status-close):not(.as-status-open) .am-select-tree-leaf-item-toggle-ctn {
+    display: none;
+}
+
+.am-select-tree-leaf-item-icon-ctn::before,
+.am-select-tree-leaf-item-toggle-ctn::before,
+.am-select-tree-leaf-item-checkbox-ctn::before {
+    content: "";
+    height: 100%;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.am-select-tree-leaf-item-icon-ctn:empty {
+    display: none;
+}
+
+.am-select-tree-leaf-item-icon-ctn > span {
+    font-size: 1.8em;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+.am-select-tree-leaf-item-icon-ctn img,
+.am-select-tree-leaf-item-icon-ctn svg {
+    width: 1.8em;
+    height: 1.8em;
+    display: inline-block;
+}
+
+
+.am-select-tree-leaf-item-text {
+    width: var(--text-width);
+    box-sizing: border-box;
+    padding: 0.3em 0.5em 0.3em calc(1.2em + 2em * var(--level) + var(--icon-width));
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1.5;
+    white-space: normal;
+}
+
+
+.am-select-tree-leaf-item-desc {
+    display: none;
+    vertical-align: middle;
+}

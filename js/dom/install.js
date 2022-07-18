@@ -148,6 +148,7 @@ import MultiCheckTreeMenuV2 from '../multichecktreemenu/MultiCheckTreeMenu';
 import MultiCheckTreeLeafMenuV2 from '../multichecktreeleafmenu/MultiCheckTreeLeafMenu';
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MCheckTreeLeafBox from "../checktreeleafbox/MCheckTreeLeafBox";
+import MSelectTreeLeafBox from "../selecttreeleafbox/MSelectTreeLeafBox";
 
 
 export var publicCreators = [
@@ -319,7 +320,8 @@ export var publicCreators = [
     TokenizeHyperInput,
     SelectListBoxV2,
     MCheckTreeBox,
-    MCheckTreeLeafBox
+    MCheckTreeLeafBox,
+    MSelectTreeLeafBox
 ];
 
 /***
