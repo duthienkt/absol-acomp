@@ -149,7 +149,7 @@ import MultiCheckTreeLeafMenuV2 from '../multichecktreeleafmenu/MultiCheckTreeLe
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MCheckTreeLeafBox from "../checktreeleafbox/MCheckTreeLeafBox";
 import MSelectTreeLeafBox from "../selecttreeleafbox/MSelectTreeLeafBox";
-
+import SelectTreeLeafMenuV2 from '../selecttreeleafmenu/SelectTreeLeafMenu';
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -269,7 +269,7 @@ export var publicCreators = [
     SelectTable2,
     SelectTreeMenu,
     SelectTreeLeafBox,
-    SelectTreeLeafMenu,
+    BrowserDetector.isMobile ? SelectTreeLeafMenuV2 : SelectTreeLeafMenu,
     SpanInput,
     SnackBar,
     StaticTabbar,

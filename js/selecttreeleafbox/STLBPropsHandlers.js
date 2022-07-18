@@ -15,7 +15,7 @@ STLBPropsHandlers.items = {
             }
         }
         this.itemListCtrl.setItems(items);
-        if (selected|| this.strictValue) this.modes.normal.setValue(curValue, this.strictValue);
+        if (selected || this.strictValue) this.modes.normal.setValue(curValue, this.strictValue);
         if (this.mode !== this.modes.normal) {
             this.mode.updateSelectedFromRef();
         }
@@ -29,10 +29,10 @@ STLBPropsHandlers.items = {
 STLBPropsHandlers.strictValue = {
     set: function (value) {
         if (value) {
-            this.addClass('as-strict-value');
+            this.$box.addClass('as-strict-value');
         }
         else {
-            this.removeClass('as-strict-value');
+            this.$box.removeClass('as-strict-value');
         }
 
         this.modes.normal.setValue(this.pendingValue, this.strictValue);
@@ -41,7 +41,7 @@ STLBPropsHandlers.strictValue = {
         }
     },
     get: function () {
-        return this.hasClass('as-strict-value');
+        return this.$box.hasClass('as-strict-value');
     }
 };
 
@@ -57,15 +57,30 @@ STLBPropsHandlers.value = {
     },
     get: function () {
         if ('pendingValue' in this) {
-           return this.pendingValue;
+            return this.pendingValue;
         }
         else {
             try {
                 return this.modes.normal.getValue(this.strictValue);
             } catch (err) {
-               return undefined;
+                return undefined;
             }
         }
+    }
+};
+
+STLBPropsHandlers.enableSearch = {
+    set: function (value) {
+        if (value) {
+            this.$box.addClass('as-enable-search');
+        }
+        else {
+            this.$box.removeClass('as-enable-search');
+
+        }
+    },
+    get: function () {
+        return this.$box.hasClass('as-enable-search');
     }
 };
 

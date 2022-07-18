@@ -17,6 +17,27 @@
     background-color: #efefef;
 }
 
-.as-select-tree-leaf-item.as-selected>.absol-exp-node{
+.as-select-tree-leaf-item.as-selected > .absol-exp-node {
     background-color: #dfdfdf;
+}
+
+.am-select-tree-menu.absol-selectmenu {
+    width: auto;
+}
+
+.am-select-tree-menu .absol-selectmenu-holder-item {
+    position: relative;
+    left: unset;
+    right: unset;
+    top: unset;
+    bottom: unset;
+    height: 100%;
+    max-width: 100%;
+}
+
+
+.am-select-tree-menu .absol-selectlist-item-text {
+    max-width: calc(100vw - 200px);/**TODO: find better solution*/
+    text-overflow: ellipsis;
+    overflow: hidden;
 }

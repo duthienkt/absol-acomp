@@ -28,6 +28,12 @@ export function STLBModeNormal(elt, items) {
 
 STLBModeNormal.prototype.getHolderByValue = CTBModeNormal.prototype.getHolderByValue;
 
+STLBModeNormal.prototype.getItemByValue = function (value) {
+    var holder = this.getHolderByValue(value);
+    if (holder) return holder.data;
+    return null;
+};
+
 STLBModeNormal.prototype.getFirstLeafHolder = function () {
     var res = null;
     if (this.children) {
@@ -115,7 +121,7 @@ STLBModeSearch.prototype.updateSelectedFromRef = function () {
     this.selectedHolder = null;
     var value = this.elt.value;
     var holder = this.dict[keyStringOf(value)];
-    if (holder){
+    if (holder) {
         holder.select(true);
         this.selectedHolder = holder;
     }
