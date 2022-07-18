@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+
+    <meta charset="UTF-8">
+    <title>SelectTreeLeafBox</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    function render(o) {
+        return absol._(o).addTo(document.body);
+    }
+
+</script>
+<script>
+    (function () {
+        var menu = render({
+            tag: 'mselecttreeleafbox',
+            props: {
+                value: -100073,
+                // strictValue: true
+            },
+            on: {
+                pressitem: function (event) {
+                    console.log(this.value);
+                },
+                close: function () {
+                    console.log('close');
+                }
+            }
+        });
+
+        absol.remoteNodeRequireAsync('./sampledata/com_tree_no_select.js').then((items) => {
+            items.forEach(function visit(item) {
+                if (item.icon.class.indexOf("mdi-account") >= 0) {
+                    item.isLeaf = true;
+                }
+                if (item.items) item.items.forEach(visit);
+                // if (item.value === 29) item.noSelect = true;
+            });
+            menu.items = items;
+            console.log('After set:', menu.value);
+
+
+        });
+    })();
+</script>
+
+</body>
+</html>
