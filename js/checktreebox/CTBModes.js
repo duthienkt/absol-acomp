@@ -19,6 +19,10 @@ export function CTBModeNormal(elt, items) {
     this.children = items.map(item => new this.elt.classes.ItemHolder(elt, this, item));
     this.hasLeaf = this.children.some(holder => holder.hasLeaf);
     this.hasNoSelect = this.children.some(holder => holder.hasNoSelect);
+
+    this.hasDesc = this.children.some(holder => holder.hasDesc);
+    this.hasIcon = this.children.some(holder => holder.hasIcon);
+
     if (this.hasLeaf) {
         this.elt.addClass('as-has-leaf');
     }

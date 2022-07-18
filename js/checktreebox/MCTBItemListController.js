@@ -25,23 +25,22 @@ MCTBItemListController.prototype.setItems = function (items) {
 };
 
 MCTBItemListController.prototype.update = function () {
-    this.elt.modes.normal = new this.elt.classes.ModeNormal(this.elt, this.items);
-    this.hasDesc = this.elt.modes.normal.children.some(holder => holder.hasDesc);
-    this.hasIcon = this.elt.modes.normal.children.some(holder => holder.hasIcon);
-    if (this.hasDesc) {
+    var mode = new this.elt.classes.ModeNormal(this.elt, this.items);
+    this.elt.modes.normal = mode;
+    if (mode.hasDesc) {
         this.elt.$list.addClass('as-has-desc');
     }
     else {
         this.elt.$list.removeClass('as-has-desc');
     }
-    if (this.hasIcon) {
+    if (mode.hasIcon) {
         this.elt.$list.addClass('as-has-icon');
     }
     else {
         this.elt.$list.removeClass('as-has-icon');
     }
-    this.elt.mode = this.elt.modes.normal;
-    this.elt.mode.onStart();
+    this.elt.mode = mode;
+    mode.onStart();
     this._searchItems = prepareSearchForList(copySelectionItemArray(this.items));
     this._searchCache = {};
 };
