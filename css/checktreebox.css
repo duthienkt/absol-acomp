@@ -48,7 +48,7 @@
     max-height: calc(80vh - 2em);
 }
 
-.am-check-tree-bo.as-enable-search .am-check-tree-box-body {
+.am-check-tree-box.as-enable-search .am-check-tree-box-body {
     max-height: calc(80vh - 4em - 10px);
 }
 
