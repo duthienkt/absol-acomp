@@ -71,10 +71,18 @@ div.as-dropdown-box-common-style {
 
 /********** MOBILE ***************/
 
+.am-modal.am-dropdown-box-modal{
+    z-index: 100001000;
+}
+
 .am-dropdown-box {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1rem;
     max-width: 95vw;
+}
+
+.am-dropdown-box.as-enable-search .absol-search-text-input{
+    visibility: visible;
 }
 
 .am-dropdown-box-header {
@@ -94,6 +102,7 @@ div.as-dropdown-box-common-style {
     vertical-align: middle;
     box-sizing: border-box;
     background-color: white;
+    visibility: hidden;
 }
 
 .am-dropdown-box-close-btn {

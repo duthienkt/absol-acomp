@@ -63,7 +63,7 @@ MCheckTreeBox.tag = 'MCheckTreeBox'.toLowerCase();
 MCheckTreeBox.render = function () {
     return _({
         extendEvent: ['change', 'close', 'cancel'],
-        class: 'am-modal',
+        class: ['am-modal', 'am-dropdown-box-modal'],
         child: {
             class: ['am-check-tree-box', 'am-dropdown-box', 'as-dropdown-box-common-style'],
             child: [
