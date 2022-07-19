@@ -11,10 +11,12 @@ STLMPropHandlers.isFocus = {
             this.addClass('as-focus');
             this.savedValue = this.$box.value;
             this.boxCtrl.onFocus();
+            this.$box.viewToSelected();
         }
         else {
             this.removeClass('as-focus');
             this.boxCtrl.onBlur();
+            this.$box.resetSearchState();
             if (keyStringOf(this.savedValue) !== keyStringOf(this.$box.value)) {
                 this._updateText();
                 this.notifyChange();

@@ -1,5 +1,5 @@
 import MSTBItemHolder from "./MSTBItemHolder";
-import { keyStringOf } from "../utils";
+import { keyStringOf, vScrollIntoView } from "../utils";
 import { CTBModeNormal } from "../checktreebox/CTBModes";
 
 export function STLBModeNormal(elt, items) {
@@ -91,6 +91,23 @@ STLBModeNormal.prototype.getValue = function (strict) {
     }
 };
 
+
+STLBModeNormal.prototype.viewToSelected = function () {
+    if (!this.selectedHolder) return;
+    var visitUp = (node) => {
+        var parent = node.parent;
+        if (parent !== this) {
+            visitUp(parent);
+        }
+        if (node.status === 'close') {
+            node.elt.status = 'open';
+            node.ev_statusChange();
+        }
+    }
+
+    visitUp(this.selectedHolder);
+    vScrollIntoView(this.selectedHolder.elt);
+};
 
 STLBModeNormal.prototype.onStop = function () {
 

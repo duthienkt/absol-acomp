@@ -12,7 +12,7 @@ import { hitElement } from "absol/src/HTML5/EventEmitter";
  * @constructor
  */
 function MSelectTreeLeafBox() {
-   this.$box = $('.am-dropdown-box', this);
+    this.$box = $('.am-dropdown-box', this);
     this.$list = $('.am-select-tree-leaf-box-list', this);
     this.itemListCtrl = new MSTLBItemListController(this);
     this.$searchInput = $(SearchTextInput.tag, this).on('stoptyping', this.eventHandler.searchTextInputModify);
@@ -64,7 +64,7 @@ MSelectTreeLeafBox.render = function () {
 
 
 MSelectTreeLeafBox.prototype.viewToSelected = function () {
-    console.log("TODO")
+    this.modes.normal.viewToSelected();
 };
 
 MSelectTreeLeafBox.prototype.notifyPressItem = function () {
@@ -75,6 +75,8 @@ MSelectTreeLeafBox.prototype.notifyPressItem = function () {
 MSelectTreeLeafBox.prototype.getItemByValue = function (value) {
     return this.modes.normal.getItemByValue(value);
 };
+
+MSelectTreeLeafBox.prototype.resetSearchState = MCheckTreeBox.prototype.resetSearchState;
 
 MSelectTreeLeafBox.property = STLBPropsHandlers;
 
