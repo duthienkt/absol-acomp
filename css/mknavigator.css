@@ -52,6 +52,10 @@
     background-color: rgb(169, 169, 172, 0.3);
 }
 
+.mk-nav-item.as-hidden{
+    display: none;
+}
+
 .mk-nav-item-text-ctn {
     flex-grow: 1;
     padding-right: var(--control-horizontal-distance-2);

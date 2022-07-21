@@ -17,6 +17,7 @@ import MKNavigatorItem from "./MKNavigatorItem";
 function MKNavigator() {
     this._items = [];
     this._value = 0;
+    this._hiddenValues = [];
     this.$itemByValue = {};
 
     this.$header = $('.mk-nav-header', this);
@@ -73,7 +74,8 @@ MKNavigator.prototype.updateValue = function () {
     else if (order.length > 0) {
         this.$itemByValue[order[0]].addClass('mk-current');
     }
-    var idx = order.indexOf(value);
+    var idx = order.filter(value => !this.$itemByValue[value].hasClass('as-hidden')).indexOf(value);
+
     if (idx >= 0) {
         this.addStyle('--mk-nav-line-top', idx * 40 + 'px');
     }
@@ -93,6 +95,9 @@ MKNavigator.prototype.mkItem = function (data) {
     var self = this;
     return _({
         tag: MKNavigatorItem.tag,
+        attr: {
+            "data-value": data && data.value
+        },
         props: {
             data: data
         },
@@ -121,6 +126,21 @@ MKNavigator.prototype.mkItem = function (data) {
     });
 };
 
+
+MKNavigator.prototype._updateHiddenValues = function () {
+    var hiddenDict = this._hiddenValues.reduce((ac, x) => {
+        ac[x] = true;
+        return ac;
+    }, {})
+    Object.keys(this.$itemByValue).forEach(value => {
+        if (hiddenDict[value]) {
+            this.$itemByValue[value].addClass('as-hidden');
+        }
+        else {
+            this.$itemByValue[value].removeClass('as-hidden');
+        }
+    });
+};
 
 MKNavigator.property = {};
 
@@ -171,6 +191,7 @@ MKNavigator.property.items = {
         else {
             this.removeClass('mk-has-draggable');
         }
+        this._updateHiddenValues();
     },
     get: function () {
         return this._items;
@@ -198,6 +219,21 @@ MKNavigator.property.value = {
         return this._value;
     }
 };
+
+MKNavigator.property.hiddenValues = {
+    set: function (values) {
+        values = values || [];
+        if (!(values instanceof Array)) values = [];
+        this._hiddenValues = values;
+        this._updateHiddenValues();
+        this.updateValue();
+    },
+    get: function () {
+        return this._hiddenValues;
+    }
+
+}
+
 
 /***
  * @memberOf MKNavigator#
