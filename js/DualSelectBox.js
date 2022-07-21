@@ -79,31 +79,13 @@ DualSelectBox.render = function () {
                 child: [
                     {
                         class: ['as-dual-select-box-list', 'absol-selectlist', 'as-bscroller'],
-                        child: Array(200).fill(null).map(function (u, i) {
-                            return {
-                                class: 'absol-selectlist-item',
-                                child: {
-                                    tag: 'span',
-                                    child: { text: 'item ' + i }
-                                }
-                            };
-                        })
                     },
                     {
                         class: 'as-dual-select-box-arrow-ctn',
                         child: 'span.mdi.mdi-menu-right'
                     },
                     {
-                        class: ['as-dual-select-box-list', 'absol-selectlist', 'as-bscroller'],
-                        child: Array(200).fill(null).map(function (u, i) {
-                            return {
-                                class: 'absol-selectlist-item',
-                                child: {
-                                    tag: 'span',
-                                    child: { text: 'item ' + i }
-                                }
-                            };
-                        })
+                        class: ['as-dual-select-box-list', 'absol-selectlist', 'as-bscroller']
                     }
                 ]
             },
@@ -239,9 +221,9 @@ DualSelectBox.prototype._calcEstimateSize = function (items) {
     var rightTextWidth = longestItem ? measureText(longestItem.text, '14px arial').width : 0;
 
     return {
-        width: (7 + leftTextWidth + 7 + 5 + 7 + 1 + 17 + 1 + 7 + rightTextWidth + 7 + 5 + 7 + 20)* fontSize/14,
-        height: maxN * 20* fontSize/14,
-        textWidth: (leftTextWidth + rightTextWidth + 12)* fontSize/14
+        width: (7 + leftTextWidth + 7 + 5 + 7 + 1 + 17 + 1 + 7 + rightTextWidth + 7 + 5 + 7 + 20) * fontSize / 14,
+        height: maxN * 20 * fontSize / 14,
+        textWidth: (leftTextWidth + rightTextWidth + 12) * fontSize / 14
     }
 };
 
