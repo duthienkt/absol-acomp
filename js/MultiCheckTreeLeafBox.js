@@ -4,7 +4,7 @@ import ExpTree from "./ExpTree";
 import '../css/selecttreeleafmenu.css';
 import SelectListBox from "./SelectListBox";
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
-import { estimateWidth14 } from "./utils";
+import { copySelectionItemArray, estimateWidth14 } from "./utils";
 import CheckboxInput from "./CheckBoxInput";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 
@@ -293,7 +293,7 @@ MultiCheckTreeLeafBox.property.items = {
         var self = this;
         this._savedStatus = {};
         this._searchCache = {};
-        items = items || [];
+        items = copySelectionItemArray(items ||[], { removeNoView: true });
         this._items = items;
         prepareSearchForList(items);
         this.$content.clearChild();

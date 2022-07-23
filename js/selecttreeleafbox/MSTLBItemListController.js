@@ -11,7 +11,7 @@ function MSTLBItemListController(elt) {
 
 MSTLBItemListController.prototype.setItems = function (items) {
     if (!items || !items.forEach || !items.map) items = [];
-    this.items = copySelectionItemArray(items);
+    this.items = copySelectionItemArray(items, { removeNoView: true });
     this.update();
 };
 

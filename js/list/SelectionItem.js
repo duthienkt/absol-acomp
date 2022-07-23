@@ -15,5 +15,6 @@
  * @property {SelectionItem[]|undefined} items
  * @property {SelectionItem|undefined} ref
  * @property {boolean} noSelect
+ * @property {boolean} noView
  * @module SelectionItem
 */

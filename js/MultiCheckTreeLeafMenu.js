@@ -66,6 +66,10 @@ MultiCheckTreeLeafMenu.prototype._updateSelectedItems = function () {
         item = this.$selectBox.$itemByValue[values[i]] && this.$selectBox.$itemByValue[values[i]].itemData;
         if (item) {
             this.$itemCtn.childNodes[i].data = item;
+            this.$itemCtn.childNodes[i].removeStyle('display', 'none');
+        }
+        else {
+            this.$itemCtn.childNodes[i].addStyle('display', 'none');
         }
     }
 };
@@ -111,12 +115,17 @@ MultiCheckTreeLeafMenu.property.items = {
 
 MultiCheckTreeLeafMenu.property.values = {
     set: function (values) {
-        this.$selectBox.values = values || [];
+        values = values ||[];
+        this.pendingValues = values ;
+        this.$selectBox.values = values ;
         this._updateSelectedItems();
 
     },
     get: function () {
-        return this.$selectBox.values.slice();
+        if ('pendingValues' in this) return this.pendingValues;
+        return this.$selectBox.values.slice().filter(value=>{
+            return !!this.$selectBox.$itemByValue[value];
+        });
     }
 };
 
@@ -139,6 +148,7 @@ MultiCheckTreeLeafMenu.eventHandler.click = function (event) {
 };
 
 MultiCheckTreeLeafMenu.eventHandler.selectBoxChange = function () {
+    delete this.pendingValues;
     this._updateSelectedItems();
     this.emit('change', { type: 'change', target: this }, this);
 };

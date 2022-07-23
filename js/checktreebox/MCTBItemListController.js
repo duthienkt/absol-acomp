@@ -20,7 +20,7 @@ OOP.mixClass(MCTBItemListController, ListDictionary);
 MCTBItemListController.prototype.setItems = function (items) {
     items = items || [];
     if (!items.forEach || !items.map) items = [];
-    this.items = copySelectionItemArray(items);
+    this.items = copySelectionItemArray(items, { removeNoView: true });
     this.update();
 };
 

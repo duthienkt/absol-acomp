@@ -1,10 +1,11 @@
 import '../css/selectlistbox.css';
-import {prepareSearchForList, searchListByText} from "./list/search";
+import { prepareSearchForList, searchListByText } from "./list/search";
 import ACore from "../ACore";
-import {measureListSize, releaseItem, requireItem} from "./SelectList";
+import { measureListSize, releaseItem, requireItem } from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
-import {getScreenSize} from "absol/src/HTML5/Dom";
-import {depthIndexingByValue, indexingByValue} from "./list/listIndexing";
+import { getScreenSize } from "absol/src/HTML5/Dom";
+import { depthIndexingByValue, indexingByValue } from "./list/listIndexing";
+import { copySelectionItemArray } from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -173,7 +174,8 @@ SelectListBox.prototype._updateSelectedItem = function () {
             var value = itemElt.value + '';
             if (valueDict[value]) {
                 itemElt.selected = true;
-            } else {
+            }
+            else {
                 itemElt.selected = false;
             }
         });
@@ -241,8 +243,10 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
             }.bind(this));
             this.domSignal.emit('scrollIntoSelected');
             return true;
-        } else return false;
-    } else
+        }
+        else return false;
+    }
+    else
         return false;
 };
 
@@ -272,11 +276,11 @@ SelectListBox.prototype.resetSearchState = function () {
 };
 
 SelectListBox.prototype.notifyPressOut = function () {
-    this.emit('pressout', {target: this, type: 'pressout'}, this);
+    this.emit('pressout', { target: this, type: 'pressout' }, this);
 };
 
 SelectListBox.prototype.notifyPressClose = function () {
-    this.emit('pressclose', {target: this, type: 'pressclose'}, this);
+    this.emit('pressclose', { target: this, type: 'pressclose' }, this);
 };
 
 SelectListBox.prototype._findFirstPageIdx = function () {
@@ -353,7 +357,7 @@ SelectListBox.prototype._implicit = function (values) {
             ac.result.push(cr);
         }
         return ac;
-    }, {result: [], dict: {}}).result;
+    }, { result: [], dict: {} }).result;
 };
 
 SelectListBox.prototype._explicit = function (values) {
@@ -361,7 +365,8 @@ SelectListBox.prototype._explicit = function (values) {
         return values.filter(function (value) {
             return !!this._itemNodeHolderByValue[value];
         }.bind(this));
-    } else {
+    }
+    else {
         return values.slice();
     }
 };
@@ -386,6 +391,7 @@ SelectListBox.property.items = {
     set: function (items) {
         items = items || [];
         if (!(items instanceof Array)) items = [];
+        items = copySelectionItemArray(items, { removeNoView: true });
         prepareSearchForList(items);
         this._items = items;
         this._itemNodeList = this._itemsToNodeList(this._items);
@@ -421,7 +427,8 @@ SelectListBox.property.strictValue = {
     set: function (value) {
         if (value) {
             this.addClass('as-strict-value');
-        } else {
+        }
+        else {
             this.removeClass('as-strict-value');
         }
     },
@@ -437,7 +444,8 @@ SelectListBox.property.displayValue = {
         this._updateItemNodeIndex();
         if (value === VALUE_HIDDEN) {
             this.addClass('as-value-hidden');
-        } else {
+        }
+        else {
             this.removeClass('as-value-hidden');
         }
     },
