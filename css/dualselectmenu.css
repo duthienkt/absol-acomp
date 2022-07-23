@@ -94,3 +94,15 @@
     min-width: calc(var(--dual-list-estimate-text-width) + 5.5em);
     --dual-list-estimate-text-width: 20px;
 }
+
+
+.am-dual-select-menu .absol-selectmenu-holder-item{
+    position: relative;
+    height: 100%;
+    top: unset;
+    bottom: unset;
+}
+
+.am-dual-select-menu{
+    width: auto;
+}

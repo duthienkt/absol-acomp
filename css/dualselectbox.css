@@ -1,0 +1,18 @@
+.am-dual-select-box {
+
+}
+
+
+.am-dual-select-box .absol-selectlist-item span {
+    white-space: normal;
+    display: inline-block;
+    margin-right: 0;
+}
+
+.am-dual-select-box .absol-selectlist-item {
+    height: auto;
+}
+
+.am-dual-select-box .absol-selectlist-item:not(:last-child) {
+    border-bottom: 1px solid #efefef;
+}
