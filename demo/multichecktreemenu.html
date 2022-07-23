@@ -85,12 +85,12 @@
             });
             menu.items = items;
 
-            items_url.href =  URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)],  { type: 'text/plain;charset=utf-8;' }))
+            items_url.href = URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)], { type: 'text/plain;charset=utf-8;' }))
         });
 
         var items_url = render({
             tag: 'a',
-            props: {  target: '__blank' },
+            props: { target: '__blank' },
             child: { text: 'view items' }
         });
         render('.break-page');
@@ -100,31 +100,29 @@
 
 <script class="viewable">
     (function () {
-        (function () {
-            render('<h2>noSelect</h2>');
-            var menu = render({
-                tag: 'multichecktreemenu',
-                props: {
-                    values: [-100037, -100034, -100000],
-                    enableSearch: true
-                },
-                on: {
-                    change: function () {
-                        absol.require('snackbar').show(JSON.stringify(this.values))
-                    }
+        render('<h2>noSelect</h2>');
+        var menu = render({
+            tag: 'multichecktreemenu',
+            props: {
+                values: [-100037, -100034, -100000],
+                enableSearch: true
+            },
+            on: {
+                change: function () {
+                    absol.require('snackbar').show(JSON.stringify(this.values))
                 }
-            });
-            absol.remoteNodeRequireAsync('./sampledata/com_tree_no_select.js').then((items) => {
-                menu.items = items;
-            });
+            }
+        });
+        absol.remoteNodeRequireAsync('./sampledata/com_tree_no_select.js').then((items) => {
+            menu.items = items;
+        });
 
-            render({
-                tag: 'a',
-                props: { href: './sampledata/com_tree_no_select.js', target: '__blank' },
-                child: { text: 'view items' }
-            });
-            render('.break-page');
-        })();
+        render({
+            tag: 'a',
+            props: { href: './sampledata/com_tree_no_select.js', target: '__blank' },
+            child: { text: 'view items' }
+        });
+        render('.break-page');
     })();
 </script>
 
@@ -154,12 +152,12 @@
             });
             menu.items = items;
 
-            items_url.href =  URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)],  { type: 'text/plain;charset=utf-8;' }))
+            items_url.href = URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)], { type: 'text/plain;charset=utf-8;' }))
         });
 
         var items_url = render({
             tag: 'a',
-            props: {  target: '__blank' },
+            props: { target: '__blank' },
             child: { text: 'view items' }
         });
         render('.break-page');

@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
 
     <meta charset="UTF-8">
-    <title>DualSelectMenu</title>
+    <title>DualSelectBox</title>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
 </head>
 <body>
@@ -50,65 +50,26 @@
             return _(o).addTo(document.body);
         }
 
-
-
-        render({ style: { height: '70vh' } });
-        render('<h2>DualSelectMenu</h2>');
-
-        var dsm = render({
-            tag: 'dualselectmenu',
+        var box = render({
+            tag: 'mdualselectbox',
+            class: ['as-anchor-1'],
+            style: {},
             props: {
                 value: ['Vietnam', 'Kon Tum'],
                 enableSearch: true,
-                //default format: "$0, $1"
-                format:'City: $1, Country: $0'
             },
-            on:{
-                change: function (){
-                    absol.require('snackbar').show(this.value.join(' - '));
+            on: {
+                change: function () {
+                    console.log(this.value, this.selectedItem);
                 }
             }
         });
-
-        render({ style: { height: '30vh' } });
-
-        dataSync.then(function (items) {
-
-            var itemJS = 'module.exports = ' + absol.generateJSVariable(items);
-            var downloadBtn = _({
-                tag: 'flexiconbutton',
-                style: {
-                    marginLeft: '20px',
-                    height: '30px'
-                },
-
-                props: {
-                    text: 'Tải xuống items mẫu',
-                    icon: 'span.mdi.mdi-download'
-                },
-                on: {
-                    click: function () {
-                        absol.FileSaver.saveTextAs(itemJS, 'example_items.js');
-                    }
-                }
-            });
-            $(document.body).addChildAfter(downloadBtn, dsm);
-            dsm.items = items;
-            var l = new absol.ListDictionary(items);
-            console.log(l);
-        });
-
+        dataSync.then(items => {
+            box.items = items;
+            box.viewToSelected();
+        })
     })();
 </script>
-<pre><code>
-     var dsm = _({
-            tag: 'dualselectmenu',
-            props: {
-                value: ['Vietnam', 'Kon Tum'],
-                // enableSearch: true
-                items: your_items
-            },
-        });</code>
-</pre>
+
 </body>
 </html>
