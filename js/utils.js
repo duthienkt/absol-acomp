@@ -862,13 +862,18 @@ export function rootTreeValues2CheckedValues(items, values) {
 /***
  *
  * @param {SelectionItem[]} items
+ * @param {{removeNoView?: boolean}=} opt
  * @returns {SelectionItem[]}
  */
-export function copySelectionItemArray(items) {
+export function copySelectionItemArray(items, opt) {
+    opt = opt || {};
+    if (opt.removeNoView) {
+        items = items.filter((item) => !item.noView);
+    }
     return items.map(item => {
         var newItem = Object.assign({}, item);
         if (item.items) {
-            newItem.items = copySelectionItemArray(item.items);
+            newItem.items = copySelectionItemArray(item.items, opt);
         }
         return newItem;
     });
