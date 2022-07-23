@@ -150,6 +150,8 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MCheckTreeLeafBox from "../checktreeleafbox/MCheckTreeLeafBox";
 import MSelectTreeLeafBox from "../selecttreeleafbox/MSelectTreeLeafBox";
 import SelectTreeLeafMenuV2 from '../selecttreeleafmenu/SelectTreeLeafMenu';
+import MDualSelectBox from "../dualselectbox/MDualSelectBox";
+import DualSelectMenuV2 from '../dualselectmenu/DualSelectMenu';
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -263,7 +265,7 @@ export var publicCreators = [
     SelectBoxItem,
 
     DualSelectBox,
-    DualSelectMenu,
+    BrowserDetector.isMobile ?DualSelectMenuV2: DualSelectMenu,
 
     SelectTable,
     SelectTable2,
@@ -321,7 +323,8 @@ export var publicCreators = [
     SelectListBoxV2,
     MCheckTreeBox,
     MCheckTreeLeafBox,
-    MSelectTreeLeafBox
+    MSelectTreeLeafBox,
+    MDualSelectBox
 ];
 
 /***
