@@ -165,7 +165,15 @@ function DTSearchFactor(global) {
         return true;
     }
 
-    var logged = false;
+    function toComparable(x){
+        if (!x) return x;
+        var type = typeof x;
+        if (type === 'string') return x;
+        if (type === "number") return x;
+        if (type === "boolean" ) return x;
+        if (type.getTime) return  type.getTime();
+        return x;
+    }
 
     function keyCmp(itemKey, filterKey) {
         if (itemKey === filterKey) return true;
@@ -185,10 +193,10 @@ function DTSearchFactor(global) {
                 else if (('min' in filterKey) || ('max' in filterKey)) {
                     res = true;
                     if ('min' in filterKey) {
-                        res = res && x >= filterKey.min;
+                        res = res && toComparable(x) >= toComparable(filterKey.min);
                     }
                     if ('max' in filterKey) {
-                        res = res && x <= filterKey.max;
+                        res = res && toComparable(x) <= toComparable(filterKey.max);
                     }
                 }
             }
