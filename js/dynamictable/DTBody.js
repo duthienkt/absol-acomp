@@ -61,6 +61,9 @@ SearchingMaster.prototype.transferFrom = function (offset) {
         var rows = self.body.rows;
         var n = self.body.rows.length;
         if (i >= n) {
+            if (n === 0){
+                self.share.thread.invoke('transferSearchItems', self.id, n, 0, 0, [], self.itemVersion);
+            }
             self.isTranferring = false;
             self.onFinishTransfer();
             waitingCtrl.end(wTkn);
@@ -414,6 +417,7 @@ function DTBody(table, data) {
     this.curentMode.render();
 
     this.master = new SearchingMaster(this);
+
     this.master.transferFrom(0);
     /***
      * @name offset

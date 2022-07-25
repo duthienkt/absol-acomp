@@ -213,7 +213,7 @@ function DTSearchFactor(global) {
         this.items = [];
         this.itemVersion = -1;
 
-        this.tranferFinished = false;
+        this.tranferFinished = true;
 
         this.pendingTask = null;
         this.taskSession = Math.random() + '';
@@ -391,6 +391,7 @@ function DTSearchFactor(global) {
         }
 
         function tick() {
+
             if (self.taskSession !== session) return;
             if (self.itemVersion !== itemVersion) {
                 return;
