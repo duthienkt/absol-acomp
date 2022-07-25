@@ -1,10 +1,12 @@
 import { keyStringOf } from "../utils";
+import varScope from "absol/src/AppPattern/VarScope";
 
 var DSMPropsHandlers = {};
 
 
 DSMPropsHandlers.isFocus = {
     set: function (value) {
+        if (this.disabled || this.readOnly) value = false;
         value = !!value;
         if (value === this.hasClass('as-focus')) return;
         if (value) {
@@ -68,5 +70,51 @@ DSMPropsHandlers.format = {
         return this.attr('data-format') || '$0, $1';
     }
 };
+
+DSMPropsHandlers.strictValue = {
+    set: function (value) {
+        this.$box.strictValue = value;
+        if (value) {
+            this.addClass('as-strict-value');
+        }
+        else {
+            this.removeClass('as-strict-value');
+        }
+    },
+    get: function () {
+        return this.$box.strictValue;
+    }
+};
+
+
+DSMPropsHandlers.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-disabled');
+    }
+};
+
+
+DSMPropsHandlers.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
 
 export default DSMPropsHandlers;

@@ -3,7 +3,6 @@ import MDualSelectBox from "../dualselectbox/MDualSelectBox";
 import MDSMBoxController from "./MDSMBoxController";
 import DSMPropsHandlers from "./DSMPropsHandlers";
 import OOP from "absol/src/HTML5/OOP";
-import { charWidth } from "../utils";
 
 function DualSelectMenu() {
     this.$box = _({
@@ -12,6 +11,7 @@ function DualSelectMenu() {
     this.$item = $('.absol-selectlist-item', this);
     OOP.drillProperty(this, this.$box, 'enableSearch');
     this.boxCtrl = new MDSMBoxController(this);
+    this.strictValue = true;
 }
 
 
@@ -71,7 +71,6 @@ DualSelectMenu.prototype.updateText = function () {
 DualSelectMenu.property = DSMPropsHandlers;
 
 DualSelectMenu.eventHandler = {};
-
 
 
 export default DualSelectMenu;
