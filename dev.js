@@ -64,7 +64,7 @@ Dom.documentReady.then(function () {
             tag: 'link',
             attr: {
                 rel: 'stylesheet',
-                href: '//cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css'
+                href: 'https://absol.cf/vendor/materialdesignicons/materialdesignicons.css'
             }
         }).addTo(document.head);
     }
