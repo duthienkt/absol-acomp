@@ -4,7 +4,7 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import './Menu';
 import { cleanMenuItemProperty } from "./utils";
 import Follower from "./Follower";
-import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { copyEvent, hitElement } from "absol/src/HTML5/EventEmitter";
 import safeThrow from "absol/src/Code/safeThrow";
 
 var isMobile = BrowserDetector.isMobile;
@@ -86,8 +86,18 @@ QuickMenuInstance.prototype.remove = function () {
     this._deinit();
 };
 
-QuickMenuInstance.prototype._onClick = function () {
-    this.toggle();
+QuickMenuInstance.prototype._onClick = function (event) {
+    var event = copyEvent(event, {
+        canceled: false,
+        cancel: function () {
+            this.canceled = true;
+        }
+    });
+    if (this.opt.onClick) {
+        this.opt.onClick.call(this, event);
+    }
+    if (!event.canceled)
+        this.toggle();
 };
 
 QuickMenuInstance.prototype._onClickOut = function (event) {
