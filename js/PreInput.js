@@ -453,7 +453,36 @@ PreInput.property.disabled = {
     get: function () {
         return this.hasClass('as-disabled');
     }
-}
+};
+
+
+PreInput.property.readOnly = {
+    set: function (value) {
+        value = !!value;
+        if (value === this.hasClass('as-read-only')) return;
+        if (value) {
+            this.addClass('as-read-only');
+            this.attr({
+                contenteditable: undefined,
+                oncut: 'return false',
+                onpaste: 'return false',
+                onkeydown: 'if(event.metaKey) return true; return false;'
+            });
+        }
+        else {
+            this.removeClass('as-read-only');
+            this.attr({
+                contenteditable: true,
+                oncut: undefined,
+                onpaste: undefined,
+                onkeydown: undefined
+            });
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
 
 
 ACore.install(PreInput);
