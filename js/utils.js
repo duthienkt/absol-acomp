@@ -668,6 +668,46 @@ export function isNaturalNumber(value) {
 }
 
 
+/****
+ *
+ * @param {string} text
+ * @param {{locales?:string}|string =} opt
+ */
+export function parseLocalFloat(text, opt) {
+    if (typeof opt === "string") opt = { locales: opt };
+    var locales = (opt && opt.locales) || (window.systemconfig && window.systemconfig.numberFormatLocales);
+    var sample = locales ? (new Intl.NumberFormat(locales).format(123456.78)) : (123456.78.toLocaleString());
+    // decimal-separator, thousand-separator.
+    var thousandSeparator = sample.match(/3(.?)4/)[1] || '';
+    var decimalSeparator = sample.match(/6(.?)7/)[1];
+    text = text.replace(new RegExp('[' + thousandSeparator + ']', 'g'), '')
+        .replace(new RegExp('[' + decimalSeparator + ']', 'g'), '.');
+    return parseFloat(text);
+}
+
+export function formatLocalFloat(value, opt) {
+    if (typeof opt === "string") opt = { locales: opt };
+    var formatOpt = Object.assign({}, opt);
+    delete formatOpt.locales;
+
+    var locales = (opt && opt.locales) || (window.systemconfig && window.systemconfig.numberFormatLocales);
+    var sample;
+    var thousandSeparator;
+    var decimalSeparator;
+    if (!locales) {
+        sample = (123456.78.toLocaleString());
+        thousandSeparator = sample.match(/3(.?)4/)[1] || '';
+        decimalSeparator = sample.match(/6(.?)7/)[1];
+        if ( decimalSeparator === '.') locales = 'en-US';
+        else  if (decimalSeparator === ','){
+            locales = 'vi-VN';
+        }
+    }
+
+    return new Intl.NumberFormat(locales, formatOpt).format(value);
+}
+
+
 /***
  *
  * @param {String} text
