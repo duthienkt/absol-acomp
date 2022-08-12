@@ -47,3 +47,12 @@ div.as-ck-inline-short-text {
     visibility: hidden;
     pointer-events: none;
 }
+
+.cke.as-has-sticky-toolbar {
+    border-top: none;
+}
+
+.cke.as-has-sticky-toolbar > .cke_inner > .cke_top {
+    border-top: 1px solid #d1d1d1;
+    z-index: 100;
+}

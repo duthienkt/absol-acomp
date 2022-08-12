@@ -2,6 +2,7 @@ import ACore, { _ } from "../../ACore";
 import '../../css/ckplaceholder.css';
 import { CKExtensionDict, CKExtensions, ckInit, ckMakeDefaultConfig } from "./plugins";
 import { config } from "process";
+import CKStickyToolbarController from "./CKStickyToolbarController";
 
 /***
  * @extends AElement
@@ -16,6 +17,10 @@ function CKPlaceholder() {
     this.editor = null;
     this._extensions = [];
     this._config = this._makeInitConfig();
+    this.afterReady = new Promise(rs => {
+        this.on('editorready', rs);
+    });
+    this.stickyToolbarCtrl = null;
     /***
      * @type {{}}
      * @name config
@@ -26,6 +31,11 @@ function CKPlaceholder() {
      * @name extensions
      * @memberOf CKPlaceholder#
      */
+    /***
+     *
+     * @type {boolean}
+     */
+    this.stickyToolbar = true;
 }
 
 CKPlaceholder.tag = 'CKPlaceholder'.toLowerCase();
@@ -200,6 +210,35 @@ CKPlaceholder.property.extensions = {
     },
     get: function () {
         return this._extensions;
+    }
+};
+
+
+CKPlaceholder.property.stickyToolbar = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-has-sticky-toolbar');
+        }
+        else {
+            return this.removeClass('as-has-sticky-toolbar');
+        }
+        this.afterReady.then(() => {
+            if (this.mode !== 'replace') return;
+            console.log(this.stickyToolbar)
+            if (this.stickyToolbar) {
+                if (!this.stickyToolbarCtrl){
+                    this.stickyToolbarCtrl = new CKStickyToolbarController(this);
+                }
+                this.stickyToolbarCtrl.start();
+            }
+            else {
+                this.editor.container.$.classList.remove('as-has-sticky-toolbar');
+                if (this.stickyToolbarCtrl) this.stickyToolbarCtrl.stop();
+            }
+        });
+    },
+    get: function () {
+        return this.hasClass('as-has-sticky-toolbar');
     }
 };
 
