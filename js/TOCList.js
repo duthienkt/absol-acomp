@@ -109,15 +109,17 @@ TOCList.prototype.loadSavedState = function (savedState) {
     this.applySavedState();
 };
 
-
-TOCList.prototype.openAllNodeRecursive = function () {
-    this.rootController.openRecursive();
-    this.savedState();
+/***
+ * @param {number=} n
+ */
+TOCList.prototype.openAllNodeRecursive = function (n) {
+    this.rootController.openRecursive(n);
+    this.saveState();
 };
 
 TOCList.prototype.closeAllNodeRecursive = function () {
     this.rootController.closeRecursive();
-    this.savedState();
+    this.saveState();
 };
 
 TOCList.prototype.deactivateAllNode = function () {
@@ -311,7 +313,7 @@ TOCList.eventHandler.pressNodeQuickMenu = function (nodeController, event) {
     };
 
     newEvent.showMenu = function (menuProps, onSelect) {
-        var token = QuickMenu.show(nodeController.nodeElt.$quickMenuBtn, menuProps, 'auto', onSelect, false);
+        var token = QuickMenu.show(nodeController.nodeElt.$quickMenuBtn, menuProps, [3, 4], onSelect, false);
         var blurTrigger = new BlurTrigger([], 'click', function () {
             QuickMenu.close(token);
         }, 10, 30);
@@ -366,9 +368,9 @@ TOCVirtualRootController.prototype.deactivateRecursive = function () {
     });
 };
 
-TOCVirtualRootController.prototype.openRecursive = function () {
+TOCVirtualRootController.prototype.openRecursive = function (n) {
     this.children.forEach(function (ct) {
-        ct.openRecursive();
+        ct.openRecursive(n);
     });
 };
 
@@ -582,6 +584,8 @@ function TOCNodeController(listElt, nodeData, parent) {
         }
     });
 
+    if (nodeData.hasQuickMenu === false) this.nodeElt.hasQuickMenu = false;
+
     this.nodeElt.on('presstoggle', this.listElt.saveState.bind(this.listElt));
     /***
      * @name children
@@ -725,12 +729,17 @@ TOCNodeController.prototype.setLevelRecursive = function (value) {
     });
 };
 
-TOCNodeController.prototype.openRecursive = function () {
+/**
+ *
+ * @param {number=} level
+ */
+TOCNodeController.prototype.openRecursive = function (level) {
+    if ((typeof level === "string") && this.level > level ) return;
     if (this.status === 'close') {
         this.open();
     }
     this.children.forEach(function (ct) {
-        ct.openRecursive();
+        ct.openRecursive(level);
     });
 };
 
@@ -749,7 +758,7 @@ TOCNodeController.prototype.ev_pressQuickMenu = function (event) {
     this.listElt.eventHandler.pressNodeQuickMenu(this, event);
 };
 
-TOCNodeController.prototype.ev_renameFinish = function (event){
+TOCNodeController.prototype.ev_renameFinish = function (event) {
 
 };
 
@@ -762,7 +771,7 @@ TOCNodeController.prototype.closeRecursive = function () {
     });
 };
 
-TOCNodeController.prototype.rename = function (){
+TOCNodeController.prototype.rename = function () {
 
 };
 

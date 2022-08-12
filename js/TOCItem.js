@@ -33,6 +33,10 @@ function TOCItem() {
         .on('click', this.eventHandler.clickQuickMenuBtn);
     this.on('click', this.eventHandler.click);
     /***
+     * @name hasQuickMenu
+     * @type {boolean}
+     * @memberOf TOCItem#
+     */ /***
      * @name name
      * @type {string}
      * @memberOf TOCItem#
@@ -65,7 +69,7 @@ TOCItem.tag = 'TOCItem'.toLowerCase();
 
 TOCItem.render = function () {
     return _({
-        class: 'as-toc-item',
+        class: ['as-toc-item', 'as-has-quick-menu'],
         extendEvent: ['presstoggle', 'checkedchange', 'pressquickmenu', 'press', 'renamefinish'],
         child: [
             {
@@ -180,6 +184,34 @@ TOCItem.property.checked = {
     },
     get: function () {
         return this.$checkbox.checked;
+    }
+};
+
+TOCItem.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+        }
+        else {
+            this.removeClass('as-disabled');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-disabled');
+    }
+};
+
+TOCItem.property.hasQuickMenu = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-has-quick-menu');
+        }
+        else {
+            this.removeClass('as-has-quick-menu');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-has-quick-menu');
     }
 };
 

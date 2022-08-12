@@ -59,7 +59,7 @@
 }
 
 div.as-toc-item-toggle-ico-ctn {
-    padding-left: calc(30px * var(--level));
+    padding-left: calc(20px * var(--level));
     box-sizing: content-box !important;
 }
 
@@ -115,6 +115,12 @@ div.as-toc-item-toggle-ico-ctn {
     background-color: var(--icon-background-cover-hover);
 }
 
+.as-toc-item:not(.as-has-quick-menu) .as-toc-item-quick-menu-ctn{
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+}
+
 .as-toc-item-name-ctn input {
     font: inherit;
     border: none;
@@ -134,4 +140,3 @@ div.as-toc-item-toggle-ico-ctn {
 .as-toc-item.as-renaming .as-toc-item-name {
     display: none;
 }
-
