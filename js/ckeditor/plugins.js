@@ -180,6 +180,10 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
     config.contentsCss = contentsCss;
 
     var extraPlugins = ['image_mgn'];
+    if (holderElt.stickyToolbar){
+        extraPlugins.push('autogrow');
+        config.autoGrow_minHeight = 400;
+    }
     if (typeof config.extraPlugins === 'string') {
         extraPlugins.push.apply(extraPlugins, config.extraPlugins.trim().split(/\s*,\s*/));
     }
