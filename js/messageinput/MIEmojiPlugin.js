@@ -43,7 +43,6 @@ MIEmojiPlugin.prototype.ev_PickEmoji = function (event) {
 };
 
 MIEmojiPlugin.prototype.onOpen = function (){
-    console.log('open')
     var value = this.inputElt.$preInput.value;
     this._lastInputSelectPosion = this.inputElt.$preInput.getSelectPosition() || { start: value.length, end: value.length };
     this.inputElt.$preInput.focus();
