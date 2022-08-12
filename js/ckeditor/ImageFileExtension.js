@@ -15,6 +15,7 @@ function init(editor) {
 
             if (window.contentModule && window.contentModule.chooseFile) {
                 window.contentModule.chooseFile({ type: "image_file" }).then(function (result) {
+                    if (result instanceof Array) result = result[0];
                     if (result) {
                         editor.insertHtml('<img alt="'+(result.title|| result.name)+'" src="'+result.url+'" />')
                     }
