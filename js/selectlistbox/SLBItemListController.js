@@ -1,6 +1,9 @@
 import { _ } from "../../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import ListDictionary from "../list/ListDictionary";
+import { copySelectionItemArray } from "../utils";
+import { SLBModeNormal } from "./SLBModes";
+import { prepareSearchForList } from "../list/search";
 
 
 /***
@@ -9,8 +12,9 @@ import ListDictionary from "../list/ListDictionary";
  * @constructor
  */
 function SLBItemListController(elt) {
-    ListDictionary.call(this, []);
     this.elt = elt;
+    this.items = [];
+    this.elt.$scroller.on('scroll', this.updateListView.bind(this));
 }
 
 OOP.mixClass(SLBItemListController, ListDictionary)
@@ -21,33 +25,21 @@ SLBItemListController.preLoadN = 3;
 SLBItemListController.prototype.toLoadNextY = 200;
 
 SLBItemListController.prototype.getItems = function () {
-    return this.arr.map(cItem => this.cloneItem(cItem));
+    return copySelectionItemArray(this.items);
 
-};
-
-SLBItemListController.prototype.cloneItem = function (item) {
-    var res = Object.assign({}, item);
-    if (item.items && item.items.map) {
-        res.items = item.items.map(cItem => this.cloneItem(cItem));
-    }
-    return res;
 };
 
 SLBItemListController.prototype.setItems = function (items) {
-    items = items || [];
-    if (!items.map || !items.forEach) {
-        items = [];
-    }
-
-    this.arr = items.map(cItem => this.cloneItem(cItem));
-    this.update();
+   this.items = copySelectionItemArray(items ||[]);
+   var mode = new SLBModeNormal(this.elt, this.items);
+   this.elt.modes.normal = mode;
+   this.elt.mode = mode;
+   mode.onStart();
 };
 
-SLBItemListController.prototype.viewAt = function (offset){
-
-};
-
-
+SLBItemListController.prototype.updateListView = function (){
+    this.elt.mode.updateListView();
+}
 
 
 export default SLBItemListController;

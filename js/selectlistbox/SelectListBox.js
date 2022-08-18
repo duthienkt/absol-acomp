@@ -1,13 +1,22 @@
 import ACore, { _ } from "../../ACore";
 import SelectListBoxPropHandlers from "./SelectListBoxPropHandlers";
 import SLBItemListController from "./SLBItemListController";
+import { SLBModeNormal } from "./SLBModes";
 
 /***
  * @extends AElement
  * @constructor
  */
 function SelectListBox() {
+    this.$box = this;
+    this.$content = $('.as-select-list-box-content', this);
+    this.$scroller = $('.as-select-list-box-scroller', this);
     this.itemListCtrl = new SLBItemListController(this);
+    this.modes = {
+        normal: new SLBModeNormal(this, []),
+        search: null
+    };
+    this.mode = this.modes.normal;
 }
 
 SelectListBox.tag = 'selectlistbox_v2'.toLowerCase();

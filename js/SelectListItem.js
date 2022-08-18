@@ -25,6 +25,8 @@ function SelectListItem() {
     OOP.drillProperty(this, this, 'noSelect', 'disabled');
 }
 
+SelectListItem.tag = 'SelectListItem'.toLowerCase();
+
 SelectListItem.render = function () {
     return _({
         class: 'absol-selectlist-item',
@@ -197,7 +199,7 @@ SelectListItem.property.selected = {
     }
 };
 
-ACore.install('SelectListItem'.toLowerCase(), SelectListItem);
+ACore.install( SelectListItem);
 
 
 export default SelectListItem;
