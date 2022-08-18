@@ -1,22 +1,26 @@
 import { EmojiAnimByIdent } from "../EmojiAnims";
-import { _ } from "../../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EmojiPicker from "../EmojiPicker";
 import { buildCss } from "../utils";
 import { isNewLine, isText, isToken, isTokenText, text2ContentElements, tokenizeMessageText } from "./tiutils";
 
 export var EMPTY_2_SPACES = String.fromCharCode(0x2003);
-
-Dom.documentReady.then(() => {
-    var styleSheet = {};
-    for (var name in EmojiAnimByIdent) {
-        styleSheet['.as-emoji-token[data-text="' + name + '"]'] = {
-            'background-image': 'url(' + EmojiPicker.assetRoot + '/static/x20/' + EmojiAnimByIdent[name][1] + ')'
+var emojiCSSLoaded = false;
+function loadEmojiCSS(){
+    if (emojiCSSLoaded) return;
+    emojiCSSLoaded = true;
+    Dom.documentReady.then(() => {
+        var styleSheet = {};
+        for (var name in EmojiAnimByIdent) {
+            styleSheet['.as-emoji-token[data-text="' + name + '"]'] = {
+                'background-image': 'url(' + EmojiPicker.assetRoot + '/static/x20/' + EmojiAnimByIdent[name][1] + ')'
+            }
         }
-    }
 
-    buildCss(styleSheet)
-});
+        buildCss(styleSheet)
+    });
+}
+
 
 /***
  *
@@ -24,6 +28,7 @@ Dom.documentReady.then(() => {
  * @constructor
  */
 function TITextController(elt) {
+    loadEmojiCSS();
     this.elt = elt;
 }
 
