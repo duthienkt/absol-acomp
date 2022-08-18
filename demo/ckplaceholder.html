@@ -21,6 +21,12 @@
         height: 100%;
         overflow: auto;
     }
+
+    #ck::after {
+        content: "";
+        display: block;
+        height: 1800px;
+    }
 </style>
 <div id="ck"></div>
 <script>
@@ -299,7 +305,8 @@
             // config: {
             //     toolbar:'SIMPLE'
             // },//some config of CKEditor
-            extensions: ['expression']
+            extensions: ['expression'],
+            stickyToolbar: true
         },
         on: {
             focus: function () {
@@ -381,5 +388,6 @@
     // });
 
 </script>
+
 </body>
 </html>

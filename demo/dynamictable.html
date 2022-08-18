@@ -54,7 +54,7 @@
                 return ac;
             }, []);
             var score = 5 + Math.random() * 5;
-            score = Math.floor(score * 100)/100;
+            score = Math.floor(score * 100) / 100;
 
             var rowData = {
                 id: id,
@@ -392,8 +392,7 @@
 
         rankFilter.exportFilter = function (filter) {
             filter.score = JSON.parse(this.value);
-            if (filter.score.min === 0)
-            {
+            if (filter.score.min === 0) {
                 delete filter.score;
             }
         }
@@ -460,7 +459,8 @@
             }
         });
         var rowCount = 1000;
-        var rowLoadingTK = table0.waitingCtl.begin();//to show loading in search input
+
+        // var rowLoadingTK = table0.waitingCtl.begin();//to show loading in search input
         function addRows() {
             var rowsData = Array(1000).fill(0).map(function (u, i) {
                 rowCount++;
@@ -476,7 +476,7 @@
             }
         }
 
-        setTimeout(addRows, 800);
+        // setTimeout(addRows, 800);
 
         table0.attachSearchInput(searchInput)
 
@@ -490,11 +490,13 @@
 </body>
 
 <script>
-    (function (){
+    (function () {
         var _ = absol._;
-        function render(o){
+
+        function render(o) {
             return _(o).addTo(document.body);
         }
+
         render("<h2>Draggable</h2>");
 
         function makeRowData1(i, id, draggable) {
