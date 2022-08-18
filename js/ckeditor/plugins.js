@@ -7,11 +7,12 @@ import SimpleTextExtension from "./SimpleTextExtension";
 import VariableExtension from "./VariableExtension";
 import DynamicLinkExtension from "./DynamicLinkExtension";
 import ImageFileExtension from "./ImageFileExtension";
+import VideoExtension from "./VideoExtension";
 
 var ckContentStyleUrl;
 var ckPluginInitialized = false;
 
-export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension];
+export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension, VideoExtension];
 
 export var CKExtensionDict = CKExtensions.reduce(function (ac, cr) {
     ac[cr.name] = cr;
@@ -84,6 +85,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
         .filter(function (c) {
             return !!c;
         }).join(',');
+    if (extensions) extensions.push('video');
     if (extensions && extensions.indexOf(VariableExtension.name) >= 0) {
         config.title = false;
     }

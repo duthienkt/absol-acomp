@@ -224,9 +224,8 @@ CKPlaceholder.property.stickyToolbar = {
         }
         this.afterReady.then(() => {
             if (this.mode !== 'replace') return;
-            console.log(this.stickyToolbar)
             if (this.stickyToolbar) {
-                if (!this.stickyToolbarCtrl){
+                if (!this.stickyToolbarCtrl) {
                     this.stickyToolbarCtrl = new CKStickyToolbarController(this);
                 }
                 this.stickyToolbarCtrl.start();
