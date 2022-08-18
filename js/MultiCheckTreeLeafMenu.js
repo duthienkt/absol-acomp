@@ -154,6 +154,7 @@ MultiCheckTreeLeafMenu.eventHandler.selectBoxChange = function () {
 };
 
 MultiCheckTreeLeafMenu.eventHandler.itemPressClose = function (itemElt, event) {
+    delete this.pendingValues;
     var item = itemElt.data;
     this.$selectBox.values = this.$selectBox.values.filter(function (value) {
         return value !== item.value;
