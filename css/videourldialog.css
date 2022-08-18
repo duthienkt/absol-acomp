@@ -1,0 +1,33 @@
+
+.as-video-url-dialog-url {
+    max-width: calc(100vw - 8em - 40px);
+    width: 500px;
+    min-height: 30px;
+    box-sizing: border-box;
+}
+
+.as-video-url-dialog input[type="number"] {
+    width: 5em;
+}
+
+.as-video-url-dialog-row> label {
+    display: inline-block;
+    vertical-align: middle;
+    width: 6em;
+}
+
+.as-video-url-dialog-row {
+    padding-bottom: 10px;
+    white-space: pre;
+}
+
+.as-video-url-dialog-row > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-video-url-dialog-video-image{
+    max-width: 200px;
+    max-height: 200px;
+
+}
