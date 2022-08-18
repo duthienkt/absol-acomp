@@ -698,8 +698,8 @@ export function formatLocalFloat(value, opt) {
         sample = (123456.78.toLocaleString());
         thousandSeparator = sample.match(/3(.?)4/)[1] || '';
         decimalSeparator = sample.match(/6(.?)7/)[1];
-        if ( decimalSeparator === '.') locales = 'en-US';
-        else  if (decimalSeparator === ','){
+        if (decimalSeparator === '.') locales = 'en-US';
+        else if (decimalSeparator === ',') {
             locales = 'vi-VN';
         }
     }
@@ -1054,4 +1054,42 @@ export function jsStringOf(x) {
 export function calcDTQueryHash(o) {
     var s = jsStringOf(o);
     return stringHashCode(s);
+}
+
+
+export function replaceInObject(o, replacer, test) {
+    return new Promise((rs) => {
+        var sync = [];
+
+        function visit(so) {
+            Object.keys(so).forEach((key) => {
+                var newValue;
+                if (test(so[key])) {
+                    newValue = replacer(so[key], key, so);
+                    if (newValue && newValue.then) {
+                        sync.push(newValue);
+                        newValue.then(newValue => so[key] = newValue);
+                    }
+                    else {
+                        so[key] = newValue;
+                    }
+                }
+                else if (typeof so[key] === "object" && so[key]) {
+                    visit(so[key]);
+                }
+            });
+        }
+
+        visit(o);
+
+        Promise.all(sync).then(() => {
+            rs(o);
+        })
+    });
+}
+
+export function replaceFileInObject(o, replacer) {
+    return replaceInObject(o, replacer, (value, key, object) => {
+        return (value instanceof File) || (value instanceof Blob);
+    });
 }
