@@ -78,7 +78,7 @@ module.exports = {
         compress: true,
         disableHostCheck: true,
         host: '0.0.0.0',
-        public: 'https://www.absol.cf'
+        // public: 'https://www.absol.cf'
     },
     performance: {
         hints: false
