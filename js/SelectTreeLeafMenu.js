@@ -4,6 +4,7 @@ import OOP from "absol/src/HTML5/OOP";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import SelectMenu from "./SelectMenu2";
+import { copySelectionItemArray } from "./utils";
 
 
 /***
@@ -70,7 +71,7 @@ SelectTreeLeafMenu.property = {};
 
 SelectTreeLeafMenu.property.items = {
     set: function (items) {
-        items = items || [];
+        items = copySelectionItemArray(items || [], {removeNoView: true});
         this.$selectBox.items = items;
         this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.width + 'px');
         if (this.$selectBox.$selectedItem) {

@@ -1,4 +1,4 @@
-import { keyStringOf } from "../utils";
+import { copySelectionItemArray, keyStringOf } from "../utils";
 
 var STLMPropHandlers = {};
 
@@ -30,7 +30,7 @@ STLMPropHandlers.isFocus = {
 
 STLMPropHandlers.items = {
     set: function (items) {
-        this.$box.items = items;
+        this.$box.items = copySelectionItemArray(items, {removeNoView: true});
         this._updateText();
     },
     get: function () {
