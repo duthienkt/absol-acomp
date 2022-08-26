@@ -37,7 +37,7 @@ import IconSprite from "../IconSprite";
 import LinearColorBar from "../LinearColorBar";
 import MediaInput from "../MediaInput";
 import MessageInput, { MessageQuote } from "../messageinput/MessageInput";
-import NumberInput from "../NumberInput";
+import NumberInput from "../numberinput/NumberInput";
 import NumberSpanInput from "../NumberSpanInput";
 import OnScreenWindow from "../OnsScreenWindow";
 import PageSelector from "../PageSelector";

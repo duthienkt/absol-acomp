@@ -1,5 +1,5 @@
-import '../css/numberinput.css';
-import ACore from "../ACore";
+import '../../css/numberinput.css';
+import ACore from "../../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import OOP from "absol/src/HTML5/OOP";
