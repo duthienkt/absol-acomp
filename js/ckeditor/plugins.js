@@ -81,6 +81,9 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
     }
     * */
     config = config || {};
+    //disable special chars encode
+    config.entities = false;
+
     config.stylesSet = ['as_styles_set_default'].concat(arrayUnique((config.stylesSet || '').trim().split(/\s*,\s*/)))
         .filter(function (c) {
             return !!c;
