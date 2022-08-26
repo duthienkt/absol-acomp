@@ -3,25 +3,30 @@ import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import OOP from "absol/src/HTML5/OOP";
-import {getCaretPosition} from "absol/src/HTML5/Text";
-import {numberToString} from "absol/src/Math/int";
+import { getCaretPosition } from "absol/src/HTML5/Text";
+import { numberToString } from "absol/src/Math/int";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 function NumberInput() {
-    this.eventHandler = OOP.bindFunctions(this, NumberInput.eventHandler);
     this.$input = $('input', this)
         .on('keydown', this.eventHandler.keydown)
         .on('keyup', this.eventHandler.keyup)
         .on('paste', this.eventHandler.paste)
         .on('change', this.eventHandler.change);
     this.$input.value = 0;
-    this._previusValue = 0;//to kwnow whenever the value changed
+
+    this._previusValue = 0;//to know whenever the value changed
     this._value = 0;
     this._max = Infinity;
     this._min = -Infinity;
+
     this.$upBtn = $('.absol-number-input-button-up-container button', this)
         .on('mousedown', this.eventHandler.mouseDownUpBtn);
     this.$downBtn = $('.absol-number-input-button-down-container button', this)
@@ -144,7 +149,7 @@ NumberInput.eventHandler.mouseDownDownBtn = function (event) {
 
 NumberInput.eventHandler.keyup = function (event) {
     var cValue = parseFloat(this.$input.value);
-    if (!isNaN(cValue) && cValue <= this.max && this.min <=cValue) {
+    if (!isNaN(cValue) && cValue <= this.max && this.min <= cValue) {
         this._value = cValue;
         this.notifyChanged({ originEvent: event, by: 'keyup' });
     }
@@ -247,12 +252,12 @@ NumberInput.property.max = {
             value = Infinity;
         }
         this._max = value;
-        this._value = Math.min(value, this._value);
-        this._min = Math.min(this._min, this._value);
+        // this._value = Math.min(value, this._value);
+        // this._min = Math.min(this._min, this._value);
         this.updateTextValue();
     },
     get: function () {
-        return this._max;
+        return Math.max(this._max, this._min);
     }
 };
 
@@ -262,24 +267,24 @@ NumberInput.property.min = {
             value = -Infinity;
         }
         this._min = value;
-        this._value = Math.max(value, this._value);
-        this._max = Math.max(this._max, this._value);
+        // this._value = Math.max(value, this._value);
+        // this._max = Math.max(this._max, this._value);
         this.updateTextValue();
 
     },
     get: function () {
-        return this._min;
+        return Math.min(this._min, this._max);
     }
 };
 
 NumberInput.property.decimalSeparator = {
     set: function (value) {
-        if (value == ',') {
-            if (this._thousandsSeparator == ',')
+        if (value === ',') {
+            if (this._thousandsSeparator === ',')
                 this._thousandsSeparator = '.';
         }
-        else if (value == '.') {
-            if (this._thousandsSeparator == '.')
+        else if (value === '.') {
+            if (this._thousandsSeparator === '.')
                 this._thousandsSeparator = ',';
         }
         else {
@@ -296,12 +301,12 @@ NumberInput.property.decimalSeparator = {
 
 NumberInput.property.thousandsSeparator = {
     set: function (value) {
-        if (value == ',') {
-            if (this._decimalSeparator == ',')
+        if (value === ',') {
+            if (this._decimalSeparator === ',')
                 this._decimalSeparator = '.';
         }
-        else if (value == '.') {
-            if (this._decimalSeparator == '.')
+        else if (value === '.') {
+            if (this._decimalSeparator === '.')
                 this._decimalSeparator = ',';
         }
         else {
