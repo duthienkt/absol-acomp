@@ -8,29 +8,36 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
-    <style>
-
-    </style>
 </head>
 
 <body>
-    <h1>Number Input</h1>
-    <script class="viewable">
-        var mNumberInput = absol._('numberinput').addStyle({ width: '8em' }).addTo(document.body);
-        mNumberInput.floatFixed = 0;
-        mNumberInput.decimalPadding = 0;
-        mNumberInput.max = 10;
-        mNumberInput.min = -10;
-        mNumberInput.on('change', function (event) {
-            console.log(event, this.value);
-        });
+<h1>Number Input</h1>
+<script class="viewable-x">
+    var mNumberInput = absol._({
+        tag: 'numberinput',
+        // class: 'as-width-auto',
+        style:{
+            width: '8em'
+        },
+        props: {
+            value: 1234356789422,
+            step: 1 / 4,
+            min: -1000,
+            max: 1000,
+            floatFixed: 2//adapt for old config
+        },
+        on: {
+            change: function (event) {
+                console.log(event.by, this.value);
+                absol.require('snackbar').show(this.value + '');
+            }
+        }
+    }).addTo(document.body);
 
-        var mNumberInputDisabled = absol._('numberinput').addStyle({ width: '8em' }).addTo(document.body);
-        mNumberInputDisabled.disabled = true;
 
-    </script>
+</script>
 
-    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
 
