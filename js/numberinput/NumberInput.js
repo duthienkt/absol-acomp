@@ -1,7 +1,7 @@
 import '../../css/numberinput.css';
 import ACore from "../../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { isRealNumber } from "../utils";
+import { nearFloor, isRealNumber } from "../utils";
 import NITextController from "./NITextController";
 import { numberAutoFixed } from "absol/src/Math/int";
 
@@ -125,7 +125,8 @@ NumberInput.render = function () {
 NumberInput.prototype._makeDefaultFormat = function () {
     var res = {
         locales: 'vi-VN',
-        maximumFractionDigits: 20
+        maximumFractionDigits: 20,
+        minimumFractionDigits: 0
     };
 
     if (window['systemconfig'] && window['systemconfig']['numberFormatLocales']) {
@@ -141,7 +142,7 @@ NumberInput.prototype.nextStep = function () {
     if (isRealNumber(this.min)) {
         ofs = this.min;
     }
-    var idx = Math.floor((this.value - ofs) / this._step);
+    var idx = nearFloor((this.value - ofs) / this._step, 0.01);
     this._value = Math.min(this._step * (idx + 1) + ofs, this.max);
     this.textCtrl.flushValueToText();
 };
@@ -151,7 +152,7 @@ NumberInput.prototype.prevStep = function () {
     if (isRealNumber(this.min)) {
         ofs = this.min;
     }
-    var idx = Math.floor((this.value - ofs) / this._step);
+    var idx = nearFloor((this.value - ofs) / this._step, 0.01);
     this._value = Math.max(this._step * (idx - 1) + ofs, this.min);
     this.textCtrl.flushValueToText();
 };
@@ -235,6 +236,7 @@ NumberInput.property.value = {
         this.textCtrl.flushValueToText();
     },
     get: function () {
+
         var value = Math.min(this.max, Math.max(this._value, this.min));
         if (this._format.maximumFractionDigits === 0) {
             return Math.round(value);
@@ -303,7 +305,8 @@ NumberInput.property.decimalSeparator = {
         var lF = this.locales2Format[this._format.locales];
         if (lF) return lF.decimalSeparator;
         return '.';
-    }
+    },
+    set: ()=>{}
 };
 
 
@@ -312,7 +315,8 @@ NumberInput.property.thousandsSeparator = {
         var lF = this.locales2Format[this._format.locales];
         if (lF) return lF.thousandsSeparator;
         return null;
-    }
+    },
+    set: ()=>{}
 };
 
 
@@ -353,7 +357,10 @@ NumberInput.property.format = {
     set: function (value) {
         if (value in this.locales2Format) {
             this._format = {
-                locales: value
+                locales: value,
+                maximumFractionDigits: this._format.maximumFractionDigits,
+                minimumFractionDigits: this._format.minimumFractionDigits,
+
             };
         }
         else if (!value) {
@@ -362,6 +369,8 @@ NumberInput.property.format = {
         else {
             this._format = Object.assign(this._makeDefaultFormat(), value);
         }
+        console.log(this._format)
+        this.textCtrl.flushValueToText();
     },
     get: function () {
         return this._format;

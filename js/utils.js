@@ -118,6 +118,12 @@ export function positiveIntMod(num, maxVal) {
 
 }
 
+export function nearFloor(x, epsilon) {
+    var y = Math.floor(x);
+    if (x - y + epsilon >= 1) y++;
+    return y;
+}
+
 
 export function measureText(text, font) {
     // re-use canvas object for better performance
