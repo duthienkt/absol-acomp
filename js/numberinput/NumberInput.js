@@ -1,40 +1,94 @@
 import '../../css/numberinput.css';
 import ACore from "../../ACore";
-import Dom from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import OOP from "absol/src/HTML5/OOP";
-import { getCaretPosition } from "absol/src/HTML5/Text";
-import { numberToString } from "absol/src/Math/int";
+import { isRealNumber } from "../utils";
+import NITextController from "./NITextController";
+import { numberAutoFixed } from "absol/src/Math/int";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
 /***
+ * @typedef NumberInputFormat
+ * @property {string} locales
+ * @property {string|null} decimalSeparator
+ * @property {string|null} thousandSeparator
+ */
+
+/***
  * @extends AElement
  * @constructor
  */
 function NumberInput() {
-    this.$input = $('input', this)
-        .on('keydown', this.eventHandler.keydown)
-        .on('keyup', this.eventHandler.keyup)
-        .on('paste', this.eventHandler.paste)
-        .on('change', this.eventHandler.change);
-    this.$input.value = 0;
+    /***
+     *
+     * @type {HTMLInputElement|AElement}
+     */
+    this.$input = $('input', this);
 
-    this._previusValue = 0;//to know whenever the value changed
+    // .on('keyup', this.eventHandler.keyup)
+    // .on('paste', this.eventHandler.paste)
+    // .on('change', this.eventHandler.change);
+    this.$input.value = '0';
+
+    this._prevValue = 0;//to know whenever the value changed
     this._value = 0;
     this._max = Infinity;
     this._min = -Infinity;
+    this._step = 1;
+    this._format = this._makeDefaultFormat();
+
 
     this.$upBtn = $('.absol-number-input-button-up-container button', this)
-        .on('mousedown', this.eventHandler.mouseDownUpBtn);
+        .on('mousedown', this.eventHandler.mouseDownBtn.bind(this, 1));
     this.$downBtn = $('.absol-number-input-button-down-container button', this)
-        .on('mousedown', this.eventHandler.mouseDownDownBtn);
-    this._decimalSeparator = '.';
-    this._thousandsSeparator = '';
-    this._floatFixed = -1;// unset
-    this._decimalPadding = -1;//unset
+        .on('mousedown', this.eventHandler.mouseDownBtn.bind(this, -1));
+
+    this.textCtrl = new NITextController(this);
+
+    this.$domSignal = _('attachhook').addTo(this);
+    this.$domSignal.once('attached', () => {
+        this.textCtrl.estimateWidthBy(this.$input.value);
+    });
+
+    /****
+     * @name min
+     * @type {number}
+     * @memberOf NumberInput#
+     */
+
+    /****
+     * @name max
+     * @type {number}
+     * @memberOf NumberInput#
+     */
+
+    /****
+     * @name value
+     * @type {number}
+     * @memberOf NumberInput#
+     */
+
+    /****
+     * @name format
+     * @type {NumberInputFormat}
+     * @memberOf NumberInput#
+     */
+
+    /****
+     * @name thousandsSeparator
+     * @type {string|null}
+     * @memberOf NumberInput#
+     */
+
+    /****
+     * @name decimalSeparator
+     * @type {string|null}
+     * @memberOf NumberInput#
+     */
+
+
 }
 
 NumberInput.tag = 'NumberInput'.toLowerCase();
@@ -68,167 +122,106 @@ NumberInput.render = function () {
 };
 
 
+NumberInput.prototype._makeDefaultFormat = function () {
+    var res = {
+        locales: 'vi-VN',
+        maximumFractionDigits: 20
+    };
+
+    if (window['systemconfig'] && window['systemconfig']['numberFormatLocales']) {
+        res.locales = window['systemconfig']['numberFormatLocales'];
+    }
+    return res;
+};
+
+
+/*****17 number********/
+NumberInput.prototype.nextStep = function () {
+    var ofs = 0;
+    if (isRealNumber(this.min)) {
+        ofs = this.min;
+    }
+    var idx = Math.floor((this.value - ofs) / this._step);
+    this._value = Math.min(this._step * (idx + 1) + ofs, this.max);
+    this.textCtrl.flushValueToText();
+};
+
+NumberInput.prototype.prevStep = function () {
+    var ofs = 0;
+    if (isRealNumber(this.min)) {
+        ofs = this.min;
+    }
+    var idx = Math.floor((this.value - ofs) / this._step);
+    this._value = Math.max(this._step * (idx - 1) + ofs, this.min);
+    this.textCtrl.flushValueToText();
+};
+
+
 NumberInput.eventHandler = {};
 
-NumberInput.eventHandler.mouseDownUpBtn = function (event) {
+
+NumberInput.eventHandler.mouseDownBtn = function (dir, event) {
     if (EventEmitter.isMouseRight(event)) return;
     var self = this;
-    var body = $(document.body);
     var pressing = true;
     var timeout = -1;
     var i = 0;
+    this.addClass('as-pressing');
 
-    function tick() {
+    var tick = () => {
         if (pressing) {
-            if (i == 0 || i >= 4) {
-                self.value = Math.round(self.value * Math.pow(10, Math.max(self._floatFixed, 0)) + 1) / Math.pow(10, Math.max(self._floatFixed, 0));
-                self.notifyChanged({ by: 'long_press_button' });
+            if (i === 0 || i >= 4) {
+                if (dir > 0)
+                    this.nextStep();
+                else
+                    this.prevStep();
+                if (i === 0) {
+                    this.notifyChanged({ by: 'press_button' });
+                }
+                else {
+                    this.notifyChanged({ by: 'long_press_button' });
+                }
             }
             ++i;
             self.__pressingUpTimeout__ = setTimeout(tick, 100);
         }
     }
 
-    function finish(event) {
+    var finish = (event) => {
         pressing = false;
+        this.removeClass('as-pressing');
+
         if (timeout >= 0) {
             clearTimeout(timeout);
             timeout = -1;
         }
-        body.off('mouseup', finish);
-        body.off('mouseleave', finish);
-        if (event.type == 'mouseup') {
-            self.$input.focus();
+        document.removeEventListener('mouseup', finish);
+        document.removeEventListener('mouseleave', finish);
+        if (event.type === 'mouseup') {
+            this.$input.focus();
         }
-        self.notifyChanged({ originEvent: event, by: 'press_button' });
+        this.notifyChanged({ originEvent: event, by: 'press_button' });
+        this.textCtrl.estimateWidthBy(this.$input.value);
     }
 
-    body.on('mouseup', finish);
-    body.on('mouseleave', finish);
+    document.addEventListener('mouseup', finish);
+    document.addEventListener('mouseleave', finish);
     tick();
-};
-
-NumberInput.eventHandler.mouseDownDownBtn = function (event) {
-    if (EventEmitter.isMouseRight(event)) return;
-    var self = this;
-    var body = $(document.body);
-    var pressing = true;
-    var timeout = -1;
-    var i = 0;
-
-    function tick() {
-        if (pressing) {
-            if (i == 0 || i >= 4) {
-                self.value = Math.round(self.value * Math.pow(10, Math.max(self._floatFixed, 0)) - 1) / Math.pow(10, Math.max(self._floatFixed, 0));
-                self.notifyChanged({ by: 'long_press_button' });
-            }
-            ++i;
-            self.__pressingUpTimeout__ = setTimeout(tick, 100);
-        }
-    }
-
-    function finish(event) {
-        pressing = false;
-        if (timeout >= 0) {
-            clearTimeout(timeout);
-            timeout = -1;
-        }
-        body.off('mouseup', finish);
-        body.off('mouseleave', finish);
-        if (event.type == 'mouseup') {
-            self.$input.focus();
-        }
-        self.notifyChanged({ originEvent: event, by: 'press_button' });
-    }
-
-    body.on('mouseup', finish);
-    body.on('mouseleave', finish);
-    tick();
-};
-
-
-NumberInput.eventHandler.keyup = function (event) {
-    var cValue = parseFloat(this.$input.value);
-    if (!isNaN(cValue) && cValue <= this.max && this.min <= cValue) {
-        this._value = cValue;
-        this.notifyChanged({ originEvent: event, by: 'keyup' });
-    }
-};
-
-
-NumberInput.eventHandler.keydown = function () {
-    var key = event.key;
-    var text = this.$input.value;
-    if (key && key.length == 1 && !event.ctrlKey) {
-        if (key.match(/[0-9.\-\+]/)) {
-            if (key == '.' && text.indexOf('.') >= 0) event.preventDefault();
-            if ((key == '+' || key == '-') && (text.indexOf('+') >= 0 || text.indexOf('-') >= 0 || getCaretPosition(this.$input) > 0)) event.preventDefault();
-        }
-        else event.preventDefault();
-    }
-};
-
-NumberInput.eventHandler.change = function (event) {
-    this.value = parseFloat(this.$input.value);
-    this.notifyChanged({ originEvent: event, by: 'input_change' });
-};
-
-NumberInput.eventHandler.paste = function (e) {
-    e.preventDefault();
-    var text = "";
-    if (e.clipboardData && e.clipboardData.getData) {
-        text = e.clipboardData.getData("text/plain");
-
-    }
-    else if (window.clipboardData && window.clipboardData.getData) {
-        text = window.clipboardData.getData("Text");
-    }
-
-    var oldText = this.$input.value;
-    var caretPos = getCaretPosition(this.$input);
-    var newText = oldText.substr(0, caretPos) + text + oldText.substr(caretPos);
-    var matched = newText.match(/[+-]?([0-9]*[.])?[0-9]+/);
-    if (matched) {
-        this.value = parseFloat(matched[0]);
-    }
 };
 
 
 NumberInput.prototype.notifyChanged = function (option) {
     option = option || {};
-    if (this._previusValue != this.value || this._prevBy !== option.by) {
-        this.emit('change', Object.assign({ target: this, value: this.value }, option || {}), this);
-        this._previusValue = this.value;
+    var value = this.value;
+    if (this._prevValue !== value) {
+        this.emit('change', Object.assign({
+            target: this,
+            value: value,
+            previousValue: this._prevValue
+        }, option || {}), this);
+        this._prevValue = value;
         this._prevBy = option.by;
     }
-}
-
-
-NumberInput.prototype.numberToString = function (number) {
-    return numberToString(this._value, this._floatFixed, this._decimalSeparator, this._thousandsSeparator, this._decimalPadding);
-};
-
-
-NumberInput.prototype.updateTextValue = function () {
-    if (this._value == Infinity || this._value == -Infinity) this.$input.value = this._value + "";
-    this.$input.value = this.numberToString(this._value);
-}
-
-NumberInput.prototype.stringToNumber = function (string) {
-    var matchedInf = string.toLowerCase().match('/([+-])?infinity/');
-    if (matchedInf) {
-        if (matchedInf[1] == '-')
-            return Infinity;
-        return -Infinity;
-    }
-    else if (this._thousandsSeparator == '.') {
-        string = string.replace(/\./g, '').replace(/\,/, '.');
-    }
-    else if (this._thousandsSeparator == ',') {
-        string = string.replace(/\,/g, '');
-    }
-
-    return parseFloat(string);
 };
 
 
@@ -237,24 +230,42 @@ NumberInput.property = {};
 NumberInput.property.value = {
     set: function (value) {
         if (typeof (value) != 'number' || isNaN(value)) value = 0;
-        this._value = Math.max(this._min, Math.min(this._max, value));
-        this.updateTextValue();
+        this._value = value;
+        this._prevValue = this.value;
+        this.textCtrl.flushValueToText();
     },
     get: function () {
-        return this._value;
+        var value = Math.min(this.max, Math.max(this._value, this.min));
+        if (this._format.maximumFractionDigits === 0) {
+            return Math.round(value);
+        }
+        if (this._format.maximumFractionDigits < 20)
+            return numberAutoFixed(value, this._format.maximumFractionDigits);
+        return value;
+    }
+};
+
+NumberInput.property.step = {
+    set: function (value) {
+        if (!isRealNumber(value)) value = 1;
+        if (value === 0) value = 1;
+        value = Math.abs(value);
+        this._step = value;
+    },
+    get: function () {
+        return this._step;
     }
 };
 
 
 NumberInput.property.max = {
     set: function (value) {
-        if (!(typeof value == 'number') || isNaN(value)) {
+        if (!isRealNumber(value)) {
             value = Infinity;
         }
         this._max = value;
-        // this._value = Math.min(value, this._value);
-        // this._min = Math.min(this._min, this._value);
-        this.updateTextValue();
+        this._prevValue = this.value;
+        this.textCtrl.flushValueToText();
     },
     get: function () {
         return Math.max(this._max, this._min);
@@ -263,103 +274,44 @@ NumberInput.property.max = {
 
 NumberInput.property.min = {
     set: function (value) {
-        if (!(typeof value == 'number') || isNaN(value)) {
+        if (!isRealNumber(value)) {
             value = -Infinity;
         }
         this._min = value;
-        // this._value = Math.max(value, this._value);
-        // this._max = Math.max(this._max, this._value);
-        this.updateTextValue();
-
+        this._prevValue = this.value;
+        this.textCtrl.flushValueToText();
     },
     get: function () {
         return Math.min(this._min, this._max);
     }
 };
 
-NumberInput.property.decimalSeparator = {
-    set: function (value) {
-        if (value === ',') {
-            if (this._thousandsSeparator === ',')
-                this._thousandsSeparator = '.';
-        }
-        else if (value === '.') {
-            if (this._thousandsSeparator === '.')
-                this._thousandsSeparator = ',';
-        }
-        else {
-            value = '';
-        }
-        this._decimalSeparator = value;
-        this.updateTextValue();
+
+NumberInput.prototype.locales2Format = {
+    'vi-VN': {
+        decimalSeparator: ',',
+        thousandsSeparator: '.'
     },
+    'en-US': {
+        decimalSeparator: '.',
+        thousandsSeparator: ','
+    }
+};
+
+NumberInput.property.decimalSeparator = {
     get: function () {
-        return this._decimalSeparator;
+        var lF = this.locales2Format[this._format.locales];
+        if (lF) return lF.decimalSeparator;
+        return '.';
     }
 };
 
 
 NumberInput.property.thousandsSeparator = {
-    set: function (value) {
-        if (value === ',') {
-            if (this._decimalSeparator === ',')
-                this._decimalSeparator = '.';
-        }
-        else if (value === '.') {
-            if (this._decimalSeparator === '.')
-                this._decimalSeparator = ',';
-        }
-        else {
-            value = '';
-        }
-        this._thousandsSeparator = value;
-        this.updateTextValue();
-    },
     get: function () {
-        return this._thousandsSeparator;
-    }
-};
-
-NumberInput.property.floatFixed = {
-    set: function (value) {
-        if (typeof value == "number") {
-            if (isNaN(value)) {
-                value = -1;
-            }
-            else {
-                value = Math.round(Math.max(-1, Math.min(100, value)));
-            }
-        }
-        else {
-            value = -1;
-        }
-
-        this._floatFixed = value;
-        this.updateTextValue();
-    },
-    get: function () {
-        return this._floatFixed;
-    }
-};
-
-NumberInput.property.decimalPadding = {
-    set: function (value) {
-        if (typeof value == "number") {
-            if (isNaN(value)) {
-                value = 0;
-            }
-            else {
-                value = Math.round(Math.max(-1, Math.min(100, value)));
-            }
-        }
-        else {
-            value = 0;
-        }
-        this._decimalPadding = value;
-        this.updateTextValue();
-    },
-    get: function () {
-        return this._decimalPadding;
+        var lF = this.locales2Format[this._format.locales];
+        if (lF) return lF.thousandsSeparator;
+        return null;
     }
 };
 
@@ -379,6 +331,61 @@ NumberInput.property.disabled = {
     }
 };
 
+NumberInput.property.readOnly = {
+    set: function (value) {
+        this.$input.readOnly = !!value;
+        if (value)
+            this.addClass('as-read-only');
+        else
+            this.removeClass('as-read-only');
+    },
+    get: function () {
+        return this.$input.readOnly;
+    }
+};
+
+NumberInput.property.format = {
+    /***
+     * @this NumberInput
+     * @param value
+     * @this NumberInput
+     */
+    set: function (value) {
+        if (value in this.locales2Format) {
+            this._format = {
+                locales: value
+            };
+        }
+        else if (!value) {
+            this._format = this._makeDefaultFormat();
+        }
+        else {
+            this._format = Object.assign(this._makeDefaultFormat(), value);
+        }
+    },
+    get: function () {
+        return this._format;
+    }
+};
+
+
+NumberInput.property.floatFixed = {
+    set: function (value) {
+        if (value >= 0 && value < 20) {
+            this._format.maximumFractionDigits = Math.floor(value);
+            this._format.minimumFractionDigits = Math.floor(value);
+        }
+        else {
+            this._format.maximumFractionDigits = 20;
+            delete this._format.minimumFractionDigits;
+        }
+        this.textCtrl.flushValueToText();
+    },
+    get: function () {
+        if (this._format.maximumFractionDigits === 20) return null;
+        return this._format.maximumFractionDigits;
+    }
+};
 
 ACore.install('NumberInput'.toLowerCase(), NumberInput);
 
