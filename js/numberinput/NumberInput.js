@@ -297,6 +297,10 @@ NumberInput.prototype.locales2Format = {
     'en-US': {
         decimalSeparator: '.',
         thousandsSeparator: ','
+    },
+    'none': {
+        decimalSeparator: '.',
+        thousandsSeparator: ''
     }
 };
 
@@ -306,7 +310,8 @@ NumberInput.property.decimalSeparator = {
         if (lF) return lF.decimalSeparator;
         return '.';
     },
-    set: ()=>{}
+    set: () => {
+    }
 };
 
 
@@ -316,7 +321,8 @@ NumberInput.property.thousandsSeparator = {
         if (lF) return lF.thousandsSeparator;
         return null;
     },
-    set: ()=>{}
+    set: () => {
+    }
 };
 
 

@@ -41,11 +41,33 @@ NITextController.prototype.flushTextToValue = function () {
 
 
 NITextController.prototype.flushValueToText = function () {
+    var formatter;
     var opt = Object.assign({}, this.elt._format);
+    var value = this.elt.value;
+    var text, parts;
+    if (opt.locales === 'none') {
+        if (opt.maximumFractionDigits === 20) {
+            text = value + '';
+        }
+        else if (opt.maximumFractionDigits === opt.minimumIntegerDigits) {
+            text = value.toFixed(opt.maximumFractionDigits);
+        }
+        else {
+            text = value + '';
+            parts = text.split('.');
+            parts[1] = parts[1] || '';
+            if (parts[1].length < opt.minimumIntegerDigits) {
+                text = value.toFixed(opt.minimumIntegerDigits);
+            }
+        }
+    }
+    else {
+        formatter = new Intl.NumberFormat(this.elt._format.locales, opt);
+        text = formatter.format(this.elt.value);
+    }
     delete opt.locales;
-    var formatter = new Intl.NumberFormat(this.elt._format.locales, opt);
-    this.$input.value = formatter.format(this.elt.value);
-    this.estimateWidthBy(this.$input.value);
+    this.$input.value = text;
+    this.estimateWidthBy(text);
 };
 
 
