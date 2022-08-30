@@ -88,6 +88,18 @@ function NumberInput() {
      * @memberOf NumberInput#
      */
 
+    /****
+     * @name readOnly
+     * @type {boolean}
+     * @memberOf NumberInput#
+     */
+
+    /****
+     * @name disabled
+     * @type {boolean}
+     * @memberOf NumberInput#
+     */
+
 
 }
 

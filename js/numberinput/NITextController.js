@@ -202,12 +202,14 @@ NITextController.prototype.onKeyDown = function (event) {
 
 
     onKeys.number = () => {
+        if (this.elt.readOnly) return;
         this.$input.value = value.substring(0, sStart) + key + value.substring(sEnd);
         this.$input.setSelectionRange(sStart + 1, sStart + 1);
         this.reformat();
         this.flushTextToValue();
     };
     onKeys['-'] = () => {
+        if (this.elt.readOnly) return;
         if (value.indexOf('-') >= 0 || sStart > 0) return;
         this.$input.value = '-' + value.substring(sEnd);
         this.$input.setSelectionRange(1, 1);
@@ -216,6 +218,7 @@ NITextController.prototype.onKeyDown = function (event) {
     };
 
     onKeys.backspace = () => {
+        if (this.elt.readOnly) return;
         var delStart, delEnd;
         if (sStart === sEnd) {
             if (sStart > 0) {
@@ -236,6 +239,7 @@ NITextController.prototype.onKeyDown = function (event) {
     };
 
     onKeys.enter = () => {
+        if (this.elt.readOnly) return;
         this.flushValueToText();
         this.$input.setSelectionRange(this.$input.value.length, this.$input.value.length);
         this.elt.notifyChanged({ by: 'enter' });
@@ -243,6 +247,7 @@ NITextController.prototype.onKeyDown = function (event) {
 
 
     onKeys.delete = () => {
+        if (this.elt.readOnly) return;
         var delStart, delEnd;
 
         if (sStart === sEnd) {
@@ -265,6 +270,7 @@ NITextController.prototype.onKeyDown = function (event) {
     };
 
     onKeys.decimalSeparator = () => {
+        if (this.elt.readOnly) return;
         var idx = value.indexOf(decimalSeparator);
         if (idx >= 0) {
             if (idx < sStart) {

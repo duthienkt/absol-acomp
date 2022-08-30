@@ -17,6 +17,25 @@
     width: calc(var(--text-width) + 2.2em);
 }
 
+.absol-number-input.as-read-only .absol-number-input-text-container {
+    right: 0;
+}
+
+.absol-number-input.as-read-only .absol-number-input-button-up-container,
+.absol-number-input.as-read-only .absol-number-input-button-down-container {
+    display: none;
+}
+
+.absol-number-input.as-read-only.as-border-none {
+    border: none;
+}
+
+.absol-number-input.as-read-only.as-border-none input {
+    text-align: left;
+    padding-left: 0;
+}
+
+
 .absol-number-input-button-up-container {
     top: 0;
 }
