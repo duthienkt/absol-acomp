@@ -29,6 +29,32 @@
     }
 </style>
 <div id="ck"></div>
+<div id="data_sample" style="display: none">
+    <p>Tôi năm nay <strong><span class="as-ck-widget-expression">{{ old }}</span></strong></p>
+
+    <p>&nbsp;</p>
+
+    <p><strong>var</strong> englishDictionary = <strong>new</strong> IFrameBridge(<strong>new</strong> Worker('../dist/wordfinder.js')); absol._({ tag: 'autocompleteinput', style: { display: 'block', height: '40px', 'max-width': '500px', margin: "10px" }, on: { change: <strong>function</strong> (event, sender) { absol.$('span#selected-word', selectedWord).innerHTML = event.value || sender.value; } }, props: { adapter: { queryItems: <strong>function</strong> (query, mInput) { <strong>return</strong> englishDictionary.invoke('find', query).then(<strong>function</strong> (texts) { <strong>return</strong> texts.<strong>map</strong>(<strong>function</strong> (text) { <strong>var</strong> start = text.toLocaleLowerCase().<strong>indexOf</strong>(query); <strong>if</strong> (start &gt;= 0) { <strong>var</strong> hightlightedText = text.<strong>substr</strong>(0, start) + '&lt;strong style="color:red"&gt;' + text.<strong>substr</strong>(start, query.<strong>length</strong>) + '&lt;/strong&gt;' + text.<strong>substr</strong>(start + query.<strong>length</strong>); <strong>return</strong> { text: text, hightlightedText: hightlightedText } } <strong>else</strong> <strong>return</strong> <strong>null</strong>; }).<strong>filter</strong>(<strong>function</strong> (it) { <strong>return</strong> it !== <strong>null</strong>; }) }) }, getItemText: <strong>function</strong> (<strong>item</strong>, mInput) { <strong>return</strong> <strong>item</strong>.text; }, getItemView: <strong>function</strong> (<strong>item</strong>, index, _, $, query, reuseItem, refParent, mInput) { <strong>return</strong> _({ tag: 'div', style: { height: '30px' }, child: { tag: 'span', style: { lineHeight: '1.2em' }, props: { innerHTML: <strong>item</strong>.hightlightedText } } }) } } } }).addTo(document.body); <strong>var</strong> selectedWord = absol._('&lt;div style="height:30px"&gt;Selected: &lt;span id="selected-word"&gt;&lt;/span&gt;&lt;/div&gt;').addTo(document.body);</p>
+
+    <p>&nbsp;</p>
+
+    <h1>Áp suất danh nghĩa</h1>
+
+    <p>Áp suất danh nghĩa - PN (Nominal Pressure) là áp suất tối đa (tính bằng bar) mà một hệ thống ống có thể chịu được khi sử dụng liên tục ở nhiệt độ 20oC dưới các điều kiện phục vụ đã được quy định và không có đột biến về áp suất.</p>
+
+    <p>1 bar = 10 mét cột nước</p>
+
+    <h1>Áp suất làm việc</h1>
+
+    <p>Áp suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.</p>
+
+    <p>Ví dụ:</p>
+
+    <ul>
+        <li>Ống có áp suất làm việc 10 bar kết nối với phụ tùng có áp suất 12.5 bar thì áp suất hệ thống là 10 bar.&nbsp;suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.suất làm việc hệ thống là áp suất danh nghĩa tại điểm yếu nhất của hệ thống.</li>
+        <li>Ống có áp suất làm việc 12.5 bar kết nối với phụ tùng có áp suất 10 bar thì áp suất hệ thống là 10 bar.</li>
+    </ul>
+</div>
 <script>
     var ck = absol.$('#ck');
 
@@ -341,7 +367,7 @@
     });
 
 
-    ckPlaceHolderElt.data = "Tôi năm nay <strong>{{ old }}<strong>";
+    ckPlaceHolderElt.data = absol.$('#data_sample').innerHTML;
     ck.appendChild(ckPlaceHolderElt);
     var preview = absol._({
         class: 'cke_contents_ltr'
