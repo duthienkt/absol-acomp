@@ -47,8 +47,9 @@
                     item.items.sort(function (a, b) {
                         return a.text < b.text ? -1 : 1;
                     });
-                } else {
-                    item.items = [{text: 'none', value: 'none'}]
+                }
+                else {
+                    item.items = [{ text: 'none', value: 'none' }]
                 }
                 return item;
             });
@@ -67,7 +68,7 @@
         var listDataAsync = fetch('./demo_tree_list_with_icon.js').then(function (res) {
             return res.text();
         }).then(function (text) {
-            var module = {exports: {}};
+            var module = { exports: {} };
             var factor = new Function('module', 'exports', text + '\nreturn module.exports;');
             return factor(module, module.exports);
         });
@@ -96,9 +97,16 @@
             {
                 tag: 'input',
                 class: 'as-text-input',
-                attr: {type: 'text'},
+                attr: { type: 'text' },
                 props: {
                     value: 'abc 123'
+                }
+            },
+            {
+                tag: 'numberinput',
+                style: { width: '9em' },
+                props: {
+                    value: 2435434.999
                 }
             },
             {
@@ -156,7 +164,7 @@
 
                 props: {
                     // value: null
-                    value: {date: 20, month: 9}// 20/10
+                    value: { date: 20, month: 9 }// 20/10
                 }
             },
             {
@@ -183,7 +191,7 @@
                 props: {
                     enableSearch: true,
                     items: Array(1600).fill(null).map(function (u, i) {
-                        return {text: `[${i}] ${absol.string.randomPhrase(15)}`, value: i};
+                        return { text: `[${i}] ${absol.string.randomPhrase(15)}`, value: i };
                     }),
                     values: [1, 2, 3, 4, 56, 7, 89]
                 }
@@ -196,14 +204,14 @@
                         "https://absol.cf/share/No%20Friends%20AMV.mp4",
                         'https://absol.cf/share/mail.txt',
                         'https://absol.cf/share/tunnel.js',
-                        {url: "https://absol.cf/share/No%20Friends%20AMV.mp4", name: 'No Friend.mp4'}
+                        { url: "https://absol.cf/share/No%20Friends%20AMV.mp4", name: 'No Friend.mp4' }
                     ]
                 }
             },
             {
                 tag: 'locationinput',
                 props: {
-                    value: {latitude: 10.799956, longitude: 106.710672}//,//default type //or
+                    value: { latitude: 10.799956, longitude: 106.710672 }//,//default type //or
                     // value: { lat: 37.772, lng: -122.214 },
                 }
             },
@@ -212,7 +220,7 @@
                 props: {
                     enableSearch: true,
                     items: Array(1600).fill(null).map(function (u, i) {
-                        return {text: `[${i}] ${absol.string.randomPhrase(15)}`, value: i};
+                        return { text: `[${i}] ${absol.string.randomPhrase(15)}`, value: i };
                     }),
                     values: [1, 2, 3, 4, 56, 7, 89]
                 }
@@ -221,7 +229,7 @@
                 props: {
                     enableSearch: true,
                     items: Array(1600).fill(null).map(function (u, i) {
-                        return {text: `[${i}] ${absol.string.randomPhrase(15)}`, value: i};
+                        return { text: `[${i}] ${absol.string.randomPhrase(15)}`, value: i };
                     }),
                     values: [1, 2, 3, 4, 56, 7, 89]
                 }
@@ -264,11 +272,11 @@
                             rows: [
                                 {
                                     cells: [
-                                        {child: {text: 'tag'}},
-                                        {child: {text: 'normal'}},
-                                        {child: {text: 'readOnly'}},
-                                        {child: {text: 'disabled'}},
-                                        {child: {text: 'readOnly + class "as-border-none"'}},
+                                        { child: { text: 'tag' } },
+                                        { child: { text: 'normal' } },
+                                        { child: { text: 'readOnly' } },
+                                        { child: { text: 'disabled' } },
+                                        { child: { text: 'readOnly + class "as-border-none"' } },
                                     ]
                                 }
                             ]
@@ -277,11 +285,11 @@
                             rows: demoTagData.map(function (o) {
                                 return {
                                     cells: [
-                                        {child: {text: o.tag}},
-                                        {child: _(o)},
-                                        {child: Object.assign(_(o), {readOnly: true})},
-                                        {child: Object.assign(_(o), {disabled: true})},
-                                        {child: Object.assign(_(o), {readOnly: true}).addClass('as-border-none')},
+                                        { child: { text: o.tag } },
+                                        { child: _(o) },
+                                        { child: Object.assign(_(o), { readOnly: true }) },
+                                        { child: Object.assign(_(o), { disabled: true }) },
+                                        { child: Object.assign(_(o), { readOnly: true }).addClass('as-border-none') },
                                     ]
                                 }
                             })
@@ -295,7 +303,7 @@
         fetch('./demo_tree_list_with_icon.js').then(function (res) {
             return res.text();
         }).then(function (text) {
-            var module = {exports: {}};
+            var module = { exports: {} };
             var factor = new Function('module', 'exports', text + '\nreturn module.exports;');
             return factor(module, module.exports);
         }).then(function (result) {
