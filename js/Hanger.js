@@ -139,9 +139,9 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
     }
     ;
     if (isTouch)
-        this.on2.call(document.body, this._touchEvents)
+        this.on2.call(document, this._touchEvents)
     else
-        this.on2.call(document.body, this._mouseEvents);
+        this.on2.call(document, this._mouseEvents);
 
 };
 
@@ -248,9 +248,9 @@ Hanger.eventHandler.hangerPointerFinish = function (event) {
 
     this._hangerPointerData = null;
     if (isTouch)
-        this.off2.call(document.body, this._touchEvents)
+        this.off2.call(document, this._touchEvents)
     else
-        this.off2.call(document.body, this._mouseEvents);
+        this.off2.call(document, this._mouseEvents);
 };
 
 ACore.install(Hanger);
