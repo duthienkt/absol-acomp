@@ -1,7 +1,9 @@
-import '../css/tablescroller.css';
-import ACore from "../ACore";
+import '../../css/tablescroller.css';
+import ACore from "../../ACore";
 import Dom from "absol/src/HTML5/Dom";
-import BScroller from "./BScroller";
+import BScroller from "../BScroller";
+import TSLMoveTool from "./TSLMoveTool";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 var $ = ACore.$;
 var _ = ACore._;
@@ -57,6 +59,8 @@ function TableScroller() {
     this._fixedTableThsVisible = [];
     this._fixedTableTr = [];
     this._fixedTableThs = [];
+
+    this.moveTool = new TSLMoveTool(this);
 }
 
 TableScroller.tag = 'TableScroller'.toLowerCase();
@@ -172,8 +176,8 @@ TableScroller.prototype.clearChild = function () {
 };
 
 TableScroller.prototype.addChild = function (elt) {
-    if (this.$viewport.childNodes.length == 0) {
-        if (elt.tagName && elt.tagName.toLowerCase() == 'table') {
+    if (this.$viewport.childNodes.length === 0) {
+        if (elt.tagName && elt.tagName.toLowerCase() === 'table') {
             elt.classList.add('absol-table-scroller-origin');
             this.$viewport.addChild(elt);
             this.$content = elt;
@@ -185,6 +189,7 @@ TableScroller.prototype.addChild = function (elt) {
         else {
             throw new Error('Element must be a table!');
         }
+        this.moveTool.onAttachTable();
     }
     else {
         throw new Error("Only 1 table accepted!");
@@ -271,13 +276,40 @@ TableScroller.prototype._updateHeaderScroller = function () {
 TableScroller.prototype._updateLeftTable = function () {
     this.$leftViewport.clearChild();
     this.$leftTable = $(this.$content.cloneNode(true)).addTo(this.$leftViewport);
-
-
+    this.$leftTableBody = $('tbody', this.$leftTable);
+    this.leftCopyRows = {};
+    Array.prototype.slice.call(this.$leftTableBody.childNodes).forEach((elt, i) => {
+        var id;
+        if (elt.tagName === 'TR') {
+            id = elt.getAttribute('data-id');
+            this.leftCopyRows[id] = elt;
+        }
+        else {
+            elt.remove();
+        }
+    });
 };
 
 
+TableScroller.prototype._makeDataIdent = function () {
+    this.originalRows = {};
+    Array.prototype.slice.call(this.$contentBody.childNodes).forEach((elt, i) => {
+        var id;
+        if (elt.tagName === 'TR') {
+            id =  elt.getAttribute('data-id')||  randomIdent(12) + '_' + i;
+            elt.setAttribute('data-id', id);
+            this.originalRows[id] = elt;
+        }
+        else {
+            elt.remove();
+        }
+    });
+};
+
 TableScroller.prototype._updateContent = function () {
     this.$contentThead = $('thead', this.$content);
+    this.$contentBody = $('tbody', this.$content)
+    this._makeDataIdent();
     this._updateFixedTable();
     this._updateHeaderScroller();
     this._updateLeftTable();

@@ -61,7 +61,7 @@ import SpanInput from "../SpanInput";
 import StaticTabbar from "../StaticTabbar";
 import Switch from "../Switch";
 import CheckBoxButton from "../CheckboxButton";
-import TableScroller from "../TableScroller";
+import TableScroller from "../tablescroller/TableScroller";
 import TableVScroller from "../TableVScroller";
 import TextArea2 from "../TextArea2";
 import TextClipboard from "../TextClipboard";
