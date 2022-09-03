@@ -2511,20 +2511,6 @@
 
 
 <h2>Table Scroller</h2>
-<script>
-    var mTableScroller = absol._({
-        tag: 'tablescroller',
-        class: 'KPIsimpletableclass KPItablehover row2colors'.split(/\s+/),
-        style: {
-            height: '500px',
-            width: '700px'
-        },
-        props: {
-            fixedCol: 2
-        },
-        child: absol.$(absol.$('#example')).addStyle('width', '1900px')
-    }).addTo(document.body);
-</script>
 
 <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
@@ -2532,14 +2518,47 @@
     (function () {
         var _ = absol._;
         var $ = absol.$;
+        var $$ = absol.$$;
 
-        var matrixTable = _({
-            tag: 'table',
-            child: [
-                { tag: 'thead' },
-                { tag: 'tbody' }
-            ]
+        // var matrixTable = _({
+        //     tag: 'table',
+        //     child: [
+        //         { tag: 'thead' },
+        //         { tag: 'tbody' }
+        //     ]
+        // });
+
+        var table =  $('#example').addStyle('width', '1900px');
+        var headerRow = $('#example > thead > tr', table);
+        headerRow.addChildBefore(_({
+            tag:'th'
+        }), headerRow.firstChild);
+
+        var rows = $$('#example > tbody > tr', table).forEach(function(row){
+            row.addChildBefore(_({
+                tag:'td',
+                class:'as-drag-zone',
+                child:'span.mdi.mdi-dots-grid',
+                style:{
+                    textAlign:'center',
+                    verticalAlign:'middle'
+                }
+            }), row.firstChild)
         });
+
+
+        var mTableScroller = _({
+            tag: 'tablescroller',
+            class: 'KPIsimpletableclass KPItablehover row2colors'.split(/\s+/),
+            style: {
+                height: '500px',
+                width: '700px'
+            },
+            props: {
+                fixedCol: 2
+            },
+            child:table
+        }).addTo(document.body);
 
 
     })();
