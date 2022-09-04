@@ -2,7 +2,7 @@ import '../css/hanger.css';
 import ACore from "../ACore";
 import Vec2 from "absol/src/Math/Vec2";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import {findChangedTouchByIdent} from "absol/src/HTML5/EventEmitter";
+import { findChangedTouchByIdent } from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
@@ -182,6 +182,20 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
                     event.preventDefault();
                 }
             };
+
+            pointerData.trackedScrollers = (() => {
+                var res = [];
+                var c = this._hangerPointerData.target;
+                while (c) {
+                    c.addEventListener('scroll', this.eventHandler.trackingScroll);
+                    res.push(c);
+                    c = c.parentElement;
+                }
+                document.addEventListener('scroll', this.eventHandler.trackingScroll);
+                res.push(document);
+
+                return res;
+            })();
             pointerData.state = 1;
             this.emit('dragstart', dragStartEvent, this);
         }
@@ -227,6 +241,8 @@ Hanger.eventHandler.hangerPointerFinish = function (event) {
     }
     if (pointerIdent !== pointerData.pointerIdent) return;
     if (pointerData.state === 1) {
+        pointerData.trackedScrollers.forEach(elt=> elt.removeEventListener('scroll',this.eventHandler.trackingScroll));
+
         var dragEndEvent = {
             type: 'dragend',
             originEvent: event,
@@ -251,6 +267,29 @@ Hanger.eventHandler.hangerPointerFinish = function (event) {
         this.off2.call(document, this._touchEvents)
     else
         this.off2.call(document, this._mouseEvents);
+};
+
+Hanger.eventHandler.trackingScroll = function (event) {
+    var pointerData = this._hangerPointerData;
+    var currentPoint =  pointerData.currentPoint;
+    var dragEvent = {
+        type: 'drag',
+        originEvent: event,
+        isTouch: false,
+        bound: pointerData.bound,
+        startingPoint: pointerData.startingPoint,
+        offsetVec: pointerData.offsetVec,
+        pointerIdent: pointerData.pointerIdent,
+        currentPoint: currentPoint,
+        target: pointerData.target,
+        clientX: currentPoint.x,
+        clientY: currentPoint.y,
+        isScrolling: true,
+        preventDefault: function () {
+            // event.preventDefault();
+        }
+    };
+    this.emit('drag', dragEvent, this);
 };
 
 ACore.install(Hanger);
