@@ -583,6 +583,10 @@
     /**********************************************************************/
 </style>
 <style>
+    * {
+        box-sizing: border-box;
+    }
+
     .shadow-box {
         box-shadow: 5px 5px 10px #888888;
     }
@@ -2520,32 +2524,23 @@
         var $ = absol.$;
         var $$ = absol.$$;
 
-        // var matrixTable = _({
-        //     tag: 'table',
-        //     child: [
-        //         { tag: 'thead' },
-        //         { tag: 'tbody' }
-        //     ]
-        // });
-
-        var table =  $('#example').addStyle('width', '1900px');
+        var table = $('#example').addStyle('width', '1900px');
         var headerRow = $('#example > thead > tr', table);
         headerRow.addChildBefore(_({
-            tag:'th'
+            tag: 'th',
+            child: { text: "STT" }
         }), headerRow.firstChild);
-
-        var rows = $$('#example > tbody > tr', table).forEach(function(row){
+        var rows = $$('#example > tbody > tr', table).forEach(function (row, i) {
             row.addChildBefore(_({
-                tag:'td',
-                class:'as-drag-zone',
-                child:'span.mdi.mdi-dots-grid',
-                style:{
-                    textAlign:'center',
-                    verticalAlign:'middle'
+                tag: 'td',
+                class: 'as-drag-zone',
+                child: '<span>' + (i + 1) + '</span>',
+                style: {
+                    textAlign: 'right',
+                    verticalAlign: 'middle'
                 }
             }), row.firstChild)
         });
-
 
         var mTableScroller = _({
             tag: 'tablescroller',
@@ -2557,12 +2552,753 @@
             props: {
                 fixedCol: 2
             },
-            child:table
+            child: table
         }).addTo(document.body);
 
 
-    })();
+        var cities = ('Ho Chi Minh City\n' +
+            'Hanoi\n' +
+            'Haiphong\n' +
+            'Cần Thơ\n' +
+            'Biên Hòa\n' +
+            'Thủ Đức\n' +
+            'Quảng Hà\n' +
+            'Bắc Ninh\n' +
+            'Hải Dương\n' +
+            'Vinh\n' +
+            'Huế\n' +
+            'Thanh Hóa\n' +
+            'Nha Trang\n' +
+            'Nam Định\n' +
+            'Buôn Ma Thuột\n' +
+            'Thái Nguyên\n' +
+            'Vũng Tàu\n' +
+            'Cà Mau\n' +
+            'Quy Nhơn\n' +
+            'Sóc Trăng\n' +
+            'Long Xuyên\n' +
+            'Việt Trì\n' +
+            'Thái Bình\n' +
+            'Quảng Ngãi\n' +
+            'Ấp Đa Lợi\n' +
+            'Rạch Giá\n' +
+            'Thủ Dầu Một\n' +
+            'Tuy Hòa\n' +
+            'Bạc Liêu\n' +
+            'Sa Đéc\n' +
+            'Phan Thiết\n' +
+            'Sơn Tây\n' +
+            'Phan Rang-Tháp Chàm\n' +
+            'Hạ Long\n' +
+            'Hà Tĩnh\n' +
+            'Đồng Hới\n' +
+            'Châu Đốc\n' +
+            'Cẩm Phả\n' +
+            'Cao Lãnh\n' +
+            'Lạng Sơn\n' +
+            'Cam Ranh\n' +
+            'Pleiku\n' +
+            'Tân An\n' +
+            'Trà Vinh\n' +
+            'Ninh Bình\n' +
+            'Tây Ninh\n' +
+            'Cam Ranh\n' +
+            'Mỹ Tho\n' +
+            'Hội An\n' +
+            'Hòa Bình\n' +
+            'Mang La\n' +
+            'Vĩnh Long\n' +
+            'Vị Thanh\n' +
+            'Yên Bái\n' +
+            'Dĩ An\n' +
+            'Quảng Trị\n' +
+            'Phú Quốc\n' +
+            'Lào Cai\n' +
+            'Bến Tre\n' +
+            'Bắc Giang\n' +
+            'Hà Tiên\n' +
+            'Cao Bằng\n' +
+            'Bình Long\n' +
+            'Hà Giang\n' +
+            'Tuyên Quang\n' +
+            'Bắc Kạn\n' +
+            'Sơn La\n' +
+            'Đông Hà\n' +
+            'Quận Mười Một\n' +
+            'Quận Năm\n' +
+            'Quận Mười\n' +
+            'Quận Phú Nhuận\n' +
+            'Đống Đa\n' +
+            'Quận Sáu\n' +
+            'Hai BàTrưng\n' +
+            'Hoàn Kiếm\n' +
+            'Quận Ba\n' +
+            'Quận Một\n' +
+            'Cầu Giấy\n' +
+            'Quận Bốn\n' +
+            'Quận Tân Phú\n' +
+            'Quận Bình Thạnh\n' +
+            'Ba Đình\n' +
+            'Thanh Khê\n' +
+            'Thanh Xuân\n' +
+            'Đà Nẵng\n' +
+            'Quận Bảy\n' +
+            'Tây Hồ\n' +
+            'Hà Đông\n' +
+            'Lái Thiêu\n' +
+            'Cầu Diễn\n' +
+            'Hưng Yên\n' +
+            'Quận Hai\n' +
+            'Hóc Môn\n' +
+            'Cẩm Lệ\n' +
+            'Văn Điển\n' +
+            'Quận Chín\n' +
+            'Sơn Trà\n' +
+            'Trâu Quỳ\n' +
+            'Phủ Lý\n' +
+            'Trôi\n' +
+            'Phùng\n' +
+            'Đông Anh\n' +
+            'Tân Túc\n' +
+            'Bình Thủy\n' +
+            'Vĩnh Yên\n' +
+            'Tam Kỳ\n' +
+            'Điện Biên Phủ\n' +
+            'Đồng Xoài\n' +
+            'Đà Lạt\n' +
+            'Lai Châu\n' +
+            'Kon Tum\n' +
+            'Gia Nghĩa\n' +
+            'Ngũ Hành Sơn\n' +
+            'Thường Tín\n' +
+            'Thị Trấn Long Điền\n' +
+            'Liên Chiểu\n' +
+            'Cái Răng\n' +
+            'Hòa Thành\n' +
+            'Lý Sơn\n' +
+            'Phúc Thọ\n' +
+            'An Dương\n' +
+            'Mê Linh\n' +
+            'Như Quỳnh\n' +
+            'Nhà Bè\n' +
+            'Liên Quan\n' +
+            'Yên Mỹ\n' +
+            'Khoái Châu\n' +
+            'Phú Quý\n' +
+            'Kim Bài\n' +
+            'Văn Giang\n' +
+            'Chúc Sơn\n' +
+            'Quốc Oai\n' +
+            'Xuân Trường\n' +
+            'Hồ\n' +
+            'Núi Đèo\n' +
+            'Yên Lạc\n' +
+            'Vĩnh Tường\n' +
+            'Núi Đối\n' +
+            'Phú Xuyên\n' +
+            'An Lão\n' +
+            'Cổ Lễ\n' +
+            'Hưng Hà\n' +
+            'Bẩn Yên Nhân\n' +
+            'Lim\n' +
+            'Ô Môn\n' +
+            'Nam Giang\n' +
+            'Vũ Thư\n' +
+            'Lai Cách\n' +
+            'Hậu Lộc\n' +
+            'Đông Hưng\n' +
+            'Chờ\n' +
+            'Bút Sơn\n' +
+            'Quảng Xương\n' +
+            'Quỳnh Côi\n' +
+            'Vân Đình\n' +
+            'Lương Bằng\n' +
+            'Gia Lộc\n' +
+            'Thốt Nốt\n' +
+            'Yên Định\n' +
+            'Phú Thái\n' +
+            'Kẻ Sặt\n' +
+            'Sóc Sơn\n' +
+            'Thanh Nê\n' +
+            'Ninh Giang\n' +
+            'Thắng\n' +
+            'Vĩnh Trụ\n' +
+            'Vạn Hà\n' +
+            'Chợ Mới\n' +
+            'Vĩnh Bảo\n' +
+            'Ân Thi\n' +
+            'Kinh Môn\n' +
+            'Thanh Miện\n' +
+            'Đại Nghĩa\n' +
+            'Thanh Hà\n' +
+            'Tân Châu\n' +
+            'Bình Minh\n' +
+            'Củ Chi\n' +
+            'Bích Động\n' +
+            'Yên Ninh\n' +
+            'Điện Bàn\n' +
+            'Thứa\n' +
+            'Gia Bình\n' +
+            'Tân Hiệp\n' +
+            'Rừng Thông\n' +
+            'Tứ Kỳ\n' +
+            'Ngô Đồng\n' +
+            'Mỹ Lộc\n' +
+            'Bình Mỹ\n' +
+            'Lâm\n' +
+            'Hòa Mạc\n' +
+            'Diễn Châu\n' +
+            'Phong Điền\n' +
+            'Vương\n' +
+            'Cần Đước\n' +
+            'Diêm Điền\n' +
+            'Tiên Lãng\n' +
+            'Nam Sách\n' +
+            'Nga Sơn\n' +
+            'Phát Diệm\n' +
+            'Cần Giuộc\n' +
+            'An Phú\n' +
+            'Trảng Bom\n' +
+            'Phú Vang\n' +
+            'Trần Cao\n' +
+            'Lấp Vò\n' +
+            'Gôi\n' +
+            'Hợp Hòa\n' +
+            'Phố Mới\n' +
+            'Vôi\n' +
+            'Chợ Gạo\n' +
+            'Lâm Thao\n' +
+            'Liễu Đề\n' +
+            'Tư Nghĩa\n' +
+            'Long Hồ\n' +
+            'Long Khánh\n' +
+            'Cao Thượng\n' +
+            'Neo\n' +
+            'Châu Thành\n' +
+            'An Nhơn\n' +
+            'Phú Mỹ\n' +
+            'Chợ Lách\n' +
+            'Yên Thịnh\n' +
+            'Phúc Yên\n' +
+            'Tây Đằng\n' +
+            'Lai Vung\n' +
+            'Phú Thọ\n' +
+            'Thanh Lưu\n' +
+            'Quán Lào\n' +
+            'Thọ Xuân\n' +
+            'Bảo Lộc\n' +
+            'Thống Nhất\n' +
+            'Hương Canh\n' +
+            'Mỏ Cày\n' +
+            'Hưng Nguyên\n' +
+            'Ngã Bảy\n' +
+            'Tầm Vu\n' +
+            'Vĩnh Bình\n' +
+            'Tuy Phước\n' +
+            'Quế\n' +
+            'Triệu Sơn\n' +
+            'Me\n' +
+            'Lập Thạch\n' +
+            'Cái Tàu Hạ\n' +
+            'Sịa\n' +
+            'Thiên Tồn\n' +
+            'Nông Cống\n' +
+            'Tân Trụ\n' +
+            'Long Thành\n' +
+            'Quảng Yên\n' +
+            'Mộ Đức\n' +
+            'Hương Trà\n' +
+            'Cái Nhum\n' +
+            'Cầu Giát\n' +
+            'Vĩnh Lộc\n' +
+            'Sơn Tịnh\n' +
+            'Một Ngàn\n' +
+            'Ba Tri\n' +
+            'Giồng Trôm\n' +
+            'Cái Dầu\n' +
+            'Tân Hòa\n' +
+            'Minh Lương\n' +
+            'Hương Sơn\n' +
+            'Vũng Liêm\n' +
+            'Ngã Sáu\n' +
+            'Bến Lức\n' +
+            'Tam Điệp\n' +
+            'Đô Lương\n' +
+            'Trà Ôn\n' +
+            'Tam Bình\n' +
+            'Nam Đàn\n' +
+            'Hậu Nghĩa\n' +
+            'Nhơn Trạch\n' +
+            'Kế Sách\n' +
+            'Tân Uyên\n' +
+            'Đức Thọ\n' +
+            'Gò Dầu\n' +
+            'Quán Hành\n' +
+            'Trà Cú\n' +
+            'Thới Lai\n' +
+            'Bồng Sơn\n' +
+            'Cầu Kè\n' +
+            'Cờ Đỏ\n' +
+            'Tiểu Cần\n' +
+            'An Châu\n' +
+            'Thanh Bình\n' +
+            'Yên Thành\n' +
+            'Trảng Bàng\n' +
+            'Tĩnh Gia\n' +
+            'Long Phú\n' +
+            'Thị Trấn Phú Mỹ\n' +
+            'Nghi Xuân\n' +
+            'Châu Thành\n' +
+            'Châu Thành\n' +
+            'Vĩnh Thạnh\n' +
+            'Hà Lam\n' +
+            'Thanh Thủy\n' +
+            'Mỹ Thọ\n' +
+            'Thị Trấn Đất Đỏ\n' +
+            'Nghèn\n' +
+            'Duy Xuyên\n' +
+            'Thị Trấn Giá Rai\n' +
+            'Phong Châu\n' +
+            'Diên Khánh\n' +
+            'Nàng Mau\n' +
+            'Mỹ Xuyên\n' +
+            'Núi Sập\n' +
+            'Nghĩa Hành\n' +
+            'Đức Phổ\n' +
+            'Thạch Hà\n' +
+            'Thị Trấn Ngải Giao\n' +
+            'Thanh Ba\n' +
+            'Bình Sơn\n' +
+            'Khánh Hải\n' +
+            'Vĩnh Châu\n' +
+            'Bình Đại\n' +
+            'Sông Thao\n' +
+            'Cù Lao Dung\n' +
+            'Phụng Hiệp\n' +
+            'Tân Hiệp\n' +
+            'Giồng Riềng\n' +
+            'Phước An\n' +
+            'Long Mỹ\n' +
+            'Nhà Bàng\n' +
+            'Hưng Hóa\n' +
+            'Ba Đồn\n' +
+            'Thạnh Phú\n' +
+            'Cái Nước\n' +
+            'Thị Trấn Hòa Bình\n' +
+            'Gò Quao\n' +
+            'Phú Ninh\n' +
+            'An Biên\n' +
+            'Đồi Ngô\n' +
+            'Chí Thạnh\n' +
+            'Quế Sơn\n' +
+            'Phù Mỹ\n' +
+            'Gia Ray\n' +
+            'Nho Quan\n' +
+            'Thị Trấn Cao Lộc\n' +
+            'Thủ Thừa\n' +
+            'Phú Lộc\n' +
+            'Cầu Gồ\n' +
+            'Thị Trấn Phước Long\n' +
+            'Huỳnh Hữu Nghĩa\n' +
+            'Sa Rài\n' +
+            'Thị Trấn Gành Hào\n' +
+            'Đu\n' +
+            'Núi Thành\n' +
+            'Phù Cát\n' +
+            'Ái Tử\n' +
+            'Bến Cầu\n' +
+            'Tam Đảo\n' +
+            'Trần Văn Thời\n' +
+            'Thị Trấn Ngan Dừa\n' +
+            'Đại Lộc\n' +
+            'Duyên Hải\n' +
+            'Ngọc Lặc\n' +
+            'Buôn Trấp\n' +
+            'Cái Đôi Vàm\n' +
+            'Vạn Giã\n' +
+            'Vĩnh Thuận\n' +
+            'Võ Xu\n' +
+            'Thị Trấn Phước Bửu\n' +
+            'Kim Tân\n' +
+            'Phước Vĩnh\n' +
+            'Chùa Hang\n' +
+            'Cẩm Thủy\n' +
+            'Châu Thành\n' +
+            'Dương Minh Châu\n' +
+            'Dầu Tiếng\n' +
+            'Đoan Hùng\n' +
+            'Tân Phú\n' +
+            'Chợ Mới\n' +
+            'Đầm Dơi\n' +
+            'Tràm Chim\n' +
+            'Vụ Bản\n' +
+            'Sơn Dương\n' +
+            'Cẩm Xuyên\n' +
+            'Phú Lộc\n' +
+            'Tri Tôn\n' +
+            'Ninh Hòa\n' +
+            'Sông Cầu\n' +
+            'Quảng Phú\n' +
+            'Thới Bình\n' +
+            'Krông Năng\n' +
+            'Phước Dân\n' +
+            'Hàng Trạm\n' +
+            'Thứ Mười Một\n' +
+            'Hạ Hòa\n' +
+            'Bo\n' +
+            'Móng Cái\n' +
+            'Chũ\n' +
+            'Đưc Trọng\n' +
+            'Chơn Thành\n' +
+            'Liên Hương\n' +
+            'Lương Sơn\n' +
+            'Thanh Chương\n' +
+            'Tân Thạnh\n' +
+            'Hải Lăng\n' +
+            'Hòa Vang\n' +
+            'Tân Kỳ\n' +
+            'Phú Phong\n' +
+            'Chợ Chu\n' +
+            'Kỳ Sơn\n' +
+            'Chi Nê\n' +
+            'Mỹ Phước\n' +
+            'Cam Lâm\n' +
+            'Thạnh Mỹ\n' +
+            'Hòn Đất\n' +
+            'Cao Phong\n' +
+            'Anh Sơn\n' +
+            'Kỳ Anh\n' +
+            'Cần Giờ\n' +
+            'Gio Linh\n' +
+            'Đắk Mil\n' +
+            'Bù Đốp\n' +
+            'Đồng Nai\n' +
+            'Thị Trấn Đồng Văn\n' +
+            'Đinh Văn\n' +
+            'Mường Khến\n' +
+            'Tiên Phước\n' +
+            'Ea T’ling\n' +
+            'Ea Kar\n' +
+            'Lộc Ninh\n' +
+            'Cát Bà\n' +
+            'Năm Căn\n' +
+            'Thị Trấn Phố Lu\n' +
+            'Vĩnh An\n' +
+            'Đông Thành\n' +
+            'Chư Sê\n' +
+            'A Yun Pa\n' +
+            'Bến Sung\n' +
+            'Hữu Lũng\n' +
+            'Hồ Xá\n' +
+            'Tân Châu\n' +
+            'U Minh\n' +
+            'Thị Trấn Yên Thế\n' +
+            'Si Ma Cai\n' +
+            'Vĩnh Hưng\n' +
+            'Thị Trấn Mèo Vạc\n' +
+            'Cam Lộ\n' +
+            'Ma Lâm\n' +
+            'Ngọc Hiển\n' +
+            'Thị Trấn Tân Yên\n' +
+            'Thanh Sơn\n' +
+            'Sơn Thịnh\n' +
+            'Quỳ Hợp\n' +
+            'Yên Lập\n' +
+            'Quảng Hà\n' +
+            'Cổ Phúc\n' +
+            'Cành Nàng\n' +
+            'Thạnh Hóa\n' +
+            'Đăk Đoa\n' +
+            'Kiến Đức\n' +
+            'Tân Biên\n' +
+            'Phong Thổ\n' +
+            'Hoài Ân\n' +
+            'Đức Phong\n' +
+            'Thị Trấn Yên Minh\n' +
+            'Lũng Hồ\n' +
+            'Hát Lót\n' +
+            'Thị Trấn Vĩnh Tuy\n' +
+            'Thị Trấn Việt Quang\n' +
+            'Thị Trấn Thuận Châu\n' +
+            'Đồng Mỏ\n' +
+            'Di Linh\n' +
+            'Kiến Giang\n' +
+            'Thị Trấn Quảng Uyên\n' +
+            'Thị Trấn Trùng Khánh\n' +
+            'Mường Ảng\n' +
+            'Phố Châu\n' +
+            'Thị Trấn Vinh Quang\n' +
+            'Tân Phú\n' +
+            'Cô Tô\n' +
+            'Than Uyên\n' +
+            'Chư Ty\n' +
+            'Tân Hưng\n' +
+            'Văn Quan\n' +
+            'Phù Yên\n' +
+            'Ea Drăng\n' +
+            'Mai Châu\n' +
+            'Thuận Nam\n' +
+            'Thị Trấn Nước Hai\n' +
+            'Tân Sơn\n' +
+            'Đắk Mâm\n' +
+            'Thị Trấn Vĩnh Lộc\n' +
+            'Huyện Chiêm Hóa\n' +
+            'Phong Điền\n' +
+            'Bắc Sơn\n' +
+            'Thị Trấn Phố Ràng\n' +
+            'Thị Trấn Mường Khương\n' +
+            'Sơn Hà\n' +
+            'Đạ Tẻh\n' +
+            'Thị Trấn Tà Lùng\n' +
+            'Tánh Linh\n' +
+            'Thị Trấn Na Sầm\n' +
+            'Yên Châu\n' +
+            'Yên Cát\n' +
+            'Thị Trấn Tam Sơn\n' +
+            'Hoàn Lão\n' +
+            'Đắk Song\n' +
+            'Đắk Hà\n' +
+            'Đắk Tô\n' +
+            'Tam Đường\n' +
+            'Sông Mã\n' +
+            'Mộc Châu\n' +
+            'Thị Trấn Hùng Quốc\n' +
+            'Phú Hòa\n' +
+            'Lộc Thắng\n' +
+            'An Châu\n' +
+            'Thị Trấn Tủa Chùa\n' +
+            'Sa Pa\n' +
+            'Lộc Bình\n' +
+            'Yên Bình\n' +
+            'Bắc Hà\n' +
+            'Quán Hàu\n' +
+            'Hiệp Đức\n' +
+            'Krông Kmar\n' +
+            'Hương Khê\n' +
+            'Lang Chánh\n' +
+            'Thị Trấn Tuần Giáo\n' +
+            'Ma Đa Gui\n' +
+            'Thường Xuân\n' +
+            'Thị Trấn Xuân Hoà\n' +
+            'Thị Trấn Việt Lâm\n' +
+            'Thị Trấn Vị Xuyên\n' +
+            'Ít Ong\n' +
+            'Minh Long\n' +
+            'Đồng Lê\n' +
+            'Côn Đảo\n' +
+            'Đà Bắc\n' +
+            'Trà Bồng\n' +
+            'Chư Prông\n' +
+            'Chợ Rã\n' +
+            'Bát Xát\n' +
+            'Ia Pa\n' +
+            'Chợ Lầu\n' +
+            'Khe Sanh\n' +
+            'Tô Hạp\n' +
+            'Thị Trấn Thông Nông\n' +
+            'Mường Chiên\n' +
+            'Yên Phú\n' +
+            'Pác Miầu\n' +
+            'Tân Việt\n' +
+            'Củng Sơn\n' +
+            'Sa Thầy\n' +
+            'Trới\n' +
+            'Plei Kần\n' +
+            'Bộc Bố\n' +
+            'Bắc Yên\n' +
+            'Đồng Xuân\n' +
+            'Thị Trấn Thất Khê\n' +
+            'Phủ Thông\n' +
+            'Thị Trấn Khánh Yên\n' +
+            'Thị Trấn Thanh Nhật\n' +
+            'Kon Dơng\n' +
+            'Hai Riêng\n' +
+            'Bằng Lũng\n' +
+            'Thị Trấn Bảo Lạc\n' +
+            'Điện Biên Đông\n' +
+            'M’Đrăk\n' +
+            'Lắk\n' +
+            'Thị Trấn Sìn Hồ\n' +
+            'Phú Túc\n' +
+            'Tây Trà\n' +
+            'Kiên Lương\n' +
+            'Quỳ Châu\n' +
+            'Bình Gia\n' +
+            'Thị Trấn Nguyên Bình\n' +
+            'Vũ Quang\n' +
+            'Ba Tơ\n' +
+            'Yến Lạc\n' +
+            'Trà My\n' +
+            'Thị Trấn Đông Khê\n' +
+            'Vân Tùng\n' +
+            'Quan Hóa\n' +
+            'Mù Cang Chải\n' +
+            'Thị Trấn Na Hang\n' +
+            'Lạc Dương\n' +
+            'Vĩnh Thạnh\n' +
+            'Mường Lát\n' +
+            'K Bang\n' +
+            'Ia Kha\n' +
+            'Thị Trấn Trạm Tấu\n' +
+            'Quan Sơn\n' +
+            'Con Cuông\n' +
+            'Ea Súp\n' +
+            'Khe Tre\n' +
+            'A Lưới\n' +
+            'An Lão\n' +
+            'Quy Đạt\n' +
+            'Kông Chro\n' +
+            'Mường Chà\n' +
+            'Krông Klang\n' +
+            'Mường Xén\n' +
+            'Kim Sơn\n' +
+            'Đắk Glei\n' +
+            'Vân Canh\n' +
+            'Khánh Vĩnh\n' +
+            'Sốp Cộp\n' +
+            'Đắk Rve\n' +
+            'Prao\n' +
+            'Hòa Bình\n' +
+            'Mường Nhé\n' +
+            'Bác Ái\n' +
+            'Đình Lập\n' +
+            'Khâm Đức\n' +
+            'Thị Trấn Mường Tè\n' +
+            'Kon Plông\n' +
+            'Thạnh Mỹ\n').trim().split('\n').slice(0, 40);
 
+        var checkAllElt = _({
+            tag: 'checkboxinput',
+            on: {
+                change: function () {
+                    var checked = this.checked;
+                    Object.values(checkedByName).forEach((elt)=>elt.checked = checked);
+
+                }
+            }
+        });
+
+        var checkedByName = cities.reduce((ac, cr)=>{
+            ac[cr] = _({
+                tag:'checkboxinput',
+                on:{
+                    change: function (){
+                        checkAllElt.checked =  Object.values(checkedByName).every((elt)=>elt.checked);
+                    }
+                }
+            })
+
+            return ac;
+        }, {});
+        var matrixTable = _({
+            tag: 'table',
+            class: 'as-dynamic-table',
+            style: { width: 'auto' },
+            child: [
+                {
+                    tag: 'thead',
+                    class: 'as-dt-header',
+                    child: {
+                        tag: 'tr',
+                        child: [
+                            {
+                                tag: 'th',
+                                class: 'as-dt-header-cell'
+                            }, {
+                                tag: 'th',
+                                class: 'as-dt-header-cell',
+                                child: { text: 'STT' }
+                            },
+                            {
+                                tag: 'th',
+                                class: 'as-dt-header-cell',
+                                child: checkAllElt
+                            },
+                            {
+                                tag: 'th',
+                                class: 'as-dt-header-cell',
+                                child: {
+                                    text: 'Thành phố'
+                                }
+                            }
+                        ].concat(
+                            cities.map(name => ({
+                                tag: 'th',
+                                child: {
+                                    tag: 'div',
+                                    style: { whiteSpace: 'nowrap', width: '180px' },
+                                    child: { text: name }
+                                }
+                            }))
+                        )
+                    }
+                },
+                {
+                    tag: 'tbody',
+                    class: 'as-dt-body',
+                    child: cities.map((name, i) => ({
+                        tag: 'tr',
+                        class: 'as-dt-body-row',
+                        child: [
+                            {
+                                tag: 'td',
+                                class: ['as-drag-zone', 'as-dt-body-cell'],
+                                child: 'span.mdi.mdi-dots-grid',
+                                style: {
+                                    textAlign: 'center',
+                                    verticalAlign: 'middle'
+                                }
+                            },
+                            { tag: 'td', class: 'as-dt-body-cell', child: { text: '' + (i + 1) } },
+                            {
+                                style: { textAlign: 'center' },
+                                tag: 'td', class: 'as-dt-body-cell',
+                                child: checkedByName[name]
+                            },
+                            {
+                                tag: 'td',
+                                style: { whiteSpace: 'nowrap' },
+                                class: 'as-dt-body-cell',
+                                child: { text: name }
+                            }
+                        ].concat(
+                            cities.map((name1, j) => ({
+                                tag: 'td',
+                                style: { width: '80px', textAlign: 'center' },
+                                class: 'as-dt-body-cell',
+                                child: { tag: 'checkboxinput' }
+                            }))
+                        )
+
+                    }))
+                }
+            ]
+        });
+
+        _('<h3>Tương tác trên phần cố định</h3>').addTo(document.body);
+        var currentCitiesArr = cities.slice();
+        var mTableScroller2 = _({
+            tag: 'tablescroller',
+            style: {
+                height: '500px',
+                width: '700px'
+            },
+            props: {
+                fixedCol: 4
+            },
+            child: matrixTable,
+            on:{
+                orderchange: function(event){
+                    console.log(event.from, event.to);
+                    var city = currentCitiesArr[event.from];
+                    currentCitiesArr.splice(event.from, 1);
+                    currentCitiesArr.splice(event.to, 0, city);
+                    console.log(currentCitiesArr.slice());
+                }
+            }
+        }).addTo(document.body);
+
+    })();
 </script>
 
 </body>
