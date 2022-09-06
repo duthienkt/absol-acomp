@@ -4,6 +4,7 @@ import Dom from "absol/src/HTML5/Dom";
 import BScroller from "../BScroller";
 import TSLMoveTool from "./TSLMoveTool";
 import { randomIdent } from "absol/src/String/stringGenerate";
+import { swapChildrenInElt } from "../utils";
 
 var $ = ACore.$;
 var _ = ACore._;
@@ -25,7 +26,7 @@ function TableScroller() {
 
     this.$attachHook = $('attachhook', this);
     this.$attachHook.requestUpdateSize = this._updateContentSize.bind(this);
-    this.$attachHook.on('error', function () {
+    this.$attachHook.on('attached', function () {
         Dom.addToResizeSystem(this);
     });
 
@@ -61,12 +62,19 @@ function TableScroller() {
     this._fixedTableThs = [];
 
     this.moveTool = new TSLMoveTool(this);
+
+    /***
+     * @name fixedCol
+     * @type {number}
+     * @memberOf TableScroller#
+     */
 }
 
 TableScroller.tag = 'TableScroller'.toLowerCase();
 
 TableScroller.render = function () {
     return _({
+        extendEvent: ['orderchange'],
         class: 'absol-table-scroller',
         child: [
             '.absol-table-scroller-viewport',
@@ -233,6 +241,7 @@ TableScroller.prototype._updateFixedTable = function () {
             cloneTh.__originElement__ = th;
             ac.result.push(cloneTh);
             if (ac.colspanSum <= fixedCol) {
+                swapChildrenInElt(cloneTh, th);
                 self._fixedTableThsVisible.push(th);
             }
             return ac;
@@ -243,6 +252,7 @@ TableScroller.prototype._updateFixedTable = function () {
 
 
 TableScroller.prototype._updateHeaderScroller = function () {
+    var fixedCol = this.fixedCol;
     var self = this;
     this.$headScrollerViewport.clearChild();
     this.$headScrollerTable = $(this.$content.cloneNode(false))
@@ -252,8 +262,8 @@ TableScroller.prototype._updateHeaderScroller = function () {
         .addTo(this.$headScrollerTable);
 
     this._headScrollerTr = Array.prototype.filter.call(this.$contentThead.childNodes, function (elt) {
-        return elt.tagName == "TR";
-    }).map(function (tr) {
+        return elt.tagName === "TR";
+    }).map((tr) => {
         var cloneTr = $(tr.cloneNode(false));
         cloneTr.__originElement__ = tr;
         self.$headScrollerThead.appendChild(cloneTr);
@@ -261,11 +271,14 @@ TableScroller.prototype._updateHeaderScroller = function () {
     });
 
     this._headScrollerTds = this._headScrollerTr.map(function (tr) {
-        return Array.prototype.filter.call(tr.__originElement__.childNodes, function (elt1) {
-            return elt1.tagName == "TH";
-        }).map(function (th) {
+        return Array.prototype.filter.call(tr.__originElement__.childNodes, (elt1) => {
+            return elt1.tagName === "TH";
+        }).map((th, i) => {
             var cloneTh = $(th.cloneNode(true)).addTo(tr);
             cloneTh.__originElement__ = th;
+            if (i >= fixedCol) {
+                swapChildrenInElt(cloneTh, th);
+            }
             return cloneTh;
         });
 
@@ -274,15 +287,23 @@ TableScroller.prototype._updateHeaderScroller = function () {
 
 
 TableScroller.prototype._updateLeftTable = function () {
+    var fixedCol = this.fixedCol;
+
     this.$leftViewport.clearChild();
-    this.$leftTable = $(this.$content.cloneNode(true)).addTo(this.$leftViewport);
+    this.$leftTable = $(this.$content.cloneNode(true)).removeClass('absol-table-scroller-origin').addTo(this.$leftViewport);
     this.$leftTableBody = $('tbody', this.$leftTable);
     this.leftCopyRows = {};
     Array.prototype.slice.call(this.$leftTableBody.childNodes).forEach((elt, i) => {
+        var cells, copyCells;
         var id;
         if (elt.tagName === 'TR') {
             id = elt.getAttribute('data-id');
-            this.leftCopyRows[id] = elt;
+            this.leftCopyRows[id] = $(elt);
+            cells = Array.prototype.slice.call(this.originalRows[id].childNodes).slice(0, fixedCol).filter(e => e.tagName === 'TD');
+            copyCells = Array.prototype.slice.call(elt.childNodes).slice(0, fixedCol).filter(e => e.tagName === 'TD');
+            cells.forEach((cell, i) => {
+                swapChildrenInElt(cell, copyCells[i]);
+            })
         }
         else {
             elt.remove();
@@ -296,9 +317,9 @@ TableScroller.prototype._makeDataIdent = function () {
     Array.prototype.slice.call(this.$contentBody.childNodes).forEach((elt, i) => {
         var id;
         if (elt.tagName === 'TR') {
-            id =  elt.getAttribute('data-id')||  randomIdent(12) + '_' + i;
+            id = elt.getAttribute('data-id') || randomIdent(12) + '_' + i;
             elt.setAttribute('data-id', id);
-            this.originalRows[id] = elt;
+            this.originalRows[id] = $(elt);
         }
         else {
             elt.remove();
@@ -338,7 +359,6 @@ TableScroller.prototype._updateFixedTableSize = function () {
             elt.addStyle('width', styleWidth);
         });
     });
-
     this.$fixedTable.addStyle({
         height: this.$contentThead.getBoundingClientRect().height + 'px',
         width: this.$content.getBoundingClientRect().width + 'px',

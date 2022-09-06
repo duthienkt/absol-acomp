@@ -612,6 +612,17 @@ export function swapElt(e1, e2) {
     temp.parentElement.replaceChild(e2, temp);
 }
 
+export function swapChildrenInElt(e1, e2) {
+    var c1 =  Array.prototype.slice.call(e1.childNodes);
+    var c2 = Array.prototype.slice.call(e2.childNodes);
+    while (c2.length > 0){
+        e1.appendChild(c2.shift());
+    }
+    while (c1.length > 0) {
+        e2.appendChild(c1.shift());
+    }
+}
+
 /**
  *
  * @param {HTMLElement} elt
