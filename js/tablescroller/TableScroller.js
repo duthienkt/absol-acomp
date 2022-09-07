@@ -9,7 +9,10 @@ import { swapChildrenInElt } from "../utils";
 var $ = ACore.$;
 var _ = ACore._;
 
-
+/***
+ * @extends {AElement}
+ * @constructor
+ */
 function TableScroller() {
     var thisTS = this;
     this.$content = undefined;
@@ -74,7 +77,7 @@ TableScroller.tag = 'TableScroller'.toLowerCase();
 
 TableScroller.render = function () {
     return _({
-        extendEvent: ['orderchange'],
+        extendEvent: ['orderchange', 'preupdatesize', 'sizeupdated'],
         class: 'absol-table-scroller',
         child: [
             '.absol-table-scroller-viewport',
@@ -128,7 +131,7 @@ Dom.getScrollSize().then(function (size) {
 
 TableScroller.eventHandler = {};
 TableScroller.eventHandler.scrollViewport = function (event) {
-    if (!this.__scrollingElement__ || this.__scrollingElement__ == this.$viewport) {
+    if (!this.__scrollingElement__ || this.__scrollingElement__ === this.$viewport) {
         this.__scrollingElement__ = this.$viewport;
         this.$headScrollerViewport.scrollLeft = this.$viewport.scrollLeft;
         this.$leftViewport.scrollTop = this.$viewport.scrollTop;
@@ -146,7 +149,7 @@ TableScroller.eventHandler.scrollViewport = function (event) {
 };
 
 TableScroller.eventHandler.scrollHeadScrollerViewport = function (event) {
-    if (!this.__scrollingElement__ || this.__scrollingElement__ == this.$headScrollerViewport) {
+    if (!this.__scrollingElement__ || this.__scrollingElement__ === this.$headScrollerViewport) {
         this.__scrollingElement__ = this.$headScrollerViewport;
         this.$viewport.scrollLeft = this.$headScrollerViewport.scrollLeft;
         if (this.__scrollTimer__ > 0) {
@@ -160,10 +163,11 @@ TableScroller.eventHandler.scrollHeadScrollerViewport = function (event) {
 };
 
 
-TableScroller.eventHandler.scrollLeftScrollerViewport = function () {
-    if (!this.__scrollingElement__ || this.__scrollingElement__ == this.$leftViewport) {
+TableScroller.eventHandler.scrollLeftScrollerViewport = function (event) {
+    if (!this.__scrollingElement__ || this.__scrollingElement__ === this.$leftViewport) {
         this.__scrollingElement__ = this.$leftViewport;
         this.$viewport.scrollTop = this.$leftViewport.scrollTop;
+        this.$vscrollbar.innerOffset = this.$viewport.scrollTop;
         if (this.__scrollTimer__ > 0) {
             clearTimeout(this.__scrollTimer__);
         }
@@ -216,7 +220,7 @@ TableScroller.prototype._updateFixedTable = function () {
     this._fixedTableThsVisible = [];
     var self = this;
     this._fixedTableTr = Array.prototype.filter.call(this.$contentThead.childNodes, function (elt) {
-        return elt.tagName == "TR";
+        return elt.tagName === "TR";
     }).map(function (tr) {
         var cloneTr = $(tr.cloneNode(false));
         cloneTr.__originElement__ = tr;
@@ -226,7 +230,7 @@ TableScroller.prototype._updateFixedTable = function () {
 
     this._fixedTableThs = this._fixedTableTr.map(function (tr) {
         return Array.prototype.filter.call(tr.__originElement__.childNodes, function (elt1) {
-            return elt1.tagName == "TH" || elt1.tagName == "TD";
+            return elt1.tagName === "TH" || elt1.tagName === "TD";
         }).reduce(function (ac, th) {
             var colspan = th.getAttribute('colspan');
             if (colspan) {
@@ -334,6 +338,7 @@ TableScroller.prototype._updateContent = function () {
     this._updateFixedTable();
     this._updateHeaderScroller();
     this._updateLeftTable();
+    this.reindexRows();
 };
 
 TableScroller.prototype._updateFixedTableSize = function () {
@@ -443,13 +448,35 @@ TableScroller.prototype._updateScrollBarSize = function () {
     }
 };
 
+
 TableScroller.prototype._updateContentSize = function () {
     if (!this.$fixedTable) return;
+    this.emit('preupdatesize');
     this._updateFixedTableSize();
     this._updateHeaderScrollerSize();
     this._updateLeftTableSize();
     this._updateLinesSize();
     this._updateScrollBarSize();
+    this.emit('sizeupdated');
+
+};
+
+TableScroller.prototype.reindexRows = function () {
+    if (this.$contentBody)
+        Array.prototype.filter.call(this.$contentBody.childNodes, elt => elt.tagName === 'TR')
+            .forEach((elt, i) => {
+                elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt);
+                if ( elt.$idx)
+                elt.$idx.attr('data-idx', i + 1);
+            });
+    if (this.$leftTableBody)
+    Array.prototype.filter.call(this.$leftTableBody.childNodes, elt => elt.tagName === 'TR')
+        .forEach((elt, i) => {
+            elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt);
+            if ( elt.$idx)
+            elt.$idx.attr('data-idx', i + 1);
+        });
+
 };
 
 TableScroller.property = {};

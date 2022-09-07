@@ -171,6 +171,7 @@ TSLMoveTool.prototype.ev_dragEnd = function (event) {
             $(at.parentElement).addChildBefore(this.dragData.original, at);
             $(copyAt.parentElement).addChildBefore(this.dragData.copy, copyAt);
         }
+        this.elt.reindexRows();
         this.elt.emit('orderchange', {
             target: this.elt,
             from: this.dragData.rowIdx,

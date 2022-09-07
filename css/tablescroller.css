@@ -22,6 +22,7 @@
     overflow: scroll;
     width: calc(100% + 17px);
     height: calc(100% + 17px);
+    background-color: white;
 }
 
 .absol-table-scroller-fixed-viewport {
@@ -30,6 +31,7 @@
     top: 0;
     z-index: 10;
     overflow: hidden;
+    background-color: white;
     /*pointer-events: none;*/
 }
 
@@ -59,6 +61,7 @@
     max-width: 100%;
     overflow-x: scroll;
     margin-bottom: -17px; /*default*/
+    background-color: white;
 }
 
 .absol-table-scroller-header-hscroller-viewport table {
@@ -82,6 +85,7 @@
     overflow-y: scroll;
     min-width: calc(100% + 19px);
     overflow-x: hidden;
+    background-color: white;
 }
 
 
@@ -224,6 +228,10 @@
     white-space: nowrap;
 }
 
+
+.as-table-scroller-row-index::before {
+    content: attr(data-idx);
+}
 
 /*.absol-table-scroller.as-has-new-pos.as-dragging::before {*/
 /*    content: "";*/
