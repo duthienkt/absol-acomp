@@ -3249,7 +3249,8 @@
                                     verticalAlign: 'middle'
                                 }
                             },
-                            { tag: 'td', class: 'as-dt-body-cell', child: { text: '' + (i + 1) } },
+                            // { tag: 'td', class: 'as-dt-body-cell', child: { text: '' + (i + 1) } },
+                            { tag: 'td', class: 'as-dt-body-cell', child:[{ tag: 'span', class:'as-table-scroller-row-index'}] },
                             {
                                 style: { textAlign: 'center' },
                                 tag: 'td', class: 'as-dt-body-cell',
