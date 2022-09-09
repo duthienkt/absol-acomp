@@ -1,9 +1,9 @@
 .as-modal {
     position: fixed;
     left: 0;
-    right: 0;
+    height: 100%;
     top: 0;
-    bottom: 0;
+    width: 100%;
     z-index: 1001000;
     white-space: nowrap;
 }
