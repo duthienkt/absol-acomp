@@ -734,7 +734,7 @@ TOCNodeController.prototype.setLevelRecursive = function (value) {
  * @param {number=} level
  */
 TOCNodeController.prototype.openRecursive = function (level) {
-    if ((typeof level === "string") && this.level > level ) return;
+    if ((typeof level === "number") && this.level >= level ) return;
     if (this.status === 'close') {
         this.open();
     }
@@ -767,7 +767,7 @@ TOCNodeController.prototype.closeRecursive = function () {
         this.close();
     }
     this.children.forEach(function (ct) {
-        ct.openRecursive();
+        ct.closeRecursive();
     });
 };
 
