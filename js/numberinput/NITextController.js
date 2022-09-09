@@ -1,6 +1,7 @@
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
 import { measureText } from "absol/src/HTML5/Text";
 import { isRealNumber } from "../utils";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /***
  *
@@ -25,8 +26,11 @@ function NITextController(elt) {
 
 NITextController.prototype.estimateWidthBy = function (text) {
     if (this.elt.hasClass('as-pressing')) return;
+    var bound = this.elt.getBoundingClientRect();
     var width = measureText(text, this.$input.getComputedStyleValue('font')).width;
     this.elt.addStyle('--text-width', width + 'px');
+    var newBound = this.elt.getBoundingClientRect();
+    if (newBound.width !== bound.width) ResizeSystem.update();
 };
 
 
