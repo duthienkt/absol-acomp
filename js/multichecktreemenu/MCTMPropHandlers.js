@@ -112,6 +112,15 @@ MCTMPropHandlers.isFocus = {
 };
 
 
+MCTMPropHandlers.enableSearch = {
+    set: function (value){
+        this.$box.enableSearch = value;
+    },
+    get: function (){
+        return this.$box.enableSearch ;
+    }
+};
+
 export default MCTMPropHandlers;
 
 
