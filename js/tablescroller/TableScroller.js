@@ -77,21 +77,28 @@ TableScroller.tag = 'TableScroller'.toLowerCase();
 
 TableScroller.render = function () {
     return _({
-        extendEvent: ['orderchange', 'preupdatesize', 'sizeupdated'],
         class: 'absol-table-scroller',
+        extendEvent: ['orderchange', 'preupdatesize', 'sizeupdated'],
         child: [
-            '.absol-table-scroller-viewport',
-            '.absol-table-scroller-fixed-viewport',//place holder
             {
-                class: 'absol-table-scroller-header-hscroller',
-                child: '.absol-table-scroller-header-hscroller-viewport'
+
+                class: 'absol-table-scroller-content',
+                child: [
+                    '.absol-table-scroller-viewport',
+                    '.absol-table-scroller-fixed-viewport',//place holder
+                    {
+                        class: 'absol-table-scroller-header-hscroller',
+                        child: '.absol-table-scroller-header-hscroller-viewport'
+                    },
+                    {
+                        class: 'absol-table-scroller-left-vscroller',
+                        child: '.absol-table-scroller-left-vscroller-viewport'
+                    },
+                    '.absol-table-scroller-head-line',
+                    '.absol-table-scroller-left-line'
+
+                ]
             },
-            {
-                class: 'absol-table-scroller-left-vscroller',
-                child: '.absol-table-scroller-left-vscroller-viewport'
-            },
-            '.absol-table-scroller-head-line',
-            '.absol-table-scroller-left-line',
             {
                 class: 'absol-table-scroller-vscrollbar-container',
                 child: {
@@ -116,14 +123,9 @@ Dom.getScrollSize().then(function (size) {
     TableScroller.scrollSize = size.width;//default scroller
     TableScroller.$style = _('style[id="table-scroller-css"]').addTo(document.head);
     TableScroller.$style.innerHTML = [
-        '.absol-table-scroller .absol-table-scroller-viewport {',// 
-        '    width: calc(100% + ' + size.width + 'px);',
-        '    height: calc(100% + ' + size.width + 'px);',
+        'body .absol-table-scroller {',
+        '    --scrollbar-width: ' + (size.width + 0) + 'px',
         '}',
-        '.absol-table-scroller .absol-table-scroller-header-hscroller-viewport {',
-        '    margin-bottom: -' + size.width + 'px;/*default*/',
-        '}'
-
     ].join('\n');
     Dom.updateResizeSystem();
     setTimeout(Dom.updateResizeSystem.bind(Dom), 30);// css load delay
@@ -466,16 +468,16 @@ TableScroller.prototype.reindexRows = function () {
         Array.prototype.filter.call(this.$contentBody.childNodes, elt => elt.tagName === 'TR')
             .forEach((elt, i) => {
                 elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt);
-                if ( elt.$idx)
-                elt.$idx.attr('data-idx', i + 1);
+                if (elt.$idx)
+                    elt.$idx.attr('data-idx', i + 1);
             });
     if (this.$leftTableBody)
-    Array.prototype.filter.call(this.$leftTableBody.childNodes, elt => elt.tagName === 'TR')
-        .forEach((elt, i) => {
-            elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt);
-            if ( elt.$idx)
-            elt.$idx.attr('data-idx', i + 1);
-        });
+        Array.prototype.filter.call(this.$leftTableBody.childNodes, elt => elt.tagName === 'TR')
+            .forEach((elt, i) => {
+                elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt);
+                if (elt.$idx)
+                    elt.$idx.attr('data-idx', i + 1);
+            });
 
 };
 

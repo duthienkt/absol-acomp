@@ -1,7 +1,25 @@
+.absol-table-scroller .absol-table-scroller-viewport {
+    width: calc(100% + var(--scrollbar-width));
+    height: calc(100% +  var(--scrollbar-width));
+}
+.absol-table-scroller .absol-table-scroller-header-hscroller-viewport {
+    margin-bottom: calc(0px - var(--scrollbar-width))
+}
+
+
 .absol-table-scroller {
+    --scrollbar-width: 17px;
+    --new-pos-y: 0;
+    position: relative;
+    padding-right: 17px;
+    padding-bottom: 17px;
+}
+
+.absol-table-scroller-content {
     position: relative;
     overflow: hidden;
-    --new-pos-y: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .absol-table-scroller-render-space {
@@ -128,12 +146,21 @@
     display: none;
 }
 
+.absol-table-scroller:not(.scroll-v){
+    padding-right: 0;
+}
+
+
+.absol-table-scroller:not(.scroll-h){
+    padding-bottom: 0;
+}
+
 
 .absol-table-scroller-vscrollbar-container {
     position: absolute;
     top: 0;
-    right: 0;
-    width: 8px;
+    right: 0px;
+    width: 17px;
     bottom: 0;
     z-index: 31;
 }
@@ -154,7 +181,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    height: 12px;
+    height: 17px;
     bottom: 0;
     z-index: 31;
 }
@@ -176,11 +203,11 @@
 
 
 .absol-table-scroller.scroll-h .absol-table-scroller-vscrollbar-container {
-    bottom: 12px;
+    bottom: 17px;
 }
 
 .absol-table-scroller.scroll-v .absol-table-scroller-hscrollbar-container {
-    right: 8px;
+    right: 17px;
 }
 
 .absol-table-scroller-fixed-table {
