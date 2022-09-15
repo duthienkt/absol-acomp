@@ -1,7 +1,7 @@
 import '../../css/numberinput.css';
 import ACore from "../../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { nearFloor, isRealNumber } from "../utils";
+import { nearFloor, isRealNumber, isNaturalNumber } from "../utils";
 import NITextController from "./NITextController";
 import { numberAutoFixed } from "absol/src/Math/int";
 
@@ -398,7 +398,7 @@ NumberInput.property.format = {
 
 NumberInput.property.floatFixed = {
     set: function (value) {
-        if (value >= 0 && value < 20) {
+        if (isNaturalNumber(value) &&  value >= 0 && value < 20) {
             this._format.maximumFractionDigits = Math.floor(value);
             this._format.minimumFractionDigits = Math.floor(value);
         }
