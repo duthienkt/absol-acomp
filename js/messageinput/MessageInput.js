@@ -2,7 +2,6 @@ import '../../css/messageinput.css';
 import ACore from "../../ACore";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
 import { fileSize2Text, openFileDialog } from "../utils";
-import XHR from "absol/src/Network/XHR";
 import { EmojiAnimByIdent } from "../EmojiAnims";
 import EmojiPicker from "../EmojiPicker";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
@@ -13,6 +12,8 @@ import OOP from "absol/src/HTML5/OOP";
 import { tokenizeMessageText } from "../tokenizeiput/tiutils";
 import MessageInputPlugin from "./MessageInputPlugin";
 import MIEmojiPlugin from "./MIEmojiPlugin";
+import ExtIcons from '../../assets/exticons/catalog.json';
+
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -24,7 +25,6 @@ var $$ = ACore.$$;
  * @typedef {{text:string, desc: string, img?:string, file?:string}|string} MessageInputQuote
  */
 
-var iconCatalogCaches = {};
 
 export var MODE_NEW = 0;
 export var MODE_EDIT = 1;
@@ -940,11 +940,7 @@ MessageInput.parseMessage = parseMessage;
 
 export function prepareIcon() {
     if (!MessageInput.iconSupportAsync) {
-        var catalogiUrl = MessageInput.iconAssetRoot + '/catalog.json';
-        MessageInput.iconSupportAsync = MessageInput.iconSupportAsync || iconCatalogCaches[catalogiUrl] ? Promise.resolve(iconCatalogCaches[catalogiUrl]) : XHR.getRequest(catalogiUrl).then(function (result) {
-            iconCatalogCaches[catalogiUrl] = JSON.parse(result);
-            return iconCatalogCaches[catalogiUrl];
-        });
+        MessageInput.iconSupportAsync = Promise.resolve(ExtIcons)
     }
     return MessageInput.iconSupportAsync;
 }
@@ -1053,7 +1049,7 @@ MessageQuote.property.data = {
             text = quote;
             desc = ''
         }
-        else if (quote && (typeof quote === "object"))  {
+        else if (quote && (typeof quote === "object")) {
             text = quote.text;
             desc = quote.desc;
             file = quote.file;
