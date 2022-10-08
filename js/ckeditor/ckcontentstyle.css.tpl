@@ -57,6 +57,15 @@
     border-collapse: collapse;
 }
 
+.cke_contents_ltr table[align="center"] {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cke_contents_ltr table[align="right"] {
+    margin-left: auto;
+}
+
 
 .cke_contents_ltr thead td {
     padding: 10px;
