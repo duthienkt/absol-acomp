@@ -1,7 +1,7 @@
 .as-toast-list {
     position: fixed;
     z-index: 1100000000;
-    width: 355px;
+    width: 25em;
     max-height: calc(100vh - 20px);
     overflow-y: auto;
 }
@@ -55,13 +55,13 @@
 
 .as-toast {
     display: block;
-    max-width: 350px;
+    max-width: calc(100vw - 20px);
     overflow: hidden;
     background-color: white;
     background-clip: padding-box;
     border: 1px solid rgba(0, 0, 0, 0.1);
     font-family: Roboto, sans-serif;
-    font-size: 14px;
+    font-size: 1rem;
 }
 
 .as-toast-header {
@@ -98,6 +98,7 @@
     color: inherit;
     margin-left: 0.25em;
     margin-bottom: 0.25em;
+    font-size: inherit;
 }
 
 .as-toast-close-btn:hover {

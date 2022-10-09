@@ -100,7 +100,7 @@
 }
 
 .as-dt-body-row {
-    height: 40px;
+    min-height: calc(40em / 14);
 }
 
 

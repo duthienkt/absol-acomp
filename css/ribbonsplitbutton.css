@@ -4,6 +4,7 @@
     height: calc(2em + 2px);
     font-family: Arial, Helvetica, sans-serif;
     box-sizing: border-box;
+    font-size: 1rem;
 }
 
 .as-ribbon-split-button div,
@@ -50,7 +51,7 @@
 
 .as-ribbon-split-button-extend {
     color: rgb(37, 36, 35);
-    width: 16px;
+    width: calc(1em + 2px);
     padding: 0;
     text-align: center;
     font-size: 20px;

@@ -102,3 +102,7 @@ li.absol-page-number>a{
     color: #147af6;
     cursor: pointer;
 }
+
+.absol-page-number a::before{
+    content: attr(data-index-text);
+}

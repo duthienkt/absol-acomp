@@ -4,12 +4,12 @@
     color: rgb(38, 141, 145);
     box-sizing: border-box;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-    height: 30px;
+    height:  calc(2rem + 2px);
     text-align: center;
-    min-height: 30px;
+    min-height:  calc(2rem + 2px);
     padding: 0 8px;
-    border-radius: 15px;
-    font-size: 14px;
+    border-radius: calc(1rem + 1px);
+    font-size: 1rem;
     background-color: white;
     outline: none;
 }
@@ -24,8 +24,8 @@
 .as-emoji-counter-sprite {
     display: inline-block;
     vertical-align: middle;
-    width: 18px;
-    height: 18px;
+    width: 1.285em;
+    height:  1.285em;
 }
 
 .as-emoji-counter-num {

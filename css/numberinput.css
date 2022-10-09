@@ -6,7 +6,7 @@
     min-width: calc(1em + 2px);
     height: calc(2em + 2px);
     border: solid 1px #d6d6d6;
-    font-size: 14px;
+    font-size: 1rem;
     box-sizing: border-box;
     width: 4em;
     --text-width: 0.5em;
@@ -64,6 +64,7 @@
     outline: none;
     color: rgb(101, 101, 101);
     background-color: transparent;
+    font-size: inherit;
 }
 
 .absol-number-input-button-up-container > button:active,

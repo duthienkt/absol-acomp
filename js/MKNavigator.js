@@ -77,7 +77,7 @@ MKNavigator.prototype.updateValue = function () {
     var idx = order.filter(value => !this.$itemByValue[value].hasClass('as-hidden')).indexOf(value);
 
     if (idx >= 0) {
-        this.addStyle('--mk-nav-line-top', idx * 40 + 'px');
+        this.addStyle('--mk-nav-line-top', `calc(${2 * idx}em + ${12 * idx}px)`);
     }
     else {
         this.removeStyle('--mk-nav-line-top');
