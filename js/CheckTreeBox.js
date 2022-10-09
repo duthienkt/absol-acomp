@@ -313,7 +313,7 @@ CheckTreeBox.prototype._calcEstimateSize = function () {
         this.estimateSize.width = longestHolder.calcWidth() * this.scale14;
         this.estimateSize.height = this.itemHeight * n;
     }
-    this.addStyle('--select-list-estimate-width', Math.max(145, this.estimateSize.width) + 'px');
+    this.addStyle('--select-list-estimate-width', (Math.max(145, this.estimateSize.width) + 17)/14 + 'rem');
 
 };
 
@@ -842,7 +842,7 @@ TreeNodeHolder.prototype.updateUp = function () {
 
 TreeNodeHolder.prototype.calcEstimateWidth = function () {
     var width = 12;//padding
-    width += 12 * this.level;
+    width += 23 * this.level;
     width += 14.7 + 5;//toggle icon
     width += 16;//checkbox
     if (this.item.icon) width += 21;//icon
@@ -853,7 +853,7 @@ TreeNodeHolder.prototype.calcEstimateWidth = function () {
 
 TreeNodeHolder.prototype.calcWidth = function () {
     var width = 12;//padding
-    width += 12 * this.level;
+    width += 23 * this.level;
     width += 14.7 + 5;//toggle icon
     width += 16;//checkbox
     if (this.item.icon) width += 21;//icon
