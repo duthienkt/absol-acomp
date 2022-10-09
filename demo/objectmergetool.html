@@ -34,7 +34,7 @@
             tag: 'objectmergetool'
         });
 
-        absol.remoteNodeRequireAsync('objectmergetool_ex1.js').then(function (data) {
+        absol.remoteNodeRequireAsync('./objectmergetool_ex.js').then(function (data) {
             mTool.descriptor = data.descriptor;
             mTool.objects = data.objects;
             preview.clearChild().addChild(_({text: absol.generateJSVariable(mTool.data)}));
