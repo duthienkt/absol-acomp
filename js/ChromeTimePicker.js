@@ -3,6 +3,7 @@ import '../css/chrometimepicker.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
 import {beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE} from "absol/src/Time/datetime";
 import {isRealNumber} from "./utils";
+import OOP from "absol/src/HTML5/OOP";
 
 /***
  * @extends AElement
@@ -11,6 +12,7 @@ import {isRealNumber} from "./utils";
 function ChromeTimePicker() {
     this._hour = null;
     this._minute = null;
+    OOP.drillProperty(this, this, 'dayOffset', 'value');
     this.$lists = $$('.as-chrome-time-picker-list', this);
     this.$hourList = this.$lists[0];
     this.$hourList.on('scroll', this.eventHandler.hourScroll)
@@ -36,6 +38,12 @@ function ChromeTimePicker() {
     this.minute = null;
     this.s24 = false;
     $$('.as-chrome-time-picker-scroller', this).forEach(this._makeScroller.bind(this));
+
+    /***
+     * @memberOf ChromeTimePicker#
+     * @type {number}
+     * @name min
+     */
 }
 
 ChromeTimePicker.tag = 'ChromeTimePicker'.toLowerCase();
@@ -285,7 +293,7 @@ ChromeTimePicker.property.minute = {
 };
 
 
-ChromeTimePicker.property.dayOffset = {
+ChromeTimePicker.property.value = {
     set: function (value) {
         if (!isRealNumber(value) && !(value instanceof Date)) {
             value = null;
@@ -309,6 +317,15 @@ ChromeTimePicker.property.dayOffset = {
     get: function () {
         var res = this._hour * MILLIS_PER_HOUR + this._minute * MILLIS_PER_MINUTE;
         return isRealNumber(res) ? res : null;
+    }
+};
+
+ChromeTimePicker.property.min = {
+    set: function (value){
+
+    },
+    get: function (){
+
     }
 };
 
