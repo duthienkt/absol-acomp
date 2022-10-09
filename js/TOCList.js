@@ -4,7 +4,7 @@ import QuickMenu from "./QuickMenu";
 import BlurTrigger from "./tool/BlurTrigger";
 import prepareSearchForItem, { searchTreeListByText } from "./list/search";
 import noop from "absol/src/Code/noop";
-import { addElementAfter, addElementsBefore } from "./utils";
+import { addElementAfter, addElementsBefore, vScrollIntoView } from "./utils";
 import { copyEvent } from "absol/src/HTML5/EventEmitter";
 
 
@@ -134,7 +134,18 @@ TOCList.prototype.deactivateAllNode = function () {
  */
 TOCList.prototype.activeNode = function (ident) {
     var nodeCt = this.findControllerByIdent(ident);
-    if (nodeCt) nodeCt.active();
+    var parent;
+    if (nodeCt) {
+        nodeCt.active();
+        parent = nodeCt.parent;
+        while (parent) {
+            if (parent.open && parent.status === 'close') parent.open();
+            parent = parent.parent;
+        }
+        setTimeout(() => {
+            vScrollIntoView(nodeCt.nodeElt);
+        }, 100);
+    }
     return nodeCt;
 };
 
@@ -734,7 +745,7 @@ TOCNodeController.prototype.setLevelRecursive = function (value) {
  * @param {number=} level
  */
 TOCNodeController.prototype.openRecursive = function (level) {
-    if ((typeof level === "number") && this.level >= level ) return;
+    if ((typeof level === "number") && this.level >= level) return;
     if (this.status === 'close') {
         this.open();
     }
