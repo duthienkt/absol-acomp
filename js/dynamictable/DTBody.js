@@ -364,6 +364,9 @@ NormalMode.prototype.onRowSplice = function (idx) {
     var pageCount;
     if (rowsPerPage !== Infinity) {
         pageCount = Math.max(1, Math.ceil(this.body.rows.length / this.body.table.adapter.rowsPerPage));
+        if (Math.min(pageCount, 5) !== this.body.table.elt.$pageSelector.pageRange)
+            this.body.table.elt.$pageSelector.pageRange = Math.min(pageCount, 5);
+
         if (this.body.table.elt.$pageSelector.pageCount !== pageCount) {
             this.body.table.elt.$pageSelector.pageCount = pageCount;
             if (this.body.table.elt.$pageSelector.selectedIndex + 1 >= pageCount) {
