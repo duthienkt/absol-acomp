@@ -387,7 +387,7 @@ NumberInput.property.format = {
         else {
             this._format = Object.assign(this._makeDefaultFormat(), value);
         }
-        console.log(this._format)
+        // console.log(this._format)
         this.textCtrl.flushValueToText();
     },
     get: function () {
