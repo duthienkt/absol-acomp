@@ -10,13 +10,13 @@ import ChromeCalendar from "./js/ChromeCalendar";
 import Radio from "./js/Radio";
 import EmojiChars from "./js/EmojiChars";
 import EmojiAnims from "./js/EmojiAnims";
-import MessageInput, {parseMessage} from './js/messageinput/MessageInput';
+import MessageInput, { parseMessage } from './js/messageinput/MessageInput';
 import EmojiPicker from './js/EmojiPicker';
 import ContextCaptor from './js/ContextMenu';
 import install from "./js/dom/install";
 import SearchTextInput from "./js/Searcher";
-import {MaterialDesignIconsNameMap} from "./js/adapter/MaterialDesignIconsAdapter";
-import {openFileDialog, vScrollIntoView} from "./js/utils";
+import { MaterialDesignIconsNameMap } from "./js/adapter/MaterialDesignIconsAdapter";
+import { openFileDialog, vScrollIntoView } from "./js/utils";
 import * as utils from "./js/utils";
 import materializeIconTrigger from "./js/materializeIconTrigger";
 import VariantColors from "./js/VariantColors";
@@ -29,6 +29,7 @@ import CPUViewer from "./js/CPUViewer";
 import ListDictionary from "./js/list/ListDictionary";
 import OverviewWidget from "./js/keeview/OverviewWidget";
 import OverviewPage from "./js/keeview/OverviewPage";
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -80,3 +81,48 @@ absol.CPUViewer = CPUViewer;
 
 absol.OverviewWidget = OverviewWidget;
 absol.OverviewPage = OverviewPage;
+
+Dom.documentReady.then(function () {
+    ContextCaptor.auto();
+});
+
+function testFont() {
+    var dynamicCSs = new DynamicCSS();
+    var value = parseInt(localStorage.getItem('as_test_font_size')) || 14;
+    var fontSizeInput = absol._({
+        tag: 'numberinput',
+        props: {
+            step: 1,
+            min: 5,
+            value: value
+        },
+        on: {
+            change: () => {
+                localStorage.setItem('as_test_font_size', fontSizeInput.value + '');
+                dynamicCSs.setProperty(':root', 'font-size', fontSizeInput.value + 'px')
+                    .commit();
+                window.dispatchEvent(new Event('resize'))
+            }
+        }
+    });
+    dynamicCSs.setProperty(':root', 'font-size', fontSizeInput.value + 'px')
+        .commit();
+    window.dispatchEvent(new Event('resize'))
+    var modal = absol._({
+        style: {
+            background: 'white',
+            position: 'fixed',
+            top: '5px',
+            right: '5px',
+            padding: '5px',
+            border: '1px solid #ddd',
+            zIndex: 1e9
+        },
+        child: ['<label>font-size </label>', fontSizeInput]
+    }).addTo(document.body);
+}
+
+if (location.href.indexOf('localhost') >= 0) {
+    Dom.documentReady.then(testFont);
+}
+
