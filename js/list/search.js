@@ -1,11 +1,14 @@
-import {nonAccentVietnamese} from "absol/src/String/stringFormat";
-import {wordsMatch} from "absol/src/String/stringMatching";
+import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import { wordsMatch } from "absol/src/String/stringMatching";
 
-var EXTRA_MATCH_SCORE = 7;
 var UNCASE_MATCH_SCORE = 4;
 var UVN_MATCH_SCORE = 3;
-var EQUAL_MATCH_SCORE = 4;
+var EXTRA_MATCH_SCORE = 9;
+var NVN_EXTRA_MATCH_SCORE = 8;
+var EQUAL_MATCH_SCORE = 10;
 var WORD_MATCH_SCORE = 3;
+var HAS_WORD_SCORE = 30;
+var HAS_NVN_WORD_SCORE = 29;
 
 /***
  *
@@ -15,10 +18,22 @@ var WORD_MATCH_SCORE = 3;
 export default function prepareSearchForItem(item) {
     if (!item.text || !item.text.charAt) item.text = item.text + '';
     var spliter = /\s+/;
-    var __text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim();
-    var __textNoneCase__ = __text__.toLowerCase();
+    var __text__ = item.text.replace(/([\s\b\-()\[\]"']|&#8239;|&nbsp;|&#xA0;|\s")+/g, ' ').trim().toLowerCase();
+    var __words__ = __text__.split(spliter);
+    __text__ = __words__.join(' ');
+    var __wordDict__ = __words__.reduce((ac, cr, i) => {
+        ac[cr] = ac[cr] || i + 1;
+        return ac;
+    }, {});
+
+    var __textNoneCase__ = __text__;
     var __nvnText__ = nonAccentVietnamese(__text__);
-    var __nvnTextNoneCase__ = __nvnText__.toLowerCase();
+    var __nvnTextNoneCase__ = __nvnText__;
+
+    var __nvnWordDict__ = __words__.reduce((ac, cr, i) => {
+        ac[cr] = ac[cr] || i + 1;
+        return ac;
+    }, {});
 
     Object.defineProperties(item, {
         __text__: {
@@ -27,50 +42,61 @@ export default function prepareSearchForItem(item) {
             writable: true,
             value: __text__
         },
-        __words__:{
+        __words__: {
             configurable: true,
             enumerable: false,
             writable: true,
             value: __text__.split(spliter)
         },
-        __textNoneCase__:{
+        __wordDict__: {
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __wordDict__
+        },
+        __textNoneCase__: {
             configurable: true,
             enumerable: false,
             writable: true,
             value: __textNoneCase__
         },
-        __wordsNoneCase__:{
+        __wordsNoneCase__: {
             configurable: true,
             enumerable: false,
             writable: true,
             value: __textNoneCase__.split(spliter)
         },
-        __nvnText__:{
+        __nvnText__: {
             configurable: true,
             enumerable: false,
             writable: true,
             value: __nvnText__
         },
-        __nvnWords__:{
+        __nvnWords__: {
             configurable: true,
             enumerable: false,
             writable: true,
             value: __nvnText__.split(spliter)
         },
-        __nvnTextNoneCase__:{
+        __nvnWordDict__: {
+            configurable: true,
+            enumerable: false,
+            writable: true,
+            value: __nvnWordDict__
+        },
+        __nvnTextNoneCase__: {
             configurable: true,
             enumerable: false,
             writable: true,
             value: __nvnTextNoneCase__
         },
-        __nvnWordsNoneCase__:{
+        __nvnWordsNoneCase__: {
             configurable: true,
             enumerable: false,
             writable: true,
             value: __nvnTextNoneCase__.split(spliter)
         }
     });
-
 
     return item;
 }
@@ -90,27 +116,37 @@ export function prepareSearchForList(items) {
 
 export function calcItemMatchScore(queryItem, item) {
     var score = 0;
-    if (item.__text__ == queryItem.__text__)
-        score += EQUAL_MATCH_SCORE * queryItem.__text__.length;
+    if (!item.__text__) return 0;
+    var hwScore = 0;
+    var i;
+    for (i = 0; i < queryItem.__words__.length; ++i) {
+        if (item.__wordDict__[queryItem.__words__[i]]) {
+            hwScore += HAS_WORD_SCORE;
+        }
+        else if (item.__nvnWordDict__[queryItem.__nvnWords__[i]]) {
+            hwScore += HAS_NVN_WORD_SCORE;
+        }
+    }
+
+    score = hwScore;
+
+    if (item.__text__ === queryItem.__text__) {
+        score += EQUAL_MATCH_SCORE;
+    }
 
     var extraIndex = item.__text__.indexOf(queryItem.__text__);
 
     if (extraIndex >= 0) {
-        score += EXTRA_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+        score += EXTRA_MATCH_SCORE;
     }
 
-    extraIndex = item.__textNoneCase__.indexOf(queryItem.__textNoneCase__);
+    extraIndex = item.__nvnText__.indexOf(queryItem.__nvnText__);
     if (extraIndex >= 0) {
-        score += UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
+        score += EXTRA_MATCH_SCORE;
     }
 
-    extraIndex = item.__nvnTextNoneCase__.indexOf(queryItem.__nvnTextNoneCase__);
-    if (extraIndex >= 0) {
-        score += UNCASE_MATCH_SCORE * queryItem.__text__.length - extraIndex / item.__text__.length;
-    }
-
-    score += wordsMatch(queryItem.__nvnWordsNoneCase__, item.__nvnWordsNoneCase__) / (queryItem.__nvnWordsNoneCase__.length + 1 + item.__nvnWordsNoneCase__.length) * 2 * WORD_MATCH_SCORE;
-    score += wordsMatch(queryItem.__wordsNoneCase__, item.__wordsNoneCase__) / (queryItem.__wordsNoneCase__.length + 1 + item.__wordsNoneCase__.length) * 2 * WORD_MATCH_SCORE;
+    var n = Math.max(queryItem.__words__.length + 1, 1);
+    score = Math.max(score, wordsMatch(queryItem.__words__, item.__words__), wordsMatch(queryItem.__nvnWords__, item.__nvnWords__)) / n * 2 * WORD_MATCH_SCORE;
     return score;
 }
 
