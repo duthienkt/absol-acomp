@@ -12,6 +12,8 @@ export var MaterialDesignIconsNameMap = {
 export var MaterialDesignIconsCode = {};
 
 Dom.documentReady.then(function () {
+    //because of merge tool handled it
+    return;
     var _ = ACore._;
     var a = _({
         tag: 'span',
