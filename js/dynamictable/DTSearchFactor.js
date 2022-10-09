@@ -1,4 +1,18 @@
 function DTSearchFactor(global) {
+    /***
+     * @typedef SelectionItem2
+     * @property {String} text
+     * @property {String} desc
+     * @property {String} __text__
+     * @property {String} __nvnText__
+     * @property {Array<String>} __words__
+     * @property {Array<String>} __nvnWords__
+     * @property {object} __wordDict__
+     * @property {object} __nvnWordDict__
+     * @module SelectionItem2
+     */
+
+
     function nonAccentVietnamese(s) {
         return s.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a")
             .replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A")
@@ -81,27 +95,40 @@ function DTSearchFactor(global) {
     }
 
     var EXTRA_MATCH_SCORE = 9;
+    var NVN_EXTRA_MATCH_SCORE = 8;
     var EQUAL_MATCH_SCORE = 10;
     var WORD_MATCH_SCORE = 3;
+    var HAS_WORD_SCORE = 30;
+    var HAS_NVN_WORD_SCORE = 29;
+
 
     /***
      *
-     * @param {SelectionItem} item
+     * @param {SelectionItem2} item
      * @returns {*}
      */
     function prepareSearchForItem(item) {
         if (!item.text || !item.text.charAt) item.text = item.text + '';
         var spliter = /\s+/;
-        var __text__ = item.text.replace(/([\s\b\-()\[\]]|&#8239;|&nbsp;|&#xA0;|\s)+/g, ' ').trim().toLowerCase();
+        var __text__ = item.text.replace(/([\s\b\-()\[\]"']|&#8239;|&nbsp;|&#xA0;|\s")+/g, ' ').trim().toLowerCase();
         var __nvnText__ = nonAccentVietnamese(__text__);
 
-        item.__text__ = __text__;
         item.__words__ = __text__.split(spliter);
+        item.__text__ = item.__words__.join(' ');
         item.__words__.sort();
+        item.__wordDict__ = item.__words__.reduce((ac, cr, i) => {
+            ac[cr] = i + 1;
+            return ac;
+        }, {});
 
-        item.__nvnText__ = __nvnText__;
         item.__nvnWords__ = __nvnText__.split(spliter);
+        item.__nvnText__ =  item.__nvnWords__.join(' ')
         item.__nvnWords__.sort();
+        item.__nvnWordDict__ = item.__nvnWords__.reduce((ac, cr, i) => {
+            ac[cr] = i + 1;
+            return ac;
+
+        }, {});
 
         return item;
     }
@@ -109,14 +136,33 @@ function DTSearchFactor(global) {
     function calcItemMatchScore(queryItem, item) {
         var score = 0;
         if (!item.__text__) return 0;
+        var hwScore = 0;
+        var i;
+        for (i = 0; i < queryItem.__words__.length; ++i) {
+            if (item.__wordDict__[queryItem.__words__[i]]) {
+                hwScore += HAS_WORD_SCORE;
+            }
+            else
+            if (item.__nvnWordDict__[queryItem.__nvnWords__[i]]) {
+                hwScore += HAS_NVN_WORD_SCORE;
+            }
+        }
+
+        score = hwScore;
+
         if (item.__text__ === queryItem.__text__) {
-            return EQUAL_MATCH_SCORE;
+             score += EQUAL_MATCH_SCORE;
         }
 
         var extraIndex = item.__text__.indexOf(queryItem.__text__);
 
         if (extraIndex >= 0) {
-            return EXTRA_MATCH_SCORE;
+            score += EXTRA_MATCH_SCORE;
+        }
+
+        extraIndex = item.__nvnText__.indexOf(queryItem.__nvnText__);
+        if (extraIndex >= 0) {
+            score += EXTRA_MATCH_SCORE;
         }
 
         var n = Math.max(queryItem.__words__.length + 1, 1);
@@ -165,13 +211,13 @@ function DTSearchFactor(global) {
         return true;
     }
 
-    function toComparable(x){
+    function toComparable(x) {
         if (!x) return x;
         var type = typeof x;
         if (type === 'string') return x;
         if (type === "number") return x;
-        if (type === "boolean" ) return x;
-        if (type.getTime) return  type.getTime();
+        if (type === "boolean") return x;
+        if (type.getTime) return type.getTime();
         return x;
     }
 
@@ -328,7 +374,6 @@ function DTSearchFactor(global) {
             var segments = [[], [], [], [], [], [], [], []];
             var threshold = maxValue - (maxValue - minValue) / 4;
 
-
             if (maxValue < 3) threshold = maxValue - (maxValue - minValue) / 8;
             var d = (maxValue - threshold) / (segments.length - 1);
             var v;
@@ -343,7 +388,6 @@ function DTSearchFactor(global) {
                     segments[k].push(item);
                 }
             }
-
 
             var res = [];
             var segment;
@@ -361,7 +405,6 @@ function DTSearchFactor(global) {
                     res = res.concat(segment);
                 }
             }
-
 
             return res;
         }
@@ -434,6 +477,7 @@ function DTSearchFactor(global) {
 
             setTimeout(tick, 5);
         }
+
         tick();
     };
 

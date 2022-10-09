@@ -1,5 +1,4 @@
 import { $, _ } from "../../ACore";
-import DTHeadCell from "./DTHeadCell";
 import DTBodyCell from "./DTBodyCell";
 import { randomIdent } from "absol/src/String/stringGenerate";
 
@@ -107,7 +106,7 @@ Object.defineProperty(DTBodyRow.prototype, 'innerText', {
         if ('innerText' in this.data) return this.data.innerText || '';
         return this.cells.map(function (cell) {
             return cell.innerText.trim();
-        }).filter(text=>!!text).join(' ');
+        }).filter(text=>!!text).join(' / ');
     }
 });
 
