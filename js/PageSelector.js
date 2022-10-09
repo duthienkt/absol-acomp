@@ -137,8 +137,7 @@ PageSelector.prototype._createButton = function (index) {
         class: 'absol-page-number',
         child: {
             tag: 'a',
-            attr: { 'data-index': index },
-            child: { text: '' + index }
+            attr: { 'data-index-text': index + 1 },
         },
         on: {
             click: PageSelector.eventHandler.clickIndex.bind(this, index)
@@ -151,7 +150,7 @@ PageSelector.prototype._createButton = function (index) {
 PageSelector.prototype.setPageRange = function (pageCount) {
     this._pageRange = pageCount;
     while (this._buttons.length < pageCount) {
-        this._buttons.push(this._createButton(this._buttons.length));
+        this._buttons.push(this._createButton(this._buttons.length ));
 
     }
     while (this._buttons.length > pageCount) {
@@ -161,7 +160,7 @@ PageSelector.prototype.setPageRange = function (pageCount) {
 
 PageSelector.prototype.setStartPage = function (index) {
     this._buttons.forEach(function (e, i) {
-        e.childNodes[0].innerHTML = i + index + '';
+        e.firstChild.attr('data-index-text', i + index + '');
     });
     this._pageOffset = index;
 };
