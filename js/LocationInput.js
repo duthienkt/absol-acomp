@@ -60,13 +60,13 @@ LocationInput.prototype._preparePicker = function () {
     });
     this.share.$modal = _({
         tag: 'modal',
-        class:'as-location-input-modal',
+        class: 'as-location-input-modal',
         child: {
             class: 'as-location-input-modal-window',
             child: this.share.$picker
         }
     });
-    if (BrowserDetector.isMobile){
+    if (BrowserDetector.isMobile) {
         this.share.$modal.addClass('as-mobile');
     }
 };
@@ -116,7 +116,7 @@ LocationInput.prototype._releasePicker = function () {
 LocationInput.eventHandler = {};
 
 LocationInput.eventHandler.pickerAction = function (event) {
-    if (!this.readOnly &&event.action === 'OK' && this.share.$picker.selectedPlace && this.share.$picker.selectedPlace.geometry && this.share.$picker.selectedPlace.geometry.location) {
+    if (!this.readOnly && event.action === 'OK' && this.share.$picker.selectedPlace && this.share.$picker.selectedPlace.geometry && this.share.$picker.selectedPlace.geometry.location) {
         this.$text.value = [this.share.$picker.selectedPlace.geometry.location.lat(), this.share.$picker.selectedPlace.geometry.location.lng()].join(', ');
         this.emit('change', { type: 'change', originalEvent: event.originalEvent || event, target: this }, this);
     }
@@ -136,8 +136,8 @@ LocationInput.eventHandler.clickIcon = function () {
  * @param event
  */
 LocationInput.eventHandler.clickOut = function (event) {
-    if (hitElement(this.share.$picker.parentElement, event)) return;
-    this._releasePicker();
+    if (event.target === this.share.$modal)
+        this._releasePicker();
 };
 
 LocationInput.eventHandler.textChange = function (event) {

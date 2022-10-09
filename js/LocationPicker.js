@@ -14,7 +14,7 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
  * @constructor
  */
 function LocationPicker() {
-    if (BrowserDetector.isMobile){
+    if (BrowserDetector.isMobile) {
         this.addClass('as-mobile');
     }
     this.map = new google.maps.Map(this, {
@@ -123,6 +123,7 @@ function LocationPicker() {
     this.selectedMarker = null;
     this.searchingMarkers = [];
     this.myLocationMarker = null;
+
     /***
      * @type {LatLng}
      * @name value
@@ -202,18 +203,20 @@ LocationPicker.prototype.selectPlace = function (place, panTo) {
     }
     this.$okBtn.disabled = !this.selectedPlace;
     if (!place) return;
-    var latlng = place.geometry && place.geometry.location;
-    if (!latlng) return;
+    var latLng = place.geometry && place.geometry.location;
+    if (!latLng) return;
 
     var zoom = panTo && (place.geometry.bounds || place.geometry.viewport) ? this.getBoundsZoomLevel(place.geometry.bounds || place.geometry.viewport) : 18;
     if (panTo) {
         this.map.setZoom(zoom);
-        this.map.panTo(latlng);
+        setTimeout(() => {
+            this.map.panTo(latLng);
+        }, 100)
     }
 
     this.selectedMarker = new google.maps.Marker({
         map: this.map,
-        position: latlng
+        position: latLng
     });
 
 
@@ -288,6 +291,35 @@ LocationPicker.prototype.selectPlaceId = function (placeId, panTo) {
  */
 LocationPicker.prototype.selectLocation = function (latLng, panTo) {
     if (arguments.length === 1) panTo = true;
+
+    if (arguments.length === 1) panTo = true;
+
+    if (this.selectedMarker) {
+        this.selectedMarker.setMap(null);
+    }
+    this.$okBtn.disabled = !latLng;
+    this.selectedPlace = null;
+    if (!latLng) return;
+    this.selectedPlace = { geometry: { location: latLng } };
+
+    var zoom = 18;
+    if (panTo) {
+        this.map.setZoom(zoom);
+        setTimeout(() => {
+            this.map.panTo(latLng);
+        }, 100)
+    }
+
+
+    this.selectedMarker = new google.maps.Marker({
+        map: this.map,
+        position: latLng
+    });
+
+
+    // this.infoWindow.open(this.map, this.selectedMarker);
+
+    /*
     return this.geocoder
         .geocode({ location: latLng })
         .then(function (response) {
@@ -302,10 +334,22 @@ LocationPicker.prototype.selectLocation = function (latLng, panTo) {
             safeThrow(e);
             return false;
         });
+
+     */
 };
 
 LocationPicker.prototype.watchMyLocation = function (location) {
     if (this.myLocationMarker) return;
+
+    this.accuracyCircle = new google.maps.Circle({
+        strokeColor: "#1988c3",
+        strokeOpacity: 0.4,
+        strokeWeight: 2,
+        fillColor: "#1988c3",
+        fillOpacity: 0.2,
+        radius: 100,
+        map: this.map
+    });
     this.myLocationMarker = new google.maps.Marker({
         position: location,
         sName: "My Location",
@@ -319,6 +363,8 @@ LocationPicker.prototype.watchMyLocation = function (location) {
             strokeColor: 'white'
         },
     });
+
+
     var id;
     if (navigator.geolocation.watchPosition && navigator.geolocation.watchPosition) {
         id = navigator.geolocation.watchPosition(function (props) {
@@ -326,6 +372,8 @@ LocationPicker.prototype.watchMyLocation = function (location) {
                 navigator.geolocation.clearWatch(id);
             }
             this.myLocationMarker.setPosition(new google.maps.LatLng(props.coords.latitude, props.coords.longitude));
+            this.accuracyCircle.setCenter(new google.maps.LatLng(props.coords.latitude, props.coords.longitude));
+            this.accuracyCircle.setRadius(props.coords.accuracy);
         }.bind(this), function () {
         }, {
             enableHighAccuracy: false,
