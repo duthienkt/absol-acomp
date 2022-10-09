@@ -40,7 +40,7 @@ DualSelectMenu.render = function () {
 };
 
 DualSelectMenu.prototype.notifyChange = function () {
-    console.log('change')
+    // console.log('change')
     delete this['pendingValue'];
     this.emit('change', { type: 'change', target: this }, this);
 };
