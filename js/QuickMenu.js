@@ -62,13 +62,29 @@ export function QuickMenuInstance(elt, opt) {
 
 QuickMenuInstance.prototype._init = function () {
     this.elt.classList.add('as-quick-menu-trigger');
-    this.elt.addEventListener('click', this._onClick, true);
+    if (this.opt.triggerEvent === 'mousedown')
+        $(this.elt).on('contextmenu', function (event) {
+            event.preventDefault();
+        }).attr('oncontextmenu', "return false;");
+    if (this.opt.triggerEvent) {
+        this.elt.addEventListener(this.opt.triggerEvent, this._onClick, true);
+    }
+    else
+        this.elt.addEventListener('click', this._onClick, true);
 };
 
 QuickMenuInstance.prototype._deinit = function () {
     if (this.state === "OPEN") this.close();
     this.elt.classList.remove('as-quick-menu-trigger');
-    this.elt.removeEventListener('click', this._onClick, true);
+    if (this.opt.triggerEvent) {
+        this.elt.removeEventListener(this.opt.triggerEvent, this._onClick, true);
+
+
+    }
+    else {
+        this.elt.removeEventListener('click', this._onClick, true);
+
+    }
 };
 
 QuickMenuInstance.prototype.getMenuProps = function () {
@@ -79,7 +95,8 @@ QuickMenuInstance.prototype.getMenuProps = function () {
     else {
         props = this.opt.menuProps;
     }
-    return props || {};
+    props = props || {};
+    return Object.assign({ extendClasses: [], extendStyle: {} }, props);
 };
 
 QuickMenuInstance.prototype.remove = function () {
@@ -87,6 +104,9 @@ QuickMenuInstance.prototype.remove = function () {
 };
 
 QuickMenuInstance.prototype._onClick = function (event) {
+    if (this.opt.triggerEvent === 'mousedown') {
+        event.preventDefault();
+    }
     var event = copyEvent(event, {
         canceled: false,
         cancel: function () {
