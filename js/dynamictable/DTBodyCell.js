@@ -30,6 +30,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
                     }
                 }
             });
+            this._elt.holder = this;
 
             if (this.data.attr) this._elt.attr(this.data.attr);
             if (this.data.class) this._elt.addClass(this.data.class);
