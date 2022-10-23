@@ -5,6 +5,7 @@ import AutoCompleteInput from "./AutoCompleteInput";
 import FlexiconButton from "./FlexiconButton";
 import safeThrow from "absol/src/Code/safeThrow";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import Snackbar from "./Snackbar";
 
 
 ///https://developers.google.com/maps/documentation/javascript/examples/geocoding-place-id
@@ -338,7 +339,7 @@ LocationPicker.prototype.selectLocation = function (latLng, panTo) {
      */
 };
 
-LocationPicker.prototype.watchMyLocation = function (location) {
+LocationPicker.prototype.watchMyLocation = function (location, position) {
     if (this.myLocationMarker) return;
 
     this.accuracyCircle = new google.maps.Circle({
@@ -364,6 +365,11 @@ LocationPicker.prototype.watchMyLocation = function (location) {
         },
     });
 
+    if (position && position.coords) {
+        this.accuracyCircle.setRadius(position.coords.accuracy);
+        Snackbar.show('Accuracy: '+ position.coords.accuracy.toFixed(1) +'(m)');
+    }
+
 
     var id;
     if (navigator.geolocation.watchPosition && navigator.geolocation.watchPosition) {
@@ -374,6 +380,8 @@ LocationPicker.prototype.watchMyLocation = function (location) {
             this.myLocationMarker.setPosition(new google.maps.LatLng(props.coords.latitude, props.coords.longitude));
             this.accuracyCircle.setCenter(new google.maps.LatLng(props.coords.latitude, props.coords.longitude));
             this.accuracyCircle.setRadius(props.coords.accuracy);
+            Snackbar.show('Sai số tọa độ: '+ props.coords.accuracy.toFixed(1) +' mét');
+
         }.bind(this), function () {
         }, {
             enableHighAccuracy: false,
@@ -393,7 +401,7 @@ LocationPicker.prototype.selectMyLocation = function () {
             if (position && position.coords)
                 location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             if (location) {
-                this.watchMyLocation(location);
+                this.watchMyLocation(location, position);
                 if (!this.readOnly)
                     this.selectLocation(location);
                 else {
