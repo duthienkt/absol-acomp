@@ -126,7 +126,7 @@ QuickMenuInstance.prototype._onClickOut = function (event) {
 };
 
 QuickMenuInstance.prototype.onSelect = function (item) {
-    if (this.opt.onSelect) this.opt.onSelect(item);
+    if (this.opt.onSelect) this.opt.onSelect(item.__originalItem__ || item);
     this.close();
 }
 
@@ -148,7 +148,21 @@ QuickMenuInstance.prototype.open = function () {
     var anchor = this.getAnchor();
     var followerElt = QuickMenu.$follower;
     var menuElt = QuickMenu.$elt;
-    Object.assign(menuElt, this.getMenuProps());
+
+    this.originProps = this.getMenuProps();
+    this.copyProps = Object.assign({}, this.originProps);
+    this.copyProps.items = this.originProps.items || [];
+    this.copyProps.items = this.copyProps.items.map(function visit(item) {
+        var cpyItem;
+        if (typeof item === "string") cpyItem =  item;
+        else if (item  && (typeof item.text === "string")) {
+             cpyItem = Object.assign({ __originalItem__: item }, item);
+            if (cpyItem.items && cpyItem.items.map) cpyItem.items = cpyItem.items.map(visit);
+        }
+        return cpyItem;
+    });
+
+    Object.assign(menuElt, this.copyProps);
     followerElt.addClass('absol-active');
 
 
@@ -161,6 +175,8 @@ QuickMenuInstance.prototype.open = function () {
         followerElt.anchor = anchor;
 
     }
+    this._onSizeNeedUpdate();
+    QuickMenu.$follower.on('preupdateposition', this._onSizeNeedUpdate);
     followerElt.followTarget = this.elt;
     menuElt.addStyle('visibility', 'hidden');
     followerElt.addTo(document.body);
@@ -187,9 +203,12 @@ QuickMenuInstance.prototype.close = function () {
     }
     this.state = 'CLOSE';
     this.elt.classList.remove('as-quick-menu-attached');
+    QuickMenu.$elt.removeStyle('--available-height');
     var followerElt = QuickMenu.$follower;
     followerElt.addClass('absol-active');
     followerElt.remove();
+    QuickMenu.$follower.off('preupdateposition', this._onSizeNeedUpdate);
+
     if (this._willAddClickOut >= 0) {
         clearTimeout(this._willAddClickOut);
     }
@@ -198,6 +217,14 @@ QuickMenuInstance.prototype.close = function () {
     }
     QuickMenu.runningInstance = null;
 
+};
+
+QuickMenuInstance.prototype._onSizeNeedUpdate = function () {
+    var screenSize = getScreenSize();
+    var eltBound = this.elt.getBoundingClientRect();
+    var aTop = eltBound.bottom;
+    var aBottom = screenSize.height - eltBound.top;
+    QuickMenu.$elt.addStyle('--available-height', (Math.max(aTop, aBottom) - 10) + 'px');
 };
 
 
