@@ -152,3 +152,12 @@
 .as-quick-menu {
     font-size: 1rem;
 }
+
+.as-quick-menu{
+    --available-height: calc(100vh - 20px);
+    max-height: var(--available-height);
+}
+
+.absol-context-menu-anchor.as-anchor-modal  .as-quick-menu{
+    max-height: calc(100vh - 20px);
+}
