@@ -51,7 +51,7 @@ MessageDialog.render = function () {
 
 
 MessageDialog.prototype._makeActionBtn = function (action) {
-    return _({
+    var button =  _({
         tag: FlexiconButton.tag,
         class: action.class || [],
         props: {
@@ -64,6 +64,10 @@ MessageDialog.prototype._makeActionBtn = function (action) {
             }
         }
     });
+
+    if (action.name) button.attr('data-name', action.name);
+
+    return button;
 };
 
 MessageDialog.property = {};
