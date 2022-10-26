@@ -207,6 +207,21 @@ export function buildCss(StyleSheet) {
     }).addTo(document.head);
 }
 
+export function forwardEvent(elt, fromName, toName){
+    elt.defineEvent(toName);
+    elt.on(fromName, function (event) {
+        event = Object.assign({}, event);
+        event.type = toName;
+        this.emit.apply(this, [toName, event].concat(Array.prototype.slice.call(arguments, 1)));
+    });
+}
+
+export function forwardMethod(elt, fromName, toName){
+    elt[fromName] = function (){
+        this[toName].apply(this, arguments);
+    }
+}
+
 /***
  *
  * @param {"camera"|"microphone"|"camcorder"|{accept:("image/*"|"audio/*"|"video/*"|undefined), capture:boolean|undefined, multiple:boolean|undefined}|{}} props

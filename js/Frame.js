@@ -1,7 +1,7 @@
 import '../css/frame.css';
 import ACore from "../ACore"
-import {randomIdent} from "absol/src/String/stringGenerate";
-import AElement from "absol/src/HTML5/AElement";
+import { randomIdent } from "absol/src/String/stringGenerate";
+import { forwardEvent } from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -12,6 +12,8 @@ var $ = ACore.$;
  */
 function Frame() {
     this.$parent = null;// FrameView or TabView
+    //adapter
+    forwardEvent(this, 'inactive', 'deactive');
 }
 
 Frame.tag = 'frame';
@@ -22,7 +24,7 @@ Frame.render = function () {
         attr: {
             id: randomIdent(12),
         },
-        extendEvent: ['attached', 'detached', 'deactive', 'active']// deactive and active event will be send by parent
+        extendEvent: ['attached', 'detached',  'active', 'inactive']// inactive and active event will be send by parent
     });
 };
 

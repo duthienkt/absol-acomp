@@ -1,8 +1,7 @@
 import '../css/frameview.css';
-import Frame from "./Frame";
 
 import ACore from "../ACore";
-import AElement from "absol/src/HTML5/AElement";
+import { forwardEvent, forwardMethod } from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -14,6 +13,9 @@ var $ = ACore.$;
  */
 function FrameView() {
     this.$containers = [];
+    //adapt
+    forwardEvent(this, 'inactiveframe', 'deactiveframe');
+    forwardMethod(this, 'notifyDeactiveFrame', 'notifyInactiveFrame');
 }
 
 FrameView.tag = 'frameview';
@@ -21,7 +23,7 @@ FrameView.tag = 'frameview';
 FrameView.render = function () {
     return _({
         class: 'absol-frame-view',
-        extendEvent: ['activeframe', 'deactiveframe']
+        extendEvent: ['activeframe', 'inactiveframe']
 
     });
 };
@@ -197,7 +199,7 @@ FrameView.prototype.activeFrame = function (frameElt) {
     for (var i = 0; i < this.$containers.length; ++i) {
         ctnElt = this.$containers[i];
         elt = ctnElt.__elt__;
-        if (frameElt == elt) {
+        if (frameElt === elt) {
             if (!ctnElt.hasClass('absol-active')) {
                 ctnElt.addClass('absol-active');
                 this.notifyActiveFrame(elt);
@@ -207,7 +209,7 @@ FrameView.prototype.activeFrame = function (frameElt) {
         else {
             if (ctnElt.hasClass('absol-active')) {
                 ctnElt.removeClass('absol-active');
-                this.notifyDeactiveFrame(elt);
+                this.notifyInactiveFrame(elt);
             }
             // else do nonthing
         }
@@ -221,9 +223,9 @@ FrameView.prototype.notifyActiveFrame = function (frameElt, originEvent) {
     this.emit('activeframe', { type: 'activeframe', target: this, frameElt: frameElt, originEvent: originEvent }, this);
 };
 
-FrameView.prototype.notifyDeactiveFrame = function (frameElt, originEvent) {
-    this.emit('deactiveframe', {
-        type: 'deactiveframe',
+FrameView.prototype.notifyInactiveFrame = function (frameElt, originEvent) {
+    this.emit('inactiveframe', {
+        type: 'inactiveframe',
         target: this,
         frameElt: frameElt,
         originEvent: originEvent
@@ -238,6 +240,6 @@ FrameView.prototype.activeFrameById = function (id) {
 };
 
 
-ACore.install('frameview', FrameView);
+ACore.install( FrameView);
 
 export default FrameView;
