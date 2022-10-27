@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+    <style>
+        /*:root{*/
+        /*    font:-apple-system-body;*/
+        /*}*/
+        /*@supports (font:-apple-system-body) and (not(-webkit-touch-callout:default)){*/
+        /*    !* Prevents Desktop Safari from setting size to 13px when -apple-system-body is set. Manually set to default 16px, as there is no way a user can set the Safari desktop font size default anyways. Which is a shame honestly. *!*/
+        /*    !* Oh, by the way, that @supports line is a brand new CSS hack I invented for this to target Desktop Safari specifically *!*/
+        /*    :root{font-size:16px}*/
+        /*}*/
+
+
+        /*!* --------------- END OF SCALING CODE --------------- *!*/
+        /*:root{*/
+        /*    padding:3ex 3ch;*/
+        /*    font-family:serif; !* Custom font families can be set here *!*/
+        /*}*/
+        /*h1{margin-block-start:0}*/
+
+
+    </style>
+</head>
+<body>
+
+<script>
+
+    setTimeout(()=>{
+        try {
+            var $ = absol.$;
+            var _ = absol._;
+
+            alert(absol._({
+                tag:'span', style:{font:'-apple-system-body'}
+            }).addTo(document.body).getComputedStyleValue('font-size'))
+
+
+        }
+        catch (err){
+            alert(err.message)
+        }
+
+
+    }, 1000);
+
+
+</script>
+</body>
+</html>

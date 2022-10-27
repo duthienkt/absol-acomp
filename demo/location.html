@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <title>Test your location</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+    <script src="data:application/javascript;base64,ZG9jdW1lbnQud3JpdGVsbignPHNjcmlwdCBhc3luYyBkZWZlclxuJyArCiAgICAnICAgICAgICBzcmM9Imh0dHBzOi8vbWFwcy5nb29nbGVhcGlzLmNvbS9tYXBzL2FwaS9qcz9rZXk9QUl6YVN5RGEta1RRR0szN0JETWVONGtuRUhiSGF5RHJia2VlNnVVJmxpYnJhcmllcz1wbGFjZXMmY2FsbGJhY2s9aW5pdE1hcCI+PC9zY3JpcHQ+Jyk7">
+    </script>
+</head>
+<body>
+<style>
+    .as-location-picker-control-ctn.as-bottom {
+        display: none;
+    }
+</style>
+<script>
+    function initMap() {
+        var _ = absol._;
+        var $ = absol.$;
+        var map = _({
+            tag: 'locationpicker',
+            style: {
+                width: '80vw',
+                height: '80vh'
+            }
+        }).addTo(document.body);
+        map.selectMyLocation();
+    };
+</script>
+</body>
+</html>
