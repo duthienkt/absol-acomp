@@ -952,6 +952,28 @@ export function copySelectionItemArray(items, opt) {
 }
 
 
+function compareSelectionItemArray(a, b) {
+    if (a === b) return true;
+    var aEmpty = !a || !a.length;
+    var bEmpty = !b || !b.length;
+    if (!aEmpty && aEmpty === bEmpty) return true;
+    if (aEmpty !== bEmpty) return false;
+    if (a.length !== b.length) return false;
+    var n = a.length;
+
+    var ait, bit;
+    for (var i = 0; i < n; ++i) {
+        ait = a[i];
+        bit = b[i];
+        if (ait === bit) continue;
+        if (ait.text !== bit.text) return false;
+        if (ait.text !== bit.text) return false;
+        if (!compareSelectionItemArray(ait.items, bit.items)) return false;
+    }
+    return true;
+}
+
+
 /***
  *
  * @param {AElement|HTMLElement} element
