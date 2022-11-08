@@ -63,3 +63,22 @@ textarea.as-text-input:disabled {
 .as-cursor-pointer {
     cursor: pointer;
 }
+
+
+
+.as-table-grid {
+    display: table;
+}
+
+.as-table-grid.as-inline {
+    display: inline-table;
+}
+
+.as-table-grid-row {
+    display: table-row;
+}
+
+
+.as-table-grid-cell {
+    display: table-cell;
+}
