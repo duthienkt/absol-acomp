@@ -10,8 +10,10 @@ import {
 import ChromeTimePicker from "./ChromeTimePicker";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import DateTimeInput from "./DateTimeInput";
-import { zeroPadding } from "./utils";
+import { isRealNumber, zeroPadding } from "./utils";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
+import OOP from "absol/src/HTML5/OOP";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
@@ -28,6 +30,8 @@ function TimeInput() {
     this._editingData = {};
     this._isOpenPicker = false;
     this._lastEmitValue = null;
+
+    this._min = 0;
     this._hour = null;
     this._minute = null;
     this._format = 'hh:mm a';
@@ -49,11 +53,26 @@ function TimeInput() {
     this.$domSignal = _('attachhook').addTo(this);
     this.domSignal = new DomSignal(this.$domSignal);
     this.domSignal.on('request_auto_select', this._autoSelect.bind(this));
+    OOP.drillProperty(this, this, 'dayOffset', 'value');
     this.dayOffset = null;
     this.hour = null;
     this.minute = null;
     this.disabled = false;
     this.notNull = true;
+    /***
+     * @memberOf TimeInput#
+     * @name min
+     * @type {number}
+     */
+
+    /***
+     * @memberOf TimeInput#
+     * @name s24
+     * @type {boolean}
+     * @readonly
+     */
+
+
 }
 
 
@@ -82,7 +101,7 @@ TimeInput.render = function () {
                 child: 'span.mdi.mdi-clock-outline'
             }
         ]
-    })
+    });
 };
 
 
@@ -287,7 +306,7 @@ TimeInput.property.minute = {
 };
 
 
-TimeInput.property.dayOffset = {
+TimeInput.property.value = {
     set: function (value) {
         if (typeof value == "number" || (value && value.getTime)) {
             value = value || 0;
@@ -309,8 +328,7 @@ TimeInput.property.dayOffset = {
         if (this._hour === null || this._minute === null) return null;
         return this._hour * MILLIS_PER_HOUR + this._minute * MILLIS_PER_MINUTE;
     }
-};
-
+}
 
 TimeInput.property.disabled = {
     set: function (value) {
@@ -375,6 +393,18 @@ TimeInput.property.readOnly = {
     }
 };
 
+TimeInput.property.min = {
+    set: function (value) {
+        if (!isRealNumber(value)) value = 0;
+        value = Math.floor(value);
+        value = Math.max(0, Math.min(MILLIS_PER_DAY, value));
+        this._min = value;
+    },
+    get: function () {
+        return this._min;
+    }
+};
+
 
 TimeInput.eventHandler = {};
 
@@ -397,6 +427,7 @@ TimeInput.eventHandler.clickOut = function (event) {
 TimeInput.eventHandler.pickerChange = function (event) {
     this._applyValue(event.hour, event.minute);
     this._notifyIfChange(event);
+    ResizeSystem.requestUpdateSignal();
 };
 
 
@@ -616,7 +647,7 @@ TimeInput.prototype._preparePicker = function () {
     if (this.share.$picker) return;
     this.share.$picker = _({
         tag: ChromeTimePicker.tag,
-        class:[ 'as-time-input-picker', 'as-dropdown-box-common-style']
+        class: ['as-time-input-picker', 'as-dropdown-box-common-style']
     });
     this.share.$follower = _({
         tag: 'follower',
@@ -636,6 +667,7 @@ TimeInput.prototype._attachPicker = function () {
     this.share.$picker.hour = this.hour || 0;
     this.share.$picker.minute = this.minute || 0;
     this.share.$picker.s24 = this.s24;
+    this.share.$picker.min = this.min;
     this.share.$picker.domSignal.emit('request_scroll_into_selected')
     this.$clockBtn.off('click', this.eventHandler.clickClockBtn);
     this.share.$picker.on('change', this.eventHandler.pickerChange);

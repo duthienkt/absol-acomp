@@ -4,6 +4,7 @@ import {beginOfDay, formatDateTime, MILLIS_PER_DAY} from "absol/src/Time/datetim
 import {hitElement} from "absol/src/HTML5/EventEmitter";
 import {isRealNumber} from "./utils";
 import TimeInput from "./TimeInput";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /**
  * @extends AElement
@@ -219,6 +220,7 @@ Time24Input.eventHandler.pickerChange = function (event) {
     if (this.dayOffset === null) this.dayOffset = 0;
     this.value = this.share.$picker.value;
     this._notifyChange(event);
+    ResizeSystem.requestUpdateSignal();
 };
 
 Time24Input.eventHandler.clickOut = function (event) {
