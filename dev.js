@@ -123,6 +123,6 @@ function testFont() {
 }
 
 if (location.href.indexOf('localhost') >= 0) {
-    Dom.documentReady.then(testFont);
+    // Dom.documentReady.then(testFont);
 }
 
