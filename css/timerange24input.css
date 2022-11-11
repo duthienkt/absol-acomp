@@ -7,3 +7,21 @@
 .as-time-range-24-input > div:first-child {
     margin-right: 10px;
 }
+
+
+.as-time-range-24-input.as-read-only.as-border-none .ac-time-input {
+    display: none;
+}
+
+.as-time-range-24-input.as-read-only.as-border-none::after{
+    content: attr(data-text);
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.as-time-range-24-input.as-read-only.as-border-none::before{
+    content: "";
+    vertical-align: middle;
+    display: inline-block;
+    height: calc(2em + 2px);
+}
