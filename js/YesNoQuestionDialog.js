@@ -11,11 +11,13 @@ function YesNoQuestionDialog() {
     this.dialogActions = [
         {
             class: 'secondary',
-            text: 'No'
+            text: 'No',
+            name: 'no',
         },
         {
             class: 'primary',
-            text: 'Yes'
+            text: 'Yes',
+            name: 'yes'
         }
     ];
 
