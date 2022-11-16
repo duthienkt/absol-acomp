@@ -2,6 +2,7 @@ import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
 import { measureText } from "absol/src/HTML5/Text";
 import { isRealNumber } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import noop from "absol/src/Code/noop";
 
 /***
  *
@@ -113,9 +114,10 @@ NITextController.prototype.onBlur = function () {
 }
 
 /***
- * @param {KeyboardEvent} event
+ * @param {KeyboardEvent|{}} event
+ * @param {boolean=} event
  */
-NITextController.prototype.onKeyDown = function (event) {
+NITextController.prototype.onKeyDown = function (event, dontInsert) {
     var key = keyboardEventToKeyBindingIdent(event);
     if ((key.length === 1 && !key.match(/[0-9.,\-]/)) || key.match(/^shift-.$/)) {
         event.preventDefault();
@@ -130,6 +132,27 @@ NITextController.prototype.onKeyDown = function (event) {
     var sEnd = this.$input.selectionEnd;
     var sDir = this.$input.selectionDirection;
     var onKeys = {};
+    onKeys.unidentified = () => {
+        var oldText = this.$input.value;
+        setTimeout(() => {
+            var newText = this.$input.value;
+            if (oldText === newText) return;
+            var key = newText[sStart];
+            var fakeEvent = {
+                preventDefault: noop,
+                key: key
+            }
+            if (key.match(/^[0-9.]$/)){
+                this.onKeyDown(fakeEvent, true);
+            }
+            else {
+                this.$input.value = oldText;
+                this.$input.setSelectionRange(sStart, sStart );
+                this.onKeyDown(fakeEvent);
+            }
+        }, 10);
+    };
+
     onKeys.arrowleft = () => {
         if (sStart === sEnd) {
             if (value[sStart - 2] === thousandsSeparator) {
@@ -207,8 +230,10 @@ NITextController.prototype.onKeyDown = function (event) {
 
     onKeys.number = () => {
         if (this.elt.readOnly) return;
-        this.$input.value = value.substring(0, sStart) + key + value.substring(sEnd);
-        this.$input.setSelectionRange(sStart + 1, sStart + 1);
+        if (!dontInsert){
+            this.$input.value = value.substring(0, sStart) + key + value.substring(sEnd);
+            this.$input.setSelectionRange(sStart + 1, sStart + 1);
+        }
         this.reformat();
         this.flushTextToValue();
     };
