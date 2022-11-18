@@ -1,5 +1,7 @@
 import ACore, { _ } from "../ACore";
 import { stringHashCode } from "absol/src/String/stringUtils";
+import YesNoQuestionDialog from "./YesNoQuestionDialog";
+import Modal from "./Modal";
 
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
@@ -304,6 +306,47 @@ export function openFileDialog(props, unSafe) {
         setTimeout(function () {
             window.addEventListener('focus', focusHandler);
         }, 10);
+    });
+}
+
+export function openYesNoQuestionDialog (title, message) {
+    return new Promise(resolve => {
+        if (window.ModalElement && window.ModalElement.question) {
+            window.ModalElement.question({
+                title: title,
+                message: message,
+                onclick: function (sel) {
+                    if (sel === 0) {
+                        resolve(true);
+                    }
+                    else {
+                        resolve(false);
+                    }
+                }
+            });
+        }
+        else {
+            var modal = _({
+                tag: Modal.tag,
+                child: {
+                    tag: YesNoQuestionDialog.tag,
+                    props: {
+                        textYes: 'Có',
+                        textNo: 'Không',
+                        message: message,
+                        dialogTitle: title
+                    },
+                    on: {
+                        action: (event) => {
+                            modal.remove();
+                            resolve(event.action.name === 'yes');
+                        }
+                    }
+                }
+
+            }).addTo(document.body);
+
+        }
     });
 }
 
