@@ -4,7 +4,6 @@ import Dom, {isDomNode} from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import BlurTrigger from "./tool/BlurTrigger";
-import { cleanMenuItemProperty } from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -334,7 +333,7 @@ VMenuItem.eventHandler = {};
 
 
 VMenuItem.eventHandler.enterButton = function (event) {
-    event.menuItem = cleanMenuItemProperty(this);
+    event.menuItem = this;
     var newEvent = EventEmitter.copyEvent(event);
     this.emit('enter', newEvent, this);
 };
@@ -347,8 +346,8 @@ VMenuItem.eventHandler.pressItem = function (event) {
 
 VMenuItem.eventHandler.clickButton = function (event) {
     event.menuDontHide = this.items && this.items.length > 0;
-    event.menuItem = cleanMenuItemProperty(this);
-    event.vmenuItem = cleanMenuItemProperty(this);
+    event.menuItem = this;
+    event.vmenuItem = this;
     var newEvent = EventEmitter.copyEvent(event, { target: this });
     this.emit('press', newEvent, this);
 };
@@ -576,13 +575,13 @@ HMenuItem.render = function () {
 HMenuItem.eventHandler = {};
 
 HMenuItem.eventHandler.clickButton = function (event) {
-    event.menuItem = cleanMenuItemProperty(this);
+    event.menuItem = this;
     event.hmenuItem = this;
     this.emit('press', EventEmitter.copyEvent(event, { target: this }), this);
 };
 
 HMenuItem.eventHandler.enterButton = function (event) {
-    event.menuItem = cleanMenuItemProperty(this);
+    event.menuItem = this;
     this.emit('enter', EventEmitter.copyEvent(event, { target: this }), this);
 };
 
