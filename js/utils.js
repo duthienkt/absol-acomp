@@ -696,9 +696,8 @@ export function vScrollIntoView(elt) {
         }
         parent = parent.parentElement;
     }
-    if (!parent || parent === document || parent.tagName == "HTML" || parent.tagName == "html") {
-        elt.scrollIntoView(true);
-        return;
+    if (!parent || parent === document || parent.tagName === "HTML" || parent.tagName === "html") {
+        parent = document.body.parentElement;
     }
 
     var eBound = elt.getBoundingClientRect();
