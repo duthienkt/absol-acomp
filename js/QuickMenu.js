@@ -153,7 +153,7 @@ QuickMenuInstance.prototype.open = function () {
     this.copyProps = Object.assign({}, this.originProps);
     this.copyProps.items = this.originProps.items || [];
     this.copyProps.items = this.copyProps.items.map(function visit(item) {
-        var cpyItem;
+        var cpyItem = item;
         if (typeof item === "string") cpyItem =  item;
         else if (item  && (typeof item.text === "string")) {
              cpyItem = Object.assign({ __originalItem__: item }, item);
