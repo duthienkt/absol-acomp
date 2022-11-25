@@ -1,7 +1,6 @@
 import ACore, { _ } from "../../ACore";
 import '../../css/ckplaceholder.css';
 import { CKExtensionDict, CKExtensions, ckInit, ckMakeDefaultConfig } from "./plugins";
-import { config } from "process";
 import CKStickyToolbarController from "./CKStickyToolbarController";
 import Dom from "absol/src/HTML5/Dom";
 
