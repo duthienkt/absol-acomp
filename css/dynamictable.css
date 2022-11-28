@@ -100,9 +100,12 @@
 }
 
 .as-dt-body-row {
-    min-height: calc(40em / 14);
+    height: calc(40em / 14);
 }
 
+.as-dt-body-row {
+ height: var(--table-row-height);
+}
 
 .as-dt-body-row.as-dragging {
     position: relative;
