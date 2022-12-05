@@ -1,4 +1,4 @@
-import ACore, { _ } from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import { stringHashCode } from "absol/src/String/stringUtils";
 import YesNoQuestionDialog from "./YesNoQuestionDialog";
 import Modal from "./Modal";
@@ -673,6 +673,8 @@ export function swapElt(e1, e2) {
 export function swapChildrenInElt(e1, e2) {
     var c1 =  Array.prototype.slice.call(e1.childNodes);
     var c2 = Array.prototype.slice.call(e2.childNodes);
+    $(e1).clearChild();
+    $(e2).clearChild();
     while (c2.length > 0){
         e1.appendChild(c2.shift());
     }
