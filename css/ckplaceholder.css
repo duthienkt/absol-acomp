@@ -1,3 +1,7 @@
+.cke_panel {
+    z-index: 1000000000 !important;
+}
+
 
 span.cke_button_icon.cke_button__as-variable-box-ico_icon {
     background-size: cover;
