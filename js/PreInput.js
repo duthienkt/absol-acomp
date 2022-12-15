@@ -217,7 +217,7 @@ PreInput.prototype.stringOf = function (node, parent) {
     }
     else if ((node.tagName === 'DIV' || node.tagName === 'div')
         && parent && parent.firstChild !== node && parent.lastChild !== node) {
-        res += '';
+        res += '\n';
     }
 
     var thisInput = this;
