@@ -1,7 +1,7 @@
 import '../css/preinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
-import {dataURItoBlob, blobToFile, blobToArrayBuffer} from "absol/src/Converter/file";
+import { dataURItoBlob, blobToFile, blobToArrayBuffer } from "absol/src/Converter/file";
 import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
@@ -65,7 +65,7 @@ PreInput.prototype.applyData = function (text, offset) {
 };
 
 
-PreInput.prototype.select = function (offset){
+PreInput.prototype.select = function (offset) {
     if (document.activeElement !== this) this.focus();
     this.applyData(this.value, offset);
 };
@@ -189,7 +189,7 @@ PreInput.prototype.getSelectPosition = function () {
                 direction = 'backward'
             }
             else if (!cmpPosition && sel.anchorOffset > sel.focusOffset ||
-                cmpPosition === Node.DOCUMENT_POSITION_PRECEDING){
+                cmpPosition === Node.DOCUMENT_POSITION_PRECEDING) {
                 direction = 'backward';
             }
             var startOffset = this.getPosition(range.startContainer, range.startOffset);
@@ -205,22 +205,28 @@ PreInput.prototype.getSelectPosition = function () {
     }
 };
 
-PreInput.prototype.stringOf = function (node) {
+PreInput.prototype.stringOf = function (node, parent) {
     if (!node) return '';
-    if (node.nodeType == 3) {
+    if (node.nodeType === 3) {
         return node.data;
     }
-    if (node.tagName == 'BR' || node.tagName == 'br') {
+    var res = '';
+    if ((node.tagName === 'BR' || node.tagName === 'br')
+        && parent && parent.lastChild !== node) {
         return '\n';
     }
+    else if ((node.tagName === 'DIV' || node.tagName === 'div')
+        && parent && parent.firstChild !== node && parent.lastChild !== node) {
+        res += '';
+    }
+
     var thisInput = this;
 
-    return Array.prototype.map.call(node.childNodes, function (cNode, index, arr) {
-        if ((cNode.tagName == 'BR' || cNode.tagName == 'br') && (index + 1 >= arr.length)) return '';
-        return thisInput.stringOf(cNode);
+    return res + Array.prototype.map.call(node.childNodes, function (cNode, index, arr) {
+        // if ((cNode.tagName == 'BR' || cNode.tagName == 'br') && (index + 1 >= arr.length)) return '';
+        return thisInput.stringOf(cNode, node);
     }).join('');
-
-}
+};
 
 
 PreInput.prototype._pasteText = function (text) {
