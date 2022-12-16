@@ -216,14 +216,13 @@ PreInput.prototype.stringOf = function (node, parent) {
         return '\n';
     }
     else if ((node.tagName === 'DIV' || node.tagName === 'div')
-        && parent && parent.firstChild !== node && parent.lastChild !== node) {
+        && parent && parent.firstChild !== node) {
         res += '\n';
     }
 
     var thisInput = this;
 
     return res + Array.prototype.map.call(node.childNodes, function (cNode, index, arr) {
-        // if ((cNode.tagName == 'BR' || cNode.tagName == 'br') && (index + 1 >= arr.length)) return '';
         return thisInput.stringOf(cNode, node);
     }).join('');
 };
