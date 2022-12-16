@@ -566,7 +566,10 @@
                             fontSize: '25px'
                         },
                         class: draggable ? 'as-drag-zone' : [],
-                        child: draggable ? 'span.mdi.mdi-drag' : 'span'
+                        render: function(cellElt){
+                            if (draggable)
+                            cellElt.addChild(_('span.mdi.mdi-drag'))
+                        }
                     },
                     {
                         style: {

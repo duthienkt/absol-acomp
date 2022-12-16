@@ -3172,18 +3172,18 @@
             on: {
                 change: function () {
                     var checked = this.checked;
-                    Object.values(checkedByName).forEach((elt)=>elt.checked = checked);
+                    Object.values(checkedByName).forEach((elt) => elt.checked = checked);
 
                 }
             }
         });
 
-        var checkedByName = cities.reduce((ac, cr)=>{
+        var checkedByName = cities.reduce((ac, cr) => {
             ac[cr] = _({
-                tag:'checkboxinput',
-                on:{
-                    change: function (){
-                        checkAllElt.checked =  Object.values(checkedByName).every((elt)=>elt.checked);
+                tag: 'checkboxinput',
+                on: {
+                    change: function () {
+                        checkAllElt.checked = Object.values(checkedByName).every((elt) => elt.checked);
                     }
                 }
             })
@@ -3204,6 +3204,10 @@
                             {
                                 tag: 'th',
                                 class: 'as-dt-header-cell'
+                            },{
+                                tag: 'th',
+                                class: 'as-dt-header-cell',
+                                child: { text: '' }
                             }, {
                                 tag: 'th',
                                 class: 'as-dt-header-cell',
@@ -3236,42 +3240,60 @@
                 {
                     tag: 'tbody',
                     class: 'as-dt-body',
-                    child: cities.map((name, i) => ({
-                        tag: 'tr',
-                        class: 'as-dt-body-row',
-                        child: [
-                            {
-                                tag: 'td',
-                                class: ['as-drag-zone', 'as-dt-body-cell'],
-                                child: 'span.mdi.mdi-dots-grid',
-                                style: {
-                                    textAlign: 'center',
-                                    verticalAlign: 'middle'
+                    child: cities.map((name, i) => {
+                        var row = absol._({
+                            tag: 'tr',
+                            class: 'as-dt-body-row',
+                            child: [
+                                {
+                                    tag: 'td',
+                                    class: ['as-drag-zone', 'as-dt-body-cell'],
+                                    child: 'span.mdi.mdi-dots-grid',
+                                    style: {
+                                        textAlign: 'center',
+                                        verticalAlign: 'middle'
+                                    }
+                                },
+                                {
+                                    tag: 'td', class: 'as-dt-body-cell',
+                                    child: {
+                                        tag: 'button',
+                                        child: { text: "Xóa" },
+                                        on: {
+                                            click: () => {
+                                                mTableScroller2.removeRow(row);
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    tag: 'td',
+                                    class: 'as-dt-body-cell',
+                                    child: [{ tag: 'span', class: 'as-table-scroller-row-index' }]
+                                },
+                                {
+                                    style: { textAlign: 'center' },
+                                    tag: 'td', class: 'as-dt-body-cell',
+                                    child: checkedByName[name]
+                                },
+                                {
+                                    tag: 'td',
+                                    style: { whiteSpace: 'nowrap' },
+                                    class: 'as-dt-body-cell',
+                                    child: { text: name }
                                 }
-                            },
-                            // { tag: 'td', class: 'as-dt-body-cell', child: { text: '' + (i + 1) } },
-                            { tag: 'td', class: 'as-dt-body-cell', child:[{ tag: 'span', class:'as-table-scroller-row-index'}] },
-                            {
-                                style: { textAlign: 'center' },
-                                tag: 'td', class: 'as-dt-body-cell',
-                                child: checkedByName[name]
-                            },
-                            {
-                                tag: 'td',
-                                style: { whiteSpace: 'nowrap' },
-                                class: 'as-dt-body-cell',
-                                child: { text: name }
-                            }
-                        ].concat(
-                            cities.map((name1, j) => ({
-                                tag: 'td',
-                                style: { width: '80px', textAlign: 'center' },
-                                class: 'as-dt-body-cell',
-                                child: { tag: 'checkboxinput' }
-                            }))
-                        )
+                            ].concat(
+                                cities.map((name1, j) => ({
+                                    tag: 'td',
+                                    style: { width: '80px', textAlign: 'center' },
+                                    class: 'as-dt-body-cell',
+                                    child: { tag: 'checkboxinput' }
+                                }))
+                            )
 
-                    }))
+                        });
+                        return row;
+                    })
                 }
             ]
         });
@@ -3281,15 +3303,15 @@
         var mTableScroller2 = _({
             tag: 'tablescroller',
             style: {
-                height: '5000px',
+                height: '500px',
                 width: '700px'
             },
             props: {
                 fixedCol: 4
             },
             child: matrixTable,
-            on:{
-                orderchange: function(event){
+            on: {
+                orderchange: function (event) {
                     console.log(event.from, event.to);
                     var city = currentCitiesArr[event.from];
                     currentCitiesArr.splice(event.from, 1);
