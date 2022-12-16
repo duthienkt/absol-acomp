@@ -171,7 +171,7 @@ TOCList.prototype.findControllerByIdent = function (ident, rootController) {
 
     function visitArr(arr) {
         arr.some(function (ct) {
-            if (ct.ident === ident) {
+            if (ct.ident + '' === ident + '') {
                 res = ct;
                 return true;
             }
