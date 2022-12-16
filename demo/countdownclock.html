@@ -50,6 +50,22 @@
             finishTime: absol.datetime.beginOfDay(absol.datetime.nextDate(new Date()))
         }
     }).addTo(document.body);
+    _({ tag: 'h3', child: { text: 'format: "standard"' } }).addTo(document.body);
+    var countdownText1 = _({
+        tag: 'countdowntext',
+        props: {
+            format: 'standard',
+            finishTime: absol.datetime.beginOfDay(absol.datetime.nextDate(new Date()))
+        }
+    }).addTo(document.body);
+    _({ tag: 'span', child: { text: ' - ' } }).addTo(document.body);
+    var countdownText2 = _({
+        tag: 'countdowntext',
+        props: {
+            format: 'standard',
+            finishTime: absol.datetime.beginOfDay(absol.datetime.nextDate(absol.datetime.nextDate(new Date())))
+        }
+    }).addTo(document.body);
 </script>
 
 <h3>Expert</h3>
