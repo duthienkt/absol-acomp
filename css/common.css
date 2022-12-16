@@ -82,3 +82,20 @@ textarea.as-text-input:disabled {
 .as-table-grid-cell {
     display: table-cell;
 }
+
+
+.as-pseudo-align-child-center {
+    text-align: center;
+}
+
+.as-pseudo-align-child-center::before {
+    height: 100%;
+    content: "";
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.as-pseudo-align-child-center > * {
+    display: inline-block;
+    vertical-align: middle;
+}
