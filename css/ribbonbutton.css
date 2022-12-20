@@ -79,18 +79,36 @@ svg.as-ribbon-button-icon {
     font-size: 2em;
 }
 
-.as-ribbon-button.as-big .as-ribbon-button-text{
+.as-ribbon-button.as-big .as-ribbon-button-text {
     white-space: normal;
     max-width: calc(100% - 1em);
 }
 
 .as-ribbon-button.as-big svg.as-ribbon-button-icon,
-.as-ribbon-button.as-big img.as-ribbon-button-icon
-{
+.as-ribbon-button.as-big img.as-ribbon-button-icon {
     height: 2em;
     display: block;
     margin-left: auto;
     margin-right: auto;
 }
 
+.as-ribbon-button.as-appearance-button {
+    height: calc(2rem + 2px);
+    box-sizing: border-box;
+    border: solid 1px #bfbfbf;
+    background-color: #ebebeb;
+    border-radius: 0.2em;
+    outline: none;
+    font-size: 1rem;
+}
 
+
+.as-ribbon-button.as-appearance-button:hover {
+    background-color: #D3D3D3;
+}
+
+.as-ribbon-button.as-appearance-button:active,
+.as-ribbon-button.as-appearance-button.as-quick-menu-attached {
+    -webkit-box-shadow: inset 0 0.2em 0.25em rgba(0, 0, 0, 0.125);
+    box-shadow: inset 0 0.2em 0.25em rgba(0, 0, 0, 0.125);
+}
