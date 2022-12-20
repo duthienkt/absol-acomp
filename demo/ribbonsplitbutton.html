@@ -15,6 +15,23 @@
 <script class="viewable">
     var $ = absol.$;
     var _ = absol._;
+    var menuItems = [
+        {
+            style: {
+                fontWeight: 'bold',
+                paddingLeft: '10px'
+            },
+            child: { tag: 'span', child: { text: 'Upload Picture From' } }
+        },
+        { text: "Dropbox", icon: 'span.mdi.mdi-dropbox' },
+        { text: "Microsoft Onedrive", icon: 'span.mdi.mdi-microsoft-onedrive' },
+        { text: "Google Drive", icon: 'span.mdi.mdi-google-drive' },
+        '-------',
+        {
+            icon: 'span.mdi.mdi-desktop-classic',
+            text: 'Your computer'
+        }
+    ];
     var button0 = _({
         tag: 'ribbonbutton',
         style: {
@@ -23,23 +40,7 @@
         props: {
             text: 'Upload Picture',
             icon: 'span.mdi.mdi-file-image-outline',
-            items: [
-                {
-                    style: {
-                        fontWeight: 'bold',
-                        paddingLeft: '10px'
-                    },
-                    child: { tag: 'span', child: { text: 'Upload Picture From' } }
-                },
-                { text: "Dropbox", icon: 'span.mdi.mdi-dropbox' },
-                { text: "Microsoft Onedrive", icon: 'span.mdi.mdi-microsoft-onedrive' },
-                { text: "Google Drive", icon: 'span.mdi.mdi-google-drive' },
-                '-------',
-                {
-                    icon: 'span.mdi.mdi-desktop-classic',
-                    text: 'Your computer'
-                }
-            ]
+            items: menuItems
         },
         on: {
             select: function (event) {
@@ -55,23 +56,7 @@
         },
         props: {
             text: 'Upload Picture',
-            items: [
-                {
-                    style: {
-                        fontWeight: 'bold',
-                        paddingLeft: '10px'
-                    },
-                    child: { tag: 'span', child: { text: 'Upload Picture From' } }
-                },
-                { text: "Dropbox", icon: 'span.mdi.mdi-dropbox' },
-                { text: "Microsoft Onedrive", icon: 'span.mdi.mdi-microsoft-onedrive' },
-                { text: "Google Drive", icon: 'span.mdi.mdi-google-drive' },
-                '-------',
-                {
-                    icon: 'span.mdi.mdi-desktop-classic',
-                    text: 'Your computer'
-                }
-            ]
+            items: menuItems
         },
         on: {
             select: function (event) {
@@ -90,23 +75,7 @@
         props: {
             text: 'Upload Picture',
             icon: '<img src="https://absol.cf/vivid_exticons/flac.svg">',
-            items: [
-                {
-                    style: {
-                        fontWeight: 'bold',
-                        paddingLeft: '10px'
-                    },
-                    child: { tag: 'span', child: { text: 'Upload Picture From' } }
-                },
-                { text: "Dropbox", icon: 'span.mdi.mdi-dropbox' },
-                { text: "Microsoft Onedrive", icon: 'span.mdi.mdi-microsoft-onedrive' },
-                { text: "Google Drive", icon: 'span.mdi.mdi-google-drive' },
-                '-------',
-                {
-                    icon: 'span.mdi.mdi-desktop-classic',
-                    text: 'Your computer'
-                }
-            ]
+            items: menuItems
         },
         on: {
             select: function (event) {
@@ -115,7 +84,7 @@
             }
         }
     }).addTo($('#demo0'));
-    var button03= _({
+    var button03 = _({
         tag: 'ribbonbutton',
         class: 'as-big',
         style: {
@@ -124,6 +93,43 @@
         props: {
             text: 'Upload Picture',
             icon: '<img src="https://absol.cf/vivid_exticons/flac.svg">',
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+            }
+        }
+    }).addTo($('#demo0'));
+
+    var button04 = _({
+        tag: 'ribbonbutton',
+        class: ['as-appearance-button'],
+        style: {
+            marginLeft: '20px'
+        },
+        props: {
+            text: 'Upload Picture',
+            icon: 'span.mdi.mdi-file-image-outline',
+            items: menuItems
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+            }
+        }
+    }).addTo($('#demo0'));
+
+    var button05 = _({
+        tag: 'ribbonbutton',
+        class: ['as-appearance-button'],
+        style: {
+            marginLeft: '20px'
+        },
+        props: {
+            text: 'Upload Picture',
+            items: menuItems
         },
         on: {
             select: function (event) {
