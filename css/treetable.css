@@ -1,0 +1,69 @@
+
+.as-tree-table {
+    font-size: 1rem;
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+}
+
+.as-tree-table-toggle {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 0.3em;
+    height: calc(30em / 14);
+    white-space: nowrap;
+    user-select: none;
+}
+
+.as-tree-table-toggle::before {
+    display: inline-block;
+    vertical-align: middle;
+    content: "";
+    height: 100%;
+}
+
+.as-tree-table-head {
+    background-color: #d6d6d6;
+}
+
+
+.as-tree-table-head-cell {
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid #ddd;
+    position: relative;
+}
+
+
+.as-tree-table-row {
+    height: calc(40em / 14);
+}
+.as-tree-table-row:nth-child(odd) {
+    background-color: rgb(245, 245, 245);
+}
+
+.as-tree-table-row:nth-child(even) {
+    background-color: white;
+}
+
+.as-tree-table-cell {
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+
+.as-tree-table-row.as-is-opened .as-tree-table-toggle .toggle-close,
+.as-tree-table-row:not(.as-is-opened) .as-tree-table-toggle .toggle-open {
+    display: none;
+}
+
+.as-tree-table-toggle .toggler-ico {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-tree-table-row:not(.as-has-sub-row) .as-tree-table-toggle .toggler-ico {
+    visibility: hidden;
+}
+
+/*.as-tree-table-row {*/
+/*    height: var(--table-row-height);*/
+/*}*/

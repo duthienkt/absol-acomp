@@ -152,6 +152,7 @@ import MSelectTreeLeafBox from "../selecttreeleafbox/MSelectTreeLeafBox";
 import SelectTreeLeafMenuV2 from '../selecttreeleafmenu/SelectTreeLeafMenu';
 import MDualSelectBox from "../dualselectbox/MDualSelectBox";
 import DualSelectMenuV2 from '../dualselectmenu/DualSelectMenu';
+import TreeTable from "../treetable/TreeTable";
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -278,6 +279,7 @@ export var publicCreators = [
     Switch,
     TableScroller,
     TableVScroller,
+    TreeTable,
     TextArea2,
     TextClipboard,
     TimeInput,
