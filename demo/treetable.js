@@ -1,11 +1,21 @@
 var tree = require('./demo_tree_list.js');
 console.log(tree)
+var count = 0;
+
+var searchInput = absol._({
+    tag: 'searchtextinput',
+    style: {
+        margin: '5px'
+    }
+}).addTo(document.body);
 
 var table = absol._({
     tag: 'treetable',
     props: {
+        searchInput: searchInput,
         adapter: {
             data: {
+                initOpened: true,
                 head: {
                     fixed: true,
                     rows: [
@@ -24,9 +34,12 @@ var table = absol._({
                 body: {
                     rows: tree.map(function visit(node) {
                         var _ = absol._;
-                        var res = {};
+                        var res = {
+                            id: (count++) + ''
+                        };
                         res.cells = [
                             {
+                                innerText: node.text,
                                 render: function (elt, cellData, controller) {
                                     _({
                                         elt: elt,
@@ -38,6 +51,7 @@ var table = absol._({
                                 }
                             },
                             {
+                                innerText: node.value,
                                 render: function (elt, cellData, controller) {
                                     _({
                                         elt: elt,
