@@ -236,6 +236,8 @@ FileListInput.property.files = {
      * @param files
      */
     set: function (files) {
+        files = files || [];
+        files = files.slice();
         var self = this;
         this.$fileItems.forEach(function (fileElt) {
             fileElt.remove();
@@ -253,7 +255,7 @@ FileListInput.property.files = {
      * @this FileListInput
      */
     get: function () {
-        return this._files;
+        return (this._files ||[]).slice();
     }
 };
 
