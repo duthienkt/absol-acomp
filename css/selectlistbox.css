@@ -46,6 +46,7 @@ div.absol-follower.as-select-list-box {
 .as-select-list-box.as-enable-search.as-anchor-6,
 .as-select-list-box.as-enable-search.as-anchor-5 {
     padding-bottom: calc(2em + 10px);
+    padding-top: 0;
 }
 
 .as-select-list-box.as-enable-search,
