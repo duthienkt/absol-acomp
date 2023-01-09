@@ -15,7 +15,7 @@ function TTHeadRow(head, data) {
         tag:'tr',
         class:'as-tree-table-head-row'
     });
-    this.elt.addChild(this.cells.map(cell=> cell.elt));
+    this.elt.addChild(this.cells.map((cell, i)=> cell.elt.attr('data-col-idx', ''+i)));
 }
 
 

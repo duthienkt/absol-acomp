@@ -11,7 +11,7 @@ function TTHead(table, data) {
     this.table = table;
     this.elt = this.table.elt.$head;
     this.rows = (this.data.rows || []).map(rowData => new TTHeadRow(this, rowData));
-    this.elt.addChild(this.rows.map(r=> r.elt));
+    this.elt.clearChild().addChild(this.rows.map(r=> r.elt));
 }
 
 

@@ -74,6 +74,9 @@ TTDataAdapter.prototype.renderBodyCell = function (elt, data, controller) {
     if (data.style) {
         elt.addStyle(data.style);
     }
+    if (data.class) {
+        elt.addClass(data.class);
+    }
 };
 
 

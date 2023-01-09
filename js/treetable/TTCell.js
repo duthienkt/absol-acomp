@@ -1,4 +1,5 @@
 import { _ } from "../../ACore";
+import DTBodyCell from "../dynamictable/DTBodyCell";
 
 /***
  *
@@ -24,5 +25,9 @@ Object.defineProperty(TTCell.prototype, 'elt', {
         return this._elt;
     }
 });
+
+
+Object.defineProperty(TTCell.prototype, 'innerText', Object.getOwnPropertyDescriptor(DTBodyCell.prototype, 'innerText'));
+
 
 export default TTCell;
