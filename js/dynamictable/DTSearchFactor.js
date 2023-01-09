@@ -109,7 +109,7 @@ function DTSearchFactor(global) {
      */
     function prepareSearchForItem(item) {
         if (!item.text || !item.text.charAt) item.text = item.text + '';
-        var spliter = /\s+/;
+        var spliter = /[\s/]+/;
         var __text__ = item.text.replace(/([\s\b\-()\[\]"']|&#8239;|&nbsp;|&#xA0;|\s")+/g, ' ').trim().toLowerCase();
         var __nvnText__ = nonAccentVietnamese(__text__);
 
