@@ -1191,3 +1191,7 @@ export function replaceFileInObject(o, replacer) {
         return (value instanceof File) || (value instanceof Blob);
     });
 }
+
+export function isNone(x){
+    return x === null || x === undefined;
+}
