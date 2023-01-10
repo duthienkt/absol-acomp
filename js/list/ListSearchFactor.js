@@ -1,4 +1,4 @@
-export default function TTSearchFactor(global) {
+export default function ListSearchFactor(global) {
     /***
      * @typedef SelectionItem2
      * @property {String} text
