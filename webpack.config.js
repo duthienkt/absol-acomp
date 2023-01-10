@@ -9,14 +9,14 @@ var packages = {
     }
 }
 
-var package = Object.assign({}, require("./package.json"));
-package.buildPCName = os.hostname();
-package.buildFolder = __dirname;
-package.buildTime = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
+var packageData = Object.assign({}, require("./package.json"));
+packageData.buildPCName = os.hostname();
+packageData.buildFolder = __dirname;
+packageData.buildTime = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString();
 
-delete package.scripts;
-delete package.devDependencies;
-delete package.main;
+delete packageData.scripts;
+delete packageData.devDependencies;
+delete packageData.main;
 
 
 const PACKAGE = 'default';
@@ -78,14 +78,14 @@ module.exports = {
         compress: true,
         disableHostCheck: true,
         host: '0.0.0.0',
-        // public: 'https://www.absol.cf'
+        // public: 'https://c9.absol.cf'
     },
     performance: {
         hints: false
     },
     plugins: [
         new webpack.DefinePlugin({
-            PACKAGE: JSON.stringify(package)
+            PACKAGE: JSON.stringify(packageData)
         }),
         new webpack.ProvidePlugin({
             process: 'process/browser',
