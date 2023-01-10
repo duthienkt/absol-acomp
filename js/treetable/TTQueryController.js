@@ -1,21 +1,5 @@
 import { $ } from "../../ACore";
-import noop from "absol/src/Code/noop";
-import Thread from "absol/src/Network/Thread";
-import TTSearchFactor from "./TTSearchFactor";
-import { randomIdent } from "absol/src/String/stringGenerate";
-
-var worker = null;
-var prepareWorker = () => {
-    prepareWorker = noop;
-    worker = new Thread({
-        methods: {
-            init: TTSearchFactor
-        },
-        extendCode: 'init(this)'
-    });
-
-
-}
+import ListSearchMaster from "../list/ListSearchMaster";
 
 
 /***
@@ -24,12 +8,23 @@ var prepareWorker = () => {
  * @constructor
  */
 function TTQueryController(elt) {
-    prepareWorker();
-    this.id = randomIdent(8);
+    this.searchMaster = new ListSearchMaster();
     this.elt = elt;
     this.$filterInputs = [];
     this.$searchInput = null;
     this['request'] = this['request'].bind(this);
+    this._waitDestroy();
+}
+
+TTQueryController.prototype._waitDestroy = function (){
+    setTimeout(()=>{
+        if (this.elt.isDescendantOf(document.body)) {
+            this._waitDestroy();
+        }
+        else {
+            this.searchMaster.destroy();
+        }
+    }, 10000)
 }
 
 TTQueryController.prototype.attachFilterInput = function (input) {
@@ -95,7 +90,7 @@ TTQueryController.prototype.makeQuery = function () {
 TTQueryController.prototype.request = function () {
     var query = this.makeQuery();
     if (query)
-        worker.invoke('callQuery', this.id, query).then(searchResult => {
+        this.searchMaster.query(query).then(searchResult => {
             this.elt.table.body.applyQueryResult(searchResult);
         });
     else this.elt.table.body.applyQueryResult(null);
@@ -116,7 +111,7 @@ TTQueryController.prototype.getSearchItems = function () {
 };
 
 TTQueryController.prototype.transferSearchItems = function () {
-    worker.invoke('transferSearchItems', this.id, this.getSearchItems());
+    this.searchMaster.transfer(this.getSearchItems());
 };
 
 
