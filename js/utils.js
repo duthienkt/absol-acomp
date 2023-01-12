@@ -209,7 +209,7 @@ export function buildCss(StyleSheet) {
     }).addTo(document.head);
 }
 
-export function forwardEvent(elt, fromName, toName){
+export function forwardEvent(elt, fromName, toName) {
     elt.defineEvent(toName);
     elt.on(fromName, function (event) {
         event = Object.assign({}, event);
@@ -218,8 +218,8 @@ export function forwardEvent(elt, fromName, toName){
     });
 }
 
-export function forwardMethod(elt, fromName, toName){
-    elt[fromName] = function (){
+export function forwardMethod(elt, fromName, toName) {
+    elt[fromName] = function () {
         this[toName].apply(this, arguments);
     }
 }
@@ -309,7 +309,7 @@ export function openFileDialog(props, unSafe) {
     });
 }
 
-export function openYesNoQuestionDialog (title, message) {
+export function openYesNoQuestionDialog(title, message) {
     return new Promise(resolve => {
         if (window.ModalElement && window.ModalElement.question) {
             window.ModalElement.question({
@@ -671,11 +671,11 @@ export function swapElt(e1, e2) {
 }
 
 export function swapChildrenInElt(e1, e2) {
-    var c1 =  Array.prototype.slice.call(e1.childNodes);
+    var c1 = Array.prototype.slice.call(e1.childNodes);
     var c2 = Array.prototype.slice.call(e2.childNodes);
     $(e1).clearChild();
     $(e2).clearChild();
-    while (c2.length > 0){
+    while (c2.length > 0) {
         e1.appendChild(c2.shift());
     }
     while (c1.length > 0) {
@@ -926,6 +926,13 @@ export function addElementAfter(inElement, elements, at) {
     }
 }
 
+
+export  function getAncestorElementOf(elt) {
+    while (elt.parentElement) {
+        elt = elt.parentElement;
+    }
+    return elt;
+}
 
 export function checkedValues2RootTreeValues(items, values) {
     var keyOf = (x) => (typeof x) + x;
@@ -1192,6 +1199,6 @@ export function replaceFileInObject(o, replacer) {
     });
 }
 
-export function isNone(x){
+export function isNone(x) {
     return x === null || x === undefined;
 }
