@@ -5,6 +5,7 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Thread from "absol/src/Network/Thread";
 import DTSearchFactor from "./DTSearchFactor";
 import {randomIdent} from "absol/src/String/stringGenerate";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /***
  *
@@ -453,6 +454,7 @@ DTBody.prototype.reindexRows = function (start, end) {
 DTBody.prototype.onRowSplice = function (idx) {
     this.curentMode.onRowSplice(idx);
     this.master.transferFrom(idx);
+    ResizeSystem.requestUpdateSignal();
 }
 
 DTBody.prototype.rowIndexOf = function (o) {

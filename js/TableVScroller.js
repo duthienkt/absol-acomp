@@ -1,6 +1,7 @@
 import '../css/tablevscroller.css';
 import ACore from "../ACore";
-import Dom from "absol/src/HTML5/Dom";
+import Dom, { depthClone } from "absol/src/HTML5/Dom";
+import { getAncestorElementOf, swapChildrenInElt } from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -8,18 +9,22 @@ var $ = ACore.$;
 function TableVScroller() {
     var thisTS = this;
     this.$attachHook = $('attachhook', this);
-    this.$attachHook.updateSize = this.update.bind(this);
+    this.$attachHook.updateSize = () => {
+        this.updateStyle();
+        this.updateSize();
+    };
 
     this.sync = new Promise(function (rs) {
-        thisTS.$attachHook.on('error', rs)
+        thisTS.$attachHook.on('attached', rs)
     });
     this.$viewport = $('.absol-table-vscroller-viewport', this);
-    this.$attachHook.on('error', function () {
+    this.$attachHook.on('attached', function () {
         Dom.addToResizeSystem(thisTS.$attachHook);
         this.updateSize();
     });
     this.$topTable = $('.absol-table-vscroller-head', this);
     this.$headLine = $('.absol-table-vscroller-head-line', this);
+    this.swappedContentPairs = [];
 }
 
 TableVScroller.tag = 'TableVScroller'.toLowerCase();
@@ -45,14 +50,10 @@ TableVScroller.prototype.clearChild = function () {
 
 TableVScroller.prototype.addChild = function (elt) {
     if (this.$viewport.childNodes.length == 0) {
-        if (elt.tagName && elt.tagName.toLowerCase() == 'table') {
+        this.$table = $('table',elt);
+
+        if (this.$table)  {
             this.$viewport.addChild(elt);
-            this.$table = $(elt);
-            this.$thead = $('thead', elt);
-            this.$tr = $('tr', this.$thead);
-            this.$topThead = this.$thead.cloneNode(true);
-            this.$topTr = $('tr', this.$topThead);
-            this.$topTable.addChild(this.$topThead).addStyle('display', 'none');
             this.update();
         }
         else {
@@ -91,6 +92,7 @@ TableVScroller.prototype.updateStyle = function () {
 
 
 TableVScroller.prototype.updateSize = function () {
+    if (!this.$thead) return;
     var theadBound = this.$thead.getBoundingClientRect();
     var tableBound = this.$table.getBoundingClientRect();
     this.$topTable.addStyle({
@@ -110,21 +112,51 @@ TableVScroller.prototype.updateSize = function () {
     }
     var realNodes = this.$tr.childNodes;
     var topNodes = this.$topTr.childNodes;
-
+    var widthStyle;
+    var displayStyle;
     for (var i = 0; i < realNodes.length; ++i) {
         if (!realNodes[i].tagName) continue;
-        var wstyle = window.getComputedStyle($(realNodes[i])).getPropertyValue('width');
-        $(topNodes[i]).attr('style', realNodes[i].attr('style')).addStyle('width', wstyle);
+        widthStyle = $(realNodes[i]).getComputedStyleValue('width');
+        displayStyle = realNodes[i].getComputedStyleValue('display');
+        if (!widthStyle) {
+            widthStyle = realNodes[i].getBoundingClientRect().width;
+            if (!widthStyle) {
+                displayStyle = 'none';
+            }
+            widthStyle += 'px';
+        }
+        // console.trace(getAncestorElementOf(realNodes[i]), widthStyle, displayStyle)
+        $(topNodes[i]).attr('style', realNodes[i].attr('style')).addStyle('width', widthStyle).addStyle('display', displayStyle);
     }
     this.$topTable.removeStyle('display');
-}
+};
+
+TableVScroller.prototype.updateContent = function () {
+    this.swappedContentPairs.forEach((originElt, copyElt) => {
+        this.swappedContentPairs.push([originElt, copyElt])
+    });
+    this.swappedContentPairs = [];
+   var elt = this.$table;
+    this.$thead = $('thead', elt);
+    this.$tr = $('tr', this.$thead);
+    this.$topThead = depthClone(this.$thead, (originElt, copyElt) => {
+        if (originElt.tagName === 'TH') {
+            swapChildrenInElt(originElt, copyElt);
+            this.swappedContentPairs.push([originElt, copyElt])
+        }
+    });
+    this.$topTr = $('tr', this.$topThead);
+    this.$topTable.clearChild().addChild(this.$topThead).addStyle('display', 'none');
+};
 
 
 TableVScroller.prototype.update = function () {
-    if (!this.$thead) return;
+    if (!this.$table) return;
+    this.updateContent();
     this.updateStyle();
     this.updateSize();
 };
+
 
 ACore.install(TableVScroller);
 

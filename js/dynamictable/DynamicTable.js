@@ -5,6 +5,7 @@ import PageSelector from "../PageSelector";
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
 import { buildCss } from "../utils";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -127,6 +128,7 @@ DynamicTable.prototype.replaceRow = function (rowData, rp) {
     if (row) {
         row.updateData(rowData);
     }
+    ResizeSystem.requestUpdateSignal();
 };
 
 
@@ -298,6 +300,15 @@ DynamicTable.property.adapter = {
         else {
             //todo
         }
+
+        var c = this.parentElement;
+        while (c) {
+            if (c.hasClass && c.hasClass('absol-table-vscroller') && c.update) {
+                c.update();
+                break;
+            }
+            c = c.parentElement;
+        }
     },
     get: function () {
         return this._adapterData;
@@ -329,6 +340,14 @@ DynamicTable.property.hiddenColumns = {
         this._hiddenColumns.forEach(function (idxV) {
             this.addClass('as-hide-col-' + idxV);
         }.bind(this));
+        var c = this.parentElement;
+        while (c) {
+            if (c.hasClass && c.hasClass('absol-table-vscroller') && c.update) {
+                c.update();
+                break;
+            }
+            c = c.parentElement;
+        }
     },
     get: function () {
         return this._hiddenColumns;
