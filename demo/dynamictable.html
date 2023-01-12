@@ -661,7 +661,7 @@
                             ]
                         },
                         body: {
-                            rows: Array(10).fill(0).map(function (u, i) {
+                            rows: Array(100).fill(0).map(function (u, i) {
                                 return makeRowData1(i + 1, 'row_' + i, i >= 5 && i <= 45);
                             })
 
@@ -674,6 +674,15 @@
                     console.log('table listener', event);
                 }
             }
+        });
+        render({
+            tag: 'tablevscroller',
+
+            style: {
+                height: '50vh',
+                marginTop:'10px'
+            },
+            child: table1
         });
     })();
 
