@@ -165,7 +165,10 @@ export default function ListSearchFactor(global) {
         }
 
         var n = Math.max(queryItem.__words__.length + 1, 1);
-        score = Math.max(score, wordsMatch(queryItem.__words__, item.__words__), wordsMatch(queryItem.__nvnWords__, item.__nvnWords__)) / n * 2 * WORD_MATCH_SCORE;
+        score = Math.max(score,
+            wordsMatch(queryItem.__words__, item.__words__) / n * 2 * WORD_MATCH_SCORE,
+            wordsMatch(queryItem.__nvnWords__, item.__nvnWords__) / n * 2 * WORD_MATCH_SCORE
+        );
         return score;
     }
 
