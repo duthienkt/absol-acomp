@@ -1,12 +1,9 @@
 import MultiSelectMenu from "./MultiSelectMenu";
 import ACore, { _, $ } from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
-import CheckListBox from "./CheckListBox";
+import { CheckListBox } from "./CheckListBox";
 import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
-import { getValueOfListItem } from "./SelectListItem";
 import AElement from "absol/src/HTML5/AElement";
-import {map} from "absol/src/Math/int";
-
 
 /***
  * @extends MultiSelectMenu
@@ -20,7 +17,7 @@ function MultiCheckMenu() {
      * @type {CheckListBox}
      */
     this.$selectlistBox = _({
-        tag: CheckListBox.tag,
+        tag: CheckListBox,//use new version
         props: {
             anchor: [1, 6, 2, 5]
         },
@@ -59,6 +56,7 @@ MultiCheckMenu.render = MultiSelectMenu.render;
 Object.assign(MultiCheckMenu.prototype, MultiSelectMenu.prototype);
 MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
+
 
 MultiCheckMenu.prototype.findItemsByValue = function (value){
     return this.$selectlistBox.findItemsByValue(value);
@@ -103,9 +101,7 @@ MultiCheckMenu.eventHandler.selectListBoxChange = function (event) {
             }
             break;
         case 'check_all':
-            this._tempValues = this.items.map(function (item) {
-                return getValueOfListItem(item);
-            })
+            this._tempValues = this.$selectlistBox.values;
             break;
         case 'uncheck_all':
             this._tempValues = [];
@@ -310,3 +306,6 @@ MultiCheckMenu.eventHandler.pressItem = function (item, event) {
 ACore.install(MultiCheckMenu);
 
 export default MultiCheckMenu;
+
+
+
