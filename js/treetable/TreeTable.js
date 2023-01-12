@@ -71,7 +71,7 @@ var loadCss = () => {
         ac[`.as-tree-table-row[data-level="${i}"] .as-tree-table-toggle::before`] = {
             width: 2 * i + 'em'
         }
-        ac[[ '.as-tree-table.as-hide-col-' + i + ' td[data-col-idx="' + i + '"]',
+        ac[['.as-tree-table.as-hide-col-' + i + ' td[data-col-idx="' + i + '"]',
             '.as-tree-table.as-hide-col-' + i + ' th[data-col-idx="' + i + '"]'].join(',')] = {
             display: 'none'
         }
@@ -156,6 +156,16 @@ TreeTable.property.adapter = {
         this.mAdapter = new TTDataAdapter(this, adapter);
         this.mAdapter.render();
         this.queryCtrl.transferSearchItems();
+
+        var c = this.parentElement;
+        while (c) {
+            if (c.hasClass && c.hasClass('absol-table-vscroller') && c.update) {
+                c.update();
+                break;
+            }
+            c = c.parentElement;
+        }
+
     },
     get: function () {
         return this._adapterData;
@@ -182,7 +192,31 @@ TreeTable.property.searchInput = {
     }
 };
 
-TreeTable.property.hiddenColumns = DynamicTable.property.hiddenColumns;
+TreeTable.property.hiddenColumns = {
+    set: function (value) {
+        value = value || [];
+        this._hiddenColumns.forEach(function (idxV) {
+            this.removeClass('as-hide-col-' + idxV);
+        }.bind(this));
+        this._hiddenColumns = value;
+
+        this._hiddenColumns.forEach(function (idxV) {
+            this.addClass('as-hide-col-' + idxV);
+        }.bind(this));
+
+        var c = this.parentElement;
+        while (c) {
+            if (c.hasClass && c.hasClass('absol-table-vscroller') && c.update) {
+                c.update();
+                break;
+            }
+            c = c.parentElement;
+        }
+    },
+    get: function () {
+        return this._hiddenColumns;
+    }
+};
 
 
 ACore.install(TreeTable);
