@@ -115,7 +115,13 @@ CheckListItem.property = {
 CheckListItem.property.data = {
     set: function (value) {
         this._data = value;
-        var viewData = {};
+        var viewData = {
+            text:'',
+            desc: '',
+            noSelect: false,
+            extendStyle: null,
+            extendClasses: null
+        };
         if (typeof value === 'string') {
             viewData.text = value
         } else {
@@ -141,7 +147,7 @@ CheckListItem.property.level = {
     set: function (value) {
         value = value || 0;
         this._level = value;
-        this.$checkbox.addStyle('margin-left', value * 1.25 + 'em');
+        this.$checkbox.addStyle('margin-left', value * 1.75 + 'em');
     },
     get: function () {
         return this._level;
@@ -200,6 +206,14 @@ CheckListItem.prototype.viewHandlers.extendStyle = {
     },
     get: function () {
         return this._extendClasses;
+    }
+};
+
+CheckListItem.prototype.viewHandlers.noSelect = {
+    set: function (value){
+        if (value) this.addClass('as-no-select');
+        else  this.removeClass('as-no-select');
+        return value;
     }
 };
 

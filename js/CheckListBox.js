@@ -224,7 +224,7 @@ CheckListBox.property.values = {
     },
     get: function () {
         return this.itemHolders.reduce(function visit(ac, holder) {
-            if (holder.selected) ac.push(holder.data.value);
+            if (holder.selected && !holder.data.noSelect) ac.push(holder.data.value);
             if (holder.children) holder.children.reduce(visit, ac);
             return ac;
         }, []);
@@ -243,14 +243,14 @@ CheckListBox.property.enableSearch = SelectListBox.property.enableSearch;
 CheckListBox.property.items = {
     set: function (items) {
         items = items || [];
-        items = copySelectionItemArray(items);
+        items = copySelectionItemArray(items, {removeNoView: true});
         this._items = items;
         this.itemHolders = items.map(it => new CLHolder(this, it));
 
         var res = this.itemHolders.reduce(function visit(ac, cr) {
-            ac.textWidth = Math.max(ac.textWidth, 3.5 * 14 + 1.25 * cr.level + 14 + measureTextWidth(cr.data.text + '')+ 7 + 10) ;
+            ac.textWidth = Math.max(ac.textWidth, 3.5 * 14 + 1.75 * 14 * cr.level + 14 + measureTextWidth(cr.data.text + '') + 7 + 17);
             if (cr.data.desc) {
-                ac.descWidth = Math.max( ac.descWidth,  measureTextWidth(cr.data.desc + ''));
+                ac.descWidth = Math.max(ac.descWidth, measureTextWidth(cr.data.desc + ''));
 
             }
             ac.dict[cr.valueKey] = ac.dict[cr.valueKey] || [];
@@ -264,8 +264,7 @@ CheckListBox.property.items = {
         }, { idx: 0, dict: {}, textWidth: 50, descWidth: 0 });
 
         this._holderDict = res.dict;
-        this._estimateWidth = res.textWidth + ( res.descWidth? res.descWidth + 30: 0 );
-        console.log(res)
+        this._estimateWidth = res.textWidth + (res.descWidth ? res.descWidth + 30 : 0);
 
         this.$scroller.scrollTop = 0;
         this.pagingCtrl.viewArr(this.itemHolders);
@@ -281,7 +280,7 @@ CheckListBox.property.items = {
 CheckListBox.property.selectedAll = {
     get: function () {
         return this.itemHolders.length > 0 && this.itemHolders.every(function visit(holder) {
-            var res = holder.selected;
+            var res = holder.selected || holder.data.noSelect;
             if (res && holder.children) {
                 res = holder.children.every(visit);
             }
@@ -299,12 +298,16 @@ CheckListBox.eventHandler.checkAllChange = function (event) {
     var checked = this.$checkAll.checked;
     var changed = false;
     var visit = (holder) => {
-        if (holder.selected !== checked) {
+        var canCheck = checked && !holder.data.noSelect;
+        if (holder.selected !== canCheck) {
             changed = true;
-            holder.selected = checked;
+            holder.selected = canCheck;
         }
-        if (checked) {
+        if (canCheck) {
             this._valueDict[holder.valueKey] = holder.data.value;
+        }
+        else {
+            delete this._valueDict[holder.valueKey];
         }
         if (holder.children) holder.children.forEach(visit);
     }
@@ -340,6 +343,8 @@ CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
         value: holder.data.value,
         itemData: holder.data
     });
+    this.domSignal.emit('updateCheckedAll');
+
 };
 
 
@@ -534,14 +539,13 @@ CLPagingController.prototype.viewListAtValue = function (value) {
     if (idx === undefined) return;
     var bound = this.$scroller.getBoundingClientRect();
     var y = idx * this.itemHeight;
-    console.log(y, idx)
     var maxY = this.holderArr.length * this.itemHeight - bound.height;
     this.$scroller.scrollTop = Math.min(maxY, y);
 };
 
 CLPagingController.prototype.viewArr = function (itemHolders) {
     this.holderArr = itemHolders.reduce((ac, holder) => holder.toArray(ac), []);
-    this.holderDict= this.holderArr.reduce((ac, cr, idx)=>{
+    this.holderDict = this.holderArr.reduce((ac, cr, idx) => {
         ac[cr.valueKey] = idx;
         return ac;
     }, {});

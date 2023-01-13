@@ -20,3 +20,11 @@
 .absol-selectlist-item.as-check-list-item .absol-selectlist-item-desc {
     line-height: calc(25rem / 14);
 }
+
+.as-check-list-item.as-no-select .as-check-list-item-checkbox {
+    visibility: hidden;
+}
+
+.as-check-list-item.as-no-select {
+    pointer-events: none;
+}
