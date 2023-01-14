@@ -34,6 +34,7 @@ function MultiCheckMenu() {
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.$attachhook = $('attachhook', this)
         .on('attached', this.eventHandler.attached);
+    this.$attachhook.requestUpdateSize = this.updateSize();
 
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
     this._isFocus = false;
@@ -57,6 +58,17 @@ MultiCheckMenu.render = MultiSelectMenu.render;
 Object.assign(MultiCheckMenu.prototype, MultiSelectMenu.prototype);
 MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
+
+
+MultiCheckMenu.prototype.updateSize = function () {
+    var bound;
+    if (this._isFocus) {
+        bound = this.getBoundingClientRect();
+        this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 15.5) + 'px');
+        this.$selectlistBox.refollow();
+        this.$selectlistBox.updatePosition();
+    }
+};
 
 
 MultiCheckMenu.prototype.findItemsByValue = function (value) {
