@@ -732,7 +732,7 @@ export function fileSize2Text(s) {
 }
 
 export function isDateTimeFormatToken(text) {
-    return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a', 'w', 'ww'].indexOf(text) >= 0;
+    return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a', 'w', 'ww', 'Q', 'QQ'].indexOf(text) >= 0;
 }
 
 export function isRealNumber(value) {

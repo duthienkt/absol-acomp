@@ -6,7 +6,7 @@ import {
     compareDate,
     formatDateString,
     parseDateString,
-    formatDateTime, parseDateTime, DATE_TIME_TOKEN_RGX, weekIndexOf, prevDate
+    formatDateTime, parseDateTime, DATE_TIME_TOKEN_RGX, weekIndexOf, prevDate, getDefaultFirstDayOfWeek, weekInYear
 } from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
@@ -35,7 +35,7 @@ function DateInput2() {
     this._format = 'dd/MM/yyyy';
     this.$input = $('input', this);
     this._editingData = {};
-    this.startDayOfWeek = 1;
+    this.startDayOfWeek = getDefaultFirstDayOfWeek();
     this.$text = this.$input;
     this.$text.on('mousedown', this.eventHandler.mouseDownInput)
         .on('mouseup', this.eventHandler.mouseUpInput)
@@ -102,18 +102,18 @@ DateInput2.prototype._verifyFormat = function (text) {
         M: ['M', 'MM'],
         y: ['yy', 'yyyy'],
         Q: ['Q', 'QQ'],
-        w:['w', 'ww'],
+        w: ['w', 'ww'],
     };
 
-    var rules = ['dMy', 'My', 'y', 'wy', 'Qy' ].map(r=>{
+    var rules = ['dMy', 'My', 'y', 'wy', 'Qy'].map(r => {
         r = r.split('');
         r.sort();
         return r.join('');
     });
 
-    var matched = tokens.reduce((ac, cr)=>{
-        Object.keys(map).some(key=>{
-            if (map[key].indexOf(cr)>=0) {
+    var matched = tokens.reduce((ac, cr) => {
+        Object.keys(map).some(key => {
+            if (map[key].indexOf(cr) >= 0) {
                 ac.push(key);
                 return true;
             }
@@ -123,7 +123,7 @@ DateInput2.prototype._verifyFormat = function (text) {
     }, []);
     matched.sort();
     matched = matched.join('');
-    return rules.indexOf(matched) >=0;
+    return rules.indexOf(matched) >= 0;
 };
 
 DateInput2.prototype._notifyIfChange = function (event) {
@@ -254,13 +254,15 @@ DateInput2.prototype._correctingCurrentToken = function () {
         d: 1, dd: 1,
         M: 1, MM: 1,
         y: 1890, yyyy: 1890,
-        w: 1, ww: 1
+        w: 1, ww: 1,
+        Q: 1, QQ: 1
     }[token.ident];
     var rqMax = {
         d: 31, dd: 31,
         M: 12, MM: 12,
         y: 2089, yyyy: 2089,
-        w: 54, ww: 54
+        w: 54, ww: 54,
+        Q: 4, QQ: 4
     }[token.ident];
     if (rqMin !== undefined) {
         if (!isNaN(value)) {
@@ -323,8 +325,14 @@ DateInput2.prototype._loadValueFromInput = function () {
     var y = tkDict.y ? tkDict.y.value : new Date().getFullYear();
     var m = tkDict.M ? tkDict.M.value - 1 : 0;
     var d = tkDict.d ? tkDict.d.value : 1;
-    var date = new Date(y, m, d);
-    if (isNaN(date.getTime())) {
+    var date;
+    if (tkDict.w && tkDict.y) {
+        date = weekInYear(y, tkDict.w.value - 1);
+    }
+    else if (tkDict.Q && tkDict.y) {
+        date = new Date(y, (tkDict.Q.value - 1) * 3, 1);
+    }
+    if (!date || isNaN(date.getTime())) {
         this._value = null;
     }
     else {
@@ -365,7 +373,10 @@ DateInput2.prototype.tokenMap = {
     MM: 'M',
     y: 'y',
     yyyy: 'y',
-    ww: 'w'
+    ww: 'w',
+    Q: 'Q',
+    QQ: 'Q'
+
 }
 
 /**
@@ -434,6 +445,19 @@ DateInput2.eventHandler.keydown = function (event) {
                         newTokenText = zeroPadding(this._editingData.w, token.ident.length);
                         token.replace(newTokenText, true);
                         break;
+                    case 'Q':
+                    case 'QQ':
+                        value = parseInt(token.text);
+                        if (isNaN(value)) {
+                            this._editingData.Q = event.key === 'ArrowUp' ? 1 : 4;
+                        }
+                        else {
+                            this._editingData.Q = 1 + (value + (event.key === 'ArrowUp' ? 0 : 3)) % 4;
+                        }
+                        newTokenText = zeroPadding(this._editingData.Q, token.ident.length);
+                        token.replace(newTokenText, true);
+                        break;
+
                     case 'MM':
                     case 'M':
                         value = parseInt(token.text) - 1;
@@ -484,6 +508,8 @@ DateInput2.eventHandler.keydown = function (event) {
                         break;
                     case 'w':
                     case 'ww':
+                    case 'Q':
+                    case 'QQ':
                         token.replace(zeroPadding(1, token.ident.length), true);
                         break;
                     case 'M':
@@ -551,6 +577,14 @@ DateInput2.eventHandler.keydown = function (event) {
                         this._editNextToken();
                     }
                     break;
+                case 'Q':
+                case 'QQ':
+                    dVal = Math.max(1, Math.min(dVal, 4));
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.state = STATE_EDITED;
+                    this._editingData.Q = dVal;
+                    this._editNextToken();
+                    break;
                 case 'MM':
                 case 'M':
                     token.replace(zeroPadding(dVal, token.ident.length), true);
@@ -584,6 +618,13 @@ DateInput2.eventHandler.keydown = function (event) {
                     dVal = Math.max(1, Math.min(54, dVal));
                     this._editingData.d = dVal;
                     token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editNextToken();
+                    break;
+                case 'Q':
+                case 'QQ':
+                    dVal = Math.max(1, Math.min(dVal, 4));
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.Q = dVal;
                     this._editNextToken();
                     break;
                 case 'MM':
@@ -729,6 +770,7 @@ DateInput2.property.calendarLevel = {
         if (this._formatTokens.indexOf('d') >= 0 || this._formatTokens.indexOf('dd') >= 0) return 'day';
         if (this._formatTokens.indexOf('w') >= 0 || this._formatTokens.indexOf('ww') >= 0) return 'week';
         if (this._formatTokens.indexOf('M') >= 0 || this._formatTokens.indexOf('MM') >= 0) return 'month';
+        if (this._formatTokens.indexOf('Q') >= 0 || this._formatTokens.indexOf('QQ') >= 0) return 'quarter';
         return 'year';
     }
 };
