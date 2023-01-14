@@ -684,12 +684,10 @@ ChromeCalendar.prototype.expandYear = function (year) {
 
 ChromeCalendar.prototype.scrollIntoDecade = function (startYear, animation) {
     if (!this.isDescendantOf(document.body)) {
-        return this.sync.then(this.scrollIntoDecade.bind(this));
-
+        return this;
     }
     var thisCal = this;
     return new Promise(function (resolve) {
-
         var eraBound = thisCal.$era.getBoundingClientRect();
         var rowIdx = Math.floor((startYear - 1890) / 4);
         if (thisCal._decadeScrollTimeout > 0) {
@@ -711,14 +709,15 @@ ChromeCalendar.prototype.scrollIntoDecade = function (startYear, animation) {
                 var tc = new Date().getTime();
                 var yc = Math.min(1, Math.pow((tc - t0) / (t1 - t0), 2)) * (y1 - y0) + y0;
                 thisCal.$era.scrollTop = yc;
+                console.log(yc)
                 if (tc < t1) {
-                    thisCal._decadeScrollTimeout = setTimeout(tick, 30);
+                    thisCal._decadeScrollTimeout = setTimeout(tick, 500);
                 } else {
                     thisCal._decadeScrollTimeout = -1;
                     thisCal.scrollIntoDecadeResolve = null;
                     resolve();
                 }
-            }, 30);
+            }, 500);
         } else {
             thisCal.$era.scrollTop = y1;
         }
