@@ -95,15 +95,35 @@ DateInput2.render = function () {
  * @param {String} text
  */
 DateInput2.prototype._verifyFormat = function (text) {
-    var regex = /([,.\-\/])|([a-zA-Z0-9]+)/g;
+    var regex = new RegExp(DATE_TIME_TOKEN_RGX.source, 'g');
     var tokens = text.match(regex);
-    var count = [['dd', 'd'], ['M', 'MM'], ['yy', 'yyyy']].map(function (list) {
-        return list.reduce(function (ac, cr) {
-            if (tokens.indexOf(cr) >= 0) return ac + 1;
-            return ac;
-        }, 0);
+    var map = {
+        d: ['dd', 'd'],
+        M: ['M', 'MM'],
+        y: ['yy', 'yyyy'],
+        Q: ['Q', 'QQ'],
+        w:['w', 'ww'],
+    };
+
+    var rules = ['dMy', 'My', 'y', 'wy', 'Qy' ].map(r=>{
+        r = r.split('');
+        r.sort();
+        return r.join('');
     });
-    return count[0] <= count[1] && count[1] <= count[2] && count[2] === 1;
+
+    var matched = tokens.reduce((ac, cr)=>{
+        Object.keys(map).some(key=>{
+            if (map[key].indexOf(cr)>=0) {
+                ac.push(key);
+                return true;
+            }
+            return false;
+        });
+        return ac;
+    }, []);
+    matched.sort();
+    matched = matched.join('');
+    return rules.indexOf(matched) >=0;
 };
 
 DateInput2.prototype._notifyIfChange = function (event) {
@@ -645,8 +665,11 @@ DateInput2.property.value = {
 DateInput2.property.format = {
     set: function (value) {
         value = value || 'dd/MM/yyyy';
-        value = value.replace(/m/g, 'M');
-        value = value.replace(/MM([M]+)/, 'MM');
+        value = value.replace(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g'), function (full) {
+            if (full === 'mm' || full === 'MMM' || full === 'MMMM' || full === 'mmm' || full === 'mmmm') return 'MM';
+            if (full === 'm') return 'M';
+            return full;
+        });
         if (!this._verifyFormat(value)) {
             value = 'dd/MM/yyyy';
             console.error("Invalid date format: " + value);
