@@ -4,6 +4,7 @@ import OOP from "absol/src/HTML5/OOP";
 import { CheckListBox } from "./CheckListBox";
 import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /***
  * @extends MultiSelectMenu
@@ -58,7 +59,7 @@ MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
 
 
-MultiCheckMenu.prototype.findItemsByValue = function (value){
+MultiCheckMenu.prototype.findItemsByValue = function (value) {
     return this.$selectlistBox.findItemsByValue(value);
 };
 
@@ -111,9 +112,10 @@ MultiCheckMenu.eventHandler.selectListBoxChange = function (event) {
     setTimeout(function () {
         this.viewItemsByValues(this._tempValues);
         var bound = this.getBoundingClientRect();
-        this.$selectlistBox.addStyle('min-width', Math.max(bound.width,  this.$selectlistBox.getFontSize()* 15.5) + 'px');
+        this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 15.5) + 'px');
         this.$selectlistBox.refollow();
         this.$selectlistBox.updatePosition();
+        ResizeSystem.requestUpdateSignal();
     }.bind(this), 1);
 };
 
@@ -145,7 +147,7 @@ MultiCheckMenu.property.isFocus = {
             document.body.appendChild(this.$selectlistBox);
             this.$selectlistBox.domSignal.$attachhook.emit('attached');
             var bound = this.getBoundingClientRect();
-            this.$selectlistBox.addStyle('min-width', Math.max(bound.width,this.$selectlistBox.getFontSize() * 15.5 )  + 'px');
+            this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 15.5) + 'px');
             this.$selectlistBox.refollow();
             this.$selectlistBox.updatePosition();
             setTimeout(function () {
@@ -258,6 +260,7 @@ MultiCheckMenu.eventHandler.pressCloseItem = function (item, event) {
         this.$selectlistBox.values = currentValues;
         this.$selectlistBox.updatePosition();
         this.viewItemsByValues(this.$selectlistBox.values);
+        ResizeSystem.requestUpdateSignal();
     }
     else {
         index = this._values.indexOf(value);
