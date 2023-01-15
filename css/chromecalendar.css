@@ -12,7 +12,7 @@
     white-space: initial;
 }
 
-.absol-chrome-calendar *{
+.absol-chrome-calendar * {
     font-size: inherit;
 }
 
@@ -64,7 +64,7 @@
     cursor: pointer;
 }
 
-.absol-chrome-calendar.as-level-day .absol-chrome-calendar-title::after {
+.absol-chrome-calendar[data-level="day"] .absol-chrome-calendar-title::after {
     content: "\25BC";
 }
 
@@ -75,7 +75,7 @@
 
 .absol-chrome-calendar-instance {
     margin-top: 1em;
-    border: solid 1px rgb(190, 190, 190);
+    border: solid 1px rgb(140, 140, 140);
     width: calc(14em + 2px);
     position: relative;
     height: calc(8.4em + 3px);
@@ -94,7 +94,7 @@
     z-index: 10;
 }
 
-.absol-chrome-calendar.as-level-week .absol-chrome-calendar-dayofweek::before {
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-dayofweek::before {
     content: "wk";
     text-align: center;
     line-height: 1.2;
@@ -110,12 +110,12 @@
     text-align: center;
     line-height: 1.2;
     display: inline-block;
-    width: 14.2857142857%;
+    width: calc(100% / 7);
     border-bottom: solid 1px rgb(191, 191, 191);
     box-sizing: border-box;
 }
 
-.absol-chrome-calendar.as-level-week .absol-chrome-calendar-dayofweek > div {
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-dayofweek > div {
     width: 12.5%;
 }
 
@@ -142,19 +142,27 @@
 
 
 .absol-chrome-calendar-month {
-    display: table;
     width: 100%;
     margin-top: 1.2em;
     background-color: white;
     /*for header*/
 }
 
+.absol-chrome-calendar[data-view="month"] .absol-chrome-calendar-month {
+    display: table;
+}
+
+.absol-chrome-calendar[data-view="month"] .absol-chrome-calendar-dayofweek {
+    display: block;
+}
+
+
 .absol-chrome-calendar-week-in-month {
     display: table-row;
     height: 1.2em;
 }
 
-.absol-chrome-calendar.as-level-week .absol-chrome-calendar-week-in-month::before {
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month::before {
     content: attr(data-week-idx-text);
     display: table-cell;
     text-align: right;
@@ -174,13 +182,12 @@
 }
 
 .absol-chrome-calendar-week-in-month > div:hover,
-.absol-chrome-calendar.as-level-week .absol-chrome-calendar-week-in-month:hover {
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month:hover {
     background-color: rgb(224, 245, 256);
 }
 
-.absol-chrome-calendar.as-level-week
-.absol-chrome-calendar-not-in-month {
-    color: rgb(190, 190, 190);
+.absol-chrome-calendar[data-level="day"] .absol-chrome-calendar-not-in-month {
+    color: rgb(140, 140, 140);
 }
 
 .absol-chrome-calendar-today {
@@ -189,11 +196,12 @@
 }
 
 .absol-chrome-calendar-selected,
-.absol-chrome-calendar.as-level-week .as-week-selected {
-    background-color: rgb(188, 205, 236);
+.absol-chrome-calendar[data-level="week"] .as-week-selected,
+.absol-chrome-calendar[data-level="quarter"] .as-quarter-selected {
+    background-color: rgb(188, 205, 236) !important;
 }
 
-.absol-chrome-calendar.as-level-week .as-week-selected .absol-chrome-calendar-selected {
+.absol-chrome-calendar[data-level="week"] .as-week-selected .absol-chrome-calendar-selected {
     background-color: transparent;
 }
 
@@ -220,11 +228,12 @@
     border-color: rgb(77, 114, 254)
 }
 
-.absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-month,
-.absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-dayofweek,
-.absol-chrome-calendar:not(.view-era) .absol-chrome-calendar-era {
+.absol-chrome-calendar-month,
+.absol-chrome-calendar-dayofweek,
+.absol-chrome-calendar-era {
     display: none;
 }
+
 
 .absol-chrome-calendar:not(.view-month) .absol-chrome-calendar-title {
     color: rgb(191, 191, 191);
@@ -249,20 +258,20 @@
     border-bottom: solid 1px rgb(191, 191, 191);
 }
 
-.absol-chrome-calendar-year.start-opening .absol-chrome-calendar-year-mounths,
-.absol-chrome-calendar-year.closing .absol-chrome-calendar-year-mounths {
+.absol-chrome-calendar-year.start-opening .absol-chrome-calendar-year-months,
+.absol-chrome-calendar-year.closing .absol-chrome-calendar-year-months {
     margin-bottom: -6em;
     transition: margin-bottom linear 0.1s;
 }
 
-.absol-chrome-calendar-year.opening .absol-chrome-calendar-year-mounths,
-.absol-chrome-calendar-year.start-closing .absol-chrome-calendar-year-mounths {
+.absol-chrome-calendar-year.opening .absol-chrome-calendar-year-months,
+.absol-chrome-calendar-year.start-closing .absol-chrome-calendar-year-months {
     margin-bottom: 0;
     transition: margin-bottom linear 0.1s;
 
 }
 
-.absol-chrome-calendar-year-mounths {
+.absol-chrome-calendar-year-months {
     width: 100%;
     display: table;
     height: 6em;
@@ -280,7 +289,11 @@
 }
 
 .absol-chrome-calendar-year-month:hover,
-.absol-chrome-calendar-era-year:hover {
+.absol-chrome-calendar-era-year:hover,
+.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-year-months[data-hover-quarter="0"] .absol-chrome-calendar-year-month[data-quarter="0"],
+.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-year-months[data-hover-quarter="1"] .absol-chrome-calendar-year-month[data-quarter="1"],
+.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-year-months[data-hover-quarter="2"] .absol-chrome-calendar-year-month[data-quarter="2"],
+.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-year-months[data-hover-quarter="3"] .absol-chrome-calendar-year-month[data-quarter="3"] {
     background-color: rgb(224, 245, 256);
 }
 
@@ -318,7 +331,7 @@ button.absol-chrome-calendar-button-disabled,
     z-index: 1000000;
     /*width: 100%;*/
     /*height: 100%; */
-    width: calc(14em  + 17px);
+    width: calc(14em + 17px);
     box-sizing: border-box;
     height: 100%;
     background-color: white;
@@ -326,6 +339,10 @@ button.absol-chrome-calendar-button-disabled,
     overflow-y: scroll;
     overflow-x: hidden;
     font-size: inherit;
+}
+
+.absol-chrome-calendar[data-level="year"]  .absol-chrome-calendar-era {
+    display: block;
 }
 
 .absol-chrome-calendar-era-row {
@@ -343,7 +360,7 @@ button.absol-chrome-calendar-button-disabled,
     text-align: center;
     line-height: 2.1em;
     font-size: inherit;
-    color: rgb(190, 190, 190);
+    color: rgb(140, 140, 140);
 }
 
 
