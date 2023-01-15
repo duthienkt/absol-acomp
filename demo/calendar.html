@@ -10,6 +10,10 @@
 
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
     <style>
+        :root {
+            font-size: 14px;
+        }
+
         .dark.bg {
             background-color: rgba(30, 30, 32, 1);
             /* background-color: white; */
@@ -41,9 +45,14 @@
     _({
         tag: 'chromecalendar',
         props: {
-            selectedDates: new Date(2019, 7, 3),
-            minLimitDate: new Date(2019, 7, 3),
-            maxLimitDate: new Date(2019, 11, 3)
+            selectedDates: new Date(),
+            minLimitDate: new Date(2022, 11, 23),
+            maxLimitDate: new Date(2023, 11, 3)
+        },
+        on: {
+            pick: function(){
+                console.log(this.selectedDates);
+            }
         }
     }).addTo(scroller);
 
@@ -55,6 +64,11 @@
             selectedDates: now,
             minLimitDate: new Date(2021, 0, 1),
             maxLimitDate: mxD
+        },
+        on: {
+            pick: function(){
+                console.log(this.selectedDates);
+            }
         }
     }).addTo(scroller);
 
@@ -62,11 +76,35 @@
         tag: 'chromecalendar',
         props: {
             level: 'month',
-            minLimitDate: new Date(2005, 7, 3),
-            maxLimitDate: new Date(2022, 11, 3)
+            minLimitDate: new Date(2022, 7, 3),
+            maxLimitDate: new Date(2023, 11, 3),
+            selectedDates: [new Date()]
         },
         style: {
             marginLeft: '10px'
+        },
+        on: {
+            pick: function(){
+                console.log(this.selectedDates);
+            }
+        }
+    }).addTo(scroller);
+
+    _({
+        tag: 'chromecalendar',
+        props: {
+            level: 'quarter',
+            minLimitDate: new Date(2022, 7, 3),
+            maxLimitDate: new Date(2023, 11, 3),
+            selectedDates: [new Date()]
+        },
+        style: {
+            marginLeft: '10px'
+        },
+        on: {
+            pick: function(){
+                console.log(this.selectedDates);
+            }
         }
     }).addTo(scroller);
 
@@ -80,6 +118,11 @@
         },
         style: {
             marginLeft: '10px'
+        },
+        on: {
+            pick: function(){
+                console.log(this.selectedDates);
+            }
         }
     }).addTo(scroller);
 
@@ -90,6 +133,11 @@
         },
         style: {
             marginLeft: '10px'
+        },
+        on: {
+            pick: function(){
+                console.log(this.selectedDates);
+            }
         }
     }).addTo(scroller);
 
@@ -100,6 +148,11 @@
         },
         style: {
             marginLeft: '10px'
+        },
+        on: {
+            pick: function(){
+                console.log(this.selectedDates);
+            }
         }
     }).addTo(scroller);
 
