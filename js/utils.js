@@ -850,7 +850,7 @@ export function fileInfoOf(fi) {
     var res = {};
     var handle = o => {
         if (typeof o === "string") {
-            res.name = (o.split('/').pop() || '').replace(/%([\dA-Fa-f][\dA-Fa-f])/g, (all, g1) => {
+            res.name = res.name ||  (o.split('/').pop() || '').replace(/%([\dA-Fa-f][\dA-Fa-f])/g, (all, g1) => {
                 var n = parseInt(g1, 16);
                 if (typeof n === "number") {
                     return String.fromCharCode(n);
