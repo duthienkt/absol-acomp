@@ -194,7 +194,10 @@ MultiSelectMenu.prototype._explicit = function (values) {
     var selectListBoxElt = this.$selectlistBox;
     var strictValue = this.strictValue;
     values = values.filter(function (value) {
-        return !strictValue || selectListBoxElt.findItemsByValue(value).length > 0;
+        if (!strictValue) return true;
+        var cts = selectListBoxElt.findItemsByValue(value);
+        if (cts && cts.length > 0) return true;
+        return false;
     })
     return values;
 };
