@@ -143,6 +143,7 @@
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
+    padding-right: calc(2.3em + 5px);
 }
 
 .as-file-list-item .as-file-list-item-check {
@@ -215,9 +216,11 @@
     background-color: rgba(169, 169, 172, 0.1);
 }
 
-.as-file-list-item:hover {
-    padding-right: 2.3em;
+
+.as-file-list-input .as-file-list-item:hover .as-file-list-item-quick-btn {
+    visibility: visible;
 }
+
 
 .as-file-list-item-quick-btn {
     position: absolute;
@@ -231,10 +234,10 @@
     padding: 0;
     right: 5px;
     top: calc(50% - 1em);
-    display: none;
+    visibility: hidden;
 }
 
-.as-file-list-input .as-file-list-item:hover .as-file-list-item-quick-btn,
+
 .as-file-list-item-quick-btn.as-quick-menu-attached {
     display: block;
 }
