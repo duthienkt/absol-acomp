@@ -325,12 +325,15 @@ DateInput2.prototype._loadValueFromInput = function () {
     var y = tkDict.y ? tkDict.y.value : new Date().getFullYear();
     var m = tkDict.M ? tkDict.M.value - 1 : 0;
     var d = tkDict.d ? tkDict.d.value : 1;
-    var date;
+    var date ;
     if (tkDict.w && tkDict.y) {
         date = weekInYear(y, tkDict.w.value - 1);
     }
     else if (tkDict.Q && tkDict.y) {
         date = new Date(y, (tkDict.Q.value - 1) * 3, 1);
+    }
+    else {
+        date = new Date(y, m, d);
     }
     if (!date || isNaN(date.getTime())) {
         this._value = null;
@@ -452,7 +455,7 @@ DateInput2.eventHandler.keydown = function (event) {
                             this._editingData.Q = event.key === 'ArrowUp' ? 1 : 4;
                         }
                         else {
-                            this._editingData.Q = 1 + (value + (event.key === 'ArrowUp' ? 0 : 3)) % 4;
+                            this._editingData.Q = 1 + (value + (event.key === 'ArrowUp' ? 0 : 2)) % 4;
                         }
                         newTokenText = zeroPadding(this._editingData.Q, token.ident.length);
                         token.replace(newTokenText, true);
