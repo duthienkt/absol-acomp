@@ -2,8 +2,9 @@ import '../css/preinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import { dataURItoBlob, blobToFile, blobToArrayBuffer } from "absol/src/Converter/file";
-import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import { ShareSerializer } from "absol/src/Print/printer";
+import { computePrintAttr } from "absol/src/Print/PrintSerialHandlers";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -493,3 +494,23 @@ PreInput.property.readOnly = {
 ACore.install(PreInput);
 
 export default PreInput;
+
+
+
+ShareSerializer.addHandlerBefore({
+    id: 'PreInput',
+    match: (elt, scope, stack) => {
+        if (elt.nodeType !== Node.ELEMENT_NODE) return false;
+        return elt.hasClass('as-preinput') || elt.hasClass('as-tokenize-hyper-input');
+    },
+    exec: (printer, elt, scope, stack, accept) => {
+        var O = printer.O;
+        var printAttr = computePrintAttr(elt);
+        var rect = printAttr.contentBound;
+        rect.x -= O.x;
+        rect.y -= O.y;
+
+        printer.text(PreInput.prototype.stringOf(elt), rect, printAttr.style);
+        return false;
+    }
+}, '*');
