@@ -495,7 +495,7 @@ ACore.install(PreInput);
 
 export default PreInput;
 
-
+/*
 
 ShareSerializer.addHandlerBefore({
     id: 'PreInput',
@@ -514,3 +514,5 @@ ShareSerializer.addHandlerBefore({
         return false;
     }
 }, '*');
+
+ */
