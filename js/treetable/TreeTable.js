@@ -1,10 +1,10 @@
-import ACore, { _, $ } from "../../ACore";
+import ACore, {_, $} from "../../ACore";
 import TTDataAdapter from "./TTDataAdapter";
 import noop from 'absol/src/Code/noop';
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import '../../css/treetable.css';
 import TTQueryController from "./TTQueryController";
-import DynamicTable from "../dynamictable/DynamicTable";
+import {formatDateTime} from "absol/src/Time/datetime";
 
 /***
  * @typedef {Object} TTDHeadCell
@@ -31,6 +31,7 @@ import DynamicTable from "../dynamictable/DynamicTable";
  * @property {function(elt:AElement, data:TTDCell, controller:TTCell): void} render
  * @property {CSSStyleDeclaration} [style]
  * @property {string|Array<string>} class
+ * @property {Object} attr
  */
 
 /***
@@ -152,6 +153,9 @@ TreeTable.property = {};
 
 TreeTable.property.adapter = {
     set: function (adapter) {
+        if (adapter.type === 'struct') {
+            adapter = ttStructAdapter2TTDAdapter(adapter);
+        }
         this._adapterData = adapter;
         this.mAdapter = new TTDataAdapter(this, adapter);
         this.mAdapter.render();
@@ -221,3 +225,70 @@ TreeTable.property.hiddenColumns = {
 
 ACore.install(TreeTable);
 export default TreeTable;
+
+
+/***
+ *
+ * @param adapterData
+ * @returns {TTDAdapter}
+ */
+export function ttStructAdapter2TTDAdapter(adapterData) {
+    var toString = {
+        'Date': x => x ? formatDateTime(x, 'dd/MM/yyyy') : '',
+        'DateTime': x => x ? formatDateTime(x, 'dd/MM/yyyy HH:mm') : '',
+        text: x => (x || '') + ''
+    };
+    /**
+     *
+     * @type {TTDAdapter}
+     */
+    var res = {
+        data: {
+            head: {
+                rows: [
+                    {
+                        cells: adapterData.propertyNames.map(name => {
+                            var cellData = {
+                                child: { text: name }
+                            };
+                            var descriptor = adapterData.propertyDescriptors[name];
+                            if (descriptor && descriptor.text) cellData.child.text = descriptor.text;
+                            return cellData;
+                        })
+                    }
+                ]
+            },
+            body: {
+                rows: adapterData.records.map(function visit(it) {
+                    var row = {};
+                    row.cells = adapterData.propertyNames.map(name => {
+                        var descriptor = adapterData.propertyDescriptors[name];
+                        var type = (descriptor && descriptor.type) || 'text'
+                        var value = it[name];
+                        var f = toString[type] || toString.text;
+                        var text = f(value);
+                        var cell = {
+                            innerText: text,
+                            attr:{
+                                'data-type': type
+                            },
+                            child: [{
+                                tag: 'span', child: { text: text }
+                            }]
+                        };
+                        if (name === adapterData.treeBy) {
+                            cell.child.unshift('.as-tree-table-toggle');
+                        }
+                        return cell;
+                    });
+                    if (it.__children__) {
+                        row.subRows = it.__children__.map(visit);
+                    }
+                    return row;
+                })
+            }
+        }
+    };
+
+    return res;
+}

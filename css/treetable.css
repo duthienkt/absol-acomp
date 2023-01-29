@@ -37,6 +37,7 @@
 .as-tree-table-row {
     height: calc(40em / 14);
 }
+
 .as-tree-table-row:nth-child(odd) {
     background-color: rgb(245, 245, 245);
 }
@@ -48,6 +49,10 @@
 .as-tree-table-cell {
     padding: 5px;
     border: 1px solid #ddd;
+}
+
+.as-tree-table-cell[data-type="number"] {
+    text-align: right;
 }
 
 .as-tree-table-row.as-is-opened .as-tree-table-toggle .toggle-close,
