@@ -14,7 +14,7 @@ var toc = {
                     type: 'dom-class',
                     tagName: key,
                     name: name,
-                    href: [rawFolder, 'document', 'components', name].join('/')
+                    href: [rawFolder, 'document', 'components', name+'.md'].join('/')
                 };
 
                 return res;
