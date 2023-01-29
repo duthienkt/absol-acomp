@@ -31,16 +31,21 @@
 </head>
 
 <body>
-<h1>PreInput</h1>
-<div id="ctn" style="font-size: 14px;">
+<div id="print">
+    <h1>PreInput</h1>
+    <div id="ctn" style="font-size: 14px;">
 
+    </div>
 </div>
+<button onclick="testPrint()">Print</button>
 <script>
     var _ = absol._;
     var $ = absol.$;
-    var input = _('tokenizehyperinput').addTo(document.body).addStyle({
+    var ctn = $('#ctn');
+    var input = _('tokenizehyperinput').addTo(ctn).addStyle({
         'min-width': '200px',
         'min-height': '30px',
+        'max-width': '400px',
         display: 'inline-block',
         border: '1px solid black'
     }).on('change', function (event) {
@@ -52,26 +57,29 @@
         153875: "Lê Văn A"
     };
 
-    input.value = 'Xin chào @[id:8278372] tôi là @[id:153875],\n\n I forget my (headphones)\n\n';
+    input.value = 'Xin chào @[id:8278372] tôi là @[id:153875], đoạn text này rất là dài, có thể xuống dòng\n\n I forget my (headphones)\n\n';
     var btn = _({
         tag: 'flexiconbutton',
         props: {
             text: 'LOG'
         },
-        on:{
-            click: function (){
+        on: {
+            click: function () {
                 console.log([input.value]);
                 // console.log([input.selectionCtrl.setRangeByOffset({start: input.value.indexOf('chào'), end: input.value.indexOf('I'), direction: 'forward'})]);
                 // console.log([input.textCtrl.getTextByRange(null)]);
                 input.selectionCtrl.setRangeByOffset(Infinity);
             }
         }
-    }).addTo(document.body);
+    }).addTo(ctn);
 
 
     setInterval(function () {
         // console.log(input.getSelectPosition())
     }, 1000)
+    function testPrint(){
+        absol.printer.downloadAsPDF(absol.$('#print'));
+    }
 </script>
 
 
