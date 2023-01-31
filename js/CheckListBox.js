@@ -12,6 +12,7 @@ import ListSearchMaster from "./list/ListSearchMaster";
 import OOP from "absol/src/HTML5/OOP";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import TextMeasurement from "./tool/TextMeasurement";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 
 var itemPool = [];
@@ -377,10 +378,12 @@ CheckListBox.eventHandler.searchModify = function () {
             var searchHolders = arr.map(holder => new CLHolderRef(this, holder, null, result));
             this.$scroller.scrollTop = 0;
             this.pagingCtrl.viewArr(searchHolders);
+            ResizeSystem.update();
         });
     }
     else {
         this.pagingCtrl.viewArr(this.itemHolders.reduce((ac, holder) => holder.toArray(ac), []));
+        ResizeSystem.update();
     }
 };
 
@@ -475,7 +478,7 @@ function CLPagingController(boxElt) {
 CLPagingController.prototype.itemHeight = 25;
 
 CLPagingController.prototype.ev_scroll = function (event) {
-    if (this.pageN <= 3) return;
+    if (this.pageN <= 2) return;
     var top = this.$scroller.scrollTop;
     var pageIdx = Math.min(this.pageN - 1, Math.max(0, Math.floor(top / this.itemHeight / this.itemPerPage)));
     if (pageIdx === this.pageIdx) return;
@@ -526,7 +529,7 @@ CLPagingController.prototype.update = function () {
             fillItemToPage(this.boxElt, pageElt, itemInPage);
             pageElt.removeStyle('display').addStyle('top', this.itemHeight * ii + 'px');
             Array.prototype.forEach.call(pageElt.childNodes, (child, i) => {
-                this.holderArr[i].attachView(child);
+                this.holderArr[ii].attachView(child);
                 ii++;
             });
         }
