@@ -1,4 +1,5 @@
-import TTRow, { TTClonedRow } from "./TTRow";
+import TTRow, {TTClonedRow} from "./TTRow";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /***
  *
@@ -21,10 +22,10 @@ function TTBody(table, data) {
 
 TTBody.prototype.applyQueryResult = function (queryResult) {
     this.clearClonedRows();
-    if (queryResult){
+    if (queryResult) {
         this.clonedRows = this.rows.filter(row => queryResult[row.id])
             .map((row, i) => new TTClonedRow(row, queryResult, i));
-        this.clonedRows .sort((a, b) => {
+        this.clonedRows.sort((a, b) => {
             var sa = a.score[1];
             var sb = b.score[1];
             if (sa !== sb) return sb - sa;
@@ -54,6 +55,43 @@ TTBody.prototype.renderRows = function (rows) {
         row.getRowElements(ac);
         return ac;
     }, []));
+};
+
+/***
+ *
+ * @param data
+ */
+TTBody.prototype.rowOf = function (data) {
+    if (data instanceof TTRow) {
+        data = data.data;
+    }
+    var result = null;
+    var queue = this.rows.slice();
+    var cr;
+    while (queue.length > 0 && !result) {
+        cr = queue.shift();
+        if (cr.data === data || cr.data.id === data || (data.id && cr.data.id === data.id)) {
+            result = cr;
+        }
+        else {
+            queue.push.apply(queue, cr.subRows);
+        }
+    }
+    return result;
+};
+
+
+/***
+ *
+ * @param {TTDRow} rowData
+ */
+TTBody.prototype.addRow = function (rowData) {
+    var row = new TTRow(this, rowData, null);
+    this.data.rows.push(rowData);
+    this.rows.push(row);
+    var elements = row.getRowElements();
+    elements.forEach(elt => this.elt.addChild(elt));
+    ResizeSystem.requestUpdateSignal();
 };
 
 

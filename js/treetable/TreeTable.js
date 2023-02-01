@@ -135,6 +135,43 @@ TreeTable.render = function () {
     });
 };
 
+
+TreeTable.prototype.removeRow = function (rowData) {
+    if (!this.table) return;
+    var row = this.table.body.rowOf(rowData);
+    if (row) row.remove();
+};
+
+TreeTable.prototype.replaceRow = function (rowData, oldRowData) {
+    if (!this.table) return;
+    var row = this.table.body.rowOf(oldRowData);
+    if (row) row.replace(rowData);
+};
+
+/***
+ *
+ * @param rowData
+ * @param {any|null} parentRow
+ */
+TreeTable.prototype.addRowIn = function (rowData, parentRow) {
+    if (!this.table) return;
+    var row;
+    if (parentRow) {
+        row = this.table.body.rowOf(parentRow);
+        if (row) row.addSubRow(rowData);
+        else {
+            console.error('Can not find row', parentRow)
+        }
+    }
+    else {
+        this.table.body.addRow(rowData);
+    }
+};
+
+TreeTable.prototype.rowOf = function (rowData) {
+    return this.table.body.rowOf(rowData);
+};
+
 TreeTable.prototype.notifySizeChange = function () {
     var c = this.parentElement;
     while (c) {
@@ -145,7 +182,7 @@ TreeTable.prototype.notifySizeChange = function () {
 
 TreeTable.prototype.attachSearchInput = function (input) {
     this.searchInput = input;
-}
+};
 
 
 TreeTable.property = {};
@@ -269,7 +306,7 @@ export function ttStructAdapter2TTDAdapter(adapterData) {
                         var text = f(value);
                         var cell = {
                             innerText: text,
-                            attr:{
+                            attr: {
                                 'data-type': type
                             },
                             child: [{

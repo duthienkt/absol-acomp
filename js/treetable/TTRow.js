@@ -1,8 +1,9 @@
-import { $, _ } from "../../ACore";
+import {$, _} from "../../ACore";
 import TTCell from "./TTCell";
 import DTBodyRow from "../dynamictable/DTBodyRow";
-import { isNone } from "../utils";
-import { randomIdent } from "absol/src/String/stringGenerate";
+import {isNone} from "../utils";
+import {randomIdent} from "absol/src/String/stringGenerate";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /***
  *
@@ -88,6 +89,115 @@ TTRow.prototype.updateSizeUp = function () {
 };
 
 
+TTRow.prototype.remove = function () {
+    var idx = -1;
+    var rowElements;
+    if (this.parentRow) {
+        idx = this.parentRow.subRows.indexOf(this);
+        if (idx >= 0) {
+            this.parentRow.subRows.splice(idx, 1);
+            this.parentRow.data.subRows.splice(idx, 1);
+            if (this.elt.parentElement) {
+                rowElements = this.getRowElements();
+                rowElements.forEach(elt => elt.selfRemove());
+                ResizeSystem.requestUpdateSignal();
+            }
+            if (this.parentRow.subRows.length === 0) this.parentRow.elt.removeClass('as-has-sub-row');
+
+        }
+    }
+    else {
+        idx = this.body.rows.indexOf(this);
+        if (idx >= 0) {
+            this.body.rows.splice(idx, 1);
+            this.body.data.rows.splice(idx, 1);
+            if (this.elt.parentElement) {
+                rowElements = this.getRowElements();
+                rowElements.forEach(elt => elt.selfRemove());
+                ResizeSystem.requestUpdateSignal();
+            }
+        }
+    }
+};
+
+/***
+ * @param {TTDRow} rowData
+ */
+TTRow.prototype.addSubRow = function (rowData) {
+    var row = new TTRow(this.body, rowData, this);
+
+    var rowElements;
+    var bf;
+    if (this.elt.parentElement && this.isOpened) {
+        rowElements = this.getRowElements();
+        bf = this.body.elt.findChildAfter(rowElements[rowElements.length - 1]);
+        rowElements = row.getRowElements();
+        if (bf) {
+            rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
+        }
+        else {
+            rowElements.forEach(elt => this.body.elt.addChild(elt));
+        }
+        ResizeSystem.requestUpdateSignal();
+
+    }
+
+    this.subRows.push(row);
+    this.data.subRows.push(rowData);
+    if (this._elt)
+        this.elt.addClass('as-has-sub-row');
+};
+
+/***
+ *
+ @param {TTDRow} newRowData
+ */
+TTRow.prototype.replace = function (newRowData) {
+    var idx = -1;
+    var rowElements;
+    var bf;
+    var newRow;
+    var needView;
+    if (this.parentRow) {
+        idx = this.parentRow.subRows.indexOf(this);
+        if (idx >= 0) {
+            newRow = new TTRow(this.body, newRowData, this.parentRow);
+            this.parentRow.subRows.splice(idx, 1, newRow);
+            this.parentRow.data.subRows.splice(idx, 1, newRowData);
+            if (this.elt.parentElement) {
+                needView = true;
+            }
+        }
+    }
+    else {
+        idx = this.body.rows.indexOf(this);
+        if (idx >= 0) {
+            newRow = new TTRow(this.body, newRowData, this.parentRow);
+            this.body.rows.splice(idx, 1, newRow);
+            this.body.data.rows.splice(idx, 1, newRowData);
+            if (this.elt.parentElement) {
+                needView = true;
+
+            }
+        }
+    }
+
+    if (needView) {
+        rowElements = this.getRowElements();
+        bf = this.body.elt.findChildAfter(rowElements[rowElements.length - 1]);
+        rowElements.forEach(elt => elt.selfRemove());
+        rowElements = newRow.getRowElements();
+        if (bf) {
+            rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
+        }
+        else {
+            rowElements.forEach(elt => this.body.elt.addChild(elt));
+        }
+        ResizeSystem.requestUpdateSignal();
+    }
+};
+
+
 Object.defineProperty(TTRow.prototype, 'elt', {
     get: function () {
         if (!this._elt) {
@@ -148,7 +258,7 @@ export function TTClonedRow(origin, queryResult, idx) {
     this.score = queryResult && queryResult[this.id];
     this.isOpened = this.score && this.score[0] < this.score[1];
     this.attach();
-    if (this.isOpened){
+    if (this.isOpened) {
         this.subRows = this.origin.subRows.filter(row => queryResult[row.id])
             .map((row, i) => new TTClonedRow(row, queryResult, i));
         this.subRows.sort((a, b) => {
