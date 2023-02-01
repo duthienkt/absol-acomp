@@ -6,7 +6,14 @@ import {
     compareDate,
     formatDateString,
     parseDateString,
-    formatDateTime, parseDateTime, DATE_TIME_TOKEN_RGX, weekIndexOf, prevDate, getDefaultFirstDayOfWeek, weekInYear
+    formatDateTime,
+    parseDateTime,
+    DATE_TIME_TOKEN_RGX,
+    weekIndexOf,
+    prevDate,
+    getDefaultFirstDayOfWeek,
+    weekInYear,
+    beginOfWeek, beginOfMonth, beginOfQuarter, beginOfYear
 } from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
@@ -14,13 +21,36 @@ import DateInput from "./DateInput";
 import AElement from "absol/src/HTML5/AElement";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import DateTimeInput from "./DateTimeInput";
-import { zeroPadding } from "./utils";
-import { hitElement } from "absol/src/HTML5/EventEmitter";
+import {zeroPadding} from "./utils";
+import {hitElement} from "absol/src/HTML5/EventEmitter";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
 var STATE_NONE = 0;
 
+/***
+ *
+ * @param {Date} date
+ * @param level
+ * @returns {Date|null}
+ */
+var dateByLevel = (date, level) => {
+    if (!date) return null;
+    switch (level) {
+        case 'week':
+            return beginOfWeek(date);
+        case 'month':
+            return beginOfMonth(date);
+        case 'quarter':
+            return beginOfQuarter(date);
+        case 'year':
+            return beginOfYear(date);
+        case 'date':
+        default:
+            return beginOfDay(date);
+
+    }
+}
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -127,7 +157,9 @@ DateInput2.prototype._verifyFormat = function (text) {
 };
 
 DateInput2.prototype._notifyIfChange = function (event) {
-    if (!this._lastValue !== !this._value || (this._lastValue && compareDate(this._lastValue, this._value)) !== 0) {
+    var oldV = this._explicit(this._lastValue);
+    var newV = this._explicit(this._value);
+    if (!oldV !== !newV || (oldV && newV && compareDate(oldV, newV) !== 0)) {
         this._lastValue = this._value;
         this.emit('change', { type: 'change', target: this, value: this._value, originEvent: event }, this);
     }
@@ -325,7 +357,7 @@ DateInput2.prototype._loadValueFromInput = function () {
     var y = tkDict.y ? tkDict.y.value : new Date().getFullYear();
     var m = tkDict.M ? tkDict.M.value - 1 : 0;
     var d = tkDict.d ? tkDict.d.value : 1;
-    var date ;
+    var date;
     if (tkDict.w && tkDict.y) {
         date = weekInYear(y, tkDict.w.value - 1);
     }
@@ -342,6 +374,18 @@ DateInput2.prototype._loadValueFromInput = function () {
         this._value = date;
     }
     this._updateNullClass();
+};
+
+DateInput2.prototype._explicit = function (value) {
+    value = value || null;
+    if (this.notNull) {
+        value = value || new Date();
+    }
+    else if (!value) return null;
+    var time = value.getTime();
+    time = Math.max(this._min.getTime(), time);
+    time = Math.min(this._max.getTime(), time);
+    return dateByLevel(new Date(time), this.calendarLevel);
 };
 
 DateInput2.prototype._applyTokenDict = function (format, dict, debug) {
@@ -667,8 +711,12 @@ DateInput2.eventHandler.dblclickInput = DateTimeInput.eventHandler.dblclickInput
 DateInput2.eventHandler.inputBlur = DateTimeInput.eventHandler.inputBlur;
 
 DateInput2.eventHandler.calendarSelect = function (value) {
+    var oldV = this._explicit(this._lastValue);
     this.value = value;
-    this.notifyChange();
+    var newV = this._explicit(this._value);
+    if (!oldV !== !newV || (oldV && newV && compareDate(oldV, newV) !== 0)) {
+        this.emit('change', { type: 'change', target: this, value: this._value }, this);
+    }
 };
 
 DateInput2.eventHandler.clickCalendarBtn = function () {
@@ -698,7 +746,7 @@ DateInput2.property.value = {
         this._applyValue(value);
     },
     get: function () {
-        return this._value;
+        return this._explicit(this._value);
     }
 };
 
@@ -763,12 +811,13 @@ DateInput2.property.text = {
     }
 };
 
-/***
- * @memberOf DateInput2
- * @name calendarLevel
- * @type {number}
- */
+
 DateInput2.property.calendarLevel = {
+    /***
+     * @memberOf DateInput2
+     * @name calendarLevel
+     * @type {number}
+     */
     get: function () {
         if (this._formatTokens.indexOf('d') >= 0 || this._formatTokens.indexOf('dd') >= 0) return 'day';
         if (this._formatTokens.indexOf('w') >= 0 || this._formatTokens.indexOf('ww') >= 0) return 'week';
@@ -807,6 +856,7 @@ DateInput2.property.notNull = {
         else {
             this.removeClass('as-must-not-null');
         }
+        this.value = this.value;//update
     },
     get: function () {
         return this.hasClass('as-must-not-null');
