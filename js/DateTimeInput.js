@@ -489,6 +489,22 @@ DateTimeInput.property.disabled = {
     }
 };
 
+DateTimeInput.property.notNull = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-must-not-null');
+            if (!this.value) this.value = new Date();
+        }
+        else {
+            this.removeClass('as-must-not-null');
+        }
+        this.value = this.value;//update
+    },
+    get: function () {
+        return this.hasClass('as-must-not-null');
+    }
+};
+
 DateTimeInput.property.format = {
     set: function (value) {
         var dict;
