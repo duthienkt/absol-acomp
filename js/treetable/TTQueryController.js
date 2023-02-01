@@ -14,6 +14,7 @@ function TTQueryController(elt) {
     this.$searchInput = null;
     this['request'] = this['request'].bind(this);
     this._waitDestroy();
+    this._rtsiIdx = -1;
 }
 
 TTQueryController.prototype._waitDestroy = function (){
@@ -112,6 +113,14 @@ TTQueryController.prototype.getSearchItems = function () {
 
 TTQueryController.prototype.transferSearchItems = function () {
     this.searchMaster.transfer(this.getSearchItems());
+};
+
+TTQueryController.prototype.requestTransferSearchItems = function (){
+    if (this._rtsiIdx > 0) return;
+    this._rtsiIdx = setTimeout(()=>{
+        this._rtsiIdx = -1;
+        this.transferSearchItems();
+    }, 0);
 };
 
 
