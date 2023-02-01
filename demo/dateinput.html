@@ -48,7 +48,35 @@
                             },
                             on: {
                                 change: function () {
-                                    console.log(this.value);
+                                    console.trace(this.value);
+                                }
+                            }
+                        }
+                    ]
+                }
+            ).addTo(inputDemoDiv);
+
+
+
+            _(
+                {
+                    style: {
+                        'margin-bottom': '10px'
+                    },
+                    child: [
+                        {
+                            tag: 'label',
+                            style: { width: '10em', 'line-height': '30px', display: 'inline-block' },
+                            child: { text: format + '' }
+                        },
+                        {
+                            tag: 'dateinput',
+                            props: {
+                                format: format
+                            },
+                            on: {
+                                change: function () {
+                                    console.trace(this.value);
                                 }
                             }
                         }
@@ -71,6 +99,34 @@
                             tag: 'dateinput',
                             props: {
                                 value: new Date(),
+                                format: format,
+                                notNull: true
+                            },
+                            on: {
+                                change: function () {
+                                    console.log(this.value);
+                                }
+                            }
+                        }
+                    ]
+                }
+            ).addTo(inputDemoDiv);
+
+
+            _(
+                {
+                    style: {
+                        'margin-bottom': '10px'
+                    },
+                    child: [
+                        {
+                            tag: 'label',
+                            style: { width: '10em', 'line-height': '30px', display: 'inline-block' },
+                            child: { text: format + '(notNull)' }
+                        },
+                        {
+                            tag: 'dateinput',
+                            props: {
                                 format: format,
                                 notNull: true
                             },

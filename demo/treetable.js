@@ -7,13 +7,102 @@ function render(o) {
 
 render('<h2>apdater.type = "default" | Ø</h2>')
 
+
+
 var searchInput = render({
     tag: 'searchtextinput',
     style: {
         margin: '5px'
     }
 });
+var addRowBtn = render({
+   tag:'flexiconbutton',
+   props:{
+       text:'Thêm dòng'
+   },
+    on:{
+       click: function () {
+           var _ = absol._;
+           var id = (count++) + '';
+           var node = {text:'Dòng mới', value: Math.random()};
+           table.addRowIn({
+               id: id,
+               cells:[
+                   {
+                       innerText: node.text,
+                       render: function (elt, cellData, controller) {
+                           _({
+                               elt: elt,
+                               child: [
+                                   '.as-tree-table-toggle',
+                                   { tag: 'span', child: { text: node.text } }
+                               ]
+                           })
+                       }
+                   },
+                   {
+                       innerText: node.value,
+                       render: function (elt, cellData, controller) {
+                           _({
+                               elt: elt,
+                               child: [
+                                   { tag: 'span', child: { text: node.value + '' } }
+                               ]
+                           });
+                       }
+                   },
+                   {
+                       child: [
+                           {
+                               tag: 'flexiconbutton',
+                               props: {
+                                   icon: 'span.mdi.mdi-delete',
+                                   text: 'Xóa'
+                               },
+                               on: {
+                                   click: () => {
+                                       table.removeRow(id);
+                                   }
+                               }
+                           },
+                           {
+                               tag: 'flexiconbutton',
+                               style:{
+                                   marginLeft: '12px'
+                               },
+                               props: {
+                                   icon: 'span.mdi.mdi-file-replace-outline',
+                                   text: 'Thay thế'
+                               },
+                               on: {
+                                   click: () => {
+                                       table.replaceRow(visit(Object.assign({}, node, { text: node.text + ' xxx ' })), res);
+                                   }
+                               }
+                           },
+                           {
+                               tag: 'flexiconbutton',
+                               style:{
+                                   marginLeft: '12px'
+                               },
+                               props: {
+                                   icon: 'span.mdi.mdi-plus',
+                                   text: 'Thêm node con'
+                               },
+                               on: {
+                                   click: () => {
+                                       table.addRowIn(visit(Object.assign({}, node, { text: node.text + ' xxx ' })), res);
+                                   }
+                               }
+                           },
 
+                       ]
+                   }
+               ]
+           }, null)
+       }
+    }
+});
 var table = render({
     tag: 'treetable',
     props: {
@@ -31,6 +120,9 @@ var table = render({
                                 },
                                 {
                                     child: { text: "Giá trị" }
+                                },
+                                {
+                                    child: { text: 'Hành động' }
                                 }
                             ]
                         }
@@ -65,6 +157,52 @@ var table = render({
                                         ]
                                     });
                                 }
+                            },
+                            {
+                                child: [
+                                    {
+                                        tag: 'flexiconbutton',
+                                        props: {
+                                            icon: 'span.mdi.mdi-delete',
+                                            text: 'Xóa'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                table.removeRow(res);
+                                            }
+                                        }
+                                    },
+                                    {
+                                        tag: 'flexiconbutton',
+                                        style:{
+                                          marginLeft: '12px'
+                                        },
+                                        props: {
+                                            icon: 'span.mdi.mdi-file-replace-outline',
+                                            text: 'Thay thế'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                table.replaceRow(visit(Object.assign({}, node, { text: node.text + ' xxx ' })), res);
+                                            }
+                                        }
+                                    },
+                                    {
+                                        tag: 'flexiconbutton',
+                                        style:{
+                                            marginLeft: '12px'
+                                        },
+                                        props: {
+                                            icon: 'span.mdi.mdi-plus',
+                                            text: 'Thêm node con'
+                                        },
+                                        on: {
+                                            click: () => {
+                                                table.addRowIn(visit(Object.assign({}, node, { text: node.text + ' xxx ', items: null })), res);
+                                            }
+                                        }
+                                    }
+                                ]
                             }
                         ];
                         if (node.items) res.subRows = node.items.map(visit);
@@ -109,7 +247,7 @@ var adapterData = {
             type: 'Date'
         }
     },
-    records: tree.map(function visit(it){
+    records: tree.map(function visit(it) {
         var res = {
             text: it.text,
             value: it.value
