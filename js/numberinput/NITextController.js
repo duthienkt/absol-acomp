@@ -348,7 +348,10 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
         this.flushTextToValue();
     };
 
-    if (onKeys[event.type]) {
+    if (key === 'ctrl-x') {
+        onKeys.delete();
+    }
+    else if (onKeys[event.type]) {
         event.preventDefault();
         onKeys[event.type]();
     }
