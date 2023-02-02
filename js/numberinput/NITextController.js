@@ -20,7 +20,9 @@ function NITextController(elt) {
         if (key.startsWith('on'))
             this[key] = this[key].bind(this);
     });
-    this.elt.$input.on('keydown', this.onKeyDown).on('blur', this.onBlur);
+    this.elt.$input.on('keydown', this.onKeyDown)
+        .on('paste', this.onKeyDown)
+        .on('blur', this.onBlur);
 
 }
 
@@ -114,11 +116,11 @@ NITextController.prototype.onBlur = function () {
 }
 
 /***
- * @param {KeyboardEvent|{}} event
+ * @param {KeyboardEvent|ClipboardEvent|{}} event
  * @param {boolean=} event
  */
 NITextController.prototype.onKeyDown = function (event, dontInsert) {
-    var key = keyboardEventToKeyBindingIdent(event);
+    var key =event.type==='keydown'?  keyboardEventToKeyBindingIdent(event) :'';
     if ((key.length === 1 && !key.match(/[0-9.,\-]/)) || key.match(/^shift-.$/)) {
         event.preventDefault();
         return;
@@ -151,6 +153,26 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
                 this.onKeyDown(fakeEvent);
             }
         }, 10);
+    };
+
+    onKeys.paste = ()=>{
+        var clipboardData = event.clipboardData || window.clipboardData;
+        var pastedData = clipboardData.getData('Text');
+        var hasSeparator = value.indexOf(decimalSeparator) >=0;
+        pastedData = pastedData.split('').filter(c=>{
+            if (c.match(/[0-9]/)) return true;
+            if (!hasSeparator && c === hasSeparator) {
+                hasSeparator = true;
+                return true;
+            }
+        }).join('');
+        if (this.elt.readOnly) return;
+        if (!dontInsert){
+            this.$input.value = value.substring(0, sStart) + pastedData + value.substring(sEnd);
+            this.$input.setSelectionRange(sStart + pastedData.length, sStart + pastedData.length);
+        }
+        this.reformat();
+        this.flushTextToValue();
     };
 
     onKeys.arrowleft = () => {
@@ -326,7 +348,11 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
         this.flushTextToValue();
     };
 
-    if (onKeys[key]) {
+    if (onKeys[event.type]) {
+        event.preventDefault();
+        onKeys[event.type]();
+    }
+    else if (onKeys[key]) {
         event.preventDefault();
         onKeys[key]();
     }

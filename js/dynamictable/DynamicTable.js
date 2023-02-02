@@ -1,10 +1,10 @@
-import ACore, { $, $$, _ } from "../../ACore";
+import ACore, {$, $$, _} from "../../ACore";
 import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import PageSelector from "../PageSelector";
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
-import { buildCss } from "../utils";
+import {buildCss} from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 var loadStyleSheet = function () {
@@ -46,6 +46,10 @@ function DynamicTable() {
      * @type {AElement}
      */
     this.$tbody = $('.as-dynamic-table>tbody', this.$table);
+    /***
+     *
+     * @type {PageSelector}
+     */
     this.$pageSelector = $('pageselector', this)
         .on('change', this.eventHandler.pageSelectorChange);
 
@@ -238,7 +242,7 @@ DynamicTable.prototype.makeQuery = function () {
         break;
     }
 
-    if (sort.length > 0){
+    if (sort.length > 0) {
         query.sort = sort;
     }
 
