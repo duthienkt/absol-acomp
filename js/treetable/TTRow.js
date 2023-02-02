@@ -128,13 +128,15 @@ TTRow.prototype.remove = function () {
  */
 TTRow.prototype.addSubRow = function (rowData) {
     var row = new TTRow(this.body, rowData, this);
-
+    var clonedRow;
+    if (this.clonedRow)
+        clonedRow = new TTClonedRow(row, null, this.subRows.length);//idx is not important
     var rowElements;
     var bf;
     if (this.elt.parentElement && this.isOpened) {
-        rowElements = this.getRowElements();
+        rowElements = this.clonedRow ? this.clonedRow.getRowElements() : this.getRowElements();
         bf = this.body.elt.findChildAfter(rowElements[rowElements.length - 1]);
-        rowElements = row.getRowElements();
+        rowElements = clonedRow ? clonedRow.getRowElements() : row.getRowElements();
         if (bf) {
             rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
         }
@@ -146,7 +148,14 @@ TTRow.prototype.addSubRow = function (rowData) {
     }
 
     this.subRows.push(row);
-    this.data.subRows.push(rowData);
+    if (this.data.subRows) {
+        this.data.subRows.push(rowData);
+    }
+    else {
+        this.data.subRows = [rowData];
+    }
+    if (this.clonedRow)
+        this.clonedRow.addSubRow(clonedRow);
     if (this._elt)
         this.elt.addClass('as-has-sub-row');
     this.body.table.elt.queryCtrl.requestTransferSearchItems();
@@ -161,6 +170,7 @@ TTRow.prototype.replace = function (newRowData) {
     var rowElements;
     var bf;
     var newRow;
+    var newClonedRow;
     var needView;
     if (this.parentRow) {
         idx = this.parentRow.subRows.indexOf(this);
@@ -168,6 +178,10 @@ TTRow.prototype.replace = function (newRowData) {
             newRow = new TTRow(this.body, newRowData, this.parentRow);
             this.parentRow.subRows.splice(idx, 1, newRow);
             this.parentRow.data.subRows.splice(idx, 1, newRowData);
+            if (this.clonedRow) {
+                newClonedRow = new TTClonedRow(newRow, null, idx);
+                this.clonedRow.replace(newClonedRow)
+            }
             if (this.elt.parentElement) {
                 needView = true;
             }
@@ -179,6 +193,10 @@ TTRow.prototype.replace = function (newRowData) {
             newRow = new TTRow(this.body, newRowData, this.parentRow);
             this.body.rows.splice(idx, 1, newRow);
             this.body.data.rows.splice(idx, 1, newRowData);
+            if (this.clonedRow) {
+                newClonedRow = new TTClonedRow(newRow, null, idx);
+                this.clonedRow.replace(newClonedRow)
+            }
             if (this.elt.parentElement) {
                 needView = true;
 
@@ -187,10 +205,10 @@ TTRow.prototype.replace = function (newRowData) {
     }
 
     if (needView) {
-        rowElements = this.getRowElements();
+        rowElements = this.clonedRow ? this.clonedRow.getRowElements() : this.getRowElements();
         bf = this.body.elt.findChildAfter(rowElements[rowElements.length - 1]);
         rowElements.forEach(elt => elt.selfRemove());
-        rowElements = newRow.getRowElements();
+        rowElements = newClonedRow ? newClonedRow.getRowElements() : newRow.getRowElements();
         if (bf) {
             rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
         }
@@ -261,6 +279,7 @@ export function TTClonedRow(origin, queryResult, idx) {
     this.data = origin.data;
     this.origin = origin;
     this.score = queryResult && queryResult[this.id];
+    if (!queryResult) this.score = 1e6;
     this.isOpened = this.score && this.score[0] < this.score[1];
     this.attach();
     if (this.isOpened) {
@@ -298,7 +317,27 @@ TTClonedRow.prototype.remove = function () {
             this.origin.body.clonedRows.splice(idx, 1);
         }
     }
+};
 
+TTClonedRow.prototype.replace = function (newClonedRow) {
+    var parentRow = this.origin.parentRow && this.origin.parentRow.clonedRow;
+    var idx;
+    if (parentRow) {
+        idx = parentRow.subRows.indexOf(this);
+        if (idx >= 0) {
+            parentRow.subRows.splice(idx, 1, newClonedRow);
+        }
+    }
+    else {
+        idx = this.origin.body.clonedRows.indexOf(this);
+        if (idx >= 0) {
+            this.origin.body.clonedRows.splice(idx, 1, newClonedRow);
+        }
+    }
+};
+
+TTClonedRow.prototype.addSubRow = function (newClonedRow) {
+    this.subRows.push(newClonedRow);
 };
 
 
