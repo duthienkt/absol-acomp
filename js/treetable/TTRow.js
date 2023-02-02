@@ -238,6 +238,8 @@ Object.defineProperty(TTRow.prototype, 'elt', {
 
             this.$toggle = $('.as-tree-table-toggle', this._elt);
             if (this.$toggle) {
+                this.$toggleCell = this.$toggle.parentElement;
+                this.$toggleCell.addClass('as-has-toggle');
                 this.$toggle = _({
                     elt: this.$toggle, child: 'toggler-ico',
                     on: {

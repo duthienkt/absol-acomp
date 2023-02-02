@@ -6,13 +6,17 @@
 }
 
 .as-tree-table-toggle {
-    display: inline-block;
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
     vertical-align: middle;
     padding-right: 0.3em;
-    height: calc(30em / 14);
     white-space: nowrap;
     user-select: none;
 }
+
+
 
 .as-tree-table-toggle::before {
     display: inline-block;
@@ -49,6 +53,7 @@
 .as-tree-table-cell {
     padding: 5px;
     border: 1px solid #ddd;
+    position: relative;
 }
 
 .as-tree-table-cell[data-type="number"] {
@@ -64,6 +69,8 @@
     display: inline-block;
     vertical-align: middle;
 }
+
+
 
 .as-tree-table-row:not(.as-has-sub-row) .as-tree-table-toggle .toggler-ico {
     visibility: hidden;

@@ -77,6 +77,10 @@ var loadCss = () => {
             display: 'none'
         }
 
+        ac[`.as-tree-table-row[data-level="${i}"] .as-tree-table-cell.as-has-toggle`] = {
+            'padding-left': `calc(5px + ${2 * i + 1.5}em)`
+        }
+
         return ac;
     }, {})).commit();
     loadCss = noop;
