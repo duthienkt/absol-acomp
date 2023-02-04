@@ -277,7 +277,7 @@ export default function ListSearchFactor(global) {
         var maxScore = -Infinity;
         var scoreHolders = this.items.map(function visit(item) {
             var res = {};
-            res.score = calcItemMatchScore(item, query);
+            res.score = calcItemMatchScore( query, item);
             res.value = item.value;
             res.maxScore = res.score;
             if (item.items) {
