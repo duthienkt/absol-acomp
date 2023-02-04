@@ -46,3 +46,35 @@
 .as-linear-color-split-line {
     stroke: white;
 }
+
+
+.as-linear-color-tiny-bar {
+    font-size: 1rem;
+    --value: 1;
+    --extend: 0.5;
+    --color: green;
+    position: relative;
+
+    display: inline-block;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+
+.as-linear-color-tiny-text {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 0.3em;
+    width: 4em;
+    text-align: right;
+}
+
+.as-linear-color-tiny-bar-rect {
+    height: calc(10em / 14);
+    width: calc(10em * var(--value) / 1.4);
+    max-width: calc(10em / 1.4 + 10em * var(--extend) / 1.4);
+    min-width: 3px;
+    background-color: var(--color);
+    display: inline-block;
+    vertical-align: middle;
+}
