@@ -1,5 +1,7 @@
 import LinearColorBar from "./LinearColorBar";
 import ACore, {_, $} from "../ACore";
+import {ShareSerializer} from "absol/src/Print/printer";
+import Rectangle from "absol/src/Math/Rectangle";
 
 /***
  * @extends {AElement}
@@ -57,10 +59,10 @@ LinearColorTinyBar.prototype._updateColor = function () {
     var colorMapping = this.colorMapping;
     var i = 0;
     while (i < colorMapping.length) {
-        if (i +1 == colorMapping.length || colorMapping[i+1].value > value) break;
+        if (i + 1 == colorMapping.length || colorMapping[i + 1].value > value) break;
         ++i;
     }
-    this.addStyle('--color', colorMapping[i].color+'');
+    this.addStyle('--color', colorMapping[i].color + '');
 };
 
 LinearColorTinyBar.property = {};
@@ -119,3 +121,18 @@ LinearColorTinyBar.property.colorMapping = {
 ACore.install(LinearColorTinyBar);
 
 export default LinearColorTinyBar;
+
+
+ShareSerializer.addHandlerBefore({
+    match: (elt, scope, stack) => {
+        return elt.hasClass && elt.hasClass('as-linear-color-tiny-bar-rect');
+    },
+    exec: (printer, elt, scope, stack, accept) => {
+        var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        bound.x -= printer.O.x;
+        bound.y -= printer.O.y;
+        printer.rect(bound, {
+            fill: elt.getComputedStyleValue('background-color')
+        });
+    }
+}, '*')
