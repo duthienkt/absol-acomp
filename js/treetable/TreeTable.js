@@ -7,6 +7,9 @@ import TTQueryController from "./TTQueryController";
 import {formatDateTime} from "absol/src/Time/datetime";
 import LinearColorTinyBar from "../LinearColorTinyBar";
 import {keyStringOf} from "../utils";
+import {parseMeasureValue} from "absol/src/JSX/attribute";
+import Rectangle from "absol/src/Math/Rectangle";
+import {ShareSerializer} from "absol/src/Print/printer";
 
 /***
  * @typedef {Object} TTDHeadCell
@@ -82,6 +85,11 @@ var loadCss = () => {
         ac[`.as-tree-table-row[data-level="${i}"] .as-tree-table-cell.as-has-toggle`] = {
             'padding-left': `calc(5px + ${2 * i + 1.5}em)`
         }
+
+        ac[`.as-printer-content .as-tree-table-row[data-level="${i}"] .as-tree-table-cell.as-has-toggle`] = {
+            'padding-left': `calc(5px + ${2 * i}em)`
+        }
+
 
         return ac;
     }, {})).commit();
@@ -359,7 +367,7 @@ export function ttStructAdapter2TTDAdapter(adapterData) {
                 tag: LinearColorTinyBar.tag,
                 props: {
                     colorMapping: desc.colorMapping || 'performance',
-                    value: x ,
+                    value: x,
                     extend: (typeof desc.extend === "number") && (desc.extend > 0) ? desc.extend : 0.5,
                     valueText: typeof x === 'number' ? (x * 100).toFixed(2) + '%' : x + ''
                 }
@@ -385,6 +393,7 @@ export function ttStructAdapter2TTDAdapter(adapterData) {
      */
     var res = {
         data: {
+            initOpened: true,
             head: {
                 rows: [
                     {
@@ -433,3 +442,52 @@ export function ttStructAdapter2TTDAdapter(adapterData) {
 
     return res;
 }
+
+ShareSerializer.addHandlerBefore({
+    id: 'TreeTableCellBorder',
+    match: (elt, scope, stack) => {
+        if (!elt.hasClass) return false;
+        if (!elt.hasClass('as-tree-table-head-cell') && !elt.hasClass('as-tree-table-cell')) return false;
+        var style = getComputedStyle(elt);
+        var borderColor = style.getPropertyValue('border-color');
+        var borderStyle = style.getPropertyValue('border-style');
+        var borderWidth = style.getPropertyValue('border-width');
+        var borderRadius = style.getPropertyValue('border-radius');
+        if (borderStyle === 'none' || borderWidth === '0px') return false;
+        scope.declare('borderStyle', {
+            width: parseFloat(borderWidth.replace('px', '')),
+            radius: parseMeasureValue(borderRadius),
+            color: borderColor,
+        });
+
+        return true;
+
+
+    },
+    exec: (printer, elt, scope, stack, accept) => {
+        var borderStyle = scope.get('borderStyle');
+        var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        var rect = bound.clone();
+        var strokeWidth = borderStyle.width;
+        rect.x -= printer.O.x ;
+        rect.y -= printer.O.y ;
+        var radius = borderStyle.radius;
+        var rounded;
+        if (radius) {
+            switch (radius.unit) {
+                case '%':
+                    rounded = [radius.value * rect.width / 100, radius.value * rect.height / 100];
+                    break;
+                case 'px':
+                    rounded = radius.value;
+                    break;
+            }
+        }
+        printer.rect(rect, {
+            stroke: borderStyle.color,
+            rounded: rounded,
+            strokeWidth: strokeWidth
+        });
+        return true;
+    }
+}, 'Border');

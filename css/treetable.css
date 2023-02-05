@@ -79,3 +79,12 @@
 /*.as-tree-table-row {*/
 /*    height: var(--table-row-height);*/
 /*}*/
+
+.as-printer-content .as-tree-table-toggle svg{
+    display: none;
+}
+
+.as-printer-content .as-tree-table-head-cell,
+.as-printer-content .as-tree-table-cell{
+    border-color: black;
+}
