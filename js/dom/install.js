@@ -153,6 +153,7 @@ import SelectTreeLeafMenuV2 from '../selecttreeleafmenu/SelectTreeLeafMenu';
 import MDualSelectBox from "../dualselectbox/MDualSelectBox";
 import DualSelectMenuV2 from '../dualselectmenu/DualSelectMenu';
 import TreeTable from "../treetable/TreeTable";
+import LinearColorTinyBar from "../LinearColorTinyBar";
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -229,6 +230,7 @@ export var publicCreators = [
     HRuler,
     IconSprite,
     LinearColorBar,
+    LinearColorTinyBar,
     MediaInput,
     MessageInput,
     MessageQuote,
