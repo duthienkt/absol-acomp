@@ -5,6 +5,8 @@ import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import '../../css/treetable.css';
 import TTQueryController from "./TTQueryController";
 import {formatDateTime} from "absol/src/Time/datetime";
+import LinearColorTinyBar from "../LinearColorTinyBar";
+import {keyStringOf} from "../utils";
 
 /***
  * @typedef {Object} TTDHeadCell
@@ -172,6 +174,53 @@ TreeTable.prototype.addRowIn = function (rowData, parentRow) {
     }
 };
 
+/***
+ *
+ * @param rowData
+ * @param {any|null} bfRow
+ */
+TreeTable.prototype.addRowBefore = function (rowData, bfRow) {
+    if (!this.table) return;
+    var row;
+    if (bfRow) {
+        row = this.table.body.rowOf(bfRow);
+        if (row) row.addRowBefore(rowData);
+        else {
+            console.error('Can not find row', bfRow)
+        }
+    }
+    else {
+        this.table.body.addRow(rowData);
+    }
+};
+
+
+/***
+ *
+ * @param rowData
+ * @param {any|null} atRow
+ */
+TreeTable.prototype.addRowAfter = function (rowData, atRow) {
+    if (!this.table) return;
+    var row;
+    if (atRow) {
+        row = this.table.body.rowOf(atRow);
+        if (row) row.addRowAfter(rowData);
+        else {
+            console.error('Can not find row', atRow)
+        }
+    }
+    else {
+        if (this.table.body.rows.length === 0) {
+            this.table.body.addRow(rowData);
+        }
+        else {
+            this.table.body.rows[0].addRowBefore(rowData);
+        }
+    }
+};
+
+
 TreeTable.prototype.rowOf = function (rowData) {
     return this.table.body.rowOf(rowData);
 };
@@ -279,6 +328,57 @@ export function ttStructAdapter2TTDAdapter(adapterData) {
         'DateTime': x => x ? formatDateTime(x, 'dd/MM/yyyy HH:mm') : '',
         text: x => (x || '') + ''
     };
+
+    var getItemDict = desc => {
+        var dict = desc.__dict__;
+        if (!dict) {
+            Object.defineProperty(desc, '__dict__', {
+                enumerable: false,
+                writable: true,
+                configurable: true,
+                value: (desc.items || []).reduce(function makeDict(ac, cr) {
+                    var key = keyStringOf(cr.value);
+                    ac[key] = cr;
+                    if (cr.items && cr.items.reduce) {
+                        cr.items.reduce(makeDict, ac);
+                    }
+                    return ac;
+                }, {})
+            });
+            dict = desc.__dict__;
+        }
+        return dict;
+    }
+
+    var handlers = {
+        'Date': x => [{ tag: 'span', child: { text: x ? formatDateTime(x, 'dd/MM/yyyy') : '' } }],
+        'DateTime': x => [{ tag: 'span', child: { text: x ? formatDateTime(x, 'dd/MM/yyyy HH:mm') : '' } }],
+        text: x => [{ tag: 'span', child: { text: (x || '') + '' } }],
+        performance: (x, desc) => {
+            return [{
+                tag: LinearColorTinyBar.tag,
+                props: {
+                    colorMapping: desc.colorMapping || 'performance',
+                    value: x / 100,
+                    extend: (typeof desc.extend === "number") && (desc.extend > 0) ? desc.extend : 0.5,
+                    valueText: typeof x === 'number' ? x.toFixed(2) + '%' : x + ''
+                }
+            }]
+        },
+        enum: (x, desc) => {
+            var dict = getItemDict(desc);
+            var item = dict[keyStringOf(x)];
+            if (item) return [{ tag: 'span', child: { text: item.text } }];
+            else return [{ tag: 'span', child: { text: '' } }];
+        },
+        '{enum}': (x, desc) => {
+            var dict = getItemDict(desc);
+            if (!(x instanceof Array)) return [{ tag: 'span', child: { text: '' } }];
+            var items = x.map(it => dict[keyStringOf(it)]).filter(it => !!it);
+            var text = items.map(it => it.text).join(', ');
+            return [{ tag: 'span', child: { text: text } }];
+        }
+    }
     /**
      *
      * @type {TTDAdapter}
@@ -308,14 +408,14 @@ export function ttStructAdapter2TTDAdapter(adapterData) {
                         var value = it[name];
                         var f = toString[type] || toString.text;
                         var text = f(value);
+                        var handler = handlers[type] || handlers.text;
+
                         var cell = {
                             innerText: text,
                             attr: {
                                 'data-type': type
                             },
-                            child: [{
-                                tag: 'span', child: { text: text }
-                            }]
+                            child: handler(value, descriptor)
                         };
                         if (name === adapterData.treeBy) {
                             cell.child.unshift('.as-tree-table-toggle');

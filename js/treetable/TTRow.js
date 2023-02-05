@@ -92,33 +92,30 @@ TTRow.prototype.updateSizeUp = function () {
 TTRow.prototype.remove = function () {
     var idx = -1;
     var rowElements;
+
+    var removeRow = (idx, rows, dataRows) => {
+        rows.splice(idx, 1);
+        dataRows.splice(idx, 1);
+        if (this.clonedRow) this.clonedRow.remove();
+        if (this.elt.parentElement) {
+            rowElements = this.clonedRow ? this.clonedRow.getRowElements() : this.getRowElements();
+            rowElements.forEach(elt => elt.selfRemove());
+            ResizeSystem.requestUpdateSignal();
+        }
+        this.body.table.elt.queryCtrl.requestTransferSearchItems();
+    }
+
     if (this.parentRow) {
         idx = this.parentRow.subRows.indexOf(this);
         if (idx >= 0) {
-            this.parentRow.subRows.splice(idx, 1);
-            this.parentRow.data.subRows.splice(idx, 1);
-            if (this.clonedRow) this.clonedRow.remove();
-            if (this.elt.parentElement) {
-                rowElements = this.clonedRow ? this.clonedRow.getRowElements() : this.getRowElements();
-                rowElements.forEach(elt => elt.selfRemove());
-                ResizeSystem.requestUpdateSignal();
-            }
+            removeRow(idx, this.parentRow.subRows, this.parentRow.data.subRows);
             if (this.parentRow.subRows.length === 0) this.parentRow.elt.removeClass('as-has-sub-row');
-            this.body.table.elt.queryCtrl.requestTransferSearchItems();
         }
     }
     else {
         idx = this.body.rows.indexOf(this);
         if (idx >= 0) {
-            this.body.rows.splice(idx, 1);
-            this.body.data.rows.splice(idx, 1);
-            if (this.clonedRow) this.clonedRow.remove();
-            if (this.elt.parentElement) {
-                rowElements = this.clonedRow ? this.clonedRow.getRowElements() : this.getRowElements();
-                rowElements.forEach(elt => elt.selfRemove());
-                ResizeSystem.requestUpdateSignal();
-            }
-            this.body.table.elt.queryCtrl.requestTransferSearchItems();
+            removeRow(idx, this.body.rows, this.body.data.rows);
         }
     }
 };
@@ -172,54 +169,131 @@ TTRow.prototype.replace = function (newRowData) {
     var newRow;
     var newClonedRow;
     var needView;
+
+    var makeReplaceRow = (idx, rows, dataRows) => {
+        newRow = new TTRow(this.body, newRowData, this.parentRow);
+        rows.splice(idx, 1, newRow);
+        dataRows.splice(idx, 1, newRowData);
+        if (this.clonedRow) {
+            newClonedRow = new TTClonedRow(newRow, null, idx);
+            this.clonedRow.replace(newClonedRow)
+        }
+        if (this.elt.parentElement) {
+            rowElements = this.clonedRow ? this.clonedRow.getRowElements() : this.getRowElements();
+            bf = this.body.elt.findChildAfter(rowElements[rowElements.length - 1]);
+            rowElements.forEach(elt => elt.selfRemove());
+            rowElements = newClonedRow ? newClonedRow.getRowElements() : newRow.getRowElements();
+            if (bf) {
+                rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
+            }
+            else {
+                rowElements.forEach(elt => this.body.elt.addChild(elt));
+            }
+            ResizeSystem.requestUpdateSignal();
+        }
+        this.body.table.elt.queryCtrl.requestTransferSearchItems();
+
+    }
     if (this.parentRow) {
         idx = this.parentRow.subRows.indexOf(this);
         if (idx >= 0) {
-            newRow = new TTRow(this.body, newRowData, this.parentRow);
-            this.parentRow.subRows.splice(idx, 1, newRow);
-            this.parentRow.data.subRows.splice(idx, 1, newRowData);
-            if (this.clonedRow) {
-                newClonedRow = new TTClonedRow(newRow, null, idx);
-                this.clonedRow.replace(newClonedRow)
-            }
-            if (this.elt.parentElement) {
-                needView = true;
-            }
+            makeReplaceRow(idx, this.parentRow.subRows, this.parentRow.data.subRows);
         }
     }
     else {
         idx = this.body.rows.indexOf(this);
         if (idx >= 0) {
-            newRow = new TTRow(this.body, newRowData, this.parentRow);
-            this.body.rows.splice(idx, 1, newRow);
-            this.body.data.rows.splice(idx, 1, newRowData);
-            if (this.clonedRow) {
-                newClonedRow = new TTClonedRow(newRow, null, idx);
-                this.clonedRow.replace(newClonedRow)
-            }
-            if (this.elt.parentElement) {
-                needView = true;
-
-            }
+            makeReplaceRow(idx, this.body.rows, this.body.data.rows);
         }
     }
-
-    if (needView) {
-        rowElements = this.clonedRow ? this.clonedRow.getRowElements() : this.getRowElements();
-        bf = this.body.elt.findChildAfter(rowElements[rowElements.length - 1]);
-        rowElements.forEach(elt => elt.selfRemove());
-        rowElements = newClonedRow ? newClonedRow.getRowElements() : newRow.getRowElements();
-        if (bf) {
-            rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
-        }
-        else {
-            rowElements.forEach(elt => this.body.elt.addChild(elt));
-        }
-        ResizeSystem.requestUpdateSignal();
-    }
-    this.body.table.elt.queryCtrl.requestTransferSearchItems();
 };
 
+
+/***
+ *
+ @param {TTDRow} newRowData
+ */
+TTRow.prototype.addRowBefore = function (newRowData) {
+    var idx = -1;
+
+    var makeNewRowBefore = (idx, rows, dataRows) => {
+        var row, clonedRow;
+        var rowElements;
+        row = new TTRow(this.body, newRowData, this.parentRow);
+        if (this.clonedRow) {
+            clonedRow = new TTClonedRow(row, null, idx);
+        }
+        if (this.elt.parentElement) {
+            rowElements = clonedRow ? clonedRow.getRowElements() : row.getRowElements();
+            rowElements.forEach(elt => this.body.elt.addChildBefore(elt, this.elt));
+            ResizeSystem.requestUpdateSignal();
+        }
+        rows.splice(idx, 0, row);
+        dataRows.splice(idx, 0, newRowData);
+        if (this.clonedRow) {
+            this.clonedRow.addRowBefore(clonedRow);
+        }
+        this.body.table.elt.queryCtrl.requestTransferSearchItems();
+    }
+
+    if (this.parentRow) {
+        idx = this.parentRow.subRows.indexOf(this);
+        if (idx >= 0) {
+            makeNewRowBefore(idx, this.parentRow.subRows, this.parentRow.data.subRows)
+        }
+    }
+    else {
+        idx = this.body.rows.indexOf(this);
+        if (idx >= 0) {
+            makeNewRowBefore(idx, this.body.rows, this.body.data.rows);
+        }
+    }
+};
+/***
+ *
+ @param {TTDRow} newRowData
+ */
+TTRow.prototype.addRowAfter = function (newRowData) {
+    var idx = -1;
+    var rowElements;
+    var bf;
+
+    var makeNewRowAfter = (idx, rows, dataRows) => {
+        var row = new TTRow(this.body, newRowData, this.parentRow);
+        var clonedRow;
+        if (this.clonedRow) clonedRow = new TTClonedRow(row, null, idx);
+        if (this.elt.parentElement) {
+            rowElements = this.clonedRow ? this.clonedRow.getRowElements() : this.getRowElements();
+            bf = this.body.elt.findChildAfter(rowElements[rowElements.length - 1]);
+            rowElements = clonedRow ? clonedRow.getRowElements() : row.getRowElements();
+            if (bf) {
+                rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
+
+            }
+            else {
+                rowElements.forEach(elt => this.body.elt.addChild(elt));
+            }
+            ResizeSystem.requestUpdateSignal();
+        }
+        rows.splice(idx + 1, 0, row);
+        dataRows.splice(idx + 1, 0, newRowData);
+        if (this.clonedRow) this.clonedRow.addRowBefore(clonedRow);
+        this.body.table.elt.queryCtrl.requestTransferSearchItems();
+    }
+
+    if (this.parentRow) {
+        idx = this.parentRow.subRows.indexOf(this);
+        if (idx >= 0) {
+            makeNewRowAfter(idx, this.parentRow.subRows, this.parentRow.data.subRows);
+        }
+    }
+    else {
+        idx = this.body.rows.indexOf(this);
+        if (idx >= 0) {
+            makeNewRowAfter(idx, this.body.rows, this.body.data.rows);
+        }
+    }
+};
 
 Object.defineProperty(TTRow.prototype, 'elt', {
     get: function () {
@@ -334,6 +408,42 @@ TTClonedRow.prototype.replace = function (newClonedRow) {
         idx = this.origin.body.clonedRows.indexOf(this);
         if (idx >= 0) {
             this.origin.body.clonedRows.splice(idx, 1, newClonedRow);
+        }
+    }
+};
+
+
+TTClonedRow.prototype.addRowBefore = function (newClonedRow) {
+    var parentRow = this.origin.parentRow && this.origin.parentRow.clonedRow;
+    var idx;
+    if (parentRow) {
+        idx = parentRow.subRows.indexOf(this);
+        if (idx >= 0) {
+            parentRow.subRows.splice(idx, 0, newClonedRow);
+        }
+    }
+    else {
+        idx = this.origin.body.clonedRows.indexOf(this);
+        if (idx >= 0) {
+            this.origin.body.clonedRows.splice(idx, 0, newClonedRow);
+        }
+    }
+};
+
+
+TTClonedRow.prototype.addRowAfter = function (newClonedRow) {
+    var parentRow = this.origin.parentRow && this.origin.parentRow.clonedRow;
+    var idx;
+    if (parentRow) {
+        idx = parentRow.subRows.indexOf(this);
+        if (idx >= 0) {
+            parentRow.subRows.splice(idx + 1, 0, newClonedRow);
+        }
+    }
+    else {
+        idx = this.origin.body.clonedRows.indexOf(this);
+        if (idx >= 0) {
+            this.origin.body.clonedRows.splice(idx + 1, 0, newClonedRow);
         }
     }
 };
