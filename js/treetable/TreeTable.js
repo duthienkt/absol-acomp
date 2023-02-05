@@ -359,9 +359,9 @@ export function ttStructAdapter2TTDAdapter(adapterData) {
                 tag: LinearColorTinyBar.tag,
                 props: {
                     colorMapping: desc.colorMapping || 'performance',
-                    value: x / 100,
+                    value: x ,
                     extend: (typeof desc.extend === "number") && (desc.extend > 0) ? desc.extend : 0.5,
-                    valueText: typeof x === 'number' ? x.toFixed(2) + '%' : x + ''
+                    valueText: typeof x === 'number' ? (x * 100).toFixed(2) + '%' : x + ''
                 }
             }]
         },
