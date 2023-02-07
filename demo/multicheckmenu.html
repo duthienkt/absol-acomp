@@ -121,7 +121,7 @@
             }
         }).addTo(document.body);
         return;
-        fetch('./demo_tree_list.js').then(res => res.text()).then(text => {
+        fetch('./demo_tree_list_2.js').then(res => res.text()).then(text => {
             var factory = new Function('module', 'exports', text + '\nreturn module.exports;');
             var module = {exports: {}};
             return factory.call(window, module, module.exports);

@@ -25,6 +25,9 @@ function TTRow(body, data, parentRow) {
     if (!isNone(data.id) && data.subRows && data.subRows.length > 0 && (data.id in this.body.table.elt.savedState)) {
         this.isOpened = !!this.body.table.elt.savedState[data.id];
     }
+	else if (typeof data.initOpened === 'boolean') {
+		this.isOpened = data.initOpened;
+	}
     else if (typeof body.table.data.initOpened === "boolean") {
         this.isOpened = body.table.data.initOpened;
     }
