@@ -135,7 +135,7 @@ ResizeBox.eventHandler.rbDragStart = function (event) {
         type: 'beginmove'
     };
 
-    this.emit('beginmove', this._mousefinishEventData, this);
+    this.emit('beginmove', this._mousedownEventData, this);
 
 };
 
