@@ -14,7 +14,7 @@ var $ = ACore.$;
  */
 function Hanger() {
     this.addClass('as-hanger');
-    this.defineEvent(['predrag', 'dragstart', 'drag', 'dragend']);
+    this.defineEvent(['predrag', 'dragstart', 'drag', 'dragend', 'draginit', 'dragdeinit']);
     this._hangOn = 0;
     this._hangerPointerData = null;
     this.on2({
@@ -113,7 +113,7 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
         target: target
     };
     var preDragEvent = {
-        type: 'predrag',
+        type: 'draginit',
         originEvent: event,
         isTouch: isTouch,
         bound: bound,
@@ -132,12 +132,12 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
             event.preventDefault();
         }
     };
-    this.emit('predrag', preDragEvent, this);
+    this.emit('draginit', preDragEvent, this);
+    this.emit('predrag', Object.assign({}, preDragEvent, { type: 'predrag' }), this);
     if (preDragEvent.canceled) {
         this._hangerPointerData = null;
         return;
     }
-    ;
     if (isTouch)
         this.on2.call(document, this._touchEvents)
     else
@@ -225,6 +225,7 @@ Hanger.eventHandler.hangerPointerMove = function (event) {
 Hanger.eventHandler.hangerPointerFinish = function (event) {
     var pointerData = this._hangerPointerData;
     var isTouch = event.type === 'touchend';
+    var dragEndEvent;
     if (pointerData.isTouch !== isTouch) return;
     var pointerIdent = -2;
     var currentPoint;
@@ -241,9 +242,8 @@ Hanger.eventHandler.hangerPointerFinish = function (event) {
     }
     if (pointerIdent !== pointerData.pointerIdent) return;
     if (pointerData.state === 1) {
-        pointerData.trackedScrollers.forEach(elt=> elt.removeEventListener('scroll',this.eventHandler.trackingScroll));
-
-        var dragEndEvent = {
+        pointerData.trackedScrollers.forEach(elt => elt.removeEventListener('scroll', this.eventHandler.trackingScroll));
+        dragEndEvent = {
             type: 'dragend',
             originEvent: event,
             isTouch: isTouch,
@@ -267,11 +267,24 @@ Hanger.eventHandler.hangerPointerFinish = function (event) {
         this.off2.call(document, this._touchEvents)
     else
         this.off2.call(document, this._mouseEvents);
+    this.emit('dragdeinit', {
+        type: 'dragdeinit',
+        originEvent: event,
+        isTouch: isTouch,
+        bound: pointerData.bound,
+        startingPoint: pointerData.startingPoint,
+        offsetVec: pointerData.offsetVec,
+        pointerIdent: pointerIdent,
+        currentPoint: currentPoint,
+        target: pointerData.target,
+        clientX: currentPoint.x,
+        clientY: currentPoint.y,
+    });
 };
 
 Hanger.eventHandler.trackingScroll = function (event) {
     var pointerData = this._hangerPointerData;
-    var currentPoint =  pointerData.currentPoint;
+    var currentPoint = pointerData.currentPoint;
     var dragEvent = {
         type: 'drag',
         originEvent: event,
