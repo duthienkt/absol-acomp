@@ -100,9 +100,6 @@ div.absol-follower.as-select-list-box {
     display: block;
 }
 
-.as-select-list-box:not(.as-searching) .as-last-in-group {
-    border-bottom: 1px solid #dddddd;
-}
 
 .as-select-list-box .as-last-in-group span {
     line-height: 19px;
