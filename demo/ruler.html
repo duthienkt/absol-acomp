@@ -126,8 +126,11 @@
                 modal.remove();
 
             })
-            .on('click', function(){
-                console.log("Click");
+            .on('click', function(event){
+                console.log(event);
+            })
+            .on('dblclick', function(event){
+                console.log(event)
             });
         myResizebox.canResize = true;
         myResizebox.canClick = true;
