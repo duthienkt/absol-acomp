@@ -1,14 +1,22 @@
 import '../css/resizebox.css';
 import ACore from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
+import Hanger from "./Hanger";
 
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/***
+ * @extends Hanger
+ * @constructor
+ */
 function ResizeBox() {
-    this.on('mousedown', this.eventHandler.mouseDownBody);
+    this.on({
+        draginit: this.eventHandler.rbDragInit,
+        dragdeinit: this.eventHandler.rbDragDeinit
+    });
+    this.hangon = 3;
     this._mousedownEventData = undefined;
     this._mousemoveEventData = undefined;
     this._lastClickTime = 0;
@@ -18,6 +26,7 @@ ResizeBox.tag = 'ResizeBox'.toLowerCase();
 
 ResizeBox.render = function () {
     return _({
+        tag: Hanger.tag,
         class: 'as-resize-box',
         extendEvent: ['beginmove', 'endmove', 'moving', 'click', 'dblclick'],//override click event
         child: {
@@ -39,15 +48,79 @@ ResizeBox.render = function () {
 
 ResizeBox.eventHandler = {};
 
-ResizeBox.eventHandler.mouseDownBody = function (event) {
-    if (EventEmitter.isMouseRight(event)) return;
+ResizeBox.eventHandler.rbDragInit = function (event) {
+    var target = event.target;
+    if (!target.attr) return;
+    if (!target.hasClass('as-resize-box-dot') && !target.hasClass('as-resize-box-body')) return;
+    var optionNames = event.target.attr('class').match(/body|left|top|right|bottom/g);
+    if (optionNames.length === 0) return;
+    this._mouseOptionNames = optionNames;
+    this._mouseOptionDict = this._mouseOptionNames.reduce((ac, cr) => {
+        ac[cr] = true;
+        return ac
+    }, {});
+    this.on({
+        drag: this.eventHandler.rbDrag,
+        dragend: this.eventHandler.rbDragEnd,
+        dragstart: this.eventHandler.rbDragStart
+    });
+    this._dragged = false;
+};
+
+ResizeBox.eventHandler.rbDragDeinit = function (event) {
+    this.off({
+        drag: this.eventHandler.rbDrag,
+        dragend: this.eventHandler.rbDragEnd,
+        dragstart: this.eventHandler.rbDragStart
+    });
+    var now = new Date().getTime();
+    if (!this._dragged) {
+        if (now - this._lastClickTime < 400) {
+            this.emit('dblclick', Object.assign({}, event, { type: 'dblclick' }), this);
+            this._lastClickTime = 0;
+        }
+        else {
+            this.emit('click', Object.assign({}, event, { type: 'click' }), this);
+            this._lastClickTime = now;
+        }
+    }
+};
+
+
+ResizeBox.eventHandler.rbDrag = function (event) {
+    if (this._mousedownEventData.option.body && !this.canMove) return;
+    this._dragged = true;
+    event.preventDefault();
+    this._mousemoveEventData = {
+        clientX: event.clientX,
+        clientY: event.clientY,
+        clientX0: this._mousedownEventData.clientX,
+        clientY0: this._mousedownEventData.clientY,
+        clientDX: event.clientX - this._mousedownEventData.clientX,
+        clientDY: event.clientY - this._mousedownEventData.clientY,
+        target: this,
+        originEvent: event,
+        option: this._mousedownEventData.option,
+        type: 'moving',
+        begin: true
+    };
+
+    this.emit('moving', this._mousemoveEventData, this);
+
+};
+
+
+ResizeBox.eventHandler.rbDragStart = function (event) {
     event.preventDefault();
     this._optionNames = event.target.attr('class').match(/body|left|top|right|bottom/g);
+    this._dragged = true;
+    $(document.body)
+        .addClass('as-resize-box-overiding')
+        .addClass(this._optionNames.join('-'));
     var option = this._optionNames.reduce(function (ac, key) {
         ac[key] = true;
         return ac;
     }, {});
-
     this._mousedownEventData = {
         clientX: event.clientX,
         clientY: event.clientY,
@@ -62,85 +135,30 @@ ResizeBox.eventHandler.mouseDownBody = function (event) {
         type: 'beginmove'
     };
 
-    $(document.body).on('mousemove', this.eventHandler.mouseMoveBody);
-    $(document.body)
-        .on('mouseup', this.eventHandler.mouseFinishBody)
-        .on('mouseleave', this.eventHandler.mouseFinishBody);
+    this.emit('beginmove', this._mousefinishEventData, this);
 
 };
 
-ResizeBox.eventHandler.mouseMoveBody = function (event) {
-    if (this._mousedownEventData.option.body && !this.canMove) return;
-    if (this._mousedownEventData && !this._mousedownEventData.begin && !this._mousedownEventData.prevented) {
-        this.emit('beginmove', this._mousedownEventData, this);
-        if (this._mousedownEventData.prevented) {
-            $(document.body).off('mousemove', this.eventHandler.mouseMoveBody);
-        }
-        else {
-            this._mousedownEventData.begin = true;
-            $(document.body)
-                .addClass('as-resize-box-overiding')
-                .addClass(this._optionNames.join('-'));
-        }
 
-    }
-
-
-    if (this._mousedownEventData.begin) {
-        event.preventDefault();
-        this._mousemoveEventData = {
-            clientX: event.clientX,
-            clientY: event.clientY,
-            clientX0: this._mousedownEventData.clientX,
-            clientY0: this._mousedownEventData.clientY,
-            clientDX: event.clientX - this._mousedownEventData.clientX,
-            clientDY: event.clientY - this._mousedownEventData.clientY,
-            target: this,
-            originEvent: event,
-            option: this._mousedownEventData.option,
-            type: 'moving'
-        };
-
-        this.emit('moving', this._mousemoveEventData, this);
-    }
+ResizeBox.eventHandler.rbDragEnd = function (event) {
+    document.body.classList.remove('as-resize-box-overiding')
+    document.body.classList.remove(this._optionNames.join('-'));
+    this._mousefinishEventData = {
+        clientX: event.clientX,
+        clientY: event.clientY,
+        clientX0: this._mousedownEventData.clientX,
+        clientY0: this._mousedownEventData.clientY,
+        clientDX: event.clientX - this._mousedownEventData.clientX,
+        clientDY: event.clientY - this._mousedownEventData.clientY,
+        target: this,
+        originEvent: event,
+        option: this._mousedownEventData.option,
+        type: 'endmove'
+    };
+    this.emit('endmove', this._mousefinishEventData, this);
 };
 
-ResizeBox.eventHandler.mouseFinishBody = function (event) {
 
-    $(document.body).off('mousemove', this.eventHandler.mouseMoveBody)
-        .off('mouseup', this.eventHandler.mouseFinishBody)
-        .off('mouseleave', this.eventHandler.mouseFinishBody)
-        .removeClass('as-resize-box-overiding')
-        .removeClass(this._optionNames.join('-'));
-    this._optionNames = undefined;
-
-    if (this._mousedownEventData.begin) {
-        this._mousefinishEventData = {
-            clientX: event.clientX,
-            clientY: event.clientY,
-            clientX0: this._mousedownEventData.clientX,
-            clientY0: this._mousedownEventData.clientY,
-            clientDX: event.clientX - this._mousedownEventData.clientX,
-            clientDY: event.clientY - this._mousedownEventData.clientY,
-            target: this,
-            originEvent: event,
-            option: this._mousedownEventData.option,
-            type: 'endmove'
-        };
-        this.emit('endmove', this._mousefinishEventData, this);
-    }
-    else {
-        if (EventEmitter.hitElement(this, event)) {
-            this.emit('click', event, this);
-            var now = new Date().getTime();
-            if (now - this._lastClickTime < 500) {
-                this.emit('dblclick', event, this);
-                this._lastClickTime = 0;
-            }
-            this._lastClickTime = now;
-        }
-    }
-};
 
 
 ResizeBox.property = {};
