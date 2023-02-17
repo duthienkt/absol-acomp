@@ -133,7 +133,7 @@ Hanger.eventHandler.hangerPointerDown = function (event) {
         }
     };
     this.emit('draginit', preDragEvent, this);
-    this.emit('predrag', Object.assign({}, preDragEvent, { type: 'predrag' }), this);
+    this.emit('predrag', Object.assign(preDragEvent, { type: 'predrag' }), this);
     if (preDragEvent.canceled) {
         this._hangerPointerData = null;
         return;
