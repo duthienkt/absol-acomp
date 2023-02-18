@@ -141,6 +141,7 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
             if (oldText === newText) return;
             var key = newText[sStart];
             var fakeEvent = {
+                type: 'keydown',
                 preventDefault: noop,
                 key: key
             }
@@ -282,7 +283,7 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
             delEnd = sEnd;
 
         }
-
+        if (delStart === undefined || delEnd === undefined) return;
         this.$input.value = value.substring(0, delStart) + value.substring(delEnd);
         this.$input.setSelectionRange(delStart, delStart);
         this.reformat();
