@@ -294,9 +294,16 @@ HScroller.prototype.scrollInto = function (element) {
 }
 
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 export function Scrollbar() {
     var thisSB = this;
     this.$button = $('.absol-scrollbar-button', this);
+    this.on('inactive', function (event, sender){
+        this.emit('deactive', event, sender);
+    })
     this.on('active', function () {
         if (!thisSB.$forceModal) thisSB.$forceModal = _('.absol-scrollbar-force-modal');
         thisSB.$forceModal.addTo(document.body);
@@ -312,7 +319,7 @@ Scrollbar.tag = 'scrollbar';
 Scrollbar.render = function () {
     return _({
         class: ['absol-scrollbar'],
-        extendEvent: ['scroll', 'active', 'deactive'],
+        extendEvent: ['scroll', 'active','inactive', 'deactive'],
         child: '.absol-scrollbar-button'
     });
 };
@@ -357,7 +364,7 @@ export function VScrollbar() {
         body.off('pointerup', finishEventHandler);
         body.off('pointermove', pointerMoveEventHandler);
         thisVS.removeClass('absol-active');
-        thisVS.emit('deactive', { type: 'deactive', originEvent: event, tagert: thisVS });
+        thisVS.emit('inactive', { type: 'inactive', originEvent: event, tagert: thisVS });
     };
 
     var pointerDownEventHandler = function (event) {
@@ -470,7 +477,7 @@ export function HScrollbar() {
         body.off('pointerup', finishEventHandler);
         body.off('pointermove', pointerMoveEventHandler);
         thisHS.removeClass('absol-active');
-        thisHS.emit('deactive', { type: 'deactive', originEvent: event, tagert: thisHS });
+        thisHS.emit('inactive', { type: 'inactive', originEvent: event, tagert: thisHS });
     };
 
     var pointerDownEventHandler = function (event) {
@@ -496,7 +503,7 @@ export function HScrollbar() {
         body.on('pointerup', finishEventHandler);
         body.on('pointermove', pointerMoveEventHandler);
         thisHS.addClass('absol-active');
-        thisHS.emit('active', { type: 'deactive', originEvent: event, tagert: thisHS });
+        thisHS.emit('active', { type: 'inactive', originEvent: event, tagert: thisHS });
     };
 
     this.on('pointerdown', pointerDownEventHandler, true);
