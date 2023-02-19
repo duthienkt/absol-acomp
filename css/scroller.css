@@ -110,7 +110,7 @@
 
 .absol-scrollbar {
     position: relative;
-    background: transparent;
+    background-color: rgba(180, 180, 182, 0.1);
 }
 
 .absol-scrollbar-button {
@@ -126,4 +126,13 @@
 
 .absol-scrollbar.absol-hidden {
     visibility: hidden;
+}
+
+.absol-vscrollbar .absol-scrollbar-button  {
+    width: 100%;
+}
+
+
+.absol-hscrollbar .absol-scrollbar-button  {
+    height: 100%;
 }
