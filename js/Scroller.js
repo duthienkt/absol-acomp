@@ -3,7 +3,7 @@ import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import Element from "absol/src/HTML5/Element";
-import {map} from 'absol/src/Math/int';
+import { map } from 'absol/src/Math/int';
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -26,6 +26,10 @@ ACore.$scrollStyle = (function () {
     }
 )();
 
+/***
+ * @extends AElement
+ * @constructor
+ */
 export function VScroller() {
     var thisVS = this;
     this.$attachHook = $('attachhook', this);
@@ -301,7 +305,7 @@ HScroller.prototype.scrollInto = function (element) {
 export function Scrollbar() {
     var thisSB = this;
     this.$button = $('.absol-scrollbar-button', this);
-    this.on('inactive', function (event, sender){
+    this.on('inactive', function (event, sender) {
         this.emit('deactive', event, sender);
     })
     this.on('active', function () {
@@ -319,7 +323,7 @@ Scrollbar.tag = 'scrollbar';
 Scrollbar.render = function () {
     return _({
         class: ['absol-scrollbar'],
-        extendEvent: ['scroll', 'active','inactive', 'deactive'],
+        extendEvent: ['scroll', 'active', 'inactive', 'deactive'],
         child: '.absol-scrollbar-button'
     });
 };
@@ -341,7 +345,10 @@ Scrollbar.property.hidden = {
     }
 };
 
-
+/***
+ * @extends Scrollbar
+ * @constructor
+ */
 export function VScrollbar() {
     var thisVS = this;
     var top0, innerOffset0;
@@ -394,6 +401,17 @@ export function VScrollbar() {
     };
 
     this.on('pointerdown', pointerDownEventHandler, true);
+    /***
+     * @type {number}
+     * @name outerHeight
+     * @memberOf VScrollbar#
+     */
+
+    /***
+     * @type {number}
+     * @name innerHeight
+     * @memberOf VScrollbar#
+     */
 }
 
 VScrollbar.tag = 'vscrollbar';
@@ -409,6 +427,15 @@ VScrollbar.prototype.updateValue = function () {
     this.$button.addStyle('height', Math.min(this.outerHeight / this.innerHeight, 1) * 100 + '%');
     this.$button.addStyle('top', this.innerOffset / this.innerHeight * 100 + '%');
 };
+
+VScrollbar.prototype.updateStatus = function () {
+    if (this.innerHeight > this.outerHeight) {
+        this.addClass('as-overflow');
+    }
+    else {
+        this.removeClass('as-overflow');
+    }
+}
 
 
 VScrollbar.property = {
@@ -429,10 +456,11 @@ VScrollbar.property = {
         set: function (value) {
             value = value || 1;
             value = Math.max(value, 1);
-            if (this._innerHeight != value) {
+            if (this._innerHeight !==value) {
                 this._innerHeight = value;
                 this.updateValue();
             }
+            this.updateStatus();
         },
         get: function () {
             return this._innerHeight || 1;
@@ -442,10 +470,11 @@ VScrollbar.property = {
         set: function (value) {
             value = value || 0;
             value = Math.max(value, 0);
-            if (this._outerHeight != value) {
+            if (this._outerHeight !== value) {
                 this._outerHeight = value;
                 this.updateValue();
             }
+            this.updateStatus();
         },
         get: function () {
             return this._outerHeight || 0;
@@ -453,7 +482,10 @@ VScrollbar.property = {
     }
 };
 
-
+/***
+ * @extends Scrollbar
+ * @constructor
+ */
 export function HScrollbar() {
     var thisHS = this;
 
