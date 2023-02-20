@@ -104,7 +104,7 @@
 }
 
 .as-dt-body-row {
- height: var(--table-row-height);
+    height: var(--table-row-height);
 }
 
 .as-dt-body-row.as-dragging {
@@ -159,4 +159,15 @@
 
 .as-dt-row-index::before {
     content: attr(data-idx);
+}
+
+
+.as-dynamic-table-wrapper.as-no-graphic .as-dt-header-cell,
+.as-dynamic-table-wrapper.as-no-graphic .as-dt-body-cell {
+    border: none;
+}
+
+.as-dynamic-table-wrapper.as-no-graphic .as-dt-header,
+.as-dynamic-table-wrapper.as-no-graphic .as-dt-body-row {
+    background-color: transparent;
 }
