@@ -311,7 +311,7 @@ export function Scrollbar() {
     this.on('active', function () {
         if (!thisSB.$forceModal) thisSB.$forceModal = _('.absol-scrollbar-force-modal');
         thisSB.$forceModal.addTo(document.body);
-    }).on('deactive', function () {
+    }).on('inactive', function () {
         setTimeout(function () {
             thisSB.$forceModal.remove();
         }, 30);
@@ -332,7 +332,7 @@ Scrollbar.property = {};
 Scrollbar.property.hidden = {
     set: function (value) {
         value = !!value;
-        if (value != this._hidden) {
+        if (value !== this._hidden) {
             this._hidden = value;
             if (value)
                 this.addClass('absol-hidden');
@@ -407,6 +407,11 @@ export function VScrollbar() {
      * @memberOf VScrollbar#
      */
 
+    /***
+     * @type {number}
+     * @name innerHeight
+     * @memberOf VScrollbar#
+     */
     /***
      * @type {number}
      * @name innerHeight
@@ -516,7 +521,7 @@ export function HScrollbar() {
         var boundRes = thisHS.getBoundingClientRect();
         var boundButton = thisHS.$button.getBoundingClientRect();
         left0 = event.clientX;
-        if (event.target == thisHS.$button) {
+        if (event.target === thisHS.$button) {
             innerOffset0 = thisHS.innerOffset;
         }
         else {
@@ -539,6 +544,22 @@ export function HScrollbar() {
     };
 
     this.on('pointerdown', pointerDownEventHandler, true);
+
+    /***
+     * @type {number}
+     * @name innerOffset
+     * @memberOf HScrollbar#
+     */
+    /***
+     * @type {number}
+     * @name innerWidth
+     * @memberOf HScrollbar#
+     */
+    /***
+     * @type {number}
+     * @name outerWidth
+     * @memberOf HScrollbar#
+     */
 }
 
 HScrollbar.tag = 'hscrollbar';
@@ -556,11 +577,22 @@ HScrollbar.prototype.updateValue = function () {
 };
 
 
+HScrollbar.prototype.updateStatus = function () {
+    if (this.innerWidth > this.outerWidth) {
+        this.addClass('as-overflow');
+    }
+    else {
+        this.removeClass('as-overflow');
+    }
+}
+
+
+
 HScrollbar.property = {
     innerOffset: {
         set: function (value) {
             value = value || 0;
-            if (this._innerOffset != value) {
+            if (this._innerOffset !== value) {
                 this._innerOffset = value;
                 this.updateValue();
             }
@@ -574,10 +606,11 @@ HScrollbar.property = {
         set: function (value) {
             value = value || 1;
             value = Math.max(value, 1);
-            if (this._innerWidth != value) {
+            if (this._innerWidth !== value) {
                 this._innerWidth = value;
                 this.updateValue();
             }
+            this.updateStatus();
         },
         get: function () {
             return this._innerWidth || 1;
@@ -587,10 +620,11 @@ HScrollbar.property = {
         set: function (value) {
             value = value || 0;
             value = Math.max(value, 0);
-            if (this._outerWidth != value) {
+            if (this._outerWidth !== value) {
                 this._outerWidth = value;
                 this.updateValue();
             }
+            this.updateStatus();
         },
         get: function () {
             return this._outerWidth || 0;
