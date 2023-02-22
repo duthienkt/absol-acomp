@@ -1123,10 +1123,10 @@ export function keyStringOf(o) {
     var type = typeof o;
     var keys;
     if (o && type === "object") {
-        if (o.getTime) {
+        if (typeof o.getTime === "function") {
             return 'd(' + o.getTime() + ')';
         }
-        else if (o.length && o.map) {
+        else if (typeof o.map === "function") {
             return 'a(' + o.map(val => keyStringOf(val)).join(',') + ')';
         }
         else {
