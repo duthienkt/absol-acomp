@@ -69,6 +69,8 @@ function CheckListItem() {
     this.$descValue = this.$desc.childNodes[0];
     this.$checkbox = $(CheckboxButton.tag, this)
         .on('change', this.eventHandler.checkboxChange);
+    this.$icon = null;
+    this._icon = null;
     this._viewData = new Attributes(this);
     this._viewData.loadAttributeHandlers(this.viewHandlers);
     OOP.drillProperty(this, this._viewData, 'extendClasses');
@@ -109,7 +111,8 @@ CheckListItem.render = function () {
 
 CheckListItem.property = {
     text: SelectListItem.property.text,
-    value: SelectListItem.property.value
+    value: SelectListItem.property.value,
+    icon: SelectListItem.property.icon,
 };
 
 CheckListItem.property.data = {
@@ -120,7 +123,8 @@ CheckListItem.property.data = {
             desc: '',
             noSelect: false,
             extendStyle: null,
-            extendClasses: null
+            extendClasses: null,
+            icon: null,
         };
         if (typeof value === 'string') {
             viewData.text = value
@@ -217,6 +221,15 @@ CheckListItem.prototype.viewHandlers.noSelect = {
     }
 };
 
+
+CheckListItem.prototype.viewHandlers.icon = {
+    set: function (icon){
+        this.icon = icon;
+    },
+    get: function (){
+        return this.icon;
+    }
+}
 
 CheckListItem.eventHandler = {};
 

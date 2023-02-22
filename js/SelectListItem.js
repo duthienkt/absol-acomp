@@ -103,7 +103,7 @@ SelectListItem.property.icon = {
         if (this._icon) {
             this.$icon = _(this._icon);
             this.$icon.addClass('as-select-list-icon');
-            this.addChildBefore(this.$icon, this.firstChild);
+            this.addChildBefore(this.$icon, this.$text);
         }
     },
     get: function () {
