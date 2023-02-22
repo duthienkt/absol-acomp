@@ -12,17 +12,23 @@ var $ = ACore.$;
  * @constructor
  */
 function SelectListItem() {
-    var res = this;
-    res.$text = $('span.absol-selectlist-item-text', res);
-    res.$textValue = res.$text.childNodes[0];
-    res.$descCtn = $('.absol-selectlist-item-desc-container', res);
-    res.$desc = $('span.absol-selectlist-item-desc', res.$descCtn);
-    res.$descValue = res.$desc.childNodes[0];
-    res._extendClasses = [];
-    res._extendStyle = {};
-    res._data = "";
-    res._level = 0;
+    this.$text = $('span.absol-selectlist-item-text', this);
+    this.$textValue = this.$text.childNodes[0];
+    this.$descCtn = $('.absol-selectlist-item-desc-container', this);
+    this.$desc = $('span.absol-selectlist-item-desc', this.$descCtn);
+    this.$descValue = this.$desc.childNodes[0];
+    this.$icon = null;
+    this._extendClasses = [];
+    this._extendStyle = {};
+    this._data = "";
+    this._level = 0;
+    this._icon = null;
     OOP.drillProperty(this, this, 'noSelect', 'disabled');
+    /***
+     * @type {AbsolConstructDescriptor|null}
+     * @name icon
+     * @memberOf SelectListItem#
+     */
 }
 
 SelectListItem.tag = 'SelectListItem'.toLowerCase();
@@ -34,14 +40,14 @@ SelectListItem.render = function () {
             {
                 tag: 'span',
                 class: 'absol-selectlist-item-text',
-                child: {text: ''}
+                child: { text: '' }
             },
             {
                 class: 'absol-selectlist-item-desc-container',
                 child: {
                     tag: 'span',
                     class: 'absol-selectlist-item-desc',
-                    child: {text: ''}
+                    child: { text: '' }
                 }
             }
         ]
@@ -82,6 +88,29 @@ SelectListItem.property.extendStyle = {
     }
 };
 
+SelectListItem.property.icon = {
+    /***
+     * @this SelectListItem
+     * @param icon
+     */
+    set: function (icon) {
+        if (this.$icon) {
+            this.$icon.remove();
+            this.$icon = null;
+        }
+
+        this._icon = icon || null;
+        if (this._icon) {
+            this.$icon = _(this._icon);
+            this.$icon.addClass('as-select-list-icon');
+            this.addChildBefore(this.$icon, this.firstChild);
+        }
+    },
+    get: function () {
+        return this._icon;
+    }
+};
+
 
 SelectListItem.property.data = {
     set: function (value) {
@@ -96,6 +125,7 @@ SelectListItem.property.data = {
             this.isLeaf = false;
             this.selected = false;
             this.disabled = false;
+            this.icon = null;
         }
         else {
             this.$textValue.data = value.text || '';
@@ -108,6 +138,7 @@ SelectListItem.property.data = {
             this.isLeaf = !!(value.isLeaf);
             this.selected = !!(value.selected);
             this.disabled = value.disabled || value.noSelect;
+            this.icon = value.icon;
         }
     },
     get: function () {
@@ -119,7 +150,8 @@ SelectListItem.property.disabled = {
     set: function (value) {
         if (value) {
             this.addClass('as-disabled');
-        } else {
+        }
+        else {
             this.removeClass('as-disabled');
         }
     },
@@ -152,7 +184,7 @@ SelectListItem.property.level = {
     set: function (value) {
         value = value || 0;
         this._level = value;
-        this.$text.addStyle('margin-left', value * 0.9 + 'em');
+        this.addStyle('--level', value);
     },
     get: function () {
         return this._level;
@@ -164,7 +196,8 @@ SelectListItem.property.lastInGroup = {
     set: function (value) {
         if (value) {
             this.addClass('as-last-in-group');
-        } else {
+        }
+        else {
             this.removeClass('as-last-in-group');
         }
     },
@@ -177,7 +210,8 @@ SelectListItem.property.isLeaf = {
     set: function (value) {
         if (value) {
             this.addClass('as-is-leaf');
-        } else {
+        }
+        else {
             this.removeClass('as-is-leaf');
         }
     },
@@ -190,7 +224,8 @@ SelectListItem.property.selected = {
     set: function (value) {
         if (value) {
             this.addClass('as-selected');
-        } else {
+        }
+        else {
             this.removeClass('as-selected');
         }
     },
@@ -199,7 +234,7 @@ SelectListItem.property.selected = {
     }
 };
 
-ACore.install( SelectListItem);
+ACore.install(SelectListItem);
 
 
 export default SelectListItem;
@@ -209,23 +244,26 @@ export function getTextOfListItem(item) {
     if (item) {
         if (item.match) {
 
-        } else
-            if (item.text && item.text.match) {
-                return item.text;
-            } else return '';
-    } else return '';
+        }
+        else if (item.text && item.text.match) {
+            return item.text;
+        }
+        else return '';
+    }
+    else return '';
 }
 
 export function getValueOfListItem(item) {
     if (item) {
         if (item.match) {
             return item;
-        } else
-            if (typeof item === "object")
-                return item.value;
-            else
-                return item;
-    } else return item;
+        }
+        else if (typeof item === "object")
+            return item.value;
+        else
+            return item;
+    }
+    else return item;
 }
 
 export function getDescriptionOfListItem(item) {

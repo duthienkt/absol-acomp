@@ -28,13 +28,13 @@
 }
 
 .absol-selectlist:not(.as-searching) > .absol-selectlist-item.as-last-in-group,
-.as-select-list-box:not(.as-searching) .as-last-in-group{
+.as-select-list-box:not(.as-searching) .as-last-in-group {
     position: relative;
     overflow: visible;
 }
 
 
-.as-select-list-box:not(.as-searching) .as-last-in-group::after ,
+.as-select-list-box:not(.as-searching) .as-last-in-group::after,
 .absol-selectlist:not(.as-searching) > .absol-selectlist-item.as-last-in-group:not(:last-child)::after {
     content: "";
     border-bottom: 1px solid black;
@@ -44,8 +44,8 @@
     bottom: -0.5px;
 }
 
-.absol-selectlist-item > span {
-    line-height: calc(20rem / 14);
+.absol-selectlist-item-text {
+    line-height: inherit;
     white-space: pre;
     padding-left: var(--as-input-horizontal-padding);
     padding-right: var(--as-input-horizontal-padding);
@@ -54,6 +54,14 @@
     -ms-user-select: none;
     user-select: none;
 }
+
+.absol-selectlist-item {
+    height: 20px;
+    line-height: 20px;
+    --level: 0;
+    padding-left: calc(0.9em * var(--level));
+}
+
 
 .absol-selectlist-item {
     position: relative;
@@ -78,4 +86,18 @@
     display: none;
 }
 
+.absol-selectlist-item {
+    padding-right: calc(0.35em + var(--select-list-desc-width));
+}
 
+.absol-selectlist-item-desc-container {
+    width: var(--select-list-desc-width);
+}
+
+
+.as-select-list-icon {
+    font-size: 1.5em;
+    display: inline-block;
+    vertical-align: middle;
+    padding-left: var(--as-input-horizontal-padding);
+}

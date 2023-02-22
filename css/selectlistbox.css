@@ -18,6 +18,10 @@
     outline: none;
 }
 
+.as-select-list-box.as-has-icon .absol-selectlist-item {
+    height: calc(30rem / 14);
+    line-height: calc(30rem / 14);
+}
 
 .as-select-list-box.as-enable-search {
     min-width: 10em;

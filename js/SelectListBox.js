@@ -209,7 +209,7 @@ SelectListBox.prototype.viewListAt = function (offset) {
         nItem = this._pageOffsets[pageIndex + 1] - sIdx;
         pageElt = this.$listPages[pageIndex];
 
-
+        console.log(this.itemHeight)
         pageElt.addStyle('top', this._pageOffsets[pageIndex] * this.itemHeight / 14 + 'em');
         this._requireItem(pageElt, nItem);
         this._assignItems(pageElt, sIdx);
@@ -324,6 +324,19 @@ SelectListBox.prototype.focus = function () {
 
 SelectListBox.prototype.footerMinWidth = 0;
 SelectListBox.prototype._updateItems = function () {
+    this._hasIcon = this._items.some(function hasIcon(it) {
+        var res = !!it.icon;
+        if (!res && it.items) {
+            res = it.items.some(hasIcon);
+        }
+        return res;
+    });
+    if (this._hasIcon) {
+        this.itemHeight = 30;
+    }
+    else {
+        this.itemHeight = 20;
+    }
     this._preDisplayItems = this._itemsToNodeList(this._items);
     this._searchCache = {};
     var estimateSize = measureListSize(this._itemNodeList);
@@ -331,8 +344,16 @@ SelectListBox.prototype._updateItems = function () {
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
     this._estimateDescWidth = estimateSize.descWidth;
-    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, estimateSize.width) / 14 + 'em');
-    this.addStyle('--select-list-desc-width', (estimateSize.descWidth) / 14 + 'em')
+    if (this._hasIcon){
+        this._estimateWidth += 28;
+        this.addClass('as-has-icon');
+    }
+    else {
+        this.removeClass('as-has-icon');
+    }
+    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, this._estimateWidth ) / 14 + 'em');
+    this.addStyle('--select-list-desc-width', (  this._estimateDescWidth) / 14 + 'em');
+
     this._updateDisplayItem();
 };
 
