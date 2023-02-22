@@ -9,29 +9,6 @@ import AElement from "absol/src/HTML5/AElement";
 var _ = ACore._;
 var $ = ACore.$;
 
-var isSupportedVar = window.CSS && window.CSS.supports && window.CSS.supports('--fake-var', 'red');
-/**
- * Setup css
- */
-if (isSupportedVar) {
-    SelectList.$dynamicStyle = (function () {
-        var cssElt = _('style#selectlist-dynamic-style');
-        var cssCode = [
-            '.absol-selectlist-item>span {',
-            '    margin-right: calc(0.35em + var(--select-list-desc-width));',
-            '}',
-
-            '.absol-selectlist-item-desc-container {',
-            '    width: var(--select-list-desc-width);',
-            '}'
-
-        ];
-
-        cssElt.innerHTML = cssCode.join('\n');
-        cssElt.addTo(document.head);
-        return cssElt;
-    })();
-}
 
 var itemPool = [];
 
