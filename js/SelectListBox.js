@@ -72,6 +72,7 @@ SelectListBox.prototype.toLoadNextY = 200;
 
 SelectListBox.prototype.preLoadN = 3;
 
+SelectListBox.prototype.itemHeightMode = [20, 30];
 SelectListBox.prototype.itemHeight = 20;
 
 
@@ -209,7 +210,6 @@ SelectListBox.prototype.viewListAt = function (offset) {
         nItem = this._pageOffsets[pageIndex + 1] - sIdx;
         pageElt = this.$listPages[pageIndex];
 
-        console.log(this.itemHeight)
         pageElt.addStyle('top', this._pageOffsets[pageIndex] * this.itemHeight / 14 + 'em');
         this._requireItem(pageElt, nItem);
         this._assignItems(pageElt, sIdx);
@@ -332,10 +332,10 @@ SelectListBox.prototype._updateItems = function () {
         return res;
     });
     if (this._hasIcon) {
-        this.itemHeight = 30;
+        this.itemHeight = this.itemHeightMode[1];
     }
     else {
-        this.itemHeight = 20;
+        this.itemHeight = this.itemHeightMode[0];
     }
     this._preDisplayItems = this._itemsToNodeList(this._items);
     this._searchCache = {};
@@ -345,7 +345,7 @@ SelectListBox.prototype._updateItems = function () {
     this._estimateWidth = estimateSize.width;
     this._estimateDescWidth = estimateSize.descWidth;
     if (this._hasIcon){
-        this._estimateWidth += 28;
+        this._estimateWidth += 32;
         this.addClass('as-has-icon');
     }
     else {

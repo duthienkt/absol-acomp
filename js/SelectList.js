@@ -217,7 +217,7 @@ SelectList.prototype.setItemsAsync = function (items) {
     this._items = items || [];
     this.$itemByValue = {};
     this.measuredSize = measureListSize(items);
-    this.style.setProperty('--select-list-desc-width', this.measuredSize.descWidth + 'px'); //addStyle notWork because of convert to cameCase 
+    this.style.setProperty('--select-list-desc-width', (this.measuredSize.descWidth/14) + 'em'); //addStyle notWork because of convert to cameCase
 
     var thisSL = this;
     var i = 0;
@@ -265,7 +265,7 @@ SelectList.prototype.setItems = function (items) {
     this._items = items || [];
     this.$itemByValue = {};
     this.measuredSize = measureListSize(items);
-    this.style.setProperty('--select-list-desc-width', this.measuredSize.descWidth + 'px'); //addStyle notWork because of convert to cameCase 
+    this.style.setProperty('--select-list-desc-width', (this.measuredSize.descWidth/14) + 'em'); //addStyle notWork because of convert to cameCase
     var itemCount = items.length;
     this._requireItems(itemCount);
     this._assignItems(0, itemCount);

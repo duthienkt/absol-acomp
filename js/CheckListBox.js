@@ -244,7 +244,7 @@ CheckListBox.property.enableSearch = SelectListBox.property.enableSearch;
 CheckListBox.property.items = {
     set: function (items) {
         items = items || [];
-        items = copySelectionItemArray(items, {removeNoView: true});
+        items = copySelectionItemArray(items, { removeNoView: true });
         this._items = items;
         this.itemHolders = items.map(it => new CLHolder(this, it));
 
@@ -475,7 +475,7 @@ function CLPagingController(boxElt) {
     this.holderDict = {};
 }
 
-CLPagingController.prototype.itemHeight = 25;
+CLPagingController.prototype.itemHeight = 30;
 
 CLPagingController.prototype.ev_scroll = function (event) {
     if (this.pageN <= 2) return;
@@ -648,6 +648,7 @@ CheckListBoxV1.render = function () {
 Object.assign(CheckListBoxV1.prototype, SelectListBox.prototype);
 CheckListBoxV1.property = Object.assign({}, SelectListBox.property);
 CheckListBoxV1.eventHandler = Object.assign({}, SelectListBox.eventHandler);
+CheckListBoxV1.prototype.itemHeightMode = [25, 30];
 CheckListBoxV1.prototype.itemHeight = 25;
 CheckListBoxV1.prototype.footerMinWidth = 110;
 
