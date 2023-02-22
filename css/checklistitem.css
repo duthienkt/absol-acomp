@@ -1,6 +1,6 @@
 .as-check-list-item {
     padding-left: 0.35em;
-    height: calc(25rem / 14);
+    height: calc(30rem / 14);
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -11,10 +11,15 @@
     vertical-align: middle;
 }
 
+.as-check-list-item-checkbox .as-checkbox-input-check-icon{
+    display: block;
+
+}
+
 .absol-selectlist-item.as-check-list-item > span {
     display: inline-block;
     vertical-align: middle;
-    line-height: calc(25rem / 14);
+    line-height: calc(30rem / 14);
 }
 
 .absol-selectlist-item.as-check-list-item .absol-selectlist-item-desc {
