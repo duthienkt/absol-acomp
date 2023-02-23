@@ -5,7 +5,8 @@ import { measureListSize, releaseItem, requireItem } from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import { depthIndexingByValue, indexingByValue } from "./list/listIndexing";
-import { copySelectionItemArray } from "./utils";
+import { copySelectionItemArray, keyStringOf } from "./utils";
+import ListSearchMaster from "./list/ListSearchMaster";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -23,6 +24,7 @@ function SelectListBox() {
     this._initControl();
     this._initScroller();
     this._initProperty();
+
     /***
      * @name strictValue
      * @type {boolean}
@@ -82,6 +84,16 @@ SelectListBox.prototype._initDomHook = function () {
     this.domSignal.on('viewListAt', this.viewListAt.bind(this));
     this.domSignal.on('viewListAtFirstSelected', this.viewListAtFirstSelected.bind(this));
     this.domSignal.on('viewListAtCurrentScrollTop', this.viewListAtCurrentScrollTop.bind(this));
+    this.searchMaster = new ListSearchMaster();
+    var checkView = () => {
+        if (this.isDescendantOf(document.body)) {
+            setTimeout(checkView, 10000);
+        }
+        else {
+            this.searchMaster.destroy();
+        }
+    }
+    setTimeout(checkView, 30000);
 };
 
 SelectListBox.prototype._initControl = function () {
@@ -260,10 +272,34 @@ SelectListBox.prototype.viewListAtCurrentScrollTop = function () {
 
 
 SelectListBox.prototype.searchItemByText = function (text) {
-    text = text.trim();
-    if (text.length == 0) return this._items;
-    if (this._searchCache[text]) return this._searchCache[text];
-    this._searchCache[text] = searchListByText(text, this._items);
+    text = text.trim().replace(/\s\s+/, ' ');
+    if (text.length === 0) return Promise.resolve(this._items);
+    this._searchCache[text] = this._searchCache[text] || this.searchMaster.query({ text: text }).then(searchResult => {
+        if (!searchResult) return;
+        var scoreOf = it => {
+            var idx = this.key2idx [it.valueKey];
+            var sc = searchResult[idx];
+            if (!sc) return -Infinity;
+            return Math.max(sc[0], sc[1]) * 1000000 - idx;
+        }
+        var makeList = originItems => {
+            var items = originItems.filter(it => {
+                var idx = this.key2idx [it.valueKey];
+                if (searchResult[idx]) return true;
+                return false;
+            }).map(it => {
+                var cpItem = Object.assign({}, it);
+                if (it.items) cpItem.items = makeList(it.items);
+                return cpItem;
+            });
+
+            items.sort((a, b) => scoreOf(b) - scoreOf(a));
+
+            return items;
+        }
+        return makeList(this._items);
+    });
+
     return this._searchCache[text];
 };
 
@@ -344,17 +380,39 @@ SelectListBox.prototype._updateItems = function () {
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
     this._estimateDescWidth = estimateSize.descWidth;
-    if (this._hasIcon){
+    if (this._hasIcon) {
         this._estimateWidth += 32;
         this.addClass('as-has-icon');
     }
     else {
         this.removeClass('as-has-icon');
     }
-    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, this._estimateWidth ) / 14 + 'em');
-    this.addStyle('--select-list-desc-width', (  this._estimateDescWidth) / 14 + 'em');
+    this.addStyle('--select-list-estimate-width', Math.max(this.footerMinWidth, this._estimateWidth) / 14 + 'em');
+    this.addStyle('--select-list-desc-width', (this._estimateDescWidth) / 14 + 'em');
 
     this._updateDisplayItem();
+
+    this.idx2key = [];
+    var makeSearchItem = it => {
+        var res = { value: this.idx2key.length };
+        var valueKey;
+        res.text = it.text + '';
+        if (it.desc) res.text += it.desc;
+        valueKey = keyStringOf(it.value);
+        it.valueKey = valueKey;
+        this.idx2key.push(valueKey);
+        if (it.items && it.items.length > 0 && it.items.map) {
+            res.items = it.items.map(makeSearchItem);
+        }
+        return res;
+    };
+
+    this.searchingItems = this._items.map(makeSearchItem);
+    this.key2idx = this.idx2key.reduce((ac, cr, i) => {
+        ac[cr] = i;
+        return ac;
+    }, {});
+    this.searchMaster.transfer(this.searchingItems);
 };
 
 /***
@@ -413,6 +471,7 @@ SelectListBox.property.items = {
         items = items || [];
         if (!(items instanceof Array)) items = [];
         items = copySelectionItemArray(items, { removeNoView: true });
+
         prepareSearchForList(items);
         this._items = items;
         this._itemNodeList = this._itemsToNodeList(this._items);
@@ -501,18 +560,25 @@ SelectListBox.eventHandler.click = function (event) {
         this.notifyPressOut();
 };
 
+/***
+ * @this SelectListBox
+ */
 SelectListBox.eventHandler.searchModify = function () {
     var text = this.$searchInput.value;
-    var searchedItems = this.searchItemByText(text);
-    this._preDisplayItems = this._itemsToNodeList(searchedItems);
-    this._displayItems = this._filterDisplayItems(this._preDisplayItems);
-    this.$content.addStyle({
-        'height': this._displayItems.length * this.itemHeight / 14 + 'em'
+    var searchSession = Math.random() + '';
+    this._searchSession = searchSession;
+    this.searchItemByText(text).then(searchedItems => {
+        if (searchSession !== this._searchSession) return;
+        this._preDisplayItems = this._itemsToNodeList(searchedItems);
+        this._displayItems = this._filterDisplayItems(this._preDisplayItems);
+        this.$content.addStyle({
+            'height': this._displayItems.length * this.itemHeight / 14 + 'em'
+        });
+        this._updateItemNodeIndex();
+        this.viewListAt(0);
+        this.$listScroller.scrollTop = 0;
+        this.updatePosition();
     });
-    this._updateItemNodeIndex();
-    this.viewListAt(0);
-    this.$listScroller.scrollTop = 0;
-    this.updatePosition();
 };
 
 
