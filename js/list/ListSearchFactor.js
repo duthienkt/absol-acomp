@@ -279,10 +279,10 @@ export default function ListSearchFactor(global) {
             var res = {};
             res.score = calcItemMatchScore( query, item);
             res.value = item.value;
-            res.maxScore = res.score;
+            res.maxChildScore = -Infinity;
             if (item.items) {
                 res.child = item.items.map(visit);
-                res.maxScore = res.child.reduce((ac, cr) => Math.max(ac, cr.maxScore), res.maxScore)
+                res.maxChildScore = res.child.reduce((ac, cr) => Math.max(ac, cr.maxChildScore, cr.score), res.maxChildScore);
             }
 
             minScore = Math.min(minScore, res.score);
@@ -292,7 +292,7 @@ export default function ListSearchFactor(global) {
         var threshold = maxScore - (maxScore - minScore) / 4;
         if (maxScore < 3) threshold = maxScore - (maxScore - minScore) / 8;
         var resDict = scoreHolders.reduce(function rValue(ac, cr) {
-            if (cr.maxScore >= threshold) ac[cr.value] = [cr.score, cr.maxScore];
+            if (Math.max(cr.maxChildScore, cr.score) >= threshold) ac[cr.value] = [cr.score, cr.maxChildScore];
             if (cr.child) cr.child.reduce(rValue, ac);
             return ac;
         }, {});
