@@ -850,7 +850,7 @@ export function fileInfoOf(fi) {
     var res = {};
     var handle = o => {
         if (typeof o === "string") {
-            res.name = res.name ||  (o.split('/').pop() || '').replace(/%([\dA-Fa-f][\dA-Fa-f])/g, (all, g1) => {
+            res.name = res.name || (o.split('/').pop() || '').replace(/%([\dA-Fa-f][\dA-Fa-f])/g, (all, g1) => {
                 var n = parseInt(g1, 16);
                 if (typeof n === "number") {
                     return String.fromCharCode(n);
@@ -927,7 +927,7 @@ export function addElementAfter(inElement, elements, at) {
 }
 
 
-export  function getAncestorElementOf(elt) {
+export function getAncestorElementOf(elt) {
     while (elt.parentElement) {
         elt = elt.parentElement;
     }
@@ -994,7 +994,13 @@ export function copySelectionItemArray(items, opt) {
         items = items.filter((item) => !item.noView);
     }
     return items.map(item => {
-        var newItem = Object.assign({}, item);
+        var newItem;
+        if (typeof item === "object" && ('text' in item)) {
+            newItem = Object.assign({}, item);
+        }
+        else {
+            newItem = { text: item + '', value: item }
+        }
         if (item.items) {
             newItem.items = copySelectionItemArray(item.items, opt);
         }
