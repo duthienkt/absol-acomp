@@ -249,7 +249,9 @@ CheckListBox.property.items = {
         this.itemHolders = items.map(it => new CLHolder(this, it));
 
         var res = this.itemHolders.reduce(function visit(ac, cr) {
-            ac.textWidth = Math.max(ac.textWidth, 3.5 * 14 + 1.75 * 14 * cr.level + 14 + measureTextWidth(cr.data.text + '') + 7 + 17);
+            var textWidth = 3.5 * 14 + 1.75 * 14 * cr.level + 14 + measureTextWidth(cr.data.text + '') + 7 + 17
+            if (cr.data.icon) textWidth += 32;
+            ac.textWidth = Math.max(ac.textWidth, textWidth);
             if (cr.data.desc) {
                 ac.descWidth = Math.max(ac.descWidth, measureTextWidth(cr.data.desc + ''));
 
