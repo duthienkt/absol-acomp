@@ -359,7 +359,7 @@ export function TTClonedRow(origin, queryResult, idx) {
     this.origin = origin;
     this.score = queryResult && queryResult[this.id];
     if (!queryResult) this.score = 1e6;
-    this.isOpened = this.score && this.score[0] < this.score[1];
+    this.isOpened = this.score && this.score[0] <= this.score[1];
     this.attach();
     if (this.isOpened) {
         this.subRows = this.origin.subRows.filter(row => queryResult[row.id])
