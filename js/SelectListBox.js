@@ -1,5 +1,4 @@
 import '../css/selectlistbox.css';
-import { prepareSearchForList, searchListByText } from "./list/search";
 import ACore from "../ACore";
 import { measureListSize, releaseItem, requireItem } from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
@@ -472,7 +471,6 @@ SelectListBox.property.items = {
         if (!(items instanceof Array)) items = [];
         items = copySelectionItemArray(items, { removeNoView: true });
 
-        prepareSearchForList(items);
         this._items = items;
         this._itemNodeList = this._itemsToNodeList(this._items);
         this._updateItemNodeIndex();
