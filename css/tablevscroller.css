@@ -1,5 +1,6 @@
 .absol-table-vscroller {
     position: relative;
+    --tvs-scroll-padding-bottom: 1px;
 }
 
 .absol-table-vscroller-head {
@@ -26,7 +27,7 @@
 
 .absol-table-vscroller-viewport {
     max-height: 100%;
-    padding-bottom: 1px;
+    padding-bottom: var(--tvs-scroll-padding-bottom);
     padding-top: 1px;
     overflow-y: auto;
 }

@@ -55,7 +55,7 @@
 
 .absol-table-scroller-fixed-viewport > table > thead,
 .absol-table-scroller-fixed-viewport > table {
-    border-top-color: transparent !important;
+    /*border-top-color: transparent !important;*/
 }
 
 .absol-table-scroller-fixed-hidden {
