@@ -1,9 +1,9 @@
 import '../css/fileinputbox.css';
-import ACore, {_, $} from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import DropZone from "./DropZone";
-import {fileAccept, fileSize2Text, isRealNumber, isURLAddress} from "./utils";
+import { fileAccept, fileInfoOf, fileSize2Text, isRealNumber, isURLAddress } from "./utils";
 import ExtIcons from '../assets/exticons/catalog.json';
-import {saveAs} from "absol/src/Network/FileSaver";
+import { saveAs } from "absol/src/Network/FileSaver";
 import MessageInput from "./messageinput/MessageInput";
 
 /***
@@ -31,16 +31,56 @@ function FileInputBox() {
     this.$removeBtn = $('.as-file-input-box-remove-btn', this)
         .on('click', this.clearValue.bind(this, true));
 
-    this.allowUpload = true;
     this._value = null;
-    this.value = this._value;
     this._fileSize = null;
-    this.fileSize = null;
     this._fileName = null;
-    this.fileName = null;
     this._fileType = null;
-    this.fileType = null;
-    this.downloadable = false;
+    this._valueInfo = null;
+    this._thumbnail = null;
+
+
+    /***
+     * default true
+     * @name allowUpload
+     * @type {boolean}
+     * @memberOf FileInputBox#
+     */
+    this.allowUpload = true;
+
+
+    /***
+     * @name value
+     * @type {null|any}
+     * @memberOf FileInputBox#
+     */
+    /***
+     * @name thumbnail
+     * @type {null|any}
+     * @memberOf FileInputBox#
+     */
+    /***
+     * @name fileSize
+     * @type {null|number}
+     * @memberOf FileInputBox#
+     */
+
+    /***
+     * @name fileType
+     * @type {null|string}
+     * @memberOf FileInputBox#
+     */
+    /***
+     * @name fileName
+     * @type {null|string}
+     * @memberOf FileInputBox#
+     */
+
+    /***
+     * default: false
+     * @name downloadable
+     * @type {boolean}
+     * @memberOf FileInputBox#
+     */
 }
 
 
@@ -72,9 +112,9 @@ FileInputBox.render = function () {
             {
                 class: 'as-file-input-box-info',
                 child: [
-                    {tag: 'span', class: 'as-file-input-box-file-name', child: {text: ''}},
+                    { tag: 'span', class: 'as-file-input-box-file-name', child: { text: '' } },
                     'br',
-                    {tag: 'span', class: 'as-file-input-box-file-size', child: {text: ''}},
+                    { tag: 'span', class: 'as-file-input-box-file-size', child: { text: '' } },
                 ]
             },
             {
@@ -94,6 +134,11 @@ FileInputBox.render = function () {
                 }
             },
 
+            {
+                class: 'as-file-input-box-checked',
+                child: 'span.mdi.mdi-check-bold'
+            },
+
         ]
     });
 };
@@ -102,7 +147,7 @@ FileInputBox.render = function () {
 FileInputBox.prototype.download = function () {
     var value = this.value;
     if (value) {
-        if (value && value.name && value.url){
+        if (value && value.name && value.url) {
             saveAs(value.url, value.name);
         }
         else {
@@ -114,7 +159,7 @@ FileInputBox.prototype.download = function () {
 FileInputBox.prototype.clearValue = function (userAction, event) {
     if (this.value) {
         this.value = null;
-        if (userAction){
+        if (userAction) {
             this.emit('change', {
                 type: 'change',
                 originalEvent: event,
@@ -123,38 +168,78 @@ FileInputBox.prototype.clearValue = function (userAction, event) {
             }, this);
         }
     }
-}
+};
+
+FileInputBox.prototype._updateThumbnail = function () {
+    var previewUrl;
+    var thumbnail = this.thumbnail;
+    var fileType = this.fileType;
+    if (thumbnail) {
+        if (typeof thumbnail === "string") {
+            previewUrl = thumbnail;
+        }
+        else if (thumbnail instanceof Blob || thumbnail instanceof File) {
+            thumbnail.url = thumbnail.url || URL.createObjectURL(thumbnail);
+            previewUrl = thumbnail.url;
+        }
+    }
+    if (!previewUrl) {
+        if (ExtIcons.indexOf(fileType) >= 0) {
+            previewUrl = MessageInput.iconAssetRoot + '/' + fileType + '.svg';
+        }
+        else {
+            previewUrl = MessageInput.iconAssetRoot + '/' + 'blank' + '.svg';
+
+        }
+    }
+
+    if (previewUrl) {
+        this.$bg.addStyle('backgroundImage', 'url("' + encodeURI(previewUrl) + '")');
+    }
+    else {
+        this.$bg.removeStyle('backgroundImage')
+    }
+};
+
+
+FileInputBox.prototype._updateFileName = function () {
+    var fileName = this.fileName;
+    if (fileName) {
+        this.$fileName.firstChild.data = fileName;
+        this.addClass('as-has-file-name');
+    }
+    else {
+        this.$fileName.firstChild.data = '';
+        this.removeClass('as-has-file-name');
+    }
+};
+
+FileInputBox.prototype._updateFileSize = function () {
+    var fileSize = this.fileName;
+    if (fileSize === null) {
+        this.$fileSize.firstChild.data = '';
+        this.removeClass('as-has-file-size');
+    }
+    else {
+        this.$fileSize.firstChild.data = fileSize2Text(fileSize);
+        this.addClass('as-has-file-size');
+    }
+};
 
 FileInputBox.property = {};
 
 FileInputBox.property.value = {
     set: function (value) {
         value = value || null;
-        var type = null;
-        var size = null;
-        var name = null;
-        if ((value instanceof File) || (value instanceof Blob)) {
-            size = value.size;
-            name = value.name;
-            type = name.split('.').pop().toLowerCase();
-
-        } else if (isURLAddress(value)) {
-            type = value.replace(/\.upload$/, '').split('.').pop();
-            name = value.split('/').pop().replace(/%20/g, ' ');
-            this.attr('title', value);
-        }
-        else if (value && value.name && value.url){//keeview file format
-            this.attr('title', value.url);
-            name = value.name;
-            type = name.split('.').pop().toLowerCase();
-        }
         this._value = value;
-        this.fileSize = size;
-        this.fileName = name;
-        this.fileType = type;
+        this._valueInfo = fileInfoOf(value);
+        this._updateThumbnail();
+        this._updateFileName();
+        this._updateFileSize();
         if (value) {
             this.addClass('as-has-value');
-        } else {
+        }
+        else {
             this.removeClass('as-has-value');
         }
     },
@@ -166,34 +251,26 @@ FileInputBox.property.value = {
 
 FileInputBox.property.fileType = {
     set: function (value) {
-        if (value) {
-            if (ExtIcons.indexOf(value) >= 0)
-                this.$bg.addStyle('backgroundImage', 'url(' + MessageInput.iconAssetRoot + '/' + value + '.svg)')
-            else
-                this.$bg.addStyle('backgroundImage', 'url(' + MessageInput.iconAssetRoot + '/' + 'blank' + '.svg)')
-        } else {
-            this.$bg.removeStyle('backgroundImage')
-        }
+        this._fileType = value;
+        this._updateThumbnail();
     },
+    /***
+     * @this FileInputBox
+     * @return {*}
+     */
     get: function () {
-        return this._fileType;
+        return this._fileType || (this._valueInfo && this._valueInfo.type) || null;
     }
 };
 
 FileInputBox.property.fileName = {
     set: function (value) {
         value = typeof value === 'string' ? value : null;
-        if (value) {
-            this.$fileName.firstChild.data = value;
-            this.addClass('as-has-file-name');
-        } else {
-            this.$fileName.firstChild.data = '';
-            this.removeClass('as-has-file-name');
-        }
         this._fileName = value;
+        this._updateFileName();
     },
     get: function () {
-        return this._fileName;
+        return this._fileName || (this._valueInfo && this._valueInfo.name) || null;
     }
 };
 
@@ -201,25 +278,32 @@ FileInputBox.property.fileSize = {
     set: function (value) {
         if (isRealNumber(value)) value = Math.max(0, value);
         else value = null;
-        if (value === null) {
-            this.$fileSize.firstChild.data = '';
-            this.removeClass('as-has-file-size');
-        } else {
-            this.$fileSize.firstChild.data = fileSize2Text(value);
-            this.addClass('as-has-file-size');
-        }
         this._fileSize = value;
+        this._updateFileSize();
     },
     get: function () {
-        return this._fileSize;
+        if (typeof this._fileSize === "number") return this._fileSize;
+        if (this._valueInfo && typeof this._valueInfo.size === "number") return this._valueInfo.size;
+        return null;
     }
 };
+
+FileInputBox.property.thumbnail = {
+    set: function (value) {
+        this._thumbnail = value || null;
+        this._updateThumbnail();
+    },
+    get: function () {
+        return this._thumbnail;
+    }
+}
 
 FileInputBox.property.allowUpload = {
     set: function (value) {
         if (value) {
             this.addClass('as-allow-upload');
-        } else {
+        }
+        else {
             this.removeClass('as-allow-upload');
         }
     },
@@ -232,7 +316,8 @@ FileInputBox.property.downloadable = {
     set: function (value) {
         if (value) {
             this.addClass('as-downloadable');
-        } else {
+        }
+        else {
             this.removeClass('as-downloadable');
         }
     },
@@ -246,7 +331,8 @@ FileInputBox.property.removable = {
     set: function (value) {
         if (value) {
             this.addClass('as-removable');
-        } else {
+        }
+        else {
             this.removeClass('as-removable');
         }
     },
@@ -263,6 +349,21 @@ FileInputBox.property.accept = {
     },
     get: function () {
         return this.$input.attr('accept') || null;
+    }
+};
+
+FileInputBox.property.checked = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-checked');
+        }
+        else {
+            this.removeClass('as-checked');
+
+        }
+    },
+    get: function () {
+        return this.hasClass('as-checked');
     }
 };
 
@@ -299,7 +400,7 @@ FileInputBox.eventHandler.input_fileDrop = function (event) {
     }
     if (file) {
         this.value = file;
-        this.emit('change', {type: 'change', originalEvent: event, file: file, action: 'drop', target: this}, this);
+        this.emit('change', { type: 'change', originalEvent: event, file: file, action: 'drop', target: this }, this);
     }
 
 };

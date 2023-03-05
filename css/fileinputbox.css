@@ -7,7 +7,7 @@
     border: 1px solid #dddddd;
     background-color: white;
     font-family: Arial, Helvetica, sans-serif;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .as-file-input-box-trigger:hover + .as-file-input-box-upload-overlay,
@@ -164,3 +164,41 @@
     color: rgb(0, 0, 250);
 }
 
+.as-file-input-box-checked {
+    display: none;
+    box-sizing: border-box;
+    z-index: 4;
+    position: absolute;
+    left: -1px;
+    top: -1px;
+    bottom: -1px;
+    right: -1px;
+    pointer-events: none;
+    border: 3px solid #0a90eb;
+    overflow: hidden;
+}
+
+.as-file-input-box.as-checked .as-file-input-box-checked{
+    display: block;
+}
+
+.as-file-input-box-checked::before {
+    content: "";
+    display: block;
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 40px;
+    height: 40px;
+    transform: rotate(45deg);
+    background-color: #0a90eb;
+}
+
+.as-file-input-box-checked .mdi {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 14px;
+    color: white;
+}
