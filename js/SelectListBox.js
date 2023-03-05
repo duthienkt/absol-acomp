@@ -84,15 +84,7 @@ SelectListBox.prototype._initDomHook = function () {
     this.domSignal.on('viewListAtFirstSelected', this.viewListAtFirstSelected.bind(this));
     this.domSignal.on('viewListAtCurrentScrollTop', this.viewListAtCurrentScrollTop.bind(this));
     this.searchMaster = new ListSearchMaster();
-    var checkView = () => {
-        if (this.isDescendantOf(document.body)) {
-            setTimeout(checkView, 10000);
-        }
-        else {
-            this.searchMaster.destroy();
-        }
-    }
-    setTimeout(checkView, 30000);
+
 };
 
 SelectListBox.prototype._initControl = function () {

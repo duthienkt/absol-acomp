@@ -40,6 +40,17 @@ function SelectMenu() {
             preupdateposition: this.eventHandler.preUpdateListPosition
         }
     });
+
+    var checkView = () => {
+        if (this.isDescendantOf(document.body)) {
+            setTimeout(checkView, 10000);
+        }
+        else {
+            if (this.$selectlistBox.searchMaster)
+                this.$selectlistBox.searchMaster.destroy();
+        }
+    }
+    setTimeout(checkView, 30000);
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
@@ -133,8 +144,8 @@ SelectMenu.property.items = {
     set: function (items) {
         items = items || [];
         this.$selectlistBox.items = items;
-        this.addStyle('--select-list-estimate-width', (this.$selectlistBox._estimateWidth)/14 + 'em');
-        this.addStyle('--select-list-desc-width', (this.$selectlistBox._estimateDescWidth)/14 + 'em');
+        this.addStyle('--select-list-estimate-width', (this.$selectlistBox._estimateWidth) / 14 + 'em');
+        this.addStyle('--select-list-desc-width', (this.$selectlistBox._estimateDescWidth) / 14 + 'em');
         this.updateItem();
     },
     get: function () {
