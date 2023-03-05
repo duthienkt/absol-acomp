@@ -46,15 +46,17 @@ export function ExpNode() {
         });
     this.on('keydown', this.eventHandler.buttonKeydown);
 
-    this.$toggleIcon = $('toggler-ico', this)
-        .on('click', function (event) {
-            thisEN.emit('presstoggle', copyEvent(event, {target: thisEN, type: 'pressremove'}), this);
-        });
+    this.$toggleIcon = $('toggler-ico', this);
 
-    this.on('click', function (event) {
-        if (!EventEmitter.hitElement(thisEN.$removeIcon, event) && !EventEmitter.hitElement(thisEN.$toggleIcon, event))
-            thisEN.emit('press', copyEvent(event, {target: thisEN, type: 'press'}), this);
-    })
+    this.on('click', (event)=> {
+        var toggleBound = this.$toggleIcon.getBoundingClientRect();
+        if (toggleBound.width > 0 && event.clientX <= toggleBound.right) {
+            this.emit('presstoggle', copyEvent(event, {target: thisEN, type: 'pressremove'}), this);
+        }
+        else if (!EventEmitter.hitElement(thisEN.$removeIcon, event)) {
+            this.emit('press', copyEvent(event, {target: thisEN, type: 'press'}), this);
+        }
+    });
 
     this.$iconCtn = $('div.absol-exp-node-ext-icon', this);
     this.$extIcon = $('img.absol-exp-node-ext-icon', this);
