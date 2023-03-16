@@ -547,6 +547,7 @@ ExpTree.eventHandler.nodePressToggle = function (event) {
 export function ExpGroup() {
     this.addClass('as-exp-group');
     this.__isExpTree__ = true;
+    this.name = '';
 }
 
 

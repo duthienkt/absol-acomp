@@ -296,7 +296,7 @@ FileInputBox.property.thumbnail = {
     get: function () {
         return this._thumbnail;
     }
-}
+};
 
 FileInputBox.property.allowUpload = {
     set: function (value) {
