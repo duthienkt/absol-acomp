@@ -7,6 +7,13 @@ var _ = ACore._;
 var $ = ACore.$;
 
 
+/***
+ *
+ *  @augments HTMLTextAreaElement
+ *  @augments AElement
+ *
+ * @constructor
+ */
 function TextArea2() {
     this.on('keydown', this.eventHandler.keydown);
     this.on('paste', this.eventHandler.paste);
@@ -29,6 +36,11 @@ TextArea2.getRenderPre = function () {
         }).addTo(SelectMenu.getRenderSpace());
     }
     return TextArea2.$preSpace;
+};
+
+TextArea2.prototype.updateSize = function () {
+    var heightStyle = this._measureHeight(this.value);
+    this.addStyle('height', heightStyle);
 };
 
 TextArea2.eventHandler = {};
@@ -66,8 +78,8 @@ TextArea2.eventHandler.keydown = function (event) {
     }
     var newText = leftText + middText + rightText;
 
-    var heightSyle = this._measureHeight(newText);
-    this.addStyle('height', heightSyle);
+    var heightStyle = this._measureHeight(newText);
+    this.addStyle('height', heightStyle);
 };
 
 
