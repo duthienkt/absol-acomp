@@ -30,6 +30,7 @@ import ListDictionary from "./js/list/ListDictionary";
 import OverviewWidget from "./js/keeview/OverviewWidget";
 import OverviewPage from "./js/keeview/OverviewPage";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
+import { FinderFileSystem } from "./js/finder/Finder";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -52,6 +53,7 @@ absol.MessageInput = MessageInput
 absol.EmojiPicker = EmojiPicker;
 absol.ContextCaptor = ContextCaptor;
 absol.ListDictionary = ListDictionary;
+absol.FinderFileSystem = FinderFileSystem;
 
 window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;
@@ -73,7 +75,7 @@ Dom.documentReady.then(function () {
 
 Object.assign(absol.$, utils);
 
-materializeIconTrigger();
+// materializeIconTrigger();
 
 absol.MaterialDesignIconsNameMap = MaterialDesignIconsNameMap;
 absol.openFileDialog = openFileDialog;
