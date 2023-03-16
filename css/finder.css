@@ -1,0 +1,278 @@
+.as-finder {
+    font-size: 1rem;
+    position: relative;
+    --finder-header-height: 51px;
+    --finder-nav-width: 301px;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+.as-finder-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: var(--finder-header-height);
+    width: 100%;
+    border-bottom: 1px solid #dddddd;
+    box-sizing: border-box;
+}
+
+.as-finder-header .as-flexicon-button {
+    min-width: 110px;
+}
+
+.as-finder-nav-ctn {
+    position: absolute;
+    left: 0;
+    top: var(--finder-header-height);
+    width: var(--finder-nav-width);
+    bottom: 0;
+    border-right: 1px solid #dddddd;
+}
+
+
+.as-finder-body {
+    position: absolute;
+    right: 0;
+    left: var(--finder-nav-width);
+    top: var(--finder-header-height);
+    bottom: 0;
+}
+
+.as-finder-content-ctn {
+    width: 100%;
+    height: 100%;
+}
+
+
+.as-finder-normal-action-button-ctn,
+.as-finder-tiny-action-button-ctn {
+    position: absolute;
+    left: 10px;
+    top: calc(50% - 15px);
+    white-space: nowrap;
+    max-width: calc(100% - 50px);
+    overflow: hidden;
+}
+
+.as-finder-normal-action-button-ctn > button:not(:last-child),
+.as-finder-tiny-action-button-ctn > button:not(:last-child) {
+    margin-right: 10px;
+}
+
+.as-finder-tiny-action-button-ctn button {
+    background-color: transparent;
+    border: none;
+    border-radius: 3px;
+    width: 30px;
+    height: 30px;
+    font-size: inherit;
+    padding: 0;
+    color: var(--as-transparent-button-text-color);
+}
+
+.as-finder-tiny-action-button-ctn button span {
+    font-size: 1.3em;
+}
+
+.as-finder-tiny-action-button-ctn button:hover {
+    color: var(--as-transparent-button-text-hover-color);
+}
+
+.as-finder-tiny-action-button-ctn button:active {
+    color: var(--as-transparent-button-text-active-color);
+}
+
+
+.as-action-button-minimized .as-finder-normal-action-button-ctn,
+.as-finder:not(.as-action-button-minimized) .as-finder-tiny-action-button-ctn {
+    visibility: hidden;
+}
+
+.as-finder[data-selected-count="0"] .as-finder-header button[name="view"],
+.as-finder[data-selected-count="0"] .as-finder-header button[name="delete"],
+.as-finder[data-selected-count="0"] .as-finder-header button[name="download"],
+.as-finder[data-selected-count="0"] .as-finder-header button[name="move"],
+.as-finder:not([data-selected-count="1"]) .as-finder-header button[name="rename"] {
+    display: none;
+}
+
+.as-finder-nav-ctn {
+    overflow-y: auto;
+
+}
+
+.as-finder-content-ctn {
+    overflow-y: auto;
+    z-index: 1;
+}
+
+.as-finder.as-mini-layout .as-finder-body {
+    left: 0;
+}
+
+.as-finder.as-mini-layout .as-finder-nav-ctn {
+    left: calc(var(--finder-nav-width) * -1);
+}
+
+.as-finder-content::before,
+.as-finder-content::after {
+    content: "";
+    display: block;
+}
+
+.as-finder-content .as-file-thumbnail {
+    display: inline-block;
+    margin: 5px;
+}
+
+
+.as-finder-content {
+    user-select: none;
+}
+
+.as-finder:not(.as-writable-folder) .as-finder-header button[name="upload"] {
+    display: none;
+}
+
+.as-finder-select-area {
+    position: fixed;
+    box-sizing: border-box;
+    border: 2px solid rgba(0, 103, 240, 0.5);
+    width: 100px;
+    height: 100px;
+    background-color: rgba(0, 103, 240, 0.2);
+    /*background-color: ;*/
+}
+
+.as-finder:not(.as-dragging) .as-file-thumbnail:hover {
+    background-color: rgba(29, 161, 255, 0.13);
+}
+
+
+.as-finder-upload-overlay {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 4;
+    backdrop-filter: blur(1px);
+    -webkit-backdrop-filter: blur(1px);
+    background-color: rgba(167, 167, 167, 0.1);
+    font-size: 2rem;
+    text-align: center;
+    text-shadow: 2px 2px 3px white, -2px -2px 3px white, -2px 2px 3px white, 2px -2px 3px white;
+    color: rgb(97, 79, 100);
+    font-weight: bold;
+    padding-top: calc(50% - 6em);
+}
+
+
+.as-finder-upload-overlay-icon-ctn {
+    text-align: center;
+    color: #1da1ff;
+    font-size: 8rem;
+
+}
+
+.as-finder-body.as-drag-over .as-finder-upload-overlay {
+    display: block;
+}
+
+
+/**************************************************/
+
+.as-file-thumbnail {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.as-file-thumbnail-background {
+    display: block;
+    width: 100px;
+    height: 100px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    border: 1px solid #c0c0c0;
+}
+
+.as-file-thumbnail-check {
+    display: none;
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    bottom: -2px;
+    right: -2px;
+    overflow: hidden;
+    z-index: 4;
+    pointer-events: none;
+    border: 2px solid #0a90eb;
+}
+
+.as-file-thumbnail.as-checked .as-file-thumbnail-check {
+    display: block;
+}
+
+.as-file-thumbnail-check::before {
+    content: "";
+    position: absolute;
+    right: -28px;
+    top: -28px;
+    width: 56px;
+    height: 56px;
+    transform: rotate(45deg);
+    background-color: #0a90eb;
+}
+
+.as-file-thumbnail-check .mdi {
+    display: inline-block;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    font-size: 14px;
+    color: white;
+}
+
+.as-file-thumbnail-file-name {
+    word-wrap: break-word; /* IE 5.5-7 */
+    white-space: -moz-pre-wrap; /* Firefox 1.0-2.0 */
+    white-space: pre-wrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100px;
+    max-height: 6.2em;
+    line-height: 1.5;
+    text-align: center;
+    font-size: 13px;
+    padding-top: 0.2em;
+    box-sizing: border-box;
+}
+
+.as-file-thumbnail-file-name > span:last-child {
+    white-space: nowrap;
+}
+
+.as-finder-folder-dialog-tree-ctn {
+    max-height: calc(90vh - 250px);
+    overflow-y: auto;
+    border: 1px solid #dddddd;
+}
+
+.as-finder-folder-dialog-tree-ctn > .as-exp-group {
+    width: 300px;
+}
+
+.as-finder-folder-dialog-selected-ctn {
+    padding-bottom: 10px;
+    white-space: pre-wrap;
+}
+
+.as-finder-folder-dialog-selected-ctn > span {
+    white-space: nowrap;
+}

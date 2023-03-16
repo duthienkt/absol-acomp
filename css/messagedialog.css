@@ -27,12 +27,12 @@
 
 .as-message-dialog-footer {
     text-align: right;
-    padding: 5px 20px;
+    padding: 10px 20px;
     border-top: 1px solid #e9ecef;
 }
 
 .as-message-dialog-footer:empty,
-.as-message-dialog-header:empty{
+.as-message-dialog-header:empty {
     display: none;
 }
 
