@@ -1,0 +1,149 @@
+.as-tree-chart * {
+    box-sizing: border-box;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+
+}
+
+.as-tree-chart {
+    --node-background-color: rgba(0, 150, 150);
+    --node-text-color: white;
+}
+
+.as-tree-chart-node {
+    display: inline-block;
+    white-space: normal;
+    vertical-align: top;
+    position: relative;
+}
+
+.as-tree-chart-text-ctn {
+    text-align: center;
+    position: relative;
+}
+
+.as-tree-chart-text {
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid black;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    background-color: var(--node-background-color);
+    color: var(--node-text-color);
+}
+
+.as-tree-chart-node.as-has-children > .as-tree-chart-text-ctn {
+    padding-bottom: 10px;
+}
+
+.as-tree-chart-node.as-has-children > .as-tree-chart-text-ctn::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    height: 10px;
+    border-left: 1px solid black;
+}
+
+.as-tree-chart-child-ctn {
+    white-space: nowrap;
+    padding-top: 10px;
+}
+
+.as-tree-chart-node:not(.as-horizontal) > .as-tree-chart-child-ctn > .as-tree-chart-node:not(:last-child) {
+    margin-right: 10px;
+}
+
+.as-tree-chart-child-ctn > .as-tree-chart-node:not(:first-child):not(:last-child)::before {
+    content: "";
+    border-top: 1px solid black;
+    position: absolute;
+    left: 0;
+    right: -10px;
+    top: -10px;
+}
+
+.as-tree-chart-child-ctn > .as-tree-chart-node:first-child:not(:last-child)::before {
+    content: "";
+    border-top: 1px solid black;
+    position: absolute;
+    left: 50%;
+    right: -10px;
+    top: -10px;
+}
+
+.as-tree-chart-child-ctn > .as-tree-chart-node > .as-tree-chart-text-ctn .as-tree-chart-text::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    height: 10px;
+    top: -11px;
+    border-left: 1px solid black;
+}
+
+.as-tree-chart-child-ctn > .as-tree-chart-node:not(:first-child):last-child > .as-tree-chart-text-ctn::before {
+    content: "";
+    border-top: 1px solid black;
+    position: absolute;
+    left: 0;
+    width: calc(50% + 1px);
+    top: -10px;
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-child-ctn  .as-tree-chart-text{
+    text-align: left;
+}
+
+.as-tree-chart-node.as-horizontal > .as-tree-chart-text-ctn .as-tree-chart-text {
+    display: block;
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-node {
+    display: block;
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-child-ctn {
+    padding-left: 20px;
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-child-ctn .as-tree-chart-text-ctn {
+    text-align: left;
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-text-ctn::after {
+    left: 10px;
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-node:not(:last-child)::before {
+    right: unset;
+    bottom: 0;
+    border-top: none;
+    border-left: 1px solid black;
+    left: -10px;
+    height: unset;
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-child-ctn > .as-tree-chart-node > .as-tree-chart-text-ctn .as-tree-chart-text::before {
+    border-left: none;
+    border-top: 1px solid black;
+    left: -10px;
+    width: 10px;
+    top: 50%;
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-node:last-child > .as-tree-chart-text-ctn::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: -10px;
+    height: calc(50% + 10px);
+    border-top: none;
+    border-left: 1px solid black;
+    /*width: unset;*/
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-node.as-has-children:last-child > .as-tree-chart-text-ctn::before {
+    height: calc(50% + 5px);
+    /*width: unset;*/
+}

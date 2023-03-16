@@ -154,6 +154,8 @@ import MDualSelectBox from "../dualselectbox/MDualSelectBox";
 import DualSelectMenuV2 from '../dualselectmenu/DualSelectMenu';
 import TreeTable from "../treetable/TreeTable";
 import LinearColorTinyBar from "../LinearColorTinyBar";
+import Finder from "../finder/Finder";
+import TreeChart from "../TreeChart";
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -185,6 +187,7 @@ export var publicCreators = [
     FileInputBox,
     FileListItem,
     FileListInput,
+    Finder,
     Scrollbar,
     VScrollbar,
     HScrollbar,
@@ -328,7 +331,9 @@ export var publicCreators = [
     MCheckTreeBox,
     MCheckTreeLeafBox,
     MSelectTreeLeafBox,
-    MDualSelectBox
+    MDualSelectBox,
+
+    TreeChart
 ];
 
 /***
