@@ -529,7 +529,7 @@ MultiCheckTreeMenu.property.values = {
      * @this MultiCheckTreeMenu
      */
     get: function () {
-        if ('pendingValues' in this) return  this.pendingValues;
+        if ('pendingValues' in this) return  this._explicit(this.pendingValues);
         return this._explicit(this._values);
     }
 };
