@@ -1,4 +1,5 @@
 import '../../css/finder.css';
+import '../../css/mobileapp.css';
 import ACore, { _, $, $$ } from "../../ACore";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import FlexiconButton from "../FlexiconButton";
@@ -6,7 +7,7 @@ import OOP from "absol/src/HTML5/OOP";
 import { ExpGroup, ExpTree } from "../ExpTree";
 import MessageInput from "../messageinput/MessageInput";
 import ext2MineType from "absol/src/Converter/ext2MineType";
-import { openFileDialog, openYesNoQuestionDialog, vScrollIntoView } from "../utils";
+import { fileInfoOf, measureText, openFileDialog, openYesNoQuestionDialog, vScrollIntoView } from "../utils";
 import { randomArbitrary } from "absol/src/Math/random";
 import TaskManager from "absol/src/AppPattern/TaskManager";
 import Modal from "../Modal";
@@ -23,6 +24,11 @@ import ContextCaptor from "../ContextMenu";
 import TextArea2 from "../TextArea2";
 import FileThumbnail from "./FileThumbnail";
 import noop from "absol/src/Code/noop";
+import SearchTextInput from "../Searcher";
+import Context from "absol/src/AppPattern/Context";
+import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import { randomIdent } from "absol/src/String/stringGenerate";
+import DomSignal from "absol/src/HTML5/DomSignal";
 
 /***
  * @extends AElement
@@ -42,24 +48,46 @@ function Finder() {
         this.navCtrl.onStart();
         this.navCtrl.notifyVisibleContentItems();
         ContextCaptor.auto();
-
     });
+
+    this.domSignal = new DomSignal(_('attachhook').addTo(this));
     this.$header = $('.as-finder-header', this);
     this.$nomalActionCtn = $('.as-finder-normal-action-button-ctn', this);
     this.$tinyActionCtn = $('.as-finder-tiny-action-button-ctn', this);
+    this.$contentHeader = $('.as-finder-content-header', this);
 
     this.$navCtn = $('.as-finder-nav-ctn', this);
     this.$nav = $(ExpGroup.tag, this.$navCtn);
+
+    this.$searchCtn = $('.as-finder-search-ctn', this);
+
+
     this.$contentCtn = $('.as-finder-content-ctn', this);
     this.$content = $('.as-finder-content', this);
-    this.$body = $('.as-finder-body', this)
+    this.$body = $('.as-finder-body', this);
+    this.$commandButtons = $$('.as-finder-nav-header button', this)
+        .concat($$('.as-finder-content-header button', this))
+        .concat($$('.as-finder-search-footer button', this))
+        .concat($$('.as-finder-search-header button', this))
+        .reduce((ac, cr) => {
+            ac[cr.attr('name')] = cr;
+            cr.on('click', () => {
+                this.execCommand(cr.attr('name'));
+            });
+            return ac;
+        }, {});
+
+    this.$searchTypeSelect = $('.as-finder-search-type-select', this);
+    this.$searchText = $('.as-finder-search-text', this);
+
     this.fileSystem = new AbsolFileSystem();
     this.layoutCtn = new LayoutController(this);
     this.navCtrl = new NavigatorController(this);
     this.selectCtrl = new SelectController(this);
     this.uploadCtrl = new UploadController(this);
     this.commandCtrl = new CommandController(this);
-    this.folderDialpg = new FolderDialog(this);
+    this.folderDialog = new FolderDialog(this);
+    this.searchCtrl = new SearchController(this);
 
     /***
      * @type {string}
@@ -83,6 +111,7 @@ Finder.tag = 'Finder'.toLowerCase();
 Finder.render = function () {
     return _({
         class: 'as-finder',
+        extendEvent: ['selectedchange'],
         attr: {
             'data-selected-count': '0'
         },
@@ -112,15 +141,158 @@ Finder.render = function () {
                 ]
             },
             {
-                class: ['as-finder-nav-ctn', 'as-bscroller'],
-                child: {
-                    tag: ExpGroup.tag
-                }
+                class: ['as-finder-nav-ctn'],
+                child: [
+                    {
+                        class: 'as-finder-nav-header',
+                        child: [
+                            {
+                                class: 'as-finder-nav-header-left',
+                                child: [{
+                                    tag: 'button',
+                                    class: 'as-transparent-button',
+                                    attr: { title: "Close Navigator", name: 'nav_toggle' },
+                                    child: 'span.mdi.mdi-menu-open'
+                                }]
+                            },
+                            {
+                                class: 'as-finder-nav-header-right',
+                                child: [
+                                    {
+                                        tag: 'button',
+                                        class: 'as-transparent-button',
+                                        attr: { title: "Search", name: 'switch_to_search' },
+                                        child: 'span.mdi.mdi-magnify',
+                                    },
+                                    {
+                                        tag: 'button',
+                                        class: 'as-transparent-button',
+                                        attr: { title: "Expand All", name: 'nav_expand_all' },
+
+                                        child: 'span.mdi.mdi-arrow-expand-vertical',
+                                    },
+                                    {
+                                        tag: 'button',
+                                        class: 'as-transparent-button',
+                                        attr: { title: "Collapse All", name: 'nav_collapse_all' },
+                                        child: 'span.mdi.mdi-arrow-collapse-vertical'
+                                    },
+                                    {
+                                        tag: 'button',
+                                        class: 'as-transparent-button',
+                                        attr: { title: "Reload", name: 'reload' },
+
+                                        child: 'span.mdi.mdi-reload'
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        tag: ExpGroup.tag,
+                        class: 'as-bscroller'
+                    }
+                ]
+            },
+            {
+                class: 'as-finder-search-ctn',
+                child: [
+                    {
+                        class: 'as-finder-search-header',
+                        child: [{
+                            tag: 'button',
+                            class: 'as-transparent-button',
+                            attr: { title: "Close Navigator", name: 'nav_toggle' },
+                            child: 'span.mdi.mdi-menu-open'
+                        }]
+                    },
+                    {
+                        class: 'as-finder-search-body',
+                        child: [
+                            {
+                                tag: SearchTextInput.tag,
+                                class: 'as-finder-search-text',
+                            },
+                            {
+                                class: 'as-finder-search-field',
+                                child: [
+                                    { child: { text: 'Kiểu' } },
+                                    {
+                                        child: {
+                                            tag: 'selectmenu',
+                                            class: 'as-finder-search-type-select',
+                                            props: {
+                                                items: [
+                                                    { text: 'Tất cả', value: 'all', icon: 'span.mdi.mdi-asterisk' },
+                                                    {
+                                                        text: 'Hình ảnh',
+                                                        value: 'image',
+                                                        icon: 'span.mdi.mdi-image-outline'
+                                                    },
+                                                    {
+                                                        text: 'Tài liệu',
+                                                        value: 'document',
+                                                        icon: 'span.mdi.mdi-file-document'
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                class: 'as-finder-search-footer',
+                                child: [
+                                    {
+                                        tag: FlexiconButton.tag,
+                                        attr: { name: 'start_search' },
+                                        props: {
+                                            text: 'OK'
+                                        }
+                                    },
+                                    {
+                                        tag: FlexiconButton.tag,
+                                        attr: { name: 'cancel_search' },
+                                        props: {
+                                            text: 'Hủy'
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
             },
             {
                 tag: DropZone.tag,
-                class: 'as-finder-body',
+                attr: { 'data-view-as': 'content' },
+                class: ['as-finder-body'],
                 child: [
+                    {
+                        class: 'as-finder-content-header',
+                        child: [
+                            {
+                                class: 'as-finder-content-header-left',
+                                child: [
+                                    {
+                                        tag: 'button',
+                                        attr: { title: 'Open Navigator', name: 'nav_toggle' },
+                                        class: 'as-transparent-button',
+                                        child: ['span.mdi.mdi-menu']
+                                    },
+                                    {
+                                        tag: 'button',
+                                        attr: { title: 'View As List', name: 'content_view_as' },
+                                        class: 'as-transparent-button',
+                                        child: ['span.mdi.mdi-format-list-bulleted-square']
+                                    }
+                                ]
+                            },
+                            {
+                                class: 'as-finder-content-header-right',
+                            }
+                        ]
+                    },
                     {
                         tag: Hanger.tag,
                         class: 'as-finder-content-ctn',
@@ -128,7 +300,7 @@ Finder.render = function () {
                             hangOn: 5
                         },
                         child: {
-                            class: 'as-finder-content'
+                            class: ['as-finder-content',]
                         }
                     },
                     {
@@ -191,6 +363,12 @@ Finder.property.rootPath = {
 };
 
 
+Finder.property.selectedFiles = {
+    get: function () {
+        return this.selectCtrl.$selectedItems.map(elt => elt.stat);
+    }
+}
+
 Finder.prototype.execCommand = function (name) {
     return this.commandCtrl.execCommand.apply(this.commandCtrl, arguments);
 };
@@ -237,6 +415,9 @@ export var FinderCommands = {};
 FinderCommands.upload = {
     text: 'Tải lên',
     icon: 'span.mdi.mdi-upload-outline',
+    match: function (fileElt) {
+        return !fileElt && this.searchCtrl.state !== 'RUNNING';
+    },
     /***
      * @this Finder
      */
@@ -301,11 +482,10 @@ FinderCommands.delete = {
                         {
                             style: { display: 'table-cell', padding: '5px 10px' },
                             child: {
-                                class: 'as-delete-check',
+                                class: 'as-finder-task-check',
                                 style: {
                                     'min-width': '3em',
                                     textAlign: 'right',
-                                    color: 'rgb(30,237,219)'
                                 },
                                 child: 'span'
                             }
@@ -330,17 +510,33 @@ FinderCommands.delete = {
                 on: {
                     action: (event, sender) => {
                         var promises;
+                        var errors = [];
                         if (event.action.name === 'ok') {
                             sender.$actionBtns[0].disabled = true;
                             sender.$actionBtns[0].text = "Đang tiến hành xóa..";
                             sender.$actionBtns[1].disabled = true;
                             promises = paths.map((path, i) => {
                                 return this.fileSystem.unlink(path).then(() => {
-                                    $('.as-delete-check', contentElt.firstChild.childNodes[i]).addChild(_('.span.mdi.mdi-check'))
+                                    $('.as-finder-task-check', contentElt.firstChild.childNodes[i]).addChild(_('.span.mdi.mdi-check'))
+                                }).catch(err => {
+                                    errors.push(err);
+                                    $('.as-finder-task-check', contentElt.firstChild.childNodes[i])
+                                        .addChild(_('.span.mdi.mdi-alert-decagram-outline').attr('title', err.message))
                                 });
                             });
                             Promise.all(promises).then(() => {
-                                this.navCtrl.reload(this.path, true).then(() => modal.remove());
+                                var commands = {};
+                                if (errors.length > 0) {
+                                    errors.forEach(err => {
+                                        if (err.command) {
+                                            commands[err.command] = true;
+                                        }
+                                    });
+                                    if (commands.reload) this.execCommand('reload');
+                                }
+                                else {
+                                    this.navCtrl.reload(this.path, true).then(() => modal.remove());
+                                }
                             });
                         }
                         else {
@@ -358,6 +554,9 @@ FinderCommands.delete = {
 FinderCommands.view = {
     icon: 'span.mdi.mdi-eye-outline',
     text: 'Xem',
+    match: function (fileElt) {
+        return !!fileElt;
+    },
     /***
      * @this Finder
      */
@@ -366,8 +565,14 @@ FinderCommands.view = {
         if (!elt) return;
         var url = elt.stat.url;
         if (!url) return;
-        url = encodeURI(url);
         var type = elt.fileType;
+        if (type === 'xlsx' || type === 'docx') {
+            url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(url);
+        }
+        else {
+            url = encodeURI(url);
+        }
+
         var mineType = ext2MineType[type] || 'none';
         var content;
         if (mineType.startsWith('video')) {
@@ -484,8 +689,8 @@ FinderCommands.download = {
 FinderCommands.rename = {
     icon: 'span.mdi.mdi-rename',
     text: 'Đổi tên',
-    math: function (elt) {
-        return this.selectCtrl.$selectedItems.length === 1;
+    match: function (elt) {
+        return !!elt;
     },
     /***
      * @this Finder
@@ -575,7 +780,7 @@ FinderCommands.move = {
         var names = itemElements.map(elt => elt.fileName);
         if (names.length === 0) return;
         var currentFolderPath = this.path;
-        this.folderDialpg.open(currentFolderPath, false, newFolderPath => newFolderPath !== currentFolderPath, 'Di chuyển file').then(newFolderPath => {
+        this.folderDialog.open(currentFolderPath, false, newFolderPath => newFolderPath !== currentFolderPath, 'Di chuyển file').then(newFolderPath => {
             if (!newFolderPath) return;
             if (newFolderPath === currentFolderPath) return;
             var contentElt = _({
@@ -597,11 +802,10 @@ FinderCommands.move = {
                             {
                                 style: { display: 'table-cell', padding: '5px 10px' },
                                 child: {
-                                    class: 'as-delete-check',
+                                    class: 'as-finder-task-check',
                                     style: {
                                         'min-width': '3em',
                                         textAlign: 'right',
-                                        color: 'rgb(30,237,219)'
                                     },
                                     child: 'span'
                                 }
@@ -635,14 +839,30 @@ FinderCommands.move = {
                     }
                 }
             }).addTo(document.body);
+            var errors = [];
             var promises = paths.map((path, i) => {
                 var newPath = newFolderPath + '/' + path.split('/').pop();
                 return this.fileSystem.move(path, newPath).then(() => {
-                    $('.as-delete-check', contentElt.firstChild.childNodes[i]).addChild(_('.span.mdi.mdi-check'))
+                    $('.as-finder-task-check', contentElt.firstChild.childNodes[i]).addChild(_('.span.mdi.mdi-check'))
+                }).catch(err => {
+                    errors.push(err);
+                    $('.as-finder-task-check', contentElt.firstChild.childNodes[i])
+                        .addChild(_('.span.mdi.mdi-alert-decagram-outline').attr('title', err.message))
                 });
             });
             Promise.all(promises).then(() => {
-                this.navCtrl.reload(this.path, true).then(() => modal.remove());
+                var commands = {};
+                if (errors.length > 0) {
+                    errors.forEach(err => {
+                        if (err.command) {
+                            commands[err.command] = true;
+                        }
+                    });
+                    if (commands.reload) this.execCommand('reload');
+                }
+                else {
+                    this.navCtrl.reload(this.path, true).then(() => modal.remove());
+                }
             });
 
         });
@@ -664,7 +884,7 @@ FinderCommands.move_dir = {
         var currentFolderPath = path.split('/');
         var name = currentFolderPath.pop();
         currentFolderPath = currentFolderPath.join('/');
-        this.folderDialpg.open(currentFolderPath, true, newPath => !newPath.startsWith(path), 'Di chuyển thư mục').then(newFolderPath => {
+        this.folderDialog.open(currentFolderPath, true, newPath => !newPath.startsWith(path), 'Di chuyển thư mục').then(newFolderPath => {
             if (!newFolderPath) return;
             return this.fileSystem.move(path, newFolderPath + '/' + name).then(() => {
                 this.path = newFolderPath + '/' + name;
@@ -673,8 +893,6 @@ FinderCommands.move_dir = {
                 });
             });
         })
-
-
     }
 };
 
@@ -710,6 +928,100 @@ FinderCommands.select_all = {
     }
 };
 
+FinderCommands.nav_expand_all = {
+    /***
+     * @this Finder
+     */
+    exec: function () {
+        this.navCtrl.expandAll();
+    }
+};
+
+FinderCommands.nav_collapse_all = {
+    /***
+     * @this Finder
+     */
+    exec: function () {
+        this.navCtrl.collapseAll();
+    }
+};
+
+
+FinderCommands.reload = {
+    /***
+     * @this Finder
+     */
+    exec: function () {
+        this.fileSystem.clearCache();
+        this.navCtrl.reload().then(() => {
+            this.navCtrl.viewDir(this.path);
+        });
+    }
+};
+
+FinderCommands.content_view_as = {
+    /***
+     * @this Finder
+     */
+    exec: function () {
+        var viewAs = this.$body.attr('data-view-as');
+        if (viewAs === 'content') {
+            this.$body.attr('data-view-as', 'list');
+            this.$commandButtons['content_view_as'].attr('title', 'View As Content');
+            this.$commandButtons['content_view_as'].firstChild.attr('class', 'mdi mdi-view-grid');
+
+        }
+        else {
+            this.$body.attr('data-view-as', 'content');
+            this.$commandButtons['content_view_as'].attr('title', 'View As List');
+            this.$commandButtons['content_view_as'].firstChild.attr('class', 'mdi mdi-format-list-bulleted-square');
+
+
+        }
+    }
+};
+
+FinderCommands.switch_to_search = {
+    /***
+     * @this Finder
+     */
+    exec: function () {
+        this.searchCtrl.start();
+    }
+};
+
+FinderCommands.cancel_search = {
+    /***
+     * @this Finder
+     */
+    exec: function () {
+        this.searchCtrl.stop();
+        this.navCtrl.viewDir(this.path);
+    }
+};
+
+
+FinderCommands.start_search = {
+    /***
+     * @this Finder
+     */
+    exec: function () {
+        this.searchCtrl.search();
+    }
+};
+
+FinderCommands.nav_toggle = {
+    icon: 'span.mdi.mdi-menu',
+    exec: function () {
+        if (this.hasClass('as-nav-open')) {
+            this.removeClass('as-nav-open');
+        }
+        else {
+            this.addClass('as-nav-open');
+        }
+    }
+};
+
 /***
  *
  * @param {Finder} elt
@@ -717,26 +1029,55 @@ FinderCommands.select_all = {
  */
 function LayoutController(elt) {
     this.elt = elt;
+    this.actionButtonWidth = 0;
+    this.elt.domSignal.on('requestUpdateActionButtonSize', this.updateActionButtonSize.bind(this));
+    this.elt.on('click', this.ev_click.bind(this))
+
 }
+
+LayoutController.prototype.requestUpdateActionButtonSize = function () {
+    this.elt.domSignal.emit('requestUpdateActionButtonSize');
+};
+
+LayoutController.prototype.updateActionButtonSize = function () {
+    var font = this.elt.$nomalActionCtn.getComputedStyleValue('font');
+    var fontSize = this.elt.$nomalActionCtn.getFontSize();
+    this.actionButtonWidth = Array.prototype.reduce.call(this.elt.$nomalActionCtn.childNodes, (ac, cr) => {
+        return ac + Math.max(110, 0.715 * fontSize * 2 + measureText(cr.text, font).width) + 10;
+    }, 60);
+    this.update();
+};
 
 LayoutController.prototype.update = function () {
     var bound = this.elt.getBoundingClientRect();
     if (bound.width < 500) {
-        this.elt.addClass('as-mini-layout');
+        if (!this.elt.hasClass('as-mini-layout'))
+            this.elt.addClass('as-mini-layout');
     }
     else {
-        this.elt.removeClass('as-mini-layout');
+        if (this.elt.hasClass('as-mini-layout')) {
+            this.elt.removeClass('as-mini-layout');
+            this.elt.removeClass('as-nav-open');
+        }
     }
-
     if (this.elt.hasClass('as-action-button-minimized')) {
-        if (this.elt.$nomalActionCtn.scrollWidth <= this.elt.$nomalActionCtn.clientWidth) {
+        if (this.actionButtonWidth <= bound.width) {
             this.elt.removeClass('as-action-button-minimized');
         }
     }
     else {
-        if (this.elt.$nomalActionCtn.scrollWidth > this.elt.$nomalActionCtn.clientWidth) {
+        if (this.actionButtonWidth > bound.width) {
             this.elt.addClass('as-action-button-minimized');
         }
+    }
+    var bodyBound = this.elt.$body.getBoundingClientRect();
+    var col = Math.floor(bodyBound.width / 300) || 1;
+    this.elt.$body.addStyle('--col', col + '');
+};
+
+LayoutController.prototype.ev_click = function (event) {
+    if (event.target === this.elt) {
+        this.elt.removeClass('as-nav-open');
     }
 };
 
@@ -755,15 +1096,17 @@ function CommandController(elt) {
 
     this.elt = elt;
     this.$normalActionCtn = this.elt.$nomalActionCtn;
+    this.$tinyActionCtn = this.elt.$tinyActionCtn;
     this.commands = Object.assign({}, FinderCommands);
     this.buttonNames = ['upload', 'view', 'download', 'move', 'rename', 'delete'];
     this.folderMenuItemNames = ['upload_to_folder', 'move_dir'];
-    this.contentMenuItemNames = ['select_all', 'move', 'delete', 'rename'];
+    this.contentMenuItemNames = ['view', 'upload', 'select_all', 'move', 'delete', 'rename'];
 
     this.$navCtn = this.elt.$navCtn;
     this.$navCtn.defineEvent('contextmenu').on('contextmenu', this.ev_navContextMenu);
     this.$contentCtn = this.elt.$contentCtn;
     this.$contentCtn.defineEvent('contextmenu').on('contextmenu', this.ev_contentContextMenu);
+
     this.updateButtons();
 }
 
@@ -785,6 +1128,25 @@ CommandController.prototype.updateButtons = function () {
         });
     });
     this.$normalActionCtn.addChild(buttons);
+
+    buttons = this.buttonNames.map(name => {
+        var desc = this.commands[name] || {};
+        return _({
+            tag: 'button',
+            class: 'as-transparent-button',
+            attr: { name: name },
+            child: desc.icon,
+            on: {
+                click: () => {
+                    this.execCommand(name);
+                }
+            }
+        });
+    });
+    this.$tinyActionCtn.addChild(buttons);
+
+
+    this.elt.layoutCtn.requestUpdateActionButtonSize();
 };
 
 
@@ -830,6 +1192,7 @@ CommandController.prototype.addButton = function (name, bf) {
             }
         }
     }), bfElt);
+    this.elt.layoutCtn.requestUpdateActionButtonSize();
 };
 
 /****
@@ -943,12 +1306,14 @@ SelectController.prototype.deselectAll = function () {
         this.$selectedItems.pop().checked = false;
     }
     this.elt.attr('data-selected-count', this.$selectedItems.length + '');
+    this.elt.emit('selectedchange');
 };
 
 SelectController.prototype.select = function (elt) {//todo: more option
     this.deselectAll();
     this.$selectedItems.push(elt);
     elt.checked = true;
+    this.elt.emit('selectedchange');
 };
 
 SelectController.prototype.selectAll = function () {//todo: more option
@@ -958,6 +1323,7 @@ SelectController.prototype.selectAll = function () {//todo: more option
     fileElements.forEach(elt => {
         elt.checked = true;
     });
+    this.elt.emit('selectedchange');
 };
 
 
@@ -1020,6 +1386,7 @@ SelectController.prototype.ev_dragEnd = function () {
     this.elt.removeClass('as-dragging');
     this.elt.attr('data-selected-count', this.$selectedItems.length + '');
     this.elt.layoutCtn.update();
+    this.elt.emit('selectedchange');
 };
 
 
@@ -1086,6 +1453,7 @@ SelectController.prototype.ev_click = function (event) {
     }
     this.elt.attr('data-selected-count', this.$selectedItems.length + '');
     this.elt.layoutCtn.update();
+    this.elt.emit('selectedchange');
 };
 
 
@@ -1182,6 +1550,7 @@ UploadController.prototype.ev_fileEnter = function (event) {
 
 
 UploadController.prototype.ev_fileDrop = function (event) {
+    if (this.elt.searchCtrl.state === "RUNNING") return;
     var files = event.files;
     if (files.length > 0)
         this.upload(files);
@@ -1388,7 +1757,7 @@ FolderDialog.prototype.open = function (initPath, showRoot, checkFunc, title) {
                 p = p.getParent && p.getParent();
             }
             setTimeout(() => {
-                vScrollIntoView(this.$activeNode);
+                vScrollIntoView(this.$activeNode.firstChild);
             }, 10)
         }
     });
@@ -1532,7 +1901,6 @@ NavigatorController.prototype.reload = function (fromPath, autoOpen) {
 };
 
 NavigatorController.prototype.viewDir = function (path) {
-    this._notifiedVisibleIdx = 0;
     this.elt.selectCtrl.deselectAll();
     if (this.$treeByPath[this.path]) {
         this.$treeByPath[this.path].active = false;
@@ -1546,7 +1914,7 @@ NavigatorController.prototype.viewDir = function (path) {
         c = c.getParent && c.getParent();
     }
 
-    vScrollIntoView(this.$treeByPath[this.path]);
+    vScrollIntoView(this.$treeByPath[this.path].firstChild);
 
 
     this.fileSystem.stat(path).then(stat => {
@@ -1559,35 +1927,50 @@ NavigatorController.prototype.viewDir = function (path) {
             return !stat.isDirectory
         })).then(stats => {
         if (this.path !== path) return;
-        var children = stats.filter(st => !st.isDirectory).map(stat => {
-            var elt = _({
-                tag: FileThumbnail.tag,
-                extendEvent: ['visible'],
-                attr: {
-                    title: stat.displayName || stat.name
-                },
-                props: {
-                    value: stat.url,
-                    fileName: stat.displayName || stat.name,
-                    allowUpload: false,
-                    stat: stat
-                },
-                on: {
-                    visible: () => {
-                        var mineType = ext2MineType[elt.fileType];
-                        if (mineType && mineType.startsWith('image/')) {
-                            elt.thumbnail = stat.url;
-                        }
-                    }
-                }
-            });
-
-            return elt;
-        });
-        this.$content.clearChild().addChild(children);
-        this.notifyVisibleContentItems();
+        this.viewContent(stats);
     });
 };
+
+NavigatorController.prototype.viewContent = function (stats) {
+    this.clearContent();
+    stats.filter(st => !st.isDirectory).forEach(stat => {
+        this.pushContentItem(stat);
+
+    });
+    this.notifyVisibleContentItems();
+};
+
+NavigatorController.prototype.clearContent = function () {
+    this._notifiedVisibleIdx = 0;
+    this.$content.clearChild();
+};
+
+NavigatorController.prototype.pushContentItem = function (stat) {
+    var elt = _({
+        tag: FileThumbnail.tag,
+        extendEvent: ['visible'],
+        attr: {
+            title: stat.displayName || stat.name
+        },
+        props: {
+            value: stat.url,
+            fileName: stat.displayName || stat.name,
+            allowUpload: false,
+            stat: stat
+        },
+        on: {
+            visible: () => {
+                var mineType = ext2MineType[elt.fileType];
+                if (mineType && mineType.startsWith('image/')) {
+                    elt.thumbnail = stat.url;
+                }
+            }
+        }
+    });
+
+    this.$content.addChild(elt);
+};
+
 
 NavigatorController.prototype.notifyVisibleContentItems = function () {
     var elt;
@@ -1606,8 +1989,148 @@ NavigatorController.prototype.notifyVisibleContentItems = function () {
     }
 };
 
+NavigatorController.prototype.expandAll = function () {
+    var visit = nodeElt => {
+        if (nodeElt.status === 'close') {
+            nodeElt.status = 'open';
+            this._states[nodeElt.path] = 'open';
+        }
+        if (nodeElt.status === 'open') {
+            nodeElt.getChildren().forEach(visit);
+        }
+    };
+
+    Array.prototype.forEach.call(this.$nav.childNodes, visit);
+};
+
+
+NavigatorController.prototype.collapseAll = function () {
+    var visit = nodeElt => {
+        if (nodeElt.status === 'open') {
+            nodeElt.status = 'close';
+            this._states[nodeElt.path] = 'close';
+        }
+        if (nodeElt.status === 'close') {
+            nodeElt.getChildren().forEach(visit);
+        }
+    };
+
+    Array.prototype.forEach.call(this.$nav.childNodes, visit);
+};
+
 NavigatorController.prototype.ev_contentScroll = function (event) {
     this.notifyVisibleContentItems();
+};
+
+var fileTextQuery2Regex = text => {
+    var code = nonAccentVietnamese(text.toLowerCase())
+        .replace(/[.,+^$()\[\]{}|\\]/g, x => '\\' + x)
+        .replace(/\*+/g, '(.*)')
+        .replace(/\?/g, '.');
+
+    return new RegExp(code, 'i');
+}
+
+
+/***
+ * @extends Context
+ * @param {Finder} elt
+ * @constructor
+ */
+function SearchController(elt) {
+    Context.apply(this);
+    this.elt = elt;
+    this.$searchText = this.elt.$searchText.on('keydown', event => {
+        if (event.key === 'Enter') {
+            this.$searchText.blur();
+            this.search();
+        }
+    });
+}
+
+
+OOP.mixClass(SearchController, Context);
+
+
+SearchController.prototype.onStart = function () {
+    // console.log('start')
+    this.elt.addClass('as-searching');
+    this.$searchText.value = '';
+    this.$searchText.focus();
+};
+
+
+SearchController.prototype.onStop = function () {
+    this.elt.removeClass('as-searching');
+    this.session = randomIdent(10);
+    this.$searchText.waiting = false;
+
+};
+
+SearchController.prototype.search = function () {
+    var session = randomIdent(10);
+    this.session = session;
+    this.elt.navCtrl.clearContent();
+    this.$searchText.waiting = true;
+    var fileSystem = this.elt.fileSystem;
+    var rootPath = this.elt.rootPath;
+    var result = [];
+    var type = this.elt.$searchTypeSelect.value;
+    var text = this.$searchText.value.trim();
+    var regex = fileTextQuery2Regex(text);
+
+
+    var isMatched = stat => {
+        var fileInfo = fileInfoOf(stat.displayName || stat.name);
+        var mineType = fileInfo.mimeType || '';
+        var fileType = fileInfo.type || '';
+        fileType = fileType.toLowerCase();
+
+        if (mineType && type !== 'all') {
+            if (type === 'image' && !mineType.startsWith('image') && type !== 'svg') {
+                return false;
+            }
+            else if (type === 'document' && ['doc', 'docx', 'pdf', 'xlsx'].indexOf(fileType) < 0 && !mineType.startsWith('text')) {
+                return false;
+            }
+        }
+        if (text.length === 0) return true;
+        if (stat.displayName && stat.displayName.match(regex)) return true;
+        if (stat.name && nonAccentVietnamese(stat.name.toLowerCase()).match(regex)) return true;
+
+        return false;
+    }
+
+
+    var handleStat = stat => {
+        if (session !== this.session) return;
+        if (stat.isDirectory) return visitDir(stat.path);
+        if (isMatched(stat)) {
+            this.elt.navCtrl.pushContentItem(stat);
+            this.elt.navCtrl.notifyVisibleContentItems();
+        }
+    };
+
+    var handleDirResult = (dir, names) => {
+        var syncs = names.map(name => {
+            return fileSystem.stat(dir + '/' + name).then(stat => {
+                if (session !== this.session) return;
+                if (stat)
+                    return handleStat(stat);
+            });
+        });
+        return Promise.all(syncs);
+    }
+
+    var visitDir = path => {
+        return fileSystem.readDir(path).then((names => handleDirResult(path, names)));
+    }
+
+    visitDir(rootPath).then(() => {
+        if (session !== this.session) return;
+        this.$searchText.waiting = false;
+    });
+
 };
 
 
@@ -1660,6 +2183,10 @@ FinderFileSystem.prototype.move = function (oldPath, newPath) {
 
 };
 
+FinderFileSystem.prototype.clearCache = function () {
+
+};
+
 /***
  * @extends FinderFileSystem
  * @constructor
@@ -1672,6 +2199,10 @@ function AbsolFileSystem() {
 }
 
 OOP.mixClass(AbsolFileSystem, FinderFileSystem);
+
+AbsolFileSystem.prototype.clearCache = function () {
+    this.cache = { readDir: {}, stats: {} };
+};
 
 AbsolFileSystem.prototype.readDir = function (path) {
     this.sync = this.sync.then(() => {

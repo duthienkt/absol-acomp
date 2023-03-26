@@ -65,7 +65,6 @@ textarea.as-text-input:disabled {
 }
 
 
-
 .as-table-grid {
     display: table;
 }
@@ -98,4 +97,27 @@ textarea.as-text-input:disabled {
 .as-pseudo-align-child-center > * {
     display: inline-block;
     vertical-align: middle;
+}
+
+
+.as-transparent-button {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font-size: inherit;
+    color: var(--as-transparent-button-text-color);
+}
+
+.as-transparent-button:hover{
+    color: var(--as-transparent-button-text-hover-color);
+}
+
+
+.as-transparent-button:active{
+    color: var(--as-transparent-button-text-active-color);
+}
+
+.as-transparent-button .mdi {
+    font-size: 1.5em;
 }

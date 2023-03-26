@@ -2,11 +2,18 @@
     font-size: 1rem;
     position: relative;
     --finder-header-height: 51px;
-    --finder-nav-width: 301px;
+    --finder-nav-width: 250px;
     overflow: hidden;
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.as-finder.as-compact-mode {
+    --finder-header-height: 0;
+}
+
+.as-finder.as-compact-mode .as-finder-header {
+    display: none;
+}
 
 .as-finder-header {
     position: absolute;
@@ -22,15 +29,91 @@
     min-width: 110px;
 }
 
-.as-finder-nav-ctn {
+.as-finder-nav-ctn,
+.as-finder-search-ctn {
     position: absolute;
     left: 0;
     top: var(--finder-header-height);
     width: var(--finder-nav-width);
     bottom: 0;
     border-right: 1px solid #dddddd;
+    padding-top: 29px;
+    background-color: white;
+    z-index: 20;
 }
 
+.as-finder-nav-ctn {
+}
+
+.as-finder-search-ctn {
+    visibility: hidden;
+
+}
+
+
+.as-finder-nav-header,
+.as-finder-search-header {
+    display: flex;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 29px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #dddddd;
+    align-items: center;
+}
+
+.as-finder-nav-header-left {
+    flex-grow: 1;
+}
+
+.as-finder-nav-header-right button {
+    height: 100%;
+    width: 30px;
+    margin-left: 5px;
+}
+
+.as-finder-nav-ctn > .as-exp-group,
+.as-finder-search-ctn > .as-finder-search-body {
+    overflow-y: auto;
+    width: 100%;
+    height: 100%;
+}
+
+
+.as-finder-search-body {
+    padding: 10px 5px;
+    box-sizing: border-box;
+}
+
+
+.as-finder-search-field {
+    padding-top: 10px;
+}
+
+.as-finder-search-field > div {
+    display: inline-block;
+}
+
+.as-finder-search-field > div:first-child {
+    width: 5em;
+}
+
+
+.as-finder-search-footer {
+    text-align: center;
+    padding-top: 20px;
+
+}
+
+.as-finder-search-footer button {
+    min-width: 100px;
+}
+
+.as-finder-search-footer button:not(:last-child) {
+    margin-right: 20px;
+}
 
 .as-finder-body {
     position: absolute;
@@ -38,7 +121,34 @@
     left: var(--finder-nav-width);
     top: var(--finder-header-height);
     bottom: 0;
+    padding-top: 29px;
 }
+
+.as-finder-content-header {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 29px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #dddddd;
+    display: flex;
+
+}
+
+.as-finder-content-header-left {
+    flex-grow: 1;
+}
+
+.as-finder-content-header-right::after {
+    content: "Kéo thả file vào đây để tải lên";
+    color: rgb(100, 100, 180);
+    font-style: italic;
+    line-height: 28px;
+    padding-right: 10px;
+    display: inline-block;
+}
+
 
 .as-finder-content-ctn {
     width: 100%;
@@ -61,7 +171,8 @@
     margin-right: 10px;
 }
 
-.as-finder-tiny-action-button-ctn button {
+.as-finder-tiny-action-button-ctn button,
+.as-finder-content-header button {
     background-color: transparent;
     border: none;
     border-radius: 3px;
@@ -94,7 +205,9 @@
 .as-finder[data-selected-count="0"] .as-finder-header button[name="delete"],
 .as-finder[data-selected-count="0"] .as-finder-header button[name="download"],
 .as-finder[data-selected-count="0"] .as-finder-header button[name="move"],
-.as-finder:not([data-selected-count="1"]) .as-finder-header button[name="rename"] {
+.as-finder:not([data-selected-count="1"]) .as-finder-header button[name="rename"],
+.as-finder:not(.as-mini-layout) .as-finder-content-header button[name="nav_toggle"],
+.as-finder:not(.as-mini-layout) .as-finder-nav-ctn button[name="nav_toggle"]{
     display: none;
 }
 
@@ -112,9 +225,30 @@
     left: 0;
 }
 
-.as-finder.as-mini-layout .as-finder-nav-ctn {
+.as-finder.as-mini-layout .as-finder-nav-ctn,
+.as-finder.as-mini-layout .as-finder-search-ctn{
     left: calc(var(--finder-nav-width) * -1);
+    transition: left 0.2s;
 }
+
+
+.as-finder.as-mini-layout.as-nav-open .as-finder-nav-ctn,
+.as-finder.as-mini-layout.as-nav-open .as-finder-search-ctn{
+    left: 0;
+}
+
+.as-finder.as-mini-layout.as-nav-open::after {
+    content: "";
+    display: block;
+    z-index: 8;
+    position: absolute;
+    left: 0;
+    top: var(--finder-header-height);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(169, 169, 172, 0.2);
+}
+
 
 .as-finder-content::before,
 .as-finder-content::after {
@@ -130,7 +264,11 @@
 
 .as-finder-content {
     user-select: none;
+    min-height: 100%;
+    box-sizing: border-box;
+    position: relative;
 }
+
 
 .as-finder:not(.as-writable-folder) .as-finder-header button[name="upload"] {
     display: none;
@@ -178,8 +316,33 @@
 
 }
 
-.as-finder-body.as-drag-over .as-finder-upload-overlay {
+.as-finder:not(.as-searching) .as-finder-body.as-drag-over .as-finder-upload-overlay {
     display: block;
+}
+
+
+.as-finder.as-searching .as-finder-nav-ctn {
+    visibility: hidden;
+}
+
+.as-finder.as-searching .as-finder-search-ctn {
+    visibility: visible;
+}
+
+.as-finder.as-searching .as-finder-content-header-right,
+.as-finder.as-searching .as-finder-header button[name='upload'],
+.as-finder.as-searching .as-finder-header button[name='move'] {
+    display: none;
+}
+
+.as-finder-task-check .mdi {
+    font-size: 1.5em;
+    color: rgb(30, 237, 219);
+}
+
+
+.as-finder-task-check .mdi.mdi-alert-decagram-outline {
+    color: red;
 }
 
 
@@ -275,4 +438,45 @@
 
 .as-finder-folder-dialog-selected-ctn > span {
     white-space: nowrap;
+}
+
+div[data-view-as="list"] {
+    --col: 1;
+}
+
+div[data-view-as="list"] .as-file-thumbnail {
+    display: inline-block;
+    margin-right: 4px;
+    height: 50px;
+    padding-left: 60px;
+    white-space: nowrap;
+    box-sizing: border-box;
+    width: calc(100% / var(--col) - 10px * var(--col));
+}
+
+div[data-view-as="list"] .as-file-thumbnail::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+div[data-view-as="list"] .as-file-thumbnail-background {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50px;
+    height: 50px;
+}
+
+div[data-view-as="list"] .as-file-thumbnail-file-name {
+    width: unset;
+    max-width: 100%;
+    text-align: left;
+}
+
+div[data-view-as="list"] .as-file-thumbnail-background,
+div[data-view-as="list"] .as-file-thumbnail-file-name {
+    display: inline-block;
+    vertical-align: middle;
 }
