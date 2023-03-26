@@ -2,6 +2,7 @@ import ACore, { _, $ } from "../ACore";
 import { stringHashCode } from "absol/src/String/stringUtils";
 import YesNoQuestionDialog from "./YesNoQuestionDialog";
 import Modal from "./Modal";
+import ext2MineType from "absol/src/Converter/ext2MineType";
 
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
@@ -226,8 +227,9 @@ export function forwardMethod(elt, fromName, toName) {
 
 /***
  *
- * @param {"camera"|"microphone"|"camcorder"|{accept:("image/*"|"audio/*"|"video/*"|undefined), capture:boolean|undefined, multiple:boolean|undefined}|{}} props
- * @return {Promise<File[]>}
+ * @param {"camera"|"microphone"|"camcorder"|{accept:("image/*"|"audio/*"|"video/*"|undefined), capture:boolean|undefined, multiple:boolean|undefined}|{}=} props
+ * @param {boolean=}unSafe
+ *  @return {Promise<File[]>}
  */
 export function openFileDialog(props, unSafe) {
     return new Promise(function (resolve) {
@@ -883,6 +885,9 @@ export function fileInfoOf(fi) {
     }
     if (!res.type && res.name) {
         res.type = res.name.toLowerCase().split('.').slice(1).pop();
+    }
+    if (!res.mimeType && res.type) {
+        res.mimeType = ext2MineType[res.type];
     }
 
     for (var k in res) {
