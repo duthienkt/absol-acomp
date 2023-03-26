@@ -1,0 +1,202 @@
+/**** APP ***************/
+
+.am-application {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.am-application-frameview {
+    width: 100%;
+    height: 100%;
+}
+
+
+.am-application-tabbar {
+    display: none;
+}
+
+.am-application.am-show-tabbar .am-application-tabbar {
+    display: block;
+}
+
+.am-application.am-show-tabbar .am-application-frameview{
+    height: calc(100% - 3em);
+}
+
+
+/*************** HEADER****************************************/
+
+.am-header-bar {
+    display: flex;
+    align-items: center;
+    background-color: rgb(29, 138, 241);
+    -webkit-box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    position: relative;
+    font-family: Arial, Helvetica, sans-serif;
+    color: white;
+    height: 3em;
+    font-size: 1rem;
+}
+
+
+.am-header-bar-left-btn,
+button.am-header-bar-command {
+    display: inline-block;
+    text-align: center;
+    border: none;
+    background-color: transparent;
+    height: 3em;
+    width: 3em;
+    padding: 0;
+    margin: 0;
+    vertical-align: middle;
+    color: white;
+    outline: none;
+    font-size: inherit;
+}
+
+.am-header-bar-left-btn span,
+button.am-header-bar-command span,
+.am-header-bar-left-btn i,
+button.am-header-bar-command i {
+    font-size: 2em;
+}
+
+button.am-header-bar-command:not(:last-child) {
+    margin-right: 0.6256em;
+}
+
+
+.am-header-bar-left-btn:active,
+button.am-header-bar-action:active,
+button.am-header-bar-command:active {
+    color: rgb(220, 220, 222);
+}
+
+.am-header-bar-title-ctn {
+    flex-grow: 1;
+    white-space: nowrap;
+    overflow: inherit;
+    position: relative;
+    height: 3em;
+}
+
+.am-header-bar-no-size-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    white-space: nowrap;
+}
+
+.am-header-bar-no-size-wrapper::before {
+    content: "";
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.am-header-bar-title-wrapper {
+    display: inline-block;
+    vertical-align: middle;
+    width: 100%;
+
+}
+
+.am-header-bar-title-ctn:first-child .am-header-bar-title {
+    padding-left: 1.2em;
+}
+
+
+.am-header-bar-title {
+    font-size: 1.2em;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+.am-header-bar-title-desc {
+    font-size: 0.8em;
+    line-height: 2;
+}
+
+.am-header-bar-title-desc:empty {
+    display: none;
+}
+
+
+.am-header-bar-right {
+
+}
+
+.am-header-bar-right::after {
+    content: "";
+    height: 100%;
+    vertical-align: middle;
+    display: inline-block;
+    width: 0.357142857em;
+}
+
+
+.am-header-bar-right-item-ctn {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+
+button.am-header-bar-action {
+    height: 3em;
+    width: 3em;
+    background-color: transparent;
+    color: white;
+    border: none;
+    font-size: inherit;
+    outline: none;
+    vertical-align: middle;
+}
+
+.am-header-bar-quickmenu-btn.am-status-active .am-header-bar-quickmenu-btn-circle {
+    background-color: rgba(169, 169, 169, 0.5);
+}
+
+
+.am-header-bar-quickmenu-btn-circle {
+    height: 2em;
+    width: 2em;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.am-header-bar-quickmenu-btn-circle span {
+    font-size: 1.6em;
+    line-height: 1.25em;
+}
+
+.am-header-bar-quickmenu-btn.as-active  .mdi-dots-horizontal-circle-outline,
+.am-header-bar-quickmenu-btn:not(.as-active)  .mdi-dots-horizontal-circle {
+    display: none;
+}
+
+
+.am-header-bar.am-light-weight,
+.am-header-bar.am-light-weight .am-header-bar-title-ctn,
+.am-header-bar.am-light-weight .am-header-bar-left-btn,
+.am-header-bar.am-light-weight button.am-header-bar-command,
+.am-header-bar.am-light-weight button.am-header-bar-action {
+    height: calc(2rem + 2px);
+}
+
+
+.am-header-bar.am-light-weight .am-header-bar-left-btn span,
+.am-header-bar.am-light-weight button.am-header-bar-command span,
+.am-header-bar-left-btn i,
+.am-header-bar.am-light-weight button.am-header-bar-command i {
+    font-size: 1.6em;
+}
+
