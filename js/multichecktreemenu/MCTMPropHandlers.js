@@ -69,7 +69,7 @@ MCTMPropHandlers.leafOnly = {
         }
         else {
             this.removeClass('as-leaf-only');
-            this.$box.leafOnly = true;
+            this.$box.leafOnly = false;
         }
         this.tokenCtrl.updateFromViewValues();
     },
