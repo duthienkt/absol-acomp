@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OrgTree</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<style>
+    body {
+        --menu-background-color: red;
+    }
+
+    .template-ctn {
+        display: none;
+    }
+
+    .tree-block, .tree-block * {
+        box-sizing: border-box;
+    }
+
+    .tree-block {
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        background: white;
+    }
+
+    .tree-child-ctn > .tree-block:not(:first-child) {
+        margin-left: 10px;
+    }
+
+    .tree-name-ctn {
+        text-align: center;
+        padding-bottom: 9px;
+        position: relative;
+    }
+
+    .tree-name {
+        display: inline-block;
+        padding: 5px;
+        border: 1px solid #210d0f;
+        position: relative;
+        white-space: normal;
+        max-width: 140px;
+        border-radius: 3px;
+        background-color: #aa3d40;
+        color: white;
+        font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    }
+
+    .tree-block.has-child > .tree-name-ctn .tree-name::before {
+        content: "";
+        position: absolute;
+        height: 10px;
+        left: 50%;
+        top: 100%;
+        border-left: 1px solid #333;
+    }
+
+    .tree-block.has-child.has-1-child > .tree-name-ctn .tree-name::before {
+        height: 20px;
+    }
+
+    .tree-child-ctn {
+        padding-top: 10px;
+
+    }
+
+    .tree-block:not(.has-1-child) > .tree-child-ctn {
+        border-top: 1px solid #333;
+    }
+
+    .tree-block:not(.has-child) > .tree-child-ctn {
+        display: none;
+    }
+
+    .tree-child-ctn > .tree-block::before {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        left: 50%;
+        bottom: 100%;
+        height: 10px;
+        border-left: 1px solid black;
+    }
+
+    .tree-block.has-1-child > .tree-child-ctn > .tree-block::before,
+    .tree-block.has-1-child > .tree-child-ctn > .tree-block::after {
+        display: none;
+    }
+
+
+    .tree-child-ctn > .tree-block:last-child::before {
+        left: unset;
+        right: 50%;
+    }
+
+
+    .tree-child-ctn > .tree-block:first-child::after {
+        content: "";
+        position: absolute;
+        z-index: 2;
+        right: 50%;
+        left: 0;
+        bottom: 100%;
+        height: 11px;
+        background-color: white;
+    }
+
+    .tree-child-ctn > .tree-block:last-child::after {
+        content: "";
+        position: absolute;
+        z-index: 2;
+        left: 50%;
+        right: 0;
+        bottom: 100%;
+        height: 11px;
+        background-color: white;
+    }
+
+    .tree-child-ctn > .tree-block:first-child:last-child::after {
+        display: none;
+    }
+
+    .tree-block.has-child[data-level="2"] > .tree-name-ctn > .tree-name {
+        display: block;
+        max-width: unset;
+        text-align: center;
+    }
+
+    .tree-block[data-level="2"] .tree-child-ctn,
+    .tree-block[data-level="2"] .tree-name-ctn {
+        text-align: left;
+    }
+
+
+    .tree-block[data-level="2"] .tree-block {
+        display: block;
+    }
+
+    .tree-block[data-level="2"] .tree-child-ctn > .tree-block::before {
+        left: 10px;
+    }
+
+    .tree-block[data-level="2"].has-child .tree-name-ctn .tree-name::before {
+        left: 9px;
+    }
+
+
+    .tree-block[data-level="2"] .tree-child-ctn {
+        border-top: none;
+
+    }
+
+    .tree-block[data-level="2"] .tree-child-ctn > .tree-block:not(:first-child) {
+        margin-left: 0;
+    }
+
+    .tree-block[data-level="2"] .tree-child-ctn {
+        padding-top: 0;
+    }
+
+    .tree-block[data-level="2"] .tree-block {
+        padding-left: 20px;
+    }
+
+    .tree-block[data-level="2"] .tree-child-ctn > .tree-block::before {
+        top: -10px;
+        bottom: 0;
+        height: auto;
+    }
+
+
+    .tree-block[data-level="2"] .tree-child-ctn > .tree-block:last-child::before {
+        top: -10px;
+        height: 25px;
+    }
+
+    .tree-block[data-level="2"] .tree-child-ctn > .tree-block:first-child::after,
+    .tree-block[data-level="2"] .tree-child-ctn > .tree-block:last-child::after {
+        display: none;
+    }
+
+    .tree-block[data-level="2"] .tree-child-ctn .tree-name-ctn::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        top: 15px;
+        border-top: 1px solid black;
+        width: 10px;
+    }
+
+
+</style>
+<div class="template-ctn">
+    <div class="tree-block">
+        <div class="tree-name-ctn">
+            <div class="tree-name"></div>
+        </div>
+        <div class="tree-child-ctn"></div>
+    </div>
+    <script>
+        var _ = absol._;
+        var $ = absol.$;
+
+        var treeBlockTemplate = $(".template-ctn .tree-block");
+
+        var data = {
+            name: "Adminstrator",
+            items: [
+                {
+                    name: "About",
+                    items: [
+                        {
+                            name: "Our board",
+                            items: [
+                                {
+                                    name: "Cynthia Tolken",
+                                    items: [
+                                        {
+                                            name: " consectetur adipiscing elit",
+                                            items: [{ name: "sed do eiusmod tempor" }, { name: "ncididunt ut labore" }, { name: "et dolore magna aliqua" }, { name: "adipiscing commodo elit at" }]
+                                        },
+                                        {
+                                            name: "odio aenean sed adipiscing",
+                                            items: [{ name: "pellentesque pulvinar" }, { name: " sapien eget mi proin sed" }, { name: "K" }, { name: "H" }]
+                                        }, {
+                                            name: "C",
+                                            items: [{ name: "M" }, { name: "M" }, { name: "K" }, { name: "H" }]
+                                        }, { name: "F" }]
+                                },
+                                {
+                                    name: "Bobby Founderson"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Our products",
+                    items: [
+                        {
+                            name: "The Widget 2000TM"
+                        },
+                        {
+                            name: "Th McGuffin V2",
+                            items: [
+                                {
+                                    name: "Brad Whiteman"
+                                },
+                                {
+                                    name: "Bobby Founderson",
+                                    items: [
+                                        {
+                                            name: " consectetur adipiscing elit",
+                                            items: [{ name: "sed do eiusmod tempor" }, { name: "ncididunt ut labore" }, { name: "et dolore magna aliqua" }, { name: "adipiscing commodo elit at" }]
+                                        },
+                                        {
+                                            name: "odio aenean sed adipiscing",
+                                            items: [{ name: "pellentesque pulvinar" }, { name: " sapien eget mi proin sed" }, { name: "K" }, { name: "H" }]
+                                        }, {
+                                            name: "C",
+                                            items: [{ name: "M" }, { name: "M" }, { name: "K" }, { name: "H" }]
+                                        }, { name: "F" }]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Contact us"
+                }
+            ]
+        };
+        _({
+            child: ['<label>HozLevel(0..n) </label>', {
+                tag: 'numberinput',
+                props: {
+                    value: 2,
+                    min: 0,
+                    step: 1
+                },
+                on: {
+                    change: function () {
+                        chart.maxHorizonLevel = this.value;
+                    }
+                }
+            }]
+        }).addTo(document.body);
+        var chart = _({
+            tag: 'treechart',
+            props: {
+                data: data,
+                maxHorizonLevel: 2
+            }
+        }).addTo(document.body);
+
+    </script>
+</div>
+</body>
+</html>
