@@ -30,11 +30,14 @@ import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import DomSignal from "absol/src/HTML5/DomSignal";
 
+var isMobile = BrowserDetector.isMobile;
+
 /***
  * @extends AElement
  * @constructor
  */
 function Finder() {
+    if (isMobile) this.addClass('as-mobile');
     // if (BrowserDetector.isMobile) alert("Chưa hỗ trợ điện thoại!");
 
     this.$attachhook = _('attachhook').addTo(this);
@@ -83,7 +86,7 @@ function Finder() {
     this.fileSystem = new AbsolFileSystem();
     this.layoutCtn = new LayoutController(this);
     this.navCtrl = new NavigatorController(this);
-    this.selectCtrl = new SelectController(this);
+    this.selectCtrl = isMobile ? new MobileSelectController(this) : new SelectController(this);
     this.uploadCtrl = new UploadController(this);
     this.commandCtrl = new CommandController(this);
     this.folderDialog = new FolderDialog(this);
@@ -113,7 +116,8 @@ Finder.render = function () {
         class: 'as-finder',
         extendEvent: ['selectedchange'],
         attr: {
-            'data-selected-count': '0'
+            'data-selected-file-count': '0',
+            'data-selected-folder-count': '0'
         },
         child: [
             {
@@ -365,7 +369,7 @@ Finder.property.rootPath = {
 
 Finder.property.selectedFiles = {
     get: function () {
-        return this.selectCtrl.$selectedItems.map(elt => elt.stat);
+        return this.selectCtrl.$selectedItems.filter(elt => elt.stat && !elt.stat.isDirectory).map(elt => elt.stat);
     }
 }
 
@@ -452,9 +456,11 @@ FinderCommands.upload_to_folder = {
 FinderCommands.delete = {
     icon: 'span.mdi.mdi-delete-outline',
     text: 'Xóa',
+    /***
+     * @this Finder
+     */
     match: function (fileElt) {
-        if (arguments.length === 0) return true;
-        return !!fileElt;
+        return fileElt && this.selectCtrl.$selectedItems.length > 0 && this.selectCtrl.$selectedItems.every(elt => elt.stat && !elt.stat.isDirectory);
     },
     /***
      * @this Finder
@@ -563,6 +569,10 @@ FinderCommands.view = {
     exec: function () {
         var elt = this.selectCtrl.$selectedItems[0];
         if (!elt) return;
+        if (elt.stat.isDirectory) {
+            this.navCtrl.viewDir(elt.stat.path);
+            return;
+        }
         var url = elt.stat.url;
         if (!url) return;
         var type = elt.fileType;
@@ -675,6 +685,7 @@ FinderCommands.download = {
     exec: function () {
         var taskMng = new TaskManager({ limit: 4 });
         this.selectCtrl.$selectedItems.forEach(elt => {
+            if (elt.isDirectory) return;
             var url = elt.stat.url;
             if (!url) return;
             taskMng.requestTask(function (onFinish, bundle) {
@@ -689,8 +700,11 @@ FinderCommands.download = {
 FinderCommands.rename = {
     icon: 'span.mdi.mdi-rename',
     text: 'Đổi tên',
+    /***
+     * @this Finder
+     */
     match: function (elt) {
-        return !!elt;
+        return this.selectCtrl.$selectedItems.length === 1 && elt.stat && !elt.stat.isDirectory;//todo: rename folder
     },
     /***
      * @this Finder
@@ -1209,6 +1223,20 @@ CommandController.prototype.addFolderMenuItem = function (name, bf) {
     else this.folderMenuItemNames.push(name);
 };
 
+/****
+ *
+ * @param {string} name
+ * @param {string=} bf
+ */
+CommandController.prototype.addContentMenuItem = function (name, bf) {
+    idx = this.folderMenuItemNames.indexOf(name);
+    if (idx >= 0) return;//todo
+    var idx = this.folderMenuItemNames.indexOf(bf);
+    if (idx >= 0)
+        this.folderMenuItemNames.splice(idx, 0, name);
+    else this.folderMenuItemNames.push(name);
+};
+
 
 CommandController.prototype.ev_navContextMenu = function (event) {
     var expTree;
@@ -1290,6 +1318,15 @@ function SelectController(elt) {
             this[key] = this[key].bind(this);
         }
     });
+    this._setupSelectTool();
+
+}
+
+/***
+ *
+ * @protected
+ */
+SelectController.prototype._setupSelectTool = function () {
     this._draged = false;
     this._dragOffset = new Vec2(0, 0);
     this.$selectArea = _('.as-finder-select-area');
@@ -1298,14 +1335,13 @@ function SelectController(elt) {
         .on('dragstart', this.ev_dragStart)
         .on('drag', this.ev_drag)
         .on('dragend', this.ev_dragEnd);
-
-}
+};
 
 SelectController.prototype.deselectAll = function () {
     while (this.$selectedItems.length > 0) {
         this.$selectedItems.pop().checked = false;
     }
-    this.elt.attr('data-selected-count', this.$selectedItems.length + '');
+    this._updateCount();
     this.elt.emit('selectedchange');
 };
 
@@ -1313,6 +1349,7 @@ SelectController.prototype.select = function (elt) {//todo: more option
     this.deselectAll();
     this.$selectedItems.push(elt);
     elt.checked = true;
+    this._updateCount();
     this.elt.emit('selectedchange');
 };
 
@@ -1323,6 +1360,7 @@ SelectController.prototype.selectAll = function () {//todo: more option
     fileElements.forEach(elt => {
         elt.checked = true;
     });
+    this._updateCount();
     this.elt.emit('selectedchange');
 };
 
@@ -1384,11 +1422,17 @@ SelectController.prototype.ev_dragEnd = function () {
     this._draged = true;
     this.$selectArea.remove();
     this.elt.removeClass('as-dragging');
-    this.elt.attr('data-selected-count', this.$selectedItems.length + '');
+    this._updateCount();
     this.elt.layoutCtn.update();
     this.elt.emit('selectedchange');
 };
 
+
+SelectController.prototype._updateCount = function () {
+    var folderCount = this.$selectedItems.filter(elt => elt.stat.isDirectory).length;
+    this.elt.attr('data-selected-file-count', this.$selectedItems.length - folderCount + '');
+    this.elt.attr('data-selected-folder-count', folderCount + '');
+}
 
 SelectController.prototype.ev_click = function (event) {
     event = event.originalEvent || event.originEvent || event;
@@ -1451,9 +1495,26 @@ SelectController.prototype.ev_click = function (event) {
             }
         }
     }
-    this.elt.attr('data-selected-count', this.$selectedItems.length + '');
+
+    this._updateCount();
     this.elt.layoutCtn.update();
     this.elt.emit('selectedchange');
+};
+
+/***
+ * @extends SelectController
+ * @param elt
+ * @constructor
+ */
+function MobileSelectController(elt) {
+    SelectController.apply(this, arguments);
+}
+
+
+OOP.mixClass(MobileSelectController, SelectController);
+
+MobileSelectController.prototype._setupSelectTool = function () {
+    this.$content.on('click', this.ev_click);
 };
 
 
@@ -1923,17 +1984,28 @@ NavigatorController.prototype.viewDir = function (path) {
         else this.elt.removeClass('as-writable-folder');
     })
     this.fileSystem.readDir(path).then(dirs => Promise.all(dirs.map(dir => this.fileSystem.stat(path + '/' + dir))))
-        .then(stats => stats.filter(stat => {
-            return !stat.isDirectory
-        })).then(stats => {
-        if (this.path !== path) return;
-        this.viewContent(stats);
-    });
+        .then(stats => {
+            if (this.path !== path) return;
+            stats.sort((a, b) => {
+                var aName, bName;
+                if (a.isDirectory === b.isDirectory) {
+                    aName = a.displayName || a.name;
+                    bName = b.displayName || b.name;
+                    if (aName < bName) return -1;
+                    return 1;
+                }
+                else {
+                    if (a.isDirectory) return -1;
+                    return 1;
+                }
+            });
+            this.viewContent(stats);
+        });
 };
 
 NavigatorController.prototype.viewContent = function (stats) {
     this.clearContent();
-    stats.filter(st => !st.isDirectory).forEach(stat => {
+    stats.forEach(stat => {
         this.pushContentItem(stat);
 
     });
@@ -1953,9 +2025,9 @@ NavigatorController.prototype.pushContentItem = function (stat) {
             title: stat.displayName || stat.name
         },
         props: {
+            isDirectory: stat.isDirectory,
             value: stat.url,
             fileName: stat.displayName || stat.name,
-            allowUpload: false,
             stat: stat
         },
         on: {
@@ -1964,6 +2036,9 @@ NavigatorController.prototype.pushContentItem = function (stat) {
                 if (mineType && mineType.startsWith('image/')) {
                     elt.thumbnail = stat.url;
                 }
+            },
+            dblclick: () => {
+                this.elt.execCommand('view');
             }
         }
     });

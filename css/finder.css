@@ -140,7 +140,7 @@
     flex-grow: 1;
 }
 
-.as-finder-content-header-right::after {
+.as-finder:not(.as-mobile) .as-finder-content-header-right::after {
     content: "Kéo thả file vào đây để tải lên";
     color: rgb(100, 100, 180);
     font-style: italic;
@@ -201,11 +201,12 @@
     visibility: hidden;
 }
 
-.as-finder[data-selected-count="0"] .as-finder-header button[name="view"],
-.as-finder[data-selected-count="0"] .as-finder-header button[name="delete"],
-.as-finder[data-selected-count="0"] .as-finder-header button[name="download"],
-.as-finder[data-selected-count="0"] .as-finder-header button[name="move"],
-.as-finder:not([data-selected-count="1"]) .as-finder-header button[name="rename"],
+.as-finder[data-selected-file-count="0"] .as-finder-header button[name="view"],
+.as-finder[data-selected-file-count="0"] .as-finder-header button[name="delete"],
+.as-finder:not([data-selected-folder-count="0"]) .as-finder-header button[name="delete"],
+.as-finder[data-selected-file-count="0"] .as-finder-header button[name="download"],
+.as-finder[data-selected-file-count="0"][data-selected-folder-count="0"] .as-finder-header button[name="move"],
+.as-finder:not([data-selected-file-count="1"][data-selected-folder-count="0"]) .as-finder-header button[name="rename"],
 .as-finder:not(.as-mini-layout) .as-finder-content-header button[name="nav_toggle"],
 .as-finder:not(.as-mini-layout) .as-finder-nav-ctn button[name="nav_toggle"]{
     display: none;

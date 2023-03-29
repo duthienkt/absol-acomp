@@ -133,6 +133,21 @@ function FileThumbnail() {
      * @name fileName
      * @memberOf FileThumbnail#
      */
+    /***
+     * @type {string|null}
+     * @name fileType
+     * @memberOf FileThumbnail#
+     */
+    /***
+     * @type {string|null}
+     * @name thumbnail
+     * @memberOf FileThumbnail#
+     */
+    /***
+     * @type {boolean}
+     * @name isDirectory
+     * @memberOf FileThumbnail#
+     */
 }
 
 
@@ -161,6 +176,9 @@ FileThumbnail.render = function () {
 
 FileThumbnail.prototype._updateFileName = function () {
     var fileName = this.fileName;
+    if (!fileName) {
+        return;
+    }
     var parts;
     var matched;
     matched = fileName.match(/([^_+\-.]+)|([_+\-.]+)/g);
@@ -178,7 +196,7 @@ FileThumbnail.prototype._updateFileName = function () {
 FileThumbnail.prototype._updateThumbnail = function () {
     var previewUrl;
     var thumbnail = this.thumbnail;
-    var fileType = this.fileType;
+    var fileType = this.isDirectory ? 'folder' : this.fileType;
     if (thumbnail) {
         if (typeof thumbnail === "string") {
             this._previewUrl = thumbnail;
@@ -245,6 +263,7 @@ FileThumbnail.property.fileType = {
      * @return {*}
      */
     get: function () {
+        if (this.isDirectory) return null;
         return this._fileType || (this._valueInfo && this._valueInfo.type) || null;
     }
 };
@@ -274,6 +293,20 @@ FileThumbnail.property.thumbnail = {
         return this._thumbnail;
     }
 };
+
+FileThumbnail.property.isDirectory = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-is-directory');
+        }
+        else {
+            this.removeClass('as-is-directory');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-is-directory');
+    }
+}
 
 ACore.install(FileThumbnail);
 
