@@ -163,6 +163,7 @@ DualSelectBox.prototype._makeLeftItem = function (item) {
         class: 'absol-selectlist-item',
         child: {
             tag: 'span',
+            class:'absol-selectlist-item-text',
             child: { text: item.text }
         }
     });
@@ -178,6 +179,7 @@ DualSelectBox.prototype.makeRightItem = function (item) {
         class: 'absol-selectlist-item',
         child: {
             tag: 'span',
+            class:'absol-selectlist-item-text',
             child: { text: item.text }
         }
     });

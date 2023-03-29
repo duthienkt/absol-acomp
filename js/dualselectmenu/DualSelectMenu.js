@@ -63,6 +63,7 @@ DualSelectMenu.prototype.updateText = function () {
         .replace('$1', secToken);
     this.$item.clearChild().addChild(_({
         tag: 'span',
+        class:'absol-selectlist-item-text',
         child: { text: text }
     }));
 };

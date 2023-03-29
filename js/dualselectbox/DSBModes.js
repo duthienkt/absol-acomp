@@ -35,6 +35,7 @@ DSBModeNormal.prototype._makeLeftItem = function (item) {
         },
         child: {
             tag: 'span',
+            class:'absol-selectlist-item-text',
             child: { text: item.text }
         },
         on: {
@@ -60,6 +61,7 @@ DSBModeNormal.prototype._makeRightItem = function (leftItem, item) {
         },
         child: {
             tag: 'span',
+            class:'absol-selectlist-item-text',
             child: { text: item.text }
         },
         on: {
