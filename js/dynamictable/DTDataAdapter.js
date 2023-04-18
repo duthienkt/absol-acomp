@@ -19,6 +19,8 @@
  * @typedef DTDataTable
  * @property head
  * @property body
+ * @property {number} rowsPerPage
+ * @property {number} fixedCol
  */
 
 import DTTable from "./DTTable";
@@ -38,8 +40,14 @@ function DTDataAdapter(tableElt, opt) {
      */
     this.data = null;
     this.rowsPerPage = 20;
+    this.fixedCol = 0;
     Object.assign(this, opt);
-
+    if (this.fixedCol === 0) {
+        this.tableElt.removeClass('as-has-fixed-col');
+    }
+    else {
+        this.tableElt.addClass('as-has-fixed-col');
+    }
 }
 
 DTDataAdapter.prototype.render = function () {

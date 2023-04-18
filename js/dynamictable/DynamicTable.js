@@ -1,11 +1,12 @@
-import ACore, {$, $$, _} from "../../ACore";
+import ACore, { $, $$, _ } from "../../ACore";
 import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import PageSelector from "../PageSelector";
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
-import {buildCss} from "../utils";
+import { buildCss, swapChildrenInElt } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import DomSignal from "absol/src/HTML5/DomSignal";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -46,6 +47,9 @@ function DynamicTable() {
      * @type {AElement}
      */
     this.$tbody = $('.as-dynamic-table>tbody', this.$table);
+
+    this.$fixedXCol = $(".as-dynamic-table-fixed-x-col", this).addClass('as-dynamic-table');
+
     /***
      *
      * @type {PageSelector}
@@ -54,8 +58,19 @@ function DynamicTable() {
         .on('change', this.eventHandler.pageSelectorChange);
 
     this.$filterInputs = [];
+
+    this.$attachhook = _('attachhook').addTo(this);
+    this.domSignal = new DomSignal(_('attachhook').addTo(this));
     //controller
     this.table = null;
+
+
+    this.fixedContentCtrl = new FixedContentController(this);
+    this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
+    this.$attachhook.on('attached', () => {
+        ResizeSystem.add(this.$attachhook);
+        this.$attachhook.requestUpdateSize();
+    })
     /***
      *
      * @type {DTDataTable||null}
@@ -85,18 +100,25 @@ DynamicTable.render = function () {
         child: [
             {
                 tag: 'table',
-                class: 'as-dynamic-table',
-                child: [
-                    {
-                        tag: 'thead',
-                        class: 'as-dt-header'
+                class: 'as-dynamic-table-fixed-x-col'
+            },
+            {
+                class: 'as-dynamic-table-horizontal-scroller',
+                child: {
+                    tag: 'table',
+                    class: 'as-dynamic-table',
+                    child: [
+                        {
+                            tag: 'thead',
+                            class: 'as-dt-header'
 
-                    },
-                    {
-                        tag: 'tbody',
-                        class: 'as-dt-body'
-                    }
-                ]
+                        },
+                        {
+                            tag: 'tbody',
+                            class: 'as-dt-body'
+                        }
+                    ]
+                }
             },
             {
                 tag: PageSelector.tag,
@@ -313,6 +335,7 @@ DynamicTable.property.adapter = {
             }
             c = c.parentElement;
         }
+        this.fixedContentCtrl.requestUpdate();
     },
     get: function () {
         return this._adapterData;
@@ -397,3 +420,93 @@ DynamicTable.eventHandler.searchKeyUp = function (event) {
 ACore.install(DynamicTable);
 
 export default DynamicTable;
+
+/***
+ *
+ * @param {DynamicTable} elt
+ * @constructor
+ */
+function FixedContentController(elt) {
+    /***
+     *
+     * @type {DynamicTable}
+     */
+    this.elt = elt;
+    this.swappedPairs = [];
+    this.elt.domSignal.on('requestUpdateFixedContent', this.update.bind(this));
+}
+
+FixedContentController.prototype.revertSwapped = function () {
+    var pair;
+    while (this.swappedPairs.length > 0) {
+        pair = this.swappedPairs.pop();
+        swapChildrenInElt(pair[0], pair[1]);
+    }
+};
+
+FixedContentController.prototype.update = function () {
+    this.revertSwapped();
+    this.elt.$fixedXCol.clearChild();
+    var fixedCol = (this.elt.adapter && this.elt.adapter.fixedCol) || 0;
+    if (!fixedCol) return;
+
+    var head = $(this.elt.$thead.cloneNode(false));
+    head.$origin = this.elt.$thead;
+    this.elt.$fixedXCol.addChild(head);
+    var headRows = Array.prototype.map.call(this.elt.$thead.childNodes, rowElt => {
+        var copyRow = $(rowElt.cloneNode(false));
+        copyRow.$origin = rowElt;
+        var cells = Array.prototype.slice.call(rowElt.childNodes, 0, fixedCol).map(cellElt => {
+            var copyCell = $(cellElt.cloneNode(true));
+            copyCell.$origin = cellElt;
+            this.swappedPairs.push([cellElt, copyCell]);
+            swapChildrenInElt(cellElt, copyCell);
+            return copyCell;
+        });
+        copyRow.addChild(cells);
+
+        return copyRow;
+    });
+    head.addChild(headRows);
+
+    var body = $(this.elt.$tbody.cloneNode(false));
+    body.$origin = this.elt.$tbody;
+    this.elt.$fixedXCol.addChild(body);
+    var bodyRows = Array.prototype.map.call(this.elt.$tbody.childNodes, rowElt => {
+        var copyRow = $(rowElt.cloneNode(false));
+        copyRow.$origin = rowElt;
+        var cells = Array.prototype.slice.call(rowElt.childNodes, 0, fixedCol).map(cellElt => {
+            var copyCell = $(cellElt.cloneNode(true));
+            copyCell.$origin = cellElt;
+            this.swappedPairs.push([cellElt, copyCell]);
+            swapChildrenInElt(cellElt, copyCell);
+            return copyCell;
+        });
+        copyRow.addChild(cells);
+
+        return copyRow;
+    });
+    body.addChild(bodyRows);
+
+    this.updateSize();
+};
+
+FixedContentController.prototype.requestUpdate = function () {
+    this.elt.domSignal.emit('requestUpdateFixedContent');
+};
+
+
+FixedContentController.prototype.updateSize = function () {
+    if (this.elt.$fixedXCol.firstChild) {
+        Array.prototype.forEach.call(this.elt.$fixedXCol.firstChild.childNodes, rowElt => {
+            var rowBound = rowElt.$origin.getBoundingClientRect();
+            rowElt.addStyle('height', rowBound.height + 'px');
+            Array.prototype.forEach.call(rowElt.childNodes, cellElt => {
+                var cellBound = cellElt.$origin.getBoundingClientRect();
+                cellElt.addStyle('width', cellBound.width + 'px');
+            });
+
+        });
+    }
+};
+

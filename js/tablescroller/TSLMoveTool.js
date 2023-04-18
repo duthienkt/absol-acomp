@@ -58,7 +58,7 @@ TSLMoveTool.prototype.ev_preDrag = function (event) {
 
 
 TSLMoveTool.prototype._findRowIdx = function (y) {
-    var newY = Rectangle.fromClientRect(this.elt.$contentBody.getBoundingClientRect()).y;
+    var newY = Rectangle.fromClientRect(this.elt.$originTableBody.getBoundingClientRect()).y;
     var oldY = this.dragData.bodyBound.y;
     var dy = newY - oldY;
     var yArr = this.dragData.rowBounds.map((rect) => rect.y + dy + rect.height / 2);
@@ -92,22 +92,22 @@ TSLMoveTool.prototype.ev_dragStart = function (event) {
     this.dragData.copy.addClass('as-dragging');
     this.dragData.original.addClass('as-dragging');
     var rowBound = Rectangle.fromClientRect(this.dragData.original.getBoundingClientRect());
-    var bodyBound = Rectangle.fromClientRect(this.elt.$contentBody.getBoundingClientRect());
+    var bodyBound = Rectangle.fromClientRect(this.elt.$originTableBody.getBoundingClientRect());
     this.dragData.mouseOffset = event.currentPoint
         .sub(rowBound.A());
-    this.dragData.rowIdx = Array.prototype.indexOf.call(this.elt.$contentBody.childNodes, this.dragData.original);
+    this.dragData.rowIdx = Array.prototype.indexOf.call(this.elt.$originTableBody.childNodes, this.dragData.original);
     this.dragData.newRowIdx = this.dragData.rowIdx;
     this.dragData.rowBound = rowBound;
     this.dragData.bodyBound = bodyBound;
     this.dragData.rowOffset = rowBound.A().sub(bodyBound.A());
-    this.dragData.rowBounds = Array.prototype.map.call(this.elt.$contentBody.childNodes, elt => Rectangle.fromClientRect(elt.getBoundingClientRect()));
+    this.dragData.rowBounds = Array.prototype.map.call(this.elt.$originTableBody.childNodes, elt => Rectangle.fromClientRect(elt.getBoundingClientRect()));
 
 
 };
 
 TSLMoveTool.prototype.ev_drag = function (event) {
     if (!this.dragData) return;
-    var bodyBound = Rectangle.fromClientRect(this.elt.$contentBody.getBoundingClientRect());
+    var bodyBound = Rectangle.fromClientRect(this.elt.$originTableBody.getBoundingClientRect());
     var rowA = bodyBound.A().add(this.dragData.rowOffset);
     var rowTransformed = event.currentPoint.sub(this.dragData.mouseOffset);
     var transform = rowTransformed.sub(rowA);
@@ -120,7 +120,7 @@ TSLMoveTool.prototype.ev_drag = function (event) {
 
     var newIdx = this._findRowIdx(rowTransformed.y + this.dragData.rowBound.height / 2);
     this.dragData.newRowIdx = newIdx;
-    var rows = this.elt.$contentBody.childNodes;
+    var rows = this.elt.$originTableBody.childNodes;
     var curIdx = this.dragData.rowIdx;
     // var copyRows = this.elt.$f
     var rowBound = this.dragData.rowBound;
@@ -153,7 +153,7 @@ TSLMoveTool.prototype.ev_dragEnd = function (event) {
     this.elt.removeClass('as-dragging');
     this.elt.removeClass('as-has-new-pos');
     this.dragData.hiddenCells.forEach(e => e.removeClass('as-transparent-fix'));
-    var rows = this.elt.$contentBody.childNodes;
+    var rows = this.elt.$originTableBody.childNodes;
     rows.forEach(elt => {
         var copyElt = this.elt.leftCopyRows[elt.getAttribute('data-id')];
         elt.addStyle('transform', 'translate(0, 0)');

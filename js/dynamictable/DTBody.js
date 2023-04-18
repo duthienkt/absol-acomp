@@ -199,6 +199,7 @@ SearchingMode.prototype.selectPage = function (pageIdx) {
     if (this.offset === newOffset) return;
     this.offset = newOffset;
     this.render();
+    this.body.table.elt.fixedContentCtrl.requestUpdate();
 };
 
 SearchingMode.prototype.render = function () {
@@ -298,6 +299,7 @@ SearchingMode.prototype.onResult = function (response) {
     this._updatePageSelector();
 
     this.render();
+    this.body.table.elt.fixedContentCtrl.requestUpdate();
 };
 
 
@@ -330,6 +332,7 @@ NormalMode.prototype.start = function () {
     this.body.table.elt.$pageSelector.pageOffset = this.offset + 1;
     this.body.table.elt.$pageSelector.selectedIndex = Math.floor(this.offset / this.body.table.adapter.rowsPerPage) + 1;
     this.render();
+    this.body.table.elt.fixedContentCtrl.requestUpdate();
 };
 
 NormalMode.prototype.end = function () {
@@ -341,6 +344,7 @@ NormalMode.prototype.selectPage = function (pageIdx) {
     if (this.offset === newOffset) return;
     this.offset = newOffset;
     this.render();
+    this.body.table.elt.fixedContentCtrl.requestUpdate();
 };
 
 NormalMode.prototype.render = function () {
@@ -354,6 +358,7 @@ NormalMode.prototype.render = function () {
     for (var i = start; i < end; ++i) {
         elt.addChild(rows[i].elt);
     }
+    this.body.table.elt.fixedContentCtrl.requestUpdate();
 };
 
 
@@ -455,6 +460,7 @@ DTBody.prototype.onRowSplice = function (idx) {
     this.curentMode.onRowSplice(idx);
     this.master.transferFrom(idx);
     ResizeSystem.requestUpdateSignal();
+    this.table.elt.fixedContentCtrl.requestUpdate();
 }
 
 DTBody.prototype.rowIndexOf = function (o) {
