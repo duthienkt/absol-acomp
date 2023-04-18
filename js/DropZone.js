@@ -34,7 +34,7 @@ DropZone.eventHandler.dragZoneFileOver = function (event) {
         this.addClass('as-drag-over');
         this.emit('fileenter', event, this);
     }
-    this._fileOverTimeout = setTimeout(this.eventHandler.dragZoneFileOverEnd, 100);
+    this._fileOverTimeout = setTimeout(this.eventHandler.dragZoneFileOverEnd, 200);
 };
 
 /***
