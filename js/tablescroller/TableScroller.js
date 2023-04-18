@@ -1,7 +1,6 @@
 import '../../css/tablescroller.css';
 import ACore from "../../ACore";
 import Dom from "absol/src/HTML5/Dom";
-import BScroller from "../BScroller";
 import TSLMoveTool from "./TSLMoveTool";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import { swapChildrenInElt } from "../utils";
@@ -10,66 +9,65 @@ import DomSignal from "absol/src/HTML5/DomSignal";
 var $ = ACore.$;
 var _ = ACore._;
 
+
+var sliceCellArray = (cells, start, end) => {
+    if (typeof start !== "number") start = 0;
+    if (typeof end !== "number") start = Infinity;
+    var res = [];
+    cells = cells.slice();
+    var cell, colSpan;
+    var n = 0;
+    while (cells.length > 0) {
+        cell = cells.shift();
+        colSpan = parseInt(cell.getAttribute('colspan') || '1') || 1;
+        n += colSpan;
+        if (n > start && n <= end)
+            res.push(cell);
+    }
+    return res;
+}
+
 /***
  * @extends {AElement}
  * @constructor
  */
 function TableScroller() {
-    var thisTS = this;
-    this.$content = undefined;
-    this.$fixedViewport = $('.absol-table-scroller-fixed-viewport', this);
+    this.$originCtn = $('.as-table-scroller-origin-table-ctn', this);
+    this.$originTable = undefined;
+    this.$originContent = undefined;
 
-    this.$leftScroller = $('.absol-table-scroller-left-vscroller', this);
-    this.$leftViewport = $('.absol-table-scroller-left-vscroller-viewport', this)
-        .on('scroll', thisTS.eventHandler.scrollLeftScrollerViewport);
+    this.$fixedYHeaderScroller = $('.as-table-scroller-fixed-y-header-scroller', this);
+    this.$fixedYHeader = $('.as-table-scroller-fixed-y-header', this);
+    this.$fixedXYHeader = $('.as-table-scroller-fixed-xy-header', this);
 
-    this.$headScroller = $('.absol-table-scroller-header-hscroller', this);
-    this.$headScrollerViewport = $('.absol-table-scroller-header-hscroller-viewport', this)
-        .on('scroll', this.eventHandler.scrollHeadScrollerViewport);
+    this.$fixXCol = $('.as-table-scroller-fixed-x-col', this);
 
     this.$attachHook = $('attachhook', this);
-    this.$attachHook.requestUpdateSize = this._updateContentSize.bind(this);
+    this.$attachHook.requestUpdateSize = this.updateContentSize.bind(this);
     this.$attachHook.on('attached', function () {
         Dom.addToResizeSystem(this);
     });
 
-    this.sync = new Promise(function (rs) {
-        thisTS.$attachHook.once('error', rs)
-    });
-
-    this.$viewport = $('.absol-table-scroller-viewport', this)
-        .on('scroll', this.eventHandler.scrollViewport);
-
-    this.$viewport.scrollInto = BScroller.prototype.scrollInto;
-
-    this.$leftLine = $('.absol-table-scroller-left-line', this);
-    this.$headLine = $('.absol-table-scroller-head-line', this);
-
-    this.$vscrollbarCtn = $('.absol-table-scroller-vscrollbar-container', this);
-    this.$vscrollbar = $('.absol-table-scroller-vscrollbar-container vscrollbar', this)
-        .on('scroll', function () {
-            thisTS.$viewport.scrollTop = this.innerOffset;
-        });
-
-
-    this.$hscrollbarCtn = $('.absol-table-scroller-hscrollbar-container', this);
-    this.$hscrollbar = $('.absol-table-scroller-hscrollbar-container hscrollbar', this)
-        .on('scroll', function () {
-            thisTS.$viewport.scrollLeft = this.innerOffset;
-        });
     this.$domSignal = _('attachhook');
     this.appendChild(this.$domSignal);
     this.domSignal = new DomSignal(this.$domSignal);
-    this.domSignal.on('requestUpdateContent', this._updateContent.bind(this));
+    this.domSignal.on('requestUpdateContent', this.updateContent.bind(this));
 
-    this.$vscrollbar.hidden = false;
-    this.$hscrollbar.hidden = false;
-    this._fixedTableThsVisible = [];
-    this._fixedTableTr = [];
-    this._fixedTableThs = [];
-    this._swappedPairs = []
+    this.$vscrollbar = $('.absol-table-scroller-vscrollbar-container vscrollbar', this);
+    this.$hscrollbar = $('.absol-table-scroller-hscrollbar-container hscrollbar', this);
 
+    this.$vscroller = $('.as-table-scroller-vertical-scroller', this);
+    this.$hscroller = $('.as-table-scroller-horizontal-scroller', this);
+
+    this.$leftLine = $('.absol-table-scroller-left-line', this).addStyle('display', 'none');
+    this.$headLine = $('.absol-table-scroller-head-line', this);
+
+    this.scrollCtr = new ScrollController(this);
     this.moveTool = new TSLMoveTool(this);
+
+    this._swappedPairs = [];
+    this.originalRows = {};
+    this.leftCopyRows = {};
 
     /***
      * @name fixedCol
@@ -88,6 +86,51 @@ TableScroller.render = function () {
             {
                 class: 'absol-table-scroller-content',
                 child: [
+                    {
+                        class: 'as-table-scroller-vertical-scroller',
+                        child: [
+                            {
+                                class: 'as-table-scroller-horizontal-scroller-viewport',
+                                child: [
+                                    {
+                                        class: 'as-table-scroller-fixed-x-col-ctn',
+                                        child: {
+                                            tag: 'table',
+                                            class: 'as-table-scroller-fixed-x-col',
+                                        }
+                                    },
+                                    {
+                                        class: 'as-table-scroller-horizontal-scroller',
+                                        child: [
+                                            {
+                                                class: 'as-table-scroller-origin-table-ctn'
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        class: 'as-table-scroller-fixed-y-header-ctn',
+                        child: {
+                            class: 'as-table-scroller-fixed-y-header-scroller',
+                            child: {
+                                tag: 'table',
+                                class: 'as-table-scroller-fixed-y-header',
+
+                            }
+
+                        }
+                    },
+                    {
+                        class: 'as-table-scroller-fixed-xy-header-ctn',
+                        child: {
+                            tag: 'table',
+                            class: 'as-table-scroller-fixed-xy-header'
+                        }
+                    },
+
                     '.absol-table-scroller-viewport',
                     '.absol-table-scroller-fixed-viewport',//place holder
                     {
@@ -136,204 +179,40 @@ Dom.getScrollSize().then(function (size) {
 });
 
 TableScroller.eventHandler = {};
-TableScroller.eventHandler.scrollViewport = function (event) {
-    if (!this.__scrollingElement__ || this.__scrollingElement__ === this.$viewport) {
-        this.__scrollingElement__ = this.$viewport;
-        this.$headScrollerViewport.scrollLeft = this.$viewport.scrollLeft;
-        this.$leftViewport.scrollTop = this.$viewport.scrollTop;
-        this.$vscrollbar.innerOffset = this.$viewport.scrollTop;
-        this.$hscrollbar.innerOffset = this.$viewport.scrollLeft;
 
-        if (this.__scrollTimer__ > 0) {
-            clearTimeout(this.__scrollTimer__);
-        }
-        this.__scrollTimer__ = setTimeout(function () {
-            this.__scrollingElement__ = undefined;
-            this.__scrollTimer__ = -1;
-        }.bind(this), 300);
-    }
-};
-
-TableScroller.eventHandler.scrollHeadScrollerViewport = function (event) {
-    if (!this.__scrollingElement__ || this.__scrollingElement__ === this.$headScrollerViewport) {
-        this.__scrollingElement__ = this.$headScrollerViewport;
-        this.$viewport.scrollLeft = this.$headScrollerViewport.scrollLeft;
-        if (this.__scrollTimer__ > 0) {
-            clearTimeout(this.__scrollTimer__);
-        }
-        this.__scrollTimer__ = setTimeout(function () {
-            this.__scrollingElement__ = undefined;
-            this.__scrollTimer__ = -1;
-        }.bind(this), 100);
-    }
-};
-
-
-TableScroller.eventHandler.scrollLeftScrollerViewport = function (event) {
-    if (!this.__scrollingElement__ || this.__scrollingElement__ === this.$leftViewport) {
-        this.__scrollingElement__ = this.$leftViewport;
-        this.$viewport.scrollTop = this.$leftViewport.scrollTop;
-        this.$vscrollbar.innerOffset = this.$viewport.scrollTop;
-        if (this.__scrollTimer__ > 0) {
-            clearTimeout(this.__scrollTimer__);
-        }
-        this.__scrollTimer__ = setTimeout(function () {
-            this.__scrollingElement__ = undefined;
-            this.__scrollTimer__ = -1;
-        }.bind(this), 100);
-    }
-}
 
 TableScroller.prototype.clearChild = function () {
-    this.$viewport.clearChild();
-    this.$fixedViewport.clearChild();
-    this.$headScrollerViewport.clearChild();
-    this.$leftViewport.clearChild();
-    this.$content = null;
+    this.$fixXCol.clearChild();
+    this.$fixedYHeader.clearChild();
+    this.$fixedXYHeader.clearChild();
+    this.$originTable = null;
     return this;
 };
 
 TableScroller.prototype.addChild = function (elt) {
-    if (this.$viewport.childNodes.length === 0) {
-        if (elt.tagName && elt.tagName.toLowerCase() === 'table') {
-            elt.classList.add('absol-table-scroller-origin');
-            this.$viewport.addChild(elt);
-            this.$content = elt;
-            this.domSignal.emit('requestUpdateContent');
+    if (this.$originTable) {
+        throw new Error('Only one table is accepted!');
+    }
+    this.$originContent = elt;
+    this.$originTable = $('table', this.$originContent);
+    this.$originCtn.addChild(this.$originTable);
+    this.requestUpdateContent();
 
-        }
-        else {
-            throw new Error('Element must be a table!');
-        }
-        this.moveTool.onAttachTable();
-    }
-    else {
-        throw new Error("Only 1 table accepted!");
-    }
 };
 
 
 TableScroller.prototype._revertWrapped = function () {
-    var t = new Date().getTime();
-    this._swappedPairs.forEach(pairs => {
-        swapChildrenInElt(pairs[0], pairs[1]);
-    });
-    this._swappedPairs = [];
-};
-
-
-TableScroller.prototype._updateFixedTable = function () {
-    var fixedCol = this.fixedCol;
-    this.$fixedViewport.clearChild();
-    this.$fixedTable = $(this.$content.cloneNode(false)).addClass('absol-table-scroller-fixed-table')
-        .removeClass('absol-table-scroller-origin').addTo(this.$fixedViewport);
-    this.$fixedTableThead = $(this.$contentThead.cloneNode(false)).addTo(this.$fixedTable);
-
-    this.$fixedTableThead.clearChild();
-    this._fixedTableThsVisible = [];
-    this._fixedTableTr = Array.prototype.filter.call(this.$contentThead.childNodes, function (elt) {
-        return elt.tagName === "TR";
-    }).map((tr) => {
-        var cloneTr = $(tr.cloneNode(false));
-        cloneTr.__originElement__ = tr;
-        this.$fixedTableThead.appendChild(cloneTr);
-        return cloneTr;
-    });
-
-    this._fixedTableThs = this._fixedTableTr.map((tr) => {
-        return Array.prototype.filter.call(tr.__originElement__.childNodes, (elt1) => {
-            return elt1.tagName === "TH" || elt1.tagName === "TD";
-        }).reduce((ac, th) => {
-            var colspan = th.getAttribute('colspan');
-            if (colspan) {
-                colspan = parseInt(colspan);
-            }
-            else {
-                colspan = 1;
-            }
-            ac.colspanSum += colspan;
-            var cloneTh = $(th.cloneNode(true));
-            tr.appendChild(cloneTh);
-            cloneTh.__originElement__ = th;
-            ac.result.push(cloneTh);
-            if (ac.colspanSum <= fixedCol) {
-                swapChildrenInElt(cloneTh, th);
-                this._swappedPairs.push([cloneTh, th]);
-                this._fixedTableThsVisible.push(th);
-            }
-            return ac;
-        }, { result: [], colspanSum: 0 }).result;
-    });
-
-};
-
-
-TableScroller.prototype._updateHeaderScroller = function () {
-    var fixedCol = this.fixedCol;
-    var self = this;
-    this.$headScrollerViewport.clearChild();
-    this.$headScrollerTable = $(this.$content.cloneNode(false))
-        .removeClass('absol-table-scroller-origin')
-        .addTo(this.$headScrollerViewport);
-    this.$headScrollerThead = $(this.$contentThead.cloneNode(false))
-        .addTo(this.$headScrollerTable);
-
-    this._headScrollerTr = Array.prototype.filter.call(this.$contentThead.childNodes, (elt) => {
-        return elt.tagName === "TR";
-    }).map((tr) => {
-        var cloneTr = $(tr.cloneNode(false));
-        cloneTr.__originElement__ = tr;
-        this.$headScrollerThead.appendChild(cloneTr);
-        return cloneTr;
-    });
-
-    this._headScrollerTds = this._headScrollerTr.map((tr) => {
-        return Array.prototype.filter.call(tr.__originElement__.childNodes, (elt1) => {
-            return elt1.tagName === "TH";
-        }).map((th, i) => {
-            var cloneTh = $(th.cloneNode(true)).addTo(tr);
-            cloneTh.__originElement__ = th;
-            if (i >= fixedCol) {
-                swapChildrenInElt(cloneTh, th);
-                this._swappedPairs.push([cloneTh, th]);
-            }
-            return cloneTh;
-        });
-
-    });
-};
-
-
-TableScroller.prototype._updateLeftTable = function () {
-    var fixedCol = this.fixedCol;
-
-    this.$leftViewport.clearChild();
-    this.$leftTable = $(this.$content.cloneNode(true)).removeClass('absol-table-scroller-origin').addTo(this.$leftViewport);
-    this.$leftTableBody = $('tbody', this.$leftTable);
-    this.leftCopyRows = {};
-    Array.prototype.slice.call(this.$leftTableBody.childNodes).forEach((elt, i) => {
-        var cells, copyCells;
-        var id;
-        if (elt.tagName === 'TR') {
-            id = elt.getAttribute('data-id');
-            this.leftCopyRows[id] = $(elt);
-            cells = Array.prototype.slice.call(this.originalRows[id].childNodes).slice(0, fixedCol).filter(e => e.tagName === 'TD');
-            copyCells = Array.prototype.slice.call(elt.childNodes).slice(0, fixedCol).filter(e => e.tagName === 'TD');
-            cells.forEach((cell, i) => {
-                swapChildrenInElt(cell, copyCells[i]);
-                this._swappedPairs.push([cell, copyCells[i]]);
-            });
-        }
-        else {
-            elt.remove();
-        }
-    });
+    var pair;
+    while (this._swappedPairs.length > 0) {
+        pair = this._swappedPairs.pop();
+        swapChildrenInElt(pair[0], pair[1]);
+    }
 };
 
 
 TableScroller.prototype._makeDataIdent = function () {
     this.originalRows = {};
-    Array.prototype.slice.call(this.$contentBody.childNodes).forEach((elt, i) => {
+    Array.prototype.slice.call(this.$originTableBody.childNodes).forEach((elt, i) => {
         var id;
         if (elt.tagName === 'TR') {
             id = elt.getAttribute('data-id') || randomIdent(12) + '_' + i;
@@ -346,157 +225,201 @@ TableScroller.prototype._makeDataIdent = function () {
     });
 };
 
-TableScroller.prototype._updateContent = function () {
-    if (!this.$content) return;
+
+TableScroller.prototype._updateFixedYHeader = function () {
+    var head = $(this.$originTableThead.cloneNode(false));
+    var headRows = Array.prototype.filter.call(this.$originTableThead.childNodes, elt => elt.tagName === 'TR')
+        .map(tr => {
+            var copyTr = $(tr.cloneNode(false));
+            copyTr.$origin = tr;
+            var cells = Array.prototype.filter.call(tr.childNodes, elt => elt.tagName === 'TH' || elt.tagName === 'TD')
+                .map(td => $(Object.assign(td.cloneNode(true), { $origin: td })));
+            copyTr.addChild(cells);
+            sliceCellArray(cells, this.fixedCol).forEach(elt => {
+                swapChildrenInElt(elt, elt.$origin);
+                this._swappedPairs.push([elt, elt.$origin]);
+            });
+            return copyTr;
+
+        });
+    head.addChild(headRows);
+    this.$fixedYHeader.clearChild().addChild(head);
+    this.$fixedYHeader.attr('class', this.$originTable.attr('class')).addClass('as-table-scroller-fixed-y-header');
+};
+
+
+TableScroller.prototype._updateFixedYHeaderSize = function () {
+    var bound = this.$originTable.getBoundingClientRect();
+    this.$fixedYHeader.addStyle('width', bound.width + 'px');
+    Array.prototype.forEach.call(this.$fixedYHeader.firstChild.firstChild.childNodes, elt => {
+        elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
+    });
+    this.$headLine.addStyle('top', this.$fixedYHeader.getBoundingClientRect().height - 1 + 'px');
+};
+
+
+TableScroller.prototype._updateFixedXCol = function () {
+    this.$fixXCol.clearChild();
+    var head = $(this.$originTableThead.cloneNode(false));
+    var headRows = Array.prototype.filter.call(this.$originTableThead.childNodes, elt => elt.tagName === 'TR')
+        .map(tr => {
+            var copyTr = $(tr.cloneNode(false));
+
+            copyTr.$origin = tr;
+            var cells = Array.prototype.filter.call(tr.childNodes, elt => elt.tagName === 'TH' || elt.tagName === 'TD');
+            cells = sliceCellArray(cells, 0, this.fixedCol)
+                .map(td => $(Object.assign(td.cloneNode(true), { $origin: td })));
+
+            copyTr.addChild(cells);
+            return copyTr;
+
+        });
+    head.addChild(headRows);
+
+    var body = $(this.$originTableBody.cloneNode());
+    var rows = Array.prototype.filter.call(this.$originTableBody.childNodes, elt => elt.tagName === 'TR')
+        .map(tr => {
+            var copyTr = $(tr.cloneNode(false));
+            copyTr.$origin = tr;
+            var id = copyTr.attr('data-id');
+            this.leftCopyRows[id] = copyTr;
+            var cells = Array.prototype.filter.call(tr.childNodes, elt => elt.tagName === 'TH' || elt.tagName === 'TD');
+            cells = sliceCellArray(cells, 0, this.fixedCol)
+                .map(td => $(Object.assign(td.cloneNode(true), { $origin: td })));
+            cells.forEach(elt => {
+                swapChildrenInElt(elt, elt.$origin);
+                this._swappedPairs.push([elt, elt.$origin]);
+            });
+            copyTr.addChild(cells);
+            return copyTr;
+        });
+    body.addChild(rows);
+    this.$fixXCol.addChild(head)
+        .addChild(body);
+    this.$fixXCol.attr('class', this.$originTable.attr('class')).addClass('as-table-scroller-fixed-x-col');
+};
+
+
+TableScroller.prototype._updateFixedXColSize = function () {
+    if (this.fixedCol === 0) return;
+    var bound = this.$originTable.getBoundingClientRect();
+    this.$fixXCol.addStyle('height', bound.height + 'px');
+
+    Array.prototype.forEach.call(this.$fixXCol.firstChild.childNodes, elt => {
+        elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
+    });
+
+    Array.prototype.forEach.call(this.$fixXCol.firstChild.firstChild.childNodes, elt => {
+        elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
+    });
+    Array.prototype.forEach.call(this.$fixXCol.lastChild.childNodes, elt => {
+        elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
+    });
+};
+
+TableScroller.prototype._updateFixedXYHeader = function () {
+    var head = $(this.$originTableThead.cloneNode(false));
+    var headRows = Array.prototype.filter.call(this.$originTableThead.childNodes, elt => elt.tagName === 'TR')
+        .map(tr => {
+            var copyTr = _('tr');
+            copyTr.$origin = tr;
+            var cells = Array.prototype.filter.call(tr.childNodes, elt => elt.tagName === 'TH' || elt.tagName === 'TD');
+            cells = sliceCellArray(cells, 0, this.fixedCol)
+                .map(td => $(Object.assign(td.cloneNode(true), { $origin: td })));
+            copyTr.addChild(cells);
+            cells.forEach(cell => {
+                swapChildrenInElt(cell, cell.$origin);
+                this._swappedPairs.push([cell, cell.$origin]);
+            })
+            return copyTr;
+
+        });
+    head.addChild(headRows);
+    this.$fixedXYHeader.clearChild().addChild(head);
+    this.$fixedXYHeader.attr('class', this.$originTable.attr('class')).addClass('as-table-scroller-fixed-xy-header');
+};
+
+
+TableScroller.prototype._updateFixedXYHeaderSize = function () {
+    Array.prototype.forEach.call(this.$fixedXYHeader.firstChild.childNodes, elt => {
+        elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
+    });
+    Array.prototype.forEach.call(this.$fixedXYHeader.firstChild.firstChild.childNodes, elt => {
+        elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
+    });
+    this.$leftLine.addStyle('left', this.$fixedXYHeader.getBoundingClientRect().width - 1 + 'px');
+};
+
+
+TableScroller.prototype.updateContent = function () {
+    if (!this.$originTable) return;
     this._revertWrapped();
-    this.$contentThead = $('thead', this.$content);
-    this.$contentBody = $('tbody', this.$content)
+
+    this.$originTableThead = $('thead', this.$originTable);
+    this.$originTableBody = $('tbody', this.$originTable);
+
+
     this._makeDataIdent();
-    this._updateFixedTable();
-    this._updateHeaderScroller();
-    this._updateLeftTable();
+
+    this._updateFixedYHeader();
+    this._updateFixedXCol();
+    this._updateFixedXYHeader();
+
     this.reindexRows();
-    this.sync.then(this._updateContentSize.bind(this)).then(function () {
-        setTimeout(this._updateContentSize.bind(this), 30);
-    }.bind(this));
-};
 
-TableScroller.prototype._updateFixedTableSize = function () {
-    var l = 1000;
-    var r = -1000;
-    this._fixedTableThsVisible.forEach(function (elt) {
-        var b = elt.getBoundingClientRect();
-        l = Math.min(l, b.left);
-        r = Math.max(r, b.right);
-    });
-    this._leftWidth = Math.max(r - l, 0);
+    this.updateContentSize();
 
-    this.$fixedViewport.addStyle('width', this._leftWidth + 2 + 'px');
-
-    this._fixedTableTr.forEach(function (elt) {
-        var styleHeight = elt.__originElement__.getBoundingClientRect().height + 'px';
-        elt.addStyle('height', styleHeight);
-    });
-
-    this._fixedTableThs.forEach(function (row) {
-        row.forEach(function (elt) {
-            var styleWidth = elt.__originElement__.getBoundingClientRect().width + 'px';
-            elt.addStyle('width', styleWidth);
-        });
-    });
-    this.$fixedTable.addStyle({
-        height: this.$contentThead.getBoundingClientRect().height + 'px',
-        width: this.$content.getBoundingClientRect().width + 'px',
-    });
 };
 
 
-TableScroller.prototype._updateHeaderScrollerSize = function () {
-    var headHeight = this.$contentThead.getBoundingClientRect().height + 'px';
-    this.$headScrollerTable.addStyle('height', headHeight);
-    this.$headScrollerTable.addStyle('width', this.$content.getBoundingClientRect().width + 'px');
-    this._headScrollerTr.forEach(function (elt) {
-        var styleHeight = elt.__originElement__.getBoundingClientRect().height + 'px';
-        elt.addStyle('height', styleHeight);
-    });
-
-    this._headScrollerTds.forEach(function (row) {
-        row.forEach(function (elt) {
-            var styleWidth = elt.__originElement__.getBoundingClientRect().width + 'px';
-            elt.addStyle('width', styleWidth);
-        });
-    });
-};
-
-TableScroller.prototype._updateLeftTableSize = function () {
-    this.$leftTable.addStyle('width', this.$content.getBoundingClientRect().width + 'px');
-    this.$leftTable.addStyle('height', this.$content.getBoundingClientRect().height + 'px');
-    this.$leftScroller.addStyle('width', this._leftWidth + 2 + 'px');
-};
-
-TableScroller.prototype._updateLinesSize = function () {
-    if (this.$viewport.clientHeight < this.$viewport.scrollHeight) {
-        this.addClass('scroll-v');
+TableScroller.prototype._updateScrollStatus = function () {
+    var bound = this.getBoundingClientRect();
+    var tableBound = this.$originTable.getBoundingClientRect();
+    if (bound.width < tableBound.width) {
+        this.addClass('as-scroll-horizontal');
+        this.$vscrollbar.outerHeight = bound.height - 17;
     }
     else {
-        this.removeClass('scroll-v');
+        this.$vscrollbar.outerHeight = bound.height;
+        this.removeClass('as-scroll-horizontal');
     }
-
-    if (this.$viewport.clientWidth < this.$viewport.scrollWidth) {
-        this.addClass('scroll-h');
+    if (bound.height < tableBound.height) {
+        this.addClass('as-scroll-vertical');
+        this.$hscrollbar.outerWidth = bound.width - 17;
     }
     else {
-        this.removeClass('scroll-h');
+        this.$hscrollbar.outerWidth = bound.width;
+        this.removeClass('as-scroll-vertical');
     }
-
-    this.$leftLine.addStyle({
-        maxHeight: this.$content.getBoundingClientRect().height + 'px',
-        left: this._leftWidth + 'px'
-    });
-    this.$headLine.addStyle({
-        top: this.$contentThead.getBoundingClientRect().height + 'px',
-        maxWidth: this.$content.getBoundingClientRect().width + 'px'
-    });
+    this.$vscrollbar.innerHeight = tableBound.height;
+    this.$hscrollbar.innerWidth = tableBound.width;
 };
 
 
-TableScroller.prototype._updateScrollBarSize = function () {
-    var viewportBound = this.$viewport.getBoundingClientRect();
-    var tableBound = this.$content.getBoundingClientRect();
-    this.$vscrollbar.innerHeight = this.$viewport.scrollHeight;
-    this.$vscrollbar.outerHeight = viewportBound.height - TableScroller.scrollSize;
-
-
-    this.$hscrollbar.innerWidth = this.$viewport.scrollWidth;
-    this.$hscrollbar.outerWidth = viewportBound.width - TableScroller.scrollSize;
-
-    var overHeight = this.$viewport.clientHeight < this.$viewport.scrollHeight;
-    var overWidth = this.$viewport.clientWidth < this.$viewport.scrollWidth;
-    if (overHeight) {
-        if (overWidth) {
-            this.$hscrollbarCtn.removeStyle('bottom');
-            this.$vscrollbarCtn.removeStyle('right');
-        }
-        else {
-            this.$vscrollbarCtn.addStyle('right', viewportBound.width - TableScroller.scrollSize - tableBound.width + 'px');
-        }
-    }
-    else {
-        if (overWidth) {
-            this.$hscrollbarCtn.addStyle('bottom', viewportBound.height - TableScroller.scrollSize - tableBound.height + 'px');
-        }
-    }
-};
-
-
-TableScroller.prototype._updateContentSize = function () {
-    if (!this.$fixedTable) return;
-    this.emit('preupdatesize');
-    this._updateFixedTableSize();
-    this._updateHeaderScrollerSize();
-    this._updateLeftTableSize();
-    this._updateLinesSize();
-    this._updateScrollBarSize();
-    this.emit('sizeupdated');
-
+TableScroller.prototype.updateContentSize = function () {
+    if (!this.$originTable) return;
+    this._updateScrollStatus();
+    this._updateFixedYHeaderSize();
+    this._updateFixedXColSize();
+    this._updateFixedXYHeaderSize();
 };
 
 TableScroller.prototype.reindexRows = function () {
-    if (this.$contentBody)
-        Array.prototype.filter.call(this.$contentBody.childNodes, elt => elt.tagName === 'TR')
-            .forEach((elt, i) => {
-                elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt);
-                if (elt.$idx)
-                    elt.$idx.attr('data-idx', i + 1);
-            });
-    if (this.$leftTableBody)
-        Array.prototype.filter.call(this.$leftTableBody.childNodes, elt => elt.tagName === 'TR')
-            .forEach((elt, i) => {
-                elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt);
-                if (elt.$idx)
-                    elt.$idx.attr('data-idx', i + 1);
-            });
+    if (!this.$originTableBody) return;
 
+    Array.prototype.filter.call(this.$originTableBody.childNodes, elt => elt.tagName === 'TR')
+        .forEach((elt, i) => {
+            if (elt.$idx === null) return;
+            elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt) || null;
+            if (elt.$idx)
+                elt.$idx.attr('data-idx', i + 1);
+        });
+    Array.prototype.forEach.call(this.$fixXCol.lastChild.childNodes, (elt, i) => {
+        if (elt.$idx === null) return;
+        elt.$idx = elt.$idx || $('.as-table-scroller-row-index', elt) || null;
+        if (elt.$idx)
+            elt.$idx.attr('data-idx', i + 1);
+    });
 };
 
 TableScroller.prototype.removeRow = function (row) {
@@ -509,16 +432,16 @@ TableScroller.prototype.removeRow = function (row) {
 
 
 TableScroller.prototype.addRowBefore = function (row, bf) {
-    if (!this.$contentBody) return this;
-    this.$contentBody.addChildBefore(row, bf);
+    if (!this.$originTableBody) return this;
+    this.$originTableBody.addChildBefore(row, bf);
     this.requestUpdateContent();
     return this;
 };
 
 
 TableScroller.prototype.addRowAfter = function (row, at) {
-    if (!this.$contentBody) return this;
-    this.$contentBody.addChildAfter(row, at);
+    if (!this.$originTableBody) return this;
+    this.$originTableBody.addChildAfter(row, at);
     this.requestUpdateContent();
     return this;
 };
@@ -534,7 +457,11 @@ TableScroller.property.fixedCol = {
     set: function (value) {
         value = value || 0;
         this._fixedCol = value;
-        this.$domSignal.emit('requestUpdateContent');
+        if (value === 0) this.$leftLine.addStyle('display', 'none');
+        else this.$leftLine.removeStyle('display');
+        this.requestUpdateContent();
+
+        // this.$domSignal.emit('requestUpdateContent');
     },
     get: function () {
         return this._fixedCol || 0;
@@ -545,3 +472,83 @@ TableScroller.property.fixedCol = {
 ACore.install(TableScroller);
 
 export default TableScroller;
+
+/***
+ *
+ * @param {TableScroller} elt
+ * @constructor
+ */
+function ScrollController(elt) {
+    this.elt = elt;
+
+    Object.keys(this.constructor.prototype).filter(k => k.startsWith('ev_'))
+        .forEach(k => this[k] = this[k].bind(this));
+
+    this.vscrollTarget = null;
+    this.hscrollTarget = null;
+
+
+    this.elt.$vscroller.on('scroll', this.ev_vScrollerScroll);
+    this.elt.$vscrollbar.on('scroll', this.ev_vScrollbarScroll);
+
+
+    this.elt.$hscroller.on('scroll', this.ev_hScrollerScroll);
+    this.elt.$hscrollbar.on('scroll', this.ev_hScrollbarScroll);
+    this.elt.$fixedYHeaderScroller.on('scroll', this.ev_fixedYHeaderScroll);
+}
+
+
+ScrollController.prototype.ev_vScrollerScroll = function (event) {
+    var now = new Date().getTime();
+    if (this.vscrollTarget && now - this.vscrollTarget.time < 100 && this.vscrollTarget.elt !== this.elt.$vscroller) return;
+    this.elt.$vscrollbar.innerOffset = this.elt.$vscroller.scrollTop;
+    this.vscrollTarget = {
+        time: now,
+        elt: this.elt.$vscroller
+    };
+};
+
+
+ScrollController.prototype.ev_vScrollbarScroll = function (event) {
+    var now = new Date().getTime();
+    if (this.vscrollTarget && now - this.vscrollTarget.time < 100 && this.vscrollTarget.elt !== this.elt.$vscrollbar) return;
+    this.elt.$vscroller.scrollTop = this.elt.$vscrollbar.innerOffset;
+    this.vscrollTarget = {
+        time: now,
+        elt: this.elt.$vscrollbar
+    };
+};
+
+
+ScrollController.prototype.ev_hScrollerScroll = function (event) {
+    var now = new Date().getTime();
+    if (this.hscrollTarget && now - this.hscrollTarget.time < 100 && this.hscrollTarget.elt !== this.elt.$hscroller) return;
+    this.elt.$hscrollbar.innerOffset = this.elt.$hscroller.scrollLeft;
+    this.elt.$fixedYHeaderScroller.scrollLeft = this.elt.$hscroller.scrollLeft;
+    this.hscrollTarget = {
+        time: now,
+        elt: this.elt.$hscroller
+    };
+};
+
+ScrollController.prototype.ev_fixedYHeaderScroll = function (event) {
+    var now = new Date().getTime();
+    if (this.hscrollTarget && now - this.hscrollTarget.time < 100 && this.hscrollTarget.elt !== this.elt.$fixedYHeaderScroller) return;
+    this.elt.$hscrollbar.innerOffset = this.elt.$fixedYHeaderScroller.scrollLeft;
+    this.elt.$hscroller.scrollLeft = this.elt.$fixedYHeaderScroller.scrollLeft;
+    this.hscrollTarget = {
+        time: now,
+        elt: this.elt.$fixedYHeaderScroller
+    };
+};
+
+
+ScrollController.prototype.ev_hScrollbarScroll = function (event) {
+    var now = new Date().getTime();
+    if (this.hscrollTarget && now - this.hscrollTarget.time < 100 && this.hscrollTarget.elt !== this.elt.$hscrollbar) return;
+    this.elt.$hscroller.scrollLeft = this.elt.$hscrollbar.innerOffset >> 0;
+    this.vscrollTarget = {
+        time: now,
+        elt: this.elt.$hscrollbar
+    };
+};

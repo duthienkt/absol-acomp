@@ -1,7 +1,8 @@
 .absol-table-scroller .absol-table-scroller-viewport {
     width: calc(100% + var(--scrollbar-width));
-    height: calc(100% +  var(--scrollbar-width));
+    height: calc(100% + var(--scrollbar-width));
 }
+
 .absol-table-scroller .absol-table-scroller-header-hscroller-viewport {
     margin-bottom: calc(0px - var(--scrollbar-width))
 }
@@ -13,6 +14,66 @@
     position: relative;
     padding-right: 17px;
     padding-bottom: 17px;
+}
+
+.absol-table-scroller:not(.as-scroll-vertical) {
+    padding-right: 0;
+}
+
+
+.absol-table-scroller:not(.as-scroll-horizontal) {
+    padding-bottom: 0;
+}
+
+
+.as-table-scroller-vertical-scroller {
+    overflow-y: scroll;
+    height: 100%;
+    box-sizing: border-box;
+    margin-right: calc(0px - var(--scrollbar-width));
+}
+
+.as-table-scroller-fixed-y-header-ctn {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+}
+
+.as-table-scroller-fixed-x-col-ctn {
+    position: absolute;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.as-table-scroller-fixed-xy-header-ctn {
+    position: absolute;
+    z-index: 12;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.as-table-scroller-fixed-y-header-scroller {
+    overflow-x: scroll;
+    margin-bottom: calc(var(--scrollbar-width) * -1);
+}
+
+
+.as-table-scroller-horizontal-scroller-viewport {
+    overflow: hidden;
+    position: relative;
+}
+
+.as-table-scroller-horizontal-scroller {
+    overflow-x: scroll;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: calc(var(--scrollbar-width) * -1);
 }
 
 .absol-table-scroller-content {
@@ -116,7 +177,6 @@
 
 .absol-table-scroller-head-line {
     left: 0;
-    width: calc(100% - 6px);
     border-bottom: solid 2px rgb(169, 169, 170);
     width: 100%;
 }
@@ -124,35 +184,25 @@
 .absol-table-scroller-left-line {
     top: 0;
     border-right: solid 2px rgb(169, 169, 170);
-    height: calc(100% - 6px);
     height: 100%;
 }
 
 
-.absol-table-scroller.scroll-v .absol-table-scroller-head-line {
+.absol-table-scroller.as-scroll-vertical .absol-table-scroller-head-line {
     width: 100%;
 }
 
-.absol-table-scroller.scroll-h .absol-table-scroller-left-line {
+.absol-table-scroller.as-scroll-horizontal .absol-table-scroller-left-line {
     height: 100%;
 }
 
 
-.absol-table-scroller:not(.scroll-v) .absol-table-scroller-head-line {
+.absol-table-scroller:not(.as-scroll-vertical) .absol-table-scroller-head-line {
     display: none;
 }
 
-.absol-table-scroller:not(.scroll-h) .absol-table-scroller-left-line {
+.absol-table-scroller:not(.as-scroll-horizontal) .absol-table-scroller-left-line {
     display: none;
-}
-
-.absol-table-scroller:not(.scroll-v){
-    padding-right: 0;
-}
-
-
-.absol-table-scroller:not(.scroll-h){
-    padding-bottom: 0;
 }
 
 
@@ -193,20 +243,20 @@
 }
 
 
-.absol-table-scroller:not(.scroll-v) .absol-table-scroller-vscrollbar-container {
+.absol-table-scroller:not(.as-scroll-vertical) .absol-table-scroller-vscrollbar-container {
     display: none;
 }
 
-.absol-table-scroller:not(.scroll-h) .absol-table-scroller-hscrollbar-container {
+.absol-table-scroller:not(.as-scroll-horizontal) .absol-table-scroller-hscrollbar-container {
     display: none;
 }
 
 
-.absol-table-scroller.scroll-h .absol-table-scroller-vscrollbar-container {
+.absol-table-scroller.as-scroll-horizontal .absol-table-scroller-vscrollbar-container {
     bottom: 17px;
 }
 
-.absol-table-scroller.scroll-v .absol-table-scroller-hscrollbar-container {
+.absol-table-scroller.as-scroll-vertical .absol-table-scroller-hscrollbar-container {
     right: 17px;
 }
 
@@ -247,11 +297,11 @@
 
 .absol-table-scroller-viewport thead .as-rotated-text-anchor,
 .absol-table-scroller-fixed-viewport thead .as-rotated-text-anchor,
-.absol-table-scroller-left-vscroller thead .as-rotated-text-anchor{
+.absol-table-scroller-left-vscroller thead .as-rotated-text-anchor {
     display: none;
 }
 
-.absol-table-scroller .as-rotated-text-anchor{
+.absol-table-scroller .as-rotated-text-anchor {
     white-space: nowrap;
 }
 
@@ -270,3 +320,4 @@
 /*    z-index: 8;*/
 /*    transition: top 0.1s;*/
 /*}*/
+
