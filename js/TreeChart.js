@@ -61,15 +61,24 @@ TreeChart.prototype._updateContent = function () {
     var data = this.data;
     if (!data) return;
     var makeTree = (nodeData, level) => {
+        var textChildren = [];
+        if (nodeData.icon) {
+            textChildren.push(_(nodeData.icon).addClass('as-as-tree-chart-icon'));
+        }
+        textChildren.push({
+            tag: 'span',
+            class: 'as-tree-chart-text',
+            child: { text: nodeData.text || nodeData.name }
+        });
         var elt = _({
             class: 'as-tree-chart-node',
             attr: { "data-level": level + '' },
             child: [
                 {
-                    class: 'as-tree-chart-text-ctn',
+                    class: 'as-tree-chart-content-ctn',
                     child: {
-                        class: 'as-tree-chart-text',
-                        child: { text: nodeData.text || nodeData.name }
+                        class: 'as-tree-chart-content',
+                        child: textChildren
                     }
                 },
                 {
@@ -77,8 +86,27 @@ TreeChart.prototype._updateContent = function () {
                 }
             ]
         });
-        elt.$text = $('.as-tree-chart-text', elt);
+        elt.$content = $('.as-tree-chart-content', elt);
         elt.$childCtn = $('.as-tree-chart-child-ctn', elt);
+
+        var fillColor, textColor;
+        if (typeof nodeData.fill === "string") {
+            fillColor = Color.parse(nodeData.fill);
+        }
+        else if (nodeData.fill instanceof Color) {
+            fillColor = nodeData.fill;
+        }
+
+        if (fillColor) {
+            textColor = fillColor.getContrastYIQ();
+            elt.$content.addStyle({
+                color: textColor.toString('hex8'),
+                backgroundColor: fillColor.toString('hex8'),
+            });
+        }
+
+
+
         if (level === this.maxHorizonLevel) elt.addClass('as-horizontal');
         if (nodeData.items && nodeData.items.length > 0) {
             elt.addClass('as-has-children');
@@ -107,21 +135,21 @@ TreeChart.prototype._formatSize = function () {
         if (!elt.$children) return;
         var sArr, maxS;
         if (level < maxHorizonLevel) {
-            sArr = elt.$children.map(e => e.$text.getBoundingClientRect().height);
+            sArr = elt.$children.map(e => e.$content.getBoundingClientRect().height);
             maxS = Math.max.apply(Math, sArr);
             elt.$children.forEach((elt, i) => {
                 if (sArr[i] < maxS) {
-                    elt.$text.addStyle('height', maxS + 'px');
+                    elt.$content.addStyle('height', maxS + 'px');
                 }
             });
         }
         else {
-            sArr = elt.$children.map(e => e.$text.getBoundingClientRect().width);
+            sArr = elt.$children.map(e => e.$content.getBoundingClientRect().width);
             maxS = Math.max.apply(Math, sArr);
-            console.log( elt.$children, sArr)
+            console.log(elt.$children, sArr)
             elt.$children.forEach((elt, i) => {
                 if (sArr[i] < maxS) {
-                    elt.$text.addStyle('width', maxS + 'px');
+                    elt.$content.addStyle('width', maxS + 'px');
                 }
             });
         }
