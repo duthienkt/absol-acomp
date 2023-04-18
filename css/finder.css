@@ -131,7 +131,7 @@
     right: 0;
     height: 29px;
     box-sizing: border-box;
-    border-bottom: 1px solid #dddddd;
+    border-bottom: 1px solid white;
     display: flex;
 
 }

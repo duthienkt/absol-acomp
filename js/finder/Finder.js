@@ -576,7 +576,7 @@ FinderCommands.view = {
         var url = elt.stat.url;
         if (!url) return;
         var type = elt.fileType;
-        if (type === 'xlsx' || type === 'docx') {
+        if (type === 'xlsx' || type === 'docx' || type === 'xls' || type === 'doc' || type === 'ppt' || type === 'pptx') {
             url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(url);
         }
         else {
@@ -679,6 +679,10 @@ FinderCommands.view = {
 FinderCommands.download = {
     icon: 'span.mdi.mdi-download-outline',
     text: 'Tải về',
+    match: function (elt) {
+        return elt && this.selectCtrl.$selectedItems.length > 0
+            && this.selectCtrl.$selectedItems.every(elt => elt.stat && !elt.stat.isDirectory);
+    },
     /***
      * @this Finder
      */
@@ -704,7 +708,7 @@ FinderCommands.rename = {
      * @this Finder
      */
     match: function (elt) {
-        return this.selectCtrl.$selectedItems.length === 1 && elt.stat && !elt.stat.isDirectory;//todo: rename folder
+        return elt && this.selectCtrl.$selectedItems.length === 1 && elt.stat && !elt.stat.isDirectory;//todo: rename folder
     },
     /***
      * @this Finder
@@ -1114,7 +1118,7 @@ function CommandController(elt) {
     this.commands = Object.assign({}, FinderCommands);
     this.buttonNames = ['upload', 'view', 'download', 'move', 'rename', 'delete'];
     this.folderMenuItemNames = ['upload_to_folder', 'move_dir'];
-    this.contentMenuItemNames = ['view', 'upload', 'select_all', 'move', 'delete', 'rename'];
+    this.contentMenuItemNames = ['view','download', 'upload', 'select_all', 'move', 'delete', 'rename'];
 
     this.$navCtn = this.elt.$navCtn;
     this.$navCtn.defineEvent('contextmenu').on('contextmenu', this.ev_navContextMenu);
