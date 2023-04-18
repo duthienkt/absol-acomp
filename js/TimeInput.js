@@ -34,7 +34,7 @@ function TimeInput() {
     this._min = 0;
     this._hour = null;
     this._minute = null;
-    this._format = 'hh:mm a';
+    this._format = 'HH:mm';
     this.$clockBtn = $('.as-time-input-icon-btn', this)
         .on('click', this.eventHandler.clickClockBtn);
     this.$text = $('input', this)
