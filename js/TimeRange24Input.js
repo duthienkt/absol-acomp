@@ -191,6 +191,39 @@ TimeRange24Input.property.readOnly = {
 };
 
 
+TimeRange24Input.property.value = {
+    set: function (value) {
+        var rangeValue = null;
+        if (isRealNumber(value)) rangeValue = { dayOffset: value, duration: 0 };
+        else if (!value) {
+        }
+        else if (typeof rangeValue === "object") {
+            if (isRealNumber(value.dayOffset)) {
+                rangeValue = { dayOffset: value.dayOffset, duration: 0 };
+            }
+            else {
+                rangeValue = { dayOffset: 0, duration: 0 };
+            }
+            if (isRealNumber(value.duration)) {
+                rangeValue.duration = value.duration;
+            }
+        }
+        if (rangeValue) {
+            this.dayOffset = rangeValue.dayOffset;
+            this.duration = rangeValue.duration;
+        }
+        else {
+            this.dayOffset = null;
+            this.duration = null;
+        }
+        return rangeValue;
+    },
+    get: function () {
+        if (!isRealNumber(this.dayOffset) && !isRealNumber(this.duration)) return null;
+        return { dayOffset: this.dayOffset || 0, duration: this.duration || 0 };
+    }
+};
+
 TimeRange24Input.eventHandler = {};
 
 TimeRange24Input.eventHandler.offsetChange = function (event) {
