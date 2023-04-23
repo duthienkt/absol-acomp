@@ -1112,7 +1112,7 @@ DateTimeInput.prototype._attachPicker = function () {
 
     setTimeout(function () {
         this.share.$follower.removeStyle('visibility');
-        document.body.addEventListener('click', this.eventHandler.clickOut);
+        document.addEventListener('click', this.eventHandler.clickOut);
     }.bind(this), 5);
 };
 
@@ -1124,7 +1124,7 @@ DateTimeInput.prototype._releasePicker = function () {
     this.share.$timePicker.off('change', this.eventHandler.timePick);
     this.share.$okBtn.off('click', this.eventHandler.clickOKBtn);
     this.share.$cancelBtn.off('click', this.eventHandler.clickCancelBtn);
-    document.body.removeEventListener('click', this.eventHandler.clickOut);
+    document.removeEventListener('click', this.eventHandler.clickOut);
     setTimeout(function () {
         this.$pickerBtn.on('click', this.eventHandler.clickPickerBtn);
     }.bind(this));
