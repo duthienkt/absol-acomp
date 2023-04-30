@@ -33,7 +33,7 @@ NITextController.prototype.estimateWidthBy = function (text) {
     var width = measureText(text, this.$input.getComputedStyleValue('font')).width;
     this.elt.addStyle('--text-width', width + 'px');
     var newBound = this.elt.getBoundingClientRect();
-    if (newBound.width !== bound.width) ResizeSystem.update();
+    if (newBound.width !== bound.width) ResizeSystem.requestUpdateUpSignal(this.elt, true);
 };
 
 
