@@ -2,6 +2,8 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+
     <title>Date Time Input</title>
     <meta charset="UTF-8">
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
@@ -11,7 +13,11 @@
 <body>
 <h1>Date Time Input</h1>
 <div class="input-demo">
-
+<style>
+    :root{
+      font-size: 14px;
+    }
+</style>
 </div>
 <script>
 
@@ -117,6 +123,57 @@
                         props: {
                             notNull: true,
                             disabled: true
+                        },
+                        on: {
+                            change: function () {
+                                absol.require('snackbar').show(this.value + '');
+                            }
+                        }
+                    }
+                ]
+            }
+        ).addTo(inputDemoDiv);
+
+        _(
+            {
+                style: {
+                    'margin-bottom': '10px'
+                },
+                child: [
+                    {
+                        tag: 'label',
+                        style: { width: '10em', 'line-height': '30px', display: 'inline-block' },
+                        child: { text: 'default' }
+                    },
+                    {
+                        tag: 'datetimeinput',
+                        props: {
+                            format:'dd/MM/yyyy HH:mm'
+                        },
+                        on: {
+                            change: function () {
+                                absol.require('snackbar').show(this.value + '');
+                            }
+                        }
+                    },
+                    {
+                        tag: 'datetimeinput',
+                        props: {
+                            format:'dd/MM/yyyy HH:mm',
+                            notNull: true
+                        },
+                        on: {
+                            change: function () {
+                                absol.require('snackbar').show(this.value + '');
+                            }
+                        }
+                    },
+                    {
+                        tag: 'datetimeinput',
+                        props: {
+                            notNull: true,
+                            disabled: true,
+                            format:'dd/MM/yyyy HH:mm'
                         },
                         on: {
                             change: function () {
