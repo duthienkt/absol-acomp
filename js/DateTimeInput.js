@@ -1,7 +1,7 @@
 import ACore, { _, $ } from "../ACore";
 import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
-import { isDateTimeFormatToken, zeroPadding } from "./utils";
+import { isDateTimeFormatToken, isRealNumber, zeroPadding } from "./utils";
 import { daysInMonth, formatDateTime } from "absol/src/Time/datetime";
 import ChromeTimePicker from "./ChromeTimePicker";
 import ChromeCalendar from "./ChromeCalendar";
@@ -213,6 +213,8 @@ DateTimeInput.prototype.tokenMap = {
     mm: 'm',
     m: 'm',
     a: 'a',
+    HH: 'H',
+    H: 'H'
 };
 
 /***
@@ -265,6 +267,7 @@ DateTimeInput.prototype._makeValueDict = function (date) {
     res.M = { value: date.getMonth() + 1 };
     res.m = { value: date.getMinutes() };
     res.h = { value: date.getHours() };
+    res.H = { value: date.getHours() };
     if (res.h.value < 12) {
         if (res.h.value === 0) res.h.value = 12;
         res.a = { value: "AM" };
@@ -280,6 +283,7 @@ DateTimeInput.prototype._makeValueDict = function (date) {
 DateTimeInput.prototype._applyTokenDict = function (format, dict, debug) {
     var rgx = new RegExp(this.tokenRegex.source, 'g');
     var tokenMap = this.tokenMap;
+    console.trace(dict)
     return format.replace(rgx, function (full, g1, g2, sourceText) {
         if (g1 && tokenMap[g1]) {
             var ident = tokenMap[g1];
@@ -306,7 +310,10 @@ DateTimeInput.prototype._applyTokenDict = function (format, dict, debug) {
 DateTimeInput.prototype._loadValueFromInput = function () {
     var tkDict = this._makeTokenDict(this.$text.value);
     var H = NaN;
-    if (tkDict.a.value === 'AM') {
+    if (tkDict.H && isRealNumber(tkDict.H.value)) {
+        H = tkDict.H.value;
+    }
+    else if (tkDict.a.value === 'AM') {
         H = tkDict.h.value % 12;
     }
     else if (tkDict.a.value === 'PM') {
@@ -402,7 +409,7 @@ DateTimeInput.prototype._correctingInput = function () {
         equalMax = false;
     }
 //todo: min max
-    if (tkDict.a.value === 'AM' || tkDict.a.value === 'PM') {
+    if (tkDict.a && (tkDict.a.value === 'AM' || tkDict.a.value === 'PM')) {
 
         if (equalMin) {
 
@@ -413,8 +420,7 @@ DateTimeInput.prototype._correctingInput = function () {
         equalMax = false;
     }
 
-    var text = this._applyTokenDict(this._format, tkDict);
-    this.$text.value = text;
+    this.$text.value = this._applyTokenDict(this._format, tkDict);
 };
 
 DateTimeInput.prototype._correctingCurrentToken = function () {
@@ -433,6 +439,7 @@ DateTimeInput.prototype._correctingCurrentToken = function () {
             M: 1, MM: 1,
             y: 1890, yyyy: 1890,
             h: 1, hh: 1,
+            HH: 0, H: 0,
             m: 0, mm: 0
         }[token.ident];
         var rqMax = {
@@ -440,6 +447,7 @@ DateTimeInput.prototype._correctingCurrentToken = function () {
             M: 12, MM: 12,
             y: 2089, yyyy: 2089,
             h: 12, hh: 12,
+            HH: 23, H: 23,
             m: 59, mm: 59
         }[token.ident];
         if (rqMin !== undefined) {
@@ -699,6 +707,21 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         while (newTokenText.length < token.ident.length) newTokenText = '0' + newTokenText;
                         token.replace(newTokenText, true);
                         break;
+
+                    case "HH":
+                    case 'H':
+                        value = parseInt(token.text);
+                        if (isNaN(value)) {
+                            this._editingData.H = event.key === 'ArrowUp' ? 1 : 12;
+                        }
+                        else {
+                            this._editingData.H = (value + (event.key === 'ArrowUp' ? 1 : 23)) % 24;
+                        }
+                        newTokenText = this._editingData.H + '';
+                        while (newTokenText.length < token.ident.length) newTokenText = '0' + newTokenText;
+                        token.replace(newTokenText, true);
+                        break;
+
                     case "mm":
                     case 'm':
                         value = parseInt(token.text);
@@ -844,7 +867,14 @@ DateTimeInput.eventHandler.keydown = function (event) {
                         this._editNextToken();
                     }
                     break;
-
+                case 'HH':
+                case 'H':
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editingData.state = STATE_EDITED;
+                    if (dVal > 2) {
+                        this._editNextToken();
+                    }
+                    break;
             }
         }
         else {
@@ -890,6 +920,14 @@ DateTimeInput.eventHandler.keydown = function (event) {
                 case 'hh':
                     dVal = (parseInt(token.text.split('').pop()) || 0) * 10 + dVal;
                     dVal = Math.max(1, Math.min(12, dVal));
+                    this._editingData.h = dVal;
+                    token.replace(zeroPadding(dVal, token.ident.length), true);
+                    this._editNextToken();
+                    break;
+                case 'H':
+                case 'HH':
+                    dVal = (parseInt(token.text.split('').pop()) || 0) * 10 + dVal;
+                    dVal = Math.max(0, Math.min(23, dVal));
                     this._editingData.h = dVal;
                     token.replace(zeroPadding(dVal, token.ident.length), true);
                     this._editNextToken();
@@ -963,6 +1001,7 @@ DateTimeInput.eventHandler.clickOKBtn = function (event) {
 DateTimeInput.eventHandler.timePick = function (event) {
     var hour = event.hour;
     var minute = event.minute;
+
     var tkDict = this._makeTokenDict(this.share.pickedValeText);
     if (tkDict.h) {
         tkDict.h.value = 1 + ((hour + 11) % 12);
@@ -970,6 +1009,10 @@ DateTimeInput.eventHandler.timePick = function (event) {
             tkDict.a.value = hour >= 12 ? "PM" : 'AM';
         }
     }
+    if (tkDict.H) {
+        tkDict.H.value = hour;
+    }
+
     if (tkDict.m) {
         tkDict.m.value = minute;
     }
@@ -998,15 +1041,15 @@ DateTimeInput.prototype._preparePicker = function () {
         this.share.$cancelBtn = _({
             tag: 'a',
             class: 'as-select-list-box-cancel-btn',
-            attr:{
-                "data-ml-key":'txt_cancel'
+            attr: {
+                "data-ml-key": 'txt_cancel'
             },
         });
         this.share.$okBtn = _({
             tag: 'a',
             class: 'as-select-list-box-ok-btn',
-            attr:{
-                "data-ml-key":'txt_ok'
+            attr: {
+                "data-ml-key": 'txt_ok'
             },
         });
         this.share.$follower = _({
@@ -1059,9 +1102,13 @@ DateTimeInput.prototype._attachPicker = function () {
             this.share.$timePicker.hour = tkDict.h.value % 12;
         }
     }
+    else if (tkDict.H && isRealNumber(tkDict.H.value)) {
+        this.share.$timePicker.hour = tkDict.H.value;
+    }
     else {
         this.share.$timePicker.hour = null;
     }
+    this.share.$timePicker.s24 = !!tkDict.H;
 
     if (tkDict.m && !isNaN(tkDict.m.value)) {
         this.share.$timePicker.minute = tkDict.m.value;
