@@ -507,6 +507,7 @@ DateTimeInput.property.notNull = {
 
 DateTimeInput.property.format = {
     set: function (value) {
+        value = value || 'dd/MM/yyyy hh:mm a';
         var dict;
         if (this._value) {
             dict = this._makeValueDict(this._value);
