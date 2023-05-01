@@ -21,8 +21,8 @@ import DateInput from "./DateInput";
 import AElement from "absol/src/HTML5/AElement";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import DateTimeInput from "./DateTimeInput";
-import {zeroPadding} from "./utils";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { isRealNumber, zeroPadding } from "./utils";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
@@ -359,10 +359,12 @@ DateInput2.prototype._loadValueFromInput = function () {
     var d = tkDict.d ? tkDict.d.value : 1;
     var date;
     if (tkDict.w && tkDict.y) {
-        date = weekInYear(y, tkDict.w.value - 1);
+        if (isRealNumber(tkDict.w.value) && isRealNumber(tkDict.y.value))
+            date = weekInYear(y, tkDict.w.value - 1);
     }
     else if (tkDict.Q && tkDict.y) {
-        date = new Date(y, (tkDict.Q.value - 1) * 3, 1);
+        if (isRealNumber(tkDict.Q.value) && isRealNumber(tkDict.y.value))
+            date = new Date(y, (tkDict.Q.value - 1) * 3, 1);
     }
     else {
         date = new Date(y, m, d);
