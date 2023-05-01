@@ -585,7 +585,8 @@ function TOCNodeController(listElt, nodeData, parent) {
             icon: nodeData.icon,
             level: this.level,
             controller: this,
-            status: 'none'
+            status: 'none',
+            extendClasses: nodeData.extendClasses
         },
         on: {
             presstoggle: this.toggle.bind(this),

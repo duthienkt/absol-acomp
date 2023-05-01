@@ -216,6 +216,22 @@ TOCItem.property.hasQuickMenu = {
 };
 
 
+TOCItem.property.extendClasses = {
+    set: function (value) {
+        value = value ||[];
+        if (typeof value === 'string') value = value.trim().split(/\s/).filter(x=> !!x);
+        if (this._extendClasses) {
+            this._extendClasses.forEach(c=> this.removeClass(c));
+        }
+        this._extendClasses = value;
+        this._extendClasses.forEach(c=> this.addClass(c));
+    },
+    get: function () {
+        return this._extendClasses || [];
+    }
+};
+
+
 TOCItem.prototype.rename = function () {
     this.addClass('as-renaming');
     var name = this.name;
