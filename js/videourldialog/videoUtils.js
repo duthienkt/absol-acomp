@@ -68,6 +68,7 @@ var videoUrlRules = [
 
 
 export function parseVideoUrl(url) {
+    url = (url || "").trim();
     var res = {
         url: url
     };
