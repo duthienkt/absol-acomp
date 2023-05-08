@@ -18,8 +18,7 @@ function TOCItem() {
     this.$nameInput = $('.as-toc-item-name-input', this)
         .on('keydown', this.eventHandler.keyDownNameInput)
         .on('paste', this.eventHandler.keyDownNameInput);
-    this.$toggleCtn = $('.as-toc-item-toggle-ico-ctn', this)
-        .on('click', this.eventHandler.clickToggleCtn);
+    this.$toggleCtn = $('.as-toc-item-toggle-ico-ctn', this);
     this._level = 0;
     this.$checkbox = $(CheckBoxInput.tag, this)
         .on('change', this.eventHandler.checkedChange);
@@ -32,6 +31,7 @@ function TOCItem() {
     this.$quickMenuBtn = $('.as-toc-item-quick-menu-ctn button', this)
         .on('click', this.eventHandler.clickQuickMenuBtn);
     this.on('click', this.eventHandler.click);
+    this._lastClickTime = 0;
     /***
      * @name hasQuickMenu
      * @type {boolean}
@@ -218,13 +218,13 @@ TOCItem.property.hasQuickMenu = {
 
 TOCItem.property.extendClasses = {
     set: function (value) {
-        value = value ||[];
-        if (typeof value === 'string') value = value.trim().split(/\s/).filter(x=> !!x);
+        value = value || [];
+        if (typeof value === 'string') value = value.trim().split(/\s/).filter(x => !!x);
         if (this._extendClasses) {
-            this._extendClasses.forEach(c=> this.removeClass(c));
+            this._extendClasses.forEach(c => this.removeClass(c));
         }
         this._extendClasses = value;
-        this._extendClasses.forEach(c=> this.addClass(c));
+        this._extendClasses.forEach(c => this.addClass(c));
     },
     get: function () {
         return this._extendClasses || [];
@@ -301,11 +301,6 @@ TOCItem.eventHandler.keyDownNameInput = function (event) {
     }.bind(this), 0);
 };
 
-TOCItem.eventHandler.clickToggleCtn = function (event) {
-    if (this.status === 'close' || this.status === 'open')
-        this.emit('presstoggle', { originalEvent: event, type: 'presstoggle' }, this);
-};
-
 
 TOCItem.eventHandler.checkedChange = function (event) {
     this.emit('checkedchange', { type: 'checkedchange', target: this, originalEvent: event }, this);
@@ -316,10 +311,19 @@ TOCItem.eventHandler.clickQuickMenuBtn = function (event) {
 };
 
 TOCItem.eventHandler.click = function (event) {
-    if (!hitElement(this.$checkbox, event) && !hitElement(this.$quickMenuBtn, event)) {
-        if (!hitElement(this.$toggleCtn, event) || !(this.status === "close" || this.status === 'open')) {
-            this.emit('press', { type: 'press', originalEvent: event }, this)
+    if (hitElement(this.$checkbox, event) || hitElement(this.$quickMenuBtn, event)) return;
+    var now= Date.now();
+    if (hitElement(this.$toggleCtn, event)) {
+        this.emit('presstoggle', { originalEvent: event, type: 'presstoggle' }, this);
+    }
+    else {
+        if (now - this._lastClickTime > 500) {
+            this.emit('press', { type: 'press', originalEvent: event }, this);
         }
+        else if (this.status === "close" || this.status === 'open'){
+            this.emit('presstoggle', { originalEvent: event, type: 'presstoggle' }, this);
+        }
+        this._lastClickTime = now;
     }
 };
 
