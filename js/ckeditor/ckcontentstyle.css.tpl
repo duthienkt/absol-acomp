@@ -134,16 +134,187 @@
 }
 
 
-.bsc-white .cke_contents_ltr h1,
-.bsc-white .cke_contents_ltr h2,
-.bsc-white .cke_contents_ltr h3,
-.bsc-white .cke_contents_ltr h4,
-.bsc-white .cke_contents_ltr h5,
-.bsc-white .cke_contents_ltr h6 {
+body .cke_contents_ltr h1,
+body .cke_contents_ltr h2,
+body .cke_contents_ltr h3,
+body .cke_contents_ltr h4,
+body .cke_contents_ltr h5,
+body .cke_contents_ltr h6 {
     font-weight: normal;
     line-height: 1.2;
 }
 
-.bsc-white .cke_contents_ltr p {
+body .cke_contents_ltr {
     line-height: 1.6;
+    font-size: inherit;
+    font-family: sans-serif, Arial, Verdana, "Trebuchet MS", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background-color: #fff;
+    word-wrap: break-word;
+    text-align: left;
+}
+
+.cke_contents_ltr blockquote {
+    font-style: italic;
+    font-family: inherit;
+    border-style: solid;
+    border-color: #ccc;
+    border-width: 0;
+    padding-left: 20px;
+    padding-right: 8px;
+    border-left-width: 5px;
+}
+
+body .cke_contents_ltr a {
+    color: #0782C1;
+}
+
+body .cke_contents_ltr ol,
+body .cke_contents_ltr ul,
+body .cke_contents_ltr dl {
+    /* IE7: reset rtl list margin. (#7334) */
+    *margin-right: 0px;
+    /* Preserved spaces for list items with text direction different than the list. (#6249,#8049)*/
+    padding: 0 40px;
+}
+
+
+body.cke_contents_ltr { /*editor*/
+    font-size: 14px;
+}
+
+
+body .cke_contents_ltr hr
+{
+    border: 0px;
+    border-top: 1px solid #ccc;
+}
+
+body .cke_contents_ltr img.right
+{
+    border: 1px solid #ccc;
+    float: right;
+    margin-left: 15px;
+    padding: 5px;
+}
+
+body .cke_contents_ltr img.left
+{
+    border: 1px solid #ccc;
+    float: left;
+    margin-right: 15px;
+    padding: 5px;
+}
+
+body .cke_contents_ltr pre
+{
+    white-space: pre-wrap; /* CSS 2.1 */
+    word-wrap: break-word; /* IE7 */
+    -moz-tab-size: 4;
+    tab-size: 4;
+}
+
+body .cke_contents_ltr .marker
+{
+    background-color: Yellow;
+}
+
+body .cke_contents_ltr span[lang]
+{
+    font-style: italic;
+}
+
+body .cke_contents_ltr figure
+{
+    text-align: center;
+    outline: solid 1px #ccc;
+    background: rgba(0,0,0,0.05);
+    padding: 10px;
+    margin: 10px 20px;
+    display: inline-block;
+}
+
+body .cke_contents_ltr figure > figcaption
+{
+    text-align: center;
+    display: block; /* For IE8 */
+}
+
+body .cke_contents_ltr a > img {
+    padding: 1px;
+    margin: 1px;
+    border: none;
+    outline: 1px solid #0782C1;
+}
+
+/* Widget Styles */
+body .cke_contents_ltr .code-featured
+{
+    border: 5px solid red;
+}
+
+body .cke_contents_ltr .math-featured
+{
+    padding: 20px;
+    box-shadow: 0 0 2px rgba(200, 0, 0, 1);
+    background-color: rgba(255, 0, 0, 0.05);
+    margin: 10px;
+}
+
+body .cke_contents_ltr .image-clean
+{
+    border: 0;
+    background: none;
+    padding: 0;
+}
+
+body .cke_contents_ltr .image-clean > figcaption
+{
+    font-size: .9em;
+    text-align: right;
+}
+
+body .cke_contents_ltr .image-grayscale
+{
+    background-color: white;
+    color: #666;
+}
+
+body .cke_contents_ltr .image-grayscale img, img.image-grayscale
+{
+    filter: grayscale(100%);
+}
+
+body .cke_contents_ltr .embed-240p
+{
+    max-width: 426px;
+    max-height: 240px;
+    margin:0 auto;
+}
+
+body .cke_contents_ltr .embed-360p
+{
+    max-width: 640px;
+    max-height: 360px;
+    margin:0 auto;
+}
+
+body .cke_contents_ltr .embed-480p
+{
+    max-width: 854px;
+    max-height: 480px;
+    margin:0 auto;
+}
+
+body .cke_contents_ltr .embed-720p
+{
+    max-width: 1280px;
+    max-height: 720px;
+    margin:0 auto;
+}
+
+body .cke_contents_ltr .embed-1080p
+{
+    max-width: 1920px;
+    max-height: 1080px;
+    margin:0 auto;
 }
