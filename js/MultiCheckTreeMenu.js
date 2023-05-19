@@ -8,6 +8,7 @@ import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import MultiSelectMenu from "./MultiSelectMenu";
 import CheckTreeLeafOnlyBox from "./CheckTreeLeafOnlyBox";
 import { copySelectionItemArray, rootTreeValues2CheckedValues } from "./utils";
+import { arrayUnique } from "absol/src/DataStructure/Array";
 
 
 /***
@@ -246,16 +247,15 @@ MultiCheckTreeMenu.prototype._implicit = function (values) {
     this._items.forEach(function (nd, i) {
         if (csRoot[i] && (!leafOnly || leafCount[nd.value] > 0)) resDict[nd.value] = nd;
     });
-
     var eValues = values.reduce(function (ac, cr) {
-        if (valueDict[cr.value]) ac.push(cr.value);
+        if (valueDict[cr]) ac.push(cr);
         return ac;
     }, []);
     for (var key in resDict) {
         eValues.push(resDict[key].value);
     }
 
-    return eValues;
+    return arrayUnique(eValues)
 };
 
 
@@ -265,83 +265,45 @@ MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
         return ac;
     }, {});
 
-    function scanMerge(node) {
-        var selected = valueDict[node.value];
-        if (selected) {
-            return {
-                s: true,
-                v: [node.value]
-            };
+    var selectDown = holder => {
+        if (holder.canSelectAll) {
+            holder.selected = true;
         }
-        var childRes;
-        if (node.items && node.items.length > 0) {
-            childRes = node.items.map(function (node) {
-                return scanMerge(node);
-            });
+        else if (holder.canSelect) {
+            holder.child.forEach(c => selectDown(c));
         }
-        else {
-            return null;
+    }
+    var compute = nd => {
+        var res = {
+            node: nd,
+            child: []
+        };
+
+        if (nd.items && nd.items.length > 0) {
+            res.child = nd.items.map(it => compute(it));
         }
 
-        var all = childRes.every(function (res) {
-            return res && res.s;
-        });
-        var res = null;
-        if (all) {
-            res = {
-                s: 'A',
-                v: [node.value]
-            }
+        res.canSelectAll = !nd.noSelect && res.child.every(c => c.canSelectAll);
+        res.canSelect = res.child.length === 0 || res.child.some(c => c.canSelect);
+        if (valueDict[res.node.value]) selectDown(res);
+        if (!res.selected && res.child.length > 0) {
+            res.selected = res.child.every(c => c.selected);
         }
-        else {
-            res = {
-                v: childRes.reduce(function (ac, cr) {
-                    if (cr && cr.v.length > 0)
-                        ac = ac.concat(cr.v);
-                    return ac;
-                }, [])
-            };
-            if (res.v.length === 0) res = null;
-        }
-
         return res;
     }
 
-
-    var merged = this._items.map(function (node) {
-        return scanMerge(node);
-    }).reduce(function (ac, cr) {
-        if (cr && cr.v.length > 0)
-            ac = ac.concat(cr.v);
-        return ac;
-    }, []);
-
-    var mergedDict = merged.reduce(function (ac, cr) {
-        ac[cr] = true;
-        return ac;
-    }, {});
-
-    var res = [];
-
-    function noSelectScan(node, selected) {
-        selected = selected || mergedDict[node.value];
-        if (!node.noSelect && selected) {
-            res.push(node.value);
+    var holders = this._items.map(it => compute(it));
+    var eValues = [];
+    var scanSelected = holder => {
+        if (holder.selected) {
+            eValues.push(holder.node.value);
         }
         else {
-            if (node.items && node.items.length > 0) {
-                node.items.forEach(function (item) {
-                    noSelectScan(item, selected);
-                })
-            }
+            holder.child.forEach(c => scanSelected(c));
         }
-    }
-
-    this._items.forEach(function (item) {
-        noSelectScan(item, false);
-    });
-
-    return res;
+    };
+    holders.forEach(c=> scanSelected(c));
+    return eValues;
 };
 
 
@@ -386,6 +348,7 @@ MultiCheckTreeMenu.prototype.findItemsByValues = function (values) {
 
 MultiCheckTreeMenu.prototype.viewValues = function (values) {
     var items = this.findItemsByValues(values);
+    console.log(items)
     this._filToken(items.length);
     this._assignTokens(items);
     this._viewValues = values;
@@ -512,7 +475,7 @@ MultiCheckTreeMenu.property.values = {
      * @param values
      */
     set: function (values) {
-        values= values ||[];
+        values = values || [];
         this.pendingValues = values;
         if (this.items.length > 0) {
             values = this._implicit(values);
@@ -529,7 +492,7 @@ MultiCheckTreeMenu.property.values = {
      * @this MultiCheckTreeMenu
      */
     get: function () {
-        if ('pendingValues' in this) return  this._explicit(this.pendingValues);
+        if ('pendingValues' in this) return this._explicit(this.pendingValues);
         return this._explicit(this._values);
     }
 };
@@ -604,6 +567,7 @@ MultiCheckTreeMenu.eventHandler.click = function (event) {
  */
 MultiCheckTreeMenu.eventHandler.boxChange = function (event) {
     delete this.pendingValues;
+    console.log(this._normalExplicit(this.$checkTreeBox.values))
     this.viewValues(this._normalExplicit(this.$checkTreeBox.values));
     ResizeSystem.update();
 };

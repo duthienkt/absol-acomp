@@ -5,7 +5,6 @@ import CheckTreeItem from "./CheckTreeItem";
 import '../css/checktreebox.css';
 import { estimateWidth14, measureText } from "./utils";
 import { prepareSearchForList, searchTreeListByText } from "./list/search";
-import CPUViewer from "./CPUViewer";
 import SelectListBox from "./SelectListBox";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 
@@ -42,7 +41,6 @@ CheckTreeBox.prototype._initScroller = function () {
     this.$pages.forEach(function (p) {
         p.__viewOffset__ = -1;
     });
-
 };
 
 CheckTreeBox.prototype._initDomHook = function () {
@@ -158,37 +156,22 @@ CheckTreeBox.prototype.HolderClass = TreeNodeHolder;
 
 CheckTreeBox.prototype.depthIndexing = function (items, arr, rootArr) {
     var res = {};
-    var count = 0;
-    var self = this;
     var HolderClass = this.HolderClass;
-
-    /***
-     *
-     * @param {TreeNodeHolder|null} root
-     * @param items
-     */
-    function scan(root, items) {
-        items.forEach(function visit(item) {
-            var value = item.value + '';
-            res[value] = res[value] || [];
-            var node = new HolderClass(self, item, count++, root);
-            res[value].push(node);
-            arr && arr.push(node);
-            if (root) {
-                root.child.push(node);
+    items.reduce((ac, it) => {
+        var holder = new HolderClass(this, it, ac.idx + 1, null);
+        ac.idx = holder.tailIdx;
+        ac.arr.push(holder);
+        holder.traverse(hd => {
+            var key = hd.item.value + '';
+            ac.dict[key] = ac.dict[key] || [];
+            ac.dict[key].push(hd);
+            if (ac.dict[key].length === 2) {
+                console.warn("Duplicate value", ac.dict[key]);
             }
-            else if (rootArr) {
-                rootArr.push(node);
-            }
-            if (res[value].length > 1) {
-                console.log("Duplicate value", res[value]);
-            }
-            if (item.items && item.items.length > 0)
-                scan(node, item.items);
         });
-    }
+        return ac;
+    }, { idx: -1, arr: rootArr, dict: res });
 
-    scan(null, items);
     return res;
 };
 
@@ -313,7 +296,7 @@ CheckTreeBox.prototype._calcEstimateSize = function () {
         this.estimateSize.width = longestHolder.calcWidth() * this.scale14;
         this.estimateSize.height = this.itemHeight * n;
     }
-    this.addStyle('--select-list-estimate-width', (Math.max(145, this.estimateSize.width) + 17)/14 + 'rem');
+    this.addStyle('--select-list-estimate-width', (Math.max(145, this.estimateSize.width) + 17) / 14 + 'rem');
 
 };
 
@@ -415,7 +398,6 @@ CheckTreeBox.property.items = {
      * @param items
      */
     set: function (items) {
-        CPUViewer.hold();
         this.cache = {};
         items = items || [];
         this._items = items;
@@ -425,7 +407,6 @@ CheckTreeBox.property.items = {
         this._calcEstimateSize();
         this._resetView();
         this.values = this['values'];//update
-        CPUViewer.release();
     },
     get: function () {
         return this._items;
@@ -484,11 +465,10 @@ CheckTreeBox.eventHandler.selectItem = function (item, event) {
         return;
     }
     this.noTransition();
-    CPUViewer.hold();
     var ref = nodeHolder.findReferenceNode();
     var targetNode = ref || nodeHolder;
     var selected = item.selected;
-    if (selected === 'all') {
+    if (selected === 'all' && (targetNode.canSelectAll || targetNode.selected === 'none')) {
         targetNode.selectAll();
     }
     else {
@@ -500,14 +480,12 @@ CheckTreeBox.eventHandler.selectItem = function (item, event) {
     this._updateToValues();
     this.updateCheckedAll();
     this.emit('change', { type: 'change', target: this }, this);
-    CPUViewer.release();
 };
 
 /***
  * @this CheckTreeBox
  */
 CheckTreeBox.eventHandler.scroll = function () {
-    CPUViewer.hold();
     var itemHeight = this.itemHeight * this.getFontSize() / 14;
     var scrollTop = this.$scroller.scrollTop;
     var scrollBottom = scrollTop + this.$scroller.clientHeight;
@@ -554,7 +532,6 @@ CheckTreeBox.eventHandler.scroll = function () {
         page2Load.removeStyle('display');
         page2Load.addStyle('top', page2Load.__viewOffset__ * itemHeight + 'px');
     }
-    CPUViewer.release();
 };
 
 
@@ -562,12 +539,10 @@ CheckTreeBox.eventHandler.scroll = function () {
  * @this CheckTreeBox
  */
 CheckTreeBox.eventHandler.searchModify = function () {
-    CPUViewer.hold();
     var self = this;
     var text = this.$searchInput.value.trim();
     if (text.length === 0) {
         this._resetView();
-        CPUViewer.release();
         return;
     }
     var searchData;
@@ -621,7 +596,6 @@ CheckTreeBox.eventHandler.searchModify = function () {
     this.updateContentSize();
     this.viewListAt(0);
     this.updatePosition();
-    CPUViewer.release();
 };
 
 
@@ -639,7 +613,6 @@ CheckTreeBox.prototype.updateSelectedInViewIfNeed = function () {
 
 
 CheckTreeBox.eventHandler.checkAllChange = function (event) {
-    CPUViewer.hold();
     var checkedAll = this.$checkAll.checked;
     var changed = false;
     var holders = this.rootHolders;
@@ -670,7 +643,6 @@ CheckTreeBox.eventHandler.checkAllChange = function (event) {
         this.emit('change', { type: 'change', target: this }, this);
     }
 
-    CPUViewer.release();
 };
 
 
@@ -700,16 +672,30 @@ export function TreeNodeHolder(boxElt, item, idx, parent) {
     this.boxElt = boxElt;
     this.item = item;
     this.idx = idx;
+    this.tailIdx = idx;//last child index
     this.parent = parent;
     this.status = (item.items && item.items.length > 0) ? 'close' : 'none';
     this.selected = 'none';
+    this.level = parent ? parent.level + 1 : 0;
+
     /***
      *
-     * @type {TreeNodeHolder[]}
+     * @type {this[]}
      */
     this.child = [];
-    this.level = parent ? parent.level + 1 : 0;
+    if (item.items && item.items.length > 0) {
+        item.items.reduce((ac, it) => {
+            var child = new this.constructor(boxElt, it, ac.idx + 1, this);
+            ac.idx = child.tailIdx;
+            ac.arr.push(child);
+            return ac;
+        }, { idx: this.idx, arr: this.child });
+        this.tailIdx = this.child[this.child.length - 1].tailIdx;
+
+    }
     this._elt = null;
+    this.canSelectAll = !this.item.noSelect && this.child.every(c => c.canSelectAll);
+    this.canSelect = !this.item.noSelect && (this.child.length === 0  || this.child.some(c => c.canSelect));
 }
 
 
@@ -740,7 +726,6 @@ TreeNodeHolder.prototype.findIdxInView = function () {
 };
 
 TreeNodeHolder.prototype.toggle = function () {
-    CPUViewer.hold();
     var idx = this.findIdxInView();
     var status = this.status;
     if (status === 'close') {
@@ -774,7 +759,6 @@ TreeNodeHolder.prototype.toggle = function () {
         }, this.boxElt);
     }
 
-    CPUViewer.release();
 };
 
 
@@ -784,7 +768,11 @@ TreeNodeHolder.prototype.toggle = function () {
  */
 TreeNodeHolder.prototype.selectAll = function (isDownUpdate) {
     if (this.selected === 'all') return;
-    this.selected = 'all';
+    if (!this.canSelect) return;
+    if (this.canSelectAll)
+        this.selected = 'all';
+    else
+        this.selected = 'child';
     if (this.itemElt) this.itemElt.selected = this.selected;
     this.child.forEach(function (child) {
         child.selectAll(true);
@@ -886,6 +874,11 @@ TreeNodeHolder.prototype.toArray = function (ac) {
         }
     }
     return ac;
+};
+
+TreeNodeHolder.prototype.traverse = function (cb) {
+    cb(this);
+    this.child.forEach(c => c.traverse(cb));
 };
 
 Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
