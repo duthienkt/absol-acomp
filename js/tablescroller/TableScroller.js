@@ -254,7 +254,9 @@ TableScroller.prototype._updateFixedYHeaderSize = function () {
     Array.prototype.forEach.call(this.$fixedYHeader.firstChild.firstChild.childNodes, elt => {
         elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
     });
-    this.$headLine.addStyle('top', this.$fixedYHeader.getBoundingClientRect().height - 1 + 'px');
+    this.$headLine.addStyle('top', this.$fixedYHeader.getBoundingClientRect().height - 1 + 'px')
+        .addStyle('max-width', bound.width + 'px');
+
 };
 
 

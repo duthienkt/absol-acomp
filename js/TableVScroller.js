@@ -50,7 +50,7 @@ TableVScroller.prototype.clearChild = function () {
 
 TableVScroller.prototype.addChild = function (elt) {
     if (this.$viewport.childNodes.length == 0) {
-        this.$table = $('table',elt);
+        this.$table = elt.$table || $('table',elt);
 
         if (this.$table)  {
             this.$viewport.addChild(elt);
