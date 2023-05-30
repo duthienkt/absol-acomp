@@ -283,7 +283,6 @@ DateTimeInput.prototype._makeValueDict = function (date) {
 DateTimeInput.prototype._applyTokenDict = function (format, dict, debug) {
     var rgx = new RegExp(this.tokenRegex.source, 'g');
     var tokenMap = this.tokenMap;
-    console.trace(dict)
     return format.replace(rgx, function (full, g1, g2, sourceText) {
         if (g1 && tokenMap[g1]) {
             var ident = tokenMap[g1];
