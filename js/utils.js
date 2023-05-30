@@ -3,6 +3,7 @@ import { stringHashCode } from "absol/src/String/stringUtils";
 import YesNoQuestionDialog from "./YesNoQuestionDialog";
 import Modal from "./Modal";
 import ext2MineType from "absol/src/Converter/ext2MineType";
+import TextMeasurement from "./tool/TextMeasurement";
 
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
@@ -685,6 +686,27 @@ export function swapChildrenInElt(e1, e2) {
     }
 }
 
+export function replaceChildrenInElt(elt, childNodes) {
+    var nChildren = childNodes.slice();
+    var cChildren = Array.prototype.slice.call(elt.childNodes);
+    var cC, nC;
+    while (cChildren.length > 0 && nChildren.length > 0) {
+        cC = cChildren[0];
+        nC = nChildren[0];
+        if (cC === nC) {
+            cChildren.shift();
+            nChildren.shift();
+        }
+        else {
+            break;
+        }
+    }
+    cChildren.forEach( (elt)=> {
+        elt.remove();
+    });
+    elt.addChild(nChildren);
+}
+
 /**
  *
  * @param {HTMLElement} elt
@@ -1212,4 +1234,87 @@ export function replaceFileInObject(o, replacer) {
 
 export function isNone(x) {
     return x === null || x === undefined;
+}
+
+var measureTool = new TextMeasurement();
+
+
+export function wrapWord(text, width, font) {
+    font = font || '14px arial';
+    measureTool.compute(font);
+    var res = [];
+    var i = 1;
+    var prevText = '';
+    var curText;
+    while (text.length > 0) {
+        if (i > text.length && text) {
+            res.push(text);
+            break;
+        }
+        curText = text.substring(0, i);
+        if (measureTool.measureTextWidth(curText, font) <= width || !prevText) {
+            prevText = curText;
+        }
+        else {
+            text = text.substring(prevText.length).trimStart();
+            res.push(prevText);
+            prevText = '';
+            i = 1;
+            continue;
+        }
+        ++i;
+    }
+
+    return res;
+
+}
+
+export function wrapText(text, width, font) {
+    font = font || '14px arial';
+    measureTool.compute(font);
+
+    var res = [];
+    var i = 1;
+    var prevText = '';
+    var prevWidth = 0;
+    var curText, curWidth;
+    while (text.length > 0) {
+        if (i > text.length && text) {
+            prevText = text;
+            prevWidth = measureTool.measureTextWidth(prevText, font);
+            if (prevWidth <= width) {
+                res.push(prevText);
+            }
+            else {
+                res.push.apply(res, wrapWord(prevText, width, font));
+            }
+            break;
+        }
+        if (!text[i - 1].match(/[\s\n]/) && (!text[i] || text[i].match(/[\s\n]/))) {
+            curText = text.substring(0, i);
+            curWidth = measureTool.measureTextWidth(curText, font);
+            if (curWidth <= width || !prevText) {
+                prevText = curText;
+                prevWidth = curWidth;
+            }
+            else {
+                if (prevWidth <= width) {
+                    res.push(prevText);
+                }
+                else {
+                    prevText = wrapWord(prevText, width, font).shift();
+                    res.push(prevText);
+                }
+                text = text.substring(prevText.length).trimStart();
+
+                prevText = '';
+                i = 1;
+                continue;
+            }
+        }
+        ++i;
+    }
+
+
+    return res;
 }

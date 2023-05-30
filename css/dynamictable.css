@@ -1,15 +1,152 @@
+:root {
+    --table-row-height: 40px;
+}
+
+
 .as-dynamic-table-wrapper.as-inline {
     display: inline-block;
 }
 
-.as-dynamic-table-wrapper.as-inline .as-dynamic-table {
-    width: auto;
+.as-dynamic-table-wrapper {
+    --dt-content-height: 0px;
+    --dt-scroll-bar-width: 17px;
+    --dt-content-width: 0;
+    --dt-header-height: 0;
+    --dt-fixed-x-width: 0;
+    position: relative;
+
+    /*padding-right: 17px;*/
+    /*padding-bottom: 17px;*/
+    box-sizing: border-box;
+    height: var(--dt-content-height);
+}
+
+.as-dynamic-table-wrapper.as-overflow-x.as-has-fixed-col::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-right: 2px solid #aaa;
+    left: calc(var(--dt-fixed-x-width) - 1px);
+}
+
+.as-dynamic-table-wrapper.as-has-fixed-col {
+    max-width: var(--dt-content-width);
 }
 
 
-.as-dynamic-table-wrapper {
+.as-dynamic-table-wrapper.as-inline{
+}
+
+
+.as-dynamic-table-wrapper.as-overflow-x {
+    padding-bottom: var(--dt-scroll-bar-width);
+}
+
+.as-dynamic-table-wrapper.as-overflow-x .as-dynamic-table-hb,
+.as-dynamic-table-wrapper.as-overflow-y .as-dynamic-table-vb {
+    display: block;
+}
+
+.as-dynamic-table-wrapper.as-overflow-y {
+    padding-right: var(--dt-scroll-bar-width);
+}
+
+
+.as-dynamic-table-wrapper.as-overflow-y.as-has-fixed-col {
+    max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
+}
+
+
+.as-dynamic-table-wrapper.as-height-grow.as-overflow-x {
+    height: calc(var(--dt-content-height) + var(--dt-scroll-bar-width));
+}
+
+
+.as-dynamic-table-viewport {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     position: relative;
 }
+
+
+
+
+.as-dynamic-table.as-dt-fixed-y,
+.as-dynamic-table.as-fixed-x {
+    table-layout: fixed;
+    width: auto;
+    /*display: inline-block;*/
+}
+
+.as-dynamic-table-fixed-x-ctn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 6;
+    color: red;
+    display: none;
+
+}
+
+.as-dynamic-table-wrapper.as-has-fixed-col .as-dynamic-table-fixed-x-ctn{
+    display: block;
+}
+
+.as-dynamic-table-fixed-xy-ctn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 9;
+    color: blue;
+}
+
+
+.as-dynamic-table-fixed-y-ctn {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 6;
+}
+
+.as-dynamic-table-space {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
+.as-dynamic-table-wrapper.as-has-fixed-col .as-dynamic-table-space {
+    width: 8096px;
+}
+
+.as-dynamic-table-vb {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: var(--dt-scroll-bar-width);
+    display: none;
+}
+
+.as-dynamic-table-wrapper.as-overflow-x .as-dynamic-table-vb {
+    height: calc(100% - var(--dt-scroll-bar-width));
+}
+
+.as-dynamic-table-hb {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: var(--dt-scroll-bar-width);
+    display: none;
+}
+
+.as-dynamic-table-wrapper.as-overflow-y .as-dynamic-table-hb {
+    width: calc(100% - var(--dt-scroll-bar-width));
+}
+
 
 .as-dynamic-table-wrapper.as-no-paging .absol-page-selector {
     display: none;
@@ -19,10 +156,6 @@
     display: none;
 }
 
-
-.as-dynamic-table-wrapper.as-has-fixed-col .as-dynamic-table-horizontal-scroller {
-    overflow-x: auto;
-}
 
 .as-dynamic-table-fixed-x-col {
     display: none;
@@ -41,7 +174,9 @@
     font-size: 1rem;
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
-    width: 100%;
+    box-sizing: border-box;
+    display: inline-block;
+    table-layout: fixed;
 }
 
 .as-dt-header {
@@ -114,7 +249,7 @@
 }
 
 .as-dt-body-cell {
-    padding: 5px;
+    padding: 4px 5px;
     border: 1px solid #ddd;
     box-sizing: border-box;
 }
@@ -147,12 +282,6 @@
     transition: transform 0.06s;
 }
 
-.as-dynamic-table-wrapper .absol-page-selector {
-    display: block;
-    margin: auto;
-    text-align: center;
-    padding-top: 10px;
-}
 
 .as-dynamic-table-wrapper.as-searching .as-drag-zone {
     opacity: 0.3;
@@ -179,6 +308,10 @@
 
 .as-dt-row-index::before {
     content: attr(data-idx);
+}
+
+.as-dt-row-index:not([data-idx])::before {
+    content: "000";
 }
 
 

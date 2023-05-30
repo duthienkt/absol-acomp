@@ -1,4 +1,4 @@
-import { $$, _ } from "../../ACore";
+import { $$, _, $ } from "../../ACore";
 
 /***
  *
@@ -8,42 +8,21 @@ import { $$, _ } from "../../ACore";
  */
 function DTHeadCell(row, data) {
     this.row = row;
-    this.elt = _({ tag: 'th', class: 'as-dt-header-cell' }).on('click', this.nextSortState.bind(this));
-    if (data.sortKey) {
-        this.elt.attr('data-sort-key', data.sortKey);
-        this.elt.attr('data-sort-order', 'none');
-    }
-    this.$sortBtn = _({
-        tag: 'span',
-        class: 'as-dt-sort-btn',
+    this._elt = null;
+    this._copyElt = null;
+    this._copyElt1 = null;
+    this._copyElt2 = null;
 
-        child: [
-            {
-                tag: 'span',
-                class: ['mdi', 'mdi-menu-up']
-                // child: { text: '🡑' }
-            },
-            {
-                tag: 'span',
-                class: ['mdi', 'mdi-menu-down']
-            }
-        ]
-    });
+
     this.data = data;
     if (data.attr) {
         this.elt.attr(data.attr);
     }
-    if (data.style){
+    if (data.style) {
         this.elt.addStyle(data.style);
     }
     this._idx = null;
-    this.render();
 }
-
-DTHeadCell.prototype.render = function () {
-    this.row.head.table.adapter.renderHeadCell(this.elt, this.data, this);
-    this.elt.addChild(this.$sortBtn);
-};
 
 
 Object.defineProperty(DTHeadCell.prototype, 'idx', {
@@ -60,6 +39,9 @@ DTHeadCell.prototype.nextSortState = function () {
     if (!this.elt.attr('data-sort-key')) return;
     var c = this.elt.attr('data-sort-order');
     var n = { none: 'ascending', ascending: 'descending', descending: 'none' }[c] || 'none';
+
+    //todo
+    console.log("TODO this??");
     $$('th', this.row.elt).forEach(elt => {
         if (elt === this.elt) return;
         if (elt.attr('data-sort-key')) {
@@ -67,8 +49,76 @@ DTHeadCell.prototype.nextSortState = function () {
         }
     })
     this.elt.attr('data-sort-order', n);
-    this.row.head.table.elt.requestQuery();
+    this.row.head.table.wrapper.requestQuery();
 };
+
+DTHeadCell.prototype.updateCopyEltSize = function () {
+    if (!this._copyElt && !this._copyElt1 && !this._copyElt2) return;
+    // copyElt is in space
+    var bound = this._copyElt.getBoundingClientRect();
+    this._elt.addStyle('width', bound.width + 'px');
+    if (this._copyElt1) {
+        this._copyElt1.addStyle('width', bound.width +'px');
+    }
+    if (this._copyElt2) {
+        this._copyElt2.addStyle('width', bound.width +'px');
+    }
+};
+
+Object.defineProperty(DTHeadCell.prototype, 'elt', {
+    get: function () {
+        if (this._elt) return this._elt;
+        this._elt = _({ tag: 'th', class: 'as-dt-header-cell' })
+            .on('click', this.nextSortState.bind(this));
+        this.row.head.table.adapter.renderHeadCell(this._elt, this.data, this);
+        if (this.data.sortKey) {
+            this._elt.attr('data-sort-key', this.data.sortKey);
+            this._elt.attr('data-sort-order', 'none');
+        }
+        this.$sortBtn = _({
+            tag: 'span',
+            class: 'as-dt-sort-btn',
+
+            child: [
+                {
+                    tag: 'span',
+                    class: ['mdi', 'mdi-menu-up']
+                    // child: { text: '🡑' }
+                },
+                {
+                    tag: 'span',
+                    class: ['mdi', 'mdi-menu-down']
+                }
+            ]
+        });
+        this._elt.addChild(this.$sortBtn);
+        return this._elt;
+    }
+});
+
+Object.defineProperty(DTHeadCell.prototype, 'copyElt', {
+    get: function () {
+        if (this._copyElt) return this._copyElt;
+        this._copyElt = $(this.elt.cloneNode(true)).addClass('as-copy-elt');
+        return this._copyElt;
+    }
+});
+
+Object.defineProperty(DTHeadCell.prototype, 'copyElt1', {
+    get: function () {
+        if (this._copyElt1) return this._copyElt1;
+        this._copyElt1 = $(this.elt.cloneNode(true)).addClass('as-copy-elt-1');
+        return this._copyElt1;
+    }
+});
+
+Object.defineProperty(DTHeadCell.prototype, 'copyElt2', {
+    get: function () {
+        if (this._copyElt2) return this._copyElt2;
+        this._copyElt2 = $(this.elt.cloneNode(true)).addClass('as-copy-elt-2');
+        return this._copyElt2;
+    }
+});
 
 
 export default DTHeadCell;

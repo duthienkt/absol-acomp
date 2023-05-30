@@ -12,6 +12,7 @@ function DTBodyRow(body, data) {
     this.body = body;
     this.data = data;
     this._elt = null;
+    this._fixedXElt = null;
 
     if ('id' in data) {
         this.id = data.id;
@@ -37,6 +38,14 @@ DTBodyRow.prototype.remove = function () {
 
 DTBodyRow.prototype.viewInto = function () {
     return this.body.viewIntoRow(this);
+};
+
+DTBodyRow.prototype.updateCopyEltSize = function () {
+    if (!this._fixedXElt) return;
+    if (!this._elt.parentElement) return;
+    if (this._fixedXElt.childNodes.length === 0) return;//has no fixed column
+    var bound = this._elt.getBoundingClientRect();
+    this._fixedXElt.addStyle('height', bound.height + 'px');
 };
 
 DTBodyRow.prototype.updateData = function (data) {
@@ -71,33 +80,54 @@ DTBodyRow.prototype.updateData = function (data) {
 
 Object.defineProperty(DTBodyRow.prototype, 'elt', {
     get: function () {
-        if (!this._elt) {
-            this._elt = _({ tag: 'tr', class: 'as-dt-body-row' });
-            this._elt.dtBodyRow = this;
-            this._elt.attr('data-id', this.id + '');
-            this._elt.addChild(this.cells.map(function (cell) {
-                return cell.elt;
-            }));
-            if (this.data.attr){
-                this._elt.attr(this.data.attr);
-            }
-            if (this.data.style){
-                this._elt.addStyle(this.data.style);
-            }
-            if (this.data.on){
-                this._elt.on(this.data.on);
-            }
+        if (this._elt) return this._elt;
+        var fixedCol = this.adapter.fixedCol || 0;
+        var child = this.cells.slice(0, fixedCol).map(c => c.copyElt);
+        var child1 = this.cells.slice(fixedCol).map(c => c.elt);
 
-
-            this.$idx = $('.as-dt-row-index', this._elt);
-            this.draggable = !!$('.as-drag-zone', this._elt);
-            if (this.$idx)
-                this.$idx.attr('data-idx', this._idx + 1 + '');
+        this._elt = _({
+            tag: 'tr', class: 'as-dt-body-row', props: {
+                dtBodyRow: this
+            },
+            child: child.concat(child1)
+        });
+        this._elt.attr('data-id', this.id + '');
+        if (this.data.attr) {
+            this._elt.attr(this.data.attr);
+        }
+        if (this.data.style) {
+            this._elt.addStyle(this.data.style);
+        }
+        if (this.data.on) {
+            this._elt.on(this.data.on);
         }
 
+
+        this.$idx = this.cells.reduce((ac, c) => {
+            return ac || $('.as-dt-row-index', c.elt);
+        }, null);
+        this.draggable = !!$('.as-drag-zone', this._elt);
+        if (this.$idx)
+            this.$idx.attr('data-idx', this._idx + 1 + '');
         return this._elt;
     }
 });
+
+
+Object.defineProperty(DTBodyRow.prototype, 'fixedXElt', {
+    get: function () {
+        if (this._fixedXElt) return this._fixedXElt;
+        var fixedCol = this.adapter.fixedCol || 0;
+        this._fixedXElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-dt-fixed-x',
+            child: this.cells.slice(0, fixedCol).map(cell => cell.elt)
+        });
+
+        return this._fixedXElt;
+    }
+});
+
 
 Object.defineProperty(DTBodyRow.prototype, 'innerText', {
     get: function () {
@@ -106,7 +136,7 @@ Object.defineProperty(DTBodyRow.prototype, 'innerText', {
         if ('innerText' in this.data) return this.data.innerText || '';
         return this.cells.map(function (cell) {
             return cell.innerText.trim();
-        }).filter(text=>!!text).join(' / ');
+        }).filter(text => !!text).join(' / ');
     }
 });
 
@@ -118,6 +148,13 @@ Object.defineProperty(DTBodyRow.prototype, 'idx', {
     },
     get: function () {
         return this._idx;
+    }
+});
+
+
+Object.defineProperty(DTBodyRow.prototype, 'adapter', {
+    get: function () {
+        return this.body.adapter;
     }
 });
 

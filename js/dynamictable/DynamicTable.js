@@ -7,6 +7,11 @@ import noop from "absol/src/Code/noop";
 import { buildCss, swapChildrenInElt } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DomSignal from "absol/src/HTML5/DomSignal";
+import { getScreenSize } from "absol/src/HTML5/Dom";
+import { HScrollbar, VScrollbar } from "../Scroller";
+import Vec2 from "absol/src/Math/Vec2";
+import DTTable from "./DTTable";
+import vec2 from "absol/src/Math/Vec2";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -48,14 +53,6 @@ function DynamicTable() {
      */
     this.$tbody = $('.as-dynamic-table>tbody', this.$table);
 
-    this.$fixedXCol = $(".as-dynamic-table-fixed-x-col", this).addClass('as-dynamic-table');
-
-    /***
-     *
-     * @type {PageSelector}
-     */
-    this.$pageSelector = $('pageselector', this)
-        .on('change', this.eventHandler.pageSelectorChange);
 
     this.$filterInputs = [];
 
@@ -63,13 +60,19 @@ function DynamicTable() {
     this.domSignal = new DomSignal(_('attachhook').addTo(this));
     //controller
     this.table = null;
+    this.$space = $('.as-dynamic-table-space', this);
+    this.$fixedYCtn = $('.as-dynamic-table-fixed-y-ctn', this);
+    this.$fixedXCtn = $('.as-dynamic-table-fixed-x-ctn', this);
+    this.$fixedXYCtn = $('.as-dynamic-table-fixed-xy-ctn', this);
+    this.$viewport = $('.as-dynamic-table-viewport', this);
+    this.$hscrollbar = $('.as-dynamic-table-hb', this);
+    this.$vscrollbar = $('.as-dynamic-table-vb', this);
 
-
-    this.fixedContentCtrl = new FixedContentController(this);
-    this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
+    // this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
+    this.$attachhook.requestUpdateSize = this.requestUpdateSize.bind(this);
     this.$attachhook.on('attached', () => {
         ResizeSystem.add(this.$attachhook);
-        this.$attachhook.requestUpdateSize();
+        this.layoutCtrl.onAttached();
     })
     /***
      *
@@ -78,6 +81,7 @@ function DynamicTable() {
     this.adapter = null;
 
     this.waitingCtl = new DTWaitingViewController(this);
+    this.layoutCtrl = new LayoutController(this);
 
     var checkAlive = () => {
         if (this.isDescendantOf(document.body)) {
@@ -98,41 +102,40 @@ DynamicTable.render = function () {
         extendEvent: ['orderchange'],
         class: 'as-dynamic-table-wrapper',
         child: [
-            {
-                tag: 'table',
-                class: 'as-dynamic-table-fixed-x-col'
-            },
-            {
-                class: 'as-dynamic-table-horizontal-scroller',
-                child: {
-                    tag: 'table',
-                    class: 'as-dynamic-table',
-                    child: [
-                        {
-                            tag: 'thead',
-                            class: 'as-dt-header'
 
-                        },
-                        {
-                            tag: 'tbody',
-                            class: 'as-dt-body'
-                        }
-                    ]
-                }
+            {
+                class: 'as-dynamic-table-viewport',
+                child: [
+                    {
+                        class: 'as-dynamic-table-space',
+                    },
+                    {
+                        class: 'as-dynamic-table-fixed-y-ctn'
+                    },
+                    {
+                        class: 'as-dynamic-table-fixed-x-ctn'
+                    },
+                    {
+                        class: 'as-dynamic-table-fixed-xy-ctn'
+                    }
+                ]
             },
             {
-                tag: PageSelector.tag,
-                props: {
-                    pageRange: 5,
-                    pageOffset: 1,
-                    selectedIndex: 1,
-                    pageCount: 15
-                }
-            }
+                tag: VScrollbar,
+                class: 'as-dynamic-table-vb'
+            },
+            {
+                tag: HScrollbar,
+                class: 'as-dynamic-table-hb'
+            },
         ]
     });
 };
 
+
+DynamicTable.prototype.requestUpdateSize = function () {
+    this.layoutCtrl.onResize();
+};
 
 DynamicTable.prototype.revokeResource = function () {
     this.table && this.table.revokeResource();
@@ -317,25 +320,21 @@ DynamicTable.prototype.notifyRowsChange = noop;
 DynamicTable.property = {};
 
 DynamicTable.property.adapter = {
+    /***
+     * @this DynamicTable
+     * @param data
+     */
     set: function (data) {
+        if (!data) return
         this._adapterData = data;
-        if (data) {
-            this._adapter = new DTDataAdapter(this, data);
-            this._adapter.render();
-        }
-        else {
-            //todo
-        }
+        this._adapter = new DTDataAdapter(this, data);
+        this.layoutCtrl.onAdapter();
 
-        var c = this.parentElement;
-        while (c) {
-            if (c.hasClass && c.hasClass('absol-table-vscroller') && c.update) {
-                c.update();
-                break;
-            }
-            c = c.parentElement;
-        }
-        this.fixedContentCtrl.requestUpdate();
+        this.table = new DTTable(this, this._adapterData.data);
+        this.$space.clearChild().addChild(this.table.elt);
+        this.$fixedYCtn.clearChild().addChild(this.table.fixedYElt);
+        this.$fixedXCtn.clearChild().addChild(this.table.fixedXElt);
+        this.$fixedXYCtn.clearChild().addChild(this.table.fixedXYElt);
     },
     get: function () {
         return this._adapterData;
@@ -389,10 +388,6 @@ DynamicTable.property.hiddenColumns = {
 DynamicTable.eventHandler = {};
 
 
-DynamicTable.eventHandler.pageSelectorChange = function (event) {
-    this.table.body.selectPage(this.$pageSelector.selectedIndex - 1, event);
-};
-
 /***
  * @this DynamicTable#
  * @param event
@@ -421,92 +416,184 @@ ACore.install(DynamicTable);
 
 export default DynamicTable;
 
+
 /***
  *
  * @param {DynamicTable} elt
  * @constructor
  */
-function FixedContentController(elt) {
+function LayoutController(elt) {
     /***
      *
      * @type {DynamicTable}
      */
     this.elt = elt;
-    this.swappedPairs = [];
-    this.elt.domSignal.on('requestUpdateFixedContent', this.update.bind(this));
+    this.maxRows = Math.ceil(Math.max(getScreenSize().height / 40, 1080 / 40));
+    this.offset = Vec2.ZERO;
+    Object.keys(this.constructor.prototype).forEach(key => {
+        if (key.startsWith('ev_')) this[key] = this[key].bind(this);
+    });
+
+    this.elt.$hscrollbar.on('scroll', this.ev_hScrollbarScroll);
+    this.elt.$vscrollbar.on('scroll', this.ev_vScrollbarScroll);
+    this.elt.on('wheel', this.ev_wheel);
 }
 
-FixedContentController.prototype.revertSwapped = function () {
-    var pair;
-    while (this.swappedPairs.length > 0) {
-        pair = this.swappedPairs.pop();
-        swapChildrenInElt(pair[0], pair[1]);
+/***
+ *
+ * @param {WheelEvent} event
+ */
+LayoutController.prototype.ev_wheel = function (event) {
+    var isOverflowY = this.elt.hasClass('as-overflow-y');
+    var isOverflowX = this.elt.hasClass('as-overflow-x');
+    console.log(isOverflowX, isOverflowY)
+    var dy = event.deltaY;
+    var prevOffset;
+    if (isOverflowY && (!event.shiftKey || !isOverflowX)) {
+        prevOffset = this.elt.$vscrollbar.innerOffset;
+        if (dy > 0) {
+            this.elt.$vscrollbar.innerOffset = Math.max(
+                Math.min(prevOffset + 100 / 40,
+                    this.elt.$vscrollbar.innerHeight - this.elt.$vscrollbar.outerHeight),
+                0);
+            if (prevOffset !== this.elt.$vscrollbar.innerOffset) {
+                event.preventDefault();
+                this.elt.$vscrollbar.emit('scroll');
+            }
+        }
+        else if (dy < 0) {
+            this.elt.$vscrollbar.innerOffset = Math.max(
+                Math.min(prevOffset - 100 / 40,
+                    this.elt.$vscrollbar.innerHeight - this.elt.$vscrollbar.outerHeight),
+                0);
+            if (prevOffset !== this.elt.$vscrollbar.innerOffset) {
+                event.preventDefault();
+                this.elt.$vscrollbar.emit('scroll');
+            }
+        }
+
+    }
+    else if (isOverflowX && (event.shiftKey || !isOverflowY)) {
+        prevOffset = this.elt.$hscrollbar.innerOffset;
+        if (dy > 0) {
+            this.elt.$hscrollbar.innerOffset = Math.max(
+                Math.min(prevOffset + 100,
+                    this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth),
+                0);
+            if (prevOffset !== this.elt.$hscrollbar.innerOffset) {
+                event.preventDefault();
+                this.elt.$hscrollbar.emit('scroll');
+            }
+        }
+        else if (dy < 0) {
+            this.elt.$hscrollbar.innerOffset = Math.max(
+                Math.min(prevOffset - 100,
+                    this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth),
+                0);
+            if (prevOffset !== this.elt.$hscrollbar.innerOffset) {
+                event.preventDefault();
+                this.elt.$hscrollbar.emit('scroll');
+            }
+        }
+
     }
 };
 
-FixedContentController.prototype.update = function () {
-    this.revertSwapped();
-    this.elt.$fixedXCol.clearChild();
-    var fixedCol = (this.elt.adapter && this.elt.adapter.fixedCol) || 0;
-    if (!fixedCol) return;
 
-    var head = $(this.elt.$thead.cloneNode(false));
-    head.$origin = this.elt.$thead;
-    this.elt.$fixedXCol.addChild(head);
-    var headRows = Array.prototype.map.call(this.elt.$thead.childNodes, rowElt => {
-        var copyRow = $(rowElt.cloneNode(false));
-        copyRow.$origin = rowElt;
-        var cells = Array.prototype.slice.call(rowElt.childNodes, 0, fixedCol).map(cellElt => {
-            var copyCell = $(cellElt.cloneNode(true));
-            copyCell.$origin = cellElt;
-            this.swappedPairs.push([cellElt, copyCell]);
-            swapChildrenInElt(cellElt, copyCell);
-            return copyCell;
-        });
-        copyRow.addChild(cells);
-
-        return copyRow;
-    });
-    head.addChild(headRows);
-
-    var body = $(this.elt.$tbody.cloneNode(false));
-    body.$origin = this.elt.$tbody;
-    this.elt.$fixedXCol.addChild(body);
-    var bodyRows = Array.prototype.map.call(this.elt.$tbody.childNodes, rowElt => {
-        var copyRow = $(rowElt.cloneNode(false));
-        copyRow.$origin = rowElt;
-        var cells = Array.prototype.slice.call(rowElt.childNodes, 0, fixedCol).map(cellElt => {
-            var copyCell = $(cellElt.cloneNode(true));
-            copyCell.$origin = cellElt;
-            this.swappedPairs.push([cellElt, copyCell]);
-            swapChildrenInElt(cellElt, copyCell);
-            return copyCell;
-        });
-        copyRow.addChild(cells);
-
-        return copyRow;
-    });
-    body.addChild(bodyRows);
-
-    this.updateSize();
-};
-
-FixedContentController.prototype.requestUpdate = function () {
-    this.elt.domSignal.emit('requestUpdateFixedContent');
-};
-
-
-FixedContentController.prototype.updateSize = function () {
-    if (this.elt.$fixedXCol.firstChild) {
-        Array.prototype.forEach.call(this.elt.$fixedXCol.firstChild.childNodes, rowElt => {
-            var rowBound = rowElt.$origin.getBoundingClientRect();
-            rowElt.addStyle('height', rowBound.height + 'px');
-            Array.prototype.forEach.call(rowElt.childNodes, cellElt => {
-                var cellBound = cellElt.$origin.getBoundingClientRect();
-                cellElt.addStyle('width', cellBound.width + 'px');
-            });
-
-        });
+LayoutController.prototype.onAdapter = function () {
+    var adapter = this.elt.adapter;
+    if (this.elt.style.height === 'auto') this.elt.removeStyle('height');
+    if (adapter.fixedCol > 0) {
+        this.elt.addClass('as-has-fixed-col');
     }
+    else {
+        this.elt.removeClass('as-has-fixed-col');
+    }
+};
+
+LayoutController.prototype.onAttached = function () {
+    if (this.elt.table) {
+        this.elt.table.updateCopyEltSize();
+        this.updateOverflowStatus();
+    }
+};
+
+
+LayoutController.prototype.onResize = function () {
+    this.updateOverflowStatus();
+    this.updateScrollbarStatus();
+    if (this.elt.table) {
+        this.elt.table.updateCopyEltSize();
+        this.updateLines();
+    }
+};
+
+LayoutController.prototype.updateOverflowStatus = function () {
+    var contentBound = this.elt.table ? this.elt.table.elt.getBoundingClientRect() : { width: 0, height: 0 };
+    this.elt.addStyle('--dt-content-height', contentBound.height + 'px');
+    this.elt.addStyle('--dt-content-width', contentBound.width + 'px');
+    var bound = this.elt.getBoundingClientRect();
+    if (bound.width < contentBound.width) {
+        this.elt.addClass('as-overflow-x');
+    }
+    else {
+        this.elt.removeClass('as-overflow-x');
+        this.elt.$space.removeStyle('left');
+    }
+
+    if (bound.height < contentBound.height) {
+        this.elt.addClass('as-overflow-y');
+    }
+    else {
+        this.elt.removeClass('as-overflow-y');
+        this.elt.$space.removeStyle('top');
+    }
+};
+
+LayoutController.prototype.updateScrollbarStatus = function () {
+    //todo: not overflow y
+    if (!this.elt.table) return;
+    var childNodes = this.elt.table.body.elt.childNodes;
+    var vBound = this.elt.$viewport.getBoundingClientRect();
+    var headBound = this.elt.table.header.elt.getBoundingClientRect();
+    var availableHeight = vBound.height - headBound.height;
+
+    var rBound;
+    var outer = 0;
+    var sHeight = 1;//border of last row
+    for (var i = 0; i < childNodes.length; ++i) {
+        rBound = childNodes[childNodes.length - 1 - i].getBoundingClientRect();
+        sHeight += rBound.height;
+        if (sHeight >= availableHeight) {
+            outer = i + (1 - (sHeight - availableHeight) / rBound.height);
+            break;
+        }
+    }
+
+    this.elt.$vscrollbar.outerHeight = outer;
+    this.elt.$vscrollbar.innerHeight = this.elt.table.body.curentMode.viewedRows.length;
+    this.elt.$vscrollbar.innerOffset = this.elt.table.body.curentMode.offset;
+    var viewportBound = this.elt.$viewport.getBoundingClientRect();
+    var tableBound = this.elt.table.elt.getBoundingClientRect();
+    this.elt.$hscrollbar.innerWidth = tableBound.width;
+    this.elt.$hscrollbar.outerWidth = viewportBound.width;
+};
+
+LayoutController.prototype.updateLines = function () {
+    if (this.elt.hasClass('as-overflow-x') && this.elt.hasClass('as-has-fixed-col')) {
+
+    }
+};
+
+LayoutController.prototype.ev_hScrollbarScroll = function (event) {
+    this.elt.$space.addStyle('left', -this.elt.$hscrollbar.innerOffset + 'px');
+    this.elt.$fixedYCtn.addStyle('left', -this.elt.$hscrollbar.innerOffset + 'px');
+    this.elt.$viewport.emit('scroll');
+};
+
+
+LayoutController.prototype.ev_vScrollbarScroll = function () {
+    this.elt.$viewport.emit('scroll');
+    this.elt.table.body.offset = this.elt.$vscrollbar.innerOffset;
 };
 

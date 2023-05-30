@@ -1,11 +1,15 @@
 import DTBodyRow from "./DTBodyRow";
 import DTRowDragController from "./DTRowDragController";
-import {isNaturalNumber, isRealNumber, calcDTQueryHash} from "../utils";
+import { isNaturalNumber, isRealNumber, calcDTQueryHash, replaceChildrenInElt } from "../utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Thread from "absol/src/Network/Thread";
 import DTSearchFactor from "./DTSearchFactor";
-import {randomIdent} from "absol/src/String/stringGenerate";
+import { randomIdent } from "absol/src/String/stringGenerate";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import { $$, _, $ } from "../../ACore";
+import Rectangle from "absol/src/Math/Rectangle";
+import { getScreenSize } from "absol/src/HTML5/Dom";
+import OOP from "absol/src/HTML5/OOP";
 
 /***
  *
@@ -15,7 +19,7 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 function SearchingMaster(body) {
     this.body = body;
     this.mode = body.modes.searching;
-    this.waitingCtrl = body.table.elt.waitingCtl;
+    this.waitingCtrl = body.table.wrapper.waitingCtl;
     this.initWorker();
     this.id = randomIdent(10);
     this.transferSession = Math.random() + '';
@@ -62,7 +66,7 @@ SearchingMaster.prototype.transferFrom = function (offset) {
         var rows = self.body.rows;
         var n = self.body.rows.length;
         if (i >= n) {
-            if (n === 0){
+            if (n === 0) {
                 self.share.thread.invoke('transferSearchItems', self.id, n, 0, 0, [], self.itemVersion);
             }
             self.isTranferring = false;
@@ -154,81 +158,157 @@ SearchingMaster.prototype.initWorker = function () {
     }
 };
 
-
 /***
  *
+ * @param {DTBody}  body
+ * @constructor
+ */
+function BaseMode(body) {
+    this.body = body;
+
+    this.offset = 0;
+    this.rowOffset = -1000;
+    this.boundCache = null;
+    this.viewedRows = null;
+}
+
+
+BaseMode.prototype.resetViewParam = function () {
+    this.offset = 0;
+    this.rowOffset = -1000;
+    this.boundCache = null;
+    this.viewedRows = null;
+};
+
+
+BaseMode.prototype.getBoundOfRows = function () {
+    if (this.boundCache) return this.boundCache;
+    if (!this.body.table.wrapper.isDescendantOf(document.body)) return null;
+    var bodyBound = this.body.elt.getBoundingClientRect();
+    var elt = this.body.elt;
+    var childNodes = elt.childNodes;
+    this.boundCache = Array.prototype.map.call(childNodes, elt => {
+        var eBound = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        eBound.y -= bodyBound.top;
+        return eBound;
+    });
+
+    return this.boundCache;
+};
+
+BaseMode.prototype.updateRowsIfNeed = function () {
+    throw Error("Not implement!");
+};
+
+
+BaseMode.prototype.render = function () {
+    this.updateRowsIfNeed();
+    var bounds = this.getBoundOfRows();
+    if (!bounds) {
+        setTimeout(() => {
+            if (this.body.elt.isDescendantOf(document.body)) {
+                this.render();
+            }
+        }, 0);
+        return;
+    }
+    var dy = 0, rowIdx;
+    if (bounds.length > 0) {
+        rowIdx = Math.floor(this.offset - this.rowOffset);
+        dy = bounds[rowIdx].y + (this.offset - this.rowOffset - rowIdx) * bounds[rowIdx].height;
+    }
+
+    this.body.table.wrapper.$space.addStyle('top', -dy + 'px');
+    this.body.table.wrapper.$fixedXCtn.addStyle('top', -dy + 'px');
+};
+
+
+/***
+ * @extends BaseMode
  * @param {DTBody} body
  * @constructor
  */
 function SearchingMode(body) {
+    BaseMode.call(this, body);
     this.status = 'STANDBY';
-    this.body = body;
-    this.offset = 0;
 
     this.waitingToken = 'none';
-    this.waitingCtrl = body.table.elt.waitingCtl;
+    this.waitingCtrl = body.table.wrapper.waitingCtl;
 
     this.taskHash = 0;
     this.renderingHash = -1;
     this.resultItems = [];
 }
 
+OOP.mixClass(SearchingMode, BaseMode);
+
 SearchingMode.prototype.start = function () {
     this.status = "RUNNING";
     this.searchingCache = {};
-    this.body.table.elt.addClass('as-searching');
+    this.body.table.wrapper.addClass('as-searching');
     this.renderingHash = -1;
 };
 
 
 SearchingMode.prototype.end = function () {
-    this.body.table.elt.removeClass('as-searching');
+    this.body.table.wrapper.removeClass('as-searching');
     this.searchingItems = null;
     this.status = "STOP";
     this.waitingCtrl.end(this.waitingToken);
     this.body.master.sendTask(null);
-
 };
 
-SearchingMode.prototype.selectPage = function (pageIdx) {
-    if (this.renderingHash === -1) {
-        this.body.modes.normal.selectPage(pageIdx);
-        return;
-    }
-    var newOffset = pageIdx * this.body.table.adapter.rowsPerPage;
-    if (this.offset === newOffset) return;
-    this.offset = newOffset;
-    this.render();
-    this.body.table.elt.fixedContentCtrl.requestUpdate();
-};
 
-SearchingMode.prototype.render = function () {
-    var start = this.offset;
-    var end = Math.min(start + this.body.table.adapter.rowsPerPage, this.resultItems.length);
+SearchingMode.prototype.updateRowsIfNeed = function () {
+    var screenSize = getScreenSize();
+    var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
+    var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
+    if (newRowOffset === this.rowOffset) return;
+    this.rowOffset = newRowOffset;
+    var start = this.rowOffset;
+    var end = Math.min(start + rowPerPage * 2, this.resultItems.length);
     var elt = this.body.elt;
-    var cChildren = Array.prototype.slice.call(elt.childNodes);
-    var nChildren = [];
+    var fixedXElt = this.body.fixedXElt;
+
+
     var rows = this.body.rows;
+    var nRows = [];
     for (var i = start; i < end; ++i) {
-        nChildren.push(rows[this.resultItems[i]].elt);
+        nRows.push(rows[this.resultItems[i]]);
     }
-    var cC, nC;
-    while (cChildren.length > 0 && nChildren.length > 0) {
-        cC = cChildren[0];
-        nC = nChildren[0];
-        if (cC === nC) {
-            cChildren.shift();
-            nChildren.shift();
+    var nChildren = nRows.map(r => r.elt);
+    var nFixedXChildren = nRows.map(r => r.fixedXElt);
+    replaceChildrenInElt(elt, nChildren);
+    replaceChildrenInElt(fixedXElt, nFixedXChildren);
+    this.boundCache = null;
+
+
+    var bounds = this.getBoundOfRows();
+    if (bounds) {
+        for (var i = 0; i < nRows.length; ++i) {
+            nRows[i].updateCopyEltSize();
         }
-        else {
-            break;
-        }
+        this.body.table.wrapper.layoutCtrl.onResize();
+        this.body.table.updateCopyEltSize();
+
     }
-    cChildren.forEach(function (elt) {
-        elt.remove();
-    });
-    elt.addChild(nChildren);
+    if (!bounds) {
+        setTimeout(() => {
+            if (this.body.elt.isDescendantOf(document.body)) {
+                var bounds = this.getBoundOfRows();
+                if (bounds) {
+                    for (var i = 0; i < nRows.length; ++i) {
+                        nRows[i].updateCopyEltSize();
+                    }
+                    this.body.table.wrapper.layoutCtrl.onResize();
+                    this.body.table.updateCopyEltSize();
+                }
+            }
+        }, 0);
+    }
 };
+
+
 SearchingMode.prototype.onRowSplice = function (idx) {
     this.render();
 }
@@ -244,7 +324,6 @@ SearchingMode.prototype.onRowRemoved = function (idx, n) {
         }
         return ac;
     }, []);
-    this._updatePageSelector();
 };
 
 SearchingMode.prototype.onRowAdded = function (idx, n) {
@@ -271,22 +350,6 @@ SearchingMode.prototype.query = function (query) {
     this.taskHash = taskHolder.hash;
 };
 
-SearchingMode.prototype._updatePageSelector = function () {
-    var pageCount = Math.max(1, Math.ceil(this.resultItems.length / this.body.table.adapter.rowsPerPage));
-    if (this.offset >= pageCount * this.body.table.adapter.rowsPerPage) {
-        this.offset = (pageCount - 1) * this.body.table.adapter.rowsPerPage;
-    }
-    this.body.table.elt.$pageSelector.pageCount = pageCount;
-    this.body.table.elt.$pageSelector.pageRange = Math.min(pageCount, 5);
-    this.body.table.elt.$pageSelector.selectedIndex = Math.floor(this.offset / this.body.table.adapter.rowsPerPage) + 1;
-    var newPageOffset = this.body.table.elt.$pageSelector.selectedIndex;
-    if (newPageOffset > 0) {
-        newPageOffset--;
-    }
-    newPageOffset = Math.max(1, Math.min(pageCount - this.body.table.elt.$pageSelector.pageRange + 1, newPageOffset));
-    this.body.table.elt.$pageSelector.pageOffset = newPageOffset;
-
-};
 
 SearchingMode.prototype.onResult = function (response) {
     if (this.status !== 'RUNNING' || response.hash !== this.taskHash) return;
@@ -294,12 +357,13 @@ SearchingMode.prototype.onResult = function (response) {
     if (this.renderingHash !== response.hash) {
         this.renderingHash = response.hash;
         this.offset = 0;
+        this.rowOffset = -1000;
+
     }
     this.resultItems = response.result;
-    this._updatePageSelector();
+    this.viewedRows = this.resultItems.map(rIdx => this.body.rows[rIdx]);
 
     this.render();
-    this.body.table.elt.fixedContentCtrl.requestUpdate();
 };
 
 
@@ -309,77 +373,76 @@ SearchingMode.prototype.share = {
 
 
 /***
- *
+ * @extends BaseMode
  * @param {DTBody} body
  * @constructor
  */
 function NormalMode(body) {
-    this.body = body;
-    this.offset = 0;
+    BaseMode.call(this, body);
 }
 
-NormalMode.prototype.start = function () {
-    if (isNaturalNumber(this.body.table.adapter.rowsPerPage)) {
-        this.body.table.elt.removeClass('as-no-paging');
-    }
-    else {
-        this.body.table.elt.addClass('as-no-paging');
-    }
+OOP.mixClass(NormalMode, BaseMode);
 
-    var pageCount = Math.max(1, Math.ceil(this.body.rows.length / this.body.table.adapter.rowsPerPage));
-    this.body.table.elt.$pageSelector.pageCount = pageCount;
-    this.body.table.elt.$pageSelector.pageRange = Math.min(pageCount, 5);
-    this.body.table.elt.$pageSelector.pageOffset = this.offset + 1;
-    this.body.table.elt.$pageSelector.selectedIndex = Math.floor(this.offset / this.body.table.adapter.rowsPerPage) + 1;
+NormalMode.prototype.start = function () {
+    this.resetViewParam();
+    this.viewedRows = this.body.rows;
+
     this.render();
-    this.body.table.elt.fixedContentCtrl.requestUpdate();
 };
 
 NormalMode.prototype.end = function () {
 
 };
 
-NormalMode.prototype.selectPage = function (pageIdx) {
-    var newOffset = pageIdx * this.body.table.adapter.rowsPerPage;
-    if (this.offset === newOffset) return;
-    this.offset = newOffset;
-    this.render();
-    this.body.table.elt.fixedContentCtrl.requestUpdate();
-};
 
-NormalMode.prototype.render = function () {
-    var start = this.offset;
-    var rowsPerPage = this.body.table.adapter.rowsPerPage;
+NormalMode.prototype.updateRowsIfNeed = function () {
+    var screenSize = getScreenSize();
+    var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
+    var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
+    if (newRowOffset === this.rowOffset) return;
+    this.rowOffset = newRowOffset;
+    var start = this.rowOffset;
     var data = this.body.data;
     var elt = this.body.elt;
-    var end = Math.min(start + rowsPerPage, data.rows.length);
+    var fixedXElt = this.body.fixedXElt;
+    var end = Math.min(start + rowPerPage * 2, data.rows.length);
     var rows = this.body.rows;
     elt.clearChild();
+    fixedXElt.clearChild();
     for (var i = start; i < end; ++i) {
         elt.addChild(rows[i].elt);
+        fixedXElt.addChild(rows[i].fixedXElt);
     }
-    this.body.table.elt.fixedContentCtrl.requestUpdate();
-};
+    this.boundCache = null;
+
+    var bounds = this.getBoundOfRows();
+    if (bounds) {
+        for (var i = start; i < end; ++i) {
+            rows[i].updateCopyEltSize();
+        }
+        this.body.table.wrapper.layoutCtrl.onResize();
+        this.body.table.updateCopyEltSize();
+    }
+    if (!bounds) {
+        setTimeout(() => {
+            if (this.body.elt.isDescendantOf(document.body)) {
+                var bounds = this.getBoundOfRows();
+                if (bounds) {
+                    for (var i = start; i < end; ++i) {
+                        rows[i].updateCopyEltSize();
+                    }
+                    this.body.table.wrapper.layoutCtrl.onResize();
+                    this.body.table.updateCopyEltSize();
+                }
+            }
+        }, 0);
+    }
+}
 
 
 NormalMode.prototype.onRowSplice = function (idx) {
-    var rowsPerPage = this.body.table.adapter.rowsPerPage;
-    if (!isNaturalNumber(rowsPerPage)) rowsPerPage = Infinity;
-    if (this.offset <= idx && this.offset + rowsPerPage > idx) this.render();
-
-    var pageCount;
-    if (rowsPerPage !== Infinity) {
-        pageCount = Math.max(1, Math.ceil(this.body.rows.length / this.body.table.adapter.rowsPerPage));
-        if (Math.min(pageCount, 5) !== this.body.table.elt.$pageSelector.pageRange)
-            this.body.table.elt.$pageSelector.pageRange = Math.min(pageCount, 5);
-
-        if (this.body.table.elt.$pageSelector.pageCount !== pageCount) {
-            this.body.table.elt.$pageSelector.pageCount = pageCount;
-            if (this.body.table.elt.$pageSelector.selectedIndex + 1 >= pageCount) {
-                this.body.table.elt.$pageSelector.selectPage(Math.min(this.body.table.elt.$pageSelector.selectedIndex, pageCount), false);//to show last page
-            }
-        }
-    }
+    this.rowOffset = -1;
+    this.render();
 };
 
 
@@ -387,11 +450,9 @@ NormalMode.prototype.viewIntoRow = function (row) {
     if (!isNaturalNumber(this.body.table.adapter.rowsPerPage)) return;
     var idx = this.body.rowIndexOf(row);
     if (idx <= 0) return;
-    var pageIdx = Math.floor(idx / this.body.table.adapter.rowsPerPage);
-    if (this.body.table.elt.$pageSelector.selectedIndex !== pageIdx + 1) {
-        this.body.table.elt.$pageSelector.selectedIndex = pageIdx + 1;
-    }
+
 };
+
 
 /***
  *
@@ -401,32 +462,30 @@ NormalMode.prototype.viewIntoRow = function (row) {
  */
 function DTBody(table, data) {
     this.table = table;
-    /***
-     *
-     * @type {AElement}
-     */
-    this.elt = this.table.elt.$tbody;
+
     this.data = data;
+
+    this._elt = null;
+    this._fixedXElt = null;
 
     this.rows = this.data.rows.map(function (rowData, i) {
         var row = new DTBodyRow(this, rowData);
         row.idx = i;
         return row;
     }.bind(this));
-    this.rowDragCtrl = new DTRowDragController(this);
+    // this.rowDragCtrl = new DTRowDragController(this);
 
     this.modes = {
         normal: new NormalMode(this),
         searching: new SearchingMode(this)
     };
-
-
+    //
+    //
     this.curentMode = this.modes.normal;
     this.curentMode.start();
     this.curentMode.render();
-
+    //
     this.master = new SearchingMaster(this);
-
     this.master.transferFrom(0);
     /***
      * @name offset
@@ -460,7 +519,6 @@ DTBody.prototype.onRowSplice = function (idx) {
     this.curentMode.onRowSplice(idx);
     this.master.transferFrom(idx);
     ResizeSystem.requestUpdateSignal();
-    this.table.elt.fixedContentCtrl.requestUpdate();
 }
 
 DTBody.prototype.rowIndexOf = function (o) {
@@ -602,10 +660,6 @@ DTBody.prototype.viewIntoRow = function (row) {
     return this.curentMode.viewIntoRow(row);
 };
 
-DTBody.prototype.selectPage = function (pageIdx, userAction) {
-    this.curentMode.selectPage(pageIdx);
-
-};
 
 DTBody.prototype.startSearchingIfNeed = function () {
     if (this.curentMode !== this.modes.searching) {
@@ -641,15 +695,11 @@ DTBody.prototype.query = function (query) {
 
 
 Object.defineProperties(DTBody.prototype, {
-    rowsPerPage: {
-        get: function () {
-            return this.table.adapter.rowsPerPage;
-        }
-    },
     offset: {
         set: function (value) {
             this._offset = value;
-            this.renderCurrentOffset();
+            this.curentMode.offset = value;
+            this.curentMode.render();
         },
         get: function () {
             return this._offset;
@@ -659,6 +709,36 @@ Object.defineProperties(DTBody.prototype, {
         get: function () {
             return this.elt.hasClass('as-searching');
         }
+    }
+});
+
+
+Object.defineProperty(DTBody.prototype, 'elt', {
+    get: function () {
+        if (this._elt) return this._elt;
+        this._elt = _({
+            tag: 'tbody',
+            class: 'as-dt-body',
+        });
+
+        return this._elt;
+    }
+});
+
+Object.defineProperty(DTBody.prototype, 'fixedXElt', {
+    get: function () {
+        if (this._fixedXElt) return this._fixedXElt;
+        this._fixedXElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-fixed-x',
+        });
+        return this._fixedXElt;
+    }
+});
+
+Object.defineProperty(DTBody.prototype, 'adapter', {
+    get: function () {
+        return this.table.adapter;
     }
 });
 
