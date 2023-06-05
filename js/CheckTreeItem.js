@@ -72,37 +72,27 @@ CheckTreeItem.property.data = {
 
 CheckTreeItem.property.selected = {
     set: function (value) {
+        this._selected = value;
         this.$checkbox.disabled = value === 'empty';
         if (value === 'all') {
-            this.$checkbox.removeClass('as-has-minus')
-                .removeClass('as-has-minus');
+            this.$checkbox.minus = false;
             this.$checkbox.checked = true;
         }
         else if (value === 'child') {
             this.$checkbox.checked = false;
-            this.$checkbox.addClass('as-has-minus');
+            this.$checkbox.minus = true;
         }
         else if (value === 'empty') {
-            this.$checkbox.removeClass('as-has-minus')
+            this.$checkbox.minus = false;
             this.$checkbox.checked = false;
         }
         else {
-            this.$checkbox.removeClass('as-has-minus');
+            this.$checkbox.minus = false;
             this.$checkbox.checked = false;
         }
     },
     get: function () {
-        if (this.$checkbox.checked) {
-            return 'all';
-        }
-        else {
-            if (this.$checkbox.hasClass('as-has-minus')) {
-                return 'child';
-            }
-            else {
-                return 'none';
-            }
-        }
+        return  this._selected;
     }
 };
 
