@@ -92,7 +92,10 @@ CheckTreeItem.property.selected = {
         }
     },
     get: function () {
-        return  this._selected;
+        if ( this.$checkbox.disabled) return 'empty';
+        if (this.$checkbox.checked) return  'all';
+        else if (this.$checkbox.minus) return 'child';
+        return 'none';
     }
 };
 
