@@ -78,9 +78,10 @@ SinglePage.prototype.updateSize = function () {
         var footerBound = this.$footer.getBoundingClientRect();
         this.$viewport.addStyle('padding-bottom', footerBound.height + 'px');
     }
+    this.addStyle('--single-page-scroller-height', this.$scroller.clientHeight + 'px');
     if (this.isSupportedEvent('sizechange'))
         this.emit('sizechange', { type: 'sizechange', target: this }, this);
-    this.addStyle('--single-page-scroller-height', this.$scroller.clientHeight + 'px');
+
 };
 
 SinglePage.prototype.addChild = function (elt) {
