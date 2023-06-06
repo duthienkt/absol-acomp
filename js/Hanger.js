@@ -14,7 +14,7 @@ var $ = ACore.$;
  */
 function Hanger() {
     this.addClass('as-hanger');
-    this.defineEvent(['predrag', 'dragstart', 'drag', 'dragend', 'draginit', 'dragdeinit']);
+    this.defineEvent(['predrag', 'dragstart', 'drag', 'dragend', 'draginit', 'dragdeinit']);//predrag is draginit
     this._hangOn = 0;
     this._hangerPointerData = null;
     this.on2({

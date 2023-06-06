@@ -37,6 +37,7 @@ DTHeadRow.prototype.updateCopyEltSize = function () {
         this._fixedXElt.addStyle('height', bound.height + 'px');
     if (this._fixedXYElt)
         this._fixedXYElt.addStyle('height', bound.height + 'px');
+    this._elt.addStyle('height', bound.height + 'px');
     this.cells.forEach(c => c.updateCopyEltSize());
 };
 

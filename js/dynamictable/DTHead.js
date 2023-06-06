@@ -70,7 +70,6 @@ Object.defineProperty(DTHead.prototype, 'fixedXYElt', {
 Object.defineProperty(DTHead.prototype, 'fixedXElt', {
     get: function () {
         if (this._fixedXElt) return this._fixedXElt;
-        console.log(this.rows)
         this._fixedXElt = _({
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-x',

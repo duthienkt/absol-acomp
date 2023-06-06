@@ -192,6 +192,9 @@ BaseMode.prototype.getBoundOfRows = function () {
         eBound.y -= bodyBound.top;
         return eBound;
     });
+    this.boundCache.body = Rectangle.fromClientRect(bodyBound);
+    this.boundCache.header = Rectangle.fromClientRect(this.body.table.header.elt.getBoundingClientRect());
+
 
     return this.boundCache;
 };
@@ -217,6 +220,16 @@ BaseMode.prototype.render = function () {
         rowIdx = Math.floor(this.offset - this.rowOffset);
         dy = bounds[rowIdx].y + (this.offset - this.rowOffset - rowIdx) * bounds[rowIdx].height;
     }
+    var availableHeight;
+    if (bounds.length > 0) {
+        availableHeight = this.body.table.wrapper.$viewport.getBoundingClientRect().height - bounds.header.height;
+        if (bounds[bounds.length - 1].y + bounds[bounds.length - 1].height - dy < availableHeight - 1) {
+            dy = -availableHeight + bounds[bounds.length - 1].y + bounds[bounds.length - 1].height + 1;//1: last border
+        }
+    }
+
+    dy = Math.max(0, dy);
+
 
     this.body.table.wrapper.$space.addStyle('top', -dy + 'px');
     this.body.table.wrapper.$fixedXCtn.addStyle('top', -dy + 'px');
@@ -238,6 +251,7 @@ function SearchingMode(body) {
     this.taskHash = 0;
     this.renderingHash = -1;
     this.resultItems = [];
+    this.viewedRows = [];
 }
 
 OOP.mixClass(SearchingMode, BaseMode);
@@ -263,6 +277,9 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
     var screenSize = getScreenSize();
     var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
+    if (this.resultItems.length - newRowOffset < rowPerPage * 2) {
+        newRowOffset = Math.max(0, newRowOffset - rowPerPage);
+    }
     if (newRowOffset === this.rowOffset) return;
     this.rowOffset = newRowOffset;
     var start = this.rowOffset;
@@ -310,6 +327,7 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
 
 
 SearchingMode.prototype.onRowSplice = function (idx) {
+    this.rowOffset = -1000;
     this.render();
 }
 
@@ -340,7 +358,7 @@ SearchingMode.prototype.onRowAdded = function (idx, n) {
 };
 
 SearchingMode.prototype.viewIntoRow = function (row) {
-
+    console.log(row);
 };
 
 SearchingMode.prototype.query = function (query) {
@@ -399,10 +417,14 @@ NormalMode.prototype.updateRowsIfNeed = function () {
     var screenSize = getScreenSize();
     var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
+    var data = this.body.data;
+    if (data.rows.length - newRowOffset < rowPerPage * 2) {
+        newRowOffset = Math.max(0, newRowOffset - rowPerPage);
+    }
     if (newRowOffset === this.rowOffset) return;
     this.rowOffset = newRowOffset;
     var start = this.rowOffset;
-    var data = this.body.data;
+
     var elt = this.body.elt;
     var fixedXElt = this.body.fixedXElt;
     var end = Math.min(start + rowPerPage * 2, data.rows.length);
@@ -447,9 +469,10 @@ NormalMode.prototype.onRowSplice = function (idx) {
 
 
 NormalMode.prototype.viewIntoRow = function (row) {
-    if (!isNaturalNumber(this.body.table.adapter.rowsPerPage)) return;
-    var idx = this.body.rowIndexOf(row);
+    var idx = this.viewedRows.indexOf(row);
     if (idx <= 0) return;
+    this.offset = idx;
+    this.render();
 
 };
 
@@ -473,7 +496,7 @@ function DTBody(table, data) {
         row.idx = i;
         return row;
     }.bind(this));
-    // this.rowDragCtrl = new DTRowDragController(this);
+    this.rowDragCtrl = new DTRowDragController(this);
 
     this.modes = {
         normal: new NormalMode(this),

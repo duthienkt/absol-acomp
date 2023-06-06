@@ -12,6 +12,7 @@ import { HScrollbar, VScrollbar } from "../Scroller";
 import Vec2 from "absol/src/Math/Vec2";
 import DTTable from "./DTTable";
 import vec2 from "absol/src/Math/Vec2";
+import Hanger from "../Hanger";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -82,6 +83,7 @@ function DynamicTable() {
 
     this.waitingCtl = new DTWaitingViewController(this);
     this.layoutCtrl = new LayoutController(this);
+    this.pointerCtrl = new PointerController(this);
 
     var checkAlive = () => {
         if (this.isDescendantOf(document.body)) {
@@ -101,9 +103,10 @@ DynamicTable.render = function () {
     return _({
         extendEvent: ['orderchange'],
         class: 'as-dynamic-table-wrapper',
-        child: [
 
+        child: [
             {
+                tag: Hanger.tag,
                 class: 'as-dynamic-table-viewport',
                 child: [
                     {
@@ -436,7 +439,10 @@ function LayoutController(elt) {
 
     this.elt.$hscrollbar.on('scroll', this.ev_hScrollbarScroll);
     this.elt.$vscrollbar.on('scroll', this.ev_vScrollbarScroll);
+
     this.elt.on('wheel', this.ev_wheel);
+    this.scrollingDir = Vec2.ZERO;
+    this.scrollingStartOffset = Vec2.ZERO;
 }
 
 /***
@@ -446,7 +452,6 @@ function LayoutController(elt) {
 LayoutController.prototype.ev_wheel = function (event) {
     var isOverflowY = this.elt.hasClass('as-overflow-y');
     var isOverflowX = this.elt.hasClass('as-overflow-x');
-    console.log(isOverflowX, isOverflowY)
     var dy = event.deltaY;
     var prevOffset;
     if (isOverflowY && (!event.shiftKey || !isOverflowX)) {
@@ -509,9 +514,25 @@ LayoutController.prototype.onAdapter = function () {
     else {
         this.elt.removeClass('as-has-fixed-col');
     }
+
+    if (adapter?.rowsPerPage === Infinity) {
+        this.elt.addStyle('as-adapt-infinity-grow');
+    }
+    else {
+        this.elt.addStyle('as-adapt-infinity-grow');
+    }
 };
 
 LayoutController.prototype.onAttached = function () {
+    var c = this.elt.parentElement;
+    while (c) {
+        if (c.isSupportedEvent && c.isSupportedEvent('sizechange')) {
+            c.on('sizechange', ()=>{
+                this.onResize();
+            })
+        }
+        c = c.parentElement;
+    }
     if (this.elt.table) {
         this.elt.table.updateCopyEltSize();
         this.updateOverflowStatus();
@@ -597,3 +618,131 @@ LayoutController.prototype.ev_vScrollbarScroll = function () {
     this.elt.table.body.offset = this.elt.$vscrollbar.innerOffset;
 };
 
+LayoutController.prototype.ev_dragStart = function (event) {
+    var isOverflowY = this.elt.hasClass('as-overflow-y');
+    var isOverflowX = this.elt.hasClass('as-overflow-x');
+    var dir = event.currentPoint.sub(event.startingPoint);
+    if (isOverflowY && Math.abs(dir.y) > Math.abs(dir.x)) {
+        this.scrollingDir = new Vec2(0, 1);
+        event.preventDefault();
+    }
+    else if (isOverflowX && Math.abs(dir.y) < Math.abs(dir.x)) {
+        this.scrollingDir = new Vec2(1, 0);
+        event.preventDefault();
+    }
+    else {
+        this.scrollingDir = Vec2.ZERO;
+    }
+    this.scrollingStartOffset = new Vec2(this.elt.$hscrollbar.innerOffset, this.elt.$vscrollbar.innerOffset);
+};
+
+LayoutController.prototype.ev_drag = function (event) {
+    var changed = false;
+    var dir = event.currentPoint.sub(event.startingPoint);
+
+    var newOffset = new Vec2(0, 0);
+    if (this.scrollingDir.x !== 0) {
+        newOffset.x = Math.max(0,
+            Math.min(this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth,
+                this.scrollingStartOffset.x - dir.x));
+        if (this.elt.$hscrollbar.innerOffset !== newOffset.x) {
+            changed = true;
+            this.elt.$hscrollbar.innerOffset = newOffset.x;
+            this.elt.$hscrollbar.emit('scroll');
+        }
+    }
+    else if (this.scrollingDir.y !== 0) {
+        newOffset.y = Math.max(0,
+            Math.min(this.elt.$vscrollbar.innerHeight - this.elt.$vscrollbar.outerHeight,
+                this.scrollingStartOffset.y - dir.y/40));
+
+        if (this.elt.$vscrollbar.innerOffset !== newOffset.y) {
+            changed = true;
+            this.elt.$vscrollbar.innerOffset = newOffset.y;
+            this.elt.$vscrollbar.emit('scroll');
+        }
+    }
+
+
+    if (changed) event.preventDefault();
+};
+
+
+LayoutController.prototype.ev_dragEnd = function (event) {
+
+};
+
+/***
+ *
+ * @param {DynamicTable} elt
+ * @constructor
+ */
+function PointerController(elt) {
+    Object.keys(this.constructor.prototype).forEach(key => {
+        if (key.startsWith('ev_')) this[key] = this[key].bind(this);
+    });
+    /***
+     *
+     * @type {DynamicTable}
+     */
+    this.elt = elt;
+    this.elt.$viewport.hangon = 5;
+    this.elt.$viewport.on('draginit', this.ev_dragInit);
+    this.elt.$viewport.on('dragstart', this.ev_dragStart);
+    this.elt.$viewport.on('drag', this.ev_drag);
+    this.elt.$viewport.on('dragend', this.ev_dragEnd);
+    this.destHandler = null;
+}
+
+
+PointerController.prototype.isInDragZone = function (elt) {
+    return false;
+};
+
+PointerController.prototype.isInInput = function (elt) {
+    while (elt) {
+        if (elt.tagName === 'INPUT') return true;
+        if (elt.tagName === 'TD') return  false;
+        var clazz = elt.getAttribute('class')||'';
+        if (clazz.indexOf('input') >=0) return  true;
+        if (clazz.indexOf('input') >=0) return  true;
+        if (clazz.indexOf('menu') >=0) return  true;
+        elt = elt.parentElement;
+    }
+    return false;
+}
+
+PointerController.prototype.ev_dragInit = function (event) {
+    if (this.isInInput(event.target)) {
+        event.cancel();
+        return;
+    }
+    event.preventDefault();//todo: check
+}
+
+PointerController.prototype.ev_dragStart = function (event) {
+    var dir = event.currentPoint.sub(event.startingPoint).normalized();
+    var ox = new Vec2(1, 0);
+    var oy = new Vec2(0, 1);
+    if (Math.abs(dir.dot(ox)) < 0.3 ||Math.abs(dir.dot(oy)) < 0.3 ) {
+        this.destHandler = this.elt.layoutCtrl;
+        this.destHandler.ev_dragStart(event);
+    }
+    else {
+        this.destHandler = null;
+    }
+};
+
+PointerController.prototype.ev_drag = function (event) {
+    if (this.destHandler) this.destHandler.ev_drag(event);
+}
+
+PointerController.prototype.ev_dragEnd = function (event) {
+
+    if (this.destHandler) this.destHandler.ev_dragEnd(event);
+};
+
+
+PointerController.prototype.ev_dragDeinit = function (event) {
+
+};
