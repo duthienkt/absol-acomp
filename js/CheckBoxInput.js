@@ -115,7 +115,25 @@ CheckboxInput.property.checked = {
     get: function () {
         return this.$input.checked;
     }
-}
+};
+
+/***
+ *
+ * @type {CheckboxInput}
+ */
+CheckboxInput.property.minus = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-has-minus');
+        }
+        else {
+            this.removeClass('as-has-minus');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-has-minus');
+    }
+};
 
 CheckboxInput.attribute = {
     checked: {

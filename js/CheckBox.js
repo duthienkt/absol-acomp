@@ -26,9 +26,16 @@ function CheckBox() {
     this.$labels = $$('span', this);
     this.on('click', this.eventHandler.click);
     OOP.drillProperty(this, this.$input, ['checked']);
+    OOP.drillProperty(this, this.$input, ['minus']);
     /***
      * @type {boolean}
      * @name checked
+     * @memberOf CheckBox#
+     */
+
+    /***
+     * @type {boolean}
+     * @name minus
      * @memberOf CheckBox#
      */
 }
