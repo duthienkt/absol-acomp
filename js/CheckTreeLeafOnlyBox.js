@@ -1,8 +1,23 @@
 import ACore, { _ } from "../ACore";
-import CheckTreeBox, { TreeNodeHolder } from "./CheckTreeBox";
+import CheckTreeBox, { TreeNodeHolder, TreeRootHolder } from "./CheckTreeBox";
 import CheckTreeItem from "./CheckTreeItem";
 import OOP from "absol/src/HTML5/OOP";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
+
+
+var normalizeItem = item => {
+    var nItem = Object.assign({}, item);
+    if (!nItem.isLeaf && nItem.noSelect) {
+        delete nItem.noSelect;
+    }
+    if (nItem.items && nItem.items.map)
+        nItem.items = normalizeItems(nItem.items);
+    return nItem;
+}
+
+var normalizeItems = (items) => {
+    return items.map(it => normalizeItem(it));
+};
 
 /***
  * Only tree has leaf can be selected
@@ -80,6 +95,13 @@ CheckTreeLeafOnlyBox.eventHandler = Object.assign({}, CheckTreeBox.eventHandler)
 
 CheckTreeLeafOnlyBox.prototype._pool = [];
 
+CheckTreeLeafOnlyBox.property.items = {
+    get: CheckTreeBox.property.items.get,
+    set: function (items) {
+        items = normalizeItems(items || []);
+        CheckTreeBox.property.items.set.call(this, items);
+    }
+}
 
 CheckTreeLeafOnlyBox.prototype._requestItem = function () {
     var res = this._pool.pop() || _({
@@ -93,6 +115,7 @@ CheckTreeLeafOnlyBox.prototype._requestItem = function () {
                 this.menuElt.eventHandler.toggleItem(this, event);
             },
             select: function (event) {
+                console.log(this.selected);
                 this.menuElt.eventHandler.selectItem(this, event);
             }
         }
@@ -105,108 +128,24 @@ CheckTreeLeafOnlyBox.prototype._requestItem = function () {
 CheckTreeLeafOnlyBox.prototype.HolderClass = TreeLeafOnlyNodeHolder;
 
 
-CheckTreeLeafOnlyBox.prototype.depthIndexing = function (items, arr, rootArr) {
-    var res = {};
-    var count = 0;
-    var self = this;
-    var HolderClass = this.HolderClass;
-
-    /***
-     *
-     * @param {TreeLeafOnlyNodeHolder|null} root
-     * @param items
-     */
-    function scan(root, items) {
-        items.forEach(function visit(item) {
-            var value = item.value + '';
-            res[value] = res[value] || [];
-            var node = new HolderClass(self, item, count++, root);
-            res[value].push(node);
-            arr && arr.push(node);
-            if (root) {
-                root.child.push(node);
-            }
-            else if (rootArr) {
-                rootArr.push(node);
-            }
-            if (res[value].length > 1) {
-                console.log("Duplicate value", res[value]);
-            }
-            if (item.items && item.items.length > 0)
-                scan(node, item.items);
-            if (item.isLeaf) {
-                if (!item.items || item.items.length === 0) {
-                    node.leafCount = 1;
-                }
-                else {
-                    console.error("Invalid item", item);
-                }
-            }
-            if (root) {
-                root.leafCount += node.leafCount;
-            }
-            if (node.leafCount === 0) {
-                node.selected = 'empty';
-
-            }
-        });
-    }
-
-    scan(null, items);
-    return res;
-};
-
-
-CheckTreeLeafOnlyBox.prototype._updateFromValues = function () {
-    var valueDict = this.values.reduce(function (ac, cr) {
-        ac[cr] = true;
-        return ac;
-    }, {});
-    this.rootHolders.forEach(function visit(node) {
-        var selectedAllCount = 0;
-        var selectedChildCount = 0;
-        var emptyChildCount = 0;
-        var cNode;
-        var value = node.item.value;
-        if (valueDict[value]) {
-            node.selectAll(true);
-        }
-        else {
-            for (var i = 0; i < node.child.length; ++i) {
-                cNode = node.child[i];
-                visit(cNode);
-                if (cNode.selected === 'all') {
-                    selectedAllCount++;
-                }
-                else if (cNode.selected === 'child') {
-                    selectedChildCount++;
-                }
-                else if (cNode.selected === 'empty') {
-                    emptyChildCount++;
-                }
-            }
-
-            if (node.child > 0 && selectedAllCount > 0 && selectedAllCount + emptyChildCount === node.child.length) {
-                node.selected = 'all';
-            }
-            else if (selectedAllCount + selectedChildCount > 0) {
-                node.selected = 'child';
-            }
-            else if (node.selected !== 'empty') {
-                node.selected = 'none';
-            }
-
-            if (node.itemElt) node.itemElt.selected = node.selected;
-        }
-    });
-    this.updateCheckedAll();
-};
-
-
 ACore.install(CheckTreeLeafOnlyBox);
 
 export default CheckTreeLeafOnlyBox;
 
+
+/***
+ * @extends TreeRootHolder
+ * @param {CheckTreeLeafOnlyBox} boxElt
+ * @param items
+ * @constructor
+ */
+function TreeLeafOnlyRootHolder(boxElt, items) {
+    TreeRootHolder.apply(this, arguments);
+}
+
+CheckTreeLeafOnlyBox.prototype.RootHolderClass = TreeLeafOnlyRootHolder;
+
+OOP.mixClass(TreeLeafOnlyRootHolder, TreeRootHolder);
 
 /***
  * @extends TreeNodeHolder
@@ -219,9 +158,23 @@ export function TreeLeafOnlyNodeHolder() {
      * @type {number}
      */
     this.leafCount = 0;
+    if (this.item.isLeaf) {
+        this.leafCount = 1;
+    }
+    else {
+        this.leafCount = this.child.reduce((ac, c) => ac + c.leafCount, 0);
+    }
+    if (this.child.length > 0) {
+        this.item.noSelect = this.child.every(c => c.item.noSelect);//all child is noSelect=> noSelect
+    }
+    this.canSelect = this.canSelect && this.leafCount > 0;
+    this.canSelectAll = this.canSelect && !this.item.noSelect && this.child.every(c => c.canSelectAll || c.leafCount === 0);
+    if (this.leafCount === 0) this.selected = 'empty';
 }
 
 OOP.mixClass(TreeLeafOnlyNodeHolder, TreeNodeHolder);
+
+TreeLeafOnlyRootHolder.prototype.SubHolderClass = TreeLeafOnlyNodeHolder;
 
 
 /***
@@ -229,6 +182,7 @@ OOP.mixClass(TreeLeafOnlyNodeHolder, TreeNodeHolder);
  * @param {boolean=} isDownUpdate
  */
 TreeLeafOnlyNodeHolder.prototype.selectAll = function (isDownUpdate) {
+    console.log('selectedAll', this.item.text)
     if (this.selected === 'empty') return;
     return TreeNodeHolder.prototype.selectAll.apply(this, arguments);
 };
@@ -239,43 +193,27 @@ TreeLeafOnlyNodeHolder.prototype.unselectAll = function (isDownUpdate) {
 };
 
 
-TreeLeafOnlyNodeHolder.prototype.updateUp = function () {
-    var childSelectAll = 0;
-    var childSelectChild = 0;
-    var childEmpty = 0;
-    if (this.child.length > 0) {
-        for (var i = 0; i < this.child.length; ++i) {
-            if (this.child[i].selected === 'all') {
-                childSelectAll++;
-            }
-            else if (this.child[i].selected === 'child') {
-                childSelectChild++;
-            }
-            else if (this.child[i].selected === 'empty') {
-                childEmpty++;
-            }
-        }
-        if (childEmpty === this.child.length) {
+TreeLeafOnlyNodeHolder.prototype.updateFromChild = function () {
+    if (this.child.length === 0) return;
+    var count = this.child.reduce((ac, cr) => {
+        ac[cr.selected]++;
+        return ac;
+    }, { all: 0, child: 0, none: 0, empty: 0 });
 
-            this.selected = 'empty';
-        }
-        else if (childSelectAll + childEmpty === this.child.length) {
-            this.selected = 'all';
-        }
-        else if (childSelectChild + childSelectAll > 0) {
-            this.selected = 'child';
-        }
-        else {
-            this.selected = 'none';
-        }
-        if (this.itemElt) {
-            this.itemElt.selected = this.selected;
-        }
+    if (count.empty === this.child.length) {
+        this.selected = 'empty';
     }
-
-    if (this.parent) this.parent.updateUp();
+    else if (count.empty + count.all === this.child.length) {
+        this.selected = 'all';
+    }
+    else if (count.all + count.child > 0) {
+        this.selected = 'child';
+    }
+    else {
+        this.selected = 'none';
+    }
+    if (this.itemElt) {
+        this.itemElt.selected = this.selected;
+    }
 };
-
-
-
 
