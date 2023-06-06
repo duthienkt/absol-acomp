@@ -3,9 +3,8 @@ import { getMapZoomLevel, isRealNumber } from "./utils";
 import '../css/locationinput.css';
 import AutoCompleteInput from "./AutoCompleteInput";
 import FlexiconButton from "./FlexiconButton";
-import safeThrow from "absol/src/Code/safeThrow";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import Snackbar from "./Snackbar";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 
 ///https://developers.google.com/maps/documentation/javascript/examples/geocoding-place-id
@@ -142,7 +141,7 @@ LocationPicker.tag = 'LocationPicker'.toLowerCase();
 LocationPicker.render = function () {
     return _({
         class: 'as-location-picker',
-        extendEvent: ['action']
+        extendEvent: ['action', 'location', 'requestlocation', 'error']
     });
 };
 
@@ -367,7 +366,7 @@ LocationPicker.prototype.watchMyLocation = function (location, position) {
 
     if (position && position.coords) {
         this.accuracyCircle.setRadius(position.coords.accuracy);
-        Snackbar.show('Accuracy: '+ position.coords.accuracy.toFixed(1) +'(m)');
+        // Snackbar.show('Accuracy: ' + position.coords.accuracy.toFixed(1) + '(m)');
     }
 
 
@@ -377,10 +376,11 @@ LocationPicker.prototype.watchMyLocation = function (location, position) {
             if (!this.isDescendantOf(document.body)) {
                 navigator.geolocation.clearWatch(id);
             }
+            this.emit('location_now', { location: props.coords });
             this.myLocationMarker.setPosition(new google.maps.LatLng(props.coords.latitude, props.coords.longitude));
             this.accuracyCircle.setCenter(new google.maps.LatLng(props.coords.latitude, props.coords.longitude));
             this.accuracyCircle.setRadius(props.coords.accuracy);
-            Snackbar.show('Sai số tọa độ: '+ props.coords.accuracy.toFixed(1) +' mét');
+            // Snackbar.show('Sai số tọa độ: ' + props.coords.accuracy.toFixed(1) + ' mét');
 
         }.bind(this), function () {
         }, {
@@ -395,11 +395,20 @@ LocationPicker.prototype.watchMyLocation = function (location, position) {
 
 
 LocationPicker.prototype.selectMyLocation = function () {
+    var id = randomIdent();
+    this.emit('requestlocation', { id: id });
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
+        var to = setTimeout(() => {
+            this.emit('error', Object.assign(new Error("GPS không phản hồi!"), { id: id }));
+        }, 10000);
+        navigator.geolocation.getCurrentPosition((position) => {
+            clearTimeout(to);
             var location = null;
-            if (position && position.coords)
+            if (position && position.coords) {
+                this.emit('location', { location: position.coords, id: id });
                 location = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            }
+
             if (location) {
                 this.watchMyLocation(location, position);
                 if (!this.readOnly)
@@ -409,8 +418,12 @@ LocationPicker.prototype.selectMyLocation = function () {
                 }
             }
 
-        }.bind(this), function () {
-        });
+        }, (err) => {
+            clearTimeout(to);
+            if (err && err.message.indexOf('denied') >=0)
+                err = Object.assign(new Error("Yêu cầu lấy tọa độ bị từ chối!"), { id: id });
+            this.emit('error', err);
+        }, { maximumAge: Infinity});
     }
 };
 
