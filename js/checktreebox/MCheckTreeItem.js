@@ -7,7 +7,7 @@ import { keyStringOf } from "../utils";
  * @extends AElement
  * @constructor
  */
-function CheckTreeItem() {
+function MCheckTreeItem() {
     this._data = null;
     this._status = 'none';
     this.$text = $('.am-check-tree-item-text', this).firstChild;
@@ -19,9 +19,9 @@ function CheckTreeItem() {
 
 }
 
-CheckTreeItem.tag = 'CheckTreeItem'.toLowerCase();
+MCheckTreeItem.tag = 'MCheckTreeItem'.toLowerCase();
 
-CheckTreeItem.render = function () {
+MCheckTreeItem.render = function () {
     return _({
         extendEvent: ['checkedchange', 'click', 'statuschange'],
         class: ['am-check-tree-item', 'am-dropdown-box-item'],
@@ -49,7 +49,7 @@ CheckTreeItem.render = function () {
     });
 };
 
-CheckTreeItem.prototype._updateData = function () {
+MCheckTreeItem.prototype._updateData = function () {
     this.$text.data = this.text;
     this.$desc.data = this.desc;
     this.$iconCtn.clearChild();
@@ -75,9 +75,9 @@ CheckTreeItem.prototype._updateData = function () {
     }
 };
 
-CheckTreeItem.eventHandler = {};
+MCheckTreeItem.eventHandler = {};
 
-CheckTreeItem.eventHandler.click = function (event) {
+MCheckTreeItem.eventHandler.click = function (event) {
     if (hitElement(this.$checkbox, event)) return;
     var  checkboxBound = this.$checkbox.getBoundingClientRect();
     var canCheck = this.$checkbox.getComputedStyleValue('pointer-events') !== 'none' && !this.$checkbox.disabled && checkboxBound.width > 0;
@@ -104,34 +104,34 @@ CheckTreeItem.eventHandler.click = function (event) {
 };
 
 
-CheckTreeItem.eventHandler.checkboxChange = function () {
+MCheckTreeItem.eventHandler.checkboxChange = function () {
     this.emit('checkedchange', { type: 'checkedchange' }, this);
 };
 
-CheckTreeItem.property = CTIPropHandlers;
+MCheckTreeItem.property = CTIPropHandlers;
 
 /***
  * @name data
- * @memberOf CheckTreeItem#
+ * @memberOf MCheckTreeItem#
  */
 
 /***
  * @name text
  * @type {string}
- * @memberOf CheckTreeItem#
+ * @memberOf MCheckTreeItem#
  */
 
 /***
  * @name desc
  * @type {string}
- * @memberOf CheckTreeItem#
+ * @memberOf MCheckTreeItem#
  */
 
 /***
  * @name value
- * @memberOf CheckTreeItem#
+ * @memberOf MCheckTreeItem#
  */
 
 
 
-export default CheckTreeItem;
+export default MCheckTreeItem;
