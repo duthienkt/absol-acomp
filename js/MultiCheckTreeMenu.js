@@ -348,7 +348,6 @@ MultiCheckTreeMenu.prototype.findItemsByValues = function (values) {
 
 MultiCheckTreeMenu.prototype.viewValues = function (values) {
     var items = this.findItemsByValues(values);
-    console.log(items)
     this._filToken(items.length);
     this._assignTokens(items);
     this._viewValues = values;
@@ -567,7 +566,6 @@ MultiCheckTreeMenu.eventHandler.click = function (event) {
  */
 MultiCheckTreeMenu.eventHandler.boxChange = function (event) {
     delete this.pendingValues;
-    console.log(this._normalExplicit(this.$checkTreeBox.values))
     this.viewValues(this._normalExplicit(this.$checkTreeBox.values));
     ResizeSystem.update();
 };
@@ -589,7 +587,6 @@ MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
     holders.forEach(function (holder) {
         holder.unselectAll();
     });
-    this.$checkTreeBox.updateCheckedAll();
     this.$checkTreeBox.updateSelectedInViewIfNeed();
     var newValues = this._viewValues.filter(function (v) {
         return v !== value;

@@ -1,5 +1,5 @@
 import { _ } from "../../ACore";
-import CheckTreeItem from "./CheckTreeItem";
+import MCheckTreeItem from "./MCheckTreeItem";
 import { addElementAfter } from "../utils";
 
 /***

@@ -7,7 +7,7 @@ import { CTBModeNormal, CTBModeSearch } from "./CTBModes";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import MCTBItemHolder from "./MCTBItemHolder";
-import CheckTreeItem from "./CheckTreeItem";
+import MCheckTreeItem from "./MCheckTreeItem";
 
 
 /***
@@ -54,7 +54,7 @@ MCheckTreeBox.prototype.classes = {
     ModeSearch: CTBModeSearch,
     ModeNormal: CTBModeNormal,
     ItemHolder: MCTBItemHolder,
-    ItemElement: CheckTreeItem
+    ItemElement: MCheckTreeItem
 };
 
 
