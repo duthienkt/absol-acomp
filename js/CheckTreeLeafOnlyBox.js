@@ -115,7 +115,6 @@ CheckTreeLeafOnlyBox.prototype._requestItem = function () {
                 this.menuElt.eventHandler.toggleItem(this, event);
             },
             select: function (event) {
-                console.log(this.selected);
                 this.menuElt.eventHandler.selectItem(this, event);
             }
         }
@@ -182,7 +181,6 @@ TreeLeafOnlyRootHolder.prototype.SubHolderClass = TreeLeafOnlyNodeHolder;
  * @param {boolean=} isDownUpdate
  */
 TreeLeafOnlyNodeHolder.prototype.selectAll = function (isDownUpdate) {
-    console.log('selectedAll', this.item.text)
     if (this.selected === 'empty') return;
     return TreeNodeHolder.prototype.selectAll.apply(this, arguments);
 };

@@ -1,7 +1,7 @@
 import { $, _ } from "../../ACore";
 import CTLIPropHandlers from "./CTLIPropHandlers";
 import OOP from "absol/src/HTML5/OOP";
-import CheckTreeItem from "../checktreebox/CheckTreeItem";
+import MCheckTreeItem from "../checktreebox/MCheckTreeItem";
 
 /***
  * @extends AElement
@@ -19,7 +19,7 @@ function CheckTreeLeafItem() {
 
 }
 
-OOP.mixClass(CheckTreeLeafItem, CheckTreeItem);
+OOP.mixClass(CheckTreeLeafItem, MCheckTreeItem);
 
 CheckTreeLeafItem.tag = 'CheckTreeLeafItem'.toLowerCase();
 
@@ -52,7 +52,7 @@ CheckTreeLeafItem.render = function () {
 };
 
 
-CheckTreeLeafItem.eventHandler = Object.assign({}, CheckTreeItem.eventHandler);
+CheckTreeLeafItem.eventHandler = Object.assign({}, MCheckTreeItem.eventHandler);
 
 CheckTreeLeafItem.property = CTLIPropHandlers;
 
