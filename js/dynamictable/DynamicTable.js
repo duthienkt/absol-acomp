@@ -13,6 +13,8 @@ import Vec2 from "absol/src/Math/Vec2";
 import DTTable from "./DTTable";
 import vec2 from "absol/src/Math/Vec2";
 import Hanger from "../Hanger";
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
+import Rectangle from "absol/src/Math/Rectangle";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -26,11 +28,88 @@ var loadStyleSheet = function () {
 }
 
 
+function DynamicTableManager() {
+    this.tables = [];
+}
+
+DynamicTableManager.prototype.STORE_KEY = 'DynamicTableSetting';
+DynamicTableManager.prototype.VER = 1;
+
+DynamicTableManager.prototype.initIfNeed = function () {
+    if (this.css) return;
+    this.css = new DynamicCSS();
+    this.tables = [];
+    try {
+        var json = localStorage.getItem(this.STORE_KEY);
+        if (json) {
+            this.data = JSON.parse(json);
+            if (!this.data || this.data.ver !== this.VER) this.data = null;
+        }
+
+    } catch (er) {
+
+    }
+    this.data = this.data || {
+        ver: this.VER,
+        colWidth: {}
+    };
+    this.initCss();
+};
+
+DynamicTableManager.prototype.initCss = function () {
+    Object.keys(this.data.colWidth).forEach(tableId => {
+        Object.keys(this.data.colWidth[tableId]).forEach(colId => {
+            var value = this.data.colWidth[tableId][colId];
+            this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]`, 'width', value + 'px')
+        });
+    });
+    this.css.commit();
+};
+
+DynamicTableManager.prototype.add = function (table) {
+    this.tables.push(table);
+};
+
+DynamicTableManager.prototype.removeTrash = function () {
+    this.tables = this.tables.filter(table => table.isDescendantOf(document.body));
+};
+
+DynamicTableManager.prototype.commitColWidth = function (sender, tableId, colId, value) {
+    this.setColWidth(tableId, colId, value);
+    this.removeTrash();
+    this.commit();
+    this.tables.forEach(table => {
+        if (table.id === table && table !== sender) {
+            table.requestUpdateSize();
+        }
+    });
+};
+
+DynamicTableManager.prototype.hasColSize = function (tableId, colId) {
+    return this.data.colWidth[tableId] && this.data.colWidth[tableId][colId];
+};
+
+DynamicTableManager.prototype.setColWidth = function ( tableId, colId, value) {
+    this.data.colWidth[tableId] = this.data.colWidth[tableId] || {};
+    this.data.colWidth[tableId][colId] = value;
+    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]`, 'width', value + 'px');
+
+};
+
+DynamicTableManager.prototype.commit = function () {
+    localStorage.setItem(this.STORE_KEY, JSON.stringify(this.data));
+    this.css.commit();
+}
+
+var manager = new DynamicTableManager();
+
+
 /***
  * @extends AElement
  * @constructor
  */
 function DynamicTable() {
+    manager.initIfNeed();
     loadStyleSheet();
     this._hiddenColumns = [];
     /***
@@ -74,6 +153,8 @@ function DynamicTable() {
     this.$attachhook.on('attached', () => {
         ResizeSystem.add(this.$attachhook);
         this.layoutCtrl.onAttached();
+        this.colSizeCtrl.onAttached();
+        manager.add(this);
     })
     /***
      *
@@ -84,6 +165,7 @@ function DynamicTable() {
     this.waitingCtl = new DTWaitingViewController(this);
     this.layoutCtrl = new LayoutController(this);
     this.pointerCtrl = new PointerController(this);
+    this.colSizeCtrl = new ColSizeController(this);
 
     var checkAlive = () => {
         if (this.isDescendantOf(document.body)) {
@@ -338,6 +420,8 @@ DynamicTable.property.adapter = {
         this.$fixedYCtn.clearChild().addChild(this.table.fixedYElt);
         this.$fixedXCtn.clearChild().addChild(this.table.fixedXElt);
         this.$fixedXYCtn.clearChild().addChild(this.table.fixedXYElt);
+
+        this.layoutCtrl.onAdapter();
     },
     get: function () {
         return this._adapterData;
@@ -527,15 +611,35 @@ LayoutController.prototype.onAttached = function () {
     var c = this.elt.parentElement;
     while (c) {
         if (c.isSupportedEvent && c.isSupportedEvent('sizechange')) {
-            c.on('sizechange', ()=>{
+            c.on('sizechange', () => {
                 this.onResize();
-            })
+            });
         }
         c = c.parentElement;
     }
     if (this.elt.table) {
         this.elt.table.updateCopyEltSize();
         this.updateOverflowStatus();
+        setTimeout(()=>{
+            var tableId = this.elt.id;
+            if (!tableId) return;
+            var cells = this.elt.table.header.rows[0] &&this.elt.table.header.rows[0].cells;
+            if (!cells) return;
+            var changed = false;
+            cells.forEach(cell=>{
+               var colId = cell.data.id;
+               if (!colId) return;
+               var bound;
+               if (!manager.hasColSize(tableId, colId)) {
+                   bound = cell.copyElt.getBoundingClientRect();
+                   if (bound.width) {
+                       manager.setColWidth(tableId, colId, bound.width);
+                       changed = true;
+                   }
+               }
+            });
+            if (changed) manager.commit();
+        }, 2000);
     }
 };
 
@@ -654,7 +758,7 @@ LayoutController.prototype.ev_drag = function (event) {
     else if (this.scrollingDir.y !== 0) {
         newOffset.y = Math.max(0,
             Math.min(this.elt.$vscrollbar.innerHeight - this.elt.$vscrollbar.outerHeight,
-                this.scrollingStartOffset.y - dir.y/40));
+                this.scrollingStartOffset.y - dir.y / 40));
 
         if (this.elt.$vscrollbar.innerOffset !== newOffset.y) {
             changed = true;
@@ -702,29 +806,44 @@ PointerController.prototype.isInDragZone = function (elt) {
 PointerController.prototype.isInInput = function (elt) {
     while (elt) {
         if (elt.tagName === 'INPUT') return true;
-        if (elt.tagName === 'TD') return  false;
-        var clazz = elt.getAttribute('class')||'';
-        if (clazz.indexOf('input') >=0) return  true;
-        if (clazz.indexOf('input') >=0) return  true;
-        if (clazz.indexOf('menu') >=0) return  true;
+        if (elt.tagName === 'TD') return false;
+        var clazz = elt.getAttribute('class') || '';
+        if (clazz.indexOf('input') >= 0) return true;
+        if (clazz.indexOf('input') >= 0) return true;
+        if (clazz.indexOf('menu') >= 0) return true;
         elt = elt.parentElement;
     }
     return false;
-}
+};
+
+PointerController.prototype.isInColResizer = function (elt) {
+    return !!(elt.hasClass && elt.hasClass('as-dt-header-cell-resizer'));
+};
+
 
 PointerController.prototype.ev_dragInit = function (event) {
     if (this.isInInput(event.target)) {
         event.cancel();
         return;
     }
-    event.preventDefault();//todo: check
+    else if (this.isInColResizer(event.target)) {
+        event.preventDefault();
+        this.destHandler = this.elt.colSizeCtrl;
+    }
+    else if (event.isTouch) {
+        event.preventDefault();//todo: check
+    }
+
 }
 
 PointerController.prototype.ev_dragStart = function (event) {
     var dir = event.currentPoint.sub(event.startingPoint).normalized();
     var ox = new Vec2(1, 0);
     var oy = new Vec2(0, 1);
-    if (Math.abs(dir.dot(ox)) < 0.3 ||Math.abs(dir.dot(oy)) < 0.3 ) {
+    if (this.destHandler) {
+        this.destHandler.ev_dragStart(event);
+    }
+    else if (Math.abs(dir.dot(ox)) < 0.3 || Math.abs(dir.dot(oy)) < 0.3) {
         this.destHandler = this.elt.layoutCtrl;
         this.destHandler.ev_dragStart(event);
     }
@@ -738,11 +857,59 @@ PointerController.prototype.ev_drag = function (event) {
 }
 
 PointerController.prototype.ev_dragEnd = function (event) {
-
     if (this.destHandler) this.destHandler.ev_dragEnd(event);
+    this.destHandler = null;
 };
 
 
 PointerController.prototype.ev_dragDeinit = function (event) {
 
+};
+
+/***
+ *
+ * @param {DynamicTable} elt
+ * @constructor
+ */
+function ColSizeController(elt) {
+    this.elt = elt;
+
+    this.colId = null;
+    this.startingBound = null;
+    this.cellElt = null;
+    this.cell = null;
+}
+
+ColSizeController.prototype.onAttached = function () {
+
+};
+
+ColSizeController.prototype.onAdapter = function () {
+
+};
+
+
+ColSizeController.prototype.ev_dragStart = function (event) {
+    this.colId = event.target.parentElement.attr('data-col-id');
+    this.cell = this.elt.table.header.rows[0].cells.find(cell => cell.data.id === this.colId);
+    this.cellElt = this.cell.copyElt;
+    this.startingBound = Rectangle.fromClientRect(this.cellElt.getBoundingClientRect());
+
+};
+
+
+ColSizeController.prototype.ev_drag = function (event) {
+    var newWidth = this.startingBound.width + event.currentPoint.sub(event.startingPoint).x;
+    this.cellElt.addStyle('width', newWidth + 'px');
+    this.elt.table.updateCopyEltSize();
+
+};
+
+
+ColSizeController.prototype.ev_dragEnd = function (event) {
+    manager.commitColWidth(this.elt, this.elt.id, this.cell.data.id, this.cellElt.getBoundingClientRect().width);
+    this.elt.requestUpdateSize();
+    setTimeout(() => {
+        this.cellElt.removeStyle('width');
+    }, 150);
 };

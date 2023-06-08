@@ -717,6 +717,11 @@ DTBody.prototype.query = function (query) {
 };
 
 
+DTBody.prototype.updateCopyEltSize = function () {
+    this.rows.forEach(row => row.updateCopyEltSize());
+};
+
+
 Object.defineProperties(DTBody.prototype, {
     offset: {
         set: function (value) {

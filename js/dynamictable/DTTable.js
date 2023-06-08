@@ -31,6 +31,7 @@ DTTable.prototype.updateCopyEltSize = function () {
     if (this._fixedYElt)
         this._fixedYElt.addStyle('width', bound.width + 'px');
     this.header.updateCopyEltSize();
+    this.body.updateCopyEltSize();
 }
 
 

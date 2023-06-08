@@ -15,12 +15,7 @@ function DTHeadCell(row, data) {
 
 
     this.data = data;
-    if (data.attr) {
-        this.elt.attr(data.attr);
-    }
-    if (data.style) {
-        this.elt.addStyle(data.style);
-    }
+
     this._idx = null;
 }
 
@@ -35,7 +30,7 @@ Object.defineProperty(DTHeadCell.prototype, 'idx', {
     }
 });
 
-DTHeadCell.prototype.nextSortState = function () {
+DTHeadCell.prototype.nextSortState = function (event) {
     if (!this.elt.attr('data-sort-key')) return;
     var c = this.elt.attr('data-sort-order');
     var n = { none: 'ascending', ascending: 'descending', descending: 'none' }[c] || 'none';
@@ -58,18 +53,43 @@ DTHeadCell.prototype.updateCopyEltSize = function () {
     var bound = this._copyElt.getBoundingClientRect();
     this._elt.addStyle('width', bound.width + 'px');
     if (this._copyElt1) {
-        this._copyElt1.addStyle('width', bound.width +'px');
+        this._copyElt1.addStyle('width', bound.width + 'px');
     }
     if (this._copyElt2) {
-        this._copyElt2.addStyle('width', bound.width +'px');
+        this._copyElt2.addStyle('width', bound.width + 'px');
     }
 };
 
 Object.defineProperty(DTHeadCell.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
+
+        var eventAdded = false;
+        var onPointerDown = (event) => {
+            if (event.target.hasClass && event.target.hasClass('as-dt-header-cell-resizer')) return;
+            if (!eventAdded) {
+                document.addEventListener('pointerup', onPointerUp);
+                eventAdded = true;
+            }
+        }
+
+        var onPointerUp = () => {
+            document.removeEventListener('pointerup', onPointerUp);
+            eventAdded = false;
+            this.nextSortState.bind(this);
+        };
+
         this._elt = _({ tag: 'th', class: 'as-dt-header-cell' })
-            .on('click', this.nextSortState.bind(this));
+            .on('pointerdown', onPointerDown);
+        if (this.data.attr) {
+            this._elt.attr(this.data.attr);
+        }
+        if (this.data.style) {
+            this._elt.addStyle(this.data.style);
+        }
+        if (this.data.id !== null && this.data.id !== undefined) {
+            this._elt.attr('data-col-id', this.data.id + '');
+        }
         this.row.head.table.adapter.renderHeadCell(this._elt, this.data, this);
         if (this.data.sortKey) {
             this._elt.attr('data-sort-key', this.data.sortKey);
@@ -91,7 +111,13 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
                 }
             ]
         });
+
+        this.$resizer = _({
+            class: 'as-dt-header-cell-resizer'
+        });
+
         this._elt.addChild(this.$sortBtn);
+        this._elt.addChild(this.$resizer);
         return this._elt;
     }
 });
