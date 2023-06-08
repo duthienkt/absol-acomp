@@ -21,6 +21,10 @@
     display: none;
 }
 
+.as-toc-item.as-status-none .as-toc-item-toggle-ico-ctn {
+    visibility: hidden;
+}
+
 .as-toc-item.as-active {
     background-color: var(--as-transparent-button-active-color);
 }
@@ -115,7 +119,7 @@ div.as-toc-item-toggle-ico-ctn {
     background-color: var(--icon-background-cover-hover);
 }
 
-.as-toc-item:not(.as-has-quick-menu) .as-toc-item-quick-menu-ctn{
+.as-toc-item:not(.as-has-quick-menu) .as-toc-item-quick-menu-ctn {
     visibility: hidden;
     pointer-events: none;
     opacity: 0;
