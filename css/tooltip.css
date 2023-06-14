@@ -130,3 +130,28 @@
     left: 0;
     top: 0;
 }
+
+.as-copyable-icon-tooltip {
+    font-size: inherit;
+    display: inline-block;
+    vertical-align: middle;
+    color: #428bca;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
+
+.as-copyable-icon-tooltip:hover {
+    background-color: var(--as-transparent-button-hover-color);
+}
+
+.as-copyable-icon-tooltip:active {
+    background-color: var(--as-transparent-button-active-color);
+}
+
+.as-cit-icon {
+    font-size: inherit;
+    color: inherit;
+}
+

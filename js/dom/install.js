@@ -156,6 +156,7 @@ import TreeTable from "../treetable/TreeTable";
 import LinearColorTinyBar from "../LinearColorTinyBar";
 import Finder from "../finder/Finder";
 import TreeChart from "../TreeChart";
+import CopyableIconTooltip from "../CopyableIconTooltip";
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -294,6 +295,7 @@ export var publicCreators = [
     TimePicker,
     DateTimeInput,
     ToolTip,
+    CopyableIconTooltip,
     Toast,
     TreeList,
     TreeListItem,
