@@ -15,6 +15,7 @@ import vec2 from "absol/src/Math/Vec2";
 import Hanger from "../Hanger";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import Rectangle from "absol/src/Math/Rectangle";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -30,10 +31,11 @@ var loadStyleSheet = function () {
 
 function DynamicTableManager() {
     this.tables = [];
+    this.storageChanged = false;
 }
 
 DynamicTableManager.prototype.STORE_KEY = 'DynamicTableSetting';
-DynamicTableManager.prototype.VER = 1;
+DynamicTableManager.prototype.VER = 2;
 
 DynamicTableManager.prototype.initIfNeed = function () {
     if (this.css) return;
@@ -74,8 +76,8 @@ DynamicTableManager.prototype.removeTrash = function () {
     this.tables = this.tables.filter(table => table.isDescendantOf(document.body));
 };
 
-DynamicTableManager.prototype.commitColWidth = function (sender, tableId, colId, value) {
-    this.setColWidth(tableId, colId, value);
+DynamicTableManager.prototype.commitColWidth = function (sender, tableId, colId, value, storage) {
+    this.setColWidth(tableId, colId, value, storage);
     this.removeTrash();
     this.commit();
     this.tables.forEach(table => {
@@ -89,15 +91,21 @@ DynamicTableManager.prototype.hasColSize = function (tableId, colId) {
     return this.data.colWidth[tableId] && this.data.colWidth[tableId][colId];
 };
 
-DynamicTableManager.prototype.setColWidth = function ( tableId, colId, value) {
-    this.data.colWidth[tableId] = this.data.colWidth[tableId] || {};
-    this.data.colWidth[tableId][colId] = value;
-    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]`, 'width', value + 'px');
+DynamicTableManager.prototype.setColWidth = function (tableId, colId, value, storage) {
+    if (storage){
+        this.data.colWidth[tableId] = this.data.colWidth[tableId] || {};
+        this.data.colWidth[tableId][colId] = value;
+        this.storageChanged = true;
+    }
 
+    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]`, 'width', value + 'px');
 };
 
 DynamicTableManager.prototype.commit = function () {
-    localStorage.setItem(this.STORE_KEY, JSON.stringify(this.data));
+    if (this.storageChanged) {
+        localStorage.setItem(this.STORE_KEY, JSON.stringify(this.data));
+        this.storageChanged = false;
+    }
     this.css.commit();
 }
 
@@ -111,6 +119,7 @@ var manager = new DynamicTableManager();
 function DynamicTable() {
     manager.initIfNeed();
     loadStyleSheet();
+    this.css = new DynamicCSS();
     this._hiddenColumns = [];
     /***
      *
@@ -183,9 +192,9 @@ DynamicTable.tag = 'DynamicTable'.toLowerCase();
 
 DynamicTable.render = function () {
     return _({
+        id: 'no-id-' + randomIdent(10),
         extendEvent: ['orderchange'],
         class: 'as-dynamic-table-wrapper',
-
         child: [
             {
                 tag: Hanger.tag,
@@ -223,6 +232,7 @@ DynamicTable.prototype.requestUpdateSize = function () {
 };
 
 DynamicTable.prototype.revokeResource = function () {
+    this.css.stop();
     this.table && this.table.revokeResource();
     this.attachSearchInput(null);
     this.filterInputs = [];
@@ -620,26 +630,36 @@ LayoutController.prototype.onAttached = function () {
     if (this.elt.table) {
         this.elt.table.updateCopyEltSize();
         this.updateOverflowStatus();
-        setTimeout(()=>{
-            var tableId = this.elt.id;
-            if (!tableId) return;
-            var cells = this.elt.table.header.rows[0] &&this.elt.table.header.rows[0].cells;
-            if (!cells) return;
-            var changed = false;
-            cells.forEach(cell=>{
-               var colId = cell.data.id;
-               if (!colId) return;
-               var bound;
-               if (!manager.hasColSize(tableId, colId)) {
-                   bound = cell.copyElt.getBoundingClientRect();
-                   if (bound.width) {
-                       manager.setColWidth(tableId, colId, bound.width);
-                       changed = true;
-                   }
-               }
-            });
-            if (changed) manager.commit();
-        }, 2000);
+        this.elt.$vscrollbar.once('scroll', ()=>{
+            setTimeout(() => {
+                if (this.elt.table.body.rows.length === 0) return;
+                var tableId = this.elt.id;
+
+                var cells = this.elt.table.header.rows[0] && this.elt.table.header.rows[0].cells;
+                if (!cells) return;
+                var changed = false;
+                cells.forEach(cell => {
+                    var colId = cell.data.id;
+                    var bound;
+                    if (!colId) {//local style
+                        bound = cell.copyElt.getBoundingClientRect();
+                        this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]`, 'width', bound.width + 'px')
+                            .commit();
+
+                        return;
+                    }
+                    if (!manager.hasColSize(tableId, colId)) {
+                        bound = cell.copyElt.getBoundingClientRect();
+                        if (bound.width) {
+                            manager.setColWidth(tableId, colId, bound.width);
+                            changed = true;
+                        }
+                    }
+                });
+                if (changed) manager.commit();
+            }, 100);
+
+        });
     }
 };
 
@@ -705,8 +725,14 @@ LayoutController.prototype.updateScrollbarStatus = function () {
 };
 
 LayoutController.prototype.updateLines = function () {
+    var fixXBound, headerBound;
     if (this.elt.hasClass('as-overflow-x') && this.elt.hasClass('as-has-fixed-col')) {
-
+        fixXBound = this.elt.$fixedXCtn.getBoundingClientRect();
+        this.elt.addStyle('--dt-fixed-x-width', fixXBound.width + 'px');
+    }
+    if (this.elt.hasClass('as-overflow-y')) {
+        headerBound = this.elt.$fixedYCtn.firstChild.getBoundingClientRect();
+        this.elt.addStyle('--dt-header-height', headerBound.height + 'px');
     }
 };
 
@@ -822,28 +848,29 @@ PointerController.prototype.isInColResizer = function (elt) {
 
 
 PointerController.prototype.ev_dragInit = function (event) {
-    if (this.isInInput(event.target)) {
-        event.cancel();
-        return;
-    }
-    else if (this.isInColResizer(event.target)) {
+    if (this.isInColResizer(event.target)) {
         event.preventDefault();
         this.destHandler = this.elt.colSizeCtrl;
     }
+    else if (this.isInInput(event.target)) {
+        event.cancel();
+        return;
+    }
     else if (event.isTouch) {
-        event.preventDefault();//todo: check
+        // event.preventDefault();//todo: check
     }
 
 }
 
 PointerController.prototype.ev_dragStart = function (event) {
+    event.preventDefault && event.preventDefault();
     var dir = event.currentPoint.sub(event.startingPoint).normalized();
     var ox = new Vec2(1, 0);
     var oy = new Vec2(0, 1);
     if (this.destHandler) {
         this.destHandler.ev_dragStart(event);
     }
-    else if (Math.abs(dir.dot(ox)) < 0.3 || Math.abs(dir.dot(oy)) < 0.3) {
+    else if (event.isTouch && (Math.abs(dir.dot(ox)) < 0.3 || Math.abs(dir.dot(oy)) < 0.3)) {
         this.destHandler = this.elt.layoutCtrl;
         this.destHandler.ev_dragStart(event);
     }
@@ -853,10 +880,12 @@ PointerController.prototype.ev_dragStart = function (event) {
 };
 
 PointerController.prototype.ev_drag = function (event) {
+    event.preventDefault && event.preventDefault();
     if (this.destHandler) this.destHandler.ev_drag(event);
 }
 
 PointerController.prototype.ev_dragEnd = function (event) {
+    event.preventDefault && event.preventDefault();
     if (this.destHandler) this.destHandler.ev_dragEnd(event);
     this.destHandler = null;
 };
@@ -874,7 +903,7 @@ PointerController.prototype.ev_dragDeinit = function (event) {
 function ColSizeController(elt) {
     this.elt = elt;
 
-    this.colId = null;
+    this.colId = null;//number: col index, string: ident
     this.startingBound = null;
     this.cellElt = null;
     this.cell = null;
@@ -890,8 +919,8 @@ ColSizeController.prototype.onAdapter = function () {
 
 
 ColSizeController.prototype.ev_dragStart = function (event) {
-    this.colId = event.target.parentElement.attr('data-col-id');
-    this.cell = this.elt.table.header.rows[0].cells.find(cell => cell.data.id === this.colId);
+    this.colId = event.target.parentElement.attr('data-col-id') || parseInt(event.target.parentElement.attr('data-col-idx'));
+    this.cell = this.elt.table.header.rows[0].cells.find(cell => cell.data.id === this.colId || cell.idx === this.colId);
     this.cellElt = this.cell.copyElt;
     this.startingBound = Rectangle.fromClientRect(this.cellElt.getBoundingClientRect());
 
@@ -907,7 +936,12 @@ ColSizeController.prototype.ev_drag = function (event) {
 
 
 ColSizeController.prototype.ev_dragEnd = function (event) {
-    manager.commitColWidth(this.elt, this.elt.id, this.cell.data.id, this.cellElt.getBoundingClientRect().width);
+    if (typeof this.colId === "string"){
+        manager.commitColWidth(this.elt, this.elt.id, this.cell.data.id, this.cellElt.getBoundingClientRect().width, true);
+    }
+    else {
+        this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${this.colId}"]`, 'width', this.cellElt.getBoundingClientRect().width + 'px').commit();
+    }
     this.elt.requestUpdateSize();
     setTimeout(() => {
         this.cellElt.removeStyle('width');
