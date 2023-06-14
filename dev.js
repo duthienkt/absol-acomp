@@ -31,6 +31,7 @@ import OverviewWidget from "./js/keeview/OverviewWidget";
 import OverviewPage from "./js/keeview/OverviewPage";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import { FinderFileSystem } from "./js/finder/Finder";
+import { silentDownloadAsPdf } from "./js/printer";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -57,6 +58,8 @@ absol.FinderFileSystem = FinderFileSystem;
 
 window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;
+
+absol.printer.silentDownloadAsPdf = silentDownloadAsPdf;
 
 Dom.documentReady.then(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
