@@ -2,7 +2,8 @@
     overflow: hidden;
     resize: none;
     box-sizing: border-box;
-    height: 1.425em;
+    --content-height: 1.425em;
+    height: var(--content-height);
     font: inherit;
 }
 

@@ -40,7 +40,7 @@ TextArea2.getRenderPre = function () {
 
 TextArea2.prototype.updateSize = function () {
     var heightStyle = this._measureHeight(this.value);
-    this.addStyle('height', heightStyle);
+    this.addStyle('--content-height', heightStyle);
 };
 
 TextArea2.eventHandler = {};
@@ -79,7 +79,7 @@ TextArea2.eventHandler.keydown = function (event) {
     var newText = leftText + middText + rightText;
 
     var heightStyle = this._measureHeight(newText);
-    this.addStyle('height', heightStyle);
+    this.addStyle('--content-height', heightStyle);
 };
 
 
@@ -93,7 +93,7 @@ TextArea2.eventHandler.paste = function (event) {
     var newText = leftText + middText + rightText;
 
     var heightSyle = this._measureHeight(newText);
-    this.addStyle('height', heightSyle);
+    this.addStyle('--content-height', heightSyle);
 
 };
 
@@ -107,7 +107,7 @@ TextArea2.eventHandler.cut = function (event) {
     var newText = leftText + rightText;
 
     var heightSyle = this._measureHeight(newText);
-    this.addStyle('height', heightSyle);
+    this.addStyle('--content-height', heightSyle);
 
 };
 
