@@ -21,14 +21,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
         this._elt = _({
-            tag: 'td', class: 'as-dt-body-cell',
-            on: {
-                click: (event) => {
-                    if (this.data.on && this.data.on.click) {
-                        this.data.on.click.call(this.data, event, this);
-                    }
-                }
-            }
+            tag: 'td', class: 'as-dt-body-cell'
         });
         this._elt.holder = this;
 
