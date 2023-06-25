@@ -153,5 +153,9 @@
 .as-cit-icon {
     font-size: inherit;
     color: inherit;
+    display: block;
 }
 
+.as-cit-icon::before {
+    display: block;
+}
