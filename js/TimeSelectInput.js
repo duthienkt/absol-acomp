@@ -155,6 +155,7 @@ TimeSelectInput.property.isFocus = {
     },
     set: function (value) {
         value = !!value;
+        if (value && (this.disabled || this.readOnly)) return;
         if (this.isFocus == value) return;
         if (value) {
             this.addClass('as-focus');
