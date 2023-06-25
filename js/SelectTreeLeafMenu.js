@@ -122,6 +122,7 @@ SelectTreeLeafMenu.property.isFocus = {
         value = !!value;
         var isFocus = this.hasClass('as-focus');
         if (value === isFocus) return;
+        if (value && (this.disabled || this.readOnly)) return;
         var bound;
         if (value) {
             this.addClass('as-focus');

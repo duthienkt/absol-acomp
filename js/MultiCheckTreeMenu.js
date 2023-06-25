@@ -316,7 +316,7 @@ MultiCheckTreeMenu.prototype._leafOnlyExplicit = function (values) {
 
     function scan(node, selected) {
         selected = selected || valueDict[node.value];
-        if (node.isLeaf && selected) res.push(node.value);
+        if (node.isLeaf && !node.noSelect && selected) res.push(node.value);
         if (node.items && node.items.length > 0) {
             node.items.forEach(function (cNode) {
                 scan(cNode, selected);
@@ -411,6 +411,7 @@ MultiCheckTreeMenu.property.isFocus = {
      * @param value
      */
     set: function (value) {
+        if (value && (this.disabled || this.readOnly)) return;
         var self = this;
         value = !!value;
         var c = this.hasClass('as-focus');

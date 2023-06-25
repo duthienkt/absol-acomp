@@ -369,6 +369,7 @@ SelectMenu.prototype._requestResource = function () {
 
 SelectMenu.property.isFocus = {
     set: function (value) {
+        if (value && (this.disabled || this.readOnly)) return;
         var self = this;
         value = !!value;
         if (value == this.isFocus) return;

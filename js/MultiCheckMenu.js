@@ -77,6 +77,7 @@ MultiCheckMenu.prototype.findItemsByValue = function (value) {
 
 
 MultiCheckMenu.eventHandler.click = function (event) {
+    if (this.disabled) return;
     if ((event.target === this || event.target === this.$itemCtn) && !this.isFocus && !this.readOnly) {
         this.isFocus = true;
     }
@@ -145,6 +146,7 @@ MultiCheckMenu.eventHandler.selectListBoxClose = function (event) {
 
 MultiCheckMenu.property.isFocus = {
     set: function (value) {
+        if (value && (this.disabled || this.readOnly)) return;
         if (!this._isFocus && value) {
             this._tempValues = this._values.slice();
             this.$selectlistBox.values = this._values;

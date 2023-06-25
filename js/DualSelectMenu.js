@@ -39,6 +39,11 @@ function DualSelectMenu() {
      * @type {boolean}
      * @memberOf DualSelectMenu#
      */
+    /***
+     * @name disabled
+     * @type {boolean}
+     * @memberOf DualSelectMenu#
+     */
 }
 
 
@@ -105,6 +110,7 @@ DualSelectMenu.property.isFocus = {
     set: function (value) {
         var self = this;
         value = !!value;
+        if (value && (this.disabled || this.readOnly)) return;
         if (this.hasClass('as-focus') === value) return;
         if (value) {
             this._prevValue = (this.$box.value || [null, null]).join('//');

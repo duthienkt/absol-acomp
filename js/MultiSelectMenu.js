@@ -315,6 +315,7 @@ MultiSelectMenu.eventHandler.attached = function () {
 
 
 MultiSelectMenu.eventHandler.click = function (event) {
+    if (this.disabled) return;
     if ((event.target === this || event.target === this.$itemCtn) && !this.disableClickToFocus && !this.readOnly) {
         this.isFocus = !this.isFocus;
     }

@@ -85,6 +85,7 @@ MCTMPropHandlers.isFocus = {
      * @param value
      */
     set: function (value) {
+        if (value && (this.disabled || this.readOnly)) return;
         if (!!value === this.hasClass('as-focus')) return;
         if (value) {
             this.savedValues = this.$box.values;

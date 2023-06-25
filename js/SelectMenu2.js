@@ -171,6 +171,7 @@ SelectMenu.property.value = {
  */
 SelectMenu.property.isFocus = {
     set: function (value) {
+        if (value && (this.disabled || this.readOnly)) return;
         var thisSM = this;
         if (!this.items || this.items.length === 0) value = false;//prevent focus
         if (this._isFocus === value) return;

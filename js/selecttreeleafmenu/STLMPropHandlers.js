@@ -6,6 +6,7 @@ var STLMPropHandlers = {};
 STLMPropHandlers.isFocus = {
     set: function (value) {
         value = !!value;
+        if (value && (this.disabled || this.readOnly)) return;
         if (this.hasClass('as-focus') === value) return;
         if (value) {
             this.addClass('as-focus');
