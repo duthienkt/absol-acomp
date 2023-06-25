@@ -101,6 +101,9 @@ TabBar.prototype.addTab = function (value) {
         if (value.tabIcon) {
             props.icon = value.tabIcon;
         }
+        if (value.preventClosing) {
+            props.preventClosing = value.preventClosing;
+        }
     }
 
 

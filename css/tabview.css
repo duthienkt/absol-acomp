@@ -115,6 +115,15 @@
     color: rgb(190, 190, 190);
 }
 
+.absol-tabbar-button.as-prevent-closing .absol-tabbar-button-close,
+.absol-tabbar-button.as-prevent-closing .absol-tabbar-button-close-circle {
+    visibility: hidden;
+}
+
+.absol-tabbar-button.as-prevent-closing {
+    pointer-events: none;
+}
+
 .absol-tabbar-button-icon-container {
     display: inline-block;
     vertical-align: middle;
@@ -325,17 +334,13 @@
     padding-right: 1em;
 }
 
-.absol-tabview> .absol-tabbar .as-tab-bar-add-btn{
+.absol-tabview > .absol-tabbar .as-tab-bar-add-btn {
     display: none;
 }
 
-.absol-tabview.as-has-add-btn> .absol-tabbar .as-tab-bar-add-btn{
+.absol-tabview.as-has-add-btn > .absol-tabbar .as-tab-bar-add-btn {
     display: inline-block;
 }
-
-
-
-
 
 
 /************************ Like Metro theme *********************/
@@ -438,7 +443,7 @@
     border-radius: 0.8em 0.8em 0 0.8em;
 }
 
-.absol-tabview.cad-dark > .absol-tabbar .as-tab-bar-add-btn:active{
+.absol-tabview.cad-dark > .absol-tabbar .as-tab-bar-add-btn:active {
     color: white;
     background-color: #3B4453;
     font-weight: bold;

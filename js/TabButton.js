@@ -140,6 +140,20 @@ TabButton.property.modified = {
     }
 };
 
+TabButton.property.preventClosing = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-prevent-closing');
+        }
+        else {
+            this.removeClass('as-prevent-closing');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-prevent-closing');
+    }
+}
+
 ACore.install(TabButton);
 
 export default TabButton;

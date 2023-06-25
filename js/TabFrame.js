@@ -69,7 +69,25 @@ TabFrame.property.desc = {
     get: function () {
         return this._desc;
     }
-}
+};
+
+TabFrame.property.preventClosing = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-prevent-closing');
+        }
+        else {
+            this.removeClass('as-prevent-closing');
+        }
+        if (this.$parent && this.$parent.notifyUpdatePreventClosing) {
+            this.$parent.notifyUpdatePreventClosing(this);
+        }
+
+    },
+    get: function () {
+        return this.hasClass('as-prevent-closing');
+    }
+};
 
 TabFrame.attribute = {};
 

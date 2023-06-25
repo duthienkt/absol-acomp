@@ -190,6 +190,14 @@ TabView.prototype.notifyUpdateModified = function (elt) {
     }
 };
 
+
+TabView.prototype.notifyUpdatePreventClosing = function (elt) {
+    var holder = this.findHolder(elt);
+    if (holder) {
+        holder.tabButton.preventClosing = elt.preventClosing;
+    }
+};
+
 TabView.prototype.findHolder = function (elt) {
     for (var i = 0; i < this._frameHolders.length; ++i) {
         var holder = this._frameHolders[i];
@@ -213,14 +221,16 @@ TabView.prototype.addChild = function () {
         var name = elt.attr('name') || 'NoName';
         var tabIcon = elt.tabIcon;
         var modified = elt.modified;
+        var preventClosing = elt.preventClosing;
 
-        var tabButton = self.$tabbar.addTab({ name: name, id: id, desc: desc, modified: modified, tabIcon: tabIcon });
+        var tabButton = self.$tabbar.addTab({ name: name, id: id, desc: desc, modified: modified, tabIcon: tabIcon, preventClosing: preventClosing });
         containerElt.addChild(elt);
         elt.notifyAttached(self);
         var holder = {};
         OOP.drillProperty(holder, elt, 'id');
         OOP.drillProperty(holder, elt, 'desc');
         OOP.drillProperty(holder, elt, 'name');
+        OOP.drillProperty(holder, elt, 'preventClosing');
         Object.defineProperties(holder, {
             tabButton: {
                 value: tabButton,
