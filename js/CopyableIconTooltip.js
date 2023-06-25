@@ -1,8 +1,9 @@
-import ACore, { _, $ } from "../ACore";
+import ACore, { _, $, $$ } from "../ACore";
 import { isDomNode } from "absol/src/HTML5/Dom";
 import Tooltip from "./Tooltip";
 import { copyText } from "absol/src/HTML5/Clipboard";
 import Snackbar from "./Snackbar";
+import MultiLanguageText from "./MultiLanguageText";
 
 
 /***
@@ -12,7 +13,8 @@ import Snackbar from "./Snackbar";
 function CopyableIconTooltip() {
     this._content = '';
     this.$content = null;
-    this._icon = 'span.mdi.mdi-info';
+    this._value = '';
+    this._icon = 'span.mdi.mdi-information-outline';
     this.$icon = $('.as-cit-icon', this);
     this.tooltip = new TooltipController(this);
 }
@@ -39,8 +41,13 @@ CopyableIconTooltip.property.content = {
         else if (typeof this._content === "string") {
             this.$content = _({
                 tag: 'span',
-                child: { text: this._content }
-            })
+                style:{'white-space':'pre-wrap'},
+                props:{
+                    innerHTML: this._content
+                }
+            });
+
+            MultiLanguageText.replaceAll(this.$content);
         }
     },
     get: function () {
@@ -50,7 +57,7 @@ CopyableIconTooltip.property.content = {
 
 CopyableIconTooltip.property.icon = {
     set: function (value) {
-        value = value || null;
+        value = value || '';
         this._icon = value;
         this.clearChild();
         this.$icon = null;
@@ -65,6 +72,15 @@ CopyableIconTooltip.property.icon = {
     },
     get: function () {
         return this._icon;
+    }
+};
+
+CopyableIconTooltip.property.value = {
+    set: function (value) {
+        this._value = value;
+    },
+    get: function () {
+        return this._value;
     }
 };
 
@@ -89,6 +105,7 @@ function TooltipController(elt) {
 
 TooltipController.prototype.ev_mouseEnter = function () {
     clearTimeout(this.timeout);
+    if (this.elt.$content)
     this.session = Tooltip.show(this.elt, this.elt.$content, 'auto');
 };
 
@@ -101,7 +118,10 @@ TooltipController.prototype.ev_mouseLeave = function () {
 
 TooltipController.prototype.ev_click = function () {
     var text;
-    if (typeof this.elt._content === "string") {
+    if (this.elt._value !== null && this.elt._value !== undefined) {
+        text = this.elt._value + '';
+    }
+    else if (typeof this.elt._content === "string") {
         text = this.elt._content;
     }
     else {
@@ -109,6 +129,6 @@ TooltipController.prototype.ev_click = function () {
     }
 
     copyText(text);
-    Snackbar.show('Copied');
+    Snackbar.show('Copied: ' + text);
 };
 export default CopyableIconTooltip;
