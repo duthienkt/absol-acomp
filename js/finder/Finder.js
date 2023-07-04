@@ -414,13 +414,14 @@ ACore.install(Finder);
 export default Finder;
 
 export var FinderCommands = {};
+Finder.prototype.commands = FinderCommands;
 
 
 FinderCommands.upload = {
     text: 'Tải lên',
     icon: 'span.mdi.mdi-upload-outline',
     match: function (fileElt) {
-        return !fileElt && this.searchCtrl.state !== 'RUNNING';
+        return !fileElt && this.searchCtrl.state !== 'RUNNING' && this.dirStat && this.dirStat.writable;
     },
     /***
      * @this Finder
@@ -438,7 +439,7 @@ FinderCommands.upload_to_folder = {
     text: 'Tải lên',
     icon: 'span.mdi.mdi-upload-outline',
     match: function (treElt) {
-        return !!treElt;
+        return treElt && treElt.stat && treElt.stat.writable;
     },
     /***
      * @this Finder
@@ -460,7 +461,7 @@ FinderCommands.delete = {
      * @this Finder
      */
     match: function (fileElt) {
-        return fileElt && this.selectCtrl.$selectedItems.length > 0 && this.selectCtrl.$selectedItems.every(elt => elt.stat && !elt.stat.isDirectory);
+        return fileElt && this.selectCtrl.$selectedItems.length > 0 && this.selectCtrl.$selectedItems.every(elt => elt.stat && !elt.stat.isDirectory && elt.stat.writable);
     },
     /***
      * @this Finder
@@ -523,11 +524,16 @@ FinderCommands.delete = {
                             sender.$actionBtns[1].disabled = true;
                             promises = paths.map((path, i) => {
                                 return this.fileSystem.unlink(path).then(() => {
-                                    $('.as-finder-task-check', contentElt.firstChild.childNodes[i]).addChild(_('.span.mdi.mdi-check'))
+                                    $('.as-finder-task-check', contentElt.firstChild.childNodes[i]).addChild(_('span.mdi.mdi-check'))
                                 }).catch(err => {
                                     errors.push(err);
                                     $('.as-finder-task-check', contentElt.firstChild.childNodes[i])
-                                        .addChild(_('.span.mdi.mdi-alert-decagram-outline').attr('title', err.message))
+                                        .addChild(_('span.mdi.mdi-alert-decagram-outline'))
+                                        .addChild(_({
+                                            tag: 'span',
+                                            class: '.as-finder-task-error-message',
+                                            child: { text: err.message }
+                                        }))
                                 });
                             });
                             Promise.all(promises).then(() => {
@@ -539,6 +545,8 @@ FinderCommands.delete = {
                                         }
                                     });
                                     if (commands.reload) this.execCommand('reload');
+                                    sender.$actionBtns[1].disabled = false;
+                                    sender.$actionBtns[0].text = "Hoàn thành";
                                 }
                                 else {
                                     this.navCtrl.reload(this.path, true).then(() => modal.remove());
@@ -708,7 +716,7 @@ FinderCommands.rename = {
      * @this Finder
      */
     match: function (elt) {
-        return elt && this.selectCtrl.$selectedItems.length === 1 && elt.stat && !elt.stat.isDirectory;//todo: rename folder
+        return elt && this.selectCtrl.$selectedItems.length === 1 && elt.stat && !elt.stat.isDirectory && elt.stat.writable;//todo: rename folder
     },
     /***
      * @this Finder
@@ -786,8 +794,11 @@ FinderCommands.move = {
     text: 'Di chuyển',
     icon: 'span.mdi.mdi-file-move-outline',
     match: function (fileElt) {
-        if (arguments.length === 0) return true;
-        return !!fileElt;
+        if (arguments.length === 0) {
+            return this.selectCtrl.$selectedItems.every(elt => elt.stat.writable);
+        }
+
+        return fileElt && fileElt.stat && fileElt.stat.writable;
     },
     /***
      * @this Finder
@@ -798,7 +809,7 @@ FinderCommands.move = {
         var names = itemElements.map(elt => elt.fileName);
         if (names.length === 0) return;
         var currentFolderPath = this.path;
-        this.folderDialog.open(currentFolderPath, false, newFolderPath => newFolderPath !== currentFolderPath, 'Di chuyển file').then(newFolderPath => {
+        this.folderDialog.open(currentFolderPath, false, (newFolderPath, stat) => newFolderPath !== currentFolderPath && stat.writable, 'Di chuyển file').then(newFolderPath => {
             if (!newFolderPath) return;
             if (newFolderPath === currentFolderPath) return;
             var contentElt = _({
@@ -861,11 +872,15 @@ FinderCommands.move = {
             var promises = paths.map((path, i) => {
                 var newPath = newFolderPath + '/' + path.split('/').pop();
                 return this.fileSystem.move(path, newPath).then(() => {
-                    $('.as-finder-task-check', contentElt.firstChild.childNodes[i]).addChild(_('.span.mdi.mdi-check'))
+                    $('.as-finder-task-check', contentElt.firstChild.childNodes[i]).addChild(_('span.mdi.mdi-check'))
                 }).catch(err => {
                     errors.push(err);
                     $('.as-finder-task-check', contentElt.firstChild.childNodes[i])
-                        .addChild(_('.span.mdi.mdi-alert-decagram-outline').attr('title', err.message))
+                        .addChild(_('span.mdi.mdi-alert-decagram-outline')).addChild(_({
+                            tag: 'span',
+                            class: '.as-finder-task-error-message',
+                            child: { text: err.message }
+                        }));
                 });
             });
             Promise.all(promises).then(() => {
@@ -892,7 +907,7 @@ FinderCommands.move_dir = {
     text: 'Di chuyển',
     icon: 'span.mdi.mdi-folder-arrow-right-outline',
     match: function (expElt) {
-        return !!expElt;
+        return expElt && expElt.stat && expElt.stat.writable && !expElt.stat.isVirtual;
     },
     /***
      * @this Finder
@@ -923,7 +938,8 @@ FinderCommands.rmdir = {
      * @param elt
      */
     match: function (elt) {
-        if (elt) return true;
+        if (elt.stat && elt.stat.isVirtual) return false;
+        if (elt) return elt.stat && elt.stat.writable;
         return false;
     },
     exec: function (elt) {
@@ -1040,6 +1056,7 @@ FinderCommands.nav_toggle = {
     }
 };
 
+
 /***
  *
  * @param {Finder} elt
@@ -1115,10 +1132,10 @@ function CommandController(elt) {
     this.elt = elt;
     this.$normalActionCtn = this.elt.$nomalActionCtn;
     this.$tinyActionCtn = this.elt.$tinyActionCtn;
-    this.commands = Object.assign({}, FinderCommands);
+    this.commands = Object.assign({}, this.elt.commands);
     this.buttonNames = ['upload', 'view', 'download', 'move', 'rename', 'delete'];
     this.folderMenuItemNames = ['upload_to_folder', 'move_dir'];
-    this.contentMenuItemNames = ['view','download', 'upload', 'select_all', 'move', 'delete', 'rename'];
+    this.contentMenuItemNames = ['view', 'download', 'upload', 'select_all', 'move', 'delete', 'rename'];
 
     this.$navCtn = this.elt.$navCtn;
     this.$navCtn.defineEvent('contextmenu').on('contextmenu', this.ev_navContextMenu);
@@ -1733,7 +1750,7 @@ FolderDialog.prototype.open = function (initPath, showRoot, checkFunc, title) {
                                 this.$activeNode.active = true;
                                 this.$selectedPath.firstChild.data = node.getPath().join('/');
                                 cPath = nodePath;
-                                if (checkFunc && !checkFunc(cPath)) {
+                                if (checkFunc && !checkFunc(cPath, stat)) {
                                     this.$dialog.$actionBtns[0].disabled = true;
                                 }
                                 else {
@@ -1747,7 +1764,7 @@ FolderDialog.prototype.open = function (initPath, showRoot, checkFunc, title) {
                         node.active = true;
                         this.$activeNode = node;
                     }
-                    if (checkFunc && !checkFunc(nodePath)) {
+                    if (checkFunc && !checkFunc(nodePath, stat)) {
                         node.getNode().addStyle('opacity', 0.3 + '');
                     }
                     node.getNode().on({
@@ -1796,7 +1813,7 @@ FolderDialog.prototype.open = function (initPath, showRoot, checkFunc, title) {
             this.$activeNode.active = true;
             this.$selectedPath.firstChild.data = node.getPath().join('/');
             cPath = nodePath;
-            if (cPath === initPath || (checkFunc && !checkFunc(cPath))) {
+            if (cPath === initPath || (checkFunc && !checkFunc(cPath, {writable: true}))) {
                 this.$dialog.$actionBtns[0].disabled = true;
             }
             else {
@@ -1983,9 +2000,16 @@ NavigatorController.prototype.viewDir = function (path) {
 
 
     this.fileSystem.stat(path).then(stat => {
+        this.elt.dirStat = stat;
         if (this.path !== path) return;
         if (stat.writable) this.elt.addClass('as-writable-folder');
         else this.elt.removeClass('as-writable-folder');
+        if (stat.isVirtual) {
+            this.elt.addClass('as-virtual-folder');
+        }
+        else {
+            this.elt.removeClass('as-virtual-folder');
+        }
     })
     this.fileSystem.readDir(path).then(dirs => Promise.all(dirs.map(dir => this.fileSystem.stat(path + '/' + dir))))
         .then(stats => {

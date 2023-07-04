@@ -208,7 +208,7 @@
 .as-finder[data-selected-file-count="0"][data-selected-folder-count="0"] .as-finder-header button[name="move"],
 .as-finder:not([data-selected-file-count="1"][data-selected-folder-count="0"]) .as-finder-header button[name="rename"],
 .as-finder:not(.as-mini-layout) .as-finder-content-header button[name="nav_toggle"],
-.as-finder:not(.as-mini-layout) .as-finder-nav-ctn button[name="nav_toggle"]{
+.as-finder:not(.as-mini-layout) .as-finder-nav-ctn button[name="nav_toggle"] {
     display: none;
 }
 
@@ -227,14 +227,14 @@
 }
 
 .as-finder.as-mini-layout .as-finder-nav-ctn,
-.as-finder.as-mini-layout .as-finder-search-ctn{
+.as-finder.as-mini-layout .as-finder-search-ctn {
     left: calc(var(--finder-nav-width) * -1);
     transition: left 0.2s;
 }
 
 
 .as-finder.as-mini-layout.as-nav-open .as-finder-nav-ctn,
-.as-finder.as-mini-layout.as-nav-open .as-finder-search-ctn{
+.as-finder.as-mini-layout.as-nav-open .as-finder-search-ctn {
     left: 0;
 }
 
@@ -271,7 +271,12 @@
 }
 
 
-.as-finder:not(.as-writable-folder) .as-finder-header button[name="upload"] {
+.as-finder:not(.as-writable-folder) .as-finder-header button[name="upload"],
+.as-finder:not(.as-writable-folder) .as-finder-header button[name="delete"],
+.as-finder:not(.as-writable-folder) .as-finder-header button[name="rename"],
+.as-finder:not(.as-writable-folder) .as-finder-header button[name="move"],
+.as-finder:not(.as-writable-folder) .as-finder-header button[name="new_folder"],
+.as-finder.as-virtual-folder .as-finder-header button[name="new_folder"] {
     display: none;
 }
 
@@ -334,6 +339,15 @@
 .as-finder.as-searching .as-finder-header button[name='upload'],
 .as-finder.as-searching .as-finder-header button[name='move'] {
     display: none;
+}
+
+.as-finder-task-check {
+    white-space: nowrap;
+}
+
+.as-finder-task-check >span{
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .as-finder-task-check .mdi {
