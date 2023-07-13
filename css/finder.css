@@ -275,8 +275,8 @@
 .as-finder:not(.as-writable-folder) .as-finder-header button[name="delete"],
 .as-finder:not(.as-writable-folder) .as-finder-header button[name="rename"],
 .as-finder:not(.as-writable-folder) .as-finder-header button[name="move"],
-.as-finder:not(.as-writable-folder) .as-finder-header button[name="new_folder"],
-.as-finder.as-virtual-folder .as-finder-header button[name="new_folder"] {
+.as-finder.as-disable-create-folder .as-finder-header button[name="new_folder"]
+{
     display: none;
 }
 
