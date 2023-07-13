@@ -120,7 +120,7 @@
     visibility: hidden;
 }
 
-.absol-tabbar-button.as-prevent-closing {
+.absol-tabbar-button.as-prevent-closing .absol-tabbar-button-icon-container {
     pointer-events: none;
 }
 
@@ -131,10 +131,10 @@
 }
 
 
-.absol-tabbar-button:hover .absol-tabbar-button-close,
-.absol-tabbar-button-active .absol-tabbar-button-close,
-.absol-tabbar-button:hover .absol-tabbar-button-close-circle,
-.absol-tabbar-button-active .absol-tabbar-button-close-circle {
+.absol-tabbar-button:not(.as-prevent-closing):hover .absol-tabbar-button-close,
+.absol-tabbar-button-active:not(.as-prevent-closing) .absol-tabbar-button-close,
+.absol-tabbar-button:hover:not(.as-prevent-closing) .absol-tabbar-button-close-circle,
+.absol-tabbar-button-active:not(.as-prevent-closing) .absol-tabbar-button-close-circle {
     visibility: visible;
     color: red;
 }
