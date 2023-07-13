@@ -114,7 +114,7 @@ Finder.tag = 'Finder'.toLowerCase();
 Finder.render = function () {
     return _({
         class: 'as-finder',
-        extendEvent: ['selectedchange'],
+        extendEvent: ['selectedchange', 'dblclickfile'],
         attr: {
             'data-selected-file-count': '0',
             'data-selected-folder-count': '0'
@@ -877,10 +877,10 @@ FinderCommands.move = {
                     errors.push(err);
                     $('.as-finder-task-check', contentElt.firstChild.childNodes[i])
                         .addChild(_('span.mdi.mdi-alert-decagram-outline')).addChild(_({
-                            tag: 'span',
-                            class: '.as-finder-task-error-message',
-                            child: { text: err.message }
-                        }));
+                        tag: 'span',
+                        class: '.as-finder-task-error-message',
+                        child: { text: err.message }
+                    }));
                 });
             });
             Promise.all(promises).then(() => {
@@ -1206,10 +1206,11 @@ CommandController.prototype.addCommand = function (name, desc) {
  */
 CommandController.prototype.addButton = function (name, bf) {
     var idx = this.buttonNames.indexOf(bf);
-    var bfElt;
+    var bfElt, smallBfElt;
     if (idx >= 0) {
         this.buttonNames.splice(idx, 0, name);
         bfElt = $(`button[name="${name}"]`, this.$normalActionCtn);
+        smallBfElt = $(`button[name="${name}"]`, this.$tinyActionCtn);
     }
     else {
         this.buttonNames.push(name);
@@ -1227,6 +1228,20 @@ CommandController.prototype.addButton = function (name, bf) {
             }
         }
     }), bfElt);
+
+    this.$tinyActionCtn.addChild(_({
+        tag: 'button',
+        class: 'as-transparent-button',
+        attr: { name: name },
+        child: desc.icon,
+        on: {
+            click: () => {
+                this.execCommand(name);
+            }
+        }
+    }), smallBfElt);
+
+
     this.elt.layoutCtn.requestUpdateActionButtonSize();
 };
 
@@ -1813,7 +1828,7 @@ FolderDialog.prototype.open = function (initPath, showRoot, checkFunc, title) {
             this.$activeNode.active = true;
             this.$selectedPath.firstChild.data = node.getPath().join('/');
             cPath = nodePath;
-            if (cPath === initPath || (checkFunc && !checkFunc(cPath, {writable: true}))) {
+            if (cPath === initPath || (checkFunc && !checkFunc(cPath, { writable: true }))) {
                 this.$dialog.$actionBtns[0].disabled = true;
             }
             else {
@@ -2066,7 +2081,21 @@ NavigatorController.prototype.pushContentItem = function (stat) {
                 }
             },
             dblclick: () => {
-                this.elt.execCommand('view');
+                var prevented = false;
+                var event;
+                if (!stat.isDirectory) {
+                    event = {
+                        fileElt: elt,
+                        stat: stat,
+                        preventDefault: () => {
+                            prevented = true;
+                        }
+                    };
+                    this.elt.emit('dblclickfile', event);
+                }
+                if (!prevented)
+                    this.elt.execCommand('view');
+
             }
         }
     });
