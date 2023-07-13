@@ -31,6 +31,7 @@
     border-right: 2px solid #aaa;
     left: calc(var(--dt-fixed-x-width) - 1px);
     z-index: 20;
+    pointer-events: none;
 }
 
 .as-dynamic-table-wrapper.as-overflow-y .as-dynamic-table-viewport::after {
@@ -196,7 +197,7 @@
 .as-dt-header-cell {
     font-weight: bold;
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #ababab;
     position: relative;
     box-sizing: border-box;
 }
@@ -362,6 +363,17 @@
 
 .absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper {
     max-height: calc(var(--single-page-scroller-height) - 20px);
+}
+
+/*Keeview modal*/
+body > div > table .as-dynamic-table-wrapper {
+    width: var(--dt-content-width);
+    max-width: calc(90vw - 50px);
+}
+
+body > div > table .as-dynamic-table-wrapper.as-overflow-y {
+    width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
+    max-width: calc(90vw - 50px);
 }
 
 /*.as-dynamic-table-wrapper*/

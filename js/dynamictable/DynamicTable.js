@@ -92,7 +92,7 @@ DynamicTableManager.prototype.hasColSize = function (tableId, colId) {
 };
 
 DynamicTableManager.prototype.setColWidth = function (tableId, colId, value, storage) {
-    if (storage){
+    if (storage) {
         this.data.colWidth[tableId] = this.data.colWidth[tableId] || {};
         this.data.colWidth[tableId][colId] = value;
         this.storageChanged = true;
@@ -157,6 +157,8 @@ function DynamicTable() {
     this.$hscrollbar = $('.as-dynamic-table-hb', this);
     this.$vscrollbar = $('.as-dynamic-table-vb', this);
 
+    this.$pageSelector = new VirtualPageSelector(this);
+
     // this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
     this.$attachhook.requestUpdateSize = this.requestUpdateSize.bind(this);
     this.$attachhook.on('attached', () => {
@@ -193,7 +195,7 @@ DynamicTable.tag = 'DynamicTable'.toLowerCase();
 DynamicTable.render = function () {
     return _({
         id: 'no-id-' + randomIdent(10),
-        extendEvent: ['orderchange'],
+        extendEvent: ['orderchange', 'colresize'],
         class: 'as-dynamic-table-wrapper',
         child: [
             {
@@ -508,6 +510,14 @@ DynamicTable.eventHandler.searchKeyUp = function (event) {
     }.bind(this), 30);
 };
 
+DynamicTable.prototype.getColWidth = function () {
+    return this.colSizeCtrl.getColWidth();
+};
+
+DynamicTable.prototype.setColWidth = function (colId, value) {
+    return this.colSizeCtrl.setColWidth(colId, value);
+};
+
 
 ACore.install(DynamicTable);
 
@@ -630,7 +640,7 @@ LayoutController.prototype.onAttached = function () {
     if (this.elt.table) {
         this.elt.table.updateCopyEltSize();
         this.updateOverflowStatus();
-        this.elt.$vscrollbar.once('scroll', ()=>{
+        this.elt.$vscrollbar.once('scroll', () => {
             setTimeout(() => {
                 if (this.elt.table.body.rows.length === 0) return;
                 var tableId = this.elt.id;
@@ -746,6 +756,7 @@ LayoutController.prototype.ev_hScrollbarScroll = function (event) {
 LayoutController.prototype.ev_vScrollbarScroll = function () {
     this.elt.$viewport.emit('scroll');
     this.elt.table.body.offset = this.elt.$vscrollbar.innerOffset;
+
 };
 
 LayoutController.prototype.ev_dragStart = function (event) {
@@ -936,8 +947,9 @@ ColSizeController.prototype.ev_drag = function (event) {
 
 
 ColSizeController.prototype.ev_dragEnd = function (event) {
-    if (typeof this.colId === "string"){
+    if (typeof this.colId === "string") {
         manager.commitColWidth(this.elt, this.elt.id, this.cell.data.id, this.cellElt.getBoundingClientRect().width, true);
+        this.notifyColResize(event);
     }
     else {
         this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${this.colId}"]`, 'width', this.cellElt.getBoundingClientRect().width + 'px').commit();
@@ -945,5 +957,74 @@ ColSizeController.prototype.ev_dragEnd = function (event) {
     this.elt.requestUpdateSize();
     setTimeout(() => {
         this.cellElt.removeStyle('width');
+        this.elt.requestUpdateSize();
     }, 150);
 };
+
+ColSizeController.prototype.getColWidth = function () {
+    var res = {};
+    this.elt.table.header.rows[0].cells.forEach(cell => {
+        var id = cell.data.id;
+        if (typeof id === "string" || typeof id === "number") id = '' + id;
+
+        if (!id) return;
+        Object.defineProperty(res, id, {
+            enumerable: true,
+            get: () => {
+                return cell.copyElt.getBoundingClientRect().width;
+            }
+        })
+    });
+
+    return res;
+};
+
+ColSizeController.prototype.setColWidth = function (colId, value) {
+    var cell = this.elt.table.header.rows[0].cells.find(cell => cell.data.id === colId || cell.idx === colId);
+    cell.copyElt.removeStyle('width');
+    if (typeof colId === "string") {
+        manager.commitColWidth(this.elt, this.elt.id, colId, value, true);
+    }
+    else {
+        this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${colId}"]`, 'width', value + 'px').commit();
+    }
+    this.elt.requestUpdateSize();
+};
+
+ColSizeController.prototype.notifyColResize = function (originalEvent) {
+    var event = {
+        type: 'colresize',
+        target: this,
+        colId: this.colId,
+        width: this.cellElt.getBoundingClientRect().width,
+        originalEvent: originalEvent.originalEvent || event
+    };
+    var colWidth;
+    Object.defineProperty(event, 'colWidth', {
+        get: () => {
+            if (colWidth) return colWidth;
+            colWidth = this.getColWidth();
+
+            return colWidth;
+        }
+    });
+
+    this.elt.emit('colresize', event, this);
+};
+
+
+function VirtualPageSelector(elt) {
+    this.elt = elt;
+}
+
+VirtualPageSelector.prototype.getSelectedPage = function () {
+   return  this.elt.$vscrollbar.innerOffset/25;
+};
+
+VirtualPageSelector.prototype.selectPage = function (value) {
+    this.elt.$vscrollbar.innerOffset = value * 25;
+    this.elt.$vscrollbar.emit('scroll');
+};
+
+
+

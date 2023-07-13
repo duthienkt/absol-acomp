@@ -277,7 +277,7 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
     var screenSize = getScreenSize();
     var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
-    if (this.resultItems.length - newRowOffset < rowPerPage * 2) {
+    if (this.resultItems.length - newRowOffset < rowPerPage ) {
         newRowOffset = Math.max(0, newRowOffset - rowPerPage);
     }
     if (newRowOffset === this.rowOffset) return;
@@ -417,10 +417,12 @@ NormalMode.prototype.updateRowsIfNeed = function () {
     var screenSize = getScreenSize();
     var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
+
     var data = this.body.data;
-    if (data.rows.length - newRowOffset < rowPerPage * 2) {
+    if (data.rows.length - newRowOffset < rowPerPage) {
         newRowOffset = Math.max(0, newRowOffset - rowPerPage);
     }
+
     if (newRowOffset === this.rowOffset) return;
     this.rowOffset = newRowOffset;
     var start = this.rowOffset;
