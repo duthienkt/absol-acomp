@@ -29,6 +29,7 @@ import Context from "absol/src/AppPattern/Context";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import DomSignal from "absol/src/HTML5/DomSignal";
+import RibbonButton from "../RibbonButton";
 
 var isMobile = BrowserDetector.isMobile;
 
@@ -73,10 +74,18 @@ function Finder() {
         .concat($$('.as-finder-search-footer button', this))
         .concat($$('.as-finder-search-header button', this))
         .reduce((ac, cr) => {
-            ac[cr.attr('name')] = cr;
-            cr.on('click', () => {
-                this.execCommand(cr.attr('name'));
-            });
+            var name = cr.attr('name');
+            ac[name] = cr;
+            if (cr.items) {//ribbon button
+                cr.on('select', (event) => {
+                    this.execCommand(name, event.item.value,event.item );
+                });
+            }
+            else {
+                cr.on('click', () => {
+                    this.execCommand(name);
+                });
+            }
             return ac;
         }, {});
 
@@ -269,7 +278,7 @@ Finder.render = function () {
             },
             {
                 tag: DropZone.tag,
-                attr: { 'data-view-as': 'content' },
+                attr: { 'data-view-as': 'list' },
                 class: ['as-finder-body'],
                 child: [
                     {
@@ -285,10 +294,30 @@ Finder.render = function () {
                                         child: ['span.mdi.mdi-menu']
                                     },
                                     {
-                                        tag: 'button',
-                                        attr: { title: 'View As List', name: 'content_view_as' },
+                                        tag: RibbonButton,
+                                        attr: { title: 'View As', name: 'content_view_as' },
                                         class: 'as-transparent-button',
-                                        child: ['span.mdi.mdi-format-list-bulleted-square']
+                                        props: {
+                                            text: 'List',
+                                            icon: 'span.mdi.mdi-format-list-bulleted-square',
+                                            items: [
+                                                {
+                                                    icon: 'span.mdi.mdi-format-list-bulleted-square',
+                                                    text: 'List',
+                                                    value: 'list',
+                                                }, {
+                                                    text: 'Medium Icons',
+                                                    icon: 'span.mdi.mdi-grid',
+                                                    value: 'content'
+                                                },
+                                                {
+                                                    text: 'Lage Icons',
+                                                    icon: 'span.mdi.mdi-image-outline',
+                                                    value: 'lage_icons'
+                                                }
+                                            ]
+                                        },
+                                        // child: ['span.mdi.mdi-format-list-bulleted-square']
                                     }
                                 ]
                             },
@@ -997,21 +1026,11 @@ FinderCommands.content_view_as = {
     /***
      * @this Finder
      */
-    exec: function () {
-        var viewAs = this.$body.attr('data-view-as');
-        if (viewAs === 'content') {
-            this.$body.attr('data-view-as', 'list');
-            this.$commandButtons['content_view_as'].attr('title', 'View As Content');
-            this.$commandButtons['content_view_as'].firstChild.attr('class', 'mdi mdi-view-grid');
+    exec: function (value, item) {
+        this.$commandButtons['content_view_as'].text = item.text;
+        this.$commandButtons['content_view_as'].icon = item.icon;
+        this.$body.attr('data-view-as', value);
 
-        }
-        else {
-            this.$body.attr('data-view-as', 'content');
-            this.$commandButtons['content_view_as'].attr('title', 'View As List');
-            this.$commandButtons['content_view_as'].firstChild.attr('class', 'mdi mdi-format-list-bulleted-square');
-
-
-        }
     }
 };
 

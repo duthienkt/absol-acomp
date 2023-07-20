@@ -85,11 +85,11 @@ var url2small = url => {
         image.onload = function () {
             var now = new Date();
 
-            if (image.naturalWidth <= 100 && image.naturalHeight < 100) {
+            if (image.naturalWidth <= 200 && image.naturalHeight < 200) {
                 resolve(url);
                 return;
             }
-            var scale = Math.min(100 / image.naturalWidth, 100 / image.naturalHeight);
+            var scale = Math.min(200 / image.naturalWidth, 200 / image.naturalHeight);
             var width = Math.round(image.naturalWidth * scale);
             var height = Math.round(image.naturalHeight * scale);
             var canvas = document.createElement('canvas');
@@ -99,7 +99,7 @@ var url2small = url => {
             for (var i = 0; i < 20; ++i)
                 for (var j = 0; j < 20; ++j) {
                     ctx.fillStyle = (i ^ j) & 1 ? '#BBBBBB' : '#FFFFFF';
-                    ctx.fillRect(i * 5, j * 5, 5, 5);
+                    ctx.fillRect(i * 10, j * 10, 10, 10);
                 }
             ctx.drawImage(image, 0, 0, width, height);
             resolve(canvas.toDataURL('image/jpeg', 0.5));
