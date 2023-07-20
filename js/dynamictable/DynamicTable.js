@@ -16,6 +16,8 @@ import Hanger from "../Hanger";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import Rectangle from "absol/src/Math/Rectangle";
 import { randomIdent } from "absol/src/String/stringGenerate";
+import AElement from "absol/src/HTML5/AElement";
+import { parseMeasureValue } from "absol/src/JSX/attribute";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -158,6 +160,7 @@ function DynamicTable() {
     this.$vscrollbar = $('.as-dynamic-table-vb', this);
 
     this.$pageSelector = new VirtualPageSelector(this);
+    this.extendStyle = {};
 
     // this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
     this.$attachhook.requestUpdateSize = this.requestUpdateSize.bind(this);
@@ -226,6 +229,29 @@ DynamicTable.render = function () {
             },
         ]
     });
+};
+
+
+DynamicTable.prototype.styleHandlers = {};
+
+/***
+ * @this {DynamicTable}
+ * @param value
+ */
+DynamicTable.prototype.styleHandlers.minWidth = function (value) {
+    this.extendStyle.minWidth = value;
+    //todo
+};
+
+DynamicTable.prototype.styleHandlers['min-width'] = DynamicTable.prototype.styleHandlers.minWidth;
+
+DynamicTable.prototype.addStyle = function (arg0, arg1) {
+    if (this.styleHandlers[arg0]) {
+        this.styleHandlers[arg0].call(this, arg1);
+    }
+    else {
+        AElement.prototype.addStyle.apply(this, arguments);
+    }
 };
 
 
@@ -429,11 +455,11 @@ DynamicTable.property.adapter = {
 
         this.table = new DTTable(this, this._adapterData.data);
         this.$space.clearChild().addChild(this.table.elt);
+
         this.$fixedYCtn.clearChild().addChild(this.table.fixedYElt);
         this.$fixedXCtn.clearChild().addChild(this.table.fixedXElt);
         this.$fixedXYCtn.clearChild().addChild(this.table.fixedXYElt);
-
-        this.layoutCtrl.onAdapter();
+        if (this.extendStyle) this.addStyle(this.extendStyle);
     },
     get: function () {
         return this._adapterData;
@@ -627,6 +653,31 @@ LayoutController.prototype.onAdapter = function () {
     }
 };
 
+LayoutController.prototype.handleMinWidth = function () {
+    var minWidth = this.elt.extendStyle.minWidth || this.elt.table.elt.getComputedStyleValue('min-width');
+
+    var mv = parseMeasureValue(minWidth);
+    if (!mv) return;
+    if (mv.unit !== 'px') return;
+    if (!this.elt.table.elt.firstChild || !this.elt.table.elt.firstChild.firstChild) return;
+    var bound = this.elt.table.elt.firstChild.firstChild.getBoundingClientRect();
+    if (bound.width >= mv.value) return;
+    //copyElt
+    var cells = this.elt.table.header.rows[0].cells;
+    var freeCells = cells.filter(cell => {
+        return !cell.data.style || !cell.data.style.width;
+    });
+    if (freeCells.length === 0) return;
+    var cellWidths = freeCells.map(cell => cell.copyElt.getBoundingClientRect().width);
+    var sumWidth = cellWidths.reduce((ac, w) => ac + w, 0);
+    var needGrowUp = mv.value - bound.width;
+    freeCells.forEach((cell, i) => {
+        var width = cellWidths[i];
+        var newWidth = width + width / sumWidth * needGrowUp;
+        cell.copyElt.addStyle('width', newWidth + 'px');
+    });
+};
+
 LayoutController.prototype.onAttached = function () {
     var c = this.elt.parentElement;
     while (c) {
@@ -638,6 +689,7 @@ LayoutController.prototype.onAttached = function () {
         c = c.parentElement;
     }
     if (this.elt.table) {
+        this.handleMinWidth();
         this.elt.table.updateCopyEltSize();
         this.updateOverflowStatus();
         this.elt.$vscrollbar.once('scroll', () => {
@@ -1018,7 +1070,7 @@ function VirtualPageSelector(elt) {
 }
 
 VirtualPageSelector.prototype.getSelectedPage = function () {
-   return  this.elt.$vscrollbar.innerOffset/25;
+    return this.elt.$vscrollbar.innerOffset / 25;
 };
 
 VirtualPageSelector.prototype.selectPage = function (value) {

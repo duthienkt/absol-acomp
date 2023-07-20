@@ -34,6 +34,7 @@ Object.defineProperty(DTHead.prototype, 'elt', {
             class: 'as-dt-header',
             child: this.rows.map(r => r.elt)
         });
+        if (this.data.style) this._elt.addStyle(this.data.style);
         return this._elt;
     }
 });
