@@ -96,7 +96,7 @@
 }
 
 .cke_contents_ltr tbody td {
-    padding: 5px;
+    padding: 5px 10px;
     border: 1px solid #ddd;
 }
 
