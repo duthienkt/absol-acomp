@@ -1,9 +1,10 @@
 import '../css/menu.css';
-import ACore from "../ACore";
-import Dom, {isDomNode} from "absol/src/HTML5/Dom";
+import ACore, { $$ } from "../ACore";
+import Dom, { isDomNode, waitImageLoaded } from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import BlurTrigger from "./tool/BlurTrigger";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -145,8 +146,8 @@ Dropdown.property.show = {
             // ResizeSystem.update();
             if (this.$container.lastChild && this.$container.lastChild.$items) {
                 this.$container.lastChild.$items.forEach(function (itemElt) {
-                    if (itemElt.autoFixParrentSize) {
-                        itemElt.autoFixParrentSize();
+                    if (itemElt.autoFixParentSize) {
+                        itemElt.autoFixParentSize();
                     }
                 });
             }
@@ -272,12 +273,6 @@ VMenuLine.tag = 'VMenuLine'.toLowerCase();
 export function VMenuItem() {
     var thisVM = this;
 
-    this.sync = new Promise(function (rs) {
-        _('attachhook').addTo(thisVM).on('error', function () {
-            this.remove();
-            rs();
-        })
-    });
     this.$dropper = $('dropright', this);
     this.$vmenu = $('vmenu', this);
     this.$button = $('menubutton', this);
@@ -316,11 +311,10 @@ VMenuItem.render = function () {
 
 VMenuItem.prototype.init = function (props) {
     Object.assign(this, props || {});
-    this.sync = this.sync.then(this.autoFixParrentSize.bind(this));
 };
 
 
-VMenuItem.prototype.autoFixParrentSize = function () {
+VMenuItem.prototype.autoFixParentSize = function () {
     var parentWidth = this.$dropper.getBoundingClientRect().width;// dropper is fixed parent content size
     if (!parentWidth) return;
     var buttonWidth = this.$button.getBoundingClientRect().width;
@@ -399,15 +393,12 @@ VMenuItem.property.hidden = {
 };
 
 
+/**
+ * @extends AElement
+ * @constructor
+ */
 export function VMenu() {
-    var thisVM = this;
 
-    this.sync = new Promise(function (rs) {
-        _('attachhook').addTo(thisVM).on('error', function () {
-            this.remove();
-            rs();
-        })
-    });
 }
 
 VMenu.tag = 'vmenu';
@@ -700,7 +691,7 @@ HMenu.property.activeTab = {
             }
         }
         if (!(lastValue >= 0) && (this._activeTab >= 0)) {
-            if (this.blurTrigger){
+            if (this.blurTrigger) {
                 this.blurTrigger.destroy();
             }
 
@@ -708,7 +699,7 @@ HMenu.property.activeTab = {
 
         }
         else if ((lastValue >= 0) && !(this._activeTab >= 0)) {
-            if (this.blurTrigger){
+            if (this.blurTrigger) {
                 this.blurTrigger.destroy();
                 this.blurTrigger = null;
             }
@@ -738,6 +729,29 @@ HMenu.property.activeTab = {
  */
 export function VRootMenu() {
     this._items = [];
+
+    this.$attachhook = _({
+        tag: 'attachhook',
+        props: {
+            prevWidth: 0,
+            requestUpdateSize: () => {
+                var newWidth = this.getBoundingClientRect().width;
+                if (newWidth === this.$attachhook.prevWidth) return;
+                this.$attachhook.prevWidth = newWidth;
+                Array.prototype.forEach.call(this.childNodes, elt => {
+                    if (elt.autoFixParentSize) {
+                        elt.autoFixParentSize();
+                    }
+                });
+            }
+        },
+        on: {
+            attached: () => {
+                ResizeSystem.add(this.$attachhook);
+                this.$attachhook.requestUpdateSize();
+            }
+        }
+    }).addTo(this);
     this.items = [];
 }
 
@@ -753,7 +767,8 @@ VRootMenu.render = function () {
 
 VRootMenu.prototype._childFromItems = function (items) {
     var thisM = this;
-    this.clearChild();
+    while (this.lastChild && this.lastChild !== this.$attachhook) this.lastChild.remove();
+    while (this.firstChild && this.firstChild !== this.$attachhook) this.firstChild.remove();
     this.$items = items.map(function (item, i) {
         var itemElt;
         if (typeof item === 'string' && (item.substr(0, 1) === '-' || item.substr(0, 1) === '=')) {
@@ -778,6 +793,11 @@ VRootMenu.prototype._childFromItems = function (items) {
         itemElt._tabIndex = i;
         thisM.addChild(itemElt);
         return itemElt;
+    });
+    this.$attachhook.prevWidth = 0;
+    this.$attachhook.requestUpdateSize();
+    $$('img', this).filter(x => !!x.getAttribute('src') && !x.classList.contains('absol-vmenu-button-icon')).forEach(elt => {
+        waitImageLoaded(elt).then(() => this.$attachhook.requestUpdateSize());
     });
 };
 

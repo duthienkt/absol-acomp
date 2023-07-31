@@ -145,6 +145,7 @@
     height: 1.8em;
     white-space: nowrap;
     position: relative;
+    display: block;
 }
 
 img.absol-vmenu-button-icon {

@@ -610,7 +610,7 @@ var propertyFilter =
         "getFontSize", "findChildAfter", "findChildBefore", "addChildBefore", "addChildAfter",
         "getBoundingRecursiveRect", "isDescendantOf", "getCSSRules", "afterAttached", "afterDisplayed",
         "_azar_extendEvents", "__azar_force", "_azar_extendAttributes", "_azar_extendTags",
-        "findAvailablePosition", "$container", "autoFixParrentSize", "sync", "$dropper", "$vmenu",
+        "findAvailablePosition", "$container", "autoFixParentSize", "sync", "$dropper", "$vmenu",
         "$button", "$text", "$key", "$arrow", "$iconCtn", "_textMarginRight", "_tabIndex",
         '$icon', '_icon', '$textNode', '$primaryBtn', '$extendBtn', '_menuHolder', '_items', 'hasClass'].reduce(function (ac, cr) {
         ac[cr] = true;
