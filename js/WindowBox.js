@@ -1,4 +1,5 @@
 import ACore, { $, _ } from "../ACore";
+import OOP from "absol/src/HTML5/OOP";
 
 /**
  * @typedef WindowBoxAction
@@ -120,7 +121,9 @@ WindowBox.property.windowActions = {
                 child: action.icon,
                 on: {
                     click: function (event) {
-                        self.emit('action', { type: 'action', target: self, actionData: action, originalEvent: event });
+                        var eventData = { type: 'action', target: self, action: action, originalEvent: event };
+                        OOP.drillProperty(eventData, eventData, 'actionData', 'action');
+                        self.emit('action', eventData, self);
                     }
                 }
             });
