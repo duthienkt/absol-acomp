@@ -93,7 +93,7 @@ DualSelectMenu.prototype._updateViewValue = function () {
         .replace('$1', secToken);
     this.$item.clearChild().addChild(_({
         tag: 'span',
-        class:'as-selectlist-item-text',
+        class:['as-selectlist-item-text', 'absol-selectlist-item-text'],
         child: { text: text }
     }));
 
