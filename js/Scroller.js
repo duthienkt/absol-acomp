@@ -4,6 +4,7 @@ import Dom from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import Element from "absol/src/HTML5/Element";
 import { map } from 'absol/src/Math/int';
+import Hanger from "./Hanger";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -322,6 +323,7 @@ Scrollbar.tag = 'scrollbar';
 
 Scrollbar.render = function () {
     return _({
+        tag: Hanger.tag,
         class: ['absol-scrollbar'],
         extendEvent: ['scroll', 'active', 'inactive', 'deactive'],
         child: '.absol-scrollbar-button'
@@ -350,57 +352,11 @@ Scrollbar.property.hidden = {
  * @constructor
  */
 export function VScrollbar() {
-    var thisVS = this;
-    var top0, innerOffset0;
-    var pointerMoveEventHandler = function (event) {
-        event.preventDefault();
-        var dy = event.clientY - top0;
-        var newInnerOffset = innerOffset0 + dy * (thisVS.innerHeight / thisVS.outerHeight) * (thisVS.outerHeight / thisVS.getBoundingClientRect().height);
-        if (newInnerOffset + thisVS.outerHeight > thisVS.innerHeight)
-            newInnerOffset = thisVS.innerHeight - thisVS.outerHeight;
-        if (newInnerOffset < 0) newInnerOffset = 0;
-        thisVS.innerOffset = newInnerOffset;
-        //todo
-        event.innerOffset = newInnerOffset;
-        thisVS.emit('scroll', event);
-    };
 
-    var finishEventHandler = function (event) {
-        var body = $(document.body);
-        body.off('pointerleave', finishEventHandler);
-        body.off('pointerup', finishEventHandler);
-        body.off('pointermove', pointerMoveEventHandler);
-        thisVS.removeClass('absol-active');
-        thisVS.emit('inactive', { type: 'inactive', originEvent: event, tagert: thisVS });
-    };
 
-    var pointerDownEventHandler = function (event) {
-        var boundRes = thisVS.getBoundingClientRect();
-        var boundButton = thisVS.$button.getBoundingClientRect();
-        top0 = event.clientY;
-        if (event.target == thisVS.$button) {
-            innerOffset0 = thisVS.innerOffset;
-        }
-        else {
-            var newInnerOffset = map(top0 - boundButton.height / 2 - boundRes.top, 0, boundRes.height, 0, thisVS.innerHeight);
-            if (newInnerOffset + thisVS.outerHeight > thisVS.innerHeight)
-                newInnerOffset = thisVS.innerHeight - thisVS.outerHeight;
-            if (newInnerOffset < 0) newInnerOffset = 0;
-            thisVS.innerOffset = newInnerOffset;
-            //todo
-            event.innerOffset = newInnerOffset;
-            innerOffset0 = newInnerOffset;
-            thisVS.emit('scroll', event);
-        }
-        var body = $(document.body);
-        body.on('pointerleave', finishEventHandler);
-        body.on('pointerup', finishEventHandler);
-        body.on('pointermove', pointerMoveEventHandler);
-        thisVS.addClass('absol-active');
-        thisVS.emit('active', { type: 'active', originEvent: event, tagert: thisVS });
-    };
-
-    this.on('pointerdown', pointerDownEventHandler, true);
+    this.on('draginit', this.eventHandler.dragInit, true)
+        .on('drag', this.eventHandler.drag, true)
+        .on('dragend', this.eventHandler.dragEnd, true);
     /***
      * @type {number}
      * @name outerHeight
@@ -440,7 +396,57 @@ VScrollbar.prototype.updateStatus = function () {
     else {
         this.removeClass('as-overflow');
     }
-}
+};
+
+
+VScrollbar.eventHandler = {};
+
+VScrollbar.eventHandler.dragInit = function (event) {
+    var boundRes = this.getBoundingClientRect();
+    var boundButton = this.$button.getBoundingClientRect();
+    if (event.target === this.$button) {
+        this.innerOffset0 = this.innerOffset;
+    }
+    else {
+        var newInnerOffset = map(event.startingPoint.y - boundButton.height / 2 - boundRes.top, 0, boundRes.height, 0, this.innerHeight);
+        if (newInnerOffset + this.outerHeight > this.innerHeight)
+            newInnerOffset = this.innerHeight - this.outerHeight;
+        if (newInnerOffset < 0) newInnerOffset = 0;
+        this.innerOffset = newInnerOffset;
+        //todo
+        event.innerOffset = newInnerOffset;
+        this.innerOffset0 = newInnerOffset;
+        this.emit('scroll', event);
+    }
+    this.addClass('absol-active');
+    this.emit('active', {
+        type: 'active',
+        originEvent: event,
+        target: this,
+        originalEvent: event.originalEvent || event
+    });
+};
+
+VScrollbar.eventHandler.drag = function (event) {
+    event.preventDefault();
+    var dy = event.currentPoint.sub(event.startingPoint).y;
+    var newInnerOffset = this.innerOffset0 + dy * (this.innerHeight / this.outerHeight) * (this.outerHeight / this.getBoundingClientRect().height);
+    if (newInnerOffset + this.outerHeight > this.innerHeight)
+        newInnerOffset = this.innerHeight - this.outerHeight;
+    if (newInnerOffset < 0) newInnerOffset = 0;
+    this.innerOffset = newInnerOffset;
+    event.innerOffset = newInnerOffset;
+    this.emit('scroll', event);
+};
+
+VScrollbar.eventHandler.dragEnd = function (event) {
+    this.removeClass('absol-active');
+    this.emit('inactive', {
+        type: 'inactive',
+        originEvent: event, target: this,
+        originalEvent: event.originalEvent || event
+    });
+};
 
 
 VScrollbar.property = {
@@ -461,7 +467,7 @@ VScrollbar.property = {
         set: function (value) {
             value = value || 1;
             value = Math.max(value, 1);
-            if (this._innerHeight !==value) {
+            if (this._innerHeight !== value) {
                 this._innerHeight = value;
                 this.updateValue();
             }
@@ -486,6 +492,7 @@ VScrollbar.property = {
         }
     }
 };
+
 
 /***
  * @extends Scrollbar
@@ -585,7 +592,6 @@ HScrollbar.prototype.updateStatus = function () {
         this.removeClass('as-overflow');
     }
 }
-
 
 
 HScrollbar.property = {
