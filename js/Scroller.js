@@ -402,6 +402,7 @@ VScrollbar.prototype.updateStatus = function () {
 VScrollbar.eventHandler = {};
 
 VScrollbar.eventHandler.dragInit = function (event) {
+    event.preventDefault();
     var boundRes = this.getBoundingClientRect();
     var boundButton = this.$button.getBoundingClientRect();
     if (event.target === this.$button) {
@@ -499,58 +500,11 @@ VScrollbar.property = {
  * @constructor
  */
 export function HScrollbar() {
-    var thisHS = this;
 
-    var left0, innerOffset0;
-    var pointerMoveEventHandler = function (event) {
-        event.preventDefault();
-        var dy = event.clientX - left0;
-        var newInnerOffset = innerOffset0 + dy * (thisHS.innerWidth / thisHS.outerWidth) * (thisHS.outerWidth / thisHS.getBoundingClientRect().width);
-        if (newInnerOffset + thisHS.outerWidth > thisHS.innerWidth)
-            newInnerOffset = thisHS.innerWidth - thisHS.outerWidth;
-        if (newInnerOffset < 0) newInnerOffset = 0;
-        thisHS.innerOffset = newInnerOffset;
-        //todo
-        event.innerOffset = newInnerOffset;
-        thisHS.emit('scroll', event);
-    };
 
-    var finishEventHandler = function (event) {
-        var body = $(document.body);
-        body.off('pointerleave', finishEventHandler);
-        body.off('pointerup', finishEventHandler);
-        body.off('pointermove', pointerMoveEventHandler);
-        thisHS.removeClass('absol-active');
-        thisHS.emit('inactive', { type: 'inactive', originEvent: event, tagert: thisHS });
-    };
-
-    var pointerDownEventHandler = function (event) {
-        var boundRes = thisHS.getBoundingClientRect();
-        var boundButton = thisHS.$button.getBoundingClientRect();
-        left0 = event.clientX;
-        if (event.target === thisHS.$button) {
-            innerOffset0 = thisHS.innerOffset;
-        }
-        else {
-            var newInnerOffset = map(left0 - boundButton.width / 2 - boundRes.left, 0, boundRes.width, 0, thisHS.innerWidth);
-            if (newInnerOffset + thisHS.outerWidth > thisHS.innerWidth)
-                newInnerOffset = thisHS.innerWidth - thisHS.outerWidth;
-            if (newInnerOffset < 0) newInnerOffset = 0;
-            thisHS.innerOffset = newInnerOffset;
-            //todo
-            event.innerOffset = newInnerOffset;
-            innerOffset0 = newInnerOffset;
-            thisHS.emit('scroll', event);
-        }
-        var body = $(document.body);
-        body.on('pointerleave', finishEventHandler);
-        body.on('pointerup', finishEventHandler);
-        body.on('pointermove', pointerMoveEventHandler);
-        thisHS.addClass('absol-active');
-        thisHS.emit('active', { type: 'inactive', originEvent: event, tagert: thisHS });
-    };
-
-    this.on('pointerdown', pointerDownEventHandler, true);
+    this.on('draginit', this.eventHandler.dragInit, true)
+        .on('drag', this.eventHandler.drag, true)
+        .on('dragend', this.eventHandler.dragEnd, true);
 
     /***
      * @type {number}
@@ -591,7 +545,72 @@ HScrollbar.prototype.updateStatus = function () {
     else {
         this.removeClass('as-overflow');
     }
-}
+};
+
+
+/**
+ *
+ * @type {{[key: string]:function}}
+ */
+HScrollbar.eventHandler = {};
+
+
+/**
+ * @this HScrollbar
+ * @param event
+ */
+HScrollbar.eventHandler.dragInit = function (event) {
+    event.preventDefault();
+    var boundRes = this.getBoundingClientRect();
+    var boundButton = this.$button.getBoundingClientRect();
+
+    if (event.target === this.$button) {
+        this.innerOffset0 = this.innerOffset;
+    }
+    else {
+        var newInnerOffset = map(event.startingPoint.x - boundButton.width / 2 - boundRes.left, 0, boundRes.width, 0, this.innerWidth);
+        if (newInnerOffset + this.outerWidth > this.innerWidth)
+            newInnerOffset = this.innerWidth - this.outerWidth;
+        if (newInnerOffset < 0) newInnerOffset = 0;
+        this.innerOffset = newInnerOffset;
+        //todo
+        event.innerOffset = newInnerOffset;
+        this.innerOffset0 = newInnerOffset;
+        this.emit('scroll', event);
+    }
+    var body = $(document.body);
+
+    this.addClass('absol-active');
+    this.emit('active', { type: 'inactive', originEvent: event, target: this });
+};
+
+
+/**
+ * @this HScrollbar
+ * @param event
+ */
+HScrollbar.eventHandler.drag = function (event) {
+    event.preventDefault();
+    var dy = event.currentPoint.x - event.startingPoint.x;
+    var newInnerOffset = this.innerOffset0 + dy * (this.innerWidth / this.outerWidth) * (this.outerWidth / this.getBoundingClientRect().width);
+    if (newInnerOffset + this.outerWidth > this.innerWidth)
+        newInnerOffset = this.innerWidth - this.outerWidth;
+    if (newInnerOffset < 0) newInnerOffset = 0;
+    this.innerOffset = newInnerOffset;
+    //todo
+    event.innerOffset = newInnerOffset;
+    this.emit('scroll', event);
+};
+
+
+/**
+ * @this HScrollbar
+ * @param event
+ */
+HScrollbar.eventHandler.dragEnd = function (event) {
+    this.removeClass('absol-active');
+    this.emit('inactive', { type: 'inactive', originEvent: event, target: this });
+};
 
 
 HScrollbar.property = {
