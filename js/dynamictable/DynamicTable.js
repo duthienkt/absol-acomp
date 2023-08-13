@@ -1,7 +1,6 @@
 import ACore, { $, $$, _ } from "../../ACore";
 import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
-import PageSelector from "../PageSelector";
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
 import { buildCss, swapChildrenInElt } from "../utils";
@@ -11,7 +10,6 @@ import { getScreenSize } from "absol/src/HTML5/Dom";
 import { HScrollbar, VScrollbar } from "../Scroller";
 import Vec2 from "absol/src/Math/Vec2";
 import DTTable from "./DTTable";
-import vec2 from "absol/src/Math/Vec2";
 import Hanger from "../Hanger";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import Rectangle from "absol/src/Math/Rectangle";
@@ -180,6 +178,7 @@ function DynamicTable() {
     this.layoutCtrl = new LayoutController(this);
     this.pointerCtrl = new PointerController(this);
     this.colSizeCtrl = new ColSizeController(this);
+    this.rowDragCtrl = new RowDragController(this);
 
     var checkAlive = () => {
         if (this.isDescendantOf(document.body)) {
@@ -302,6 +301,11 @@ DynamicTable.prototype.rowAt = function (idx) {
 
 DynamicTable.prototype.rowOf = function (o) {
     return this.table.body.rowOf(o);
+};
+
+
+DynamicTable.prototype.rowIndexOf = function (o) {
+    return this.table.body.rowIndexOf(o);
 };
 
 
@@ -889,6 +893,11 @@ function PointerController(elt) {
 
 
 PointerController.prototype.isInDragZone = function (elt) {
+    while (elt && elt !== this.elt) {
+        if (elt.classList.contains('as-drag-zone')) return true;
+        elt = elt.parentElement;
+    }
+
     return false;
 };
 
@@ -911,6 +920,10 @@ PointerController.prototype.isInColResizer = function (elt) {
 
 
 PointerController.prototype.ev_dragInit = function (event) {
+    if (this.isInDragZone(event.target)) {
+        event.preventDefault();
+        this.destHandler = this.elt.rowDragCtrl;
+    }
     if (this.isInColResizer(event.target)) {
         event.preventDefault();
         this.destHandler = this.elt.colSizeCtrl;
@@ -926,14 +939,15 @@ PointerController.prototype.ev_dragInit = function (event) {
 }
 
 PointerController.prototype.ev_dragStart = function (event) {
-    event.preventDefault && event.preventDefault();
     var dir = event.currentPoint.sub(event.startingPoint).normalized();
     var ox = new Vec2(1, 0);
     var oy = new Vec2(0, 1);
     if (this.destHandler) {
+        event.preventDefault && event.preventDefault();
         this.destHandler.ev_dragStart(event);
     }
     else if (event.isTouch && (Math.abs(dir.dot(ox)) < 0.3 || Math.abs(dir.dot(oy)) < 0.3)) {
+        event.preventDefault && event.preventDefault();
         this.destHandler = this.elt.layoutCtrl;
         this.destHandler.ev_dragStart(event);
     }
@@ -943,13 +957,17 @@ PointerController.prototype.ev_dragStart = function (event) {
 };
 
 PointerController.prototype.ev_drag = function (event) {
-    event.preventDefault && event.preventDefault();
-    if (this.destHandler) this.destHandler.ev_drag(event);
+    if (this.destHandler) {
+        event.preventDefault && event.preventDefault();
+        this.destHandler.ev_drag(event);
+    }
 }
 
 PointerController.prototype.ev_dragEnd = function (event) {
-    event.preventDefault && event.preventDefault();
-    if (this.destHandler) this.destHandler.ev_dragEnd(event);
+    if (this.destHandler) {
+        event.preventDefault && event.preventDefault();
+        this.destHandler.ev_dragEnd(event);
+    }
     this.destHandler = null;
 };
 
@@ -1064,6 +1082,253 @@ ColSizeController.prototype.notifyColResize = function (originalEvent) {
     this.elt.emit('colresize', event, this);
 };
 
+/**
+ * new version
+ * @param {DynamicTable} elt
+ * @constructor
+ */
+function RowDragController(elt) {
+    this.elt = elt;
+    this._isDragging = false;
+}
+
+RowDragController.prototype._findRow = function (cElt) {
+    while (cElt && cElt !== this.elt) {
+        if (cElt.dtBodyRow) {
+            return cElt.dtBodyRow;
+        }
+        cElt = cElt.parentElement;
+    }
+    return null;
+}
+
+RowDragController.prototype._getZIndex = function () {
+    var e = this.elt.$fixedXYCtn;
+    var style;
+    var res = 0;
+    while (e && e !== document.body) {
+        style = getComputedStyle(e);
+        res = Math.max(parseFloat(style.getPropertyValue('z-index')) || 0);
+        e = e.parentElement;
+    }
+    return res;
+};
+
+
+RowDragController.prototype._updateClass = function () {
+    this.row.body.rows.forEach((row, i) => {
+        if (!row._elt) return;
+        if (this.newIdx < this.rowIdx) {
+            if (i < this.newIdx || i >= this.rowIdx) {
+                row._elt.addStyle('transform', `translate(0, 0)`);
+            }
+            else if (i < this.rowIdx) {
+                row._elt.addStyle('transform', `translate(0, ${this.rowRect.height}px)`);
+            }
+        }
+        else if (this.newIdx > this.rowIdx) {
+            if (i <= this.rowIdx || i > this.newIdx) {
+                row._elt.addStyle('transform', `translate(0, 0)`);
+                row._elt._transformY = this.rowRect.height;
+            }
+            else if (i <= this.newIdx) {
+                row._elt.addStyle('transform', `translate(0, ${-this.rowRect.height}px)`);
+                row._elt._transformY = -this.rowRect.height;
+            }
+        }
+        else {
+            row._elt.addStyle('transform', `translate(0, 0)`);
+            row._elt._transformY = 0;
+        }
+
+    })
+};
+
+
+RowDragController.prototype._computeRowBound = function () {
+    this.firstBoundIdx = this.elt.rowIndexOf(this.row.body.elt.firstChild);
+    this.bounds = Array.prototype.map.call(this.row.body.elt.childNodes, (elt) => {
+        var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        rect.y -= elt._transformY || 0;
+        return rect;
+    });
+};
+
+RowDragController.prototype._computeNewIdx = function () {
+    var firstBound = Rectangle.fromClientRect(this.row.body.elt.firstChild.getBoundingClientRect());
+    var delta = firstBound.A().sub(this.bounds[0].A());
+    var cBound = Rectangle.fromClientRect(this.ctn.getBoundingClientRect());
+    var y0 = this.bounds[0].y + delta.y;
+    var nearest = Infinity;
+    this.newIdx = this.firstBoundIdx;
+    var cur;
+    var S = [];
+    S['-1'] = 0;
+    var i, y;
+    for (i = 0; i < this.bounds.length; ++i) {
+        S.push(S[i - 1] + this.bounds[i].height);
+    }
+    for (i = 0; i < this.bounds.length; ++i) {
+        cur = this.firstBoundIdx + i;
+        if (cur <= this.rowIdx) {
+            y = y0 + S[i - 1];
+        }
+        else {
+            y = y0 + S[i] - cBound.height;
+        }
+        if (nearest > Math.abs(cBound.y - y) + 0.1) {
+            nearest = Math.abs(cBound.y - y);
+            this.newIdx = cur;
+        }
+    }
+
+
+};
+
+
+RowDragController.prototype.ev_dragStart = function (event) {
+    if (this.elt.table.body.curentMode.name !== 'normal') return;
+    this.elt.addClass('as-row-dragging');
+    this.row = this._findRow(event.target);
+    this.body = this.row.body;
+    this.rowIdx = this.elt.rowIndexOf(this.row);
+    this.newIdx = this.rowIdx;
+    this.clonedTable = this._cloneTableRow(this.row);
+    this.ctn = _({
+        class: 'as-dt-body-row-cloned-ctn',
+        style: {
+            zIndex: this._getZIndex() + 20,
+            cursor: 'move',
+            opacity: 0.9
+        },
+        child: $(this._cloneTableRow(this.row)).removeStyle('transform')
+    }).addTo(document.body);
+    this.row.elt.addClass('as-dragging');
+    this.rowRect = Rectangle.fromClientRect(this.row.elt.getBoundingClientRect());
+    this.elt.addStyle('--dt-dragging-row-height', this.rowRect.height);
+    this.viewportRect = Rectangle.fromClientRect(this.elt.$viewport.getBoundingClientRect());
+    this.headerRect = Rectangle.fromClientRect(this.elt.$fixedYCtn.getBoundingClientRect());
+    this.pointeroffset = event.startingPoint.sub(this.rowRect.A());
+    this.ctn.addStyle({
+        top: this.rowRect.y + 'px',
+        left: this.rowRect.x + 'px'
+    });
+    this._computeRowBound();
+    this._computeNewIdx();
+    this._updateClass();
+    this._isDragging = true;
+};
+
+RowDragController.prototype.ev_rowRenderChange = function () {
+    if (!this._isDragging) return;
+    this._computeRowBound();
+    this._computeNewIdx();
+    this._computeNewIdx();
+    this._updateClass();
+};
+
+/**
+ *
+ * @param {DTBodyRow}row
+ * @private
+ */
+RowDragController.prototype._cloneTableRow = function (row) {
+    var tableElt = $(row.body.table.elt.cloneNode(false))
+        .addStyle({ tableLayout: 'fixed', width: row.body.table.elt.getBoundingClientRect().width + 'px' });
+    var tBodyElt = $(row.body.elt.cloneNode(false));
+    tableElt.addChild(tBodyElt);
+    var rowElt = $(this.row.elt.cloneNode(false)).addStyle({
+        height: this.row.elt.getBoundingClientRect().height + 'px',
+        backgroundColor: this.row.elt.getComputedStyleValue('background-color')
+    });
+    tBodyElt.addChild(rowElt);
+    this.row.cells.forEach(cell => {
+        var width = cell.elt.getBoundingClientRect().width;
+        $(cell.elt.cloneNode(true)).addStyle({ width: width + 'px' }).addTo(rowElt);
+    });
+    return tableElt;
+};
+
+
+RowDragController.prototype.ev_drag = function (event) {
+    var newY = event.currentPoint.sub(this.pointeroffset).y;
+    this.ctn.addStyle('top', newY + 'px');
+    clearTimeout(this._dragOutTO);
+
+    var ctnBound = Rectangle.fromClientRect(this.ctn.getBoundingClientRect());
+    var onDragOutPositive = () => {
+        var dy = ctnBound.D().y - this.viewportRect.D().y;
+        dy /= 1000 / 60 / 4 * this.rowRect.height;
+        dy = Math.min(dy, this.elt.$vscrollbar.innerHeight - this.elt.$vscrollbar.outerHeight - this.elt.$vscrollbar.innerOffset);
+        if (dy > 0) {
+            this.elt.$vscrollbar.innerOffset += dy;
+            this.elt.$vscrollbar.emit('scroll');
+        }
+        this._computeNewIdx();
+        this._updateClass();
+        clearTimeout(this._dragOutTO);
+        this._dragOutTO = setTimeout(onDragOutPositive, 33);
+    };
+
+    var onDragOutNegative = () => {
+        var dy = ctnBound.y - this.headerRect.D().y;
+        dy /= 1000 / 60 / 4 * this.rowRect.height;
+        dy = Math.max(dy, -this.elt.$vscrollbar.innerOffset);
+        if (dy < 0) {
+            this.elt.$vscrollbar.innerOffset += dy;
+            this.elt.$vscrollbar.emit('scroll');
+        }
+        this._computeNewIdx();
+        this._updateClass();
+        clearTimeout(this._dragOutTO);
+        this._dragOutTO = setTimeout(onDragOutNegative, 33);
+    };
+    if (this.viewportRect.D().y < ctnBound.D().y) {
+        this._dragOutTO = setTimeout(onDragOutPositive, 1000 / 60);
+    }
+    else if (this.headerRect.D().y > ctnBound.y) {
+        this._dragOutTO = setTimeout(onDragOutNegative, 100 / 60);
+    }
+    else {
+        this._computeNewIdx();
+        this._updateClass();
+    }
+};
+
+
+RowDragController.prototype.ev_dragEnd = function (event) {
+    this.elt.addClass('as-row-dragging');
+    this.elt.removeClass('as-row-dragging');
+
+    this.elt.removeStyle('--dragging-row-height');
+    this.row.elt.removeClass('as-dragging');
+    this._isDragging = false;
+    clearTimeout(this._dragOutTO);
+    this.ctn.remove();
+    this.row.body.rows.forEach(row => {
+        if (row._elt) {
+            row._elt.removeStyle('transform');
+            row._elt._transformY = 0;
+        }
+    });
+    if (this.newIdx !== this.rowIdx) {
+        this.row.body.moveRowAt(this.rowIdx, this.newIdx);
+
+        var eventData = {
+            type: 'otherchange',
+            target: this.row,
+            from: this.rowIdx,
+            to: this.newIdx,
+            originalEvent: event,
+            row: this.row,
+            data: this.row.data
+        }
+        if (this.row.data.on && this.row.data.on.orderchange) {
+            this.row.data.on.orderchange.call(this.row, eventData, this.row)
+        }
+        this.elt.emit('orderchange', eventData, this.body.table.wrapper);
+    }
+};
 
 function VirtualPageSelector(elt) {
     this.elt = elt;

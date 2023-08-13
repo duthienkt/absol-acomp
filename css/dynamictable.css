@@ -9,6 +9,7 @@
     --dt-content-width: 0;
     --dt-header-height: 0;
     --dt-fixed-x-width: 0;
+    --dt-dragging-row-height: 0;
     position: relative;
 
     /*padding-right: 17px;*/
@@ -293,13 +294,37 @@
     cursor: move;
 }
 
+.as-dynamic-table-wrapper.as-row-dragging .as-dt-body-row{
+    transition: transform 0.2s;
+}
+
 .as-dt-body-row.as-dragging {
-    position: relative;
-    z-index: 1000000;
+    opacity: 0.0;
+    /*position: relative;*/
+    /*z-index: 1000000;*/
+
+    /*opacity: 0.8;*/
+}
+
+
+.as-dt-body-row.as-after-dragging {
+
+}
+
+
+
+.as-dt-body-row-cloned-ctn {
+    position: fixed;
+    cursor: move;
+    opacity: 0.7;
     -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
     -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
     box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    opacity: 0.8;
+
+}
+
+.as-dt-body-row-cloned-ctn > table {
+    display: block;
 }
 
 .as-dt-body-row.as-drag-neighbor {
@@ -377,3 +402,4 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
 }
 
 /*.as-dynamic-table-wrapper*/
+

@@ -172,6 +172,8 @@ function BaseMode(body) {
     this.viewedRows = null;
 }
 
+BaseMode.prototype.name = 'base';
+
 
 BaseMode.prototype.resetViewParam = function () {
     this.offset = 0;
@@ -256,6 +258,8 @@ function SearchingMode(body) {
 
 OOP.mixClass(SearchingMode, BaseMode);
 
+SearchingMode.prototype.name = 'search';
+
 SearchingMode.prototype.start = function () {
     this.status = "RUNNING";
     this.searchingCache = {};
@@ -277,7 +281,7 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
     var screenSize = getScreenSize();
     var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
-    if (this.resultItems.length - newRowOffset < rowPerPage ) {
+    if (this.resultItems.length - newRowOffset < rowPerPage) {
         newRowOffset = Math.max(0, newRowOffset - rowPerPage);
     }
     if (newRowOffset === this.rowOffset) return;
@@ -401,6 +405,8 @@ function NormalMode(body) {
 
 OOP.mixClass(NormalMode, BaseMode);
 
+NormalMode.prototype.name = 'normal';
+
 NormalMode.prototype.start = function () {
     this.resetViewParam();
     this.viewedRows = this.body.rows;
@@ -461,6 +467,7 @@ NormalMode.prototype.updateRowsIfNeed = function () {
             }
         }, 0);
     }
+    this.body.table.wrapper.rowDragCtrl.ev_rowRenderChange();
 }
 
 
@@ -498,7 +505,7 @@ function DTBody(table, data) {
         row.idx = i;
         return row;
     }.bind(this));
-    this.rowDragCtrl = new DTRowDragController(this);
+    // this.rowDragCtrl = new DTRowDragController(this);
 
     this.modes = {
         normal: new NormalMode(this),
@@ -549,6 +556,7 @@ DTBody.prototype.onRowSplice = function (idx) {
 DTBody.prototype.rowIndexOf = function (o) {
     var n = this.rows.length;
     for (var i = 0; i < n; ++i) {
+        if (o === this.rows[i]._elt) return i;
         if (o === this.rows[i]) return i;
         if (o === this.data.rows[i]) return i;
         if (o === this.data.rows[i].id) return i;
@@ -652,6 +660,15 @@ DTBody.prototype.removeRow = function (row) {
     if (this.curentMode.onRowRemoved)
         this.curentMode.onRowRemoved(idx);
     this.onRowSplice(idx);
+};
+
+DTBody.prototype.moveRowAt = function (idx, newIdx) {
+    var row = this.rows.splice(idx, 1)[0];
+    var rowData = this.data.rows.splice(idx, 1)[0];
+    this.rows.splice(newIdx, 0, row);
+    this.data.rows.splice(newIdx, 0, rowData);
+    this.reindexRows(Math.min(idx, newIdx));
+    this.onRowSplice(Math.min(idx, newIdx));
 };
 
 DTBody.prototype.clearRows = function () {
