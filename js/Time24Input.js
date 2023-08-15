@@ -1,8 +1,8 @@
-import ACore, {$, _} from "../ACore";
+import ACore, { $, _ } from "../ACore";
 import ChromeTime24Picker from "./ChromeTime24Picker";
-import {beginOfDay, formatDateTime, MILLIS_PER_DAY} from "absol/src/Time/datetime";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
-import {isRealNumber} from "./utils";
+import { beginOfDay, formatDateTime, MILLIS_PER_DAY } from "absol/src/Time/datetime";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { isRealNumber } from "./utils";
 import TimeInput from "./TimeInput";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
@@ -61,7 +61,8 @@ Time24Input.prototype._updateText = function () {
         text = formatDateTime(new Date(beginOfDay(new Date).getTime() + this._value + this._dayOffset), this._format);
         if (this._value + this._dayOffset >= MILLIS_PER_DAY) text += ' (Hôm sau)';
         this.removeClass('as-value-null');
-    } else {
+    }
+    else {
         text = this._format;
         this.addClass('as-value-null');
     }
@@ -70,12 +71,12 @@ Time24Input.prototype._updateText = function () {
 
 
 Time24Input.prototype._notifyChange = function (event) {
-    this.emit('change', {type: 'change', originalEvent: event.originalEvent || event.originEvent || event}, this);
+    this.emit('change', { type: 'change', originalEvent: event.originalEvent || event.originEvent || event }, this);
 };
 
 
 Time24Input.prototype.clear = function (event) {
-    if (this._value !== null && !this.notNull){
+    if (this._value !== null && !this.notNull) {
         this.value = null;
         this._notifyChange(event);
     }
@@ -88,7 +89,8 @@ Time24Input.prototype.share = {
      * @type Time24Input
      */
     $holdingInput: null,
-    $follower: null
+    $follower: null,
+    $closeBtn: null
 };
 
 
@@ -96,13 +98,25 @@ Time24Input.prototype._preparePicker = function () {
     if (this.share.$picker) return;
     this.share.$picker = _({
         tag: ChromeTime24Picker.tag,
-        class:'as-dropdown-box-common-style'
+
     });
     this.share.$follower = _({
         tag: 'follower',
-        class: 'as-chrome-time-24-picker-follower',
-        child: this.share.$picker
+        class: ['as-chrome-time-24-picker-follower', 'as-dropdown-box-common-style'],
+        child: [
+            this.share.$picker,
+            {
+                class: 'as-dropdown-box-footer',
+                child: [
+                    {
+                        class: 'as-dropdown-box-footer-right',
+                        child: ['<a data-ml-key="txt_close" class="as-select-list-box-close-btn"></a>']
+                    }
+                ]
+            }
+        ]
     });
+    this.share.$closeBtn = $('.as-select-list-box-close-btn', this.share.$follower);
 };
 
 Time24Input.prototype._attachPicker = function () {
@@ -164,7 +178,8 @@ Time24Input.property.displayTime = {
     get: function () {
         if (isRealNumber(this._value) && isRealNumber(this._dayOffset)) {
             return this._value + this._dayOffset;
-        } else {
+        }
+        else {
             return null;
         }
     }
@@ -179,7 +194,8 @@ Time24Input.property.notNull = {
             }
             this.addClass('as-must-not-null');
 
-        } else {
+        }
+        else {
             this.removeClass('as-must-not-null');
         }
     },
@@ -201,7 +217,7 @@ Time24Input.property.disabled = {
     }
 };
 
-Time24Input.property.readOnly  = TimeInput.property.readOnly;
+Time24Input.property.readOnly = TimeInput.property.readOnly;
 
 Time24Input.property.format = {
     set: function (value) {
@@ -224,7 +240,7 @@ Time24Input.eventHandler.pickerChange = function (event) {
 };
 
 Time24Input.eventHandler.clickOut = function (event) {
-    if (hitElement(this.share.$follower, event)) return;
+    if (hitElement(this.share.$follower, event) && !hitElement(this.share.$closeBtn, event)) return;
     this._releasePicker();
 };
 

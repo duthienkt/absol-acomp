@@ -50,7 +50,7 @@
     background-color: transparent;
 }
 
-.ac-time-input.as-disabled{
+.ac-time-input.as-disabled {
     background-color: var(--as-disabled-background-color);
 }
 
@@ -126,6 +126,11 @@
 input:focus + .as-time-input-clear-btn,
 .ac-time-input .as-time-input-clear-btn {
     visibility: visible;
+}
+
+.as-dropdown-box-common-style .as-chrome-time-picker {
+    border: none;
+    box-shadow: none;
 }
 
 

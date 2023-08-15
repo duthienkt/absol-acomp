@@ -25,3 +25,9 @@
     display: inline-block;
     height: calc(2em + 2px);
 }
+
+
+.as-chrome-time-24-picker-follower .as-chrome-time-24-picker {
+    border: none;
+    box-shadow: none;
+}

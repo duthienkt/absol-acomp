@@ -419,7 +419,7 @@ TimeInput.eventHandler.dblclickInput = DateTimeInput.eventHandler.dblclickInput;
 TimeInput.eventHandler.inputBlur = DateTimeInput.eventHandler.inputBlur;
 
 TimeInput.eventHandler.clickOut = function (event) {
-    if (hitElement(this.share.$picker, event)) return;
+    if (hitElement(this.share.$picker, event) && !hitElement(this.share.$closeBtn, event)) return;
     this._releasePicker();
 };
 
@@ -639,7 +639,8 @@ TimeInput.eventHandler.keydown = function (event) {
 TimeInput.prototype.share = {
     $picker: null,
     $holdingInput: null,
-    $follower: null
+    $follower: null,
+    $closeBtn: null
 };
 
 
@@ -647,12 +648,22 @@ TimeInput.prototype._preparePicker = function () {
     if (this.share.$picker) return;
     this.share.$picker = _({
         tag: ChromeTimePicker.tag,
-        class: ['as-time-input-picker', 'as-dropdown-box-common-style']
+        class: ['as-time-input-picker']
     });
     this.share.$follower = _({
         tag: 'follower',
-        class: 'as-time-input-follower',
-        child: this.share.$picker
+        class: ['as-time-input-follower', 'as-dropdown-box-common-style'],
+        child: [
+            this.share.$picker,
+            {
+                class: 'as-dropdown-box-footer',
+                child: [
+                    {
+                        class: 'as-dropdown-box-footer-right',
+                        child: ['<a data-ml-key="txt_close" class="as-select-list-box-close-btn"></a>']
+                    }
+                ]
+            }]
     });
 };
 

@@ -1,10 +1,10 @@
-import ACore, {$$, $, _} from "../ACore";
+import ACore, { $$, $, _ } from "../ACore";
 import '../css/chrometimepicker.css';
 import '../css/chrometime24picker.css';
 import ChromeTimePicker from "./ChromeTimePicker";
-import {beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE} from "absol/src/Time/datetime";
+import { beginOfDay, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
 import DomSignal from "absol/src/HTML5/DomSignal";
-import {vScrollIntoView} from "./utils";
+import { vScrollIntoView } from "./utils";
 
 /**
  *
@@ -17,12 +17,13 @@ function calcMinHMTime(leftOffset) {
         if (m === 59) {
             h++;
             m = 0;
-        } else {
+        }
+        else {
             m++;
         }
     }
     var offset = h * MILLIS_PER_HOUR + m * MILLIS_PER_MINUTE;
-    return {m: m, h: h, offset: offset};
+    return { m: m, h: h, offset: offset };
 }
 
 /***
@@ -58,8 +59,8 @@ ChromeTime24Picker.render = function () {
             {
                 class: ['as-chrome-time-picker-scroller', 'as-chrome-time-24-picker-hour'],
                 child: [
-                    {tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up'},
-                    {tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down'},
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
                     {
                         class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h24'],
                         child: {
@@ -71,12 +72,12 @@ ChromeTime24Picker.render = function () {
                                     child: [
                                         {
                                             tag: 'span',
-                                            child: {text: i + ''}
+                                            child: { text: i + '' }
                                         },
                                         {
                                             tag: 'span',
                                             class: 'as-chrome-time-24-picker-tomorrow-text',
-                                            child: {text: ' (Hôm sau)'}
+                                            child: { text: ' (Hôm sau)' }
                                         }
                                     ],
                                     props: {
@@ -92,8 +93,8 @@ ChromeTime24Picker.render = function () {
             {
                 class: 'as-chrome-time-picker-scroller',
                 child: [
-                    {tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up'},
-                    {tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down'},
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
+                    { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
                     {
                         class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-m60'],
                         child: {
@@ -105,7 +106,7 @@ ChromeTime24Picker.render = function () {
 
                                     child: {
                                         tag: 'span',
-                                        child: {text: i + ''}
+                                        child: { text: i + '' }
                                     },
                                     props: {
                                         __min__: i
@@ -127,7 +128,8 @@ ChromeTime24Picker.prototype._updateHourNumbers = function () {
         this.$hours[i].firstChild.firstChild.data = (mH + i) % 24;
         if (mH + i >= 24) {
             this.$hours[i].addClass('as-in-tomorrow');
-        } else {
+        }
+        else {
             this.$hours[i].removeClass('as-in-tomorrow');
         }
     }
@@ -142,7 +144,8 @@ ChromeTime24Picker.prototype._updateMinuteNumbers = function () {
         if (vH === h && i < m) {
             this.$minutes[i].disabled = true;
 
-        } else {
+        }
+        else {
             this.$minutes[i].disabled = false;
         }
     }
@@ -156,7 +159,8 @@ ChromeTime24Picker.prototype._updateSelectedHour = function () {
         if (i === d) {
             this.$hours[i].addClass('as-selected');
             this.$selectedHour = this.$hours[i];
-        } else {
+        }
+        else {
             this.$hours[i].removeClass('as-selected');
         }
     }
@@ -169,7 +173,8 @@ ChromeTime24Picker.prototype._updateSelectedMinute = function () {
         if (vM === i) {
             this.$minutes[i].addClass('as-selected');
             this.$selectedMinute = this.$minutes[i];
-        } else {
+        }
+        else {
             this.$minutes[i].removeClass('as-selected');
         }
     }
@@ -188,7 +193,8 @@ ChromeTime24Picker.prototype._scrollToSelectedHour = function () {
         if (this.$selectedHour) {
             vScrollIntoView(this.$selectedHour);
         }
-    } else {
+    }
+    else {
         this.domSignal.emit('scrollToSelectedHour');
     }
 };
@@ -198,13 +204,14 @@ ChromeTime24Picker.prototype._scrollToSelectedMinute = function () {
         if (this.$selectedMinute) {
             vScrollIntoView(this.$selectedMinute);
         }
-    } else {
+    }
+    else {
         this.domSignal.emit('scrollToSelectedMinute');
     }
 };
 
 ChromeTime24Picker.prototype.notifyChange = function () {
-    this.emit('change', {type: 'change'}, this);
+    this.emit('change', { type: 'change' }, this);
 };
 
 
@@ -218,9 +225,11 @@ ChromeTime24Picker.property.dayOffset = {
     set: function (value) {
         if (typeof value === "number") {
             value = Math.max(0, value % MILLIS_PER_DAY);//10p
-        } else if (value instanceof Date) {
+        }
+        else if (value instanceof Date) {
             value = Math.max(0, (value.getTime() - beginOfDay(value).getTime()) % MILLIS_PER_DAY);
-        } else value = 0;
+        }
+        else value = 0;
         this._dayOffset = value;
         this._update();
     },
