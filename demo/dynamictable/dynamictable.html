@@ -421,8 +421,10 @@
         var stime = Date.now();
         var table0 = render({
             tag: 'dynamictable',
-            style:{
-                height: '500px'
+            // id:'dt_000',
+            style: {
+                height: '500px',
+                'min-width': '800px'
             },
             // class:'as-no-graphic',
             props: {
@@ -435,11 +437,12 @@
                             rows: [
                                 {
                                     cells: [
-                                        {},
-                                        { child: absol._({ text: "STT" }) },
-                                        { child: absol._({ text: "MSSV" }) },
-                                        { child: { text: 'Tên' }, style:{width: '900px'} },
+                                        { id: 'cb' },
+                                        { child: absol._({ text: "STT" }), idx: 'cb_1' },
+                                        { child: absol._({ text: "MSSV" }), id: 'cb_2' },
+                                        { child: { text: 'Tên' }, id: 'cb_3' },
                                         {
+                                            id: 'cb_4',
                                             child: { text: 'Lớp' },
                                             on: {
                                                 someEvent: function (event) {
@@ -449,23 +452,26 @@
                                             sortKey: 'class'
                                         },
                                         {
-                                            child: { text: 'Giỏi' , style:{width: '200px'}}
+                                            id: 'cb_5',
+                                            child: { text: 'Giỏi', style: { width: '200px' } }
                                         },
                                         {
+                                            id: 'cb_6',
                                             child: { text: 'Điểm TB' },
                                             sortKey: 'score'
                                         },
-                                        {}
+                                        {
+                                            idx: 'cb_7',
+                                        }
                                     ]
                                 }
                             ]
                         },
                         body: {
-                            rows: Array(300).fill(0).map(function (u, i) {
+                            rows: Array(100).fill(0).map(function (u, i) {
                                 var id = 'row_' + i;
                                 return makeRowData(i, id);
                             })
-
                         }
                     }
                 }
@@ -658,9 +664,10 @@
                                     cells: [
                                         {},
                                         { child: absol._({ text: "STT" }) },
-                                        { child: absol._({ text: "MSSV" }) },
-                                        { child: { text: 'Tên' } },
+                                        { child: absol._({ text: "MSSV" }), id: 'stt' },
+                                        { child: { text: 'Tên' }, id: 'name' },
                                         {
+                                            id: 'class',
                                             child: { text: 'Lớp' },
                                             on: {
                                                 someEvent: function (event) {

@@ -16,6 +16,7 @@
         height: 100%;
         width: 100%;
         overflow: hidden;
+        font-size: 14px;
     }
 
     #ck {
@@ -572,7 +573,7 @@
         tag: 'ckplaceholder',
         props: {
             config: {
-                toolbar:'SIMPLE'
+                toolbar:'ADVANCED'
             },//some config of CKEditor
             extensions: ['expression'],
             stickyToolbar: true
@@ -615,7 +616,21 @@
     var preview = absol._({
         class: 'cke_contents_ltr'
     });
+    absol._({
+        tag:'flexiconbutton',
+        props:{
+            text:'Save PDF'
+        },
+        on: {
+            click: function (){
+                absol.printer.downloadAsPDF(preview, 'test.pdf');
+            }
+        }
+    }).addTo(ck);
+
     ck.appendChild(preview);
+
+
 
 
 </script>

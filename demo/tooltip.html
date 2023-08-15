@@ -100,6 +100,19 @@
         });
     });
 
+    var LanguageModule = {
+        text2: function(key, value) {
+            return key+':' +value.join(',');
+        }
+    };
+    var ten_bien = 'varx';
+    absol._({
+        tag:'CopyableIconTooltip'.toLowerCase(),
+        props:{
+            content:"<mlt key=\"txt_variable_copy_tooltip\" v0=\""+ten_bien+"\"></mlt>"
+        }
+    }).addTo(absol.$('.test-ctn'));
+
 </script>
 <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 

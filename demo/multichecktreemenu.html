@@ -21,8 +21,8 @@
     }
 
     body > a {
-        display: block;
         padding: 5px;
+        display: inline-block;
     }
 </style>
 <script>
@@ -34,6 +34,7 @@
 
 <script class="viewable">
     (function () {
+        // return;
         render('<h2>Basic (auto: desktop/mobile)</h2>');
         var menu = render({
             tag: 'multichecktreemenu',
@@ -62,6 +63,7 @@
 
 <script class="viewable">
     (function () {
+        // return;
         render('<h2>leafOnly = true</h2>');
         var menu = render({
             tag: 'multichecktreemenu',
@@ -81,9 +83,48 @@
                     item.isLeaf = true;
                 }
                 if (item.items) item.items.forEach(visit);
-                if (item.value === 29) item.noSelect = true;
+            });
+            items.push({
+                icon: 'span.mdi.mdi-folder',
+                text: 'Bộ phận kế toán',
+                value: 'bpkt',
+                items: [
+                    {
+                        icon: 'span.mdi.mdi-folder',
+                        text: 'Phòng kế toán 1',
+                        value: 'pkt1'
+                    },
+                    {
+                        icon: 'span.mdi.mdi-folder',
+                        text: 'Phòng kế toán 2',
+                        value: 'pkt2',
+                        items:[{
+                            text:'admin',
+                            value: 'adm',
+                            isLeaf: true,
+                            noSelect: true
+                        }]
+                    },
+                    {
+                        icon: 'span.mdi.mdi-folder',
+                        text: 'Phòng kế toán 3',
+                        value: 'pkt3',
+                        items: [{
+                            text: 'Nguyễn Văn B',
+                            value: 'nvb',
+                            isLeaf: true
+                        },
+                            {
+                                text:'admin1',
+                                value: 'adm1',
+                                isLeaf: true,
+                                noSelect: true
+                            }]
+                    }
+                ]
             });
             menu.items = items;
+
 
             items_url.href = URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)], { type: 'text/plain;charset=utf-8;' }))
         });
@@ -100,6 +141,7 @@
 
 <script class="viewable">
     (function () {
+        // return;
         render('<h2>noSelect</h2>');
         var menu = render({
             tag: 'multichecktreemenu',
@@ -129,6 +171,7 @@
 
 <script class="viewable">
     (function () {
+        // return;
         render('<h2>leafOnly = true, noSelect</h2>');
         var menu = render({
             tag: 'multichecktreemenu',
@@ -164,7 +207,7 @@
 
     })();
 </script>
-<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+<!--<script src="https://absol.cf/absol/demo/autohightlighting.js"></script>-->
 
 </body>
 </html>
