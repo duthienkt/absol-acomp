@@ -308,14 +308,6 @@ export function Scrollbar() {
     this.$button = $('.absol-scrollbar-button', this);
     this.on('inactive', function (event, sender) {
         this.emit('deactive', event, sender);
-    })
-    this.on('active', function () {
-        if (!thisSB.$forceModal) thisSB.$forceModal = _('.absol-scrollbar-force-modal');
-        thisSB.$forceModal.addTo(document.body);
-    }).on('inactive', function () {
-        setTimeout(function () {
-            thisSB.$forceModal.remove();
-        }, 30);
     });
 }
 
@@ -352,8 +344,6 @@ Scrollbar.property.hidden = {
  * @constructor
  */
 export function VScrollbar() {
-
-
     this.on('draginit', this.eventHandler.dragInit, true)
         .on('drag', this.eventHandler.drag, true)
         .on('dragend', this.eventHandler.dragEnd, true);
