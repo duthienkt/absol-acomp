@@ -43,7 +43,7 @@ NITextController.prototype.flushTextToValue = function () {
     var text = this.$input.value;
     var floatText = text.split(thousandsSeparator).join('').split(decimalSeparator).join('.');
     this.elt._value = parseFloat(floatText);
-    if (!isRealNumber(this.elt._value)) this.elt._value = 0;
+    if (!isRealNumber(this.elt._value)) this.elt._value = null;
 };
 
 
@@ -52,7 +52,10 @@ NITextController.prototype.flushValueToText = function () {
     var opt = Object.assign({}, this.elt._format);
     var value = this.elt.value;
     var text, parts;
-    if (opt.locales === 'none') {
+    if (value === null) {
+        text = '';
+    }
+    else if (opt.locales === 'none') {
         if (opt.maximumFractionDigits === 20) {
             text = value + '';
         }
@@ -70,9 +73,9 @@ NITextController.prototype.flushValueToText = function () {
     }
     else {
         formatter = new Intl.NumberFormat(this.elt._format.locales, opt);
-        text = formatter.format(this.elt.value);
+        text = formatter.format(value);
     }
-    delete opt.locales;
+
     this.$input.value = text;
     this.estimateWidthBy(text);
 };
@@ -120,7 +123,7 @@ NITextController.prototype.onBlur = function () {
  * @param {boolean=} event
  */
 NITextController.prototype.onKeyDown = function (event, dontInsert) {
-    var key =event.type==='keydown'?  keyboardEventToKeyBindingIdent(event) :'';
+    var key = event.type === 'keydown' ? keyboardEventToKeyBindingIdent(event) : '';
     if ((key.length === 1 && !key.match(/[0-9.,\-]/)) || key.match(/^shift-.$/)) {
         event.preventDefault();
         return;
@@ -145,22 +148,22 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
                 preventDefault: noop,
                 key: key
             }
-            if (key.match(/^[0-9.]$/)){
+            if (key.match(/^[0-9.]$/)) {
                 this.onKeyDown(fakeEvent, true);
             }
             else {
                 this.$input.value = oldText;
-                this.$input.setSelectionRange(sStart, sStart );
+                this.$input.setSelectionRange(sStart, sStart);
                 this.onKeyDown(fakeEvent);
             }
         }, 10);
     };
 
-    onKeys.paste = ()=>{
+    onKeys.paste = () => {
         var clipboardData = event.clipboardData || window.clipboardData;
         var pastedData = clipboardData.getData('Text');
-        var hasSeparator = value.indexOf(decimalSeparator) >=0;
-        pastedData = pastedData.split('').filter(c=>{
+        var hasSeparator = value.indexOf(decimalSeparator) >= 0;
+        pastedData = pastedData.split('').filter(c => {
             if (c.match(/[0-9]/)) return true;
             if (!hasSeparator && c === hasSeparator) {
                 hasSeparator = true;
@@ -168,7 +171,7 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
             }
         }).join('');
         if (this.elt.readOnly) return;
-        if (!dontInsert){
+        if (!dontInsert) {
             this.$input.value = value.substring(0, sStart) + pastedData + value.substring(sEnd);
             this.$input.setSelectionRange(sStart + pastedData.length, sStart + pastedData.length);
         }
@@ -253,7 +256,7 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
 
     onKeys.number = () => {
         if (this.elt.readOnly) return;
-        if (!dontInsert){
+        if (!dontInsert) {
             this.$input.value = value.substring(0, sStart) + key + value.substring(sEnd);
             this.$input.setSelectionRange(sStart + 1, sStart + 1);
         }

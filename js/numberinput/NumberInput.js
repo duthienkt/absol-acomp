@@ -107,7 +107,7 @@ NumberInput.tag = 'NumberInput'.toLowerCase();
 
 NumberInput.render = function () {
     return _({
-        class: 'absol-number-input',
+        class: ['absol-number-input', 'as-must-not-null'],
         extendEvent: ['change'],
         child: [
             {
@@ -242,14 +242,24 @@ NumberInput.property = {};
 
 NumberInput.property.value = {
     set: function (value) {
-        if (typeof (value) != 'number' || isNaN(value)) value = 0;
+        if (typeof value === "string") value = parseFloat(value);
+        if (typeof (value) != 'number' || isNaN(value)) value = null;
         this._value = value;
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
+        var value = this._value;
+        if (value === null) {
+            if (this.notNull) {
+                value = 0;
+            }
+            else {
+                return null;
 
-        var value = Math.min(this.max, Math.max(this._value, this.min));
+            }
+        }
+        value = Math.min(this.max, Math.max(value, this.min));
         if (this._format.maximumFractionDigits === 0) {
             return Math.round(value);
         }
@@ -398,7 +408,7 @@ NumberInput.property.format = {
 
 NumberInput.property.floatFixed = {
     set: function (value) {
-        if (isNaturalNumber(value) &&  value >= 0 && value < 20) {
+        if (isNaturalNumber(value) && value >= 0 && value < 20) {
             this._format.maximumFractionDigits = Math.floor(value);
             this._format.minimumFractionDigits = Math.floor(value);
         }
@@ -411,6 +421,23 @@ NumberInput.property.floatFixed = {
     get: function () {
         if (this._format.maximumFractionDigits === 20) return null;
         return this._format.maximumFractionDigits;
+    }
+};
+
+
+NumberInput.property.notNull = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-must-not-null');
+        }
+        else {
+            this.removeClass('as-must-not-null');
+        }
+        this._prevValue = this.value;
+        this.textCtrl.flushValueToText();
+    },
+    get: function () {
+        return this.hasClass('as-must-not-null');
     }
 };
 
