@@ -154,9 +154,9 @@ QuickMenuInstance.prototype.open = function () {
     this.copyProps.items = this.originProps.items || [];
     this.copyProps.items = this.copyProps.items.map(function visit(item) {
         var cpyItem = item;
-        if (typeof item === "string") cpyItem =  item;
-        else if (item  && (typeof item.text === "string")) {
-             cpyItem = Object.assign({ __originalItem__: item }, item);
+        if (typeof item === "string") cpyItem = item;
+        else if (item && (typeof item.text === "string")) {
+            cpyItem = Object.assign({ __originalItem__: item }, item);
             if (cpyItem.items && cpyItem.items.map) cpyItem.items = cpyItem.items.map(visit);
         }
         return cpyItem;
@@ -220,6 +220,11 @@ QuickMenuInstance.prototype.close = function () {
 };
 
 QuickMenuInstance.prototype._onSizeNeedUpdate = function () {
+    Array.prototype.forEach.call(QuickMenu.$elt.childNodes, elt => {
+        if (elt.autoFixParentSize) {
+            elt.autoFixParentSize();
+        }
+    });
     var screenSize = getScreenSize();
     var eltBound = this.elt.getBoundingClientRect();
     var aTop = eltBound.bottom;
