@@ -134,7 +134,7 @@ Time24Input.prototype._attachPicker = function () {
     this.share.$picker.value = isRealNumber(this._value) ? this._value : 0;
 
     setTimeout(function () {
-        document.body.addEventListener('click', this.eventHandler.clickOut);
+        document.addEventListener('click', this.eventHandler.clickOut);
         this.share.$follower.removeStyle('visibility');
     }.bind(this), 5);
 };
@@ -146,7 +146,7 @@ Time24Input.prototype._releasePicker = function () {
     this.share.$follower.remove();
     this.share.$follower.followTarget = null;
     this.share.$holdingInput = null;
-    document.body.removeEventListener('click', this.eventHandler.clickOut);
+    document.removeEventListener('click', this.eventHandler.clickOut);
     setTimeout(function () {
         this.$clockBtn.on('click', this.eventHandler.clickClockBtn);
     }.bind(this), 10)

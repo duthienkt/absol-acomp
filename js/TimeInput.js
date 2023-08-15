@@ -683,7 +683,7 @@ TimeInput.prototype._attachPicker = function () {
     this.$clockBtn.off('click', this.eventHandler.clickClockBtn);
     this.share.$picker.on('change', this.eventHandler.pickerChange);
     setTimeout(function () {
-        document.body.addEventListener('click', this.eventHandler.clickOut);
+        document.addEventListener('click', this.eventHandler.clickOut);
         this.share.$follower.removeStyle('visibility');
     }.bind(this), 5);
 
@@ -693,7 +693,7 @@ TimeInput.prototype._releasePicker = function () {
     if (this.share.$holdingInput !== this) return;
     // this.share.$calendar.off('pick', this.eventHandler.calendarPick);
     this.share.$follower.remove();
-    document.body.removeEventListener('click', this.eventHandler.clickOut);
+    document.removeEventListener('click', this.eventHandler.clickOut);
     this.share.$picker.off('change', this.eventHandler.pickerChange);
 
     setTimeout(function () {
