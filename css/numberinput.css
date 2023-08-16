@@ -67,6 +67,10 @@
     font-size: inherit;
 }
 
+.as-printer-content .absol-number-input button {
+    display: none;
+}
+
 .absol-number-input-button-up-container > button:active,
 .absol-number-input-button-down-container > button:active {
     color: black;
