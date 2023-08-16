@@ -4,6 +4,8 @@ import OOP from "absol/src/HTML5/OOP";
 import RadioButton from "./RadioButton";
 import Svg from "absol/src/HTML5/Svg";
 import AElement from "absol/src/HTML5/AElement";
+import { ShareSerializer } from "absol/src/Print/printer";
+import Rectangle from "absol/src/Math/Rectangle";
 
 
 var _ = ACore._;
@@ -128,3 +130,42 @@ Radio.getValueByName = function (name) {
 ACore.install(Radio);
 
 export default Radio;
+
+var radioImageCache = {};
+ShareSerializer.addHandlerBefore({
+    match: (elt, scope, stack) => {
+        if ((elt.hasClass('absol-radio-icon') || elt.hasClass('as-checkbox-input-check-icon'))
+            && (elt.parentElement.hasClass('absol-radio')
+                || elt.parentElement.hasClass('absol-radio-button')
+                || elt.parentElement.hasClass('as-checkbox-input'))) {
+            return true;
+        }
+        return false;
+    },
+    exec: (printer, elt, scope, stack, accept) => {
+        var type = elt.hasClass('absol-radio-icon') ? 'radio' : 'check';
+        var fontSize = elt.getFontSize();
+        var checked = !!elt.parentElement.__origin__.checked;
+        var disabled = !!elt.parentElement.__origin__.disabled;
+        var bound = Rectangle.fromClientRect(elt.getBoundingClientRect());
+        if (bound.width === 0) return;
+        var rect = bound.clone();
+        rect.x -= printer.O.x;
+        rect.y -= printer.O.y;
+        var key = type + fontSize + checked + disabled;
+        var res;
+        if (radioImageCache[key]) {
+            res = radioImageCache[key];
+        }
+        else {
+            res = Svg.svgToCanvas(elt.__origin__).catch(err => {
+                console.error(err);
+            });
+            radioImageCache[key] = res;
+        }
+
+        res.elt = elt;
+        printer.image(res, rect);
+    },
+    id: 'Radio'
+}, 'SVG');
