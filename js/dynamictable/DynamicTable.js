@@ -167,6 +167,9 @@ function DynamicTable() {
         this.layoutCtrl.onAttached();
         this.colSizeCtrl.onAttached();
         manager.add(this);
+        setTimeout(()=>{
+            this.requestUpdateSize();
+        },10);
     })
     /***
      *

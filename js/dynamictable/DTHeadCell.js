@@ -87,6 +87,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
         if (this.data.style) {
             this._elt.addStyle(this.data.style);
         }
+
         if (this.data.id !== null && this.data.id !== undefined) {
             this._elt.attr('data-col-id', this.data.id + '');
         }
@@ -126,6 +127,17 @@ Object.defineProperty(DTHeadCell.prototype, 'copyElt', {
     get: function () {
         if (this._copyElt) return this._copyElt;
         this._copyElt = $(this.elt.cloneNode(true)).addClass('as-copy-elt');
+        if (this.data.style &&this.data.style.width) {
+            var self = this;
+            setTimeout(function wait() {
+                if (self._copyElt.isDescendantOf(document.body)) {
+                    self._copyElt.addStyle('width', self._copyElt.getBoundingClientRect().width+'px');
+                }
+                else {
+                    setTimeout(wait, 10);
+                }
+            }, 10);
+        }
         return this._copyElt;
     }
 });
