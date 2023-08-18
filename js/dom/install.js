@@ -157,6 +157,7 @@ import LinearColorTinyBar from "../LinearColorTinyBar";
 import Finder from "../finder/Finder";
 import TreeChart from "../TreeChart";
 import CopyableIconTooltip from "../CopyableIconTooltip";
+import DateNLevelInput from "../DateNLevelInput";
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -206,6 +207,7 @@ export var publicCreators = [
     VRootMenu,
     MenuButton,
     DateInput2,
+    DateNLevelInput,
     Hanger,
     DraggableHStack,
     DraggableVStack,

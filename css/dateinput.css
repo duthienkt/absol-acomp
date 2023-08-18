@@ -120,3 +120,18 @@
     width: 100%;
     padding-left: 0;
 }
+
+.as-date-n-level-input {
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-date-n-level-input > div:first-child {
+    margin-right: 10px;
+}
+
+.as-date-n-level-input > div {
+    display: inline-block;
+    vertical-align: middle;
+}
