@@ -1,6 +1,6 @@
 import '../css/resizebox.css';
 import ACore from "../ACore";
-import EventEmitter from "absol/src/HTML5/EventEmitter";
+import { isMouseRight } from "absol/src/HTML5/EventEmitter";
 import Hanger from "./Hanger";
 
 
@@ -49,6 +49,10 @@ ResizeBox.render = function () {
 ResizeBox.eventHandler = {};
 
 ResizeBox.eventHandler.rbDragInit = function (event) {
+    if (isMouseRight(event.originEvent)) {
+        event.cancel();
+        return;
+    }
     var target = event.target;
     if (!target.attr) return;
     if (!target.hasClass('as-resize-box-dot') && !target.hasClass('as-resize-box-body')) return;
@@ -157,8 +161,6 @@ ResizeBox.eventHandler.rbDragEnd = function (event) {
     };
     this.emit('endmove', this._mousefinishEventData, this);
 };
-
-
 
 
 ResizeBox.property = {};
