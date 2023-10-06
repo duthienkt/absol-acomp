@@ -11,6 +11,7 @@ import { randomIdent } from "absol/src/String/stringGenerate";
 function DTBodyRow(body, data) {
     this.body = body;
     this.data = data;
+    this.data.cells = this.data.cells || [];
     this._elt = null;
     this._fixedXElt = null;
 

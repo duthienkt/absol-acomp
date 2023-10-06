@@ -506,6 +506,8 @@ DynamicTable.property.hiddenColumns = {
             }
             c = c.parentElement;
         }
+        ResizeSystem.update();
+        ResizeSystem.requestUpdateSignal();
     },
     get: function () {
         return this._hiddenColumns;
@@ -712,8 +714,10 @@ LayoutController.prototype.onAttached = function () {
                     var bound;
                     if (!colId) {//local style
                         bound = cell.copyElt.getBoundingClientRect();
-                        this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]`, 'width', bound.width + 'px')
-                            .commit();
+                        if (bound.width > 0) {
+                            this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]`, 'width', bound.width + 'px')
+                                .commit();
+                        }
 
                         return;
                     }
