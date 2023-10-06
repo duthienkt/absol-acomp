@@ -4,7 +4,7 @@
 }
 
 
-.absol-vscroller.disabled>.absol-vscroller-viewport {
+.absol-vscroller.disabled > .absol-vscroller-viewport {
     overflow-y: visible;
     margin-right: 0px;
     min-width: 100%;
@@ -23,11 +23,11 @@
 
 }
 
-.absol-vscroller>.absol-vscroller-viewport {
+.absol-vscroller > .absol-vscroller-viewport {
     max-height: 100%;
 }
 
-.absol-vscroller.limited-height>.absol-vscroller-viewport {
+.absol-vscroller.limited-height > .absol-vscroller-viewport {
     max-height: inherit;
 }
 
@@ -49,13 +49,13 @@
     min-height: calc(100% + 17px);
 }
 
-.absol-hscroller.disabled>.absol-hscroller-viewport {
+.absol-hscroller.disabled > .absol-hscroller-viewport {
     overflow-x: visible;
     margin-bottom: 0px;
 }
 
 
-.absol-hscroller>.absol-hscroller-viewport {
+.absol-hscroller > .absol-hscroller-viewport {
     max-width: 100%;
 }
 
@@ -87,22 +87,19 @@
     left: 0;
 }
 
-.absol-scrollbar-container>.absol-scrollbar {
+.absol-scrollbar-container > .absol-scrollbar {
     width: 100%;
     height: 100%;
 }
 
 
-
-
-
-.absol-scrollbar-container.vertical>.absol-scrollbar>.absol-scrollbar-button {
+.absol-scrollbar-container.vertical > .absol-scrollbar > .absol-scrollbar-button {
     left: 1px;
     right: 1px;
     top: 0;
 }
 
-.absol-scrollbar-container.horizontal>.absol-scrollbar>.absol-scrollbar-button {
+.absol-scrollbar-container.horizontal > .absol-scrollbar > .absol-scrollbar-button {
     top: 1px;
     bottom: 1px;
     left: 0;
@@ -119,7 +116,7 @@
     border-radius: 2px;
 }
 
-.absol-scrollbar-button:hover, .absol-scrollbar-button:active{
+.absol-scrollbar-button:hover, .absol-scrollbar-button:active {
     background-color: rgba(133, 133, 133, 1);;
 }
 
@@ -128,11 +125,20 @@
     visibility: hidden;
 }
 
-.absol-vscrollbar .absol-scrollbar-button  {
+.absol-vscrollbar .absol-scrollbar-button {
     width: 100%;
 }
 
 
-.absol-hscrollbar .absol-scrollbar-button  {
+.absol-hscrollbar .absol-scrollbar-button {
     height: 100%;
+}
+
+.absol-table-scroller-vscrollbar-container .absol-vscrollbar:not(.as-overflow) {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.absol-table-scroller-left-vscroller-viewport:empty {
+    display: none;
 }
