@@ -159,6 +159,14 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
         }, 10);
     };
 
+
+    onKeys.process = ()=>{
+        setTimeout(()=>{
+            this.flushTextToValue();
+        }, 10);
+
+    }
+
     onKeys.paste = () => {
         var clipboardData = event.clipboardData || window.clipboardData;
         var pastedData = clipboardData.getData('Text');
@@ -351,6 +359,7 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
         this.reformat();
         this.flushTextToValue();
     };
+
 
     if (key === 'ctrl-x') {
         onKeys.delete();
