@@ -701,7 +701,7 @@ export function replaceChildrenInElt(elt, childNodes) {
             break;
         }
     }
-    cChildren.forEach( (elt)=> {
+    cChildren.forEach((elt) => {
         elt.remove();
     });
     elt.addChild(nChildren);
@@ -873,6 +873,7 @@ export function fileAccept(pattern, typeString) {
 export function fileInfoOf(fi) {
     var res = {};
     var handle = o => {
+        var parts;
         if (typeof o === "string") {
             res.name = res.name || (o.split('/').pop() || '').replace(/%([\dA-Fa-f][\dA-Fa-f])/g, (all, g1) => {
                 var n = parseInt(g1, 16);
@@ -882,6 +883,15 @@ export function fileInfoOf(fi) {
                 return all;
             }).replace(/\?.+$/, '');
             if (!res.url && isURLAddress(o)) res.url = o;
+            parts = res.name.split('.');
+            if (!res.type && parts.length > 1) {
+                res.type = parts.pop();
+            }
+            else {
+                parts = res.url.split('.');
+                res.type = parts.pop();
+            }
+            if (res.type === 'upload') res.type = parts.pop();
         }
         else if ((typeof o === "object") && o) {
             if (o instanceof Blob) {
