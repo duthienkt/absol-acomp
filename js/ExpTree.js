@@ -99,9 +99,12 @@ ExpNode.property.icon = {
             this.$iconP.remove();
             this.$iconP = undefined;
         }
-        if (value && value != null) {
+        if (value) {
             var newE;
-            if (!Dom.isDomNode(value)) {
+            if (Dom.isDomNode(value)) {
+                newE = value;
+            }
+            else {
                 newE = _(value);
             }
             this.$iconP = newE;
