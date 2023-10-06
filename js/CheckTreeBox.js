@@ -957,6 +957,12 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
             elt.level = this.level;
             elt.status = this.status;
             elt.selected = this.selected;
+            if (this.item.noSelect || !this.canSelect) {
+                elt.noSelect = true;
+            }
+            else {
+                elt.noSelect = false;
+            }
         }
         else {
             this._elt = null;
