@@ -1,5 +1,8 @@
 .as-select-tree-leaf-item:not(.as-is-leaf) > .absol-exp-node > .absol-exp-node-name,
-.as-select-tree-leaf-item:not(.as-is-leaf) > .absol-exp-node > .absol-exp-node-ext-icon {
+.as-select-tree-leaf-item:not(.as-is-leaf) > .absol-exp-node > .absol-exp-node-ext-icon,
+.as-select-tree-leaf-item.as-no-select > .absol-exp-node > .absol-exp-node-name,
+.as-select-tree-leaf-item.as-no-select > .absol-exp-node > .absol-exp-node-ext-icon
+{
     color: #888;
 }
 
@@ -13,7 +16,7 @@
     background-color: transparent;
 }
 
-.as-select-tree-leaf-item.as-is-leaf > .absol-exp-node:hover {
+.as-select-tree-leaf-item.as-is-leaf:not(.as-no-select) > .absol-exp-node:hover {
     background-color: #efefef;
 }
 

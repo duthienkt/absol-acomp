@@ -2,7 +2,7 @@ var SLBPropHandlers = {};
 
 SLBPropHandlers.items = {
     set: function (items){
-        console.log(items)
+        // console.log(items)
     },
     get: function (){
 

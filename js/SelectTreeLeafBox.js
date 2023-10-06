@@ -50,7 +50,7 @@ SelectTreeLeafBox.render = function () {
         }, {
             class: ['as-bscroller', 'as-select-list-box-scroller', 'as-select-tree-leaf-box-content'], child: []
         }, 'attachhook.as-dom-signal'],
-        props:{
+        props: {
             anchor: [1, 6, 2, 5]
         }
     });
@@ -109,13 +109,19 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
 
     var nodeElt = _({
         tag: ExpTree.tag, class: 'as-select-tree-leaf-item', props: {
-            name: item.text, desc: item.desc, icon: item.icon, status: status,
+            name: item.text,
+            desc: item.desc,
+            icon: item.icon,
+            status: status,
             itemData: item
         },
         on: {
-           'statuschange': this.updatePosition.bind(this)
+            'statuschange': this.updatePosition.bind(this)
         }
     });
+    if (item.noSelect) {
+        nodeElt.addClass('as-no-select');
+    }
     nodeElt.getNode().on({
         press: function (event) {
             if (isBranchStatus(nodeElt.status)) {
@@ -123,7 +129,7 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
                 savedStatus[item.value] = nodeElt.status;
                 self.updatePosition();
             }
-            else if (isLeaf) {
+            else if (isLeaf && !item.noSelect) {
                 self.emit('pressitem', { item: item, target: self, itemElt: nodeElt, originalEvent: event }, self);
             }
         }
