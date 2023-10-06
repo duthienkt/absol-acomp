@@ -88,6 +88,53 @@
     }).addTo(document.body);
 </script>
 
+<h3>Value: null</h3>
+<script>
+    var mNumberInput = absol._({
+        tag: 'numberinput',
+        // class: 'as-width-auto',
+        style: {
+            width: '13em'
+        },
+        props: {
+            value: null,
+            step: 2e-1,
+            min: 0,
+            max: 1e9,
+        },
+        on: {
+            change: function (event) {
+                console.log(event.by, this.value);
+                absol.require('snackbar').show(this.value + '');
+            }
+        }
+    }).addTo(document.body);
+</script>
+
+<script>
+    var mNumberInput = absol._({
+        tag: 'numberinput',
+        // class: 'as-width-auto',
+        style: {
+            width: '13em'
+        },
+        props: {
+            value: null,
+            step: 0.2,
+            min: 0,
+            max: 1e9,
+            notNull: false
+        },
+        on: {
+            change: function (event) {
+                console.log(event.by, this.value);
+                absol.require('snackbar').show(this.value + '');
+            }
+        }
+    }).addTo(document.body);
+</script>
+
+
 <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 
 </body>
