@@ -1,5 +1,5 @@
 import '../css/contextmenu.css';
-import ACore from "../ACore";
+import ACore, { $$ } from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 import Vec2 from 'absol/src/Math/Vec2';
@@ -124,6 +124,9 @@ ContextCaptor.prototype.showContextMenu = function (x, y, props, onSelectItem) {
             });
         }
         anchor.addClass('absol-active');
+        $$('VMenuItem'.toLowerCase(), vmenu).forEach(e => {
+            if (e.autoFixParentSize) e.autoFixParentSize();
+        });
     }, 30);
 
 
