@@ -129,6 +129,7 @@
     color: rgb(104, 104, 104);
     margin-left: 0.5em;
     font-size: 0.85em;
+	vertical-align: middle;
 }
 
 .absol-exp-node-desc:empty {
