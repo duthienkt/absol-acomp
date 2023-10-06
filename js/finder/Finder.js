@@ -116,6 +116,12 @@ function Finder() {
      * @name rootPath
      * @memberOf Finder#
      */
+
+    /***
+     * @type {string}
+     * @name accept
+     * @memberOf Finder#
+     */
 }
 
 Finder.tag = 'Finder'.toLowerCase();
@@ -1894,6 +1900,17 @@ FolderDialog.prototype.open = function (initPath, showRoot, checkFunc, title) {
     });
 };
 
+var isMatchAccept = (accept, statInfo) => {
+    if (accept && (typeof accept === "object") && accept.accept) accept = accept.accept;
+    if (typeof accept !== "string") return true;
+    if (!accept) return true;
+    if (statInfo.isDirectory) return true;
+    var fileInfo = fileInfoOf(statInfo);
+    if (accept.startsWith('image')) {
+        return fileInfo.mimeType && fileInfo.mimeType.startsWith('image');
+    }
+    return true;// not handle other case
+}
 
 /***
  *
@@ -2061,6 +2078,7 @@ NavigatorController.prototype.viewDir = function (path) {
                     return 1;
                 }
             });
+            stats = stats.filter(x=> isMatchAccept(this.elt.accept,x));
             this.viewContent(stats);
         });
 };
@@ -2358,7 +2376,7 @@ AbsolFileSystem.prototype.clearCache = function () {
 AbsolFileSystem.prototype.readDir = function (path) {
     this.sync = this.sync.then(() => {
         if (this.cache.readDir[path || '..']) return this.cache.readDir[path || '..'];
-        return fetch('https://absol.cf/filesystem/ls.php', {
+        return fetch('/filesystem/ls.php', {
             method: 'POST',
             cache: "no-cache",
             headers: {
@@ -2371,7 +2389,7 @@ AbsolFileSystem.prototype.readDir = function (path) {
             res = res.filter(c => c.path.startsWith('/html'));
             res.forEach(c => {
                 c.name = c.path.split('/').pop();
-                c.url = c.path.replace('/html', 'https://absol.cf')
+                c.url = c.path.replace('/html', location.origin)
             });
             this.cache.readDir[path || '..'] = res.map(c => c.name);
             res.forEach(c => {
@@ -2434,7 +2452,7 @@ AbsolFileSystem.prototype.writeFile = function (file, data, onProcess) {
                 var form = new FormData();
                 form.append('action', 'upload_part');
                 form.append('fileUpload', bundle.file, bundle.name);
-                fetch('https://absol.cf/filesystem/writefile.php', {
+                fetch('/filesystem/writefile.php', {
                     method: 'POST',
                     body: form
                 }).then(res => res.text()).then(text => {
@@ -2443,7 +2461,7 @@ AbsolFileSystem.prototype.writeFile = function (file, data, onProcess) {
                     if (typeof onProcess === "function") {
                         onProcess(syncDone / (syncs.length || 1));
                     }
-                    rs('https://absol.cf');
+                    rs(location.origin);
                     finishTask();
                 });
             }, bundle);
@@ -2468,7 +2486,7 @@ AbsolFileSystem.prototype.writeFile = function (file, data, onProcess) {
         form.append('action', 'join_parts');
         form.append('parts', parts.join(';'));
         form.append('path', file);
-        fetch('https://absol.cf/filesystem/writefile.php', {
+        fetch('/filesystem/writefile.php', {
             method: 'POST',
             body: form
         }).then(res => res.text()).then(text => {
@@ -2485,7 +2503,7 @@ AbsolFileSystem.prototype.unlink = function (path) {
     var form = new FormData();
     form.append('action', 'delete_files');
     form.append('paths', path);
-    return fetch('https://absol.cf/filesystem/writefile.php', {
+    return fetch('/filesystem/writefile.php', {
         method: 'POST',
         body: form
     }).then(res => res.text()).then(text => {
@@ -2502,7 +2520,7 @@ AbsolFileSystem.prototype.rename = function (path, name) {
     form.append('action', 'rename');
     form.append('path', path);
     form.append('new_name', name);
-    return fetch('https://absol.cf/filesystem/writefile.php', {
+    return fetch('/filesystem/writefile.php', {
         method: 'POST',
         body: form
     }).then(res => res.text()).then(text => {
@@ -2511,7 +2529,7 @@ AbsolFileSystem.prototype.rename = function (path, name) {
         delete this.cache.readDir[folderPath];
         delete this.cache.stats[path];
         return {
-            url: newPath.replace('/html', 'https://absol.cf'),
+            url: newPath.replace('/html', location.origin),
             path: newPath,
             name: name
         }
@@ -2531,7 +2549,7 @@ AbsolFileSystem.prototype.move = function (oldPath, newPath) {
     form.append('action', 'move');
     form.append('old_path', oldPath);
     form.append('new_path', newPath);
-    return fetch('https://absol.cf/filesystem/writefile.php', {
+    return fetch('/filesystem/writefile.php', {
         method: 'POST',
         body: form
     }).then(res => res.text()).then(text => {
