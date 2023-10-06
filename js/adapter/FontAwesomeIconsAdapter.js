@@ -3,13 +3,14 @@
  */
 import Dom from "absol/src/HTML5/Dom";
 import ACore from "../../ACore";
-
+import '../../css/icons.css';
 export var FontAwesomeIconsNameMap = {
     'close': 'times'
 };
 
 export var MaterialDesignIconsCode = {};
 
+/*
 Dom.documentReady.then(function () {
     var _ = ACore._;
     var iElt = _({
@@ -39,3 +40,5 @@ Dom.documentReady.then(function () {
         }
     }).addTo(document.head);
 });
+
+*/
