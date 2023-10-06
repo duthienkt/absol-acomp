@@ -1,3 +1,9 @@
+/****Adapt icon************/
+.fa-close:before {
+    content: "\f00d";
+}
+
+
 .kv-document-2-site {
     display: flex;
     align-content: stretch;

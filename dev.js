@@ -1,6 +1,5 @@
 import 'absol/src/polyfill';
 import "absol/src/absol";
-import './js/adapter/MaterialDesignIconsAdapter';
 import AComp from "./AComp";
 import * as string from 'absol/src/String/stringMatching';
 import './css/keeview.css';
@@ -15,7 +14,6 @@ import EmojiPicker from './js/EmojiPicker';
 import ContextCaptor from './js/ContextMenu';
 import install from "./js/dom/install";
 import SearchTextInput from "./js/Searcher";
-import { MaterialDesignIconsNameMap } from "./js/adapter/MaterialDesignIconsAdapter";
 import { openFileDialog, vScrollIntoView } from "./js/utils";
 import * as utils from "./js/utils";
 import materializeIconTrigger from "./js/materializeIconTrigger";
@@ -80,7 +78,6 @@ Object.assign(absol.$, utils);
 
 // materializeIconTrigger();
 
-absol.MaterialDesignIconsNameMap = MaterialDesignIconsNameMap;
 absol.openFileDialog = openFileDialog;
 absol.CPUViewer = CPUViewer;
 
