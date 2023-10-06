@@ -1,4 +1,4 @@
-import ACore from "../ACore";
+import ACore, { $$ } from "../ACore";
 import Dom, { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import './Menu';
@@ -220,10 +220,8 @@ QuickMenuInstance.prototype.close = function () {
 };
 
 QuickMenuInstance.prototype._onSizeNeedUpdate = function () {
-    Array.prototype.forEach.call(QuickMenu.$elt.childNodes, elt => {
-        if (elt.autoFixParentSize) {
-            elt.autoFixParentSize();
-        }
+    $$('VMenuItem'.toLowerCase(), QuickMenu.$elt).forEach(e => {
+        if (e.autoFixParentSize) e.autoFixParentSize();
     });
     var screenSize = getScreenSize();
     var eltBound = this.elt.getBoundingClientRect();
