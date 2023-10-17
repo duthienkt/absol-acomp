@@ -15,9 +15,23 @@ function autoThemeVariable(viewElt) {
     hsla[2] = (hsla[2] + 1) / 2;
     hsla[1] = (hsla[1] + 0.2) / 2;
     var nColor = Color.fromHSLA(hsla[0], hsla[1], hsla[2], hsla[3]);
-    viewElt.addStyle('--node-background-color', nColor.toString('rgba'));
+    viewElt.addStyle('--vert-node-background-color', nColor.toString('rgba'));
     nColor = nColor.getContrastYIQ();
-    viewElt.addStyle('--node-text-color', nColor.toString('rgba'));
+    viewElt.addStyle('--vert-node-text-color', nColor.toString('rgba'));
+    hsla[0] += 0.1;
+    if (hsla[0] > 1) hsla[0] -= 1;
+    nColor = Color.fromHSLA(hsla[0], hsla[1], hsla[2], hsla[3]);
+    viewElt.addStyle('--horz-node-background-color', nColor.toString('rgba'));
+    nColor = nColor.getContrastYIQ();
+    viewElt.addStyle('--horz-node-text-color', nColor.toString('rgba'));
+    hsla[0] -= 0.2;
+    if (hsla[0] < 0) hsla[0] += 1;
+    nColor = Color.fromHSLA(hsla[0], hsla[1], hsla[2], hsla[3]);
+    viewElt.addStyle('--root-background-color', nColor.toString('rgba'));
+    nColor = nColor.getContrastYIQ();
+    viewElt.addStyle('--root-text-color', nColor.toString('rgba'));
+
+
 }
 
 /***
@@ -25,7 +39,7 @@ function autoThemeVariable(viewElt) {
  * @constructor
  */
 function TreeChart() {
-    autoThemeVariable(this);
+    // autoThemeVariable(this);
     this.$domSignal = _('attachhook').addTo(this);
     this.domSignal = new DomSignal(this.$domSignal);
     this.domSignal.on('formatSize', this._formatSize.bind(this));
@@ -106,8 +120,8 @@ TreeChart.prototype._updateContent = function () {
         }
 
 
-
         if (level === this.maxHorizonLevel) elt.addClass('as-horizontal');
+        if (nodeData.isLeaf)  elt.addClass('as-is-leaf');
         if (nodeData.items && nodeData.items.length > 0) {
             elt.addClass('as-has-children');
             /***
@@ -146,7 +160,6 @@ TreeChart.prototype._formatSize = function () {
         else {
             sArr = elt.$children.map(e => e.$content.getBoundingClientRect().width);
             maxS = Math.max.apply(Math, sArr);
-            console.log(elt.$children, sArr)
             elt.$children.forEach((elt, i) => {
                 if (sArr[i] < maxS) {
                     elt.$content.addStyle('width', maxS + 'px');

@@ -5,8 +5,19 @@
 }
 
 .as-tree-chart {
-    --node-background-color: rgba(0, 150, 150);
-    --node-text-color: white;
+    --root-background-color: #ED7D31;
+    --root-text-color: white;
+
+    --vert-node-background-color: #4472C4;
+    --vert-node-text-color: white;
+
+    --horz-node-background-color: #A9D18E;
+    --horz-node-text-color: black;
+
+    --leaf-node-background-color: #F8CBAD;
+    --leaf-node-text-color: black;
+
+
     font-size: 1rem;
 }
 
@@ -22,6 +33,23 @@
     position: relative;
 }
 
+.as-tree-chart-node[data-level="0"] >.as-tree-chart-content-ctn> .as-tree-chart-content {
+    background-color: var(--root-background-color);
+    color: var(--root-text-color);
+}
+
+.as-tree-chart-node.as-horizontal .as-tree-chart-child-ctn .as-tree-chart-content{
+    background-color: var(--horz-node-background-color);
+    color: var(--horz-node-text-color);
+}
+
+.as-tree-chart-node.as-is-leaf >.as-tree-chart-content-ctn> .as-tree-chart-content {
+    background-color: var(--leaf-node-background-color);
+    color: var(--leaf-node-text-color);
+}
+
+
+
 .as-tree-chart-content {
     padding: 5px;
     border-radius: 4px;
@@ -29,12 +57,12 @@
     text-align: center;
     position: relative;
     display: inline-block;
-    background-color: var(--node-background-color);
-    color: var(--node-text-color);
+    background-color: var(--vert-node-background-color);
+    color: var(--vert-node-text-color);
 }
 
 .as-as-tree-chart-icon,
-.as-as-tree-chart-text{
+.as-as-tree-chart-text {
     display: inline-block;
     vertical-align: middle;
 }
@@ -102,7 +130,7 @@
     top: -10px;
 }
 
-.as-tree-chart-node.as-horizontal .as-tree-chart-child-ctn  .as-tree-chart-content{
+.as-tree-chart-node.as-horizontal .as-tree-chart-child-ctn .as-tree-chart-content {
     text-align: left;
 }
 
