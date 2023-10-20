@@ -19,6 +19,7 @@
 
 
     font-size: 1rem;
+    display: inline-block;
 }
 
 .as-tree-chart-node {
@@ -88,6 +89,9 @@
 .as-tree-chart-child-ctn {
     white-space: nowrap;
     padding-top: 10px;
+    text-align: center;
+    vertical-align: top;
+    box-sizing: border-box;
 }
 
 .as-tree-chart-node:not(.as-horizontal) > .as-tree-chart-child-ctn > .as-tree-chart-node:not(:last-child) {

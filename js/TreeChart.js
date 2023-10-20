@@ -43,6 +43,7 @@ function TreeChart() {
     this.$domSignal = _('attachhook').addTo(this);
     this.domSignal = new DomSignal(this.$domSignal);
     this.domSignal.on('formatSize', this._formatSize.bind(this));
+    this.domSignal.on('fixWidth', this._fixWidth.bind(this));
     this.$root = null;
     this._maxHorizonLevel = 2;
     /***
@@ -121,7 +122,7 @@ TreeChart.prototype._updateContent = function () {
 
 
         if (level === this.maxHorizonLevel) elt.addClass('as-horizontal');
-        if (nodeData.isLeaf)  elt.addClass('as-is-leaf');
+        if (nodeData.isLeaf) elt.addClass('as-is-leaf');
         if (nodeData.items && nodeData.items.length > 0) {
             elt.addClass('as-has-children');
             /***
@@ -174,7 +175,32 @@ TreeChart.prototype._formatSize = function () {
     if (cBound.width !== newBound.width || cBound.height !== newBound.height) {
         ResizeSystem.update();
     }
+    this.domSignal.emit('fixWidth');
 };
+
+TreeChart.prototype._fixWidth = function () {
+    if (!this.$root) return;
+    var cBound = this.getBoundingClientRect();
+    var maxHorizonLevel = this.maxHorizonLevel;
+    var visit = (elt) => {
+        if (!elt.$children) return;
+        elt.$children.forEach(c => visit(c));
+        var bound, cBound;
+        bound = elt.$childCtn.getBoundingClientRect();
+        cBound = elt.$childCtn.getBoundingRecursiveRect(100);
+        if (cBound.width > bound.width) {
+            console.log(elt.$childCtn)
+            elt.$childCtn.addStyle('width', cBound.width + 'px');
+        }
+    };
+
+    visit(this.$root);
+    var newBound = this.getBoundingClientRect();
+    if (cBound.width !== newBound.width || cBound.height !== newBound.height) {
+        ResizeSystem.update();
+    }
+};
+
 
 TreeChart.property = {};
 
