@@ -167,9 +167,9 @@ function DynamicTable() {
         this.layoutCtrl.onAttached();
         this.colSizeCtrl.onAttached();
         manager.add(this);
-        setTimeout(()=>{
+        setTimeout(() => {
             this.requestUpdateSize();
-        },10);
+        }, 10);
     })
     /***
      *
@@ -578,6 +578,7 @@ function LayoutController(elt) {
 
     this.elt.$hscrollbar.on('scroll', this.ev_hScrollbarScroll);
     this.elt.$vscrollbar.on('scroll', this.ev_vScrollbarScroll);
+    this.elt.$viewport.on('scroll', this.ev_viewportScroll);
 
     this.elt.on('wheel', this.ev_wheel);
     this.scrollingDir = Vec2.ZERO;
@@ -874,6 +875,20 @@ LayoutController.prototype.ev_drag = function (event) {
 
 LayoutController.prototype.ev_dragEnd = function (event) {
 
+};
+
+LayoutController.prototype.ev_viewportScroll = function (event) {
+    if (this.elt.$viewport.scrollLeft !== 0) {
+        this.elt.$hscrollbar.innerOffset += this.elt.$viewport.scrollLeft;
+        this.elt.$viewport.scrollLeft = 0;
+        this.elt.$hscrollbar.emit('scroll');
+    }
+
+    if (this.elt.$viewport.scrollTop !== 0) {
+        this.elt.$vscrollbar.innerOffset += this.elt.$viewport.scrollTop / 30;//todo: better solution
+        this.elt.$viewport.scrollTop = 0;
+        this.elt.$vscrollbar.emit('scroll');
+    }
 };
 
 /***

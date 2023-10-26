@@ -477,12 +477,17 @@ NormalMode.prototype.onRowSplice = function (idx) {
 };
 
 
-NormalMode.prototype.viewIntoRow = function (row) {
-    var idx = this.viewedRows.indexOf(row);
+NormalMode.prototype.viewIntoRow = function (o) {
+    var idx = this.viewedRows.findIndex(row => {
+        if (o === row._elt) return true;
+        if (o === row) return true;
+        if (o === row.data) return true;
+        if (o === row.id || row.data.id) return true;
+        return false;
+    });
     if (idx <= 0) return;
     this.offset = idx;
     this.render();
-
 };
 
 
