@@ -96,11 +96,27 @@ DualSelectMenu.prototype._updateViewValue = function () {
         class:['as-selectlist-item-text', 'absol-selectlist-item-text'],
         child: { text: text }
     }));
-
-
 };
 
 DualSelectMenu.property = {};
+
+DualSelectMenu.property.selectedItems = {
+    get: function () {
+        var value = this.$box.value || [null, null];
+        var hbv = this.$box.holderByValue;
+        var firstHolder = hbv[value[0]];
+        var sectHolder;
+        var res = [null, null];
+        if (firstHolder) {
+            res[0] = firstHolder.item;
+            sectHolder = firstHolder.child[value[1]];
+            if (sectHolder)
+                res[1] = sectHolder.item;
+        }
+
+        return res;
+    }
+};
 
 DualSelectMenu.property.isFocus = {
     /***
