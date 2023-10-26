@@ -19,6 +19,7 @@ function LocationPicker() {
     }
     this.map = new google.maps.Map(this, {
         zoom: 8,
+        scaleControl: true,
         center: new google.maps.LatLng(21.018755, 105.839729),
         streetViewControl: false,
         fullscreenControl: false,

@@ -200,7 +200,7 @@ LVPoints.prototype.remove = function () {
  * @constructor
  */
 function LocationView() {
-    this.map = new google.maps.Map(this, { zoom: 8, center: new google.maps.LatLng(21.018755, 105.839729) });
+    this.map = new google.maps.Map(this, { zoom: 8, center: new google.maps.LatLng(21.018755, 105.839729),  scaleControl: true });
     this.marker = null;
     this._value = null;
     this.$domSignal = _('attachhook').addTo(this);
