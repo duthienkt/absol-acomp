@@ -1,6 +1,6 @@
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
 import { measureText } from "absol/src/HTML5/Text";
-import { isRealNumber } from "../utils";
+import { isNaturalNumber, isRealNumber } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import noop from "absol/src/Code/noop";
 
@@ -326,10 +326,12 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
             delEnd = sEnd;
         }
 
-        this.$input.value = value.substring(0, delStart) + value.substring(delEnd);
-        this.$input.setSelectionRange(delStart, delStart);
-        this.reformat();
-        this.flushTextToValue();
+        if (isNaturalNumber(delStart) && isNaturalNumber(delEnd)){
+            this.$input.value = value.substring(0, delStart) + value.substring(delEnd);
+            this.$input.setSelectionRange(delStart, delStart);
+            this.reformat();
+            this.flushTextToValue();
+        }
     };
 
     onKeys.decimalSeparator = () => {
