@@ -4,8 +4,9 @@ import { measureListSize, releaseItem, requireItem } from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import { depthIndexingByValue, indexingByValue } from "./list/listIndexing";
-import { copySelectionItemArray, keyStringOf } from "./utils";
+import { copySelectionItemArray, keyStringOf, measureText } from "./utils";
 import ListSearchMaster from "./list/ListSearchMaster";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -13,6 +14,17 @@ var $$ = ACore.$$;
 
 export var VALUE_HIDDEN = -1;
 export var VALUE_NORMAL = 1;
+
+var calcWidthLimit = () => {
+    var width = getScreenSize().width;
+    if (BrowserDetector.isMobile) {
+        width -= 20;
+    }
+    else {
+        width = width * 0.9 - 250;
+    }
+    return Math.min(width, 1280);
+}
 
 /***
  * @extends Follower
@@ -84,6 +96,8 @@ SelectListBox.prototype._initDomHook = function () {
     this.domSignal.on('viewListAtFirstSelected', this.viewListAtFirstSelected.bind(this));
     this.domSignal.on('viewListAtCurrentScrollTop', this.viewListAtCurrentScrollTop.bind(this));
     this.searchMaster = new ListSearchMaster();
+    this.widthLimit = calcWidthLimit();
+    this.addStyle('--as-width-limit', this.widthLimit + 'px');
 
 };
 
@@ -144,9 +158,22 @@ SelectListBox.prototype._requireItem = function (pageElt, n) {
 SelectListBox.prototype._assignItems = function (pageElt, offset) {
     var n = Math.min(this._displayItems.length - offset, pageElt.childNodes.length);
     var itemElt, value;
+    var data;
     for (var i = 0; i < n; ++i) {
         itemElt = pageElt.childNodes[i];
-        itemElt.data = this._displayItems[offset + i];
+        data = this._displayItems[offset + i];
+        if (data && data !== true && data.text) {
+            if (!data.textLength)
+                data.textLength = measureText(data.text + '', '14px arial').width;
+            if (data.textLength > this.widthLimit - 5) {
+                itemElt.attr('title', data.text);
+            }
+            else itemElt.attr('title', null);
+        }
+        else {
+            itemElt.attr('title', null);
+        }
+        itemElt.data = data;
         value = itemElt.value + '';
     }
 };
@@ -367,7 +394,7 @@ SelectListBox.prototype._updateItems = function () {
     this._preDisplayItems = this._itemsToNodeList(this._items);
     this._searchCache = {};
     var estimateSize = measureListSize(this._itemNodeList);
-
+    estimateSize.width = Math.min(this.widthLimit || Infinity, estimateSize.width);
     this._estimateSize = estimateSize;
     this._estimateWidth = estimateSize.width;
     this._estimateDescWidth = estimateSize.descWidth;

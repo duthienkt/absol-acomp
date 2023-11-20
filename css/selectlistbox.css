@@ -1,6 +1,7 @@
 .as-select-list-box {
     --select-list-estimate-width: 0;
     --max-height: calc(100vh - 80px);
+    --as-width-limit: 100vw;
     position: fixed;
     top: 10px;
     left: 10px;
@@ -93,6 +94,14 @@ div.absol-follower.as-select-list-box {
 
 .as-select-list-box .absol-selectlist-item {
     cursor: default;
+}
+
+.as-select-list-box .absol-selectlist-item-text {
+    max-width: calc(var(--as-width-limit) - var(--select-list-desc-width) - 10px);
+    display: inline-block;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .as-select-list-box-search-ctn {

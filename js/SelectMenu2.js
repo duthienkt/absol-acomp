@@ -4,6 +4,7 @@ import ACore, { _, $ } from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom, { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
+import { measureText } from "./utils";
 
 
 ACore.creator['dropdown-ico'] = function () {
@@ -40,6 +41,8 @@ function SelectMenu() {
             preupdateposition: this.eventHandler.preUpdateListPosition
         }
     });
+    this.widthLimit = this.$selectlistBox.widthLimit;
+    this.addStyle('--as-width-limit', this.$selectlistBox.widthLimit + 'px');
 
     var checkView = () => {
         if (this.isDescendantOf(document.body)) {
@@ -114,11 +117,19 @@ SelectMenu.prototype.init = function (props) {
 SelectMenu.prototype.updateItem = function () {
     var value = this._explicit(this._value);
     var selectedItems = this.$selectlistBox.findDisplayItemsByValue(value);
+    var data;
     if (selectedItems.length >= 1) {
-        this.$viewItem.data = selectedItems[0].item;
+        data = selectedItems[0].item;
+        this.$viewItem.data = data;
+        if (data.text && measureText(data.text + '', '14px arial').width - 30 > this.widthLimit) {
+            this.$viewItem.attr('title', data.text);
+        }
+        else
+            this.$viewItem.attr('title', null);
     }
     else {
-        this.$viewItem.data = { text: '', value: null }
+        this.$viewItem.data = { text: '', value: null };
+        this.$viewItem.attr('title', null);
     }
 };
 
