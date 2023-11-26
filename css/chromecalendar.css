@@ -10,6 +10,7 @@
     user-select: none;
     background-color: rgb(255, 255, 255);
     white-space: initial;
+    outline: none;
 }
 
 .absol-chrome-calendar * {

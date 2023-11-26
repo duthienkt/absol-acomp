@@ -76,6 +76,7 @@ function ChromeCalendar() {
         .on('request_update_disabled_year_in_era', this._updateDisabledYearInEra.bind(this))
         .on('request_update_picked_years', this._updatePickedYears.bind(this));
 
+    this.on('keydown', this.eventHandler.keydown);
     this.sync = new Promise(function (rs) {
         thisCal.$attachHook.on('attached', rs);
     });
@@ -91,6 +92,7 @@ function ChromeCalendar() {
     OOP.drillProperty(this, this, 'maxDateLimit', 'max');
 
     this.startDayOfWeek = getDefaultFirstDayOfWeek();
+
 }
 
 
@@ -100,6 +102,7 @@ ChromeCalendar.render = function () {
         class: ['absol-chrome-calendar'],
         attr: {
             'data-level': 'day',
+            tabindex: '1'
         },
         extendEvent: 'pick',
         child: [
@@ -1266,6 +1269,16 @@ ChromeCalendar.eventHandler.levelChange = function () {
             this.viewEra();
             break;
     }
+};
+
+
+ChromeCalendar.eventHandler.keydown = function (event) {
+    
+    console.log(event.key);
+};
+
+ChromeCalendar.eventHandler.doubleKey = function (event) {
+
 };
 
 ACore.install(ChromeCalendar);
