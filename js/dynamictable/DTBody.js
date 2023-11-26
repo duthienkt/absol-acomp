@@ -280,6 +280,8 @@ SearchingMode.prototype.end = function () {
 SearchingMode.prototype.updateRowsIfNeed = function () {
     var screenSize = getScreenSize();
     var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
+    if (this.body.table.wrapper.hasClass('as-adapt-infinity-grow')) rowPerPage = 1e7;
+
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
     if (this.resultItems.length - newRowOffset < rowPerPage) {
         newRowOffset = Math.max(0, newRowOffset - rowPerPage);
@@ -422,6 +424,7 @@ NormalMode.prototype.end = function () {
 NormalMode.prototype.updateRowsIfNeed = function () {
     var screenSize = getScreenSize();
     var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
+    if (this.body.table.wrapper.hasClass('as-adapt-infinity-grow')) rowPerPage = 1e7;
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
 
     var data = this.body.data;
@@ -482,7 +485,7 @@ NormalMode.prototype.viewIntoRow = function (o) {
         if (o === row._elt) return true;
         if (o === row) return true;
         if (o === row.data) return true;
-        if (o === row.id || row.data.id) return true;
+        if (o === row.id || row.data.id === o) return true;
         return false;
     });
     if (idx <= 0) return;
