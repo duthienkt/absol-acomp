@@ -8,6 +8,8 @@ import { $$, _, $ } from "../../ACore";
  * @constructor
  */
 function DTHead(table, data) {
+    if (!data) data = {};
+    if (!data.rows) data.rows = [];
     this.table = table;
     this._elt = null;
     this._copyElt = null;
