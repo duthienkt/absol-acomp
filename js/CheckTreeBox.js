@@ -57,6 +57,7 @@ CheckTreeBox.prototype._initProperty = function () {
     this.scale14 = $(document.body).getFontSize() / 14;
     this._items = [];
     this._values = [];
+    this.initOpened = 0;
     this.itemHolderByValue = {};
     this.rootHolder = null;
 
@@ -544,6 +545,12 @@ CheckTreeBox.prototype.RootHolderClass = TreeRootHolder;
 
 TreeRootHolder.prototype.level = -1;
 
+TreeRootHolder.prototype.reset = function () {
+    this.child.forEach(c => c.reset());
+    this.selected = "none";
+
+};
+
 /***
  *
  * @param {Array=} ac
@@ -597,6 +604,7 @@ TreeRootHolder.prototype.getValues = function (ac) {
  * @param {Array} values
  */
 TreeRootHolder.prototype.setValues = function (values) {
+    this.reset();
     values = values.reduce((ac, cr) => {
         ac[keyStringOf(cr)] = true;
         return ac;
@@ -687,6 +695,9 @@ export function TreeNodeHolder(boxElt, item, idx, parent) {
     this.status = (item.items && item.items.length > 0) ? 'close' : 'none';
     this.selected = 'none';
     this.level = parent ? parent.level + 1 : 0;
+    if (this.status === 'close'  && this.level < this.boxElt.initOpened) {
+        this.status = 'open';
+    }
     this._elt = null;
     var Clazz = this.constructor;
     /***
@@ -850,6 +861,14 @@ TreeNodeHolder.prototype.unselectAll = function (isDownUpdate) {
         if (this.parent) this.parent.updateUp();
     }
 };
+
+TreeNodeHolder.prototype.reset = function () {
+    this.selected = 'none';
+    if (this.itemElt) this.itemElt.selected = this.selected;
+    this.child.forEach(function (child) {
+        child.reset(true);
+    });
+}
 
 TreeNodeHolder.prototype.updateFromChild = function () {
     if (this.child.length === 0) return;
