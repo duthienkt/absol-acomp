@@ -1,4 +1,3 @@
-import MCTBItemHolder from "./MCTBItemHolder";
 import { keyStringOf } from "../utils";
 
 /***
