@@ -150,6 +150,17 @@ export function calcItemMatchScore(queryItem, item) {
     return score;
 }
 
+function isItemMustIncluded(queryItem, item) {
+    var dict1 = queryItem.__nvnWordDict__;
+    var dict2 = item.__nvnWordDict__;
+    for (var i in dict1) {
+        for (var j in dict2)  {
+            if (j.indexOf(i)<0) return false;
+        }
+    }
+    return true;
+}
+
 /***
  *
  * @param  {String} query
@@ -163,7 +174,8 @@ export function searchListByText(query, items) {
     var its = items.map(function (item) {
         return {
             item: item,
-            score: calcItemMatchScore(queryItem, item)
+            score: calcItemMatchScore(queryItem, item),
+            mustIncluded: isItemMustIncluded(queryItem, item)
         }
     });
     its.sort(function (a, b) {
@@ -177,7 +189,7 @@ export function searchListByText(query, items) {
     if (midValue === 0) midValue += 0.1;
     if (midValue < 1) midValue = 1;
     return its.filter(function (it) {
-        return it.score >= midValue;
+        return it.score >= midValue || it.mustIncluded;
     }).map(function (it) {
         return it.item;
     });
@@ -198,12 +210,15 @@ export function searchTreeListByText(query, items) {
 
     function makeScoreRecursive(item) {
         var score = calcItemMatchScore(queryItem, item);
-        gmaxScore = Math.max(score, gmaxScore);
+        var mustIncluded = isItemMustIncluded(queryItem, item);
+            gmaxScore = Math.max(score, gmaxScore);
         gminScore = Math.min(score, gminScore);
 
         var children = (item.items || []).map(function (item) {
             return makeScoreRecursive(item);
         });
+
+        mustIncluded = mustIncluded || children.some(c=> c.mustIncluded);
 
         var maxScore = children.reduce(function (ac, cr) {
             return Math.max(ac, cr.maxScore);
@@ -213,7 +228,8 @@ export function searchTreeListByText(query, items) {
             score: score,
             maxScore: maxScore,
             item: item,
-            children: children
+            children: children,
+            mustIncluded: mustIncluded
         }
     }
 
@@ -224,7 +240,7 @@ export function searchTreeListByText(query, items) {
     function filterItems(nodes, medScore) {
         nodes.sort(sortcmp);
         return nodes.filter(function (node) {
-            return node.maxScore >= medScore;
+            return node.maxScore >= medScore || node.mustIncluded;
         }).map(function (node) {
             var res;
             if (typeof node.item == 'string') {
