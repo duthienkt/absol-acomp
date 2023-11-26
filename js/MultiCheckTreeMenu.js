@@ -7,7 +7,7 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import MultiSelectMenu from "./MultiSelectMenu";
 import CheckTreeLeafOnlyBox from "./CheckTreeLeafOnlyBox";
-import { copySelectionItemArray, rootTreeValues2CheckedValues } from "./utils";
+import { copySelectionItemArray, isNaturalNumber, rootTreeValues2CheckedValues } from "./utils";
 import { arrayUnique } from "absol/src/DataStructure/Array";
 
 
@@ -19,6 +19,7 @@ function MultiCheckTreeMenu() {
     this._items = [];
     this._values = [];
     this._viewValues = [];
+    this._initOpened = 0;
     /***
      * @type {CheckTreeBox|CheckTreeLeafOnlyBox}
      */
@@ -42,6 +43,12 @@ function MultiCheckTreeMenu() {
      * parent will be selected if all off leaf selected, sub tree can not select if had no leaf
      * @name leafOnly
      * @type {boolean}
+     * @memberOf MultiCheckTreeMenu#
+     */
+    /**
+     * parent will be selected if all off leaf selected, sub tree can not select if had no leaf
+     * @name initOpened
+     * @type {number}
      * @memberOf MultiCheckTreeMenu#
      */
 
@@ -144,12 +151,14 @@ MultiCheckTreeMenu.prototype._switchLeafMode = function () {
                 toggleitem: this.eventHandler.boxToggleItem,
                 cancel: this.eventHandler.boxCancel,
                 close: this.eventHandler.boxClose
-            }
+            },
+
         });
         this._explicit = this._normalExplicit;
 
     }
     this.$checkTreeBox.followTarget = this;
+    this.$checkTreeBox.initOpened = this.initOpened;
     this.$checkTreeBox.items = this._items;
     this.$checkTreeBox.values = this._values;
     this.$checkTreeBox.enableSearch = enableSearch;
@@ -302,7 +311,7 @@ MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
             holder.child.forEach(c => scanSelected(c));
         }
     };
-    holders.forEach(c=> scanSelected(c));
+    holders.forEach(c => scanSelected(c));
     return eValues;
 };
 
@@ -386,6 +395,11 @@ MultiCheckTreeMenu.prototype.cancelView = function () {
 MultiCheckTreeMenu.prototype.init = function (props) {
     props = props || {};
     var cProps = Object.assign({}, props);
+    if ('initOpened' in props) {
+        this.initOpened = props.initOpened;
+        delete cProps.initOpened;
+    }
+
     if ('leafOnly' in props) {
         this.leafOnly = props.leafOnly;
         delete cProps.leafOnly;
@@ -404,6 +418,21 @@ MultiCheckTreeMenu.prototype.init = function (props) {
 
 
 MultiCheckTreeMenu.property = {};
+
+MultiCheckTreeMenu.property.initOpened = {
+    set: function (value) {
+        if (isNaturalNumber(value)) {
+            this._initOpened = value;
+        }
+        else {
+            this._initOpened = 0;
+        }
+        this.$checkTreeBox.initOpened = this._initOpened;
+    },
+    get: function () {
+        return this._initOpened;
+    }
+}
 
 MultiCheckTreeMenu.property.isFocus = {
     /***
