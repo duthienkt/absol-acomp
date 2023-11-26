@@ -14,7 +14,7 @@ function MultiCheckTreeMenu() {
     });
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.boxCtrl = new MMCTMBoxController(this);
-    this.tokenCtrl = new MCTMTokenController(this);
+    this.tokenCtrl = new MCTMTokenController(this);//mobile only
 }
 
 MultiCheckTreeMenu.tag = 'MultiCheckTreeMenu'.toLowerCase();
