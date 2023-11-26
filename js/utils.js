@@ -4,6 +4,7 @@ import YesNoQuestionDialog from "./YesNoQuestionDialog";
 import Modal from "./Modal";
 import ext2MineType from "absol/src/Converter/ext2MineType";
 import TextMeasurement from "./tool/TextMeasurement";
+import { MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
 
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
@@ -758,6 +759,43 @@ export function fileSize2Text(s) {
 export function isDateTimeFormatToken(text) {
     return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a', 'w', 'ww', 'Q', 'QQ'].indexOf(text) >= 0;
 }
+
+export var normalizeMinuteOfMillis = mil => {
+    mil = mil >> 0;
+    if (mil < 0) {
+        mil += Math.ceil(-mil / MILLIS_PER_DAY) * MILLIS_PER_DAY
+    }
+    mil = mil % MILLIS_PER_DAY;
+    return Math.floor(mil / 6e4) * 6e4;
+};
+
+/**
+ *
+ * @param {number} mil
+ * @returns {{hour: number, minute: number, isNextDate: boolean}}
+ */
+export var millisToClock = mil => {
+    var res = {};
+    res.minute = Math.floor(mil / 6e4) % 60;
+    var hour = Math.floor(mil / 36e5);
+
+    if (hour >= 24) {
+        res.hour = hour % 24;
+        res.isNextDate = true;
+    } else {
+        res.hour = hour;
+    }
+    return res;
+};
+
+
+export var clockToMillis = (hour, minute) => {
+    var res = hour * MILLIS_PER_HOUR + minute * MILLIS_PER_MINUTE;
+    if (isNaturalNumber(res)) return res;
+    return null;
+};
+
+
 
 export function isRealNumber(value) {
     return (isFinite(value) && (typeof value === "number"));
