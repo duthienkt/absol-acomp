@@ -3,7 +3,7 @@ import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
-import { buildCss, swapChildrenInElt } from "../utils";
+import { buildCss, vScrollIntoView } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
@@ -170,10 +170,11 @@ function DynamicTable() {
         setTimeout(() => {
             this.requestUpdateSize();
         }, 10);
+
     })
     /***
      *
-     * @type {DTDataTable||null}
+     * @type {{data: DTDataTable}||null}
      */
     this.adapter = null;
 
@@ -325,7 +326,26 @@ DynamicTable.prototype.clearRows = function () {
 };
 
 DynamicTable.prototype.viewIntoRow = function (row) {
-    this.table.body.viewIntoRow(row);
+    var counter = 300;
+    var wait = () => {
+        counter--;
+        if (this.isDescendantOf(document.body)) {
+            if (this.hasClass('as-adapt-infinity-grow')) {
+                row = this.rowOf(row);
+                if (row) {
+                    vScrollIntoView(row.elt);
+                    console.log(row.elt)
+                }
+            }
+            else
+                this.table.body.viewIntoRow(row);
+        }
+        else if (counter > 0) {
+            setTimeout(wait, 30);
+        }
+
+    }
+    setTimeout(wait, 10);
 };
 
 DynamicTable.prototype.attachSearchInput = function (inputElt) {
@@ -467,6 +487,17 @@ DynamicTable.property.adapter = {
         this.$fixedXCtn.clearChild().addChild(this.table.fixedXElt);
         this.$fixedXYCtn.clearChild().addChild(this.table.fixedXYElt);
         if (this.extendStyle) this.addStyle(this.extendStyle);
+        setTimeout(() => {
+            this.requestUpdateSize();
+        }, 10);
+
+        setTimeout(() => {
+            this.requestUpdateSize();
+        }, 30);
+
+        setTimeout(() => {
+            this.requestUpdateSize();
+        }, 100);
     },
     get: function () {
         return this._adapterData;
@@ -647,19 +678,24 @@ LayoutController.prototype.ev_wheel = function (event) {
 
 LayoutController.prototype.onAdapter = function () {
     var adapter = this.elt.adapter;
-    if (this.elt.style.height === 'auto') this.elt.removeStyle('height');
+    if (this.elt.style.height === 'auto') {
+        this.elt.removeStyle('height');
+        this.elt.addClass('as-adapt-infinity-grow');
+    }
     if (adapter.fixedCol > 0) {
         this.elt.addClass('as-has-fixed-col');
     }
     else {
         this.elt.removeClass('as-has-fixed-col');
     }
-
-    if (adapter?.rowsPerPage === Infinity) {
-        this.elt.addStyle('as-adapt-infinity-grow');
+    if (adapter.rowsPerPage === Infinity) {
+        this.elt.addClass('as-adapt-infinity-grow');
+    }
+    if (!adapter.data.head || !adapter.data.head.rows || !adapter.data.head.rows[0] || !adapter.data.head.rows[0].cells || !adapter.data.head.rows[0].cells[0]) {
+        this.elt.addClass('as-headless');
     }
     else {
-        this.elt.addStyle('as-adapt-infinity-grow');
+        this.elt.removeClass('as-headless');
     }
 };
 
@@ -684,7 +720,25 @@ LayoutController.prototype.handleMinWidth = function () {
     freeCells.forEach((cell, i) => {
         var width = cellWidths[i];
         var newWidth = width + width / sumWidth * needGrowUp;
+        var paddingLeft = cell.copyElt.getComputedStyleValue('padding-left') || '0px';
+        var paddingRight = cell.copyElt.getComputedStyleValue('padding-right') || '0px';
+        paddingLeft = parseFloat(paddingLeft.replace('px', ''));
+        paddingRight = parseFloat(paddingRight.replace('px', ''));
+
         cell.copyElt.addStyle('width', newWidth + 'px');
+        cell.copyElt.addStyle('--as-force-min-width', newWidth - paddingLeft - paddingRight - 1 + 'px');
+        cell.elt.addClass('as-col-width-auto');
+        cell.copyElt.addClass('as-col-width-auto');
+        cell.elt.addStyle('--as-force-min-width', newWidth - paddingLeft - paddingRight - 1 + 'px');
+        if (cell._copyElt1) {
+            cell._copyElt1.addStyle('--as-force-min-width', newWidth - paddingLeft - paddingRight - 1 + 'px');
+            cell._copyElt1.addClass('as-col-width-auto');
+
+        }
+        if (cell._copyElt2) {
+            cell._copyElt2.addClass('as-col-width-auto');
+            cell._copyElt2.addStyle('--as-force-min-width', newWidth - paddingLeft - paddingRight - 1 + 'px');
+        }
     });
 };
 
