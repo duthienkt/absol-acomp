@@ -3,6 +3,7 @@ import CheckTreeBox, { TreeNodeHolder, TreeRootHolder } from "./CheckTreeBox";
 import CheckTreeItem from "./CheckTreeItem";
 import OOP from "absol/src/HTML5/OOP";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
+import { keyStringOf } from "./utils";
 
 
 var normalizeItem = item => {
@@ -101,7 +102,7 @@ CheckTreeLeafOnlyBox.property.items = {
         items = normalizeItems(items || []);
         CheckTreeBox.property.items.set.call(this, items);
     }
-}
+};
 
 CheckTreeLeafOnlyBox.prototype._requestItem = function () {
     var res = this._pool.pop() || _({
@@ -146,6 +147,8 @@ CheckTreeLeafOnlyBox.prototype.RootHolderClass = TreeLeafOnlyRootHolder;
 
 OOP.mixClass(TreeLeafOnlyRootHolder, TreeRootHolder);
 
+
+
 /***
  * @extends TreeNodeHolder
  * @constructor
@@ -163,6 +166,7 @@ export function TreeLeafOnlyNodeHolder() {
     else {
         this.leafCount = this.child.reduce((ac, c) => ac + c.leafCount, 0);
     }
+
     if (this.child.length > 0) {
         this.item.noSelect = this.child.every(c => c.item.noSelect);//all child is noSelect=> noSelect
     }
@@ -175,6 +179,16 @@ OOP.mixClass(TreeLeafOnlyNodeHolder, TreeNodeHolder);
 
 TreeLeafOnlyRootHolder.prototype.SubHolderClass = TreeLeafOnlyNodeHolder;
 
+
+TreeLeafOnlyNodeHolder.prototype.setValues = function (values) {
+    if (values[keyStringOf(this.item.value)]) {
+        this.selectAll(true);
+    }
+    else {
+        this.child.forEach(c => c.setValues(values));
+    }
+    this.updateFromChild();
+};
 
 /***
  *
