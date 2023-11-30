@@ -122,7 +122,7 @@ function DTSearchFactor(global) {
         }, {});
 
         item.__nvnWords__ = __nvnText__.split(spliter);
-        item.__nvnText__ =  item.__nvnWords__.join(' ')
+        item.__nvnText__ = item.__nvnWords__.join(' ')
         item.__nvnWords__.sort();
         item.__nvnWordDict__ = item.__nvnWords__.reduce((ac, cr, i) => {
             ac[cr] = i + 1;
@@ -142,8 +142,7 @@ function DTSearchFactor(global) {
             if (item.__wordDict__[queryItem.__words__[i]]) {
                 hwScore += HAS_WORD_SCORE;
             }
-            else
-            if (item.__nvnWordDict__[queryItem.__nvnWords__[i]]) {
+            else if (item.__nvnWordDict__[queryItem.__nvnWords__[i]]) {
                 hwScore += HAS_NVN_WORD_SCORE;
             }
         }
@@ -151,18 +150,20 @@ function DTSearchFactor(global) {
         score = hwScore;
 
         if (item.__text__ === queryItem.__text__) {
-             score += EQUAL_MATCH_SCORE;
+            score += EQUAL_MATCH_SCORE;
         }
 
         var extraIndex = item.__text__.indexOf(queryItem.__text__);
 
         if (extraIndex >= 0) {
-            score += EXTRA_MATCH_SCORE;
+            score += EXTRA_MATCH_SCORE + 200 - extraIndex - (item.__text__.length - queryItem.__text__.length);
+
         }
 
         extraIndex = item.__nvnText__.indexOf(queryItem.__nvnText__);
         if (extraIndex >= 0) {
-            score += EXTRA_MATCH_SCORE;
+            score += EXTRA_MATCH_SCORE + 200 - extraIndex - (item.__text__.length - queryItem.__text__.length);
+
         }
 
         var n = Math.max(queryItem.__words__.length + 1, 1);
