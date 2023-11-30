@@ -121,12 +121,14 @@ QuickMenuInstance.prototype._onClick = function (event) {
 };
 
 QuickMenuInstance.prototype._onClickOut = function (event) {
-    if (hitElement(this.elt, event)) return;
+    if (hitElement(this.elt, event) || hitElement(QuickMenu.$elt, event)) return;
     this.close();
 };
 
 QuickMenuInstance.prototype.onSelect = function (item) {
-    if (this.opt.onSelect) this.opt.onSelect(item.__originalItem__ || item);
+    item = item.__originalItem__ || item;
+    if (item.items && item.items.length > 0) return;
+    if (this.opt.onSelect) this.opt.onSelect(item);
     this.close();
 }
 
