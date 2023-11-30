@@ -217,11 +217,11 @@ Time24Input.property.value = {
         this._firedValue = this.value;
     },
     get: function () {
+        if (!isRealNumber(this._hour) || !isRealNumber(this._minute)) return null;
         var mil = clockToMillis(this._hour, this._minute);
         if (mil < this.dayOffset) mil += MILLIS_PER_DAY;
         mil -= this.dayOffset;
-        if (isRealNumber(mil)) return mil;
-        return null;
+        return  mil;
     }
 };
 
@@ -550,6 +550,7 @@ T24ITextController.prototype.updateTextFromValue = function () {
     var value = this.elt.value;
     var hour = this.elt.hour;
     var minute = this.elt.minute;
+    console.log(this.elt._hour, this.elt._minute, value)
     var isNextDate = this.isNextDate(hour, minute);
     var text = this.formatText(hour, minute);
     if (isNextDate) {

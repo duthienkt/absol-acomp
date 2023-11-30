@@ -242,7 +242,7 @@ TimeRange24Input.eventHandler.offsetChange = function (event) {
 };
 
 TimeRange24Input.eventHandler.durationChange = function (event) {
-    if (this.$duration.dayOffset !== null && this.$offset.dayOffset === null) {
+    if (!isRealNumber(this.$offset.dayOffset) ) {
         this.$offset.dayOffset = this.$duration.dayOffset;
     }
     this._updateTextData();
