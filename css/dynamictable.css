@@ -397,11 +397,11 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 
-.absol-single-page-scroller-viewport .as-dynamic-table-wrapper:not(.as-as-adapt-infinity-grow) {
+.absol-single-page-scroller-viewport .as-dynamic-table-wrapper:not(.as-adapt-infinity-grow) {
     max-height: calc(var(--single-page-scroller-height) - 20px);
 }
 
-.absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper:not(.as-as-adapt-infinity-grow) {
+.absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper:not(.as-adapt-infinity-grow) {
     max-height: calc(var(--single-page-scroller-height) - 20px);
 }
 
