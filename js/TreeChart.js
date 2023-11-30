@@ -78,7 +78,7 @@ TreeChart.prototype._updateContent = function () {
     var makeTree = (nodeData, level) => {
         var textChildren = [];
         if (nodeData.icon) {
-            textChildren.push(_(nodeData.icon).addClass('as-as-tree-chart-icon'));
+            textChildren.push(_(nodeData.icon).addClass('as-tree-chart-icon'));
         }
         textChildren.push({
             tag: 'span',
