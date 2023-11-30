@@ -182,6 +182,22 @@ TreeTable.prototype.addRowIn = function (rowData, parentRow) {
     }
 };
 
+TreeTable.prototype.addRow = function (rowData) {
+    if (!this.table) return;
+    this.table.body.addRow(rowData);
+};
+
+
+
+TreeTable.prototype.addRows = function (rowDataArr) {
+    if (!this.table) return;
+    rowDataArr.forEach(rowData=>{
+        this.table.body.addRow(rowData);
+    });
+};
+
+
+
 /***
  *
  * @param rowData
@@ -255,6 +271,9 @@ TreeTable.property.adapter = {
             adapter = ttStructAdapter2TTDAdapter(adapter);
         }
         this._adapterData = adapter;
+        if (adapter && adapter.data) {
+            adapter.data.initOpened  = adapter.data.initOpened || adapter.initOpened;//adapt param
+        }
         this.mAdapter = new TTDataAdapter(this, adapter);
         this.mAdapter.render();
         this.queryCtrl.transferSearchItems();
