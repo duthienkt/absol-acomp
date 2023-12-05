@@ -796,7 +796,6 @@ export var clockToMillis = (hour, minute) => {
 };
 
 
-
 export function isRealNumber(value) {
     return (isFinite(value) && (typeof value === "number"));
 }
@@ -1060,13 +1059,20 @@ export function rootTreeValues2CheckedValues(items, values) {
 /***
  *
  * @param {SelectionItem[]} items
- * @param {{removeNoView?: boolean}=} opt
+ * @param {{removeNoView?: boolean, removeNewLine?:boolean}=} opt
  * @returns {SelectionItem[]}
  */
 export function copySelectionItemArray(items, opt) {
     opt = opt || {};
     if (opt.removeNoView) {
         items = items.filter((item) => !item.noView);
+    }
+    if (opt.removeNewLine) {
+        items.forEach(it => {
+            if (it.text && it.text.indexOf && it.text.indexOf('\n') >= 0) {
+                it.text = it.text.replace(/[\r\n]/g, '');
+            }
+        })
     }
     return items.map(item => {
         var newItem;
