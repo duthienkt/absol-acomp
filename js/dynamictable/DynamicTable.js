@@ -334,7 +334,6 @@ DynamicTable.prototype.viewIntoRow = function (row) {
                 row = this.rowOf(row);
                 if (row) {
                     vScrollIntoView(row.elt);
-                    console.log(row.elt)
                 }
             }
             else
@@ -1223,7 +1222,8 @@ RowDragController.prototype._updateClass = function () {
 
 RowDragController.prototype._computeRowBound = function () {
     this.firstBoundIdx = this.elt.rowIndexOf(this.row.body.elt.firstChild);
-    this.bounds = Array.prototype.map.call(this.row.body.elt.childNodes, (elt) => {
+
+    this.bounds = Array.prototype.map.call(this.row.body.elt.childNodes, (elt, i) => {
         var rect = Rectangle.fromClientRect(elt.getBoundingClientRect());
         rect.y -= elt._transformY || 0;
         return rect;
@@ -1252,7 +1252,7 @@ RowDragController.prototype._computeNewIdx = function () {
         else {
             y = y0 + S[i] - cBound.height;
         }
-        if (nearest > Math.abs(cBound.y - y) + 0.1) {
+        if (nearest > Math.abs(cBound.y - y) + 0.1 && this.row.body.rows[cur].draggable) {
             nearest = Math.abs(cBound.y - y);
             this.newIdx = cur;
         }
