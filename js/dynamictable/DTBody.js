@@ -1,5 +1,4 @@
 import DTBodyRow from "./DTBodyRow";
-import DTRowDragController from "./DTRowDragController";
 import { isNaturalNumber, isRealNumber, calcDTQueryHash, replaceChildrenInElt } from "../utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Thread from "absol/src/Network/Thread";
@@ -513,7 +512,6 @@ function DTBody(table, data) {
         row.idx = i;
         return row;
     }.bind(this));
-    // this.rowDragCtrl = new DTRowDragController(this);
 
     this.modes = {
         normal: new NormalMode(this),
