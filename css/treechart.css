@@ -62,13 +62,13 @@
     color: var(--vert-node-text-color);
 }
 
-.as-as-tree-chart-icon,
-.as-as-tree-chart-text {
+.as-tree-chart-icon,
+.as-tree-chart-text {
     display: inline-block;
     vertical-align: middle;
 }
 
-.as-as-tree-chart-icon {
+.as-tree-chart-icon {
     font-size: 1.25em;
     padding-right: 0.25em;
 }
