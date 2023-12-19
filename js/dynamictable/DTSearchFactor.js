@@ -133,6 +133,21 @@ function DTSearchFactor(global) {
         return item;
     }
 
+    function isItemMustIncluded(queryItem, item) {
+        if (item.__nvnText__.indexOf(queryItem.__nvnText__) >= 0) {
+            return true;
+        }
+        var dict1 = queryItem.__nvnWordDict__;
+        var dict2 = item.__nvnWordDict__;
+        for (var i in dict1) {
+            for (var j in dict2) {
+                if (j.indexOf(i) < 0) return false;
+            }
+        }
+
+        return true;
+    }
+
     function calcItemMatchScore(queryItem, item) {
         var score = 0;
         if (!item.__text__) return 0;
@@ -382,6 +397,7 @@ function DTSearchFactor(global) {
             for (i = 0; i < n; ++i) {
                 item = items[i];
                 v = item.score;
+                if (item.mustIncluded) v = Math.max(threshold + 0.1, v);
                 if (v < threshold || v < 0.8) continue;
                 if (v >= maxValue) segments[segments.length - 1].push(item)
                 else {
@@ -466,7 +482,8 @@ function DTSearchFactor(global) {
                     its.push({
                         i: i,
                         item: items[i],
-                        score: queryTextItem ? calcItemMatchScore(queryTextItem, items[i]) : 0
+                        score: queryTextItem ? calcItemMatchScore(queryTextItem, items[i]) : 0,
+                        mustIncluded: isItemMustIncluded(queryTextItem, items[i])
                     });
                 }
                 else {
