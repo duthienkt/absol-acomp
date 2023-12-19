@@ -133,6 +133,21 @@ export default function ListSearchFactor(global) {
         return item;
     }
 
+    function isItemMustIncluded(queryItem, item) {
+        if (item.__nvnText__.indexOf(queryItem.__nvnText__) >= 0) {
+            return true;
+        }
+        var dict1 = queryItem.__nvnWordDict__;
+        var dict2 = item.__nvnWordDict__;
+        for (var i in dict1) {
+            for (var j in dict2) {
+                if (j.indexOf(i) < 0) return false;
+            }
+        }
+
+        return true;
+    }
+
     function calcItemMatchScore(queryItem, item) {
         var score = 0;
         if (!item.__text__) return 0;
@@ -277,7 +292,8 @@ export default function ListSearchFactor(global) {
         var maxScore = -Infinity;
         var scoreHolders = this.items.map(function visit(item) {
             var res = {};
-            res.score = calcItemMatchScore( query, item);
+            res.score = calcItemMatchScore(query, item);
+            res.mustIncluded = isItemMustIncluded(query, item);
             res.value = item.value;
             res.maxChildScore = -Infinity;
             if (item.items) {
@@ -292,7 +308,7 @@ export default function ListSearchFactor(global) {
         var threshold = maxScore - (maxScore - minScore) / 4;
         if (maxScore < 3) threshold = maxScore - (maxScore - minScore) / 8;
         var resDict = scoreHolders.reduce(function rValue(ac, cr) {
-            if (Math.max(cr.maxChildScore, cr.score) >= threshold) ac[cr.value] = [cr.score, cr.maxChildScore];
+            if (Math.max(cr.maxChildScore, cr.score) >= threshold || cr.mustIncluded) ac[cr.value] = [cr.score, cr.maxChildScore];
             if (cr.child) cr.child.reduce(rValue, ac);
             return ac;
         }, {});
@@ -310,10 +326,10 @@ export default function ListSearchFactor(global) {
     global.callQuery = function (id, query) {
         if (slaves[id]) return slaves[id].callQuery(query);
         return null;
-    }
+    };
 
     global.destroySlave = function (id) {
         delete slaves[id];
-    }
+    };
 
 }
