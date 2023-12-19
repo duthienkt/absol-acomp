@@ -1,4 +1,4 @@
-var tree = require('./demo_tree_list.js');
+var tree = require('../demo_tree_list.js');
 var count = 0;
 
 function render(o) {
