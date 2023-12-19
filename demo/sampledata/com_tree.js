@@ -16,6 +16,50 @@ var persionIcon = ()=>({
 
 module.exports = [
     {
+        text:'hcm',
+        value: '2332',
+        icon: {
+            tag: "span",
+            class: [
+                "mdi",
+                "mdi-folder-account"
+            ]
+        },
+    },
+    {
+        text:'hcm1',
+        value: '3231',
+        icon: {
+            tag: "span",
+            class: [
+                "mdi",
+                "mdi-folder-account"
+            ]
+        },
+    },
+    {
+        text:'hcm2',
+        value: '3242342',
+        icon: {
+            tag: "span",
+            class: [
+                "mdi",
+                "mdi-folder-account"
+            ]
+        }
+    },
+    {icon: {
+            tag: "span",
+            class: [
+                "mdi",
+                "mdi-folder-account"
+            ]
+        },
+        text:'hcm3',
+        value:'2342'
+    },
+
+    {
         value: 28,
         text: "Tiền Phong Nam",
         icon: {
