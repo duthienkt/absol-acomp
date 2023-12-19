@@ -10,7 +10,6 @@ function DateNLevelInput() {
     this.$level = $('.as-date-n-level-input-select-level', this);
     this.$date = $('dateinput', this);
     this.ctrl = new DateNLevelInputCtrl(this);
-    this._level = 'date';
     this._allowLevels = this.defaultAllowLevels.slice();
 }
 
@@ -84,7 +83,6 @@ DateNLevelInput.property.allowLevels = {
 DateNLevelInput.property.level = {
     set: function (value) {
         if (!this.leve2format[value]) value = 'date';
-        this._level = value;
         value = this.level;
         this.attr('data-level', value);
         this.$date.format = this.leve2format[value];
@@ -92,7 +90,7 @@ DateNLevelInput.property.level = {
         this.ctrl.level = value;
     },
     get: function () {
-        var level = this._level;
+        var level = this.ctrl.level;
         if (this._allowLevels.indexOf(level) < 0) level = this._allowLevels[0];
         return level;
     }
