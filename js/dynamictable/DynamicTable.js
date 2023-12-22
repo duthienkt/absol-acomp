@@ -1391,7 +1391,7 @@ RowDragController.prototype.ev_dragEnd = function (event) {
         this.row.body.moveRowAt(this.rowIdx, this.newIdx);
 
         var eventData = {
-            type: 'otherchange',
+            type: 'orderchange',
             target: this.row,
             from: this.rowIdx,
             to: this.newIdx,
