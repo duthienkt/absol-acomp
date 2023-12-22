@@ -16,6 +16,14 @@
     background-color: white;
     padding-right: 45px;
     white-space: normal;
+    --as-width-limit: 100vw;
+    max-width: var(--as-width-limit);
+}
+
+.as-multi-select-menu .absol-selectbox-item-text span{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(var(--as-width-limit) - 85px);
 }
 
 .as-multi-select-menu-item-ctn {
