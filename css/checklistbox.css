@@ -1,5 +1,6 @@
 .as-check-list-box.as-select-list-box {
     width: calc(var(--select-list-estimate-width) + 2px + 5px + 23px + 7px);
+    --as-width-limit: calc(100vw - 20px);
 }
 
 .as-check-list-box.as-select-list-box.as-enable-search .as-select-list-box-scroller {
@@ -11,4 +12,8 @@
 }
 
 
-
+.as-check-list-box.as-select-list-box .absol-selectlist-item-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(var(--as-width-limit) - 0.7em - 2.5em);
+}
