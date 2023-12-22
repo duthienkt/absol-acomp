@@ -7,7 +7,7 @@
 </head>
 <body>
 <style>
-    :root{
+    :root {
         font-size: 14px;
     }
 </style>
@@ -131,6 +131,24 @@
                 }
             }
         }).addTo(document.body);
+
+        var menu3 = _({
+            tag: 'multicheckmenu',
+            style: {
+                'max-height': '300px',
+                marginBottom: '800px'
+            },
+            props: {
+                enableSearch: false,
+                items: Array(100).fill().map((u, i) => ({ text: absol.string.randomPhrase(300), value: i }))
+            },
+            on: {
+                change: function (event) {
+                    console.log(event.type, this.values);
+                }
+            }
+        }).addTo(document.body);
+
         return;
         fetch('./demo_tree_list_2.js').then(res => res.text()).then(text => {
             var factory = new Function('module', 'exports', text + '\nreturn module.exports;');

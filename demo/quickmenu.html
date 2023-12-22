@@ -58,9 +58,21 @@
 </script>
 <h2>Static</h2>
 <script class="viewable">
-    (function (){
+    (function () {
         var menuProps = {
             items: [
+                {
+                    text: "Tool",
+                    items: [
+                        {
+                            text: "Tool 1"
+                        },
+                        {
+                            text: "Tool 2"
+                        }
+                    ]
+                },
+
                 {
                     text: 'Cut', key: 'extendStyle[color=red]', cmd: 'cut',
                     extendStyle: {
@@ -89,20 +101,20 @@
             ]
         };
         var anchor = ['modal', [0, 3, 4, 7], [1, 2, 5, 6], [0, 7], [3, 4]];
-        anchor.forEach(anchor=>{
+        anchor.forEach(anchor => {
             var button = render({
                 tag: 'flexiconbutton',
-                style:{
-                  margin: '5px'
+                style: {
+                    margin: '5px'
                 },
-                props:{
-                    text: 'Anchor = '+JSON.stringify(anchor)
+                props: {
+                    text: 'Anchor = ' + JSON.stringify(anchor)
                 }
             });
             var holder = absol.QuickMenu.toggleWhenClick(button, {
-                menuProps:menuProps,
+                menuProps: menuProps,
                 anchor: anchor,
-                onSelect: function (item){
+                onSelect: function (item) {
                     console.log(item);
                 }
             })
@@ -111,16 +123,16 @@
 </script>
 <h2>Dynamic</h2>
 <script class="viewable">
-    (function (){
+    (function () {
         var counter = 10;
 
         var button = render({
             tag: 'flexiconbutton',
-            style:{
+            style: {
                 margin: '200px'
             },
-            props:{
-                text: 'Counter = '+ counter
+            props: {
+                text: 'Counter = ' + counter
             }
         });
         var holder = absol.QuickMenu.toggleWhenClick(button, {
@@ -136,22 +148,22 @@
                         },
                         "================================",
                         { text: 'Lần thứ ' + counter, value: counter },
-                        {text: 'Menu text', value:123}
+                        { text: 'Menu text', value: 123 }
                     ]
                 }
             },
-            getAnchor: function (){
-              return [Math.random() * 15 >>0,Math.random() * 15 >>0, Math.random() * 15 >>0]
+            getAnchor: function () {
+                return [Math.random() * 15 >> 0, Math.random() * 15 >> 0, Math.random() * 15 >> 0]
             },
             onSelect: function (item) {
                 console.log(item)
             },
-            onOpen: function (){
-              //do something
+            onOpen: function () {
+                //do something
             },
-            onClose: function (){
+            onClose: function () {
                 counter--;
-                button.text =  'Counter = '+ counter;
+                button.text = 'Counter = ' + counter;
                 if (!counter) holder.remove();//remove quickmenu form button
             }
         })
