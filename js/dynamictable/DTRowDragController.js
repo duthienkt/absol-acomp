@@ -164,7 +164,7 @@ DTRowDragController.prototype.ev_dragEnd = function (event) {
         this.body.reindexRows(Math.min(fromIdx, toIdx), Math.max(fromIdx, toIdx) + 1);
 
         var eventData = {
-            type: 'otherchange',
+            type: 'orderchange',
             target: dragData.row,
             from: fromIdx,
             to: toIdx,

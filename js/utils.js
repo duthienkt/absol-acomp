@@ -708,11 +708,7 @@ export function replaceChildrenInElt(elt, childNodes) {
     elt.addChild(nChildren);
 }
 
-/**
- *
- * @param {HTMLElement} elt
- */
-export function vScrollIntoView(elt) {
+export function findVScrollContainer(elt) {
     var parent = elt.parentElement;
     var overflowStyle;
     while (parent) {
@@ -726,7 +722,15 @@ export function vScrollIntoView(elt) {
     if (!parent || parent === document || parent.tagName === "HTML" || parent.tagName === "html") {
         parent = document.body.parentElement;
     }
+    return parent;
+}
 
+/**
+ *
+ * @param {HTMLElement} elt
+ */
+export function vScrollIntoView(elt) {
+    var parent = findVScrollContainer(elt);
     var eBound = elt.getBoundingClientRect();
     var viewportBound = parent.getBoundingClientRect();
     var currentScrollTop = parent.scrollTop;
@@ -738,7 +742,7 @@ export function vScrollIntoView(elt) {
         newScrollTop = currentScrollTop - (viewportBound.top - eBound.top);
     }
 
-    if (newScrollTop != currentScrollTop) {
+    if (newScrollTop !== currentScrollTop) {
         parent.scrollTop = newScrollTop;
     }
 }

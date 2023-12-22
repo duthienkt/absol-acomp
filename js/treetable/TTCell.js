@@ -18,8 +18,23 @@ Object.defineProperty(TTCell.prototype, 'elt', {
         if (!this._elt) {
             this._elt = _({
                 tag: 'td',
-                class: 'as-tree-table-cell'
+                class: 'as-tree-table-cell',
+                props: {
+                    ttCell: this
+                },
+                on: {
+                    click: (event) => {
+                        if (this.data && this.data.on && this.data.on.click) {
+                            this.data.on.click.call(this._elt, event, this);
+                        }
+                    }
+                }
             });
+            if (typeof this.data.class === "string") {
+                this.data.class.trim().split(/\s+/).forEach(clzz => {
+                    this._elt.addClass(clzz);
+                });
+            }
             this.row.body.table.elt.mAdapter.renderBodyCell(this.elt, this.data, this);
         }
         return this._elt;

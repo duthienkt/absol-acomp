@@ -306,6 +306,9 @@ Object.defineProperty(TTRow.prototype, 'elt', {
                 class: 'as-tree-table-row',
                 attr: {
                     'data-level': this.level + ''
+                },
+                props:{
+                    ttRow: this
                 }
             });
             if (this.data.id) this._elt.attr('data-id', this.data.id);

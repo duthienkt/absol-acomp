@@ -21,7 +21,14 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
         this._elt = _({
-            tag: 'td', class: 'as-dt-body-cell'
+            tag: 'td', class: 'as-dt-body-cell',
+            on: {
+                click:  (event)=> {
+                    if (this.data && this.data.on && this.data.on.click) {
+                        this.data.on.click.call(this._elt, event, this);
+                    }
+                }
+            }
         });
         this._elt.holder = this;
 
@@ -37,7 +44,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
     }
 });
 
-Object.defineProperty(DTBodyCell.prototype,'copyElt', {
+Object.defineProperty(DTBodyCell.prototype, 'copyElt', {
     get: function () {
         if (this._copyElt) return this._copyElt;
         this._copyElt = $(this.elt.cloneNode(true)).addClass('as-copy-elt');

@@ -1,4 +1,4 @@
-import TTRow, {TTClonedRow} from "./TTRow";
+import TTRow, { TTClonedRow } from "./TTRow";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /***
@@ -23,6 +23,7 @@ function TTBody(table, data) {
 TTBody.prototype.applyQueryResult = function (queryResult) {
     this.clearClonedRows();
     if (queryResult) {
+        this.table.elt.addClass('as-searching');
         this.clonedRows = this.rows.filter(row => queryResult[row.id])
             .map((row, i) => new TTClonedRow(row, queryResult, i));
         this.clonedRows.sort((a, b) => {
@@ -35,6 +36,7 @@ TTBody.prototype.applyQueryResult = function (queryResult) {
         this.table.elt.notifySizeChange();
     }
     else {
+        this.table.elt.removeClass('as-searching');
         this.renderRows();
     }
 
