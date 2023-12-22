@@ -29,12 +29,12 @@ function MultiCheckMenu() {
             close: this.eventHandler.selectListBoxClose
         }
     });
-
+    this.addStyle('--as-width-limit', this.$selectlistBox.widthLimit + 'px');
 
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.$attachhook = $('attachhook', this)
         .on('attached', this.eventHandler.attached);
-    this.$attachhook.requestUpdateSize = this.updateSize();
+    this.$attachhook.requestUpdateSize = this.updateSize.bind(this);
 
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
     this._isFocus = false;

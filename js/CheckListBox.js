@@ -1,6 +1,6 @@
 import ACore, { _, $, $$ } from "../ACore";
 import Follower from "./Follower";
-import SelectListBox, { VALUE_HIDDEN } from "./SelectListBox";
+import SelectListBox, { calcWidthLimit, VALUE_HIDDEN } from "./SelectListBox";
 import CheckListItem from "./CheckListItem";
 import '../css/checklistbox.css'
 import noop from "absol/src/Code/noop";
@@ -78,6 +78,8 @@ export function CheckListBox() {
     this.itemHolders = [];
     this._holderDict = {};
     this._estimateWidth = 100;
+    this.widthLimit = calcWidthLimit();
+    this.addStyle('--as-width-limit', this.widthLimit + 'px');
     this.$scroller = $('.as-select-list-box-scroller', this);
     this.$content = $('.as-select-list-box-content', this);
     this.$pages = $$('.as-select-list-box-page', this);
@@ -244,7 +246,7 @@ CheckListBox.property.enableSearch = SelectListBox.property.enableSearch;
 CheckListBox.property.items = {
     set: function (items) {
         items = items || [];
-        items = copySelectionItemArray(items, { removeNoView: true });
+        items = copySelectionItemArray(items, { removeNoView: true, removeNewLine: true });
         this._items = items;
         this.itemHolders = items.map(it => new CLHolder(this, it));
 
@@ -267,7 +269,7 @@ CheckListBox.property.items = {
         }, { idx: 0, dict: {}, textWidth: 50, descWidth: 0 });
 
         this._holderDict = res.dict;
-        this._estimateWidth = res.textWidth + (res.descWidth ? res.descWidth + 30 : 0);
+        this._estimateWidth = Math.min(this.widthLimit || Infinity, res.textWidth + (res.descWidth ? res.descWidth + 30 : 0));
 
         this.$scroller.scrollTop = 0;
         this.pagingCtrl.viewArr(this.itemHolders);
@@ -418,6 +420,11 @@ CLHolder.prototype.toArray = function (ac) {
 
 CLHolder.prototype.attachView = function (itemElt) {
     if (itemElt.clHolder) itemElt.clHolder.detachView();
+    if (!this.textLength)
+        this.textLength = measureText(this.data.text + '', '14px arial').width;
+    if (this.textLength > this.boxElt.widthLimit - (0.7 + 2.5) * 14) {
+        itemElt.attr('title', this.data.text);
+    }
     itemElt.clHolder = this;
     this.itemElt = itemElt;
     itemElt.data = this.data;
@@ -428,6 +435,7 @@ CLHolder.prototype.attachView = function (itemElt) {
 
 CLHolder.prototype.detachView = function () {
     if (this.itemElt) {
+        this.itemElt.attr('title', null);
         this.itemElt.clHolder = null;
         this.itemElt = null;
     }

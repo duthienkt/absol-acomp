@@ -15,7 +15,7 @@ var $$ = ACore.$$;
 export var VALUE_HIDDEN = -1;
 export var VALUE_NORMAL = 1;
 
-var calcWidthLimit = () => {
+export var calcWidthLimit = () => {
     var width = getScreenSize().width;
     if (BrowserDetector.isMobile) {
         width -= 20;
