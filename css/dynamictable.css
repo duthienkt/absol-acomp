@@ -298,6 +298,12 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     box-sizing: border-box;
 }
 
+.as-dt-body-row .as-drag-zone .mdi,
+.as-tree-table-row .as-drag-zone .mdi {
+    font-size: 25px;
+}
+
+
 .as-dt-body-row {
     height: calc(40em / 14);
 }
@@ -306,7 +312,8 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     height: var(--table-row-height);
 }
 
-.as-dynamic-table-wrapper:not(.as-searching) .as-dt-body-row .as-drag-zone {
+.as-dynamic-table-wrapper:not(.as-searching) .as-dt-body-row .as-drag-zone,
+.as-tree-table:not(.as-searching) .as-tree-table-row .as-drag-zone {
     cursor: move;
 }
 
