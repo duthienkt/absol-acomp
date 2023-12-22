@@ -151,11 +151,14 @@ export function calcItemMatchScore(queryItem, item) {
 }
 
 function isItemMustIncluded(queryItem, item) {
+    if (item.__nvnText__.indexOf(queryItem.__nvnText__) >= 0) {
+        return true;
+    }
     var dict1 = queryItem.__nvnWordDict__;
     var dict2 = item.__nvnWordDict__;
     for (var i in dict1) {
-        for (var j in dict2)  {
-            if (j.indexOf(i)<0) return false;
+        for (var j in dict2) {
+            if (j.indexOf(i) < 0) return false;
         }
     }
     return true;
@@ -168,7 +171,7 @@ function isItemMustIncluded(queryItem, item) {
  */
 export function searchListByText(query, items) {
     query = (query || '').trim();
-    if (query.length == 0 || items.length == 0)
+    if (query.length === 0 || items.length === 0)
         return items;
     var queryItem = prepareSearchForItem({ text: query });
     var its = items.map(function (item) {
@@ -211,14 +214,14 @@ export function searchTreeListByText(query, items) {
     function makeScoreRecursive(item) {
         var score = calcItemMatchScore(queryItem, item);
         var mustIncluded = isItemMustIncluded(queryItem, item);
-            gmaxScore = Math.max(score, gmaxScore);
+        gmaxScore = Math.max(score, gmaxScore);
         gminScore = Math.min(score, gminScore);
 
         var children = (item.items || []).map(function (item) {
             return makeScoreRecursive(item);
         });
 
-        mustIncluded = mustIncluded || children.some(c=> c.mustIncluded);
+        mustIncluded = mustIncluded || children.some(c => c.mustIncluded);
 
         var maxScore = children.reduce(function (ac, cr) {
             return Math.max(ac, cr.maxScore);
