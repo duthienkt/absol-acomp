@@ -13,6 +13,8 @@ function TTHeadCell(row, data){
         tag:'th',
         class: 'as-tree-table-head-cell'
     });
+    if (data.attr) this.elt.attr(data.attr);
+    if (data.style) this.elt.addStyle(data.style);
     this.row.head.table.elt.mAdapter.renderHeadCell(this.elt, this.data, this);
 }
 
