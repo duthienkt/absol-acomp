@@ -24,12 +24,12 @@ function TTRow(body, data, parentRow) {
     this.subRows = (this.data.subRows || []).map(rowData => new TTRow(body, rowData, this));
     if (!isNone(data.id) && data.subRows && data.subRows.length > 0 && (data.id in this.body.table.elt.savedState)) {
         this.isOpened = !!this.body.table.elt.savedState[data.id];
-    }
-	else if (typeof data.initOpened === 'boolean') {
-		this.isOpened = data.initOpened;
-	}
-    else if (typeof body.table.data.initOpened === "boolean") {
+    } else if (typeof data.initOpened === 'boolean') {
+        this.isOpened = data.initOpened;
+    } else if (typeof body.table.data.initOpened === "boolean") {
         this.isOpened = body.table.data.initOpened;
+    } else if (typeof body.table.elt.initOpen === 'boolean') {
+        this.isOpened = body.table.elt.initOpen;
     }
 }
 
@@ -67,8 +67,7 @@ TTRow.prototype.open = function () {
     var bf = this.body.elt.findChildAfter(this.elt);
     if (bf) {
         rowElements.forEach(elt => bodyElt.addChildBefore(elt, bf));
-    }
-    else {
+    } else {
         bodyElt.addChild(rowElements);
     }
     this.updateSizeUp();
@@ -114,8 +113,7 @@ TTRow.prototype.remove = function () {
             removeRow(idx, this.parentRow.subRows, this.parentRow.data.subRows);
             if (this.parentRow.subRows.length === 0) this.parentRow.elt.removeClass('as-has-sub-row');
         }
-    }
-    else {
+    } else {
         idx = this.body.rows.indexOf(this);
         if (idx >= 0) {
             removeRow(idx, this.body.rows, this.body.data.rows);
@@ -139,8 +137,7 @@ TTRow.prototype.addSubRow = function (rowData) {
         rowElements = clonedRow ? clonedRow.getRowElements() : row.getRowElements();
         if (bf) {
             rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
-        }
-        else {
+        } else {
             rowElements.forEach(elt => this.body.elt.addChild(elt));
         }
         ResizeSystem.requestUpdateSignal();
@@ -150,8 +147,7 @@ TTRow.prototype.addSubRow = function (rowData) {
     this.subRows.push(row);
     if (this.data.subRows) {
         this.data.subRows.push(rowData);
-    }
-    else {
+    } else {
         this.data.subRows = [rowData];
     }
     if (this.clonedRow)
@@ -188,8 +184,7 @@ TTRow.prototype.replace = function (newRowData) {
             rowElements = newClonedRow ? newClonedRow.getRowElements() : newRow.getRowElements();
             if (bf) {
                 rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
-            }
-            else {
+            } else {
                 rowElements.forEach(elt => this.body.elt.addChild(elt));
             }
             ResizeSystem.requestUpdateSignal();
@@ -202,8 +197,7 @@ TTRow.prototype.replace = function (newRowData) {
         if (idx >= 0) {
             makeReplaceRow(idx, this.parentRow.subRows, this.parentRow.data.subRows);
         }
-    }
-    else {
+    } else {
         idx = this.body.rows.indexOf(this);
         if (idx >= 0) {
             makeReplaceRow(idx, this.body.rows, this.body.data.rows);
@@ -244,8 +238,7 @@ TTRow.prototype.addRowBefore = function (newRowData) {
         if (idx >= 0) {
             makeNewRowBefore(idx, this.parentRow.subRows, this.parentRow.data.subRows)
         }
-    }
-    else {
+    } else {
         idx = this.body.rows.indexOf(this);
         if (idx >= 0) {
             makeNewRowBefore(idx, this.body.rows, this.body.data.rows);
@@ -272,8 +265,7 @@ TTRow.prototype.addRowAfter = function (newRowData) {
             if (bf) {
                 rowElements.forEach(elt => this.body.elt.addChildBefore(elt, bf));
 
-            }
-            else {
+            } else {
                 rowElements.forEach(elt => this.body.elt.addChild(elt));
             }
             ResizeSystem.requestUpdateSignal();
@@ -289,8 +281,7 @@ TTRow.prototype.addRowAfter = function (newRowData) {
         if (idx >= 0) {
             makeNewRowAfter(idx, this.parentRow.subRows, this.parentRow.data.subRows);
         }
-    }
-    else {
+    } else {
         idx = this.body.rows.indexOf(this);
         if (idx >= 0) {
             makeNewRowAfter(idx, this.body.rows, this.body.data.rows);
@@ -307,7 +298,7 @@ Object.defineProperty(TTRow.prototype, 'elt', {
                 attr: {
                     'data-level': this.level + ''
                 },
-                props:{
+                props: {
                     ttRow: this
                 }
             });
@@ -326,8 +317,7 @@ Object.defineProperty(TTRow.prototype, 'elt', {
                         click: () => {
                             if (this.clonedRow) {
                                 this.clonedRow.toggle();
-                            }
-                            else {
+                            } else {
                                 this.toggle();
                             }
                         }
@@ -373,8 +363,7 @@ export function TTClonedRow(origin, queryResult, idx) {
             if (sa !== sb) return sb - sa;
             return a.idx - b.idx;
         });
-    }
-    else {
+    } else {
         this.subRows = this.origin.subRows.map((row, i) => new TTClonedRow(row, queryResult, i));
     }
 }
@@ -392,8 +381,7 @@ TTClonedRow.prototype.remove = function () {
         if (idx >= 0) {
             parentRow.subRows.splice(idx, 1);
         }
-    }
-    else {
+    } else {
         idx = this.origin.body.clonedRows.indexOf(this);
         if (idx >= 0) {
             this.origin.body.clonedRows.splice(idx, 1);
@@ -409,8 +397,7 @@ TTClonedRow.prototype.replace = function (newClonedRow) {
         if (idx >= 0) {
             parentRow.subRows.splice(idx, 1, newClonedRow);
         }
-    }
-    else {
+    } else {
         idx = this.origin.body.clonedRows.indexOf(this);
         if (idx >= 0) {
             this.origin.body.clonedRows.splice(idx, 1, newClonedRow);
@@ -427,8 +414,7 @@ TTClonedRow.prototype.addRowBefore = function (newClonedRow) {
         if (idx >= 0) {
             parentRow.subRows.splice(idx, 0, newClonedRow);
         }
-    }
-    else {
+    } else {
         idx = this.origin.body.clonedRows.indexOf(this);
         if (idx >= 0) {
             this.origin.body.clonedRows.splice(idx, 0, newClonedRow);
@@ -445,8 +431,7 @@ TTClonedRow.prototype.addRowAfter = function (newClonedRow) {
         if (idx >= 0) {
             parentRow.subRows.splice(idx + 1, 0, newClonedRow);
         }
-    }
-    else {
+    } else {
         idx = this.origin.body.clonedRows.indexOf(this);
         if (idx >= 0) {
             this.origin.body.clonedRows.splice(idx + 1, 0, newClonedRow);
@@ -462,8 +447,7 @@ TTClonedRow.prototype.addSubRow = function (newClonedRow) {
 TTClonedRow.prototype.attach = function () {
     if (this.isOpened) {
         this.origin.elt.addClass('as-is-opened');
-    }
-    else {
+    } else {
         this.origin.elt.removeClass('as-is-opened');
 
     }
@@ -474,8 +458,7 @@ TTClonedRow.prototype.attach = function () {
 TTClonedRow.prototype.detach = function () {
     if (this.origin.isOpened) {
         this.origin.elt.addClass('as-is-opened');
-    }
-    else {
+    } else {
         this.origin.elt.removeClass('as-is-opened');
     }
     this.origin.clonedRow = null;
