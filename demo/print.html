@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <title>Print</title>
+    <style>
+        ::root{
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+<script>
+    var now = Date.now();
+    absol.printer.silentDownloadAsPdf({
+        paddingEven: false,
+        fileName: 'Test_1800_form.pdf',
+        docs: Array(1800).fill(0).map((u, i)=>{
+            return {
+                index: i,
+                opt:{
+                    footer: "Form thứ "+(i+1)
+                },
+                render: function (holderDiv, data){
+                    holderDiv.innerHTML = `<div><span>Đây là form thứ ${i + 1} </span> These indicate InDesign attempting to dynamically allocate memory, and having it fail. The first time it tries to allocate 6MB, and fails. The second time it tries to allocate 61MB, also failing.
+
+I don't think that it is normal behavior for InDesign to try to allocate 61MB of RAM in one fell swoop. It seems awfully high, though not outside the realm of possibility. I suspect InDesign is failing to properly sanity-check something that causes it to think it needs that much memory when it does not.
+
+On the other hand, 6MB is not crazy. If your OS cannot support allocating 6MB of RAM, that's concerning. (One reason it might not support it is that this is the 683rd try and InDesign has already allocated 4GB of memory in 6MB chunks, and since InDesign is a 32-bit program, it cannot address more than 4GB of RAM no matter what.)
+
+Either way, I think the strongest liklihood is "garbage in, garbage out," and something is wrong with one of your input files, be it the INDD document or a linked file such as a PDF. Oh, and also bugs in InDesign.
+
+We can't really say without more information. I'm also uncertain what to suggest...there are some tools to characterize the memory allocation behavior of applications, but they tend to be highly technical and difficult to interpret. I am not certain what to recommend to you in that space. Perhaps someone else will have a better idea.</div>`;
+                }
+            }
+
+        })
+    }).then(()=>{
+        console.log(Date.now()- now);
+    });
+
+
+
+</script>
+</body>
+</html>

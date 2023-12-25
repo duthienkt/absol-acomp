@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DynamicTable with scroller</title>
+    <script src="../../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol._;
+
+        function render(o) {
+            return _(o).addTo(document.body);
+        }
+
+        render({
+            tag: 'dynamictable',
+            style: {width: '90vw', height: '90vh'},
+            props: {
+                adapter: {
+                    fixedCol: 3,
+                    data: {
+                        head: {
+                            rows: [
+                                {
+                                    cells: [
+                                        { child: { text: 'S' } },
+                                        {
+                                            child: { text: 'STT' }
+                                        },
+                                        {
+                                            child: { text: 'Tên' }
+                                        }
+                                    ].concat(Array(1).fill(null).map((x, i) => ({
+                                        child: { text: 'Task ' + i }
+                                    })))
+                                }
+                            ]
+                        },
+                        body: {
+                            rows: Array(400).fill(null).map((u, i) => {
+                                return {
+                                    cells: [
+                                        {
+                                            child: [{
+                                                tag: 'checkboxbutton',
+                                                on: {
+                                                    change: function () {
+                                                        console.log(this, i + 1);
+                                                    }
+                                                }
+                                            }]
+                                        },
+                                        {
+                                            child: { text: i + 1 }
+                                        },
+                                        {
+                                            child: { text: 'Date ' + (i + 1) }
+                                        }
+                                    ].concat(Array(1).fill(null).map((x, i) => ({
+                                        child:
+                                            { tag: 'input', style: { width: '200px' } }
+                                    })))
+                                }
+                            })
+                        }
+                    }
+                }
+
+
+            }
+        });
+
+    })();
+</script>
+</body>
+</html>

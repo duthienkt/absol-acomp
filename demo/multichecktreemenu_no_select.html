@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+    <title>CheckTreeBox</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
+</head>
+<body>
+<style>
+    .break-page {
+        margin: 20px;
+        display: block;
+        height: 3px;
+        box-sizing: border-box;
+        border-top: solid 1px #65676d;
+        border-bottom: solid 1px #65676d;
+    }
+
+    body > a {
+        display: block;
+        padding: 5px;
+    }
+</style>
+<script>
+    function render(o) {
+        return absol._(o).addTo(document.body);
+    }
+
+</script>
+
+<script class="viewable">
+    (function () {
+        render('<h2>noSelect</h2>');
+        var menu = render({
+            tag: 'multichecktreemenu',
+            props: {
+                values: [-100037, -100034, -100000],
+                enableSearch: true
+            },
+            on: {
+                change: function () {
+                    absol.require('snackbar').show(JSON.stringify(this.values))
+                }
+            }
+        });
+        absol.remoteNodeRequireAsync('./sampledata/com_tree_no_select.js').then((items) => {
+            console.log(items)
+            menu.items = items;
+        });
+
+
+        render('.break-page');
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IconTest</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+    <link rel="stylesheet" href="https://lab.daithangminh.vn/css/googleicons/icons.css">
+    <link rel="stylesheet" href="https://lab.daithangminh.vn/css/fontawesome_5.15.1/css/all.css">
+</head>
+<body>
+<h3>GMI</h3>
+<script>
+    var gIcons = [
+        'mode_edit', 'file_copy',
+        'reply', 'file_download',
+        'delete', 'save',
+        'arrow_back_ios', 'group_add',
+        'done_all', 'close',
+        'edit', 'create',
+        'add', 'more_vert',
+        'visibility', 'send',
+        'clear', 'done',
+        'trending_flat', 'remove',
+        'cancel', 'star_border',
+        'star', 'remove_circle',
+        'filter_alt', 'content_copy'
+    ]
+    gIcons.map(name => {
+        absol._({
+            child:[
+                {
+                    tag:'span',
+                    child: {
+                        text: name+': '
+                    }
+                },
+                {
+                    tag:'span',
+                    class:'material-icons',
+                    child:{text: name}
+                }
+            ]
+        }).addTo(document.body)
+    });
+</script>
+<h3>FA</h3>
+<script>
+    var faIcons = [ 'fa-search', 'fa-close', 'fa-spinner fa-spin', 'fa-times' ];
+    faIcons.map(name => {
+        absol._({
+            child:[
+                {
+                    tag:'span',
+                    child: {
+                        text: name+': '
+                    }
+                },
+                {
+                    tag:'span',
+                    class:('fa '+ name).split(/\s+/),
+                }
+            ]
+        }).addTo(document.body)
+    });
+</script>
+</body>
+</html>

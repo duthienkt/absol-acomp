@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    	<link rel="icon" href="/general_images/Logo_keeview_favicon.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <title>Test GPS</title>
+    <?php
+                include_once "../absol/absol-full.php";
+            ?>
+
+    <script src="data:application/javascript;base64,ZG9jdW1lbnQud3JpdGVsbignPHNjcmlwdCBhc3luYyBkZWZlclxuJyArCiAgICAnICAgICAgICBzcmM9Imh0dHBzOi8vbWFwcy5nb29nbGVhcGlzLmNvbS9tYXBzL2FwaS9qcz9rZXk9QUl6YVN5RGEta1RRR0szN0JETWVONGtuRUhiSGF5RHJia2VlNnVVJmxpYnJhcmllcz1wbGFjZXMmY2FsbGJhY2s9aW5pdE1hcCI+PC9zY3JpcHQ+Jyk7">
+    </script>
+</head>
+<body>
+<style>
+    ::root {
+        font-size: 14px;
+    }
+
+    .as-location-picker-control-ctn.as-bottom {
+        display: none;
+    }
+
+    @media (orientation: landscape) {
+        .as-test-picker {
+            width: calc(99vh - 20px);
+            height: 80vh;
+        }
+    }
+
+    @media (orientation: portrait) {
+        .as-test-picker {
+            width: calc(99vw - 20px);
+            height: 80vw;
+        }
+    }
+
+    .error-text {
+        color: red;
+        font-size: 16px;
+        white-space: pre-wrap;
+    }
+
+    .info-text {
+        color: rgb(0, 0, 90);
+        font-size: 1.1rem;
+        white-space: pre-wrap;
+    }
+
+</style>
+<script>
+
+    var focusTime = 0;
+    window.onfocus = () => {
+        focusTime = new Date().getTime();
+    };
+
+    function timeText() {
+        var now = new Date();
+        var res = '';
+        if (now.getTime() - focusTime < 120) {
+            res += 'FocusEvent - '
+        }
+        res +=  [absol.int.integerZeroPadding(now.getHours(), 2), absol.int.integerZeroPadding(now.getMinutes(), 2), absol.int.integerZeroPadding(now.getSeconds(), 2)].join(':');
+        return res;
+    }
+
+    function initMap() {
+        var _ = absol._;
+        var $ = absol.$;
+        var dict = {};
+        var count = 0;
+        var map = _({
+            tag: 'locationpicker',
+            class: "as-test-picker",
+            on: {
+                error: err => {
+                    var elt = dict[err.id];
+                    if (elt) {
+                        elt.lastChild.data += '\n => ' + err.message;
+                    }
+                    else
+                        _({
+                            tag: 'div',
+                            class: 'error-text',
+                            child: { text: err.message }
+                        }).addTo(document.body)
+                },
+                requestlocation: event => {
+                    console.log(event.id)
+                    var id = event.id;
+                    var idx = ++count;
+                    var elt = _({
+                        tag: 'div',
+                        class: 'info-text',
+                        child: [
+                            {
+                                text: `[${timeText()}](${idx}) Lấy tọa độ `
+                            },
+                            {
+                                text: ""
+                            }
+                        ]
+                    }).addTo(document.body);
+                    dict[id] = elt;
+                },
+                location: event => {
+                    var elt = dict[event.id];
+                    if (!elt) return;
+                    elt.lastChild.data += '\n =>[' + timeText() + '] (' + [event.location.latitude, event.location.longitude].join(', ') + ') sai số ' + event.location.accuracy.toFixed(1) + 'm';
+                },
+                location_now: event => {
+                    var now = new Date();
+                    var time = timeText();
+                    nowView.firstChild.data = 'Tọa độ(real-time):\n[' + time + ']\n (' + [event.location.latitude, event.location.longitude].join(', ') + ') sai số ' + event.location.accuracy.toFixed(1) + 'm';
+                }
+            }
+        }).addTo(document.body);
+        map.selectMyLocation();
+        var info = absol.BrowserDetector;
+        var infoText = '';
+        if (info.device) infoText = `Thiết bị: ${info.device.type}\n`;
+        if (info.browser) infoText += `Trình duyệt: ${info.browser.type} phiên bản ${info.browser.version || 'không rõ'}\n`;
+        if (info.os) infoText += `OS: ${info.os.type} phiên bản ${info.os.version || 'không rõ'}\n`;
+        var infoView = _({
+            tag: 'pre',
+            class: 'info-text',
+            child: { text: infoText }
+        });
+        absol.$(document.body).addChildAfter(infoView, map);
+        var nowView = _({
+            tag: 'pre',
+            class: 'info-text',
+            child: { text: '' }
+        });
+        absol.$(document.body).addChildAfter(nowView, infoView);
+
+        setTimeout(() => {
+            map.selectMyLocation();
+        }, 5000);
+
+    };
+</script>
+</body>
+</html>
