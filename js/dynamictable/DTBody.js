@@ -488,8 +488,9 @@ NormalMode.prototype.viewIntoRow = function (o) {
         return false;
     });
     if (idx <= 0) return;
-    this.offset = idx;
-    this.render();
+    var scrollbar = this.body.table.wrapper.$vscrollbar;
+    scrollbar.innerOffset = Math.max(0,Math.min(idx - scrollbar.outerHeight / 3,scrollbar.innerHeight - scrollbar.outerHeight));
+    scrollbar.emit('scroll');
 };
 
 

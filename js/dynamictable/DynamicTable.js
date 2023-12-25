@@ -336,8 +336,9 @@ DynamicTable.prototype.viewIntoRow = function (row) {
                     vScrollIntoView(row.elt);
                 }
             }
-            else
+            else {
                 this.table.body.viewIntoRow(row);
+            }
         }
         else if (counter > 0) {
             setTimeout(wait, 30);
