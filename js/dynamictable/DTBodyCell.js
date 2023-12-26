@@ -1,5 +1,5 @@
 import { $, _ } from "../../ACore";
-import { jsStringOf } from "../utils";
+import { addElementClassName, jsStringOf } from "../utils";
 import { formatDateTime } from "absol/src/Time/datetime";
 
 /***
@@ -23,7 +23,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
         this._elt = _({
             tag: 'td', class: 'as-dt-body-cell',
             on: {
-                click:  (event)=> {
+                click: (event) => {
                     if (this.data && this.data.on && this.data.on.click) {
                         this.data.on.click.call(this._elt, event, this);
                     }
@@ -33,7 +33,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
         this._elt.holder = this;
 
         if (this.data.attr) this._elt.attr(this.data.attr);
-        if (this.data.class) this._elt.addClass(this.data.class);
+        if (typeof this.data.class === "string") addElementClassName(this._elt, this.data.class);
         if (this.data.style) this._elt.addStyle(this.data.style);
 
         if (this.data.on) this._elt.on(this.data.on);

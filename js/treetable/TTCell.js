@@ -1,5 +1,6 @@
 import { _ } from "../../ACore";
 import DTBodyCell from "../dynamictable/DTBodyCell";
+import { addElementClassName } from "../utils";
 
 /***
  *
@@ -31,10 +32,12 @@ Object.defineProperty(TTCell.prototype, 'elt', {
                 }
             });
             if (typeof this.data.class === "string") {
-                this.data.class.trim().split(/\s+/).forEach(clzz => {
-                    this._elt.addClass(clzz);
-                });
+                addElementClassName(this._elt, this.data.class);
             }
+            if (this.data.attr) this._elt.attr(this.data.attr);
+            if (this.data.class) this._elt.addClass(this.data.class);
+            if (this.data.style) this._elt.addStyle(this.data.style);
+
             this.row.body.table.elt.mAdapter.renderBodyCell(this.elt, this.data, this);
         }
         return this._elt;

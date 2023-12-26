@@ -1005,6 +1005,15 @@ export function addElementAfter(inElement, elements, at) {
 }
 
 
+export function addElementClassName(elt, className) {
+   if (typeof className === "string") {
+        className = className.trim().split(/\s+/);
+   }
+   if (className instanceof Array) {
+       className.forEach(cls=> elt.classList.add(cls));
+   }
+}
+
 export function getAncestorElementOf(elt) {
     while (elt.parentElement) {
         elt = elt.parentElement;
