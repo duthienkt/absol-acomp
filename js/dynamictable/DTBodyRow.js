@@ -25,11 +25,11 @@ function DTBodyRow(body, data) {
     /***
      * @type {DTBodyCell[]}
      */
-    this.cells = this.data.cells.map(function (cellData, i) {
-        var cell = new DTBodyCell(this, cellData);
-        cell.idx = i;
-        return cell;
-    }.bind(this));
+    this.cells = this.data.cells.map((cellData) => new DTBodyCell(this, cellData));
+    this.cells.reduce((ac, cell) => {
+        cell.idx = ac;
+        return ac + cell.colspan;
+    }, 0);
 }
 
 
@@ -59,11 +59,11 @@ DTBodyRow.prototype.updateData = function (data) {
     else {
         this.id = randomIdent(8);
     }
-    this.cells = this.data.cells.map(function (cellData, i) {
-        var cell = new DTBodyCell(this, cellData);
-        cell.idx = i;
-        return cell;
-    }.bind(this));
+    this.cells = this.data.cells.map((cellData) => new DTBodyCell(this, cellData));
+    this.cells.reduce((ac, cell) => {
+        cell.idx = ac;
+        return ac + cell.colspan;
+    }, 0);
 
     if (this._elt) {
         this._elt.attr('data-id', this.id + '');
