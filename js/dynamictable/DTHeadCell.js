@@ -159,4 +159,14 @@ Object.defineProperty(DTHeadCell.prototype, 'copyElt2', {
 });
 
 
+Object.defineProperty(DTHeadCell.prototype, 'colspan', {
+    get: function () {
+        var value = this.data.attr && this.data.attr.colspan;
+        if (typeof value === "string") value = parseInt(value);
+        if (typeof value === "number") return value;
+        else return 1;
+    }
+});
+
+
 export default DTHeadCell;

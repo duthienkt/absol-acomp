@@ -18,11 +18,11 @@ import DTHeadCell from "./DTHeadCell";
 function DTHeadRow(head, data) {
     this.head = head;
     this.data = data;
-    this.cells = this.data.cells.map(function (cellData, i) {
-        var cell = new DTHeadCell(this, cellData);
-        cell.idx = i;
-        return cell;
-    }.bind(this));
+    this.cells = this.data.cells.map((cellData) => new DTHeadCell(this, cellData));
+    this.cells.reduce((ac, cell) => {
+        cell.idx = ac;
+        return ac + cell.colspan;
+    }, 0);
     this._elt = null;
     this._copyElt = null;
     this._fixedXYElt = null;
