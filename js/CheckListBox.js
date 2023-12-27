@@ -453,6 +453,7 @@ CLHolder.prototype.getSearchItem = function () {
 
 
 function CLHolderRef(boxElt, origin, parent, result) {
+    this.boxElt = boxElt;
     this.origin = origin;
     this.data = origin.data;
     this.parent = parent;
