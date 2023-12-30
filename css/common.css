@@ -109,15 +109,41 @@ textarea.as-text-input:disabled {
     color: var(--as-transparent-button-text-color);
 }
 
-.as-transparent-button:hover{
+.as-transparent-button:hover {
     color: var(--as-transparent-button-text-hover-color);
 }
 
 
-.as-transparent-button:active{
+.as-transparent-button:active {
     color: var(--as-transparent-button-text-active-color);
 }
 
 .as-transparent-button .mdi {
     font-size: 1.5em;
+}
+
+
+.as-section-text-n-line {
+    position: relative;
+    display: block;
+    padding-bottom: 5px;
+}
+
+.as-section-text-n-line span {
+    background-color: white;
+    position: relative;
+    z-index: 2;
+    padding-right: 5px;
+    display: inline-block;
+}
+
+
+.as-section-text-n-line::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    right: 0;
+    top: calc(50% - 1px);
+    border-top: 1px solid #dddddd;
 }
