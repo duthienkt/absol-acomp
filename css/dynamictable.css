@@ -203,8 +203,15 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     font-family: Arial, Helvetica, sans-serif;
     border-collapse: collapse;
     box-sizing: border-box;
-    display: inline-block;
+    display: inline-table;
     table-layout: fixed;
+}
+
+
+.as-dynamic-table-wrapper:not(.as-inline) .as-dynamic-table-space  .as-dynamic-table {
+    /*min-width: 100%;*/
+    table-layout: auto;
+    /*display: table;*/
 }
 
 .as-dt-header {
