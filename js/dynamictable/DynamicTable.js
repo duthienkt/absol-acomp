@@ -742,6 +742,18 @@ LayoutController.prototype.handleMinWidth = function () {
     });
 };
 
+
+LayoutController.prototype.handleDisplay = function () {
+    // return;
+    var display = this.elt.getComputedStyleValue('display');
+    if (display !== 'block') return;
+    var tableWidth = this.elt.table.elt.getBoundingClientRect().width;
+    var viewportWidth = this.elt.$viewport.getBoundingClientRect().width;
+    if (tableWidth < viewportWidth - 17) {
+        this.elt.table.elt.addStyle('width', viewportWidth - 17 + 'px');
+    }
+};
+
 LayoutController.prototype.onAttached = function () {
     var c = this.elt.parentElement;
     while (c) {
@@ -753,6 +765,7 @@ LayoutController.prototype.onAttached = function () {
         c = c.parentElement;
     }
     if (this.elt.table) {
+        this.handleDisplay();
         this.handleMinWidth();
         this.elt.table.updateCopyEltSize();
         this.updateOverflowStatus();
