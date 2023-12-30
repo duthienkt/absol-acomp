@@ -76,7 +76,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
         var onPointerUp = () => {
             document.removeEventListener('pointerup', onPointerUp);
             eventAdded = false;
-            this.nextSortState.bind(this);
+            this.nextSortState();
         };
 
         this._elt = _({ tag: 'th', class: 'as-dt-header-cell' })
@@ -127,11 +127,11 @@ Object.defineProperty(DTHeadCell.prototype, 'copyElt', {
     get: function () {
         if (this._copyElt) return this._copyElt;
         this._copyElt = $(this.elt.cloneNode(true)).addClass('as-copy-elt');
-        if (this.data.style &&this.data.style.width) {
+        if (this.data.style && this.data.style.width) {
             var self = this;
             setTimeout(function wait() {
                 if (self._copyElt.isDescendantOf(document.body)) {
-                    self._copyElt.addStyle('width', self._copyElt.getBoundingClientRect().width+'px');
+                    self._copyElt.addStyle('width', self._copyElt.getBoundingClientRect().width + 'px');
                 }
                 else {
                     setTimeout(wait, 10);
