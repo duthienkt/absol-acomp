@@ -6,7 +6,7 @@ import '../../css/treetable.css';
 import TTQueryController from "./TTQueryController";
 import { formatDateTime } from "absol/src/Time/datetime";
 import LinearColorTinyBar from "../LinearColorTinyBar";
-import { findVScrollContainer, keyStringOf } from "../utils";
+import { findVScrollContainer, keyStringOf, vScrollIntoView } from "../utils";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import Rectangle from "absol/src/Math/Rectangle";
 import { ShareSerializer } from "absol/src/Print/printer";
@@ -250,6 +250,25 @@ TreeTable.prototype.addRowAfter = function (rowData, atRow) {
 
 TreeTable.prototype.rowOf = function (rowData) {
     return this.table.body.rowOf(rowData);
+};
+
+
+TreeTable.prototype.viewIntoRow = function (row) {
+    var counter = 300;
+    var wait = () => {
+        counter--;
+        if (this.isDescendantOf(document.body)) {
+            row = this.rowOf(row);
+            if (row) {
+                vScrollIntoView(row.elt);
+            }
+        }
+        else if (counter > 0) {
+            setTimeout(wait, 30);
+        }
+
+    }
+    setTimeout(wait, 10);
 };
 
 TreeTable.prototype.notifySizeChange = function () {
