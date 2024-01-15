@@ -151,6 +151,7 @@ export function calcItemMatchScore(queryItem, item) {
 }
 
 function isItemMustIncluded(queryItem, item) {
+    if (!queryItem) return  true;
     if (item.__nvnText__.indexOf(queryItem.__nvnText__) >= 0) {
         return true;
     }
