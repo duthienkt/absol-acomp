@@ -1014,6 +1014,18 @@ export function addElementClassName(elt, className) {
    }
 }
 
+export function findMaxZIndex(elt) {
+    var e = elt
+    var style;
+    var res = 0;
+    while (e && e !== document.body) {
+        style = getComputedStyle(e);
+        res = Math.max(parseFloat(style.getPropertyValue('z-index')) || 0);
+        e = e.parentElement;
+    }
+    return res;
+}
+
 export function getAncestorElementOf(elt) {
     while (elt.parentElement) {
         elt = elt.parentElement;

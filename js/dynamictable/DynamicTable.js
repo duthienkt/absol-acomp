@@ -3,7 +3,7 @@ import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
-import { buildCss, vScrollIntoView } from "../utils";
+import { buildCss, findMaxZIndex, vScrollIntoView } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
@@ -1197,14 +1197,7 @@ RowDragController.prototype._findRow = function (cElt) {
 
 RowDragController.prototype._getZIndex = function () {
     var e = this.elt.$fixedXYCtn;
-    var style;
-    var res = 0;
-    while (e && e !== document.body) {
-        style = getComputedStyle(e);
-        res = Math.max(parseFloat(style.getPropertyValue('z-index')) || 0);
-        e = e.parentElement;
-    }
-    return res;
+    return  findMaxZIndex(e);
 };
 
 
