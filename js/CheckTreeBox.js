@@ -695,7 +695,7 @@ export function TreeNodeHolder(boxElt, item, idx, parent) {
     this.status = (item.items && item.items.length > 0) ? 'close' : 'none';
     this.selected = 'none';
     this.level = parent ? parent.level + 1 : 0;
-    if (this.status === 'close'  && this.level < this.boxElt.initOpened) {
+    if (this.status === 'close' && this.level < this.boxElt.initOpened) {
         this.status = 'open';
     }
     this._elt = null;
@@ -863,7 +863,8 @@ TreeNodeHolder.prototype.unselectAll = function (isDownUpdate) {
 };
 
 TreeNodeHolder.prototype.reset = function () {
-    this.selected = 'none';
+    if (this.selected !== "empty")
+        this.selected = 'none';
     if (this.itemElt) this.itemElt.selected = this.selected;
     this.child.forEach(function (child) {
         child.reset(true);

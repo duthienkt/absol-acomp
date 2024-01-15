@@ -148,7 +148,6 @@ CheckTreeLeafOnlyBox.prototype.RootHolderClass = TreeLeafOnlyRootHolder;
 OOP.mixClass(TreeLeafOnlyRootHolder, TreeRootHolder);
 
 
-
 /***
  * @extends TreeNodeHolder
  * @constructor
@@ -172,6 +171,7 @@ export function TreeLeafOnlyNodeHolder() {
     }
     this.canSelect = this.canSelect && this.leafCount > 0;
     this.canSelectAll = this.canSelect && !this.item.noSelect && this.child.every(c => c.canSelectAll || c.leafCount === 0);
+
     if (this.leafCount === 0) this.selected = 'empty';
 }
 
@@ -211,6 +211,8 @@ TreeLeafOnlyNodeHolder.prototype.updateFromChild = function () {
         ac[cr.selected]++;
         return ac;
     }, { all: 0, child: 0, none: 0, empty: 0 });
+    // if (this.boxElt.debug)
+    // console.log( this.item, count.empty , count.all, this.child.length);//0, 9, 10
 
     if (count.empty === this.child.length) {
         this.selected = 'empty';
@@ -221,7 +223,7 @@ TreeLeafOnlyNodeHolder.prototype.updateFromChild = function () {
     else if (count.all + count.child > 0) {
         this.selected = 'child';
     }
-    else {
+    else if (this.selected !== "empty") {
         this.selected = 'none';
     }
     if (this.itemElt) {
