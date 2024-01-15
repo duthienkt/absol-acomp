@@ -67,7 +67,7 @@ DTHeadCell.prototype.nextSortState = function (event) {
     }
     else {
         items = [{
-            text: 'Không sort',
+            text: 'Không sắp xếp',
             value: { key: sortKeyArr.join(';'), order: 'none' },
             icon: 'span.mdi.mdi-sort-variant-off'
         }];

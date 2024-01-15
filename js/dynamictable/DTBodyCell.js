@@ -21,14 +21,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
         this._elt = _({
-            tag: 'td', class: 'as-dt-body-cell',
-            on: {
-                click: (event) => {
-                    if (this.data && this.data.on && this.data.on.click) {
-                        this.data.on.click.call(this._elt, event, this);
-                    }
-                }
-            }
+            tag: 'td', class: 'as-dt-body-cell'
         });
         this._elt.holder = this;
 
@@ -36,7 +29,15 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
         if (typeof this.data.class === "string") addElementClassName(this._elt, this.data.class);
         if (this.data.style) this._elt.addStyle(this.data.style);
 
-        if (this.data.on) this._elt.on(this.data.on);
+        if (this.data.on) {
+            Object.keys(this.data.on).forEach(key => {
+                var cb = this.data.on[key];
+                if (typeof cb !== "function") return;
+                this._elt.on(key, event => {
+                    cb.call(this._elt, event, this);
+                });
+            });
+        }
         if (this._idx !== null) this._elt.attr('data-col-idx', this._idx + '');
         this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
 

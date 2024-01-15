@@ -774,7 +774,15 @@ Object.defineProperty(DTBody.prototype, 'elt', {
             tag: 'tbody',
             class: 'as-dt-body',
         });
-
+        if (this.data.on) {
+            Object.keys(this.data.on).forEach(key => {
+                var cb = this.data.on[key];
+                if (typeof cb !== "function") return;
+                this._elt.on(key, event => {
+                    cb.call(this._elt, event, this);
+                });
+            });
+        }
         return this._elt;
     }
 });

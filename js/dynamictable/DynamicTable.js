@@ -863,6 +863,10 @@ LayoutController.prototype.updateScrollbarStatus = function () {
     var tableBound = this.elt.table.elt.getBoundingClientRect();
     this.elt.$hscrollbar.innerWidth = tableBound.width;
     this.elt.$hscrollbar.outerWidth = viewportBound.width;
+    if (this.elt.$hscrollbar.innerOffset + this.elt.$hscrollbar.outerWidth > this.elt.$hscrollbar.innerWidth) {
+        this.elt.$hscrollbar.innerOffset = Math.max(0, this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth);
+        this.elt.$hscrollbar.emit('scroll');
+    }
 };
 
 LayoutController.prototype.updateLines = function () {
@@ -885,8 +889,8 @@ LayoutController.prototype.ev_hScrollbarScroll = function (event) {
 
 
 LayoutController.prototype.ev_vScrollbarScroll = function () {
-    this.elt.$viewport.emit('scroll');
     this.elt.table.body.offset = this.elt.$vscrollbar.innerOffset;
+    this.elt.$viewport.emit('scroll');
 
 };
 

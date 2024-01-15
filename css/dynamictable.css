@@ -268,8 +268,8 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     display: inline-block;
 }
 
-.as-dt-header-cell[data-sort-order="ascending"] .as-dt-sort-btn .mdi-menu-up,
-.as-dt-header-cell[data-sort-order="descending"] .as-dt-sort-btn .mdi-menu-down {
+.as-dt-header-cell[data-sort-order="ascending"] .as-dt-sort-btn .mdi-menu-down,
+.as-dt-header-cell[data-sort-order="descending"] .as-dt-sort-btn .mdi-menu-up {
     color: #007bff;
 }
 

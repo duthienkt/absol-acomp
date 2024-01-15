@@ -1,6 +1,7 @@
 import { $, _ } from "../../ACore";
 import DTBodyCell from "./DTBodyCell";
 import { randomIdent } from "absol/src/String/stringGenerate";
+import { addElementClassName } from "../utils";
 
 /***
  *
@@ -93,6 +94,9 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
             child: child.concat(child1)
         });
         this._elt.attr('data-id', this.id + '');
+        if (this.data.class) {
+            addElementClassName(this._elt, this.data.class);
+        }
         if (this.data.attr) {
             this._elt.attr(this.data.attr);
         }
@@ -100,7 +104,13 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
             this._elt.addStyle(this.data.style);
         }
         if (this.data.on) {
-            this._elt.on(this.data.on);
+            Object.keys(this.data.on).forEach(key => {
+                var cb = this.data.on[key];
+                if (typeof cb !== "function") return;
+                this._elt.on(key, event => {
+                    cb.call(this._elt, event, this);
+                });
+            });
         }
 
 
