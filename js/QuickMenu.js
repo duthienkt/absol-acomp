@@ -227,6 +227,16 @@ QuickMenuInstance.prototype._onSizeNeedUpdate = function () {
     });
     var screenSize = getScreenSize();
     var eltBound = this.elt.getBoundingClientRect();
+    var outRect = traceOutBoundingClientRect(this.elt);
+    var isOut = false;
+    if (eltBound.left > outRect.right || eltBound.right < outRect.left || eltBound.top > outRect.bottom || eltBound.bottom < outRect.top) isOut = true;
+
+    if (isOut || (!eltBound.width && !eltBound.height)) {
+        setTimeout(() => {
+            this.close();
+        }, 0);
+    }
+
     var aTop = eltBound.bottom;
     var aBottom = screenSize.height - eltBound.top;
     QuickMenu.$elt.addStyle('--available-height', (Math.max(aTop, aBottom) - 10) + 'px');
