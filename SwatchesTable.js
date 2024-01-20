@@ -520,8 +520,9 @@ export var MaterialSwatches = [
         { "name": "Blue Grey 900", "value": "#263238" }
     ],
     [
-        { "name": "Black", "value": "#000000" },
-        { "name": "White", "value": "#ffffff" }
+        { "name": "White", "value": "#ffffff" },
+        { "name": "Black", "value": "#000000" }
+
     ]
 ];
 
