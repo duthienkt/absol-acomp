@@ -1,0 +1,259 @@
+.as-solid-color-picker:not(.as-solid-color-picker-mode-swatches) .as-solid-color-picker-swatches-select-ctn,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-swatches) .as-solid-color-picker-swatches-ctn,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-picker) .as-solid-color-picker-spectrum,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-picker) .as-solid-color-picker-hue,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-picker) .as-solid-color-picker-alpha,
+.as-solid-color-picker:not(.as-solid-color-picker-mode-picker) .as-solid-color-picker-near {
+    display: none;
+}
+
+.as-solid-color-picker:not(.as-has-opacity) .as-solid-color-picker-color-opacity,
+.as-solid-color-picker:not(.as-has-opacity) .as-solid-color-picker-alpha {
+    visibility: hidden;
+}
+
+.as-solid-color-picker .as-hanger {
+    user-select: none;
+    touch-action: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.as-solid-color-picker {
+    display: inline-block;
+    border: 1px solid black;
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    outline: none;
+    background-color: white;
+}
+
+.as-solid-color-picker-body {
+    padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    box-sizing: border-box;
+    border-bottom: 1px solid #dddddd;
+}
+
+.as-solid-color-picker-header {
+    padding: 10px;
+}
+
+.as-solid-color-picker-mode {
+    font-size: 0.9em;
+}
+
+.as-solid-color-picker-mode button {
+    height: 1.5em;
+    min-width: 7em;
+}
+
+.as-solid-color-picker-swatches-name {
+    color: #006ce5;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.as-solid-color-picker-swatches-select-ctn {
+    line-height: 2em;
+}
+
+.as-solid-color-picker-swatches-ctn {
+    overflow-y: auto;
+    width: 20em;
+    height: 20em;
+    box-sizing: content-box;
+}
+
+.as-solid-color-picker-swatches-ctn .as-swatches-table {
+    width: 100%;
+}
+
+.as-solid-color-picker-swatches-ctn .as-swatches-table-row,
+.as-solid-color-picker-recent-swatches-ctn .as-swatches-table-row {
+    height: 2em;
+}
+
+.as-solid-color-picker-recent-swatches-ctn .as-swatches-table-cell {
+    width: 1.6666666em;
+}
+
+
+.as-solid-color-picker-recent-title {
+    line-height: 1.5em;
+    margin-top: 0.5em;
+    font-weight: bold;
+}
+
+.as-solid-color-picker-recent-swatches-ctn {
+    overflow-y: auto;
+    width: 20em;
+    height: 4em;
+    box-sizing: content-box;
+}
+
+.as-solid-color-picker-footer {
+    padding: 10px;
+}
+
+.as-solid-color-picker-footer .as-flexicon-button {
+    font-size: inherit;
+    height: 2em;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+
+.as-solid-color-picker-selected-ctn {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAaSURBVBhXYzh8+PD///8hJAOcBSRxyRw+DABJUCox2kjvSgAAAABJRU5ErkJggg==');
+    background-size: 1.5em;
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-solid-color-picker-selected {
+    height: 2em;
+    width: 5em;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+}
+
+.as-solid-color-picker-color-hex,
+.as-solid-color-picker-color-opacity {
+    font-size: inherit;
+    width: 6em;
+}
+
+.as-flexicon-input.as-solid-color-picker-color-opacity.as-flexicon-input-has-icon.as-flexicon-input-has-unit input {
+    width: calc(100% - 4em);
+}
+
+
+/*.as-solid-color-picker-color-hex input {*/
+/*    padding-left: 0;*/
+/*    padding-right: 0;*/
+/*}*/
+
+.as-solid-color-picker-color-opacity input {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.as-solid-color-picker-footer *:not(:first-child) {
+    margin-left: 0.5em;
+}
+
+.as-swatches-table-cell .as-solid-color-picker-selected-dot {
+    left: calc(50% - 0.5em);
+    top: calc(50% - 0.5em);
+}
+
+.as-solid-color-picker-selected-dot {
+    position: absolute;
+    width: 1em;
+    height: 1em;
+    box-shadow: inset 0px 0px 0.3em 0.125em rgba(255, 255, 255, 0.7);
+    z-index: 1;
+    border-radius: 50%;
+}
+
+
+.as-solid-color-picker-spectrum {
+    width: 20em;
+    height: 13.3em;
+    background-color: red;
+    position: relative;
+}
+
+.as-solid-color-picker-spectrum-dot {
+    width: 1em;
+    height: 1em;
+    box-shadow: inset 0px 0px 0.3em 0.125em rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    border-radius: 50%;
+    position: absolute;
+    bottom: calc(100% - 0.5em);
+    left: calc(100% - 0.5em);
+}
+
+
+.as-solid-color-picker-hue {
+    width: 20em;
+    height: 2em;
+    background: linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%);
+    position: relative;
+}
+
+.as-solid-color-picker-hue-dot {
+    width: 1em;
+    height: 1em;
+    box-shadow: inset 0px 0px 0.3em 0.125em rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    border-radius: 50%;
+    position: absolute;
+    top: calc(50% - 0.5em);
+    left: calc(0% - 0.5em);
+}
+
+
+.as-solid-color-picker-alpha {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAaSURBVBhXYzh8+PD///8hJAOcBSRxyRw+DABJUCox2kjvSgAAAABJRU5ErkJggg==');
+    background-size: 1.5em;
+    image-rendering: optimizeSpeed;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: pixelated;
+    image-rendering: optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+
+    width: 20em;
+    height: 2em;
+    position: relative;
+}
+
+.as-solid-color-picker-alpha-color {
+    background: linear-gradient(to right, rgba(255, 0, 0, 0.0) 0%, rgba(255, 0, 0, 1) 100%);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.as-solid-color-picker-alpha-dot {
+    width: 1em;
+    height: 1em;
+    box-shadow: inset 0px 0px 0.3em 0.125em rgba(0, 0, 0, 0.7);
+    z-index: 1;
+    border-radius: 50%;
+    position: absolute;
+    top: calc(50% - 0.5em);
+    left: calc(100% - 0.5em);
+}
+
+
+.as-solid-color-picker-near {
+    margin-top: 0.5em;
+    width: 20em;
+    height: 4.2em;
+}
+
+.as-solid-color-picker-near .as-swatches-table-cell-color {
+    transition: transform 0.1s;
+}
+
+
+.as-solid-color-picker-near .as-swatches-table-cell-color:hover {
+    transform: scale(1.2);
+    z-index: 2;
+}
