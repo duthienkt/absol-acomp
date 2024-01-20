@@ -1,7 +1,6 @@
-import CPCore from "./CPCore";
 import Color from 'absol/src/Color/Color';
-var _ = CPCore._;
-var $ = CPCore.$;
+import ACore, { _, $ } from "../../ACore";
+import '../../css/swatchestable.css';
 
 
 function SwatchesTable() {
@@ -137,7 +136,7 @@ SwatchesTable.property.data = {
                     rowElt.childNodes[j].__swatchescell_value = row[j];
                     this._dict[Color.parse(row[j]).toHex8()] = rowElt.childNodes[j];
                 }
-                
+
             }
         }
     },
@@ -590,6 +589,6 @@ export var iOsSwatches = [
     ]
 ];
 
-CPCore.install('swatchestable', SwatchesTable);
+ACore.install('swatchestable', SwatchesTable);
 
 export default SwatchesTable;

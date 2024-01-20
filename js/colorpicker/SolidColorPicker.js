@@ -1,10 +1,8 @@
-import CPCore from "./CPCore";
 import { MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches } from "./SwatchesTable";
-import QuickMenu from "absol-acomp/js/QuickMenu";
 import Color from "absol/src/Color/Color";
-
-var _ = CPCore._;
-var $ = CPCore.$;
+import ACore, { _, $ } from "../../ACore";
+import QuickMenu from "../QuickMenu";
+import '../../css/solidcolorpicker.css';
 
 /**
  * @extends AElement
@@ -22,7 +20,7 @@ function SolidColorPicker() {
     this._sat = 1;
     this._brightness = 1;
     this._swatchesNames = ['Material Design', 'Moqups Classic', 'Bootstrap', 'iOS'];
-    this._swatchesShortName = [ 'material', 'moqups','bootstrap', 'ios'];
+    this._swatchesShortName = ['material', 'moqups', 'bootstrap', 'ios'];
     this._swatchesIcons = ['span.mdi.mdi-palette', 'span.mdi.mdi-material-design', 'span.mdi.mdi-bootstrap', 'span.mdi.mdi-apple-ios'];
 
     this._swatchesData = [MaterialSwatches, MoqupsClassicSwathes, BootstrapSwatches, iOsSwatches];
@@ -694,6 +692,6 @@ SolidColorPicker.eventHandler.keydown = function (event) {
     }
 };
 
-CPCore.install('solidcolorpicker', SolidColorPicker);
+ACore.install('solidcolorpicker', SolidColorPicker);
 
 export default SolidColorPicker;

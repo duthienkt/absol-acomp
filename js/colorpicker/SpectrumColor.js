@@ -1,6 +1,5 @@
-import CPCore from "./CPCore";
-var _ = CPCore._;
-var $ = CPCore.$;
+import ACore, { _ , $} from "../../ACore";
+import '../../css/spectrumcolor.css';
 
 function SpectrumColor() {
 
@@ -19,6 +18,6 @@ SpectrumColor.render = function () {
 };
 
 
-CPCore.install('spectrumcolor', SpectrumColor);
+ACore.install('spectrumcolor', SpectrumColor);
 
 export default SpectrumColor;

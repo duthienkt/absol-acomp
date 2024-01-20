@@ -1,10 +1,8 @@
 import './ColorPicker';
-import CPCore from "./CPCore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-
-var _ = CPCore._;
-var $ = CPCore.$;
+import ACore, { $, _ } from "../../ACore";
+import SolidColorPicker from "./SolidColorPicker";
 
 var isMobile = BrowserDetector.isMobile;
 
@@ -87,6 +85,7 @@ ColorPickerButton.prototype.openPicker = function () {
     this.addClass('as-color-picker-selecting');
     this.$ColorPicker.on('change', this.eventHandler.changeColor)
         .on('submit', this.eventHandler.submit);
+    console.log(this.$ColorPicker)
     this.$ColorPicker.reloadSetting();
 
     this.$follower.addStyle('visibility', 'hidden');
@@ -199,6 +198,6 @@ ColorPickerButton.property.hasOpacity = {
 };
 
 
-CPCore.install('colorpickerbutton', ColorPickerButton);
+ACore.install(ColorPickerButton);
 
 export default ColorPickerButton;

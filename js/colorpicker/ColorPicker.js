@@ -1,8 +1,8 @@
-import CPCore from "./CPCore";
+
 import OOP from "absol/src/HTML5/OOP";
 import Color from 'absol/src/Color/Color';
-var _ = CPCore._;
-var $ = CPCore.$;
+import ACore, {$, _} from "../../ACore";
+import '../../css/colorpickerbutton.css';
 
 
 function ColorPicker() {
@@ -557,6 +557,7 @@ ColorPicker.eventHandler.inputBlur = function () {
     this.alpha = hsba[3];
 };
 
-CPCore.creator.colorpicker = ColorPicker;
+
+ACore.install('ColorPicker'.toLowerCase(),ColorPicker);
 
 export default ColorPicker;
