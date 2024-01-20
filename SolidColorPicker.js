@@ -6,6 +6,10 @@ import Color from "absol/src/Color/Color";
 var _ = CPCore._;
 var $ = CPCore.$;
 
+/**
+ * @extends AElement
+ * @constructor
+ */
 function SolidColorPicker() {
     this.on('keydown', this.eventHandler.keydown);
     this.$swatchesName = $('.as-solid-color-picker-swatches-name', this);
