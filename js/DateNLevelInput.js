@@ -83,7 +83,6 @@ DateNLevelInput.property.allowLevels = {
 DateNLevelInput.property.level = {
     set: function (value) {
         if (!this.leve2format[value]) value = 'date';
-        value = this.level;
         this.attr('data-level', value);
         this.$date.format = this.leve2format[value];
         this.ctrl.prevVal = this.$date.value;
