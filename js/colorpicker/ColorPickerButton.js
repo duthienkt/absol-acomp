@@ -85,7 +85,6 @@ ColorPickerButton.prototype.openPicker = function () {
     this.addClass('as-color-picker-selecting');
     this.$ColorPicker.on('change', this.eventHandler.changeColor)
         .on('submit', this.eventHandler.submit);
-    console.log(this.$ColorPicker)
     this.$ColorPicker.reloadSetting();
 
     this.$follower.addStyle('visibility', 'hidden');
