@@ -1,7 +1,9 @@
-import ACore from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import SpinnerIcoText from '../assets/icon/spinner.tpl';
 import MdiStoreMarkerOutlineText from '../assets/icon/mdi_store_marker_outline.tpl';
+import FontColorIconText from '../assets/icon/font_color.tpl';
 import '../css/icons.css';
+import Color from "absol/src/Color/Color";
 
 export function SpinnerIco() {
     return ACore._(SpinnerIcoText);
@@ -18,3 +20,49 @@ export function MdiStoreMarkerOutline() {
 MdiStoreMarkerOutline.tag = 'mdi-store-marker-outline';
 
 ACore.install(MdiStoreMarkerOutline);
+
+export function FontColorIcon() {
+    this._value = '#000000';
+    this.$contract = $('.as-font-color-contract', this);
+    this.$value = $('.as-font-color-value', this);
+    this.value = 'cyan';
+}
+
+FontColorIcon.tag = 'FontColorIcon'.toLowerCase();
+
+FontColorIcon.render = function () {
+    return _(FontColorIconText);
+};
+
+FontColorIcon.property = {};
+FontColorIcon.property.value = {
+    set: function (value) {
+        var cValue;
+        if (typeof value === "string") {
+            try {
+                cValue = Color.parse(value);
+                value = cValue.toString('hex6');
+            } catch (err) {
+                value = "#000000";
+                cValue = Color.parse(value);
+            }
+        }
+        else if (value instanceof Color) {
+            cValue = value;
+            value = value.toString('hex6');
+        }
+        else {
+            value = "#000000";
+            cValue = Color.parse(value);
+        }
+        this._value = value;
+        var hColor = cValue.getContrastYIQ();
+        this.$contract.addStyle('fill', hColor.toString("hex6"));
+        this.$value.addStyle('fill', this._value.toString('hex6'));
+
+    },
+    get: function () {
+        return this._value;
+    }
+};
+
