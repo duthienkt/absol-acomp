@@ -3,6 +3,7 @@ import Color from "absol/src/Color/Color";
 import ACore, { _, $ } from "../../ACore";
 import QuickMenu from "../QuickMenu";
 import '../../css/solidcolorpicker.css';
+import SpectrumColor from "./SpectrumColor";
 
 /**
  * @extends AElement
@@ -155,7 +156,7 @@ SolidColorPicker.render = function () {
                         }
                     },
                     {
-                        tag: 'spectrumcolor',
+                        tag: SpectrumColor,
                         class: 'as-solid-color-picker-spectrum',
                         child: '.as-solid-color-picker-spectrum-dot'
                     },
