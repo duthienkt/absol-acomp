@@ -42,6 +42,7 @@ function TokenField() {
     });
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
+    this.$selectlistBox.sponsorElement = this;
 
     this.autocomplete = null;
     this.separator = ' ';

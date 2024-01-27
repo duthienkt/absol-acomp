@@ -180,6 +180,7 @@ QuickMenuInstance.prototype.open = function () {
     this._onSizeNeedUpdate();
     QuickMenu.$follower.on('preupdateposition', this._onSizeNeedUpdate);
     followerElt.followTarget = this.elt;
+    followerElt.sponsorElement = this.elt;
     menuElt.addStyle('visibility', 'hidden');
     followerElt.addTo(document.body);
     followerElt.addClass('absol-active');

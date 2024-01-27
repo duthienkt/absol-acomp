@@ -902,6 +902,7 @@ DateInput2.prototype._attachCalendar = function () {
     this.share.$follower.addStyle('visibility', 'hidden');
     this.share.$holdingInput = this;
     this.share.$follower.followTarget = this;
+    this.share.$follower.sponsorElement = this;
     this.share.$calendar.level = this.calendarLevel;
     this.share.$calendar.startDayOfWeek = this.startDayOfWeek || 0;
     this.share.$calendar.min = this._min;

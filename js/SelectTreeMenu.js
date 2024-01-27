@@ -33,6 +33,7 @@ function SelectTreeMenu() {
     });
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
+    this.$selectlistBox.sponsorElement = this;
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
 
     this._lastValue = "NOTHING_VALUE";

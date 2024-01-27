@@ -131,6 +131,7 @@ SelectTreeLeafMenu.property.isFocus = {
             document.body.appendChild(this.$selectBox);
             this.$selectBox.addStyle('visibility', 'hidden');
             this.$selectBox.followTarget = this;
+            this.$selectBox.sponsorElement = this;
             this.$selectBox.updatePosition();
             this.off('click', this.eventHandler.click);
             setTimeout(function () {

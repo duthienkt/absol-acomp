@@ -1363,6 +1363,7 @@ ChromeCalendar.show = function (element, calendarProps, anchor, calendarPickList
         if (darkTheme) ChromeCalendar.$ctn.addClass('dark');
         else ChromeCalendar.$ctn.removeClass('dark');
         ChromeCalendar.$follower.followTarget = element;
+        ChromeCalendar.$follower.sponsorElement = element;
         ChromeCalendar.$follower.anchor = anchor;
         ChromeCalendar.$calendar.addStyle('visibility', 'hidden');//for prevent size change blink
         ChromeCalendar._listener = calendarPickListener;

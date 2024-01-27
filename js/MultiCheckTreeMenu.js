@@ -35,6 +35,7 @@ function MultiCheckTreeMenu() {
     });
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.$checkTreeBox.followTarget = this;
+    this.$checkTreeBox.sponsorElement = this;
     this.on('click', this.eventHandler.click);
 
     this.enableSearch = false;
@@ -158,6 +159,7 @@ MultiCheckTreeMenu.prototype._switchLeafMode = function () {
 
     }
     this.$checkTreeBox.followTarget = this;
+    this.$checkTreeBox.sponsorElement = this;
     this.$checkTreeBox.initOpened = this.initOpened;
     this.$checkTreeBox.items = this._items;
     this.$checkTreeBox.values = this._values;

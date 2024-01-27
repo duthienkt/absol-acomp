@@ -44,6 +44,7 @@ function MultiCheckMenu() {
     this.items = [];
     this.values = [];
     this.$selectlistBox.followTarget = this;
+    this.$selectlistBox.sponsorElement = this;
     this.disableClickToFocus = false;
     this.orderly = true;
     this.itemFocusable = false;

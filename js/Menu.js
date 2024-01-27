@@ -125,6 +125,7 @@ ACore.install(MenuButton);
 export function Dropdown() {
     this.$container = $('.absol-dropdown-content', this);
     this.$container.followTarget = this;
+    this.$container.sponsorElement = this;
     this.$container.anchor = [1, 2, 6, 5];
 
 }
@@ -242,6 +243,7 @@ Dropdown.prototype.init = function (props) {
 export function Dropright() {
     this.$container = $('.absol-dropright-content', this);
     this.$container.followTarget = this;
+    this.$container.sponsorElement = this;
     this.$container.anchor = [0, 3, 7, 4];
 }
 

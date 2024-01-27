@@ -674,6 +674,7 @@ TimeInput.prototype._attachPicker = function () {
     this.share.$holdingInput = this;
     this.share.$follower.addTo(document.body);
     this.share.$follower.followTarget = this;
+    this.share.$follower.sponsorElement = this;
     this.share.$follower.addStyle('visibility', 'hidden');
     this.share.$picker.hour = this.hour || 0;
     this.share.$picker.minute = this.minute || 0;

@@ -56,6 +56,7 @@ function SelectMenu() {
     setTimeout(checkView, 30000);
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
+    this.$selectlistBox.sponsorElement = this;
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
     OOP.drillProperty(this, this, 'selectedvalue', 'value');
     this.strictValue = true;

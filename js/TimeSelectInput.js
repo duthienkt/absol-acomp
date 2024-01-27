@@ -40,6 +40,7 @@ function TimeSelectInput() {
     this.$toggleBtn = $('absol-selectmenu-btn', this);
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
+    this.$selectlistBox.sponsorElement = this;
     this._makeTimeList(0, MILLIS_PER_DAY, MILLIS_PER_MINUTE * 15);
     this._hour = 0;
     this._minute = 0;

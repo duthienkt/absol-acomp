@@ -133,6 +133,7 @@ DualSelectMenu.property.isFocus = {
             this.addClass('as-focus');
             this.off('click', this.eventHandler.click);
             this.$box.followTarget = this;
+            this.$box.sponsorElement = this;
             this.$box.addTo(document.body);
             this.$box.updatePosition();
             this.$box.scrollIntoSelected();

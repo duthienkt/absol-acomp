@@ -90,6 +90,7 @@ ColorPickerButton.prototype.openPicker = function () {
     this.$follower.addStyle('visibility', 'hidden');
     this.$follower.addTo(document.body);
     this.$follower.followTarget = this;
+    this.$follower.sponsorElement = this;
     setTimeout(function () {
         document.addEventListener('click', this.eventHandler.clickBody);
     }.bind(this), 100);

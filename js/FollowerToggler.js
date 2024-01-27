@@ -65,6 +65,7 @@ FollowerToggler.prototype.bindFollower = function (elt) {
         else
             elt.addClass('absol-follower-hidden');
         elt.followTarget = this;
+        elt.sponsorElement = this;
         this.$follower = elt;
     }
     else {

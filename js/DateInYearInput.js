@@ -85,6 +85,7 @@ DateInYearInput.prototype._attachPicker = function () {
     this.share.$input = this;
     this.share.$follower.addTo(document.body);
     this.share.$follower.followTarget = this;
+    this.share.$follower.sponsorElement = this;
     this.share.$picker.value = this._value;
 
     this.share.$picker.on('change', this.eventHandler.pickerChange);
