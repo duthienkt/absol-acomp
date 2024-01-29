@@ -122,6 +122,11 @@ textarea.as-text-input:disabled {
     font-size: 1.5em;
 }
 
+.as-transparent-button > svg,
+.as-transparent-button > img {
+    width: 1.5em;
+    height: 1.5em;
+}
 
 .as-section-text-n-line {
     position: relative;
