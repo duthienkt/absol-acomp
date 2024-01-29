@@ -2,6 +2,8 @@ import ACore, { _, $ } from "../ACore";
 import SpinnerIcoText from '../assets/icon/spinner.tpl';
 import MdiStoreMarkerOutlineText from '../assets/icon/mdi_store_marker_outline.tpl';
 import FontColorIconText from '../assets/icon/font_color.tpl';
+import InsertColLeftIconText from '../assets/icon/insert_col_left.tpl';
+import InsertColRightIconText from '../assets/icon/insert_col_right.tpl';
 import '../css/icons.css';
 import Color from "absol/src/Color/Color";
 
@@ -12,6 +14,22 @@ export function SpinnerIco() {
 SpinnerIco.tag = 'SpinnerIco'.toLowerCase();
 
 ACore.install(SpinnerIco);
+
+export function InsertColLeftIcon() {
+    return ACore._(InsertColLeftIconText);
+}
+
+SpinnerIco.tag = 'InsertColLeftIcon'.toLowerCase();
+
+ACore.install(InsertColLeftIcon);
+
+export function InsertColRightIcon() {
+    return ACore._(InsertColRightIconText);
+}
+
+SpinnerIco.tag = 'InsertColRightIcon'.toLowerCase();
+
+ACore.install(InsertColRightIcon);
 
 export function MdiStoreMarkerOutline() {
     return ACore._(MdiStoreMarkerOutlineText);
