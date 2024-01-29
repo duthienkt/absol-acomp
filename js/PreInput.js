@@ -22,6 +22,7 @@ function PreInput() {
     this.history = [];
     this.value = '';
     this.historyIndex = -1;
+    this.changePendingEvent = null;
     this.commitChange('', 0);
 }
 
@@ -36,6 +37,16 @@ PreInput.render = function () {
         },
         child: 'br'
     });
+};
+
+PreInput.prototype.notifyChange = function (data, originalEvent) {
+    this.emit('change', Object.assign({
+            type: 'change',
+            target: this,
+            originalEvent: originalEvent || this.changePendingEvent
+        },
+        data));
+    this.changePendingEvent = null;
 };
 
 PreInput.prototype.applyData = function (text, offset) {
@@ -110,7 +121,7 @@ PreInput.prototype.undo = function () {
     this.historyIndex--;
     var record = this.history[this.historyIndex];
     this.applyData(record.text, record.offset);
-    this.emit('change', { target: this, value: record.text, action: 'undo', record: record, type: 'change' }, this);
+    this.notifyChange({value: record.text, action: 'undo', record: record});
 };
 
 
@@ -119,10 +130,16 @@ PreInput.prototype.redo = function () {
     this.historyIndex++;
     var record = this.history[this.historyIndex];
     this.applyData(record.text, record.offset);
-    this.emit('change', { target: this, value: record.text, action: 'redo', record: record, type: 'change' }, this);
+    this.notifyChange({value: record.text, action: 'redo', record: record});
 };
 
 
+/**
+ *
+ * @param text
+ * @param offset
+ * @param {Event=} event
+ */
 PreInput.prototype.commitChange = function (text, offset) {
     while (this.historyIndex < this.history.length - 1) {
         this.history.pop();
@@ -139,17 +156,21 @@ PreInput.prototype.commitChange = function (text, offset) {
             offset: offset
         };
         this.history.push(record);
-        this.emit('change', {
-            target: this,
+        this.notifyChange({
             value: record.text,
             action: 'commit',
-            record: record,
-            type: 'change'
-        }, this);
+            record: record
+        });
     }
 };
 
-PreInput.prototype.waitToCommit = function (text, offset) {
+/**
+ *
+ * @param text
+ * @param offset
+ * @param {Event=} event
+ */
+PreInput.prototype.waitToCommit = function (text, offset, event) {
     var thisInput = this;
     if (this._commitTimeout > 0)
         clearTimeout(this._commitTimeout);
@@ -274,6 +295,7 @@ PreInput.eventHandler = {};
 
 
 PreInput.eventHandler.paste = function (event) {
+    this.changePendingEvent = event;
     var thisIp = this;
     var clipboardData = (event.clipboardData || window.clipboardData);
     /**Safari bug */
@@ -387,6 +409,7 @@ PreInput.eventHandler.paste = function (event) {
 
 
 PreInput.eventHandler.keydown = function (event) {
+    this.changePendingEvent = event;
     if (event.ctrlKey) {
         switch (event.key) {
             case 'z':
