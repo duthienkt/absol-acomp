@@ -3,6 +3,7 @@ import { measureText } from "absol/src/HTML5/Text";
 import { isNaturalNumber, isRealNumber } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import noop from "absol/src/Code/noop";
+import Snackbar from "../Snackbar";
 
 /***
  *
@@ -128,7 +129,7 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
         event.preventDefault();
         return;
     }
-
+    Snackbar.show(key);
     var thousandsSeparator = this.elt.thousandsSeparator;
     var decimalSeparator = this.elt.decimalSeparator;
 
@@ -137,6 +138,8 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
     var sEnd = this.$input.selectionEnd;
     var sDir = this.$input.selectionDirection;
     var onKeys = {};
+
+
     onKeys.unidentified = () => {
         var oldText = this.$input.value;
         setTimeout(() => {
@@ -160,8 +163,8 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
     };
 
 
-    onKeys.process = ()=>{
-        setTimeout(()=>{
+    onKeys.process = () => {
+        setTimeout(() => {
             this.flushTextToValue();
         }, 10);
 
@@ -326,7 +329,7 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
             delEnd = sEnd;
         }
 
-        if (isNaturalNumber(delStart) && isNaturalNumber(delEnd)){
+        if (isNaturalNumber(delStart) && isNaturalNumber(delEnd)) {
             this.$input.value = value.substring(0, delStart) + value.substring(delEnd);
             this.$input.setSelectionRange(delStart, delStart);
             this.reformat();
@@ -362,8 +365,21 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
         this.flushTextToValue();
     };
 
-
-    if (key === 'ctrl-x') {
+    if (key === 'arrowup') {
+        if (sStart === 0 && sEnd === 0) {
+            this.elt.nextStep();
+            event.preventDefault();
+            this.$input.setSelectionRange(0, 0);
+        }
+    }
+    else if (key === 'arrowdown') {
+        if (sStart === value.length && sEnd === value.length) {
+            this.elt.prevStep();
+            event.preventDefault();
+            this.$input.setSelectionRange(this.$input.value.length, this.$input.value.length);
+        }
+    }
+    else if (key === 'ctrl-x') {
         onKeys.delete();
     }
     else if (onKeys[event.type]) {
