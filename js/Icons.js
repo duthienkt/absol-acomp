@@ -19,7 +19,7 @@ export function InsertColLeftIcon() {
     return ACore._(InsertColLeftIconText);
 }
 
-SpinnerIco.tag = 'InsertColLeftIcon'.toLowerCase();
+InsertColLeftIcon.tag = 'InsertColLeftIcon'.toLowerCase();
 
 ACore.install(InsertColLeftIcon);
 
@@ -27,7 +27,7 @@ export function InsertColRightIcon() {
     return ACore._(InsertColRightIconText);
 }
 
-SpinnerIco.tag = 'InsertColRightIcon'.toLowerCase();
+InsertColRightIcon.tag = 'InsertColRightIcon'.toLowerCase();
 
 ACore.install(InsertColRightIcon);
 
