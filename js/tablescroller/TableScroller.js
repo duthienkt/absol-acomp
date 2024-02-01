@@ -370,6 +370,9 @@ TableScroller.prototype.updateContent = function () {
     this.reindexRows();
 
     this.updateContentSize();
+    requestAnimationFrame(()=> {
+        this.updateContentSize();
+    });
 
 };
 
