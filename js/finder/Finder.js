@@ -30,6 +30,7 @@ import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import RibbonButton from "../RibbonButton";
+import { getScreenSize } from "absol/src/HTML5/Dom";
 
 var isMobile = BrowserDetector.isMobile;
 
@@ -78,7 +79,7 @@ function Finder() {
             ac[name] = cr;
             if (cr.items) {//ribbon button
                 cr.on('select', (event) => {
-                    this.execCommand(name, event.item.value,event.item );
+                    this.execCommand(name, event.item.value, event.item);
                 });
             }
             else {
@@ -1604,6 +1605,8 @@ function UploadController(elt) {
 }
 
 UploadController.prototype.upload = function (files) {
+    var screenSize = getScreenSize();
+
     var contentElt = _({
         style: { maxHeight: '50vh', overflow: 'auto' },
         child: {
@@ -1615,7 +1618,10 @@ UploadController.prototype.upload = function (files) {
                         style: { display: 'table-cell', padding: '5px 20px 5px 10px' },
                         child: {
                             style: {
-                                'min-width': '30em',
+                                'width': Math.min(screenSize.width - 180, 800) / 14 + 'em',
+                                textOverflow: 'ellipsis',
+                                overflow: 'hidden'
+
                             },
                             child: { text: file.name }
                         }
@@ -2078,7 +2084,7 @@ NavigatorController.prototype.viewDir = function (path) {
                     return 1;
                 }
             });
-            stats = stats.filter(x=> isMatchAccept(this.elt.accept,x));
+            stats = stats.filter(x => isMatchAccept(this.elt.accept, x));
             this.viewContent(stats);
         });
 };
@@ -2273,7 +2279,11 @@ SearchController.prototype.search = function () {
 
     var handleStat = stat => {
         if (session !== this.session) return;
-        if (stat.isDirectory) return visitDir(stat.path);
+        if (stat.isDirectory) return new Promise(rs => {
+            setTimeout(() => {
+                rs(visitDir(stat.path));
+            }, 5);
+        });
         if (isMatched(stat)) {
             this.elt.navCtrl.pushContentItem(stat);
             this.elt.navCtrl.notifyVisibleContentItems();
@@ -2369,6 +2379,8 @@ function AbsolFileSystem() {
 
 OOP.mixClass(AbsolFileSystem, FinderFileSystem);
 
+AbsolFileSystem.prototype.API_PREFIX = location.href.indexOf('localhost') >= 0 ? 'https://absol.cf' : '';
+
 AbsolFileSystem.prototype.clearCache = function () {
     this.cache = { readDir: {}, stats: {} };
 };
@@ -2376,7 +2388,7 @@ AbsolFileSystem.prototype.clearCache = function () {
 AbsolFileSystem.prototype.readDir = function (path) {
     this.sync = this.sync.then(() => {
         if (this.cache.readDir[path || '..']) return this.cache.readDir[path || '..'];
-        return fetch('/filesystem/ls.php', {
+        return fetch(this.API_PREFIX + '/filesystem/ls.php', {
             method: 'POST',
             cache: "no-cache",
             headers: {
@@ -2389,7 +2401,7 @@ AbsolFileSystem.prototype.readDir = function (path) {
             res = res.filter(c => c.path.startsWith('/html'));
             res.forEach(c => {
                 c.name = c.path.split('/').pop();
-                c.url = c.path.replace('/html', location.origin)
+                c.url = c.path.replace('/html', this.API_PREFIX ||location.origin)
             });
             this.cache.readDir[path || '..'] = res.map(c => c.name);
             res.forEach(c => {
@@ -2452,7 +2464,7 @@ AbsolFileSystem.prototype.writeFile = function (file, data, onProcess) {
                 var form = new FormData();
                 form.append('action', 'upload_part');
                 form.append('fileUpload', bundle.file, bundle.name);
-                fetch('/filesystem/writefile.php', {
+                fetch(this.API_PREFIX + '/filesystem/writefile.php', {
                     method: 'POST',
                     body: form
                 }).then(res => res.text()).then(text => {
@@ -2486,7 +2498,7 @@ AbsolFileSystem.prototype.writeFile = function (file, data, onProcess) {
         form.append('action', 'join_parts');
         form.append('parts', parts.join(';'));
         form.append('path', file);
-        fetch('/filesystem/writefile.php', {
+        fetch(this.API_PREFIX + '/filesystem/writefile.php', {
             method: 'POST',
             body: form
         }).then(res => res.text()).then(text => {
@@ -2503,7 +2515,7 @@ AbsolFileSystem.prototype.unlink = function (path) {
     var form = new FormData();
     form.append('action', 'delete_files');
     form.append('paths', path);
-    return fetch('/filesystem/writefile.php', {
+    return fetch(this.API_PREFIX + '/filesystem/writefile.php', {
         method: 'POST',
         body: form
     }).then(res => res.text()).then(text => {
@@ -2520,7 +2532,7 @@ AbsolFileSystem.prototype.rename = function (path, name) {
     form.append('action', 'rename');
     form.append('path', path);
     form.append('new_name', name);
-    return fetch('/filesystem/writefile.php', {
+    return fetch(this.API_PREFIX + '/filesystem/writefile.php', {
         method: 'POST',
         body: form
     }).then(res => res.text()).then(text => {
@@ -2529,7 +2541,7 @@ AbsolFileSystem.prototype.rename = function (path, name) {
         delete this.cache.readDir[folderPath];
         delete this.cache.stats[path];
         return {
-            url: newPath.replace('/html', location.origin),
+            url: newPath.replace('/html', this.API_PREFIX || location.origin),
             path: newPath,
             name: name
         }
@@ -2549,7 +2561,7 @@ AbsolFileSystem.prototype.move = function (oldPath, newPath) {
     form.append('action', 'move');
     form.append('old_path', oldPath);
     form.append('new_path', newPath);
-    return fetch('/filesystem/writefile.php', {
+    return fetch(this.API_PREFIX + '/filesystem/writefile.php', {
         method: 'POST',
         body: form
     }).then(res => res.text()).then(text => {
