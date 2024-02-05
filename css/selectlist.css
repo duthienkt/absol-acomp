@@ -101,3 +101,292 @@
     vertical-align: middle;
     padding-left: var(--as-input-horizontal-padding);
 }
+
+
+
+/**************** MOBILE ******************************/
+
+:root {
+    --modal-margin-top: 80px;
+    --modal-margin-bottom: 80px;
+    --modal-max-width: 500px;
+    --modal-width: calc(100vw - 80px);
+    /*--modal-border-radius: 8px;*/
+    --modal-border-radius: 0px;
+}
+
+.am-list-modal {
+    z-index: 100005;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    text-align: center;
+    box-sizing: border-box;
+    padding-top: var(--modal-margin-top);
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.am-list-modal > div {
+    display: inline-block;
+    text-align: initial;
+}
+
+
+.am-list-popup-box {
+    max-width: var(--modal-max-width);
+    width: var(--modal-width);
+    /*-webkit-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);*/
+    /*-moz-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);*/
+    /*box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);*/
+    box-shadow: 2px 2px 2px 0px #908787;
+    -webkit-box-shadow: 2px 2px 2px 0px #908787;
+    background-color: #ffffff;
+    border-radius: var(--modal-border-radius);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.am-list-popup-box.am-enable-search .absol-search-text-input {
+    visibility: visible;
+}
+
+
+.am-list-popup-header {
+    height: calc(2em + 10px);
+    display: block;
+    white-space: nowrap;
+    box-sizing: border-box;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    border-bottom: solid 1px #dddddd;
+    /*background-color: rgba(169, 169, 169, 0.2);*/
+}
+
+.am-list-popup-header .absol-search-text-input {
+    display: inline-block;
+    width: calc(100% - 2em - 18px);
+    vertical-align: middle;
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.am-list-popup-close-btn {
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 50%;
+    padding: 0;
+    height: 2em;
+    width: 2em;
+    font-size: inherit;
+    border: none;
+    outline: none;
+    margin-left: 10px;
+    background-color: rgb(255, 255, 255);
+    color: #7a7a7a;
+    white-space: nowrap;
+}
+
+.am-list-popup-close-btn:active {
+    color: red;
+}
+
+
+.am-list-popup-close-btn:before {
+    content: "";
+    display: inline-block;
+    height: 2em;
+    vertical-align: middle;
+}
+
+.am-list-popup-close-btn span {
+    font-size: 24px;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.am-list-popup-box .absol-search-text-input {
+    visibility: hidden;
+}
+
+.am-list-popup-paging {
+    display: block;
+    height: 2em;
+    text-align: center;
+    box-sizing: border-box;
+    border-bottom: 1px solid #dddddd;
+}
+
+.am-list-popup-paging::before {
+    content: "";
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.am-list-popup-paging-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.am-list-popup-paging > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.am-list-popup-paging > button {
+    padding: 0;
+    margin-left: 0.25em;
+    margin-right: 0.25em;
+    width: 1.75em;
+    height: 1.75em;
+    display: inline-block;
+    background-color: transparent;
+    border: none;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.am-list-popup-paging > button:active {
+    background-color: rgba(169, 169, 169, 0.3);
+}
+
+
+input[type="number"].am-list-popup-paging-offset {
+    width: 4em;
+    outline: none;
+    margin-right: 0.2em;
+    /*border: solid 1px #a9a9a9;*/
+    /*border-radius: 0.3em;*/
+    border:none;
+    text-align: right;
+    font-size: inherit;
+    height: 1.25em;
+    box-sizing: border-box;
+
+}
+
+.am-list-popup-list-scroller {
+    width: 100%;
+    overflow: auto;
+    --content-height: calc(100vh - 200px);
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+
+.am-list-popup-list-scroller::-webkit-scrollbar {
+    display: none;
+}
+
+.am-list-popup-content {
+    display: block;
+    position: relative;
+}
+
+.am-list-popup-list-page{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -200vh;
+    box-sizing: border-box;
+}
+
+
+.am-list-modal .am-selectlist {
+    width: 100%;
+}
+
+.am-list-popup-list-page.am-selectlist{
+    --desc-width: inherit;
+}
+
+.am-value-hidden .am-selectlist-item.as-selected{
+    display: none;
+}
+
+.am-selectlist {
+    display: table;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.am-selectlist > .am-selectlist-item {
+    display: table-row;
+
+}
+
+.am-selectlist > .am-selectlist-item:active {
+    background-color: rgba(169, 169, 169, 0.4);
+}
+
+.am-selectlist > .am-selectlist-item.as-selected {
+    background-color: #dfdfdf;
+}
+
+
+.am-selectlist > .am-selectlist-item {
+    border-bottom: 0.5px solid #dddddd;
+}
+
+.am-selectlist > .am-selectlist-item > .am-selectlist-item-check-ctn {
+    display: table-cell;
+}
+
+.am-selectlist > .am-selectlist-item > .am-selectlist-item-text-ctn,
+.am-selectlist > .am-selectlist-item > .am-selectlist-item-desc-ctn {
+    display: table-cell;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.am-selectlist > .am-selectlist-item > .am-selectlist-item-text-ctn {
+    padding-right: 5px;
+    padding-left: calc(10px + 0.9em * var(--level));
+}
+
+.am-selectlist > .am-selectlist-item > .am-selectlist-item-desc-ctn {
+    padding-left: 5px;
+    padding-right: 10px;
+}
+
+
+.am-selectlist {
+    --desc-width: auto;
+}
+
+.am-selectlist .am-selectlist-item-desc-ctn {
+    width: var(--desc-width);
+}
+
+/******************************************************/
+.am-selectlist-item {
+    --level: 0;
+}
+
+.am-selectlist-item-text-ctn {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.am-selectlist-item-desc-ctn {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+
+.am-selectlist-item-desc {
+    font-style: italic;
+    line-height: 20px;
+    color: rgb(80, 80, 82);
+}
+
+
+.am-selectlist-item-icon {
+    font-size: 1.5em;
+    display: inline-block;
+    vertical-align: middle;
+}

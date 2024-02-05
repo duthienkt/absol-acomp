@@ -1,5 +1,4 @@
 import AutoCompleteInput from "../AutoCompleteInput";
-import Dom from "absol/src/HTML5/Dom";
 import BoardTable from "../BoardTable";
 import Board from "../Board";
 import BScroller from "../BScroller";
@@ -158,6 +157,10 @@ import Finder from "../finder/Finder";
 import TreeChart from "../TreeChart";
 import CopyableIconTooltip from "../CopyableIconTooltip";
 import DateNLevelInput from "../DateNLevelInput";
+import TableOfTextInput from "../TableOfTextInput";
+import MListModal from "../selectlistbox/MListModal";
+import MSelectMenu from "../selectmenu/MSelectMenu";
+
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
@@ -337,7 +340,8 @@ export var publicCreators = [
     MSelectTreeLeafBox,
     MDualSelectBox,
 
-    TreeChart
+    TreeChart,
+    TableOfTextInput
 ];
 
 /***
@@ -348,6 +352,9 @@ function install(core) {
     core.install(publicCreators);
     core.install('checkboxbutton', CheckboxInput);
     core.install('selectbox', MultiSelectMenu);
+    if (BrowserDetector.isMobile) {
+        core.install('selectmenu', MSelectMenu);
+    }
 }
 
 export default install;
