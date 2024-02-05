@@ -1,0 +1,51 @@
+.as-table-of-text-input {
+    width: 100%;
+    border-collapse: collapse;
+    color: black;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+
+.as-table-of-text-input.as-inline {
+    display: inline-table;
+}
+
+.as-table-of-text-input-cell {
+    padding: 3px 5px;
+    border: 1px dashed #dddddd;
+}
+
+.as-table-of-text-input-cell .as-preinput {
+    outline: none;
+    display: block;
+}
+
+.as-table-of-text-input-cell.as-bold {
+    font-weight: bold;
+}
+
+.as-table-of-text-input-cell.as-italic {
+    font-style: italic;
+}
+
+.as-table-of-text-input-tool {
+    background-color: white;
+    font-size: 14px;
+    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    border-radius: 4px;
+    padding: 3px;
+}
+
+.as-table-of-text-input-tool > button {
+    height: 30px;
+    width: 30px;
+    vertical-align: middle;
+}
+
+
+.as-table-of-text-input-tool > button.as-checked {
+    color: #2977ff;
+    background-color: rgb(240, 247, 255);
+}
