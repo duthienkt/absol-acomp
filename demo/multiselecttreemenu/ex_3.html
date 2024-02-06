@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MultiCheckMenu</title>
+    <script src="../../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        _('<h3>MultiCheckMenu</h3>').addTo(document.body);
+        var menu0 = _({
+            tag: 'multichecktreemenu',
+            props: {
+                enableSearch: true,
+                leafOnly: true
+            },
+            on:{
+                change:function () {
+                    menu1.values = this.values.slice();
+                }
+            }
+        }).addTo(document.body);
+        var menu1 = _({
+            tag: 'multichecktreemenu',
+            props: {
+                enableSearch: true,
+                leafOnly: true,
+                debug: true
+            }
+        }).addTo(document.body);
+        absol.remoteNodeRequireAsync('./ex3.js').then(res=>{
+            menu0.items = res;
+            menu1.items = res;
+        })
+        // MultiCheckMenu
+    })();
+</script>
+</body>
+</html>

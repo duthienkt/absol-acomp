@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8">
+    <title>Test your location</title>
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+</head>
+<body>
+<style>
+    ::root {
+        font-size: 14px;
+    }
+
+    .as-location-picker-control-ctn.as-bottom {
+        display: none;
+    }
+
+    @media (orientation: landscape) {
+        .as-test-picker {
+            width: calc(99vh - 20px);
+            height: 80vh;
+        }
+    }
+
+    @media (orientation: portrait) {
+        .as-test-picker {
+            width: calc(99vw - 20px);
+            height: 80vw;
+        }
+    }
+
+    .error-text {
+        color: red;
+        font-size: 16px;
+        white-space: pre-wrap;
+    }
+
+    .info-text {
+        color: rgb(0, 0, 90);
+        font-size: 1.1rem;
+        white-space: pre-wrap;
+    }
+
+</style>
+<script>
+    absol.remoteNodeRequireAsync(location.href.replace('.html', '.js'));
+</script>
+</body>
+</html>
