@@ -6,3 +6,7 @@
 .absol-selectmenu-holder-item .absol-tree-list-item-parent:hover {
     background-color: transparent;
 }
+
+.am-select-tree-menu {
+    max-width: var(--as-width-limit);
+}

@@ -333,6 +333,7 @@ input[type="number"].am-list-popup-paging-offset {
 
 .am-selectlist > .am-selectlist-item > .am-selectlist-item-check-ctn {
     display: table-cell;
+    vertical-align: middle;
 }
 
 .am-selectlist > .am-selectlist-item > .am-selectlist-item-text-ctn,

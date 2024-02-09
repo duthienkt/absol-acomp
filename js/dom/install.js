@@ -160,6 +160,7 @@ import DateNLevelInput from "../DateNLevelInput";
 import TableOfTextInput from "../TableOfTextInput";
 import MListModal from "../selectlistbox/MListModal";
 import MSelectMenu from "../selectmenu/MSelectMenu";
+import MSelectTreeMenu from "../selecttreemenu/MSelectTreeMenu";
 
 
 export var publicCreators = [
@@ -354,6 +355,7 @@ function install(core) {
     core.install('selectbox', MultiSelectMenu);
     if (BrowserDetector.isMobile) {
         core.install('selectmenu', MSelectMenu);
+        core.install('selecttreemenu', MSelectTreeMenu)
     }
 }
 
