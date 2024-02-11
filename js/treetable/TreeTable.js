@@ -13,6 +13,7 @@ import { ShareSerializer } from "absol/src/Print/printer";
 import Hanger from "../Hanger";
 import Vec2 from "absol/src/Math/Vec2";
 import Modal from "../Modal";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /***
  * @typedef {Object} TTDHeadCell
@@ -349,12 +350,13 @@ TreeTable.property.hiddenColumns = {
 
         var c = this.parentElement;
         while (c) {
-            if (c.hasClass && c.hasClass('absol-table-vscroller') && c.update) {
-                c.update();
+            if (c.hasClass && (c.hasClass('absol-table-vscroller') || c.hasClass('absol-table-scroller')) && (c.update || c.updateContent)) {
+                (c.update ||c.updateContent).call(c);
                 break;
             }
             c = c.parentElement;
         }
+        if (this.isDescendantOf(document.body)) ResizeSystem.update();
     },
     get: function () {
         return this._hiddenColumns;

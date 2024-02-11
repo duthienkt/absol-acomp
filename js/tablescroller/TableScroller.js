@@ -252,7 +252,14 @@ TableScroller.prototype._updateFixedYHeaderSize = function () {
     var bound = this.$originTable.getBoundingClientRect();
     this.$fixedYHeader.addStyle('width', bound.width + 'px');
     Array.prototype.forEach.call(this.$fixedYHeader.firstChild.firstChild.childNodes, elt => {
-        elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
+        var bound = elt.$origin.getBoundingClientRect();
+        elt.addStyle('width', bound.width + 'px');
+        if (bound.width + bound.height === 0) {
+            elt.addStyle('display', 'none');
+        }
+        else {
+            elt.removeStyle('display');
+        }
     });
     this.$headLine.addStyle('top', this.$fixedYHeader.getBoundingClientRect().height - 1 + 'px')
         .addStyle('max-width', bound.width + 'px');
