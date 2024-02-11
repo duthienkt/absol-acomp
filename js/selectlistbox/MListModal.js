@@ -344,11 +344,12 @@ MListModal.property.items = {
         this._items = items;
         this._preDisplayItems = this._listToDisplay(this._items);
         this._displayItems = this._filterValue(this._preDisplayItems);
-        this._itemsByValue = items.reduce((ac, cr) => {
+        this._itemsByValue = items.reduce(function reducer(ac, cr) {
             var key = keyStringOf(cr.value);
             if (!ac[key]) ac[key] = [];
             else console.error("Duplicate value", cr);
             ac[key].push(cr);
+            if (cr.items && cr.items.reduce) cr.items.reduce(reducer, ac);
             return ac;
         }, {});
 
