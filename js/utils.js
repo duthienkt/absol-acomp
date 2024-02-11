@@ -928,7 +928,7 @@ export function fileInfoOf(fi) {
             if (!res.type && parts.length > 1) {
                 res.type = parts.pop();
             }
-            else {
+            else if (typeof res.url === 'string') {
                 parts = res.url.split('.');
                 res.type = parts.pop();
             }
@@ -1006,12 +1006,12 @@ export function addElementAfter(inElement, elements, at) {
 
 
 export function addElementClassName(elt, className) {
-   if (typeof className === "string") {
+    if (typeof className === "string") {
         className = className.trim().split(/\s+/);
-   }
-   if (className instanceof Array) {
-       className.forEach(cls=> elt.classList.add(cls));
-   }
+    }
+    if (className instanceof Array) {
+        className.forEach(cls => elt.classList.add(cls));
+    }
 }
 
 export function findMaxZIndex(elt) {
@@ -1246,7 +1246,6 @@ export function keyStringOf(o) {
             keys.sort();
             return 'o(' + keys.map(key => key + ':' + keyStringOf(o[key])).join(',') + ')';
         }
-
     }
     else {
         return type[0] + '(' + o + ')';
