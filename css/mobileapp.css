@@ -4,6 +4,8 @@
     width: 100%;
     height: 100%;
     position: relative;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 14px;
 }
 
 .am-application-frameview {
@@ -20,7 +22,7 @@
     display: block;
 }
 
-.am-application.am-show-tabbar .am-application-frameview{
+.am-application.am-show-tabbar .am-application-frameview {
     height: calc(100% - 3em);
 }
 
@@ -178,8 +180,8 @@ button.am-header-bar-action {
     line-height: 1.25em;
 }
 
-.am-header-bar-quickmenu-btn.as-active  .mdi-dots-horizontal-circle-outline,
-.am-header-bar-quickmenu-btn:not(.as-active)  .mdi-dots-horizontal-circle {
+.am-header-bar-quickmenu-btn.as-active .mdi-dots-horizontal-circle-outline,
+.am-header-bar-quickmenu-btn:not(.as-active) .mdi-dots-horizontal-circle {
     display: none;
 }
 
@@ -200,3 +202,39 @@ button.am-header-bar-action {
     font-size: 1.6em;
 }
 
+
+.am-activity {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+.am-activity.am-grid {
+    grid-template-areas: 'header' 'body';
+    grid-template-rows: 3em auto;
+    display: grid;
+}
+
+
+.am-activity.am-grid > .am-header-bar {
+    grid-area: header;
+}
+
+.am-activity.am-grid > .am-activity-body {
+    grid-area: body;
+}
+
+.am-explore-item-block {
+
+}
+
+.am-explore-item-block-icon {
+    display: block;
+    width: 5em;
+    height: 5em;
+}
+
+
+.am-explore-item-block-name {
+
+}
