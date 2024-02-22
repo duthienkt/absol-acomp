@@ -4,6 +4,7 @@ import { FontColorIcon } from "../Icons";
 import Follower from "../Follower";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { findMaxZIndex } from "../utils";
+import SolidColorPicker from "./SolidColorPicker";
 
 /**
  * @extends AElement
@@ -130,7 +131,7 @@ FCBPickerController.prototype.share = {
 FCBPickerController.prototype.prepare = function () {
     if (this.share.$follower) return;
     this.share.$picker = _({
-        tag: 'solidcolorpicker',
+        tag: SolidColorPicker,
         props: {
             hasOpacity: false
         }
