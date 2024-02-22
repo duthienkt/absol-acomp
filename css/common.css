@@ -128,6 +128,21 @@ textarea.as-text-input:disabled {
     height: 1.5em;
 }
 
+
+.as-transparent-button.as-variant-danger {
+    color: var(--variant-color-danger)
+}
+
+.as-transparent-button.as-variant-danger:hover {
+    color: #c03542;
+}
+
+
+
+.as-transparent-button.as-variant-danger:active{
+    color: #ef0d23;
+}
+
 .as-section-text-n-line {
     position: relative;
     display: block;
