@@ -50,6 +50,10 @@
     display: flex;
 }
 
+div.kv-document-page.absol-frame {
+    display: flex;
+}
+
 .kv-document-page-header {
     position: relative;
     text-align: left;
