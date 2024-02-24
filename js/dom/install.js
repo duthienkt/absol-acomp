@@ -161,6 +161,8 @@ import TableOfTextInput from "../TableOfTextInput";
 import MListModal from "../selectlistbox/MListModal";
 import MSelectMenu from "../selectmenu/MSelectMenu";
 import MSelectTreeMenu from "../selecttreemenu/MSelectTreeMenu";
+import MHeaderBar from "../mobile/MHeaderBar";
+import { MExploreGroup, MExploreItemBlock, MExploreSectionBreak, MSpringboardMenu } from "../mobile/MExplore";
 
 
 export var publicCreators = [
@@ -278,7 +280,7 @@ export var publicCreators = [
     SelectBoxItem,
 
     DualSelectBox,
-    BrowserDetector.isMobile ?DualSelectMenuV2: DualSelectMenu,
+    BrowserDetector.isMobile ? DualSelectMenuV2 : DualSelectMenu,
 
     SelectTable,
     SelectTable2,
@@ -342,7 +344,13 @@ export var publicCreators = [
     MDualSelectBox,
 
     TreeChart,
-    TableOfTextInput
+    TableOfTextInput,
+
+    MHeaderBar,
+    MExploreSectionBreak,
+    MExploreItemBlock,
+    MExploreGroup,
+    MSpringboardMenu
 ];
 
 /***
