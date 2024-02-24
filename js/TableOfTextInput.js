@@ -6,11 +6,15 @@ import Follower from "./Follower";
 import FontColorButton from "./colorpicker/FontColorButton";
 import Attributes from "absol/src/AppPattern/Attributes";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
-import { findMaxZIndex, isNaturalNumber, isRealNumber } from "./utils";
+import { findMaxZIndex, getTextNodeBounds, isNaturalNumber, isRealNumber } from "./utils";
 import Color from "absol/src/Color/Color";
 import { InsertColLeftIcon, InsertColRightIcon } from "./Icons";
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
 import Snackbar from "./Snackbar";
+import { getTextNodeBound } from "absol/src/HTML5/Dom";
+import { getTextNodesIn } from "absol/src/HTML5/Text";
+import OOP from "absol/src/HTML5/OOP";
+import { copyJSVariable } from "absol/src/JSMaker/generator";
 
 
 /**
@@ -39,21 +43,18 @@ import Snackbar from "./Snackbar";
  * @constructor
  */
 function TableOfTextInput() {
+
     /**
      *
-     * @type {TEICell[]}
+     * @type {TEITable}
      */
-    this.cells = [];
-    this.$row = $('tbody tr', this);
-    this.formatTool = new TEIFormatTool(this);
-
-    this._minCol = 3;
-    this._maxCol = 3;
-
+    this.teiTable = new TEITable(this);
     /**
      * @name data
      * @type {TEICell[]}
      */
+
+    OOP.drillProperty(this, this.teiTable, ['minCol', 'maxCol', 'data', 'excelRichTextRows']);
 }
 
 /**
@@ -85,50 +86,10 @@ TableOfTextInput.render = function () {
         child: [
             {
                 tag: 'tbody',
-                child: [
-                    {
-                        tag: 'tr'
-                    }
-                ]
+                child: []
             }
         ]
     });
-};
-
-TableOfTextInput.property = {};
-TableOfTextInput.property.data = {
-    set: function (value) {
-        value = value || [];
-        this.cells.slice().forEach(c => c.remove());
-        this.cells = value.map(cd => new TEICell(this, cd));
-        this.$row.addChild(this.cells.map(c => c.td));
-    },
-    get: function () {
-        return this.cells.map(c => c.data);
-    }
-};
-
-TableOfTextInput.property.minCol = {
-    set: function (value) {
-        if (!isNaturalNumber(value)) value = 1;
-        value = Math.max(1, Math.floor(value));
-        this._minCol = value;
-    },
-    get: function () {
-        return this._minCol;
-    }
-};
-
-
-TableOfTextInput.property.maxCol = {
-    set: function (value) {
-        if (!isNaturalNumber(value)) value = 20;
-        value = Math.min(20, Math.max(1, Math.floor(value)));
-        this._maxCol = value;
-    },
-    get: function () {
-        return Math.max(this._minCol, this._maxCol);
-    }
 };
 
 
@@ -136,33 +97,299 @@ export default TableOfTextInput;
 
 ACore.install(TableOfTextInput);
 
+
 /**
  *
- * @param {TableOfTextInput} table
+ * @param {TableOfTextInput} elt
+ * @constructor
+ */
+function TEITable(elt) {
+    this._minCol = 3;
+    this._maxCol = 3;
+    this._minRow = 1;
+    this._maxRow = 9;
+    this.elt = elt;
+    this.$body = $('tbody', this.elt);
+
+    /**
+     *
+     * @type {TEIRow[]}
+     */
+    this.rows = [];
+    this.formatTool = new TEIFormatTool(this);
+}
+
+
+TEITable.prototype.notifyChange = function (data) {
+    this.elt.emit('change', Object.assign({ type: 'change', target: this }, data), this.elt);
+};
+
+Object.defineProperties(TEITable.prototype, {
+    minCol: {
+        /**
+         * @this TableOfTextInput
+         * @param value
+         */
+        set: function (value) {
+            if (!isNaturalNumber(value)) value = 1;
+            value = Math.max(1, Math.floor(value));
+            this._minCol = value;
+        },
+        get: function () {
+            return this._minCol;
+        }
+    },
+    maxCol: {
+        /**
+         * @this TableOfTextInput
+         * @param value
+         */
+        set: function (value) {
+            if (!isNaturalNumber(value)) value = 20;
+            value = Math.min(20, Math.max(1, Math.floor(value)));
+            this._maxCol = value;
+        },
+        get: function () {
+            return Math.max(this._minCol, this._maxCol);
+        }
+    },
+    minRow: {
+        /**
+         * @this TableOfTextInput
+         * @param value
+         */
+        set: function (value) {
+            if (!isNaturalNumber(value)) value = 1;
+            value = Math.max(1, Math.floor(value));
+            this._minRow = value;
+        },
+        get: function () {
+            return this._minRow;
+        }
+    },
+    maxRow: {
+        /**
+         * @this TableOfTextInput
+         * @param value
+         */
+        set: function (value) {
+            if (!isNaturalNumber(value)) value = 20;
+            value = Math.min(20, Math.max(1, Math.floor(value)));
+            this._maxRow = value;
+        },
+        get: function () {
+            return Math.max(this._minRow, this._maxRow);
+        }
+    },
+    data: {
+        set: function (value) {
+            value = copyJSVariable(value || {});
+            if (!(value.rows instanceof Array)) value.rows = [];
+            this.rows.forEach(row => row.tr.remove());
+            this.rows = value.rows.map(rowData => new TEIRow(this, rowData));
+            this.$body.addChild(this.rows.map(row => row.tr));
+        },
+        get: function () {
+            return {
+                rows: this.rows.map(row => row.data)
+            }
+        }
+    },
+    excelRichTextRows: {
+        get: function () {
+            var cBound = this.elt.getBoundingClientRect();
+            var placeHolderElt;
+            var renderSpace;
+            if (!cBound.width || !cBound.height) {
+                if (this.parentElement) {
+                    placeHolderElt = _({
+                        style: {
+                            display: 'none'
+                        }
+                    });
+                    this.selfReplace(placeHolderElt);
+                }
+                renderSpace = _({
+                    style: {
+                        position: 'fixed',
+                        zIndex: -1000,
+                        visibility: 'hidden',
+                        opacity: 0
+                    }
+                }).addTo(document.body);
+            }
+
+            var textNodes = getTextNodesIn(this.elt).filter(t => !!t.data);
+            var lineHeight = 25.662879943847656;
+            cBound = this.elt.getBoundingClientRect();
+            var y0 = cBound.top + 4 + 3.2348480224609375;
+            var textInfos = textNodes.reduce((ac, txt) => {
+                var cell = cellOf(txt);
+                var style = cell.style.export();
+                var bounds = getTextNodeBounds(txt);
+
+                bounds.forEach(bound => {
+                    var excelData = {
+                        text: bound.text.replace(/\n+$/, ''),
+                    };
+                    if (excelData.text.trim().length === 0) return;
+
+                    excelData.font = { 'name': 'Calibri' };
+                    if (style.color) {
+                        excelData.font.color = { argb: 'ff' + Color.parse(style.color).toString('hex6').substring(1).toLowerCase() };
+                    }
+                    if (style.fontWeight === 'bold') {
+                        excelData.font.bold = true;
+                    }
+                    if (style.fontStyle === 'italic') {
+                        excelData.font.italic = true;
+                    }
+
+                    if (style.fontSize) {
+                        excelData.font.size = style.fontSize;
+                    }
+
+
+                    ac.push({
+                        rowIdx: Math.round((bound.rect.y - y0) / lineHeight),
+                        bound: bound.rect,
+                        text: excelData.text,
+                        excelData: excelData
+                    });
+
+                });
+                return ac;
+            }, []);
+
+            textInfos.sort((a, b) => {
+                if (a.rowIdx === b.rowIdx) {
+                    return a.bound.x - b.bound.x;
+                }
+                else {
+                    return a.bound.y - b.bound.y;
+                }
+            });
+
+
+            var richTextRows = textInfos.reduce((ac, cr, i) => {
+                var rowIdx = cr.rowIdx;
+                while (ac.richTextRows.length <= rowIdx) {
+                    ac.x = ac.x0;
+                    ac.richTextRows.push([]);
+                }
+
+                var marginTextL = Math.floor((cr.bound.x - ac.x) / 3.314239501953125);
+                if (marginTextL > 0) {
+                    ac.richTextRows[ac.richTextRows.length - 1].push({
+                        text: ' '.repeat(marginTextL),
+                        font: { 'name': 'Calibri' }
+                    });
+                }
+
+                ac.richTextRows[ac.richTextRows.length - 1].push(cr.excelData);
+                ac.x = cr.bound.x + cr.bound.width;
+                ac.y = cr.bound.y;
+
+                return ac;
+            }, {
+                richTextRows: [],
+
+                x: cBound.left + 5,
+                x0: cBound.left + 5,
+
+
+            }).richTextRows;
+
+            if (placeHolderElt) {
+                placeHolderElt.selfReplace(this);
+            }
+            if (renderSpace) renderSpace.remove();
+            return richTextRows;
+        }
+    }
+});
+
+
+/**
+ *
+ * @param {TEITable} table
+ * @param  data
+ * @constructor
+ */
+function TEIRow(table, data) {
+    data = data || {};
+    if (!(data.cells instanceof Array)) data.cells = [];
+    this.table = table;
+    this.tr = _('tr');
+    /**
+     *
+     * @type {TEICell[]}
+     */
+    this.cells = [];
+    this.data = data;
+}
+
+Object.defineProperty(TEIRow.prototype, 'data', {
+    set: function (data) {
+        this.cells = data.cells.map(cellData => new TEICell(this, cellData));
+        this.tr.clearChild().addChild(this.cells.map(cell => cell.td));
+    },
+    get: function () {
+        return {
+            cells: this.cells.map(cell => cell.data)
+        }
+    }
+});
+
+
+var cellOf = node => {
+    while (node) {
+        if (node.teiCell) return node.teiCell;
+        node = node.parentElement;
+    }
+    return null;
+}
+
+/**
+ *
+ * @param {TEIRow} row
  * @param {TEIDataCell} data
  * @constructor
  */
-function TEICell(table, data) {
-    this.table = table;
+function TEICell(row, data) {
+    this.row = row;
+    this.table = row.table;
     this.td = _({
         tag: 'td',
         class: 'as-table-of-text-input-cell',
+        on: {
+            click: (event) => {
+                if (event.target === this.td) this.focus();
+            },
+        },
         child: {
             tag: PreInput,
             attr: {
                 spellcheck: 'false'
             },
-            props: {},
+            props: {
+                teiCell: this
+            },
             on: {
                 focus: () => {
-                    table.formatTool.onFocus(this);
+                    this.table.formatTool.onFocus(this);
                 },
                 blur: () => {
-                    table.formatTool.onBlur(this);
+                    this.table.formatTool.onBlur(this);
                 },
                 change: (event) => {
                     if (event.originalEvent)
-                        table.emit('change', { type: 'change', target: table, cell: this }, this);
+                        this.table.elt.emit('change', {
+                            type: 'change',
+                            target: this.table,
+                            cell: this
+                        }, this.table.elt);
+                    this.table.formatTool.$follower.updatePosition();
                 }
             }
         }
@@ -173,6 +400,18 @@ function TEICell(table, data) {
     Object.assign(this.style, data.style);
     this.style.loadAttributeHandlers(this.styleHandlers);
 }
+
+TEICell.prototype.focus = function () {
+    this.$input.focus();
+    var textNode = getTextNodesIn(this.$input).pop();
+    if (!textNode) return;
+    var range = document.createRange();
+    range.setStart(textNode, textNode.data.length);
+    range.setEnd(textNode, textNode.data.length);
+    var sel = getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+};
 
 TEICell.prototype.remove = function () {
     this.td.remove();
@@ -221,19 +460,19 @@ TEICell.prototype.styleHandlers = {
     fontSize: {
         set: function (value) {
             if (typeof value === "string") value = parseInt(value.replace(/[^0-9.]/g, ''), 10);
-            if (!isRealNumber(value)) value = 14;
+            if (!isRealNumber(value)) value = 11;
             value = Math.abs(value);
-            value = value || 14;
-            this.td.addStyle('font-size', value + 'px');
+            value = value || 11;
+            this.td.addStyle('font-size', value + 'pt');
             return value;
         },
         get: function (ref) {
             var value = ref.get();
-            return value || 14;
+            return value || 11;
         },
         export: function (ref) {
             var value = ref.get();
-            if (value === 14) value = undefined;
+            if (value === 11) value = undefined;
             return value || undefined;
         }
     },
@@ -302,9 +541,12 @@ Object.defineProperty(TEICell.prototype, "data", {
 function TEIFormatTool(table) {
     Object.keys(TEIFormatTool.prototype).filter(k => k.startsWith('ev_')).forEach(k => this[k] = this[k].bind(this));
     this.table = table;
-    this.table.on('keydown', this.ev_keydown)
+    this.table.elt.on('keydown', this.ev_keydown)
     this.$follower = _({
         tag: Follower,
+        props: {
+            anchor: [6, 1]
+        },
         child: {
             class: 'as-table-of-text-input-tool',
             child: [
@@ -352,17 +594,46 @@ function TEIFormatTool(table) {
                 },
                 {
                     tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-insert-col'],
-                    child: { tag: InsertColLeftIcon },
-                    attr: { 'data-insert': 'left' }
+                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
+                    child: 'span.mdi.mdi-table-column-plus-before',
+                    attr: { 'data-command': 'left' }
                 },
                 {
                     tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-insert-col'],
-                    child: { tag: InsertColRightIcon },
-                    attr: { 'data-insert': 'right' }
+                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
+                    child: 'span.mdi.mdi-table-column-plus-after',
+                    attr: { 'data-command': 'right' }
                 },
-
+                {
+                    tag: 'button',
+                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
+                    child: 'span.mdi.mdi-table-row-plus-before',
+                    attr: { 'data-command': 'above' }
+                },
+                {
+                    tag: 'button',
+                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
+                    child: 'span.mdi.mdi-table-row-plus-after',
+                    attr: { 'data-command': 'bellow' }
+                },
+                {
+                    tag: 'button',
+                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command', 'as-variant-danger'],
+                    attr: { 'data-command': 'removeCol' },
+                    child: {
+                        tag: 'span',
+                        class: ['mdi', 'mdi-table-column-remove'],
+                    },
+                },
+                {
+                    tag: 'button',
+                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command', 'as-variant-danger'],
+                    attr: { 'data-command': 'removeRow' },
+                    child: {
+                        tag: 'span',
+                        class: ['mdi', 'mdi-table-row-remove'],
+                    },
+                },
             ]
         }
     });
@@ -380,29 +651,177 @@ function TEIFormatTool(table) {
             ac[value] = btn;
             return ac;
         }, {});
-    this.$insertBtns = $$('.as-table-of-text-input-tool-insert-col', this.$follower)
+    this.$commandBtns = $$('.as-table-of-text-input-tool-command', this.$follower)
         .reduce((ac, btn) => {
-            var value = btn.attr('data-insert');
+            var value = btn.attr('data-command');
             btn.on('click', ev => {
-                this.ev_clickInsert(value, ev);
+                this.commands[value].exec.call(this);
+                // this.ev_clickInsert(value, ev);
             });
             ac[value] = btn;
             return ac;
         }, {});
+    // this.$removeBtn = $('.as-table-of-text-input-tool-remove-col', this.$follower)
+    //     .on('click', this.ev_clickRemove);
+
     this.focusCell = null;
+    this.table.elt.on('change', () => this.updateAvailableCommands());
 }
 
 
+TEIFormatTool.prototype.commands = {
+    left: {
+        /**
+         * @this TEIFormatTool
+         */
+        available: function () {
+            return this.focusCell.row.cells.length < this.table.maxCol;
+        },
+        /**
+         * @this TEIFormatTool
+         */
+        exec: function () {
+            var idx = this.focusCell.row.cells.indexOf(this.focusCell);
+            this.table.rows.forEach(row => {
+                var newCell = new TEICell(row, { value: '' });
+                row.tr.addChildBefore(newCell.td, row.cells[idx].td);
+                row.cells.splice(idx, 0, newCell);
+
+            });
+            this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
+            this.table.formatTool.$follower.updatePosition();
+
+        }
+    },
+    right: {
+        /**
+         * @this TEIFormatTool
+         */
+        exec: function () {
+            var idx = this.focusCell.row.cells.indexOf(this.focusCell);
+            this.table.rows.forEach(row => {
+                var newCell = new TEICell(row, { value: '' });
+                row.tr.addChildAfter(newCell.td, row.cells[idx].td);
+                row.cells.splice(idx + 1, 0, newCell);
+
+            });
+            this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
+            this.table.formatTool.$follower.updatePosition();
+        }
+    },
+    above: {
+        /**
+         * @this TEIFormatTool
+         */
+        available: function () {
+            return this.table.rows.length < this.table.maxRow;
+        },
+        /**
+         * @this TEIFormatTool
+         */
+        exec: function () {
+            var colN = this.table.rows[0].cells.length;
+            var focusRow = this.focusCell.row;
+            var idx = this.table.rows.indexOf(focusRow);
+            var newRow = new TEIRow(this.table, {
+                cells: Array(colN).fill().map(() => ({
+                    value: ''
+                }))
+            });
+            this.table.rows.splice(idx, 0, newRow);
+            this.table.$body.addChildBefore(newRow.tr, focusRow.tr);
+            this.table.notifyChange({ newRow: newRow });
+            this.table.formatTool.$follower.updatePosition();
+        }
+    },
+    bellow: {
+        /**
+         * @this TEIFormatTool
+         */
+        exec: function () {
+            var colN = this.table.rows[0].cells.length;
+            var focusRow = this.focusCell.row;
+            var idx = this.table.rows.indexOf(focusRow);
+            var newRow = new TEIRow(this.table, {
+                cells: Array(colN).fill().map(() => ({
+                    value: ''
+                }))
+            });
+            this.table.rows.splice(idx + 1, 0, newRow);
+            this.table.$body.addChildAfter(newRow.tr, focusRow.tr);
+            this.table.notifyChange({ newRow: newRow });
+            this.table.formatTool.$follower.updatePosition();
+        }
+    },
+    removeCol: {
+        /**
+         * @this TEIFormatTool
+         */
+        available: function () {
+            return this.table.minCol < this.focusCell.row.cells.length;
+        },
+        /**
+         * @this TEIFormatTool
+         */
+        exec: function () {
+            var focusRow = this.focusCell.row;
+            var idx = focusRow.cells.indexOf(this.focusCell);
+            this.table.rows.forEach(row => {
+                var cell = row.cells[idx];
+                cell.td.remove();
+                row.cells.splice(idx, 1);
+            });
+            this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
+            this.table.formatTool.$follower.updatePosition();
+            var cellNext = focusRow.cells[idx - 1] || focusRow.cells[idx];
+            if (cellNext) cellNext.focus();
+        }
+    },
+    removeRow: {
+        /**
+         * @this TEIFormatTool
+         */
+        available: function () {
+            return this.table.minRow < this.table.rows.length;
+        },
+        /**
+         * @this TEIFormatTool
+         */
+        exec: function () {
+            var focusRow = this.focusCell.row;
+            var idx = this.table.rows.indexOf(focusRow);
+            var colIdx = focusRow.cells.indexOf(this.focusCell);
+            focusRow.tr.remove();
+            this.table.rows.splice(idx, 1);
+            this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
+            this.table.formatTool.$follower.updatePosition();
+            var nextRow = this.table.rows[idx] || this.table.rows[idx - 1];
+            var nexCell;
+            if (nextRow) {
+                nexCell = nextRow.cells[colIdx];
+                if (nexCell) nexCell.focus();
+            }
+        }
+    }
+};
+
+TEIFormatTool.prototype.commands.right.available = TEIFormatTool.prototype.commands.left.available;
+TEIFormatTool.prototype.commands.bellow.available = TEIFormatTool.prototype.commands.above.available;
+
 TEIFormatTool.prototype.onFocus = function (cell) {
+    if (this.focusCell !== cell && this.focusCell) {
+        this.focusCell.td.removeClass('as-focus');
+    }
     this.focusCell = cell;
+    this.focusCell.td.addClass('as-focus');
     if (!this.$follower.parentElement) {
         this.$follower.addTo(document.body);
         setTimeout(() => {
             document.addEventListener('click', this.ev_clickOut);
         }, 30);
     }
-    this.$follower.followTarget = this.focusCell.td;
-    this.$follower.sponsorElement = this.focusCell.td;
+    this.$follower.followTarget = this.table.elt;
+    this.$follower.sponsorElement = this.table.elt;
     this.$follower.addStyle('z-index', findMaxZIndex(this.focusCell.td));
 
     this.$fontSize.value = this.focusCell.style.fontSize;
@@ -422,18 +841,33 @@ TEIFormatTool.prototype.onFocus = function (cell) {
             this.$alignBtns[align].removeClass('as-checked');
         }
     }
+    this.updateAvailableCommands();
+
+};
+
+TEIFormatTool.prototype.updateAvailableCommands = function () {
+    Object.keys(this.$commandBtns).forEach(key => {
+        var available = this.focusCell && this.commands[key].available.call(this);
+        this.$commandBtns[key].disabled = !available;
+    });
 };
 
 
 TEIFormatTool.prototype.onBlur = function (cell) {
     // if (this.focusCell !== cell) return;
-
+    // if (this.focusCell && this.focusCell === cell) {
+    //     this.focusCell.td.removeClass('as-focus');
+    //     this.focusCell = null;
+    // }
 };
 
 
 TEIFormatTool.prototype.ev_clickOut = function (event) {
-    if (hitElement(this.table, event)) return;
-    this.focusCell = null;
+    if (hitElement(this.table.elt, event)) return;
+    if (this.focusCell) {
+        this.focusCell.td.removeClass('as-focus');
+        this.focusCell = null;
+    }
     this.$follower.followTarget = null;
     this.$follower.remove();
     document.removeEventListener('click', this.ev_clickOut);
@@ -445,7 +879,7 @@ TEIFormatTool.prototype.ev_fontSizeChange = function () {
     var newValue = this.$fontSize.value;
     if (newValue !== prevValue) {
         this.focusCell.style.fontSize = newValue;
-        this.table.emit('change', { type: 'change', target: this.table, cell: this }, this);
+        this.table.elt.emit('change', { type: 'change', target: this.table, cell: this }, this);
     }
 };
 
@@ -458,7 +892,7 @@ TEIFormatTool.prototype.ev_clickBold = function () {
         this.$bold.addClass('as-checked');
         this.focusCell.style.fontWeight = 'bold';
     }
-    this.table.emit('change', { type: 'change', target: this.table, cell: this }, this);
+    this.table.elt.emit('change', { type: 'change', target: this.table, cell: this }, this);
 
 };
 
@@ -472,7 +906,7 @@ TEIFormatTool.prototype.ev_clickItalic = function () {
         this.$italic.addClass('as-checked');
         this.focusCell.style.fontStyle = 'italic';
     }
-    this.table.emit('change', { type: 'change', target: this.table, cell: this }, this);
+    this.table.elt.emit('change', { type: 'change', target: this.table, cell: this }, this);
 };
 
 TEIFormatTool.prototype.ev_fontColorSubmit = function () {
@@ -481,7 +915,7 @@ TEIFormatTool.prototype.ev_fontColorSubmit = function () {
     var newColor = this.$fontColor.value;
     if (prevColor !== newColor) {
         this.focusCell.style.color = newColor;
-        this.table.emit('change', { type: 'change', target: this.table, cell: this }, this);
+        this.table.elt.emit('change', { type: 'change', target: this.table, cell: this }, this);
     }
 };
 
@@ -492,8 +926,7 @@ TEIFormatTool.prototype.ev_clickAlign = function (newValue, event) {
         this.$alignBtns[prevValue].removeClass('as-checked');
         this.$alignBtns[newValue].addClass('as-checked');
         this.focusCell.style.textAlign = newValue;
-        console.log('change')
-        this.table.emit('change', { type: 'change', target: this.table, cell: this }, this);
+        this.table.elt.emit('change', { type: 'change', target: this.table, cell: this }, this);
     }
 };
 
@@ -510,13 +943,19 @@ TEIFormatTool.prototype.ev_clickInsert = function (at, event) {
     else {
         this.table.$row.addChildBefore(newCell.td, this.table.cells[bfIdx].td);
         this.table.cells.splice(bfIdx, 0, newCell);
-
     }
 
-    this.table.emit('change', { type: 'change', target: this.table, cell: this }, this);
+    this.table.elt.emit('change', { type: 'change', target: this.table, cell: this }, this);
 
 };
 
+
+TEIFormatTool.prototype.ev_clickRemove = function () {
+    if (!this.focusCell) return;
+    this.focusCell.remove();
+    this.table.elt.emit('change', { type: 'change', target: this.table, cell: this.focusCell }, this.table);
+    this.focusCell = null;
+};
 
 TEIFormatTool.prototype.ev_keydown = function (event) {
     var key = keyboardEventToKeyBindingIdent(event);

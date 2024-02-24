@@ -2,17 +2,39 @@
     width: 100%;
     border-collapse: collapse;
     color: black;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: 'Aptos Narrow', Calibri, sans-serif, 'Mongolian Baiti', 'Microsoft Yi Baiti', 'Javanese Text', 'Yu Gothic';
+    font-size: 11pt;
 }
 
+.as-table-of-text-input.as-size-a4 {
+    width: 445pt;
+}
+
+.as-table-of-text-input pre {
+    font: inherit;
+    line-height: 1.75;
+}
 
 .as-table-of-text-input.as-inline {
     display: inline-table;
 }
 
 .as-table-of-text-input-cell {
-    padding: 3px 5px;
+    vertical-align: top;
+    padding: 0px 5px;
     border: 1px dashed #dddddd;
+    position: relative;
+}
+
+.as-table-of-text-input-cell.as-focus::before {
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    border: 1px dashed var(--variant-color-primary);
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
 
 .as-table-of-text-input-cell .as-preinput {
