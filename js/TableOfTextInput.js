@@ -124,6 +124,29 @@ TEITable.prototype.notifyChange = function (data) {
     this.elt.emit('change', Object.assign({ type: 'change', target: this }, data), this.elt);
 };
 
+TEITable.prototype.calcCellPos = function () {
+    var n = this.rows[0].cells.reduce((ac, cell) => ac + cell.colspan, 0);
+    var m = this.rows.length;
+    var heights = Array(n).fill(0);
+    var row, i, j, k;
+    var cell, colspan, rowspan, colIdx;
+    for (i = 0; i < m; ++i) {
+        row = this.rows[i];
+        colIdx = 0;
+        for (j = 0; j < row.cells.length; ++j) {
+            cell = row.cells[j];
+            while (heights[colIdx] > i) colIdx++;
+            colspan = cell.colspan;
+            rowspan = cell.rowspan;
+            cell.td.attr('data-col-idx', colIdx);
+            for (k = 0; k < colspan; ++k) {
+                heights[colIdx] = i + rowspan;
+            }
+        }
+    }
+
+};
+
 Object.defineProperties(TEITable.prototype, {
     minCol: {
         /**
@@ -188,6 +211,7 @@ Object.defineProperties(TEITable.prototype, {
             this.rows.forEach(row => row.tr.remove());
             this.rows = value.rows.map(rowData => new TEIRow(this, rowData));
             this.$body.addChild(this.rows.map(row => row.tr));
+            this.calcCellPos();
         },
         get: function () {
             return {
@@ -537,6 +561,41 @@ Object.defineProperty(TEICell.prototype, "data", {
     }
 });
 
+
+Object.defineProperties(TEICell.prototype, {
+    colspan: {
+        set: function (value) {
+
+        },
+        get: function () {
+            var value = this.td.attr('colspan') || '1';
+            value = parseInt(value);
+            if (isNaturalNumber(value)) return value;
+            return 1;
+        }
+    },
+    rowspan: {
+        set: function (value) {
+
+        },
+        get: function () {
+            var value = this.td.attr('rowspan') || '1';
+            value = parseInt(value);
+            if (isNaturalNumber(value)) return value;
+            return 1;
+        }
+    },
+    colpos: {
+        get: function () {
+
+        }
+    },
+    rowpos: {
+        get: function () {
+
+        }
+    }
+});
 
 function TEIFormatTool(table) {
     Object.keys(TEIFormatTool.prototype).filter(k => k.startsWith('ev_')).forEach(k => this[k] = this[k].bind(this));
