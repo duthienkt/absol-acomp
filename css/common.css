@@ -143,6 +143,10 @@ textarea.as-text-input:disabled {
     color: #ef0d23;
 }
 
+button.as-transparent-button:disabled {
+    color: #dddddd;
+}
+
 .as-section-text-n-line {
     position: relative;
     display: block;
