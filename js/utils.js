@@ -5,6 +5,7 @@ import Modal from "./Modal";
 import ext2MineType from "absol/src/Converter/ext2MineType";
 import TextMeasurement from "./tool/TextMeasurement";
 import { MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
+import Rectangle from "absol/src/Math/Rectangle";
 
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
@@ -574,6 +575,65 @@ export function estimateWidth14(text) {
         l += (charWidth[text.charAt(j)]) || 9.337890625;
     }
     return l;
+}
+
+
+/**
+ *TODO: import from absol-acomp
+ * @param {Text} text
+ * @param {number=} startOffset
+ * @param {number=} endOffset
+ * @returns {*[]}
+ */
+export function getTextNodeBounds(text, startOffset, endOffset) {
+    if (!text || text.nodeType !== Node.TEXT_NODE || !text.parentElement) return null;
+    var style = getComputedStyle(text.parentElement);
+    var fontSize = parseFloat(style.getPropertyValue('font-size').replace('px', ''));
+    var lineHeight = style.getPropertyValue('line-height');
+    if (lineHeight === 'normal') lineHeight = 1.2;
+    else lineHeight = parseFloat(lineHeight.replace('px', '')) / fontSize;
+    var txt = text.data;
+    var y = -Infinity;
+    var c;
+    var range;
+    var parts = [];
+    var cPart;
+    var j;
+    var delta = lineHeight * fontSize / 3;
+    var rect;
+    var i = 0;
+    if (isNaturalNumber(startOffset)) i = Math.max(startOffset, i);
+    if (isNaturalNumber(endOffset)) endOffset = Math.min(txt.length, endOffset);
+    else endOffset = txt.length
+    while (i < endOffset) {
+        c = txt[i];
+        j = i + 1;
+
+        range = document.createRange();
+        range.setStart(text, i);
+        range.setEnd(text, j);
+        rect = Rectangle.fromClientRect(range.getBoundingClientRect());
+        if (Math.abs(rect.y - y) < delta) {
+            cPart.end = j;
+            cPart.rect = cPart.rect.merge(rect);
+        }
+        else {
+            cPart = {
+                start: i,
+                end: j,
+                rect: rect
+            };
+            y = rect.y;
+            parts.push(cPart);
+        }
+        i = j;
+    }
+
+    parts.forEach(part => {
+        rect = part.rect;
+        part.text = txt.substring(part.start, part.end);
+    });
+    return parts;
 }
 
 /***
