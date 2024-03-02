@@ -105,22 +105,9 @@
     vertical-align: middle;
 }
 
-.as-solid-color-picker-selected-ctn {
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAaSURBVBhXYzh8+PD///8hJAOcBSRxyRw+DABJUCox2kjvSgAAAABJRU5ErkJggg==');
-    background-size: 1.5em;
-    image-rendering: optimizeSpeed;
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -o-crisp-edges;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: pixelated;
-    image-rendering: optimize-contrast;
-    -ms-interpolation-mode: nearest-neighbor;
-
+.as-solid-color-picker-selected {
     display: inline-block;
     vertical-align: middle;
-}
-
-.as-solid-color-picker-selected {
     height: 2em;
     width: 5em;
     border: 1px solid #ddd;
@@ -133,22 +120,58 @@
     width: 6em;
 }
 
+.as-solid-color-picker-color-hex input {
+    margin-left: 0;
+}
+
 .as-flexicon-input.as-solid-color-picker-color-opacity.as-flexicon-input-has-icon.as-flexicon-input-has-unit input {
     width: calc(100% - 4em);
 }
 
+.as-solid-color-picker.as-nullable .as-solid-color-picker-none-ctn{
+    display: inline-block;
 
-/*.as-solid-color-picker-color-hex input {*/
-/*    padding-left: 0;*/
-/*    padding-right: 0;*/
-/*}*/
+}
+
+.as-solid-color-picker-none-ctn {
+    display: none;
+    margin-top: 5px;
+    padding: 5px;
+    cursor: default;
+    user-select: none;
+}
+
+.as-solid-color-picker-none-ctn.as-selected {
+    box-shadow: rgba(0, 0, 0, 0.7) 0px 0px 0.3em 0.125em inset;
+}
+
+.as-solid-color-picker-none-ctn:hover {
+    color: var(--as-transparent-button-text-hover-color);
+}
+
+
+.as-solid-color-picker-none-ctn:active {
+    color: var(--as-transparent-button-text-active-color);
+}
+
+.as-solid-color-picker-none-ctn > * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-solid-color-picker-none-cell {
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 0.3em;
+}
+
 
 .as-solid-color-picker-color-opacity input {
     padding-left: 0;
     padding-right: 0;
 }
 
-.as-solid-color-picker-footer *:not(:first-child) {
+.as-solid-color-picker-footer > *:not(:first-child) {
     margin-left: 0.5em;
 }
 

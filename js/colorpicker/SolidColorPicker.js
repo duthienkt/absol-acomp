@@ -1,99 +1,101 @@
-import { MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches } from "./SwatchesTable";
+import { MoqupsClassicSwathes, iOsSwatches, MaterialSwatches, BootstrapSwatches, ColorCell } from "./SwatchesTable";
 import Color from "absol/src/Color/Color";
 import ACore, { _, $ } from "../../ACore";
 import QuickMenu from "../QuickMenu";
 import '../../css/solidcolorpicker.css';
 import SpectrumColor from "./SpectrumColor";
+import OOP from "absol/src/HTML5/OOP";
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
+import { base64EncodeUnicode } from "absol/src/Converter/base64";
+import red_cross_tpl from '../../assets/icon/red_cross.tpl';
+import { isRealNumber } from "../utils";
 
 /**
  * @extends AElement
  * @constructor
  */
 function SolidColorPicker() {
+    if (!SolidColorPicker.css) {
+        SolidColorPicker.css = new DynamicCSS()
+            .setProperty('.as-color-cell.as-solid-color-picker-selected.as-null .as-color-cell-value',
+                'background-image',
+                `url("data:image/svg+xml;base64,${base64EncodeUnicode(red_cross_tpl.replace(/\$width/g, '58').replace(/\$height/g, '22'))}")`)
+            .commit();
+    }
+    this.swatchMode = new SCPSWatchMode(this);
+    this.pickerMode = new SCPPickerMode(this);
+    this.modes = [this.swatchMode, this.pickerMode];
+    this.modeCtrl = new SCPSWatchModeController(this);
+    OOP.drillProperty(this, this.modeCtrl, 'mode');
+
+
+    this.footerCtrl = new SCPFooterController(this);
+    this.$opacity = this.footerCtrl.$opacity;
+    this.$hex = this.footerCtrl.$hex;
+    this.$selected = this.footerCtrl.$selected;
+
+    this.historyCtrl = new SCPHistoryController(this);
+    this.$swatchesName = this.modeCtrl.$swatchesName;
+
     this.on('keydown', this.eventHandler.keydown);
-    this.$swatchesName = $('.as-solid-color-picker-swatches-name', this);
-    var thisSP = this;
     this._lastEmitHex8 = '';
-    this._rgb = 'ff0000';
-    this._opatictyPercent = 100;
-    this._value = new Color([1, 0, 0, 1]);
-    this._hue = 0;
-    this._sat = 1;
-    this._brightness = 1;
+    this.rawValue = new Color([1, 0, 0, 1]);
+
     this._swatchesNames = ['Material Design', 'Moqups Classic', 'Bootstrap', 'iOS'];
     this._swatchesShortName = ['material', 'moqups', 'bootstrap', 'ios'];
     this._swatchesIcons = ['span.mdi.mdi-palette', 'span.mdi.mdi-material-design', 'span.mdi.mdi-bootstrap', 'span.mdi.mdi-apple-ios'];
 
     this._swatchesData = [MaterialSwatches, MoqupsClassicSwathes, BootstrapSwatches, iOsSwatches];
 
-    this._mode = 'swatches';
-    this.$mode = $('.as-solid-color-picker-mode', this)
-        .on('change', this.eventHandler.modeChange);
 
     /**
      * @type {import('absol-acomp/js/BScroller').default}
      */
-    this.$swatchesTableCtn = $('.as-solid-color-picker-swatches-ctn', this);
+    this.$swatchesTableCtn = this.swatchMode.$swatchesTableCtn;
+    this.$selectedDot = _('.as-solid-color-picker-selected-dot');//share
 
     /**
      * @type {import('./SwatchesTable').default}
      */
-    this.$swatchesTable = $('.as-solid-color-picker-swatches-ctn swatchestable', this)
-        .on('presscell', this.eventHandler.swatchesPressCell);
-    this.$recentSwatchesTable = $('.as-solid-color-picker-recent-swatches-ctn swatchestable', this)
-        .on('presscell', this.eventHandler.swatchesPressCell);
+    this.$swatchesTable = this.swatchMode.$swatchesTable;
 
-    this.$selectedDot = _('.as-solid-color-picker-selected-dot');
-    QuickMenu.toggleWhenClick(this.$swatchesName, {
-        anchor: [1, 6],
-        getMenuProps: function () {
-            return {
-                extendClasses: 'as-solid-color-picker-swatches-name-menu',
-                extendStyle: {
-                    'font-size': thisSP.getComputedStyleValue('font-size')
-                },
-                items: thisSP._swatchesNames.map(function (name, i) {
-                    return { text: name, value: thisSP._swatchesShortName[i], icon: thisSP._swatchesIcons[i] };
-                })
-            }
-        },
-        onSelect: function (item) {
-            thisSP.swatches = item.value;
-        }
-    });
+    this.$recentSwatchesTable = this.historyCtrl.$recentSwatchesTable;
 
-    this.$attachhook = _('attachhook').on('error', this.eventHandler.attached);
 
-    this.$hex = $('.as-solid-color-picker-color-hex', this)
-        .on('keyup', this.eventHandler.hexKeyup)
-        .on('change', this.eventHandler.hexChange);
-    this.$opacity = $('.as-solid-color-picker-color-opacity', this)
-        .on('change', this.eventHandler.opacityChange)
-        .on('keyup', this.eventHandler.opacityKeyUp);
-    this.$selected = $('.as-solid-color-picker-selected', this);
+    this.$attachhook = _('attachhook')
+        .on('attached', this.eventHandler.attached).addTo(this);
 
-    this.$spectrum = _({
-        tag: 'hanger', elt: $('.as-solid-color-picker-spectrum', this)
-    })
-        .on('predrag', this.eventHandler.spectrumDrag)
-        .on('drag', this.eventHandler.spectrumDrag);
-    this.$spectrumDot = $('.as-solid-color-picker-spectrum-dot', this);
 
-    this.$alpha = _({ tag: 'hanger', elt: $('.as-solid-color-picker-alpha', this) })
-        .on('predrag', this.eventHandler.alphaDrag)
-        .on('drag', this.eventHandler.alphaDrag);
-    this.$alphaDot = $('.as-solid-color-picker-alpha-dot', this);
+    this.$spectrum = this.pickerMode.$spectrum;
+    this.$spectrumDot = this.pickerMode.$spectrumDot;
 
-    this.$hue = _({ tag: 'hanger', elt: $('.as-solid-color-picker-hue', this) })
-        .on('predrag', this.eventHandler.hueDrag)
-        .on('drag', this.eventHandler.hueDrag);
-    this.$hueDot = $('.as-solid-color-picker-hue-dot', this);
-    this.$near = $('.as-solid-color-picker-near', this)
-        .on('presscell', this.eventHandler.nearPressCell);
+    this.$alpha = this.pickerMode.$alpha;
+
 
     this.$submitBtn = $('.as-solid-color-picker-submit-btn', this)
         .on('click', this.notifySubmit.bind(this));
-    this._updateNear();
+
+
+    /**
+     * @name hasOpacity
+     * @type {boolean}
+     * @memberof SolidColorPicker#
+     */
+
+
+    /**
+     * @name nullable
+     * @type {boolean}
+     * @memberof SolidColorPicker#
+     */
+
+
+    /**
+     * @name value
+     * @type {Color|null}
+     * @memberof SolidColorPicker#
+     */
+
 }
 
 
@@ -105,7 +107,7 @@ SolidColorPicker.render = function () {
             tabindex: '1'
         },
         extendEvent: ['change', 'sizechange', 'submit'],
-        class: ['as-solid-color-picker', 'as-solid-color-picker-mode-swatches', 'as-has-opacity'],
+        class: ['as-solid-color-picker', 'as-has-opacity'],
         child: [
             {
                 class: 'as-solid-color-picker-header',
@@ -176,6 +178,21 @@ SolidColorPicker.render = function () {
                         class: 'as-solid-color-picker-near'
                     },
                     {
+                        class: 'as-solid-color-picker-none-ctn',
+                        child: [
+                            {
+                                tag: ColorCell,
+                                class: 'as-solid-color-picker-none-cell',
+                                props: {
+                                    value: null
+                                }
+                            },
+                            {
+                                child: { text: 'None' }
+                            }
+                        ]
+                    },
+                    {
                         class: 'as-solid-color-picker-recent-title',
                         child: { text: 'RECENT COLOR' }
                     },
@@ -194,13 +211,8 @@ SolidColorPicker.render = function () {
                 class: 'as-solid-color-picker-footer',
                 child: [
                     {
-                        class: 'as-solid-color-picker-selected-ctn',
-                        child: {
-                            class: 'as-solid-color-picker-selected',
-                            style: {
-                                'background-color': '#ffffffff'
-                            }
-                        }
+                        tag: ColorCell,
+                        class: 'as-solid-color-picker-selected'
                     },
                     {
                         tag: 'flexiconinput',
@@ -269,8 +281,7 @@ SolidColorPicker.pushInstances = function (elt) {
         if (instance.isDescendantOf(document.body)) {
             aliveInstance.push(instance);
         }
-        ;
-        if (instance == elt) found = true;
+        if (instance === elt) found = true;
     }
     while (aliveInstance.length > 0) {
         instances.push(aliveInstance.pop());
@@ -289,7 +300,6 @@ SolidColorPicker.updateInstancesSetting = function () {
         if (instance.isDescendantOf(document.body)) {
             aliveInstance.push(instance);
         }
-        ;
     }
     while (aliveInstance.length > 0) {
         instance = aliveInstance.pop();
@@ -300,10 +310,13 @@ SolidColorPicker.updateInstancesSetting = function () {
 
 SolidColorPicker.$instances = [];
 
+SolidColorPicker.css = null;
+
 /**
  * @param {Color} color
  */
 SolidColorPicker.pushColorHistory = function (color) {
+    if (!color) return;
     var hex6Color = color.toString('hex6');
     var recentColors = SolidColorPicker.setting.recentColors;
     var index = recentColors.indexOf(hex6Color);
@@ -323,84 +336,372 @@ SolidColorPicker.prototype.reloadSetting = function () {
         swatches.push(recentColors.splice(0, 12));
     }
     this.$recentSwatchesTable.data = swatches;
-    this._autoAdDotToCell();
+    this.swatchMode.viewValue();
 };
 
-SolidColorPicker.prototype._addDotToCell = function (cell, cellColor) {
-    var shadowColor = cellColor.getContrastYIQ();
-    shadowColor.rgba[3] = 0.7;
-    this.$selectedDot.addStyle('box-shadow', 'inset 0px 0px 0.3em 0.125em ' + shadowColor.toString());
-    cell.addChild(this.$selectedDot);
+
+SolidColorPicker.prototype.notifyCanBeChanged = function () {
+    var value = this.value;
+    var cHex8 = value ? this.rawValue.toHex8() : "null";
+    if (cHex8 !== this._lastEmitHex8) {
+        this._lastEmitHex8 = cHex8;
+        this.notifyChange();
+    }
 };
 
-SolidColorPicker.prototype._autoAdDotToCell = function () {
-    this.$selectedDot.remove();
-    var cell;
-    if (this._mode == 'swatches') {
-        cell = this.$swatchesTable.getCell('#' + this._rgb);
+SolidColorPicker.prototype.notifyChange = function () {
+    this.emit('change', { target: this, value: this.value, type: 'change' }, this);
+};
+
+SolidColorPicker.prototype.notifySizeCanBeChanged = function () {
+    var bound = this.getBoundingClientRect();
+    if (!this._lastSize || this._lastSize.width !== bound.width || this._lastSize.height !== bound.height) {
+        this._lastSize = { width: bound.width, height: bound.height };
+        this.notifySizeChange();
+    }
+};
+
+SolidColorPicker.prototype.notifySizeChange = function () {
+    this.emit('sizechange', { target: this, size: this._lastSize, type: 'sizechange' }, this);
+};
+
+SolidColorPicker.prototype.notifySubmit = function () {
+    SolidColorPicker.pushColorHistory(this.rawValue);
+    this.emit('submit', { target: this, value: this.rawValue, type: 'submit' }, this);
+};
+
+
+SolidColorPicker.property = {};
+
+
+/**
+ * @type {SolidColorPicker}
+ */
+SolidColorPicker.property.value = {
+    /**
+     *
+     * @param {Color} value
+     */
+    set: function (value) {
+        value = value || null;
+        if (value && !value.toHex8) {//is
+            try {
+                value = Color.parse(value + '');
+            } catch (e) {
+                value = new Color([0, 0, 0, 0]);
+            }
+        }
+        this.rawValue = value;
+
+        this.footerCtrl.viewValue();
+        this.pickerMode.viewValue();
+        this.swatchMode.viewValue();
+        //
+        // this._lastEmitHex8 = value.toHex8();
+        // this._setValue(value);
+        // this._setRGB(value.toHex6());
+        // this._setOpacityPercent(Math.round(value.rgba[3] * 100));
+        //
+        // var hsba = Color.rgbaToHSBA(value.rgba);
+        // this._setHue(hsba[0] * 360);
+        // this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
+        // this._updateNear();
+    },
+    get: function () {
+        var nullable = this.nullable;
+        var hasOpacity = this.hasOpacity;
+        var value = this.rawValue || null;//
+        if (!nullable && !value) value = new Color([0, 0, 0, 0]);
+        if (!hasOpacity && value) value.rgba[3] = 1;
+        return value;
+    }
+};
+
+/**
+ * @type {SolidColorPicker}
+ */
+SolidColorPicker.property.swatches = {
+    set: function (value) {
+        var index = this._swatchesShortName.indexOf(value);
+        index = Math.max(index, 0);
+        value = this._swatchesShortName[index];
+
+        if (this._swatches != value) {
+            this._swatches = value;
+            this.$swatchesTable.data = this._swatchesData[index];
+            this.$swatchesName.childNodes[0].data = this._swatchesNames[index];
+        }
+        this.swatchMode.viewValue();
+    },
+    get: function () {
+        return this._swatches;
+    }
+};
+
+
+SolidColorPicker.property.nullable = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-nullable');
+        }
+        else {
+            this.removeClass('as-nullable');
+        }
+        this.footerCtrl.viewValue();
+        this.pickerMode.viewValue();
+        this.swatchMode.viewValue();
+    },
+    get: function () {
+        return this.hasClass('as-nullable');
+    }
+};
+
+SolidColorPicker.property.hasOpacity = {
+    /**
+     * @this SolidColorPicker#
+     * @param value
+     */
+    set: function (value) {
+        if (value) {
+            this.addClass('as-has-opacity');
+        }
+        else {
+            this.removeClass('as-has-opacity');
+        }
+        this.footerCtrl.viewValue();
+        this.swatchMode.viewValue();
+        this.pickerMode.viewValue();
+    },
+    get: function () {
+        return this.hasClass('as-has-opacity');
+    }
+};
+
+/**
+ * @type {SolidColorPicker}
+ */
+SolidColorPicker.eventHandler = {};
+
+SolidColorPicker.eventHandler.attached = function () {
+    SolidColorPicker.pushInstances(this);
+    this.reloadSetting();
+};
+
+
+SolidColorPicker.eventHandler.keydown = function (event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        event.target.blur();
+        this.notifySubmit();
+    }
+};
+
+ACore.install('solidcolorpicker', SolidColorPicker);
+
+/**
+ *
+ * @param {SolidColorPicker} elt
+ *
+ * @constructor
+ */
+function SCPHistoryController(elt) {
+    this.elt = elt;
+    this.$recentSwatchesTable = $('.as-solid-color-picker-recent-swatches-ctn swatchestable',
+        this.elt)
+        .on('presscell', this.elt.swatchMode.ev_pressCell.bind(this));
+}
+
+
+/**
+ *
+ * @param {SolidColorPicker} elt
+ * @constructor
+ */
+function SCPSWatchModeController(elt) {
+    this.elt = elt;
+    this.$swatchesName = $('.as-solid-color-picker-swatches-name', this.elt);
+
+    QuickMenu.toggleWhenClick(this.$swatchesName, {
+        anchor: [1, 6],
+        getMenuProps: () => {
+            return {
+                extendClasses: 'as-solid-color-picker-swatches-name-menu',
+                extendStyle: {
+                    'font-size': this.elt.getComputedStyleValue('font-size')
+                },
+                items: this.elt._swatchesNames.map((name, i) => {
+                    return { text: name, value: this.elt._swatchesShortName[i], icon: this.elt._swatchesIcons[i] };
+                })
+            }
+        },
+        onSelect: (item) => {
+            this.elt.swatches = item.value;
+        }
+    });
+    this.$mode = $('.as-solid-color-picker-mode', this.elt)
+        .on('change', this.updateMode.bind(this));
+    this.viewingMode = null;
+    this.updateMode();
+}
+
+
+SCPSWatchModeController.prototype.updateMode = function () {
+    var value = this.$mode.value;
+    if (value === this.viewingMode) return;
+    this.elt.removeClass('as-solid-color-picker-mode-' + this.viewingMode);
+    this.viewingMode = value + '';
+    this.elt.addClass('as-solid-color-picker-mode-' + this.viewingMode);
+    this.$mode.value = this.viewingMode;
+    this.elt.notifySizeCanBeChanged();
+};
+
+Object.defineProperty(SCPSWatchModeController.prototype, 'mode', {
+    set: function (value) {
+        this.$mode.value = value;
+        this.updateMode();
+    },
+    get: function () {
+        return this.$mode.value;
+    }
+});
+
+/**
+ *
+ * @param {SolidColorPicker} elt
+ * @constructor
+ */
+function SCPSWatchMode(elt) {
+    this.elt = elt;
+    /**
+     *
+     * @type {BScroller}
+     */
+    this.$swatchesTableCtn = $('.as-solid-color-picker-swatches-ctn', this.elt);
+
+    /**
+     * @type {SwatchesTable}
+     */
+    this.$swatchesTable = $('.as-solid-color-picker-swatches-ctn swatchestable', this.elt)
+        .on('presscell', this.ev_pressCell.bind(this));
+    this.$noneCtn = $('.as-solid-color-picker-none-ctn', this.elt).on('click', this.ev_clickNone.bind(this));
+
+
+}
+
+SCPPickerMode.prototype.name = "swatches";
+SCPPickerMode.prototype.displayName = "SWATCHES";
+
+
+SCPSWatchMode.prototype.ev_pressCell = function (event) {
+    try {
+        var value = Color.parse(event.value + '');
+        var hC = value.getContrastYIQ();
+        hC.rgba[3] = 0.7;
+        value.rgba[3] = this.elt.footerCtrl.opacity;
+        this.elt.rawValue = value;
+        this.elt.footerCtrl.viewValue();
+        this.elt.$selectedDot.addStyle('box-shadow', `inset 0px 0px 0.3em 0.125em ${hC.toString('rgba')}`);
+
+        event.cellElt.addChild(this.elt.$selectedDot);
+        this.$noneCtn.removeClass('as-selected');
+        this.elt.pickerMode.viewValue();
+
+        //
+    } catch (e) {
+        // this.$selectedDot.removeStyle('box-shadow');
+        // this.$hex.value = 'ffffff';
+    }
+    this.elt.notifyCanBeChanged();
+};
+
+SCPSWatchMode.prototype.ev_clickNone = function (event) {
+    this.elt.rawValue = null;
+    this.viewValue();
+    this.elt.footerCtrl.viewValue();
+    this.elt.swatchMode.viewValue();
+    this.elt.pickerMode.viewValue();
+    this.elt.notifyCanBeChanged();
+};
+
+
+SCPSWatchMode.prototype.viewValue = function () {
+    this.elt.$selectedDot.remove();
+    var cell, hC;
+    /**
+     *
+     * @type {Color|null}
+     */
+    var value = this.elt.value;
+    if (!value) this.$noneCtn.addClass('as-selected');
+    else this.$noneCtn.removeClass('as-selected');
+
+    if (this.elt.modeCtrl.mode === 'swatches' && value) {
+        cell = this.$swatchesTable.getCell(value.toString('hex6'));
+        if (cell) this.$swatchesTableCtn.scrollInto(cell);
+    }
+
+    if (!cell && value) {
+        cell = this.elt.$recentSwatchesTable.getCell(value.toString('hex6'));
     }
     if (cell) {
-        this._addDotToCell(cell, this._value);
-        this.$swatchesTableCtn.scrollInto(cell);
-    }
-    else {
-        cell = this.$recentSwatchesTable.getCell('#' + this._rgb);
-        if (cell) {
-            this._addDotToCell(cell, this._value);
-            this.$swatchesTableCtn.scrollInto(cell);
-        }
+        hC = value.getContrastYIQ();
+        hC.rgba[3] = 0.7;
+        this.elt.$selectedDot.addStyle('box-shadow', `inset 0px 0px 0.3em 0.125em ${hC.toString('rgba')}`);
+        cell.addChild(this.elt.$selectedDot);
     }
 };
 
 
 /**
- * Need to call first
- * @param {Color} color
+ *
+ * @param {SolidColorPicker} elt
+ * @constructor
  */
-SolidColorPicker.prototype._setValue = function (color) {
-    this._value = color;
-    this.$selected.addStyle('background-color', color.toString());
+function SCPPickerMode(elt) {
+    this.elt = elt;
+    this.$spectrum = _({
+        tag: 'hanger', elt: $('.as-solid-color-picker-spectrum', this.elt)
+    })
+        .on('predrag', this.ev_spectrumDrag.bind(this))
+        .on('drag', this.ev_spectrumDrag.bind(this));
+    this.$hueDot = $('.as-solid-color-picker-hue-dot', this.elt);
+    this.$spectrumDot = $('.as-solid-color-picker-spectrum-dot', this.elt);
+
+    this.$alpha = _({ tag: 'hanger', elt: $('.as-solid-color-picker-alpha', this.elt) })
+        .on('predrag', this.ev_alphaDrag.bind(this))
+        .on('drag', this.ev_alphaDrag.bind(this));
+    this.$alphaDot = $('.as-solid-color-picker-alpha-dot', this.elt);
+
+    this.$hue = _({ tag: 'hanger', elt: $('.as-solid-color-picker-hue', this.elt) })
+        .on('predrag', this.ev_hueDrag.bind(this))
+        .on('drag', this.ev_hueDrag.bind(this));
+
+    this.$near = $('.as-solid-color-picker-near', this.elt)
+        .on('presscell', this.ev_nearPressCell.bind(this));
+
+    this._hue = 0;
+    this._sat = 1;
+    this._brightness = 1;
+
+}
+
+SCPPickerMode.prototype.name = 'picker';
+SCPPickerMode.prototype.displayName = 'PICKER';
+
+
+SCPPickerMode.prototype.viewValue = function () {
+    var value = this.elt.value || new Color([0, 0, 0, 1]);
+    var hsba = Color.rgbaToHSBA(value.rgba);
+    this._setHue(hsba[0] * 360);
+    this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
+    this._updateOpacity();
     this._updateNear();
 };
 
-SolidColorPicker.prototype._setRGB = function (rgb) {
-    this._rgb = rgb;
-    this.$hex.value = this._rgb;
-    this.$selectedDot.remove();
-    this._autoAdDotToCell();
-};
 
-SolidColorPicker.prototype._setOpacityPercent = function (opacity) {
-    this._opatictyPercent = opacity;
-    this.$opacity.value = opacity;
-    this._updateOpacityPercent();
-};
-
-SolidColorPicker.prototype._updateOpacityPercent = function () {
-    this.$alphaDot.addStyle('left', 'calc(' + this._opatictyPercent + '% - 0.5em)');
-};
-
-SolidColorPicker.prototype._setHue = function (hue) {
-    this._hue = hue;
-    var spectrumColor = Color.fromHSB(hue / 360, 1, 1);
-    var hueDotColor = spectrumColor.getContrastYIQ();
-    hueDotColor.rgba[3] = 0.7;
-    this.$hueDot.addStyle({
-        'box-shadow': 'inset 0px 0px 0.3em 0.125em ' + hueDotColor.toString(),
-        left: 'calc(' + (hue / 3.6) + '% - 0.5em)'
-    })
-    this.$spectrum.addStyle('background-color', spectrumColor.toString());
-    this._updateSpectrumDot();
-};
-
-SolidColorPicker.prototype._setSatBrightness = function (sat, brightness) {
-    this._sat = sat;
-    this._brightness = brightness;
-    this._updateSpectrumDot();
-};
-
-SolidColorPicker.prototype._updateSpectrumDot = function () {
-    var dotColor = this._value.getContrastYIQ();
+SCPPickerMode.prototype._updateSpectrumDot = function () {
+    var value = this.elt.value || new Color([0, 0, 0, 1]);
+    var dotColor = value.getContrastYIQ();
     dotColor.rgba[3] = 0.7;
     this.$spectrumDot.addStyle({
         bottom: 'calc(' + this._brightness + '% - 0.5em)',
@@ -410,8 +711,9 @@ SolidColorPicker.prototype._updateSpectrumDot = function () {
 };
 
 
-SolidColorPicker.prototype._updateNear = function () {
-    var hsba = Color.rgbaToHSBA(this._value.rgba);
+SCPPickerMode.prototype._updateNear = function () {
+    var value = this.elt.value || new Color([0, 0, 0, 1]);
+    var hsba = Color.rgbaToHSBA(value.rgba);
     var sat = hsba[1];
     var hue = hsba[0];
     var brightness = hsba[2];
@@ -434,265 +736,179 @@ SolidColorPicker.prototype._updateNear = function () {
     this.$near.data = [whiterColors, darkerColors, hueNearColors];
 };
 
-SolidColorPicker.prototype.notifyCanBeChanged = function () {
-    var cHex8 = this._value.toHex8();
-    if (cHex8 != this._lastEmitHex8) {
-        this._lastEmitHex8 = cHex8;
-        this.notifyChange();
-    }
-};
-
-SolidColorPicker.prototype.notifyChange = function () {
-    this.emit('change', { target: this, value: this.value, type: 'change' }, this);
-};
-
-SolidColorPicker.prototype.notifySizeCanBeChanged = function () {
-    var bound = this.getBoundingClientRect();
-    if (!this._lastSize || this._lastSize.width != bound.width || this._lastSize.height != bound.height) {
-        this._lastSize = { width: bound.width, height: bound.height };
-        this.notifySizeChange();
-    }
-};
-
-SolidColorPicker.prototype.notifySizeChange = function () {
-    this.emit('sizechange', { target: this, size: this._lastSize, type: 'sizechange' }, this);
-};
-
-SolidColorPicker.prototype.notifySubmit = function () {
-    SolidColorPicker.pushColorHistory(this._value);
-    this.emit('submit', { target: this, value: this._value, type: 'submit' }, this);
+SCPPickerMode.prototype._setHue = function (hue) {
+    this._hue = hue;
+    var spectrumColor = Color.fromHSB(hue / 360, 1, 1);
+    var hueDotColor = spectrumColor.getContrastYIQ();
+    hueDotColor.rgba[3] = 0.7;
+    this.$hueDot.addStyle({
+        'box-shadow': 'inset 0px 0px 0.3em 0.125em ' + hueDotColor.toString(),
+        left: 'calc(' + (hue / 3.6) + '% - 0.5em)'
+    })
+    this.$spectrum.addStyle('background-color', spectrumColor.toString());
+    this._updateSpectrumDot();
 };
 
 
-SolidColorPicker.property = {};
-
-
-/**
- * @type {SolidColorPicker}
- */
-SolidColorPicker.property.value = {
-    /**
-     *
-     * @param {Color} value
-     */
-    set: function (value) {
-        value = value || 'transparent';
-        if (!value.toHex8) {
-            try {
-                value = Color.parse(value + '');
-            } catch (e) {
-                value = new Color([0, 0, 0, 0]);
-            }
-        }
-        this._lastEmitHex8 = value.toHex8();
-        this._setValue(value);
-        this._setRGB(value.toHex6());
-        this._setOpacityPercent(Math.round(value.rgba[3] * 100));
-
-        var hsba = Color.rgbaToHSBA(value.rgba);
-        this._setHue(hsba[0] * 360);
-        this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
-        this._updateNear();
-    },
-    get: function () {
-        return this._value;
-    }
+SCPPickerMode.prototype._setSatBrightness = function (sat, brightness) {
+    this._sat = sat;
+    this._brightness = brightness;
+    this._updateSpectrumDot();
 };
 
-/**
- * @type {SolidColorPicker}
- */
-SolidColorPicker.property.swatches = {
-    set: function (value) {
-        var index = this._swatchesShortName.indexOf(value);
-        index = Math.max(index, 0);
-        value = this._swatchesShortName[index];
-
-        if (this._swatches != value) {
-            this._swatches = value;
-            this.$swatchesTable.data = this._swatchesData[index];
-            this.$swatchesName.childNodes[0].data = this._swatchesNames[index];
-        }
-        this._autoAdDotToCell();
-    },
-    get: function () {
-        return this._swatches;
-    }
+SCPPickerMode.prototype._updateOpacity = function () {
+    this.$alphaDot.addStyle('left', 'calc(' + (this.elt.footerCtrl.opacity * 100) + '% - 0.5em)');
 };
 
-SolidColorPicker.property.mode = {
-    set: function (value) {
-        if (value === this._mode) return;
-        this.removeClass('as-solid-color-picker-mode-' + this._mode);
-        this._mode = value + '';
-        this.addClass('as-solid-color-picker-mode-' + this._mode);
-        this.$mode.value = this._mode;
-        this.notifySizeCanBeChanged();
-    },
-    get: function () {
-        return this._mode;
-    }
-};
-
-
-SolidColorPicker.property.hasOpacity = {
-    set: function (value) {
-        if (value) {
-            this.addClass('as-has-opacity');
-        }
-        else {
-            this.removeClass('as-has-opacity');
-        }
-    },
-    get: function () {
-        return this.hasClass('as-has-opacity');
-    }
-}
-
-/**
- * @type {SolidColorPicker}
- */
-SolidColorPicker.eventHandler = {};
-
-SolidColorPicker.eventHandler.attached = function () {
-    SolidColorPicker.pushInstances(this);
-    this.reloadSetting();
-};
-
-SolidColorPicker.eventHandler.modeChange = function () {
-    var value = this.$mode.value;
-    if (value == this._mode) return;
-    this.removeClass('as-solid-color-picker-mode-' + this._mode);
-    this._mode = value + '';
-    this.addClass('as-solid-color-picker-mode-' + this._mode);
-    this.$mode.value = this._mode;
-    this.notifySizeCanBeChanged();
-};
-
-SolidColorPicker.eventHandler.swatchesPressCell = function (event) {
-    try {
-        var value = Color.parse(event.value + '');
-        value.rgba[3] = this._opatictyPercent / 100;
-        this._setValue(value);
-        this._addDotToCell(event.cellElt, value);
-        this._rgb = value.toHex6();
-        this.$hex.value = this._rgb;
-
-        var hsba = Color.rgbaToHSBA(value.rgba);
-        this._setHue(hsba[0] * 360);
-        this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
-    } catch (e) {
-        this.$selectedDot.removeStyle('box-shadow');
-        this.$hex.value = 'ffffff';
-    }
-    this.notifyCanBeChanged();
-};
-
-SolidColorPicker.eventHandler.nearPressCell = function (event) {
-    try {
-        var value = Color.parse(event.value + '');
-        value.rgba[3] = this._opatictyPercent / 100;
-        this._setValue(value);
-        this._setRGB(value.toHex6());
-
-        var hsba = Color.rgbaToHSBA(value.rgba);
-        this._setHue(hsba[0] * 360);
-        this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
-    } catch (e) {
-        this.$selectedDot.removeStyle('box-shadow');
-        this.$hex.value = 'ffffff';
-    }
-    this.notifyCanBeChanged();
-};
-
-SolidColorPicker.eventHandler.hexKeyup = function () {
-    try {
-        var value = Color.parse('#' + this.$hex.value.trim());
-        if (value.rgba[3] == 1) {
-            value.rgba[3] = this._opatictyPercent / 100;
-            this._setValue(value);
-            this._rgb = value.toHex6();
-            this._autoAdDotToCell();
-
-            var hsba = Color.rgbaToHSBA(value.rgba);
-            this._setHue(hsba[0] * 360);
-            this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
-            this.notifyCanBeChanged();
-        }
-    } catch (e) {
-    }
-};
-
-
-SolidColorPicker.eventHandler.hexChange = function () {
-    if (this.$hex.value != this._rgb)
-        this.$hex.value = this._rgb;
-};
-
-
-SolidColorPicker.eventHandler.opacityKeyUp = function () {
-    var opacity = parseFloat(this.$opacity.value);
-    if (!isNaN(opacity)) {
-        opacity = Math.round(Math.max(0, Math.min(opacity, 100)));
-        this._opatictyPercent = opacity;
-        var color = Color.parse('#' + this._rgb);
-        color.rgba[3] = opacity / 100;
-        this._setValue(color);
-        this._updateOpacityPercent();
-        this.notifyCanBeChanged();
-    }
-};
-
-SolidColorPicker.eventHandler.opacityChange = function () {
-    var opacity = this._opatictyPercent;
-    if (this.$opacity.value != opacity) {
-        this.$opacity.value = opacity + '';
-    }
-};
-
-SolidColorPicker.eventHandler.alphaDrag = function (event) {
-    var aBound = this.$alpha.getBoundingClientRect();
-    var opacity = (event.clientX - aBound.left) * 100 / aBound.width;
-    opacity = Math.max(0, Math.min(100, Math.round(opacity)));
-    var color = Color.parse('#' + this._rgb);
-    color.rgba[3] = opacity / 100;
-    this._setValue(color);
-    this._setOpacityPercent(opacity);
-    this.notifyCanBeChanged();
-};
-
-SolidColorPicker.eventHandler.hueDrag = function (event) {
-    var hBound = this.$hue.getBoundingClientRect();
-    var hue = (event.clientX - hBound.left) * 360 / hBound.width;
-    hue = Math.max(0, Math.min(360, Math.round(hue)));
-    var value = Color.fromHSBA(hue / 360, this._sat / 100, this._brightness / 100, this._opatictyPercent / 100);
-    this._setValue(value);
-    this._setHue(hue);
-    this._setRGB(value.toHex6());
-    this.notifyCanBeChanged();
-};
-
-SolidColorPicker.eventHandler.spectrumDrag = function (event) {
+SCPPickerMode.prototype.ev_spectrumDrag = function (event) {
+    event.preventDefault();
     var sBound = this.$spectrum.getBoundingClientRect();
     var brightness = (sBound.bottom - event.clientY) * 100 / sBound.height;
     brightness = Math.max(0, Math.min(100, Math.round(brightness)));
     var sat = (event.clientX - sBound.left) * 100 / sBound.width;
     sat = Math.max(0, Math.min(100, Math.round(sat)));
-    var value = Color.fromHSBA(this._hue / 360, sat / 100, brightness / 100, this._opatictyPercent / 100);
-    this._setValue(value);
+    this.elt.rawValue = Color.fromHSBA(this._hue / 360, sat / 100, brightness / 100, this.elt.footerCtrl.opacity);
     this._setSatBrightness(sat, brightness);
-    this._setRGB(value.toHex6());
-    this.notifyCanBeChanged();
+    this._updateNear();
+    this.elt.footerCtrl.viewValue();
+    this.elt.swatchMode.viewValue();
+    this.elt.notifyCanBeChanged();
 };
 
-SolidColorPicker.eventHandler.keydown = function (event) {
-    if (event.key == 'Enter') {
-        event.preventDefault();
-        event.target.blur();
-        this.notifySubmit();
+
+SCPPickerMode.prototype.ev_alphaDrag = function (event) {
+    event.preventDefault();
+    var aBound = this.$alpha.getBoundingClientRect();
+    var opacity = (event.clientX - aBound.left) * 100 / aBound.width;
+    opacity = Math.max(0, Math.min(100, Math.round(opacity)));
+    var color = this.elt.value || new Color([0, 0, 0, 0]);
+    color.rgba[3] = opacity / 100;
+    this.elt.rawValue = color;
+    this.elt.footerCtrl.viewValue();
+    this._updateOpacity();
+    // this._setOpacityPercent(opacity);
+    this.elt.notifyCanBeChanged();
+};
+
+SCPPickerMode.prototype.ev_hueDrag = function (event) {
+    event.preventDefault();
+    var hBound = this.$hue.getBoundingClientRect();
+    var hue = (event.clientX - hBound.left) * 360 / hBound.width;
+    hue = Math.max(0, Math.min(360, Math.round(hue)));
+    this.elt.rawValue = Color.fromHSBA(hue / 360, this._sat / 100, this._brightness / 100, this.elt.footerCtrl.opacity);
+    this._setHue(hue);
+    this.elt.footerCtrl.viewValue();
+    this.elt.swatchMode.viewValue();
+    this._updateNear();
+    this.elt.notifyCanBeChanged();
+};
+
+SCPPickerMode.prototype.ev_nearPressCell = function (event) {
+    var value = event.value.clone();
+    value.rgba[3] = this.elt.footerCtrl.opacity;
+    this.elt.rawValue = value;
+    this.viewValue();
+    this.elt.footerCtrl.viewValue();
+    this.elt.pickerMode.viewValue();
+};
+
+/**
+ *
+ * @param {SolidColorPicker} elt
+ * @constructor
+ */
+function SCPFooterController(elt) {
+    this.elt = elt;
+    this.$selected = $('.as-solid-color-picker-selected', this.elt);
+    this.$opacity = $('.as-solid-color-picker-color-opacity', this.elt)
+        .on('change', this.ev_opacityChange.bind(this))
+        .on('keyup', this.ev_opacityKeyUp.bind(this));
+
+    this.$hex = $('.as-solid-color-picker-color-hex', this.elt)
+        .on('keyup', this.ev_hexKeyUp.bind(this))
+        .on('change', this.ev_hexChange.bind(this));
+}
+
+SCPFooterController.prototype.ev_opacityChange = function (event) {
+    var color = this.elt.value;
+    var opacityTxt = color ? Math.round(color.rgba[3] * 100) : '100';
+    if (color && this.$opacity.value !== opacityTxt) {
+        this.$opacity.value = opacityTxt;
     }
 };
 
-ACore.install('solidcolorpicker', SolidColorPicker);
+SCPFooterController.prototype.ev_opacityKeyUp = function (event) {
+    var opacity = parseFloat(this.$opacity.value);
+    if (!isNaN(opacity)) {
+        opacity = Math.round(Math.max(0, Math.min(opacity, 100)));
+        var color = this.elt.value || new Color(0, 0, 0, 1);
+        color.rgba[3] = opacity / 100;
+        this.elt.rawValue = color;
+        this.elt.pickerMode.viewValue();
+        this.$selected.value = color;
+        this.elt.notifyCanBeChanged();
+    }
+};
+
+SCPFooterController.prototype.ev_hexKeyUp = function (event) {
+    // var prevValue = this.elt.value;
+    var value;
+    var nullable = this.elt.nullable;
+    var hex = this.$hex.value.trim();
+    try {
+        if (nullable && hex.length === 0) {
+            value = null;
+        }
+        else {
+            value = Color.parse('#' + hex);
+        }
+    } catch (e) {
+        // console.error(e);
+    }
+
+    if (!value && !nullable) return;
+    if (value)
+        value.rgba[3] = this.opacity;
+    this.elt.rawValue = value;
+    this.$selected.value = value;
+    this.elt.pickerMode.viewValue();
+    this.elt.swatchMode.viewValue();
+    this.elt.notifyCanBeChanged();
+
+
+};
+
+
+SCPFooterController.prototype.ev_hexChange = function (event) {
+    var value = this.elt.value;
+    if (value)
+        this.$hex.value = value.toHex6();
+};
+
+SCPFooterController.prototype.viewValue = function () {
+    var value = this.elt.value;
+    var hasOpacity = this.elt.hasOpacity;
+    this.$selected.value = value;
+    this.$hex.value = value ? (value.toHex6()) : '';
+    if (hasOpacity && value) {
+        this.$opacity.value = Math.round(value.rgba[3] * 100) + '';
+    }
+    else this.$opacity.value = '100';
+};
+
+
+Object.defineProperty(SCPFooterController.prototype, 'opacity', {
+    get: function () {
+        if (!this.elt.hasOpacity) return 1;
+        var opFromText = parseFloat(this.$opacity.value) / 100;
+        if (isRealNumber(opFromText)) {
+            opFromText = Math.max(0, Math.min(opFromText, 1));
+            return opFromText;
+        }
+        var value = this.elt.value;
+        if (!value) return 1;
+        return value.rgba[3];
+    }
+});
 
 export default SolidColorPicker;
