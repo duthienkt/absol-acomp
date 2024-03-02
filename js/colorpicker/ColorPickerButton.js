@@ -3,6 +3,11 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import ACore, { $, _ } from "../../ACore";
 import SolidColorPicker from "./SolidColorPicker";
+import { ColorCell } from "./SwatchesTable";
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
+import { base64EncodeUnicode } from "absol/src/Converter/base64";
+import red_cross_tpl from "../../assets/icon/red_cross.tpl";
+import Color from "absol/src/Color/Color";
 
 var isMobile = BrowserDetector.isMobile;
 
@@ -12,8 +17,15 @@ var isMobile = BrowserDetector.isMobile;
  * @constructor
  */
 function ColorPickerButton() {
+    if (!ColorPickerButton.css) {
+        ColorPickerButton.css = new DynamicCSS()
+            .setProperty('.as-color-cell.as-color-picker-button-inner.as-null .as-color-cell-value',
+                'background-image',
+                `url("data:image/svg+xml;base64,${base64EncodeUnicode(red_cross_tpl.replace(/\$width/g, '33').replace(/\$height/g, '18'))}")`)
+            .commit();
+    }
     this.mode = 'OBJECT';
-    this.$innerValue = $('.as-color-picker-button-inner-value', this);
+    this.$innerValue = $('.as-color-picker-button-inner', this);
     this.prepare();
     this.on('click', this.eventHandler.click);
     /***
@@ -26,18 +38,16 @@ function ColorPickerButton() {
      * @type {boolean}
      * @memberOf ColorPickerButton#
      */
+
+    /***
+     * @name nullable
+     * @type {boolean}
+     * @memberOf ColorPickerButton#
+     */
 }
 
 ColorPickerButton.tag = 'ColorPickerButton'.toLowerCase();
 
-ColorPickerButton.prototype._isClickMenu = function (event) {
-    var c = event.target;
-    while (c) {
-        if (c.classList.contains('as-solid-color-picker-swatches-name-menu')) return true;
-        c = c.parentElement;
-    }
-    return false;
-};
 
 ColorPickerButton.prototype.supportedModes = ['OBJECT', 'RGBA', 'RGB', 'HEX8', 'HEX6', 'HEX4', 'HEX3'];
 ColorPickerButton.prototype.hasOpacityModes = ['OBJECT', 'RGBA', 'HEX8', 'HEX4'];
@@ -49,14 +59,14 @@ ColorPickerButton.eventHandler.click = function (event) {
 };
 
 ColorPickerButton.eventHandler.changeColor = function (event) {
-    this.$innerValue.addStyle("background-color", event.value.toString());
     this._value = event.value;
+    this.$innerValue.value = event.value;
     this.emit('change', event, this);
 };
 
 
 ColorPickerButton.eventHandler.clickBody = function (event) {
-    if (EventEmitter.hitElement(this, event) || EventEmitter.hitElement(this.$ColorPicker, event) || this._isClickMenu(event)) return;
+    if (EventEmitter.hitElement(this, event) || EventEmitter.hitElement(this.$ColorPicker, event)) return;
     this.closePicker();
 };
 
@@ -65,7 +75,7 @@ ColorPickerButton.eventHandler.submit = function (event) {
 };
 
 ColorPickerButton.prototype.togglePicker = function () {
-    if (this.containsClass('as-color-picker-selecting')) {
+    if (this.hasClass('as-color-picker-selecting')) {
         this.closePicker();
     }
     else {
@@ -75,7 +85,7 @@ ColorPickerButton.prototype.togglePicker = function () {
 
 
 ColorPickerButton.prototype.openPicker = function () {
-    if (this.containsClass('as-color-picker-selecting')) return;
+    if (this.hasClass('as-color-picker-selecting')) return;
 
     if (ColorPickerButton.lastOpen) {
         ColorPickerButton.lastOpen.closePicker();
@@ -94,9 +104,12 @@ ColorPickerButton.prototype.openPicker = function () {
     setTimeout(function () {
         document.addEventListener('click', this.eventHandler.clickBody);
     }.bind(this), 100);
+
     this._lastValue = this.value;
+    this.$ColorPicker.nullable = this.nullable;
     this.$ColorPicker.hasOpacity = this.hasOpacity;
     ColorPickerButton.$ColorPicker.value = this.value;
+
     setTimeout(function () {
         thisBt.$follower.removeStyle('visibility');
     }, 1);
@@ -105,7 +118,7 @@ ColorPickerButton.prototype.openPicker = function () {
 
 
 ColorPickerButton.prototype.closePicker = function () {
-    if (!this.containsClass('as-color-picker-selecting')) return;
+    if (!this.hasClass('as-color-picker-selecting')) return;
     this.removeClass('as-color-picker-selecting');
     if (ColorPickerButton.lastOpen === this) {
         ColorPickerButton.lastOpen = null;
@@ -151,9 +164,8 @@ ColorPickerButton.render = function () {
         class: 'as-color-picker-button',
         child: [
             {
-                tag: "div",
+                tag: ColorCell,
                 class: "as-color-picker-button-inner",
-                child: '.as-color-picker-button-inner-value'
             }
         ]
     });
@@ -163,18 +175,19 @@ ColorPickerButton.property = {};
 ColorPickerButton.property.value = {
     set: function (value) {
         this._value = value;
-        if (this._value) {
-            this.$innerValue.addStyle("background-color", value);
-        }
-        else {
-            this.$innerValue.addStyle("background-color", 'transparent');
-
-        }
+        this.$innerValue.value = value;
     },
     get: function () {
-        if (!this._value) return this._value;
-        if (this.mode.match(/HEX4|HEX6|HEX8|RGB|RGBA/)) return this._value.toString(this.mode);
-        return this._value;
+        var nullable = this.nullable;
+        var value = this._value;
+        if (!this._value && nullable) return  value;//null, ""
+        if (!this._value && !nullable) {
+            value = new Color([0, 0, 0, 1]);
+        }
+        if (this.mode.match(/HEX4|HEX6|HEX8|RGB|RGBA/) && value && value.toHex3) {
+            value = this._value.toString(this.mode);
+        }
+        return value;
     }
 };
 
@@ -196,6 +209,21 @@ ColorPickerButton.property.hasOpacity = {
         return this.hasOpacityModes.indexOf(this._mode) >= 0;
     }
 };
+
+
+ColorPickerButton.property.nullable = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-nullable');
+        }
+        else {
+            this.removeClass('as-null-nullable');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-nullable');
+    }
+}
 
 
 ACore.install(ColorPickerButton);
