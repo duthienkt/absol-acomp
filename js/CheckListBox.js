@@ -60,7 +60,7 @@ function fillItemToPage($parent, $page, n) {
 
 var mTextMeasurement = null;
 
-var measureTextWidth = text => {
+export var measureArial14TextWidth = text => {
     if (!mTextMeasurement) {
         mTextMeasurement = new TextMeasurement();
         mTextMeasurement.compute('14px arial');
@@ -251,11 +251,11 @@ CheckListBox.property.items = {
         this.itemHolders = items.map(it => new CLHolder(this, it));
 
         var res = this.itemHolders.reduce(function visit(ac, cr) {
-            var textWidth = 3.5 * 14 + 1.75 * 14 * cr.level + 14 + measureTextWidth(cr.data.text + '') + 7 + 17
+            var textWidth = 3.5 * 14 + 1.75 * 14 * cr.level + 14 + measureArial14TextWidth(cr.data.text + '') + 7 + 17
             if (cr.data.icon) textWidth += 32;
             ac.textWidth = Math.max(ac.textWidth, textWidth);
             if (cr.data.desc) {
-                ac.descWidth = Math.max(ac.descWidth, measureTextWidth(cr.data.desc + ''));
+                ac.descWidth = Math.max(ac.descWidth, measureArial14TextWidth(cr.data.desc + ''));
 
             }
             ac.dict[cr.valueKey] = ac.dict[cr.valueKey] || [];

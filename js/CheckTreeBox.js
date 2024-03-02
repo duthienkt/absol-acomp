@@ -8,6 +8,7 @@ import { prepareSearchForList, searchTreeListByText } from "./list/search";
 import SelectListBox from "./SelectListBox";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { arrayCompare } from "absol/src/DataStructure/Array";
+import { measureArial14TextWidth } from "./CheckListBox";
 
 
 /***
@@ -916,12 +917,13 @@ TreeNodeHolder.prototype.calcEstimateWidth = function () {
 
 TreeNodeHolder.prototype.calcWidth = function () {
     var width = 12;//padding
-    width += 23 * this.level;
+    width+= 43; //cheat for some size with checklistbox
+    width +=  1.75 * 14  * this.level;
     width += 14.7 + 5;//toggle icon
     width += 16;//checkbox
     if (this.item.icon) width += 21;//icon
-    width += 7 + measureText(this.item.text, '14px arial').width;//margin-text
-    if (this.item.desc) width += 6 + measureText(this.item.desc, '11.9px arial').width * 0.85;
+    width += 7 + measureArial14TextWidth(this.item.text);//margin-text
+    if (this.item.desc) width += 6 + measureArial14TextWidth(this.item.desc/*, '11.9px arial'*/).width * 0.85;
     return width;
 };
 
