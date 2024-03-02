@@ -1,6 +1,56 @@
 import Color from 'absol/src/Color/Color';
 import ACore, { _, $ } from "../../ACore";
 import '../../css/swatchestable.css';
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
+import { base64EncodeUnicode } from "absol/src/Converter/base64";
+import red_cross_tpl from "../../assets/icon/red_cross.tpl";
+
+
+/**
+ * @extends AElement
+ * @constructor
+ */
+export function ColorCell() {
+    this.$value = this.firstChild;
+    if (!ColorCell.css) {
+        ColorCell.css = new DynamicCSS()
+            .setProperty('.as-color-cell.as-null .as-color-cell-value',
+                'background-image',
+                `url("data:image/svg+xml;base64,${base64EncodeUnicode(red_cross_tpl.replace(/\$width/g, '24').replace(/\$height/g, '24'))}")`)
+            .commit();
+    }
+}
+
+ColorCell.tag = 'ColorCell'.toString();
+
+ColorCell.render = function () {
+    return _({
+        class: 'as-color-cell',
+        child: [
+            '.as-color-cell-value'
+        ]
+    });
+};
+
+
+ColorCell.property = {};
+
+ColorCell.property.value = {
+    set: function (value) {
+        if (value === null || value === undefined) {
+            this.addClass('as-null');
+        }
+        else if (value) {
+            this.removeClass('as-null');
+            this.$value.addStyle('background-color', value + '');
+        }
+        this._value = value;
+
+    },
+    get: function () {
+        return this._value;
+    }
+};
 
 
 function SwatchesTable() {
@@ -21,7 +71,7 @@ SwatchesTable.render = function () {
 
 
 SwatchesTable.prototype.getCell = function () {
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
         var key = arguments[0];
         if (key.toHex8) {
             key = key.toHex8();
@@ -34,7 +84,7 @@ SwatchesTable.prototype.getCell = function () {
         key = key + '';
         return this._dict[key];
     }
-    else if (arguments.length == 2) {
+    else if (arguments.length === 2) {
         return this.childNodes[arguments[0]] && this.childNodes[arguments[0]].childNodes[arguments[1]];
     }
 };
@@ -95,8 +145,8 @@ SwatchesTable.property.data = {
                     child = this._poolCells.pop();
                 else {
                     child = _({
-                        class: 'as-swatches-table-cell',
-                        child: '.as-swatches-table-cell-color'
+                        tag: ColorCell,
+                        class:'as-swatches-table-cell'
                     });
                     child.on('click', this.eventHandler.clickCell.bind(this, child));
                 }
@@ -108,19 +158,20 @@ SwatchesTable.property.data = {
                 if (!row[j]) {
                     rowElt.childNodes[j]
                         .attr('title', null)
-                    rowElt.childNodes[j].firstChild.removeStyle('background-color');
+                    // rowElt.childNodes[j].firstChild.removeStyle('background-color');
                     rowElt.childNodes[j].__swatchescell_value = row[j];
                     this._dict['null'] = rowElt.childNodes[j];
                 }
                 else if (row[j].toHex8) {
-                    rowElt.childNodes[j].firstChild.addStyle('background-color', row[j].toString());
+                    rowElt.childNodes[j].value = row[j];
                     rowElt.childNodes[j].attr('title', null);
                     rowElt.childNodes[j].__swatchescell_value = row[j];
                     this._dict[row[j].toHex8()] = rowElt.childNodes[j];
                 }
                 else if (typeof row[j] == 'object') {
                     if (row[j].value) {
-                        rowElt.childNodes[j].firstChild.addStyle('background-color', row[j].value);
+                        rowElt.childNodes[j].value =  row[j].value;
+                        // rowElt.childNodes[j].firstChild.addStyle('background-color', row[j].value);
                         rowElt.childNodes[j].__swatchescell_value = row[j].value;
                         this._dict[Color.parse(row[j].value + '').toHex8()] = rowElt.childNodes[j];
                     }
@@ -131,7 +182,7 @@ SwatchesTable.property.data = {
                     rowElt.childNodes[j].attr('title', row[j].name || null)
                 }
                 else if (typeof row[j] == 'string') {
-                    rowElt.childNodes[j].firstChild.addStyle('background-color', row[j]);
+                    rowElt.childNodes[j].value =  row[j];
                     rowElt.childNodes[j].attr('title', null);
                     rowElt.childNodes[j].__swatchescell_value = row[j];
                     this._dict[Color.parse(row[j]).toHex8()] = rowElt.childNodes[j];
