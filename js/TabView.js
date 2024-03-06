@@ -100,7 +100,9 @@ TabView.prototype.activeTab = function (id, userActive) {
             id: holder.id,
             userActive: !!userActive,
             tabButton: holder.tabButton,
-            holder: holder
+            holder: holder,
+            from: (needDeactivatedHolder[0] && needDeactivatedHolder[0].tabFrame || null),
+            to: holder.tabFrame
         }, self);
     });
 };
@@ -223,7 +225,14 @@ TabView.prototype.addChild = function () {
         var modified = elt.modified;
         var preventClosing = elt.preventClosing;
 
-        var tabButton = self.$tabbar.addTab({ name: name, id: id, desc: desc, modified: modified, tabIcon: tabIcon, preventClosing: preventClosing });
+        var tabButton = self.$tabbar.addTab({
+            name: name,
+            id: id,
+            desc: desc,
+            modified: modified,
+            tabIcon: tabIcon,
+            preventClosing: preventClosing
+        });
         containerElt.addChild(elt);
         elt.notifyAttached(self);
         var holder = {};
