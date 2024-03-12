@@ -175,7 +175,7 @@ ColorPickerButton.property = {};
 ColorPickerButton.property.value = {
     set: function (value) {
         this._value = value;
-        this.$innerValue.value = value;
+        this.$innerValue.value = value || null;
     },
     get: function () {
         var nullable = this.nullable;
@@ -196,6 +196,7 @@ ColorPickerButton.property.mode = {
         value = value || 'OBJECT';
         value = value.toUpperCase();
         if (this.supportedModes.indexOf(value) < 0) value = 'OBJECT';
+        this.attr('data-mode', value);
         this._mode = value;
     },
     get: function () {

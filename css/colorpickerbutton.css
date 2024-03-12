@@ -37,3 +37,7 @@
 .as-color-picker-button-fol{
     z-index: 1000;
 }
+
+.as-color-picker-button[data-mode="HEX6"] .as-null .as-color-cell-value{
+    display: none;
+}
