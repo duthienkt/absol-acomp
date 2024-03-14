@@ -1,12 +1,23 @@
+
+.as-table-of-text-input-wrapper {
+    border: 1px solid #dddddd;
+}
+
+.as-table-of-text-input-content-ctn {
+    overflow: auto;
+}
+
+
 .as-table-of-text-input {
     width: 100%;
     border-collapse: collapse;
     color: black;
     font-family: 'Aptos Narrow', Calibri, sans-serif, 'Mongolian Baiti', 'Microsoft Yi Baiti', 'Javanese Text', 'Yu Gothic';
     font-size: 11pt;
+    margin: 10px;
 }
 
-.as-table-of-text-input.as-size-a4 {
+.as-table-of-text-input-wrapper.as-size-a4 .as-table-of-text-input {
     width: 445pt;
 }
 
@@ -22,7 +33,7 @@
 .as-table-of-text-input-cell {
     vertical-align: top;
     padding: 0px 5px;
-    border: 1px dashed #dddddd;
+    border: 1px dashed #808080;
     position: relative;
 }
 
@@ -51,13 +62,14 @@
 }
 
 .as-table-of-text-input-tool {
-    background-color: white;
+    background-color: #f8f8f8;
     font-size: 14px;
-    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    border-radius: 4px;
+    /*-webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);*/
+    /*-moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);*/
+    /*box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);*/
+    /*border-radius: 4px;*/
     padding: 3px;
+    border-bottom: 1px solid #dddddd;
 }
 
 .as-table-of-text-input-tool > button {

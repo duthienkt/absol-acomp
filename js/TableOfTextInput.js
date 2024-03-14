@@ -2,11 +2,10 @@ import ACore, { _, $, $$ } from "../ACore";
 import AElement from "absol/src/HTML5/AElement";
 import PreInput from "./PreInput";
 import '../css/tableoftextinput.css';
-import Follower from "./Follower";
 import FontColorButton from "./colorpicker/FontColorButton";
 import Attributes from "absol/src/AppPattern/Attributes";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
-import { findMaxZIndex, getTextNodeBounds, isNaturalNumber, isRealNumber } from "./utils";
+import { getTextNodeBounds, isNaturalNumber, isRealNumber } from "./utils";
 import Color from "absol/src/Color/Color";
 import { InsertColLeftIcon, InsertColRightIcon } from "./Icons";
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
@@ -80,14 +79,23 @@ TableOfTextInput.tag = 'TableOfTextInput'.toLowerCase();
 
 TableOfTextInput.render = function () {
     return _({
-        tag: 'table',
-        extendEvent: ['change'],
-        class: 'as-table-of-text-input',
+        class: 'as-table-of-text-input-wrapper',
         child: [
             {
-                tag: 'tbody',
-                child: []
+                class: 'as-table-of-text-input-content-ctn',
+                child: {
+                    tag: 'table',
+                    extendEvent: ['change'],
+                    class: 'as-table-of-text-input',
+                    child: [
+                        {
+                            tag: 'tbody',
+                            child: []
+                        }
+                    ]
+                }
             }
+
         ]
     });
 };
@@ -100,15 +108,16 @@ ACore.install(TableOfTextInput);
 
 /**
  *
- * @param {TableOfTextInput} elt
+ * @param {TableOfTextInput} wrapper
  * @constructor
  */
-function TEITable(elt) {
+function TEITable(wrapper) {
     this._minCol = 3;
     this._maxCol = 3;
     this._minRow = 1;
     this._maxRow = 9;
-    this.elt = elt;
+    this.wrapper = wrapper;
+    this.elt = $('table', wrapper);
     this.$body = $('tbody', this.elt);
 
     /**
@@ -117,6 +126,18 @@ function TEITable(elt) {
      */
     this.rows = [];
     this.formatTool = new TEIFormatTool(this);
+}
+
+TEITable.prototype.defaultData = {
+    rows: [
+        {
+            cells: [
+                { value: '' },
+                { value: '' },
+                { value: '' }
+            ]
+        }
+    ]
 }
 
 
@@ -206,8 +227,25 @@ Object.defineProperties(TEITable.prototype, {
     },
     data: {
         set: function (value) {
-            value = copyJSVariable(value || {});
-            if (!(value.rows instanceof Array)) value.rows = [];
+            if (typeof value === "string") {
+                value = {
+                    rows: [
+                        { cells: [{ value: value }] }
+                    ]
+                };
+            }
+            value = copyJSVariable(value || this.defaultData);
+
+            if (!(value.rows instanceof Array)) value.rows = copyJSVariable(this.defaultData.rows);
+            value.rows.forEach(row => {
+                if (!(row.cells instanceof Array)) {
+                    row.cells = []
+                }
+                if (row.cells.length === 0) {
+                    row.cells.push({ value: '' });
+                }
+            });
+
             this.rows.forEach(row => row.tr.remove());
             this.rows = value.rows.map(rowData => new TEIRow(this, rowData));
             this.$body.addChild(this.rows.map(row => row.tr));
@@ -413,7 +451,6 @@ function TEICell(row, data) {
                             target: this.table,
                             cell: this
                         }, this.table.elt);
-                    this.table.formatTool.$follower.updatePosition();
                 }
             }
         }
@@ -601,107 +638,102 @@ function TEIFormatTool(table) {
     Object.keys(TEIFormatTool.prototype).filter(k => k.startsWith('ev_')).forEach(k => this[k] = this[k].bind(this));
     this.table = table;
     this.table.elt.on('keydown', this.ev_keydown)
-    this.$follower = _({
-        tag: Follower,
-        props: {
-            anchor: [6, 1]
-        },
-        child: {
-            class: 'as-table-of-text-input-tool',
-            child: [
-                {
-                    tag: 'numberinput',
-                    class: 'as-table-of-text-input-tool-font-size',
-                    props: {
-                        value: 14
-                    },
-                    attr: { title: 'Ctrl+< | Ctrl+>' }
+    this.$tool = _({
+        class: 'as-table-of-text-input-tool',
+        child: [
+            {
+                tag: 'numberinput',
+                class: 'as-table-of-text-input-tool-font-size',
+                props: {
+                    value: 14
                 },
-                {
-                    tag: 'button',
-                    attr: { title: 'Ctrl+B' },
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-bold'/*, 'as-checked'*/],
-                    child: 'span.mdi.mdi-format-bold'
-                },
-                {
-                    tag: 'button',
-                    attr: { title: 'Ctrl+I' },
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-italic'],
-                    child: 'span.mdi.mdi-format-italic'
-                },
+                attr: { title: 'Ctrl+< | Ctrl+>' }
+            },
+            {
+                tag: 'button',
+                attr: { title: 'Ctrl+B' },
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-bold'/*, 'as-checked'*/],
+                child: 'span.mdi.mdi-format-bold'
+            },
+            {
+                tag: 'button',
+                attr: { title: 'Ctrl+I' },
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-italic'],
+                child: 'span.mdi.mdi-format-italic'
+            },
 
-                {
-                    tag: FontColorButton
+            {
+                tag: FontColorButton
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
+                child: 'span.mdi.mdi-format-align-left',
+                attr: { 'data-align': 'left', title: 'Ctrl+L' }
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
+                child: 'span.mdi.mdi-format-align-center',
+                attr: { 'data-align': 'center', title: 'Ctrl+E' }
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
+                child: 'span.mdi.mdi-format-align-right',
+                attr: { 'data-align': 'right', title: 'Ctrl+R' }
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
+                child: 'span.mdi.mdi-table-column-plus-before',
+                attr: { 'data-command': 'left' }
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
+                child: 'span.mdi.mdi-table-column-plus-after',
+                attr: { 'data-command': 'right' }
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
+                child: 'span.mdi.mdi-table-row-plus-before',
+                attr: { 'data-command': 'above' }
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
+                child: 'span.mdi.mdi-table-row-plus-after',
+                attr: { 'data-command': 'bellow' }
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-command', 'as-variant-danger'],
+                attr: { 'data-command': 'removeCol' },
+                child: {
+                    tag: 'span',
+                    class: ['mdi', 'mdi-table-column-remove'],
                 },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
-                    child: 'span.mdi.mdi-format-align-left',
-                    attr: { 'data-align': 'left', title: 'Ctrl+L' }
+            },
+            {
+                tag: 'button',
+                class: ['as-transparent-button', 'as-table-of-text-input-tool-command', 'as-variant-danger'],
+                attr: { 'data-command': 'removeRow' },
+                child: {
+                    tag: 'span',
+                    class: ['mdi', 'mdi-table-row-remove'],
                 },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
-                    child: 'span.mdi.mdi-format-align-center',
-                    attr: { 'data-align': 'center', title: 'Ctrl+E' }
-                },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
-                    child: 'span.mdi.mdi-format-align-right',
-                    attr: { 'data-align': 'right', title: 'Ctrl+R' }
-                },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
-                    child: 'span.mdi.mdi-table-column-plus-before',
-                    attr: { 'data-command': 'left' }
-                },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
-                    child: 'span.mdi.mdi-table-column-plus-after',
-                    attr: { 'data-command': 'right' }
-                },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
-                    child: 'span.mdi.mdi-table-row-plus-before',
-                    attr: { 'data-command': 'above' }
-                },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
-                    child: 'span.mdi.mdi-table-row-plus-after',
-                    attr: { 'data-command': 'bellow' }
-                },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command', 'as-variant-danger'],
-                    attr: { 'data-command': 'removeCol' },
-                    child: {
-                        tag: 'span',
-                        class: ['mdi', 'mdi-table-column-remove'],
-                    },
-                },
-                {
-                    tag: 'button',
-                    class: ['as-transparent-button', 'as-table-of-text-input-tool-command', 'as-variant-danger'],
-                    attr: { 'data-command': 'removeRow' },
-                    child: {
-                        tag: 'span',
-                        class: ['mdi', 'mdi-table-row-remove'],
-                    },
-                },
-            ]
-        }
+            },
+        ]
     });
+    this.table.wrapper.addChildBefore(this.$tool, this.table.wrapper.firstChild);
 
-    this.$fontSize = $('.as-table-of-text-input-tool-font-size', this.$follower).on('change', this.ev_fontSizeChange);
-    this.$bold = $('.as-table-of-text-input-tool-bold', this.$follower).on('click', this.ev_clickBold);
-    this.$italic = $('.as-table-of-text-input-tool-italic', this.$follower).on('click', this.ev_clickItalic);
-    this.$fontColor = $(FontColorButton.tag, this.$follower).on('submit', this.ev_fontColorSubmit);
-    this.$alignBtns = $$('.as-table-of-text-input-tool-text-align', this.$follower)
+    this.$fontSize = $('.as-table-of-text-input-tool-font-size', this.$tool).on('change', this.ev_fontSizeChange);
+    this.$bold = $('.as-table-of-text-input-tool-bold', this.$tool).on('click', this.ev_clickBold);
+    this.$italic = $('.as-table-of-text-input-tool-italic', this.$tool).on('click', this.ev_clickItalic);
+    this.$fontColor = $(FontColorButton.tag, this.$tool).on('submit', this.ev_fontColorSubmit);
+    this.$alignBtns = $$('.as-table-of-text-input-tool-text-align', this.$tool)
         .reduce((ac, btn) => {
             var value = btn.attr('data-align');
             btn.on('click', ev => {
@@ -710,7 +742,7 @@ function TEIFormatTool(table) {
             ac[value] = btn;
             return ac;
         }, {});
-    this.$commandBtns = $$('.as-table-of-text-input-tool-command', this.$follower)
+    this.$commandBtns = $$('.as-table-of-text-input-tool-command', this.$tool)
         .reduce((ac, btn) => {
             var value = btn.attr('data-command');
             btn.on('click', ev => {
@@ -720,7 +752,7 @@ function TEIFormatTool(table) {
             ac[value] = btn;
             return ac;
         }, {});
-    // this.$removeBtn = $('.as-table-of-text-input-tool-remove-col', this.$follower)
+    // this.$removeBtn = $('.as-table-of-text-input-tool-remove-col', this.$tool)
     //     .on('click', this.ev_clickRemove);
 
     this.focusCell = null;
@@ -748,7 +780,6 @@ TEIFormatTool.prototype.commands = {
 
             });
             this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
-            this.table.formatTool.$follower.updatePosition();
 
         }
     },
@@ -765,7 +796,6 @@ TEIFormatTool.prototype.commands = {
 
             });
             this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
-            this.table.formatTool.$follower.updatePosition();
         }
     },
     above: {
@@ -790,7 +820,6 @@ TEIFormatTool.prototype.commands = {
             this.table.rows.splice(idx, 0, newRow);
             this.table.$body.addChildBefore(newRow.tr, focusRow.tr);
             this.table.notifyChange({ newRow: newRow });
-            this.table.formatTool.$follower.updatePosition();
         }
     },
     bellow: {
@@ -809,7 +838,6 @@ TEIFormatTool.prototype.commands = {
             this.table.rows.splice(idx + 1, 0, newRow);
             this.table.$body.addChildAfter(newRow.tr, focusRow.tr);
             this.table.notifyChange({ newRow: newRow });
-            this.table.formatTool.$follower.updatePosition();
         }
     },
     removeCol: {
@@ -831,7 +859,6 @@ TEIFormatTool.prototype.commands = {
                 row.cells.splice(idx, 1);
             });
             this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
-            this.table.formatTool.$follower.updatePosition();
             var cellNext = focusRow.cells[idx - 1] || focusRow.cells[idx];
             if (cellNext) cellNext.focus();
         }
@@ -853,7 +880,6 @@ TEIFormatTool.prototype.commands = {
             focusRow.tr.remove();
             this.table.rows.splice(idx, 1);
             this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
-            this.table.formatTool.$follower.updatePosition();
             var nextRow = this.table.rows[idx] || this.table.rows[idx - 1];
             var nexCell;
             if (nextRow) {
@@ -871,17 +897,16 @@ TEIFormatTool.prototype.onFocus = function (cell) {
     if (this.focusCell !== cell && this.focusCell) {
         this.focusCell.td.removeClass('as-focus');
     }
-    this.focusCell = cell;
-    this.focusCell.td.addClass('as-focus');
-    if (!this.$follower.parentElement) {
-        this.$follower.addTo(document.body);
+
+    if (!this.focusCell) {
         setTimeout(() => {
             document.addEventListener('click', this.ev_clickOut);
         }, 30);
     }
-    this.$follower.followTarget = this.table.elt;
-    this.$follower.sponsorElement = this.table.elt;
-    this.$follower.addStyle('z-index', findMaxZIndex(this.focusCell.td));
+
+
+    this.focusCell = cell;
+    this.focusCell.td.addClass('as-focus');
 
     this.$fontSize.value = this.focusCell.style.fontSize;
     if (this.focusCell.style.fontWeight === 'bold')
@@ -913,22 +938,16 @@ TEIFormatTool.prototype.updateAvailableCommands = function () {
 
 
 TEIFormatTool.prototype.onBlur = function (cell) {
-    // if (this.focusCell !== cell) return;
-    // if (this.focusCell && this.focusCell === cell) {
-    //     this.focusCell.td.removeClass('as-focus');
-    //     this.focusCell = null;
-    // }
+
 };
 
 
 TEIFormatTool.prototype.ev_clickOut = function (event) {
-    if (hitElement(this.table.elt, event)) return;
+    if (hitElement(this.table.wrapper, event)) return;
     if (this.focusCell) {
         this.focusCell.td.removeClass('as-focus');
         this.focusCell = null;
     }
-    this.$follower.followTarget = null;
-    this.$follower.remove();
     document.removeEventListener('click', this.ev_clickOut);
 };
 
