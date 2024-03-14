@@ -163,6 +163,10 @@ import MSelectMenu from "../selectmenu/MSelectMenu";
 import MSelectTreeMenu from "../selecttreemenu/MSelectTreeMenu";
 import MHeaderBar from "../mobile/MHeaderBar";
 import { MExploreGroup, MExploreItemBlock, MExploreSectionBreak, MSpringboardMenu } from "../mobile/MExplore";
+import SolidColorPicker from "../colorpicker/SolidColorPicker";
+import { ColorCell } from "../colorpicker/SwatchesTable";
+import ColorPickerButton from "../colorpicker/ColorPickerButton";
+import SelectColorSchemeMenu from "../colorpicker/SelectColorSchemeMenu";
 
 
 export var publicCreators = [
@@ -338,6 +342,7 @@ export var publicCreators = [
     ObjectMergeTool,
     TokenizeHyperInput,
     SelectListBoxV2,
+
     MCheckTreeBox,
     MCheckTreeLeafBox,
     MSelectTreeLeafBox,
@@ -350,7 +355,12 @@ export var publicCreators = [
     MExploreSectionBreak,
     MExploreItemBlock,
     MExploreGroup,
-    MSpringboardMenu
+    MSpringboardMenu,
+
+    SolidColorPicker,
+    ColorPickerButton,
+    ColorCell,
+    SelectColorSchemeMenu
 ];
 
 /***
