@@ -153,7 +153,7 @@ FCBPickerController.prototype.openPicker = function () {
     this.share.$follower.addTo(document.body);
     this.share.$follower.followTarget = this.elt.$extend;
     this.share.$follower.sponsorElement = this.elt.$extend;
-    this.share.$follower.addStyle('z-index', findMaxZIndex(this.elt.$extend));
+    this.share.$follower.addStyle('z-index', findMaxZIndex(this.elt.$extend) + 70);
     this.share.$follower.removeStyle('visibility');
     this.elt.$extend.off('click', this.ev_clickExtend);
     this.share.$picker.on('submit', this.ev_submit);
