@@ -3,7 +3,6 @@ import { measureText } from "absol/src/HTML5/Text";
 import { isNaturalNumber, isRealNumber } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import noop from "absol/src/Code/noop";
-import Snackbar from "../Snackbar";
 
 /***
  *
@@ -129,7 +128,6 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
         event.preventDefault();
         return;
     }
-    Snackbar.show(key);
     var thousandsSeparator = this.elt.thousandsSeparator;
     var decimalSeparator = this.elt.decimalSeparator;
 
