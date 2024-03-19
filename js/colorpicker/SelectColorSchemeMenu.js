@@ -4,9 +4,10 @@ import { _, $ } from "../../ACore";
 import { keyStringOf } from "../utils";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import Color from "absol/src/Color/Color";
+import { map } from "absol/src/Math/int";
 
 export var DEFAULT_CHART_COLOR_SCHEMES = [
-    ['#f0f0f0', '#d9d9d9', '#bdbdbd', '#969696', '#737373', '#525252'],
+    ['#f0f0f0', '#d9d9d9', '#bdbdbd', '#969696', '#737373', '#525252'],//gray scale
     ['#a50026', '#f46d43', '#fee08b', '#d9ef8b', '#66bd63', '#006837'],
     ['#7fc97f', '#beaed4', '#fdc086', '#ffff99', '#386cb0', '#f0027f'],
     ['#1b9e77', '#d95f02', '#7570b3', '#e7298a', '#66a61e', '#e6ab02'],
@@ -28,7 +29,55 @@ export var DEFAULT_CHART_COLOR_SCHEMES = [
     ['#ffffcc', '#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#fc4e2a']
 ];
 
+var DEFAULT_CHART_COLOR_SCHEMES_OBJS = DEFAULT_CHART_COLOR_SCHEMES.map(scm => scm.map(c => Color.parse(c)));
+
 Color.DEFAULT_CHART_COLOR_SCHEMES = DEFAULT_CHART_COLOR_SCHEMES;
+
+
+var ColorSchemeGenerators = {};
+
+
+var scaleArray = (arr, newN) => Array(newN).fill(0).map((u, i) => {
+    var k = i * (arr.length - 1) / (newN - 1);
+    var l = Math.floor(k);
+    var h = Math.ceil(k);
+    if (l === h) return arr[l];
+    return map(k, l, h, arr[l], arr[h]);
+})
+
+export var generatorColorScheme = (id, n) => {
+    var hsl6 = DEFAULT_CHART_COLOR_SCHEMES_OBJS[id].map(c => c.toHSLA());
+    var h6 = hsl6.map(c => c[0]);
+    var s6 = hsl6.map(c => c[1]);
+    var l, h, s;
+    if ((id >= 1 && id <= 7)|| id === 12 || id ===13) {
+        if (n > 6) {
+            s = s6.concat(Array(n - 6).fill(0).map((u, i) => 0.6 + (3 * i * 0.3) % 0.35));
+        }
+    }
+    if (id === 1) {
+        h6[0] -= 1;
+
+    }
+    else if (id === 2) {
+        if (n > 6) {
+            s = s6.concat(Array(n - 6).fill(0).map((u, i) => 0.5 + (3 * i * 0.3) % 0.45));
+        }
+    }
+    else if (id === 18 && n !== 6) {
+        h6[0] = 1;
+        h6[1] = 1;
+    }
+    s = s || scaleArray(s6, n);
+
+    l = l || scaleArray(hsl6.map(c => c[2]), n);
+    h = h || scaleArray(h6, n).map(h => h < 0 ? h + 1 : h);
+    return Array(n).fill(0).map((u, i) => Color.fromHSL(h[i], s[i], l[i]));
+};
+
+
+// DEFAULT_CHART_COLOR_SCHEMES = Array(20).fill(0).map((u, id) => colorSchemeGenerator(id, 20).map(c => c.toString('hex6')))
+// console.log(DEFAULT_CHART_COLOR_SCHEMES)
 
 /**
  * @extends AElement
@@ -201,7 +250,7 @@ SCSMComboBoxController.prototype.update = function () {
     var selectedItem = this.elt.dropdown.selectedItem;
     this.$selected.clearChild();
     if (!selectedItem) return;
-    this.$selected.addChild(selectedItem.colors.map(color=>_({
+    this.$selected.addChild(selectedItem.colors.map(color => _({
         class: 'as-scsm-item-cell', style: {
             backgroundColor: color
         }
