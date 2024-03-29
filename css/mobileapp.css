@@ -202,6 +202,10 @@ button.am-header-bar-action {
     font-size: 1.6em;
 }
 
+.am-application.am-stack > .am-activity {
+    position: absolute;
+}
+
 
 .am-activity {
     width: 100%;
@@ -352,12 +356,12 @@ button.am-header-bar-action {
     margin-bottom: 10px;
 }
 
-.am-springboard-menu.am-style-simple .am-explore-section-break-line{
+.am-springboard-menu.am-style-simple .am-explore-section-break-line {
     display: none;
 }
 
 
-.am-springboard-menu.am-style-simple .am-explore-section-break-name{
+.am-springboard-menu.am-style-simple .am-explore-section-break-name {
     background-color: transparent;
     color: black;
     font-weight: bold;
@@ -369,6 +373,6 @@ button.am-header-bar-action {
 }
 
 
-.am-springboard-menu.am-style-simple  .am-explore-section-break {
+.am-springboard-menu.am-style-simple .am-explore-section-break {
     margin-bottom: 0;
 }
