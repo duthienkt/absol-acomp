@@ -4,6 +4,7 @@
     border-radius: .25em;
     box-sizing: border-box;
     overflow: hidden;
+    --value-color: #007bff;
 }
 
 
@@ -13,24 +14,28 @@
     color: #fff;
     text-align: center;
     white-space: nowrap;
-    background-color: #007bff;
+    background-color: var(--value-color);
     transition: width .6s ease;
 }
 
-.as-progress-bar.as-variant-success .as-progress-bar-value {
-    background-color: #28a745;
+.as-progress-bar.as-variant-success,
+.as-progress-circle.as-variant-success {
+    --value-color: #28a745;
 }
 
-.as-progress-bar.as-variant-info .as-progress-bar-value {
-    background-color: #17a2b8;
+.as-progress-bar.as-variant-info,
+.as-progress-circle.as-variant-info {
+    --value-color: #17a2b8;
 }
 
-.as-progress-bar.as-variant-warning .as-progress-bar-value {
-    background-color: #ffc107;
+.as-progress-bar.as-variant-warning,
+.as-progress-circle.as-variant-warning {
+    --value-color: #ffc107;
 }
 
-.as-progress-bar.as-variant-danger .as-progress-bar-value {
-    background-color: #dc3545;
+.as-progress-bar.as-variant-danger,
+.as-progress-circle.as-variant-danger {
+    --value-color: #dc3545;
 }
 
 
@@ -53,3 +58,79 @@
 .as-progress-bar.as-animated .as-progress-bar-value {
     animation: as-progress-bar-stripes 1s linear infinite;
 }
+
+
+.as-progress-circle {
+    display: inline-block;
+    width: 7em;
+    height: 7em;
+    background-color: #fcfcf6;
+    border-radius: 50%;
+    position: relative;
+    --value-color: #007bff;
+
+    box-shadow: 3px 2px 12px -1px rgba(0, 0, 0, 0.1) inset;
+    overflow: hidden;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+.as-progress-circle-inner {
+    background-color: white;
+    position: absolute;
+    border-radius: 50%;
+    left: 0.8em;
+    right: 0.8em;
+    top: 0.8em;
+    bottom: 0.8em;
+    font-size: 1rem;
+    box-shadow: 3px 2px 12px -1px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    text-align: center;
+}
+
+
+.as-progress-circle-inner::before {
+    content: "";
+    height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-progress-circle-text {
+    display: inline-block;
+    vertical-align: middle;
+    white-space: pre-wrap;
+    max-width: calc(100% - 0.3em);
+    font-size: 1em;
+    color: #454c5b;
+}
+
+.as-progress-circle-start,
+.as-progress-circle-end {
+    border-radius: 50%;
+    width: 0.8em;
+    height: 0.8em;
+    background-color: var(--value-color);
+    /*background-color: red;*/
+    top: 0;
+    left: calc(50% - 0.4em);
+    position: absolute;
+    /*box-shadow: 3px 2px 12px -1px rgba(0, 0, 0, 0.1);*/
+}
+
+.as-progress-circle-pie {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background-color: var(--value-color);
+}
+
+
+.as-progress-circle-end {
+
+}
+
+
