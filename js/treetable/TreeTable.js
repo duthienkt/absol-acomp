@@ -276,6 +276,7 @@ TreeTable.prototype.notifySizeChange = function () {
     var c = this.parentElement;
     while (c) {
         if (typeof c.updateSize === 'function') c.updateSize();
+        else if (typeof c.requestUpdateSize === 'function') c.requestUpdateSize();
         c = c.parentElement;
     }
 };
