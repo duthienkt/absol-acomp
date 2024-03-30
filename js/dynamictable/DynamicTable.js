@@ -248,6 +248,23 @@ DynamicTable.prototype.styleHandlers.minWidth = function (value) {
 
 DynamicTable.prototype.styleHandlers['min-width'] = DynamicTable.prototype.styleHandlers.minWidth;
 
+/***
+ * @this {DynamicTable}
+ * @param value
+ */
+DynamicTable.prototype.styleHandlers.tableLayout = function (value) {
+    if (value === 'fixed') {
+        this.addClass('as-table-layout-fixed');
+    }
+    else {
+        this.removeClass('as-table-layout-fixed');
+    }
+    //todo
+};
+
+DynamicTable.prototype.styleHandlers['table-layout'] = DynamicTable.prototype.styleHandlers.tableLayout;
+
+
 DynamicTable.prototype.addStyle = function (arg0, arg1) {
     if (this.styleHandlers[arg0]) {
         this.styleHandlers[arg0].call(this, arg1);
@@ -749,7 +766,7 @@ LayoutController.prototype.handleDisplay = function () {
     if (display !== 'block') return;
     var tableWidth = this.elt.table.elt.getBoundingClientRect().width;
     var viewportWidth = this.elt.$viewport.getBoundingClientRect().width;
-    if (tableWidth < viewportWidth - 17) {
+    if (tableWidth < viewportWidth - 17 && !this.elt.hasClass('as-table-layout-fixed')) {
         this.elt.table.elt.addStyle('width', viewportWidth - 17 + 'px');
     }
 };

@@ -19,6 +19,11 @@
     overflow: hidden;
 }
 
+
+.as-dynamic-table-wrapper.as-table-layout-fixed table.as-dynamic-table{
+    table-layout: fixed;
+}
+
 td .as-dynamic-table-wrapper .as-dt-header-cell {
     --as-force-min-width: 0;
 }
