@@ -4,6 +4,8 @@ import CheckTreeItem from "./CheckTreeItem";
 import OOP from "absol/src/HTML5/OOP";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { keyStringOf } from "./utils";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import SearchTextInput from "./Searcher";
 
 
 var normalizeItem = item => {
@@ -34,6 +36,76 @@ CheckTreeLeafOnlyBox.tag = 'CheckTreeLeafOnlyBox'.toLowerCase();
 
 
 CheckTreeLeafOnlyBox.render = function () {
+    var mobile = (arguments[1] && arguments[1].forceMobile) || BrowserDetector.isMobile;
+
+    var footer = {
+        class: 'as-dropdown-box-footer',
+        child: [
+            {
+                tag: 'checkbox',
+                class: 'as-select-list-box-check-all',
+                props: {
+                    checked: false,
+                    text: LanguageSystem.getText('txt_check_all') || LanguageSystem.getText('txt_all') || 'Check All'
+                }
+            },
+            {
+                class: 'as-dropdown-box-footer-right',
+                child: [
+                    {
+                        tag: 'a',
+                        class: 'as-select-list-box-cancel-btn',
+                        attr: {
+                            "data-ml-key": 'txt_cancel'
+                        }
+                    },
+                    {
+                        tag: 'a',
+                        class: 'as-select-list-box-close-btn',
+                        attr: {
+                            "data-ml-key": 'txt_close'
+                        }
+                    }
+                ]
+            }
+        ]
+    };
+    var content = {
+        class: ['as-check-tree-box-scroller', 'as-bscroller', 'as-select-list-box-scroller'],
+        child: {
+            class: ['as-check-tree-box-content', 'as-select-list-box-content'],
+            child: Array(this.prototype.preLoadN).fill('.as-select-list-box-page')
+        }
+    };
+
+    if (mobile) {
+        return _({
+            props: { mobile: true },
+            extendEvent: ['change', 'close', 'toggleitem', 'cancel'],
+            class: ['am-check-tree-box-modal', 'am-modal', 'am-dropdown-box-modal'],
+            child: {
+                class: ['am-check-tree-box', 'am-dropdown-box', 'as-dropdown-box-common-style'],
+                child: [
+                    {
+                        class: 'am-dropdown-box-header',
+                        child: [
+                            {
+                                tag: SearchTextInput.tag
+                            },
+                            {
+                                tag: 'button',
+                                class: 'am-dropdown-box-close-btn',
+                                child: 'span.mdi.mdi-close'
+                            }
+                        ]
+                    },
+                    content,
+                    footer
+                ]
+            }
+        })
+    }
+
     return _({
         tag: 'follower',
         extendEvent: ['change', 'toggleitem', 'cancel', 'close'],
@@ -43,45 +115,8 @@ CheckTreeLeafOnlyBox.render = function () {
                 class: 'as-select-list-box-search-ctn',
                 child: 'searchtextinput'
             },
-            {
-                class: ['as-check-tree-box-scroller', 'as-bscroller', 'as-select-list-box-scroller'],
-                child: {
-                    class: ['as-check-tree-box-content', 'as-select-list-box-content'],
-                    child: Array(this.prototype.preLoadN).fill('.as-select-list-box-page')
-                }
-            },
-            {
-                class: 'as-dropdown-box-footer',
-                child: [
-                    {
-                        tag: 'checkbox',
-                        class: 'as-select-list-box-check-all',
-                        props: {
-                            checked: false,
-                            text: LanguageSystem.getText('txt_check_all') || LanguageSystem.getText('txt_all') || 'Check All'
-                        }
-                    },
-                    {
-                        class: 'as-dropdown-box-footer-right',
-                        child: [
-                            {
-                                tag: 'a',
-                                class: 'as-select-list-box-cancel-btn',
-                                attr: {
-                                    "data-ml-key": 'txt_cancel'
-                                }
-                            },
-                            {
-                                tag: 'a',
-                                class: 'as-select-list-box-close-btn',
-                                attr: {
-                                    "data-ml-key": 'txt_close'
-                                }
-                            }
-                        ]
-                    }
-                ]
-            }
+            content,
+            footer
         ],
         props: {
             anchor: [1, 6, 2, 5]
