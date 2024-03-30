@@ -2,7 +2,7 @@ var CTBPropHandlers = {};
 
 CTBPropHandlers.items = {
     /***
-     * @this CheckTreeBox|MCheckTreeBox
+     * @this MCheckTreeBox
      * @param items
      */
     set: function (items) {
