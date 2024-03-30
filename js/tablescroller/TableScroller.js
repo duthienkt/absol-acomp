@@ -12,7 +12,7 @@ var _ = ACore._;
 
 var sliceCellArray = (cells, start, end) => {
     if (typeof start !== "number") start = 0;
-    if (typeof end !== "number") start = Infinity;
+    if (typeof end !== "number")  end = Infinity;
     var res = [];
     cells = cells.slice();
     var cell, colSpan;
@@ -44,6 +44,7 @@ function TableScroller() {
 
     this.$attachHook = $('attachhook', this);
     this.$attachHook.requestUpdateSize = this.updateContentSize.bind(this);
+    this.requestUpdateSize = this.updateContentSize.bind(this);
     this.$attachHook.on('attached', function () {
         Dom.addToResizeSystem(this);
     });
