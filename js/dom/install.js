@@ -141,9 +141,7 @@ import MessageDialog from "../MessageDialog";
 import ObjectMergeTool from "../objectmergetool/ObjectMergeTool";
 import TokenizeHyperInput from "../tokenizeiput/TokenizeHyperInput";
 import SelectListBoxV2 from "../selectlistbox/SelectListBox";
-import MCheckTreeBox from "../checktreebox/MCheckTreeBox";
 import PathMenu from "../PathMenu";
-import MultiCheckTreeMenuV2 from '../multichecktreemenu/MultiCheckTreeMenu';
 import MultiCheckTreeLeafMenuV2 from '../multichecktreeleafmenu/MultiCheckTreeLeafMenu';
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MCheckTreeLeafBox from "../checktreeleafbox/MCheckTreeLeafBox";
@@ -158,7 +156,6 @@ import TreeChart from "../TreeChart";
 import CopyableIconTooltip from "../CopyableIconTooltip";
 import DateNLevelInput from "../DateNLevelInput";
 import TableOfTextInput from "../TableOfTextInput";
-import MListModal from "../selectlistbox/MListModal";
 import MSelectMenu from "../selectmenu/MSelectMenu";
 import MSelectTreeMenu from "../selecttreemenu/MSelectTreeMenu";
 import MHeaderBar from "../mobile/MHeaderBar";
@@ -167,6 +164,7 @@ import SolidColorPicker from "../colorpicker/SolidColorPicker";
 import { ColorCell } from "../colorpicker/SwatchesTable";
 import ColorPickerButton from "../colorpicker/ColorPickerButton";
 import SelectColorSchemeMenu from "../colorpicker/SelectColorSchemeMenu";
+import ProgressCircle from "../ProgressCircle";
 
 
 export var publicCreators = [
@@ -260,6 +258,7 @@ export var publicCreators = [
     PageSelector,
     PreInput,
     ProgressBar,
+    ProgressCircle,
     QuickListButton,
     QuickMenu,
     QuickPath,
@@ -321,7 +320,7 @@ export var publicCreators = [
     MultiCheckMenu,
     CheckTreeItem,
     CheckTreeBox,
-    BrowserDetector.isMobile ? MultiCheckTreeMenuV2 : MultiCheckTreeMenu,
+    MultiCheckTreeMenu,
     MessageDialog,
     YesNoQuestionDialog,
     TOCItem,
@@ -343,7 +342,7 @@ export var publicCreators = [
     TokenizeHyperInput,
     SelectListBoxV2,
 
-    MCheckTreeBox,
+    // MCheckTreeBox,
     MCheckTreeLeafBox,
     MSelectTreeLeafBox,
     MDualSelectBox,
