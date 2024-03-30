@@ -1,7 +1,7 @@
 import { $, _ } from "../../ACore";
 import CTLIPropHandlers from "./CTLIPropHandlers";
 import OOP from "absol/src/HTML5/OOP";
-import MCheckTreeItem from "../checktreebox/MCheckTreeItem";
+import { MCheckTreeItem } from "../checktreebox/MCheckTreeBox";
 
 /***
  * @extends AElement
