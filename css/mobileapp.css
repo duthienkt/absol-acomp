@@ -204,6 +204,8 @@ button.am-header-bar-action {
 
 .am-application.am-stack > .am-activity {
     position: absolute;
+    left: 0;
+    top: 0;
 }
 
 
