@@ -8,7 +8,6 @@ import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import MultiSelectMenu from "./MultiSelectMenu";
 import CheckTreeLeafOnlyBox from "./CheckTreeLeafOnlyBox";
 import { copySelectionItemArray, isNaturalNumber, rootTreeValues2CheckedValues } from "./utils";
-import { arrayUnique } from "absol/src/DataStructure/Array";
 
 
 /***
@@ -19,26 +18,31 @@ function MultiCheckTreeMenu() {
     this._items = [];
     this._values = [];
     this._viewValues = [];
-    this._initOpened = 0;
     /***
      * @type {CheckTreeBox|CheckTreeLeafOnlyBox}
      */
     this.$checkTreeBox = _({
-        tag: CheckTreeBox.tag,
+        tag: this.renderProps.leafOnly ? CheckTreeLeafOnlyBox.tag : CheckTreeBox.tag,
+        // forceMobile: true,
+
         on: {
             change: this.eventHandler.boxChange,
             preupdateposition: this.eventHandler.preUpdateListPosition,
             toggleitem: this.eventHandler.boxToggleItem,
             cancel: this.eventHandler.boxCancel,
             close: this.eventHandler.boxClose
+        },
+        props: {
+            initOpened: this.renderProps.initOpened,
+            enableSearch: this.renderProps.enableSearch
         }
     });
+
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.$checkTreeBox.followTarget = this;
     this.$checkTreeBox.sponsorElement = this;
     this.on('click', this.eventHandler.click);
 
-    this.enableSearch = false;
 
     /**
      * parent will be selected if all off leaf selected, sub tree can not select if had no leaf
@@ -62,8 +66,14 @@ function MultiCheckTreeMenu() {
 
 MultiCheckTreeMenu.tag = 'MultiCheckTreeMenu'.toLowerCase();
 
-MultiCheckTreeMenu.render = function () {
-    return _({
+MultiCheckTreeMenu.render = function (data, domDesc) {
+    var leafOnly = domDesc.props && domDesc.props.leafOnly;
+    var props = domDesc.props || {};
+    /**
+     * @name renderProps
+     * @memberof MultiCheckTreeMenu#
+     */
+    var res = _({
         class: ['as-multi-select-menu', 'as-multi-check-tree-menu'],
         extendEvent: ['change'],
         attr: {
@@ -79,8 +89,15 @@ MultiCheckTreeMenu.render = function () {
                 child: 'dropdown-ico'
             },
             'attachhook'
-        ]
+        ],
+        props: {
+            renderProps: props
+        }
     });
+
+    if (leafOnly) res.addClass('as-leaf-only');
+
+    return res;
 };
 
 MultiCheckTreeMenu.prototype.tokenPool = [];
@@ -125,225 +142,6 @@ MultiCheckTreeMenu.prototype._assignTokens = function (items) {
         this.$itemCtn.childNodes[i].data = items[i];
     }
 };
-
-
-MultiCheckTreeMenu.prototype._switchLeafMode = function () {
-    var enableSearch = this.enableSearch;
-    if (this.leafOnly) {
-        this.$checkTreeBox = _({
-            tag: CheckTreeLeafOnlyBox.tag,
-            on: {
-                change: this.eventHandler.boxChange,
-                preupdateposition: this.eventHandler.preUpdateListPosition,
-                toggleitem: this.eventHandler.boxToggleItem,
-                cancel: this.eventHandler.boxCancel,
-                close: this.eventHandler.boxClose
-            }
-        });
-        this._explicit = this._leafOnlyExplicit;
-
-    }
-    else {
-        this.$checkTreeBox = _({
-            tag: CheckTreeBox.tag,
-            on: {
-                change: this.eventHandler.boxChange,
-                preupdateposition: this.eventHandler.preUpdateListPosition,
-                toggleitem: this.eventHandler.boxToggleItem,
-                cancel: this.eventHandler.boxCancel,
-                close: this.eventHandler.boxClose
-            },
-
-        });
-        this._explicit = this._normalExplicit;
-
-    }
-    this.$checkTreeBox.followTarget = this;
-    this.$checkTreeBox.sponsorElement = this;
-    this.$checkTreeBox.initOpened = this.initOpened;
-    this.$checkTreeBox.items = this._items;
-    this.$checkTreeBox.values = this._values;
-    this.$checkTreeBox.enableSearch = enableSearch;
-};
-
-
-MultiCheckTreeMenu.prototype._implicit = function (values) {
-    values = (values || []);
-    var valueDict = (values || []).reduce(function (ac, cr) {
-        ac[cr + ''] = true;
-        return ac;
-    }, {});
-
-    var resDict = {};
-
-    function depthRemoveValueDict(node) {
-        if (valueDict[node.value]) delete valueDict[node.value];
-        if (node.items && node.items.length) {
-            node.items.forEach(depthRemoveValueDict);
-        }
-    }
-
-    var leafOnly = this.leafOnly;
-    var scan;
-    var leafCount = {};
-    var leafScan;
-    if (leafOnly) {
-        leafScan = function (node) {
-            if (node.isLeaf) {
-                leafCount[node.value] = 1;
-            }
-            else {
-                leafCount[node.value] = 0;
-            }
-            if (node.items && node.items.length > 0) {
-                if (!node.isLeaf) {
-                    node.items.forEach(leafScan);
-                    leafCount[node.value] = node.items.reduce(function (ac, cr) {
-                        return ac + (leafCount[cr.value] || 0);
-                    }, 0);
-                }
-                else {
-                    console.error("Invalid item:", node);
-                }
-            }
-        };
-        this._items.forEach(leafScan);
-        scan = function scan(node) {
-            if (!leafCount[node.value]) {
-                depthRemoveValueDict(node);
-                return true;
-            }
-            if (valueDict[node.value] && leafCount[node.value] > 0) return true;
-            if (!node.items || node.items.length === 0) return false;
-            var cs = node.items.map(scan);
-            if (cs.every(function (e) {
-                return e
-            })) {
-                depthRemoveValueDict(node);
-                return true;
-            }
-            else {
-                node.items.forEach(function (nd, i) {
-                    if (cs[i] && leafCount[nd.value] > 0) resDict[nd.value] = nd;
-                });
-                return false;
-            }
-        };
-    }
-    else {
-        scan = function scan(node) {
-            if (valueDict[node.value]) {
-                depthRemoveValueDict(node);
-                return true;
-            }
-            if (!node.items || node.items.length === 0) return false;
-            var cs = node.items.map(scan);
-            if (cs.every(function (e) {
-                return e
-            })) {
-                depthRemoveValueDict(node);
-                return true;
-            }
-            else {
-                node.items.forEach(function (nd, i) {
-                    if (cs[i]) resDict[nd.value] = nd;
-                });
-                return false;
-            }
-        };
-    }
-
-    var csRoot = this._items.map(scan);
-
-    this._items.forEach(function (nd, i) {
-        if (csRoot[i] && (!leafOnly || leafCount[nd.value] > 0)) resDict[nd.value] = nd;
-    });
-    var eValues = values.reduce(function (ac, cr) {
-        if (valueDict[cr]) ac.push(cr);
-        return ac;
-    }, []);
-    for (var key in resDict) {
-        eValues.push(resDict[key].value);
-    }
-
-    return arrayUnique(eValues)
-};
-
-
-MultiCheckTreeMenu.prototype._normalExplicit = function (values) {
-    var valueDict = values.reduce(function (ac, cr) {
-        ac[cr] = true;
-        return ac;
-    }, {});
-
-    var selectDown = holder => {
-        if (holder.canSelectAll) {
-            holder.selected = true;
-        }
-        else if (holder.canSelect) {
-            holder.child.forEach(c => selectDown(c));
-        }
-    }
-    var compute = nd => {
-        var res = {
-            node: nd,
-            child: []
-        };
-
-        if (nd.items && nd.items.length > 0) {
-            res.child = nd.items.map(it => compute(it));
-        }
-
-        res.canSelectAll = !nd.noSelect && res.child.every(c => c.canSelectAll);
-        res.canSelect = res.child.length === 0 || res.child.some(c => c.canSelect);
-        if (valueDict[res.node.value]) selectDown(res);
-        if (!res.selected && res.child.length > 0) {
-            res.selected = res.child.every(c => c.selected);
-        }
-        return res;
-    }
-
-    var holders = this._items.map(it => compute(it));
-    var eValues = [];
-    var scanSelected = holder => {
-        if (holder.selected) {
-            eValues.push(holder.node.value);
-        }
-        else {
-            holder.child.forEach(c => scanSelected(c));
-        }
-    };
-    holders.forEach(c => scanSelected(c));
-    return eValues;
-};
-
-
-MultiCheckTreeMenu.prototype._leafOnlyExplicit = function (values) {
-    var valueDict = values.reduce(function (ac, cr) {
-        ac[cr] = true;
-        return ac;
-    }, {});
-    var res = [];
-
-    function scan(node, selected) {
-        selected = selected || valueDict[node.value];
-        if (node.isLeaf && !node.noSelect && selected) res.push(node.value);
-        if (node.items && node.items.length > 0) {
-            node.items.forEach(function (cNode) {
-                scan(cNode, selected);
-            })
-        }
-    }
-
-    this._items.forEach(function (node) {
-        scan(node, false);
-    });
-
-    return res;
-};
-
-
-MultiCheckTreeMenu.prototype._explicit = MultiCheckTreeMenu.prototype._normalExplicit;
 
 
 MultiCheckTreeMenu.prototype.findItemsByValues = function (values) {
@@ -391,7 +189,7 @@ MultiCheckTreeMenu.prototype.commitView = function () {
 
 MultiCheckTreeMenu.prototype.cancelView = function () {
     this.$checkTreeBox.values = this._values;
-    this.viewValues(this._normalExplicit(this._values));
+    this.viewValues(this.$checkTreeBox.viewValues);
 };
 
 MultiCheckTreeMenu.prototype.init = function (props) {
@@ -493,7 +291,7 @@ MultiCheckTreeMenu.property.items = {
         this._items = copySelectionItemArray(items || [], { removeNoView: true });
         this.$checkTreeBox.items = this._items;
         this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.width) + 'px');
-        this.values = this._values;//update
+        this.viewValues(this.$checkTreeBox.viewValues);
     },
     get: function () {
         return this.$checkTreeBox.items;
@@ -506,33 +304,20 @@ MultiCheckTreeMenu.property.values = {
      * @param values
      */
     set: function (values) {
-        values = values || [];
-        this.pendingValues = values;
-        if (this.items.length > 0) {
-            values = this._implicit(values);
-        }
-        else {
-            values = values || [];
-        }
         this.$checkTreeBox.values = values;
-        this._values = values;
-        values = this.$checkTreeBox.values.slice();//correct wrong item
-        this.viewValues(this._normalExplicit(values));
+        this.viewValues(this.$checkTreeBox.viewValues);
     },
     /***
      * @this MultiCheckTreeMenu
      */
     get: function () {
-        if ('pendingValues' in this) return this._explicit(this.pendingValues);
-        return this._explicit(this._values);
+        return this.$checkTreeBox.values;
     }
 };
 
 MultiCheckTreeMenu.property.checkedValues = {
     get: function () {
-        var values = this.values;
-        var items = this.items;
-        return rootTreeValues2CheckedValues(items, values);
+        return this.$checkTreeBox.viewValues;
     }
 };
 
@@ -540,13 +325,7 @@ MultiCheckTreeMenu.property.leafOnly = {
     set: function (value) {
         if (!!value === this.hasClass('as-leaf-only'))
             return;
-        if (value) {
-            this.addClass('as-leaf-only');
-        }
-        else {
-            this.removeClass('as-leaf-only');
-        }
-        this._switchLeafMode();
+        throw Error("Can not change leafOnly value!");
     },
     get: function () {
         return this.hasClass('as-leaf-only');
@@ -565,7 +344,7 @@ MultiCheckTreeMenu.eventHandler = {};
  * @param event
  */
 MultiCheckTreeMenu.eventHandler.clickOut = function (event) {
-    if (event.target === this || event.target === this.$itemCtn || (!hitElement(this, event) && !hitElement(this.$checkTreeBox, event))) {
+    if ((event.target.hasClass && event.target.hasClass('am-modal')) || event.target === this || event.target === this.$itemCtn || (!hitElement(this, event) && !hitElement(this.$checkTreeBox, event))) {
         this.commitView();
         this.isFocus = false;
     }
@@ -597,8 +376,7 @@ MultiCheckTreeMenu.eventHandler.click = function (event) {
  * @param event
  */
 MultiCheckTreeMenu.eventHandler.boxChange = function (event) {
-    delete this.pendingValues;
-    this.viewValues(this._normalExplicit(this.$checkTreeBox.values));
+    this.viewValues(this.$checkTreeBox.viewValues);
     ResizeSystem.update();
 };
 
@@ -620,17 +398,10 @@ MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
         holder.unselectAll();
     });
     this.$checkTreeBox.updateSelectedInViewIfNeed();
-    var newValues = this._viewValues.filter(function (v) {
-        return v !== value;
-    });
+    var newValues = this.$checkTreeBox.viewValues;
+    this.viewValues(newValues);
+    this.emit('change', { type: 'change', target: this }, this);
 
-    if (this.isFocus) {
-        this.viewValues(newValues);
-    }
-    else {
-        this.values = newValues;
-        this.emit('change', { type: 'change', target: this }, this);
-    }
 };
 
 
