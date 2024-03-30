@@ -30,6 +30,8 @@ import OverviewPage from "./js/keeview/OverviewPage";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import { FinderFileSystem } from "./js/finder/Finder";
 import { silentDownloadAsPdf } from "./js/printer";
+import MApplication from "./js/mobile/MApplication";
+import MActivity from "./js/mobile/MActivity";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -83,6 +85,10 @@ absol.CPUViewer = CPUViewer;
 
 absol.OverviewWidget = OverviewWidget;
 absol.OverviewPage = OverviewPage;
+
+absol.MApplication = MApplication;
+absol.MActivity = MActivity;
+
 
 Dom.documentReady.then(function () {
     ContextCaptor.auto();
