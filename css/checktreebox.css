@@ -31,7 +31,7 @@
     --desc-width: 0;
 }
 
-.am-check-tree-box:not(.as-enable-search) .absol-search-text-input {
+.am-check-tree-box-modal:not(.as-enable-search) .absol-search-text-input {
     visibility: hidden;
     opacity: 0;
     pointer-events: none;
@@ -141,7 +141,7 @@
 .am-check-tree-item-text {
     width: var(--text-width);
     box-sizing: border-box;
-    padding: 0.3em 0.5em 0.3em calc(2.5em + 2em * var(--level) + var(--icon-width));
+    padding: 0.3em 0.5em 0.3em calc(3em + 2em * var(--level) + var(--icon-width));
     display: inline-block;
     vertical-align: middle;
     line-height: 1.5;

@@ -1,16 +1,16 @@
-import ACore, { _, $, $$ } from "../ACore";
+import ACore, { _, $, $$ } from "../../ACore";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
-import CheckTreeItem from "./CheckTreeItem";
-import '../css/checktreebox.css';
-import { copySelectionItemArray, estimateWidth14, keyStringOf, measureText } from "./utils";
-import { prepareSearchForList, searchTreeListByText } from "./list/search";
-import SelectListBox from "./SelectListBox";
+import CheckTreeItem from "../CheckTreeItem";
+import '../../css/checktreebox.css';
+import { copySelectionItemArray, estimateWidth14, keyStringOf, measureText } from "../utils";
+import { prepareSearchForList, searchTreeListByText } from "../list/search";
+import SelectListBox from "../SelectListBox";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { arrayCompare } from "absol/src/DataStructure/Array";
-import { measureArial14TextWidth } from "./CheckListBox";
+import { measureArial14TextWidth } from "../CheckListBox";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import SearchTextInput from "./Searcher";
+import SearchTextInput from "../Searcher";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
@@ -250,7 +250,7 @@ CheckTreeBox.property.values = {
 
 CheckTreeBox.property.viewValues = {
     get: function () {
-        return this.listCtrl.getViewValues();
+       return this.listCtrl.getViewValues();
     }
 };
 
