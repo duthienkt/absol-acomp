@@ -1,6 +1,7 @@
-import MCTBItemHolder from "../checktreebox/MCTBItemHolder";
 import { _ } from "../../ACore";
 import SelectTreeLeafItem from "./SelectTreeLeafItem";
+import { MCTBItemHolder } from "../checktreebox/MCheckTreeBox";
+
 
 function MSTBItemHolder(boxElt, parent, data) {
     this.ref = null;
