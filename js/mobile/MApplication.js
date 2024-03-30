@@ -1,6 +1,7 @@
 import Fragment from 'absol/src/AppPattern/Fragment';
-import { _ } from "../../../absol-mobile/js/dom/Core";
 import '../../css/mobileapp.css';
+import { _ } from "../../ACore";
+import OOP from "absol/src/HTML5/OOP";
 
 /**
  * @extends Fragment
@@ -12,6 +13,8 @@ function MApplication() {
     this.pendingLoop = [];
     this.loopRunning = false;
 }
+
+OOP.mixClass(MApplication, Fragment);
 
 
 MApplication.prototype.createView = function () {
@@ -45,7 +48,7 @@ MApplication.prototype.startActivity = function (clazz, bundle) {
             newAct.start(true);
         }
         else if (this.state === 'RUNNING') {
-            curAct.pause();
+            if (curAct) curAct.pause();
             newAct.start();
         }
     }
