@@ -45,7 +45,7 @@ MSTBItemHolder.prototype.ev_click = function (event) {
         if (this.boxElt.mode !== this.boxElt.modes.normal) {
             this.boxElt.mode.updateSelectedFromRef();
         }
-        this.boxElt.notifyPressItem();
+        this.boxElt.notifyPressItem({ item: this.data });
     }
 };
 

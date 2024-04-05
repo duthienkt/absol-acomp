@@ -5,6 +5,8 @@ import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import SelectMenu from "./SelectMenu2";
 import { copySelectionItemArray } from "./utils";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import MSelectTreeLeafBox from "./selecttreeleafbox/MSelectTreeLeafBox";
 
 
 /***
@@ -13,23 +15,58 @@ import { copySelectionItemArray } from "./utils";
  */
 function SelectTreeLeafMenu() {
     this.$selectBox = _({
-        tag: SelectTreeLeafBox.tag,
+        tag: this.mobile ? MSelectTreeLeafBox : SelectTreeLeafBox.tag,
         on: {
             pressitem: this.eventHandler.pressItem,
             preupdateposition: this.eventHandler.preUpdateListPosition
         }
     });
+    this.$selectBox.sponsorElement = this;
+
     OOP.drillProperty(this, this.$selectBox, 'enableSearch');
     this.$holderItem = $('selectlistitem', this);
-    this.on('click', this.eventHandler.click.bind(this));
+    // this.on('click', this.eventHandler.click.bind(this));
+    this.boxCtrl = new STLBoxController(this);
+    OOP.drillProperty(this, this.boxCtrl, 'isFocus');
+
+    /**
+     * @name items
+     * @type {Array}
+     * @memberof SelectTreeLeafMenu#
+     */
+
+    /**
+     * @name value
+     * @memberof SelectTreeLeafMenu#
+     */
+
+    /**
+     * @name mobile
+     * @type {boolean}
+     * @memberof SelectTreeLeafMenu#
+     */
+    /**
+     * @name disabled
+     * @type {boolean}
+     * @memberof SelectTreeLeafMenu#
+     */
+    /**
+     * @name readOnly
+     * @type {boolean}
+     * @memberof SelectTreeLeafMenu#
+     */
 }
 
 SelectTreeLeafMenu.tag = 'SelectTreeLeafMenu'.toLowerCase();
 
 SelectTreeLeafMenu.render = function () {
+    var mobile = BrowserDetector.isMobile;
     return _({
-        class: ['absol-selectmenu', 'as-select-menu', 'as-select-tree-leaf-menu'],
+        class: ['absol-selectmenu', 'as-select-menu', 'as-select-tree-leaf-menu', 'as-strict-value'],
         extendEvent: ['change'],
+        props: {
+            mobile: mobile
+        },
         attr: {
             tabindex: '1'
         },
@@ -71,11 +108,11 @@ SelectTreeLeafMenu.property = {};
 
 SelectTreeLeafMenu.property.items = {
     set: function (items) {
-        items = copySelectionItemArray(items || [], {removeNoView: true});
+        items = copySelectionItemArray(items || [], { removeNoView: true });
         this.$selectBox.items = items;
         this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.width + 'px');
-        if (this.$selectBox.$selectedItem) {
-            this.$holderItem.data = this.$selectBox.$selectedItem.itemData;
+        if (this.$selectBox.selectedItem) {
+            this.$holderItem.data = this.$selectBox.selectedItem;
         }
         else {
             this.$holderItem.data = { text: '' };
@@ -89,8 +126,8 @@ SelectTreeLeafMenu.property.items = {
 SelectTreeLeafMenu.property.value = {
     set: function (value) {
         this.$selectBox.value = value;
-        if (this.$selectBox.$selectedItem) {
-            this.$holderItem.data = this.$selectBox.$selectedItem.itemData;
+        if (this.$selectBox.selectedItem) {
+            this.$holderItem.data = this.$selectBox.selectedItem;
         }
         else {
             this.$holderItem.data = { text: '' };
@@ -109,51 +146,6 @@ SelectTreeLeafMenu.property.strictValue = {
     },
     get: function () {
         return this.hasClass('as-strict-value');
-    }
-};
-
-
-SelectTreeLeafMenu.property.isFocus = {
-    /**
-     * @this SelectTreeLeafMenu
-     * @param value
-     */
-    set: function (value) {
-        value = !!value;
-        var isFocus = this.hasClass('as-focus');
-        if (value === isFocus) return;
-        if (value && (this.disabled || this.readOnly)) return;
-        var bound;
-        if (value) {
-            this.addClass('as-focus');
-            bound = this.getBoundingClientRect();
-            this.$selectBox.addStyle('min-width', bound.width + 'px');
-            document.body.appendChild(this.$selectBox);
-            this.$selectBox.addStyle('visibility', 'hidden');
-            this.$selectBox.followTarget = this;
-            this.$selectBox.sponsorElement = this;
-            this.$selectBox.updatePosition();
-            this.off('click', this.eventHandler.click);
-            setTimeout(function () {
-                document.addEventListener('click', this.eventHandler.clickOut);
-                this.$selectBox.removeStyle('visibility');
-                this.$selectBox.focus();
-            }.bind(this), 5);
-
-            this.$selectBox.viewToSelected();
-        }
-        else {
-            this.removeClass('as-focus');
-            document.removeEventListener('click', this.eventHandler.clickOut);
-            this.$selectBox.remove();
-            setTimeout(function () {
-                this.on('click', this.eventHandler.click);
-            }.bind(this), 100);
-            this.$selectBox.resetSearchState();
-        }
-    },
-    get: function () {
-        return this.hasClass('as-focus');
     }
 };
 
@@ -204,3 +196,78 @@ SelectTreeLeafMenu.eventHandler.preUpdateListPosition = function () {
 
 ACore.install(SelectTreeLeafMenu);
 export default SelectTreeLeafMenu;
+
+/**
+ *
+ * @param {SelectTreeLeafMenu} elt
+ * @constructor
+ */
+function STLBoxController(elt) {
+    this.elt = elt;
+    this.ev_click = this.ev_click.bind(this);
+    this.ev_clickOut = this.ev_clickOut.bind(this);
+    this.elt.on('click', this.ev_click);
+}
+
+Object.defineProperty(STLBoxController.prototype, 'isFocus', {
+    set: function (value) {
+        value = !!value;
+        if (this.elt.hasClass('as-focus') === value) return;
+        if (value && (this.elt.disabled || this.elt.readOnly)) return;
+
+        var bound;
+        if (value) {
+            this.elt.$selectBox.addTo(document.body);
+            this.elt.addClass('as-focus');
+            this.elt.$selectBox.addStyle('visible', 'hidden');
+            this.elt.off('click', this.ev_click);
+            if (this.elt.mobile) {
+
+            }
+            else {
+                bound = this.elt.getBoundingClientRect();
+                this.elt.$selectBox.addStyle('min-width', bound.width + 'px');
+                this.elt.$selectBox.followTarget = this.elt;
+                this.elt.$selectBox.updatePosition();
+            }
+
+            setTimeout(function () {
+                document.addEventListener('click', this.ev_clickOut);
+                this.elt.$selectBox.removeStyle('visibility');
+                this.elt.$selectBox.focus();
+            }.bind(this), 5);
+            this.elt.$selectBox.viewToSelected();
+        }
+        else {
+            this.elt.removeClass('as-focus');
+            this.elt.$selectBox.remove();
+            document.removeEventListener('click', this.ev_clickOut);
+            if (this.elt.mobile) {
+
+            }
+            else {
+                this.elt.$selectBox.followTarget = null;
+            }
+            setTimeout(() => {
+                this.elt.on('click', this.ev_click);
+            }, 100);
+            this.elt.$selectBox.resetSearchState();
+
+        }
+    },
+    get: function () {
+        return this.elt.hasClass('as-focus');
+    }
+});
+
+STLBoxController.prototype.ev_click = function (event) {
+    if (!this.elt.disabled && !this.elt.readOnly)
+        this.isFocus = true;
+};
+
+STLBoxController.prototype.ev_clickOut = function (event) {
+    if (!hitElement(this.elt.$selectBox, event)
+        || (event.target.attr && event.target.attr('class') && event.target.attr('class').indexOf('modal') >= 0)) {
+        this.isFocus = false;
+    }
+};

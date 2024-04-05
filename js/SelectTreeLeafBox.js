@@ -4,8 +4,7 @@ import ExpTree from "./ExpTree";
 import '../css/selecttreeleafmenu.css';
 import SelectListBox from "./SelectListBox";
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
-import { estimateWidth14 } from "./utils";
-import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import { estimateWidth14, keyStringOf } from "./utils";
 
 function isBranchStatus(status) {
     return status === 'open' || status === 'close';
@@ -36,6 +35,29 @@ function SelectTreeLeafBox() {
     this.$content = $('.as-select-tree-leaf-box-content', this);
     this._savedStatus = {};
     this.estimateSize = { width: 0, height: 0 };
+
+    /**
+     * @name items
+     * @memberof MSelectTreeLeafBox#
+     * @type {Array}
+     */
+
+
+    /**
+     * @name value
+     * @memberof MSelectTreeLeafBox#
+     */
+
+    /**
+     * @name strictMode
+     * @type {boolean}
+     * @memberof MSelectTreeLeafBox#
+     */
+
+    /**
+     * @name selectedItem
+     * @memberof MSelectTreeLeafBox#
+     */
 }
 
 
@@ -103,7 +125,7 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
     if (item.items && item.items.length > 0) {
         status = 'close';
     }
-    if (isBranchStatus(status) && isBranchStatus(savedStatus[item.value])) {
+    if (isBranchStatus(status) && isBranchStatus(savedStatus[keyStringOf(item.value)])) {
         status = savedStatus[item.value];
     }
 
@@ -135,11 +157,11 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
         }
     });
     if (dict) {
-        if (dict[item.value] && !this.warned) {
+        if (dict[keyStringOf(item.value)] && !this.warned) {
             this.warned = true;
             console.warn(this, 'has duplicated value, element will not work correctly!', item);
         }
-        dict[item.value] = nodeElt;
+        dict[keyStringOf(item.value)] = nodeElt;
     }
     if (item.isLeaf) {
         nodeElt.addClass('as-is-leaf');
@@ -209,7 +231,7 @@ SelectTreeLeafBox.prototype._updateSelectedItem = function () {
         this.$selectedItem.removeClass('as-selected');
         this.$selectedItem = null;
     }
-    this.$selectedItem = this.$dislayItemByValue[this._value];
+    this.$selectedItem = this.$dislayItemByValue[keyStringOf(this.value)];
     if (this.$selectedItem) {
         this.$selectedItem.addClass('as-selected');
     }
@@ -245,13 +267,7 @@ SelectTreeLeafBox.property.items = {
         this.$content.addChild(this.$items);
         this.estimateSize = this._calcEstimateSize(items);
         this.addStyle('--select-list-estimate-width', this.estimateSize.width + 'px');
-        var firstLeaf;
-        if (this._value === null || this._value === undefined || (this.strictValue && !this.$itemByValue[this._value])) {
-            firstLeaf = this._findFirstLeaf();
-            if (firstLeaf) {
-                this.value = firstLeaf.value;
-            }
-        }
+
         this._updateSelectedItem();
         self.updatePosition();
     }, get: function () {
@@ -264,7 +280,33 @@ SelectTreeLeafBox.property.value = {
         this._value = value;
         this._updateSelectedItem();
     }, get: function () {
-        return this._value;
+        var firstLeaf;
+        if (!this.strictValue || this.$itemByValue[keyStringOf(this._value)]) {
+            return this._value;
+        }
+        else {
+            firstLeaf = this._findFirstLeaf();
+            if (firstLeaf) return firstLeaf.value;
+            else return this._value;
+        }
+    }
+};
+
+SelectTreeLeafBox.property.selectedItem = {
+    get: function () {
+        var key = keyStringOf(this._value);
+        var firstLeaf;
+        if (this.$itemByValue[key]) {
+            return this.$itemByValue[key].data;
+        }
+        else if (!this.strictValue) {
+            return  null;
+        }
+        else {
+            firstLeaf = this._findFirstLeaf();
+            if (firstLeaf) return firstLeaf;
+            else return null;
+        }
     }
 };
 

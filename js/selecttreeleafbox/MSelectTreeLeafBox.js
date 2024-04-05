@@ -6,12 +6,15 @@ import { STLBModeNormal } from "./STLBModes";
 import STLBPropsHandlers from "./STLBPropsHandlers";
 import MCheckTreeBox from "../checktreebox/MCheckTreeBox";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
+import SelectTreeLeafBox from "../SelectTreeLeafBox";
+import { estimateWidth14, keyStringOf } from "../utils";
 
 /****
  * @extends AElement
  * @constructor
  */
 function MSelectTreeLeafBox() {
+    this.estimateSize = { width: 0, height: 0 };
     this.$box = $('.am-dropdown-box', this);
     this.$list = $('.am-select-tree-leaf-box-list', this);
     this.itemListCtrl = new MSTLBItemListController(this);
@@ -25,8 +28,33 @@ function MSelectTreeLeafBox() {
     this.modes = {
         normal: new STLBModeNormal(this, []),
         search: null
-    }
+    };
     this.mode = this.modes.normal;
+    this.strictValue = true;
+
+
+    /**
+     * @name items
+     * @memberof MSelectTreeLeafBox#
+     * @type {Array}
+     */
+
+
+    /**
+     * @name value
+     * @memberof MSelectTreeLeafBox#
+     */
+
+    /**
+     * @name strictMode
+     * @type {boolean}
+     * @memberof MSelectTreeLeafBox#
+     */
+
+    /**
+     * @name selectedItem
+     * @memberof MSelectTreeLeafBox#
+     */
 }
 
 MSelectTreeLeafBox.tag = 'MSelectTreeLeafBox'.toString();
@@ -62,14 +90,29 @@ MSelectTreeLeafBox.render = function () {
     });
 };
 
+MSelectTreeLeafBox.prototype._calcEstimateSize = SelectTreeLeafBox.prototype._calcEstimateSize;
+
+
+MSelectTreeLeafBox.prototype._estimateItemWidth = function (item, level) {
+    var width = 12;//padding
+    width += 12 * level;
+    width += 14.7 + 5;//toggle icon
+    // if (item.icon) width += 21;//icon
+    width += 7 + estimateWidth14(item.text) + 5 + 7;//margin-text
+    if (item.desc) width += 6 + estimateWidth14(item.desc) * 0.85;
+    return width;
+};
+
+MSelectTreeLeafBox.prototype._findFirstLeaf = SelectTreeLeafBox.prototype._findFirstLeaf;
+
 
 MSelectTreeLeafBox.prototype.viewToSelected = function () {
     this.modes.normal.viewToSelected();
 };
 
-MSelectTreeLeafBox.prototype.notifyPressItem = function () {
+MSelectTreeLeafBox.prototype.notifyPressItem = function (eventData) {
     delete this.pendingValue;
-    this.emit('pressitem', { type: 'pressitem', target: this }, this);
+    this.emit('pressitem', Object.assign({ type: 'pressitem', target: this }, eventData), this);
 };
 
 MSelectTreeLeafBox.prototype.getItemByValue = function (value) {
@@ -79,6 +122,88 @@ MSelectTreeLeafBox.prototype.getItemByValue = function (value) {
 MSelectTreeLeafBox.prototype.resetSearchState = MCheckTreeBox.prototype.resetSearchState;
 
 MSelectTreeLeafBox.property = STLBPropsHandlers;
+
+MSelectTreeLeafBox.property.items = {
+    set: function (items) {
+        var curValue;
+        var selected = true;
+        if ('pendingValue' in this) {
+            curValue = this.pendingValue;
+        }
+        else {
+            try {
+                curValue = this.modes.normal.getValue(this.strictValue);
+            } catch (err) {
+                selected = false;
+            }
+        }
+
+        this.estimateSize = this._calcEstimateSize(items);
+        this._items = items;
+        this.itemListCtrl.setItems(items);
+        if (selected || this.strictValue) this.modes.normal.setValue(curValue, this.strictValue);
+        if (this.mode !== this.modes.normal) {
+            this.mode.updateSelectedFromRef();
+        }
+    },
+    get: function () {
+        this.itemListCtrl.getItems();
+    }
+};
+
+MSelectTreeLeafBox.property.value = {
+    /***
+     * @this MSelectTreeLeafBox
+     * @param value
+     */
+    set: function (value) {
+        this.pendingValue = value;
+        this._value = value;
+        this.modes.normal.setValue(this.pendingValue, this.strictValue);
+
+    },
+    get: function () {
+        console.log(this.pendingValue, this.strictValue)
+
+        if ('pendingValue' in this) {
+            return this.pendingValue;
+        }
+        else {
+            try {
+                return this.modes.normal.getValue(this.strictValue);
+            } catch (err) {
+                return undefined;
+            }
+        }
+    }
+};
+
+MSelectTreeLeafBox.property.selectedItem = {
+    get: function () {
+        return  this.modes.normal.getItemByValue(this.value);
+    }
+};
+
+
+MSelectTreeLeafBox.property.strictValue = {
+    set: function (value) {
+        if (value) {
+            this.$box.addClass('as-strict-value');
+        }
+        else {
+            this.$box.removeClass('as-strict-value');
+        }
+
+        this.modes.normal.setValue(this.pendingValue, this.strictValue);
+        if (this.mode !== this.modes.normal) {
+            this.mode.updateSelectedFromRef();
+        }
+    },
+    get: function () {
+        return this.$box.hasClass('as-strict-value');
+    }
+};
+
 
 MSelectTreeLeafBox.eventHandler = {};
 
