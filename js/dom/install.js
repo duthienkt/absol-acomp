@@ -289,7 +289,7 @@ export var publicCreators = [
     SelectTable2,
     SelectTreeMenu,
     SelectTreeLeafBox,
-    BrowserDetector.isMobile ? SelectTreeLeafMenuV2 : SelectTreeLeafMenu,
+    /*BrowserDetector.isMobile ? SelectTreeLeafMenuV2 :*/ SelectTreeLeafMenu,
     SpanInput,
     SnackBar,
     StaticTabbar,
@@ -374,6 +374,9 @@ function install(core) {
         core.install('selectmenu', MSelectMenu);
         core.install('selecttreemenu', MSelectTreeMenu)
     }
+    core.install('MSelectTreeLeafMenu'.toLowerCase(), SelectTreeLeafMenu);
+    core.install('MMultiCheckTreeMenu'.toLowerCase(), MultiCheckTreeMenu);
+    core.install('MMultiCheckTreeLeafMenu'.toLowerCase(), MultiCheckTreeLeafMenu);
 }
 
 export default install;
