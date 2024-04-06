@@ -11,7 +11,6 @@ import OOP from "absol/src/HTML5/OOP";
 import ListDictionary from "../list/ListDictionary";
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "../list/search";
 
-console.trace(1)
 
 /***
  * not optimize
