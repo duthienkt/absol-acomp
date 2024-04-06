@@ -8,6 +8,7 @@ import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import MultiSelectMenu from "./MultiSelectMenu";
 import CheckTreeLeafOnlyBox from "./CheckTreeLeafOnlyBox";
 import { copySelectionItemArray, isNaturalNumber, rootTreeValues2CheckedValues } from "./utils";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 
 /***
@@ -96,6 +97,7 @@ MultiCheckTreeMenu.render = function (data, domDesc) {
     });
 
     if (leafOnly) res.addClass('as-leaf-only');
+    if (BrowserDetector.isMobile) res.addClass('am-multi-select-menu');
 
     return res;
 };

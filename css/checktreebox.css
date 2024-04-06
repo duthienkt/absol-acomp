@@ -37,6 +37,19 @@
     pointer-events: none;
 }
 
+.am-check-tree-box .as-check-tree-box-scroller {
+    max-height: calc(100vh - var(--modal-margin-top) - 100px);
+}
+
+.am-check-tree-box {
+    width: var(--select-list-estimate-width);
+    /*max-width: calc(100vw - 20px);*/
+}
+
+.am-check-tree-box .as-check-tree-box-content {
+    /*max-width: calc(100vw - 20px);*/
+}
+
 .am-check-tree-box.as-has-desc {
     --text-width: 50%;
     --desc-width: 50%;

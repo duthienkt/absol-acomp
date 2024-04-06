@@ -20,6 +20,10 @@
     max-width: var(--as-width-limit);
 }
 
+.as-multi-select-menu.am-multi-select-menu {
+    min-width: unset;
+}
+
 .as-multi-select-menu .absol-selectbox-item-text span{
     overflow: hidden;
     text-overflow: ellipsis;

@@ -81,7 +81,9 @@ div.as-dropdown-box-common-style {
     max-width: 95vw;
 }
 
-.am-dropdown-box.as-enable-search .absol-search-text-input{
+.am-dropdown-box.as-enable-search .absol-search-text-input,
+.am-dropdown-box-modal.as-enable-search .absol-search-text-input
+{
     visibility: visible;
 }
 
