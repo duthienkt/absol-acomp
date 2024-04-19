@@ -22,7 +22,9 @@
 
 /***********************************************************************************************************************/
 
-.am-check-tree-box .as-dropdown-box-footer {
+.am-check-tree-box .as-dropdown-box-footer,
+.am-check-tree-box
+{
     min-width: 18em;
 }
 

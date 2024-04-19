@@ -84,10 +84,10 @@ CheckTreeBox.prototype.focus = SelectListBox.prototype.focus;
 
 CheckTreeBox.prototype.addStyle = function (name, value) {
     var ms;
-    if (name === 'minWidth' || name === 'min-width'){
+    if (name === 'minWidth' || name === 'min-width') {
         ms = parseMeasureValue(value);
         if (ms.unit === 'px') {
-            value = Math.max(240, ms.value)+'px';
+            value = Math.max(240, ms.value) + 'px';
         }
         return AElement.prototype.addStyle.call(this, name, value);
     }
@@ -117,14 +117,14 @@ CheckTreeBox.render = function () {
                         attr: {
                             "data-ml-key": 'txt_cancel'
                         }
-                    },
-                    {
-                        tag: 'a',
-                        class: 'as-select-list-box-close-btn',
-                        attr: {
-                            "data-ml-key": 'txt_close'
-                        }
-                    }]
+                    }
+                ].concat(mobile ? [] : [{
+                    tag: 'a',
+                    class: 'as-select-list-box-close-btn',
+                    attr: {
+                        "data-ml-key": 'txt_close'
+                    }
+                }])
             }
         ]
     };
@@ -209,7 +209,6 @@ CheckTreeBox.prototype.resetSearchState = function () {
 CheckTreeBox.prototype.updateContentSize = function () {
     this.listCtrl.updateContentSize();
 };
-
 
 
 CheckTreeBox.prototype._implicit = function (values) {
@@ -860,19 +859,16 @@ function CTBItemListController(elt) {
     this._items = [];
     this._values = [];
     this.itemHolderByValue = {};
-    this.rootHolder =  new RootHolderClass(this.elt, []);;
+    this.rootHolder = new RootHolderClass(this.elt, []);
 
-    /***
-     *
-     * @type {TreeNodeHolder[]}
-     */
+
     // this.rootHolders = [];
 
     /***
      *
      * @type {TreeRootHolder}
      */
-    this.rootViewHolder =this.rootHolder;
+    this.rootViewHolder = this.rootHolder;
     /***
      *
      * @type {TreeNodeHolder[]}
@@ -939,7 +935,7 @@ CTBItemListController.prototype.getValues = function () {
 
 
 CTBItemListController.prototype.getViewValues = function () {
-    return this.getValues();
+    return this.rootHolder.getViewValues()
 };
 
 
@@ -1149,7 +1145,9 @@ function CTBActionController(elt) {
     this.$cancelBtn = $('.as-select-list-box-cancel-btn', this.elt)
         .on('click', this.ev_clickCancelBtn.bind(this));
     this.$closeBtn = $('.as-select-list-box-close-btn', this.elt)
-        .on('click', this.ev_clickCloseBtn.bind(this));
+        || $('.am-dropdown-box-close-btn', this.elt);
+
+    this.$closeBtn.on('click', this.ev_clickCloseBtn.bind(this));
 }
 
 
@@ -1194,7 +1192,6 @@ CTBSearchController.prototype.ev_searchModify = function () {
                 it.items.forEach(visit);
             }
         });
-        console.log(searchData.items)
 
     }
     searchData.rootViewHolder.traverse(hd => {
