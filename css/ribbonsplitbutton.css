@@ -47,6 +47,7 @@
     padding-left: 0.5em;
     padding-right: 0.2em;
     border-width: 1px 0px 1px 1px;
+    color: inherit;
 }
 
 .as-ribbon-split-button-extend {
