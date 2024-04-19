@@ -123,6 +123,9 @@ MSelectMenu.property.items = {
         }
         else
             this.updateItem();
+        if (this.style.width === 'auto' || !this.style.width) {
+            this.addStyle('--recommend-width', this.getRecommendWith() / 14 + 'em');
+        }
     },
     get: function () {
         return this._items || [];
@@ -211,7 +214,7 @@ MSelectMenu.eventHandler = {};
 
 MSelectMenu.eventHandler.attached = function () {
     if (this.style.width === 'auto' || !this.style.width) {
-        this.addStyle('width', this.getRecommendWith() / 14 + 'em');
+        this.addStyle('--recommend-width', this.getRecommendWith() / 14 + 'em');
     }
 };
 
