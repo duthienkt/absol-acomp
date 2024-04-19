@@ -101,6 +101,7 @@
     padding: 0;
     border: none;
     background-color: transparent;
+    color: black;
 }
 
 .as-chrome-time-picker-btn:hover {

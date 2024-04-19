@@ -120,6 +120,8 @@ textarea.as-text-input:disabled {
 
 .as-transparent-button .mdi {
     font-size: 1.5em;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .as-transparent-button > svg,
