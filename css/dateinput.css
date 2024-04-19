@@ -41,6 +41,8 @@
     height: 100%;
     background-color: rgba(169, 169, 169, 0.1);
     cursor: pointer;
+    color: black;
+    padding: 0;
 }
 
 
@@ -56,6 +58,8 @@
 .as-date-input-icon-ctn > span {
     line-height: 28px;
     font-size: calc(16em / 14);
+    display: inline-block;
+    padding: 0;
 }
 
 .as-date-input.as-read-only .as-date-input-icon-ctn {
