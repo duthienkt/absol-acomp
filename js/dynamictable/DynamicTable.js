@@ -769,6 +769,9 @@ LayoutController.prototype.handleDisplay = function () {
     if (tableWidth < viewportWidth - 17 && !this.elt.hasClass('as-table-layout-fixed')) {
         this.elt.table.elt.addStyle('width', viewportWidth - 17 + 'px');
     }
+    if (!this.elt.hasClass('as-table-layout-fixed')) {
+        this.elt.table.elt.addStyle('min-width', viewportWidth - 17 + 'px');
+    }
 };
 
 LayoutController.prototype.onAttached = function () {
