@@ -17,6 +17,20 @@ function render(o) {
             }
         }
     });
+    render('br');
+    var menu1 = render({
+        tag: 'multicheckmenu',
+        props: {
+            values: [-100037, -100034, -100000],
+            enableSearch: true
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(JSON.stringify(this.values))
+            }
+        }
+    });
+    render('br');
     var testBtn = render({
         tag: 'flexiconbutton',
         props: {
@@ -30,6 +44,7 @@ function render(o) {
     });
     absol.remoteNodeRequireAsync('./sampledata/com_tree.js').then((items) => {
         menu.items = items;
+        menu1.items = items;
     });
 
     render({

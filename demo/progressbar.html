@@ -4,6 +4,8 @@
 <head>
     <title>ProgressBar</title>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <!-- <link rel="stylesheet" href="https://absol.cf/materialdesignicons/materialdesignicons.min.css"> -->
     <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
@@ -66,7 +68,7 @@
                 props: {
                     variant: variant,
                     value: Math.random(),
-                    striped: true
+                    striped: true,
                 }
             })
             ctn.addChild(_({
@@ -101,6 +103,27 @@
             return bar;
         });
 
+        var bars3 = variantValues.map(function (variant) {
+            var bar = _({
+                tag: 'progresscircle',
+                props: {
+                    variant: variant,
+                    value: Math.random(),
+                    text:'Đang tải\n$value'
+
+                }
+            })
+            ctn.addChild(_({
+                style: {
+                    'margin-top': '1em'
+                },
+                child: [
+                    { tag: 'span', child: { text: variant + ' animated' } },
+                    bar
+                ]
+            }));
+            return bar;
+        });
 
     </script>
 

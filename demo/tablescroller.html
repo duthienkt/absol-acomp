@@ -3230,8 +3230,13 @@
                                 tag: 'th',
                                 child: {
                                     tag: 'div',
-                                    style: { whiteSpace: 'nowrap', width: '180px' },
-                                    child: { text: name }
+                                    style: { whiteSpace: 'nowrap', width: '180px', cursor:'pointer' },
+                                    child: { text: name },
+                                    on:{
+                                        click:function () {
+                                            console.log(name);
+                                        }
+                                    }
                                 }
                             }))
                         )

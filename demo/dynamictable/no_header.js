@@ -30,7 +30,7 @@ var data = {
 var tb = _({
     tag: 'dynamictable',
     style:{
-      height:'auto'
+      height:'80vh'
     },
     props: {
         adapter: {

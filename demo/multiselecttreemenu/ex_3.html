@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta charset="UTF-8">
     <title>MultiCheckMenu</title>
     <script src="../../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
@@ -12,7 +13,7 @@
         var _ = absol._;
         var $ = absol.$;
 
-        _('<h3>MultiCheckMenu</h3>').addTo(document.body);
+        _('<h3>MultiCheckTreeMenu</h3>').addTo(document.body);
         var menu0 = _({
             tag: 'multichecktreemenu',
             props: {
@@ -23,7 +24,7 @@
                 change:function () {
                     menu1.values = this.values.slice();
                 }
-            }
+        }
         }).addTo(document.body);
         var menu1 = _({
             tag: 'multichecktreemenu',
