@@ -353,6 +353,7 @@
     box-sizing: border-box;
     padding-right: 35px;
     max-width: 95vw;
+    width: var(--recommend-width);
 }
 
 .am-selectmenu.disabled .absol-selectmenu-btn{
