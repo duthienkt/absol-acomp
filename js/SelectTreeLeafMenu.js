@@ -23,7 +23,7 @@ function SelectTreeLeafMenu() {
     });
     this.$selectBox.sponsorElement = this;
 
-    OOP.drillProperty(this, this.$selectBox, 'enableSearch');
+    OOP.drillProperty(this, this.$selectBox, ['enableSearch', 'selectedItem']);
     this.$holderItem = $('selectlistitem', this);
     // this.on('click', this.eventHandler.click.bind(this));
     this.boxCtrl = new STLBoxController(this);
@@ -126,8 +126,9 @@ SelectTreeLeafMenu.property.items = {
 SelectTreeLeafMenu.property.value = {
     set: function (value) {
         this.$selectBox.value = value;
-        if (this.$selectBox.selectedItem) {
-            this.$holderItem.data = this.$selectBox.selectedItem;
+        var selectedItem = this.$selectBox.selectedItem
+        if (selectedItem) {
+            this.$holderItem.data = selectedItem;
         }
         else {
             this.$holderItem.data = { text: '' };

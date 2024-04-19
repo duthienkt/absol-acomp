@@ -297,7 +297,7 @@ SelectTreeLeafBox.property.selectedItem = {
         var key = keyStringOf(this._value);
         var firstLeaf;
         if (this.$itemByValue[key]) {
-            return this.$itemByValue[key].data;
+            return this.$itemByValue[key].itemData;
         }
         else if (!this.strictValue) {
             return  null;
