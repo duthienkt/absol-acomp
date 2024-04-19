@@ -139,7 +139,7 @@ MSelectTreeLeafBox.property.items = {
         }
 
         this.estimateSize = this._calcEstimateSize(items);
-        this._items = items;
+        this._items = items;//todo: check usage
         this.itemListCtrl.setItems(items);
         if (selected || this.strictValue) this.modes.normal.setValue(curValue, this.strictValue);
         if (this.mode !== this.modes.normal) {
@@ -147,7 +147,7 @@ MSelectTreeLeafBox.property.items = {
         }
     },
     get: function () {
-        this.itemListCtrl.getItems();
+       return this.itemListCtrl.getItems();
     }
 };
 
@@ -163,8 +163,6 @@ MSelectTreeLeafBox.property.value = {
 
     },
     get: function () {
-        console.log(this.pendingValue, this.strictValue)
-
         if ('pendingValue' in this) {
             return this.pendingValue;
         }
