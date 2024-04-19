@@ -311,6 +311,14 @@ TreeTable.property.adapter = {
             c = c.parentElement;
         }
 
+        ResizeSystem.requestUpdateSignal();
+        var td = $('td', this);
+        if (td) {
+            var attachhook = _('attachhook').once('attached', () => {
+                attachhook.remove();
+                ResizeSystem.requestUpdateSignal();
+            }).addTo(td);
+        }
     },
     get: function () {
         return this._adapterData;
@@ -352,7 +360,7 @@ TreeTable.property.hiddenColumns = {
         var c = this.parentElement;
         while (c) {
             if (c.hasClass && (c.hasClass('absol-table-vscroller') || c.hasClass('absol-table-scroller')) && (c.update || c.updateContent)) {
-                (c.update ||c.updateContent).call(c);
+                (c.update || c.updateContent).call(c);
                 break;
             }
             c = c.parentElement;
