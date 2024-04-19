@@ -58,15 +58,14 @@ CheckTreeLeafOnlyBox.render = function () {
                         attr: {
                             "data-ml-key": 'txt_cancel'
                         }
-                    },
-                    {
-                        tag: 'a',
-                        class: 'as-select-list-box-close-btn',
-                        attr: {
-                            "data-ml-key": 'txt_close'
-                        }
                     }
-                ]
+                ].concat(mobile ? [] : [{
+                    tag: 'a',
+                    class: 'as-select-list-box-close-btn',
+                    attr: {
+                        "data-ml-key": 'txt_close'
+                    }
+                }])
             }
         ]
     };
@@ -224,6 +223,32 @@ TreeLeafOnlyNodeHolder.prototype.setValues = function (values) {
     }
     this.updateFromChild();
 };
+
+
+TreeLeafOnlyNodeHolder.prototype.getValues = function (ac) {
+    ac = ac || [];
+    if (this.selected === 'all' && this.item.isLeaf) {
+        ac.push(this.item.value);
+    }
+    else {
+        this.child.forEach(c => c.getValues(ac));
+    }
+
+    return ac;
+};
+
+
+TreeLeafOnlyNodeHolder.prototype.getViewValues = function (ac) {
+    ac = ac || [];
+    if (this.selected === 'all') {
+        ac.push(this.item.value);
+    }
+    else if (this.selected === 'child') {
+        this.child.forEach(c => c.getValues(ac));
+    }
+    return ac;
+};
+
 
 /***
  *
