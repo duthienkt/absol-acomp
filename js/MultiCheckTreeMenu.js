@@ -158,6 +158,7 @@ MultiCheckTreeMenu.prototype.findItemsByValues = function (values) {
 
 
 MultiCheckTreeMenu.prototype.viewValues = function (values) {
+    values = values.slice();
     var items = this.findItemsByValues(values);
     this._filToken(items.length);
     this._assignTokens(items);
@@ -190,7 +191,7 @@ MultiCheckTreeMenu.prototype.commitView = function () {
 };
 
 MultiCheckTreeMenu.prototype.cancelView = function () {
-    this.$checkTreeBox.values = this._values;
+    this.$checkTreeBox.values = this._values.slice();
     this.viewValues(this.$checkTreeBox.viewValues);
 };
 
@@ -294,6 +295,7 @@ MultiCheckTreeMenu.property.items = {
         this.$checkTreeBox.items = this._items;
         this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.width) + 'px');
         this.viewValues(this.$checkTreeBox.viewValues);
+        this._values = this.$checkTreeBox.values.slice();
     },
     get: function () {
         return this.$checkTreeBox.items;
@@ -306,20 +308,23 @@ MultiCheckTreeMenu.property.values = {
      * @param values
      */
     set: function (values) {
-        this.$checkTreeBox.values = values;
+        if (!(values instanceof Array)) values = [];
+        this.$checkTreeBox.values = values.slice();
         this.viewValues(this.$checkTreeBox.viewValues);
+        this._values = this.$checkTreeBox.values.slice();
     },
     /***
      * @this MultiCheckTreeMenu
      */
     get: function () {
-        return this.$checkTreeBox.values;
+        if (this.isFocus) return  this._values.slice();
+        return this.$checkTreeBox.values.slice();
     }
 };
 
 MultiCheckTreeMenu.property.checkedValues = {
     get: function () {
-        return this.$checkTreeBox.viewValues;
+        return this.$checkTreeBox.viewValues.slice();
     }
 };
 
@@ -327,6 +332,7 @@ MultiCheckTreeMenu.property.leafOnly = {
     set: function (value) {
         if (!!value === this.hasClass('as-leaf-only'))
             return;
+
         throw Error("Can not change leafOnly value!");
     },
     get: function () {
@@ -400,9 +406,10 @@ MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
         holder.unselectAll();
     });
     this.$checkTreeBox.updateSelectedInViewIfNeed();
-    var newValues = this.$checkTreeBox.viewValues;
+    var newValues = this.$checkTreeBox.viewValues.slice();
     this.viewValues(newValues);
-    this.emit('change', { type: 'change', target: this }, this);
+    this._values = newValues;
+    this.emit('change', { type: 'change', target: this }, this);//todo
 
 };
 
