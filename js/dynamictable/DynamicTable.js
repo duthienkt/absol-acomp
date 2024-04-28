@@ -198,11 +198,16 @@ function DynamicTable() {
 
 DynamicTable.tag = 'DynamicTable'.toLowerCase();
 
-DynamicTable.render = function () {
+DynamicTable.render = function (data, domDesc) {
+    var width = domDesc.style && domDesc.style.width;
+    var classList = ['as-dynamic-table-wrapper'];
+    if (width === 'match_parent') {
+        classList.push('as-width-match-parent');
+    }
     return _({
         id: 'no-id-' + randomIdent(10),
         extendEvent: ['orderchange', 'colresize'],
-        class: 'as-dynamic-table-wrapper',
+        class: classList,
         child: [
             {
                 tag: Hanger.tag,
@@ -761,9 +766,9 @@ LayoutController.prototype.handleMinWidth = function () {
 
 
 LayoutController.prototype.handleDisplay = function () {
-    // return;
-    var display = this.elt.getComputedStyleValue('display');
-    if (display !== 'block') return;
+    if (!this.elt.hasClass('as-width-match-parent')) {
+        return;
+    }
     var tableWidth = this.elt.table.elt.getBoundingClientRect().width;
     var viewportWidth = this.elt.$viewport.getBoundingClientRect().width;
     if (tableWidth < viewportWidth - 17 && !this.elt.hasClass('as-table-layout-fixed')) {
@@ -1217,7 +1222,7 @@ RowDragController.prototype._findRow = function (cElt) {
 
 RowDragController.prototype._getZIndex = function () {
     var e = this.elt.$fixedXYCtn;
-    return  findMaxZIndex(e);
+    return findMaxZIndex(e);
 };
 
 

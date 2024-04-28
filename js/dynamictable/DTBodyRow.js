@@ -15,6 +15,14 @@ function DTBodyRow(body, data) {
     this.data.cells = this.data.cells || [];
     this._elt = null;
     this._fixedXElt = null;
+    this.filterKeys = Object.assign({}, this.data.keys);
+    this.data.cells.reduce((ac, cr, i) => {
+        if (typeof cr.innerText === "string") {
+            ac['[' + i + ']'] = cr.innerText;
+        }
+        return ac;
+    }, this.filterKeys);
+    console.log(this.filterKeys)
 
     if ('id' in data) {
         this.id = data.id;

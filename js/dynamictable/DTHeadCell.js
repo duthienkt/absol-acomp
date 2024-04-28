@@ -35,11 +35,27 @@ function DTHeadCell(row, data) {
     this._idx = null;
 }
 
+DTHeadCell.prototype.makeAutoSortAttribute = function () {
+    var rows = this.row.head.table.data && this.row.head.table.data.body && this.row.head.table.data.body.rows;
+    if (!rows || !rows.length) return;
+    if (this.elt.attr('data-sort-key')) return;
+    var idx = this.idx;
+    var canSort = rows.every(row => {
+        return row.cells[idx] && (typeof row.cells[idx].innerText === 'string');
+    });
+    if (canSort) {
+        this.elt.attr('data-sort-key', '[' + idx + ']');
+        this.data.sortKey = '[' + idx + ']';
+        this._elt.attr('data-sort-order', 'none');
+        this._elt.attr('title', 'Sort');
+    }
+};
 
 Object.defineProperty(DTHeadCell.prototype, 'idx', {
     set: function (value) {
         this._idx = value;
         this.elt.attr('data-col-idx', value + '');
+        this.makeAutoSortAttribute();
     },
     get: function () {
         return this._idx;
@@ -48,9 +64,9 @@ Object.defineProperty(DTHeadCell.prototype, 'idx', {
 
 DTHeadCell.prototype.nextSortState = function (event) {
     if (!this.elt.attr('data-sort-key')) return;
-    var c = this.elt.attr('data-sort-order');
+    var c = this.elt.attr('data-sort-order') || 'none';
     var n = { none: 'ascending', ascending: 'descending', descending: 'none' }[c] || 'none';
-    var sortKeyArr = implicitSortKeyArr(this.data.sortKey);
+    var sortKeyArr = implicitSortKeyArr(this.data.sortKey || c);
 
     var sortBtn = this.$sortBtn;
     var followerElt, menuElt, items;
@@ -194,6 +210,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
         if (sortKeyArr.length > 0) {
             this._elt.attr('data-sort-key', sortKeyArr.join(';'));
             this._elt.attr('data-sort-order', 'none');
+            this._elt.attr('title', 'Sort');
         }
         this.$sortBtn = _({
             tag: 'span',

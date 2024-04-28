@@ -82,7 +82,7 @@ SearchingMaster.prototype.transferFrom = function (offset) {
             item = {
                 text: rows[i].innerText,
                 value: i,
-                keys: rows[i].data.keys
+                keys: rows[i].filterKeys
             };
             items.push(item);
             ++i;

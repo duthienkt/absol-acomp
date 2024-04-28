@@ -19,8 +19,12 @@
     overflow: hidden;
 }
 
+.as-dynamic-table-wrapper.as-width-match-parent {
 
-.as-dynamic-table-wrapper.as-table-layout-fixed table.as-dynamic-table{
+}
+
+
+.as-dynamic-table-wrapper.as-table-layout-fixed table.as-dynamic-table {
     table-layout: fixed;
 }
 
@@ -88,7 +92,8 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 
-.as-dynamic-table-wrapper.as-overflow-y.as-has-fixed-col {
+.as-dynamic-table-wrapper.as-overflow-y.as-has-fixed-col,
+.as-dynamic-table-wrapper.as-overflow-y:not(.as-width-match-parent) {
     max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
 }
 
@@ -147,6 +152,11 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     top: 0;
     width: 100%;
 }
+
+.as-dynamic-table-space > table {
+    vertical-align: top;
+}
+
 
 .as-dynamic-table-wrapper.as-has-fixed-col .as-dynamic-table-space,
 .as-dynamic-table-wrapper.as-inline .as-dynamic-table-space {
@@ -213,7 +223,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 
-.as-dynamic-table-wrapper:not(.as-inline) .as-dynamic-table-space  .as-dynamic-table {
+.as-dynamic-table-wrapper:not(.as-inline) .as-dynamic-table-space .as-dynamic-table {
     /*min-width: 100%;*/
     table-layout: auto;
     /*display: table;*/
@@ -262,11 +272,12 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     position: absolute;
     right: 0.25em;
     top: calc(50% - 0.75em);
-    color: #a9a9a9;
+    /*color: #a9a9a9;*/
 
     height: 1.5em;
     width: 1.5em;
     pointer-events: none;
+    color: transparent;
 }
 
 .as-dt-header-cell[data-sort-key] .as-dt-sort-btn {
@@ -421,8 +432,13 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 .absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper:not(.as-adapt-infinity-grow) {
-    max-height: calc(var(--single-page-scroller-height) - 20px);
+    max-height: calc(var(--single-page-scroller-height) - 20px - 22px);
 }
+
+.absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper.as-overflow-y:not(.as-adapt-infinity-grow) {
+    max-height: calc(var(--single-page-scroller-height) - 20px - 39px);
+}
+
 
 /*Keeview modal*/
 body > div > table .as-dynamic-table-wrapper {
