@@ -1,0 +1,25 @@
+.as-expression-input {
+    box-sizing: border-box;
+    border: 1px solid var(--as-input-border-color);
+    min-height: var(--as-input-height);
+
+}
+
+.as-expression-input-content {
+    font-size: 14px;
+    line-height: 2;
+    min-height: 2em;
+}
+
+.as-expression-input-content::before{
+    content: "=";
+    color: #aaaaaa;
+    display: inline-block;
+    height: 28px;
+    vertical-align: middle;
+    padding: 0 5px;
+}
+
+.asei-identifier{
+    display: inline-block;
+}
