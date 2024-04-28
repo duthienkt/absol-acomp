@@ -18,7 +18,10 @@ function SelectTreeLeafMenu() {
         tag: this.mobile ? MSelectTreeLeafBox : SelectTreeLeafBox.tag,
         on: {
             pressitem: this.eventHandler.pressItem,
-            preupdateposition: this.eventHandler.preUpdateListPosition
+            preupdateposition: this.eventHandler.preUpdateListPosition,
+            close: ()=>{
+                this.isFocus = false;
+            }
         }
     });
     this.$selectBox.sponsorElement = this;
@@ -110,9 +113,15 @@ SelectTreeLeafMenu.property.items = {
     set: function (items) {
         items = copySelectionItemArray(items || [], { removeNoView: true });
         this.$selectBox.items = items;
+        if (!this.mobile)
         this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.width + 'px');
-        if (this.$selectBox.selectedItem) {
-            this.$holderItem.data = this.$selectBox.selectedItem;
+        var selectedItem = this.$selectBox.selectedItem;
+
+        if (selectedItem) {
+            this.$holderItem.data = selectedItem;
+            if (this.mobile) {
+                this.addStyle('--select-list-estimate-width', this.$selectBox._estimateItemWidth(selectedItem, 0) + 'px');
+            }
         }
         else {
             this.$holderItem.data = { text: '' };
@@ -126,9 +135,12 @@ SelectTreeLeafMenu.property.items = {
 SelectTreeLeafMenu.property.value = {
     set: function (value) {
         this.$selectBox.value = value;
-        var selectedItem = this.$selectBox.selectedItem
+        var selectedItem = this.$selectBox.selectedItem;
         if (selectedItem) {
             this.$holderItem.data = selectedItem;
+            if (this.mobile) {
+                this.addStyle('--select-list-estimate-width', this.$selectBox._estimateItemWidth(selectedItem, 0) + 'px');
+            }
         }
         else {
             this.$holderItem.data = { text: '' };
