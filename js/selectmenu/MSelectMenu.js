@@ -87,13 +87,15 @@ MSelectMenu.prototype.updateItem = function () {
 };
 
 MSelectMenu.prototype.notifyChange = function (data) {
-    this.emit('change', Object.assign({}, data, { type: 'chage', target: this }), this);
+        this.emit('change', Object.assign({}, data, { type: 'change', target: this }), this);
 };
 
 MSelectMenu.prototype._dictByValue = SelectMenu.prototype._dictByValue;
 
 MSelectMenu.prototype.getRecommendWith = function () {
-    return this.$selectlist.estimateSize.width + 36;
+    var res = 12 + this.$selectlist.estimateSize.textWidth + 30;
+    if (this.$selectlist.estimateSize.descWidth) res += this.$selectlist.estimateSize.descWidth + 20;
+    return res;
 };
 
 MSelectMenu.prototype.init = SelectMenu.prototype.init;
@@ -143,11 +145,11 @@ MSelectMenu.property.value = {
         if (!this.strictValue) return this._value;
         var selected = this.findItemsByValue(this._value);
         if (selected) {
-            return  selected[0].value;
+            return selected[0].value;
         }
         else {
             if (this._items && this._items.length > 0) {
-                return  this._items[0].value;
+                return this._items[0].value;
             }
         }
         return this._value;
