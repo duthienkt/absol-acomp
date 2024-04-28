@@ -69,7 +69,7 @@ Object.defineProperty(DTBodyCell.prototype, 'innerText', {
         }
         else if (typeof text === "object") {
             if (text instanceof Date) {
-                return formatDateTime(text, 'dd/MM/yyyy hh:mm a');
+                return formatDateTime(text, 'dd/MM/yyyy HH:mm');
             }
             else {
                 return jsStringOf(text);

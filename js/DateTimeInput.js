@@ -23,7 +23,7 @@ function DateTimeInput() {
     this._value = null;
     this._min = new Date(1890, 0, 1);
     this._max = new Date(new Date(2090, 0, 1).getTime() - 1);
-    this._format = 'dd/MM/yyyy hh:mm a';
+    this._format = 'dd/MM/yyyy HH:mm';
     this.$attachhook = _('attachhook').addTo(this);
     this.domSignal = new DomSignal(this.$attachhook);
     this.domSignal.on('request_auto_select', this._autoSelect.bind(this));
@@ -64,7 +64,7 @@ DateTimeInput.render = function () {
                     ondrop: "return false;"
                 },
                 props: {
-                    value: 'dd/MM/yyyy hh:mm a'
+                    value: 'dd/MM/yyyy HH:mm'
                 }
             },
             {
@@ -514,7 +514,7 @@ DateTimeInput.property.notNull = {
 
 DateTimeInput.property.format = {
     set: function (value) {
-        value = value || 'dd/MM/yyyy hh:mm a';
+        value = value || 'dd/MM/yyyy HH:mm';
         var dict;
         if (this._value) {
             dict = this._makeValueDict(this._value);

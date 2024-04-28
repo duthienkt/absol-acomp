@@ -347,8 +347,8 @@ TimeInput.property.format = {
     enumerable: true,
     configurable: true,
     set: function (value) {
-        if (typeof value !== "string") value = "hh:mm a";
-        value = value || 'hh:mm a';
+        if (typeof value !== "string") value = "HH:mm";
+        value = value || 'HH:mm';
         this._format = value;
         this.dayOffset = this['dayOffset'];
     },
