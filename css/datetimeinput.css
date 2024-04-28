@@ -52,6 +52,7 @@
     border-radius: 0;
     color: inherit;
     font-size: inherit;
+    padding: 0;
 }
 
 .as-date-time-input-icon-btn > span {
