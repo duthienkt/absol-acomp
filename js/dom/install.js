@@ -165,6 +165,7 @@ import { ColorCell } from "../colorpicker/SwatchesTable";
 import ColorPickerButton from "../colorpicker/ColorPickerButton";
 import SelectColorSchemeMenu from "../colorpicker/SelectColorSchemeMenu";
 import ProgressCircle from "../ProgressCircle";
+import ExpressionInput from "../ExpressionInput";
 
 
 export var publicCreators = [
@@ -193,6 +194,7 @@ export var publicCreators = [
     DateInYearInput,
     DateTimeInput,
     DropZone,
+    ExpressionInput,
     EmojiPickerTooltip,
     FileInputBox,
     FileListItem,
