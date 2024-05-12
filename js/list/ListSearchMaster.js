@@ -1,7 +1,7 @@
 import { randomIdent } from "absol/src/String/stringGenerate";
 import Thread from "absol/src/Network/Thread";
 import ListSearchFactor from "./ListSearchFactor";
-import { calcDTQueryHash } from "../utils";
+import { calcDTQueryHash, revokeResource } from "../utils";
 
 function ListSearchMaster() {
     this.prepare();
@@ -40,6 +40,7 @@ ListSearchMaster.prototype.query = function (query) {
 
 
 ListSearchMaster.prototype.destroy = function () {
+    this.cache = {};
     this.share.worker.invoke('destroySlave', this.id);
 }
 

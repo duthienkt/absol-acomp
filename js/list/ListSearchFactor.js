@@ -12,6 +12,51 @@ export default function ListSearchFactor(global) {
      * @module SelectionItem2
      */
 
+    function revokeResource(o) {
+        if (!o) return;
+        var oc, ocs;
+        var keys, key;
+        if (Array.isArray(o)) {
+            while (o.length) {
+                oc = o.pop();
+                try {
+                    revokeResource(oc);
+                } catch (err) {
+                }
+            }
+        }
+
+        else if (o.removeResource) {
+            o.removeResource();
+        }
+        else if (typeof o === "object") {
+            keys = [];
+            ocs = [];
+            for (key in o) {
+                keys.push(key);
+            }
+            while (keys.length) {
+                key = keys.pop();
+                ocs.push(o[keys]);
+                try {
+                    delete o[key];
+                } catch (err) {
+                }
+            }
+            while (ocs.length) {
+                try {
+                    revokeResource(ocs.pop());
+                } catch (err) {
+                }
+            }
+        }
+        ocs = undefined;
+        oc = undefined;
+        keys = undefined;
+        key = undefined;
+        o = undefined;
+    }
+
 
     function nonAccentVietnamese(s) {
         return s.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a")
@@ -277,6 +322,10 @@ export default function ListSearchFactor(global) {
         this.items = [];
     }
 
+    Slave.prototype.revokeResource = function () {
+        revokeResource(this.items);
+        this.items = undefined;
+    }
 
     Slave.prototype.processItems = function (items) {
         this.items = items;
@@ -330,6 +379,7 @@ export default function ListSearchFactor(global) {
     };
 
     global.destroySlave = function (id) {
+        revokeResource(slaves);
         delete slaves[id];
     };
 
