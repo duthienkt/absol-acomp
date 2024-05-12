@@ -18,17 +18,14 @@ import { copyJSVariable } from "absol/src/JSMaker/generator";
 
 /**
  * @typedef TEIDataRow
- */
-
-/**
- * @typedef TEIDataBody
- * @property {TEIDataRow[]} rows
+ * @property {TEIDataCell[]} cells
  */
 
 /**
  * @typedef TEIData
- * @property {TEIDataBody} body
+ * @property {TEIDataRow[]} rows
  */
+
 
 /**
  * @typedef TEIDataCell
