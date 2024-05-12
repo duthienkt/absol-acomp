@@ -4,7 +4,7 @@ import { measureListSize, releaseItem, requireItem } from "./SelectList";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import { depthIndexingByValue, indexingByValue } from "./list/listIndexing";
-import { copySelectionItemArray, keyStringOf, measureText } from "./utils";
+import { copySelectionItemArray, keyStringOf, measureText, revokeResource } from "./utils";
 import ListSearchMaster from "./list/ListSearchMaster";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
@@ -25,6 +25,20 @@ export var calcWidthLimit = () => {
     }
     return Math.min(width, 1280);
 }
+
+var makeSearchItem = (it, idx2key) => {
+    var res = { value: idx2key.length };
+    var valueKey;
+    res.text = it.text + '';
+    if (it.desc) res.text += it.desc;
+    valueKey = keyStringOf(it.value);
+    it.valueKey = valueKey;
+    idx2key.push(valueKey);
+    if (it.items && it.items.length > 0 && it.items.map) {
+        res.items = it.items.map(makeSearchItem);
+    }
+    return res;
+};
 
 /***
  * @extends Follower
@@ -89,13 +103,44 @@ SelectListBox.prototype.itemHeightMode = [20, 30];
 SelectListBox.prototype.itemHeight = 20;
 
 
+SelectListBox.prototype.revokeResource = function () {
+    if (this.searchMaster) {
+        this.searchMaster.destroy();
+        this.searchMaster = null;
+    }
+
+    revokeResource(this._items);
+
+    // var n = items.length;
+    this._items = undefined;
+    revokeResource(this.idx2key);
+    this.idx2key = undefined;
+    revokeResource(this.key2idx)
+    this.key2idx = undefined;
+    revokeResource(this.searchingItems);
+    this.searchingItems = undefined;
+    revokeResource(this._itemNodeHolderByValue);
+    this._itemNodeHolderByValue = undefined;
+    // this._filteredItems = [];// not need , only use when search
+    revokeResource(this._preDisplayItems);
+    this._preDisplayItems = undefined;
+    revokeResource(this._displayItems);
+    this._displayItems = undefined;
+    revokeResource(this._searchCache)
+    this._searchCache = undefined;
+};
+
 SelectListBox.prototype._initDomHook = function () {
     this.$domSignal = $('attachhook.as-dom-signal', this);
     this.domSignal = new DomSignal(this.$domSignal);
     this.domSignal.on('viewListAt', this.viewListAt.bind(this));
     this.domSignal.on('viewListAtFirstSelected', this.viewListAtFirstSelected.bind(this));
     this.domSignal.on('viewListAtCurrentScrollTop', this.viewListAtCurrentScrollTop.bind(this));
-    this.searchMaster = new ListSearchMaster();
+    /**
+     *
+     * @type {ListSearchMaster|null}
+     */
+    this.searchMaster = null;
     this.widthLimit = calcWidthLimit();
     this.addStyle('--as-width-limit', this.widthLimit + 'px');
 
@@ -292,6 +337,7 @@ SelectListBox.prototype.viewListAtCurrentScrollTop = function () {
 SelectListBox.prototype.searchItemByText = function (text) {
     text = text.trim().replace(/\s\s+/, ' ');
     if (text.length === 0) return Promise.resolve(this._items);
+    this.prepareSearch();
     this._searchCache[text] = this._searchCache[text] || this.searchMaster.query({ text: text }).then(searchResult => {
         if (!searchResult) return;
         var scoreOf = it => {
@@ -409,29 +455,29 @@ SelectListBox.prototype._updateItems = function () {
     this.addStyle('--select-list-desc-width', (this._estimateDescWidth) / 14 + 'em');
 
     this._updateDisplayItem();
+    this.transferSearchDataIfNeed();
 
+
+};
+
+SelectListBox.prototype.transferSearchDataIfNeed = function () {
+    if (!this.searchMaster) return;
     this.idx2key = [];
-    var makeSearchItem = it => {
-        var res = { value: this.idx2key.length };
-        var valueKey;
-        res.text = it.text + '';
-        if (it.desc) res.text += it.desc;
-        valueKey = keyStringOf(it.value);
-        it.valueKey = valueKey;
-        this.idx2key.push(valueKey);
-        if (it.items && it.items.length > 0 && it.items.map) {
-            res.items = it.items.map(makeSearchItem);
-        }
-        return res;
-    };
-
-    this.searchingItems = this._items.map(makeSearchItem);
+    this.searchingItems = this._items.map(it => makeSearchItem(it, this.idx2key));
     this.key2idx = this.idx2key.reduce((ac, cr, i) => {
         ac[cr] = i;
         return ac;
     }, {});
     this.searchMaster.transfer(this.searchingItems);
 };
+
+SelectListBox.prototype.prepareSearch = function () {
+    if (!this.searchMaster) {
+        this.searchMaster = new ListSearchMaster();
+        this.transferSearchDataIfNeed();
+    }
+};
+
 
 /***
  *

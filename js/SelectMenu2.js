@@ -46,14 +46,14 @@ function SelectMenu() {
 
     var checkView = () => {
         if (this.isDescendantOf(document.body)) {
-            setTimeout(checkView, 10000);
+            setTimeout(checkView, 5000);
         }
         else {
             if (this.$selectlistBox.searchMaster)
                 this.$selectlistBox.searchMaster.destroy();
         }
     }
-    setTimeout(checkView, 30000);
+    setTimeout(checkView, 3000);
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
     this.$selectlistBox.sponsorElement = this;
@@ -97,6 +97,7 @@ SelectMenu.render = function () {
 };
 
 
+
 SelectMenu.prototype.init = function (props) {
     props = props || {};
     Object.keys(props).forEach(function (key) {
@@ -114,6 +115,17 @@ SelectMenu.prototype.init = function (props) {
     this.value = value;
 };
 
+
+SelectMenu.prototype.revokeResource = function () {
+    this.$selectlistBox.revokeResource();
+};
+
+SelectMenu.prototype.selfRemove = function () {
+    setTimeout(()=>{
+        if (!this.parentElement) this.revokeResource();
+    },100);
+    this.remove();
+}
 
 SelectMenu.prototype.updateItem = function () {
     var value = this._explicit(this._value);
