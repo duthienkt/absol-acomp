@@ -1,25 +1,103 @@
-.as-expression-input {
-    box-sizing: border-box;
-    border: 1px solid var(--as-input-border-color);
-    min-height: var(--as-input-height);
+/*.as-expression-input {*/
+/*    box-sizing: border-box;*/
+/*    border: 1px solid var(--as-input-border-color);*/
+/*    min-height: var(--as-input-height);*/
 
+/*}*/
+
+/*.as-expression-input-content {*/
+/*    font-size: 14px;*/
+/*    line-height: 2;*/
+/*    min-height: 2em;*/
+/*}*/
+
+/*.as-expression-input-content::before{*/
+/*    content: "=";*/
+/*    color: #aaaaaa;*/
+/*    display: inline-block;*/
+/*    height: 28px;*/
+/*    vertical-align: middle;*/
+/*    padding: 0 5px;*/
+/*}*/
+
+/*.asei-identifier{*/
+/*    display: inline-block;*/
+/*}*/
+
+
+.as-expression-input {
+    font-family: Arial, Helvetica, sans-serif;
+    border-color: var(--as-input-border-color);
+    border-style: solid;
+    box-sizing: border-box;
+    border-width: 1px;
+    border-radius: var(--as-input-border-radius);
+    font-size: 14px;
+    position: relative;
 }
 
 .as-expression-input-content {
-    font-size: 14px;
-    line-height: 2;
-    min-height: 2em;
+    min-height: 28px;
+    outline: none;
+    line-height: 28px;
+    padding-left: calc(18px + var(--as-input-horizontal-padding));
+    white-space: pre;
 }
 
-.as-expression-input-content::before{
-    content: "=";
-    color: #aaaaaa;
-    display: inline-block;
-    height: 28px;
-    vertical-align: middle;
-    padding: 0 5px;
+.as-expression-input-content .as-token[data-type="number"] {
+    color: #0289f6;
 }
 
-.asei-identifier{
+.as-expression-input-content .as-token[data-type="string"] {
+    color: darkgreen;
+}
+
+
+.as-expression-input-icon-ctn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    font-size: 1.5em;
+    line-height: 28px;
+}
+
+.as-expression-input-icon-ctn .mdi-equal {
+    color: rgba(169, 169, 170);
+}
+
+.as-expression-input-icon-ctn .mdi-alert-circle {
+    color: red;
+    opacity: 0.8;
+    display: none;
+}
+
+
+.as-expression-input.as-error .as-expression-input-icon-ctn .mdi-alert-circle {
     display: inline-block;
+}
+
+.as-expression-input.as-error .as-expression-input-icon-ctn .mdi-equal {
+    display: none;
+}
+
+
+.as-token.as-unexpected-token {
+    background-color: red;
+    animation-name: error_blink;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+@keyframes error_blink {
+    0% {
+        background-color: red
+    }
+    50% {
+        background-color: transparent
+    }
+    100% {
+        background-color: red
+    }
 }
