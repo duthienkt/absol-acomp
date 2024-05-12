@@ -22,7 +22,6 @@ function DTBodyRow(body, data) {
         }
         return ac;
     }, this.filterKeys);
-    console.log(this.filterKeys)
 
     if ('id' in data) {
         this.id = data.id;
@@ -41,6 +40,18 @@ function DTBodyRow(body, data) {
     }, 0);
 }
 
+DTBodyRow.prototype.revoke = function () {
+   while (this.cells.length) {
+       this.cells.pop().revoke();
+   }
+   this.cells = null;
+   this.data = null;
+   this.body = null;
+   if (this._elt) this._elt.dtBodyRow = null;
+   this._elt = null;
+   this.$id = null;
+    this.draggable = null;
+};
 
 DTBodyRow.prototype.remove = function () {
     this.body.removeRow(this);

@@ -49,7 +49,7 @@ var overrideFunctions = overrideNames.map((name, i) => {
     }
 });
 
-var hookContentChange = elt => {
+export var hookContentChange = elt => {
     if (!elt) return;
     if (elt.nodeType !== Node.ELEMENT_NODE) return;
     if (elt.contentHooked) return;
@@ -91,6 +91,11 @@ function DTDataAdapter(tableElt, opt) {
         this.tableElt.addClass('as-has-fixed-col');
     }
 }
+
+DTDataAdapter.prototype.revoke = function () {
+    this.tableElt = null;
+    this.data = null;
+};
 
 DTDataAdapter.prototype.render = function () {
     if (this.tableElt.table) this.tableElt.table.revokeResource();

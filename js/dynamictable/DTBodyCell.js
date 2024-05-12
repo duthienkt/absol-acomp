@@ -16,6 +16,15 @@ function DTBodyCell(row, data) {
     this.data = data;
 }
 
+DTBodyCell.prototype.revoke = function () {
+    this.row = null;
+    if (this._elt) this._elt.holder = null;
+    this._elt = null;
+    this._copyElt = null;
+    this._idx = null;
+    this.data = null;
+}
+
 
 Object.defineProperty(DTBodyCell.prototype, 'elt', {
     get: function () {

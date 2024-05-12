@@ -3,7 +3,7 @@ import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
-import { buildCss, findMaxZIndex, vScrollIntoView } from "../utils";
+import { buildCss, findMaxZIndex, revokeResource, vScrollIntoView } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
@@ -162,7 +162,7 @@ function DynamicTable() {
 
     // this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
     this.$attachhook.requestUpdateSize = this.requestUpdateSize.bind(this);
-    this.$attachhook.on('attached', () => {
+    this.$attachhook.once('attached', () => {
         ResizeSystem.add(this.$attachhook);
         this.layoutCtrl.onAttached();
         this.colSizeCtrl.onAttached();
@@ -170,6 +170,17 @@ function DynamicTable() {
         setTimeout(() => {
             this.requestUpdateSize();
         }, 10);
+
+
+        var checkAlive = () => {
+            if (this.isDescendantOf(document.body)) {
+                setTimeout(checkAlive, 2000);
+            }
+            else {
+                this.revokeResource();
+            }
+        };
+        setTimeout(checkAlive, 500);
 
     })
     /***
@@ -183,16 +194,6 @@ function DynamicTable() {
     this.pointerCtrl = new PointerController(this);
     this.colSizeCtrl = new ColSizeController(this);
     this.rowDragCtrl = new RowDragController(this);
-
-    var checkAlive = () => {
-        if (this.isDescendantOf(document.body)) {
-            setTimeout(checkAlive, 5000);
-        }
-        else {
-            this.revokeResource();
-        }
-    };
-    setTimeout(checkAlive, 30000);
 }
 
 
@@ -286,9 +287,43 @@ DynamicTable.prototype.requestUpdateSize = function () {
 
 DynamicTable.prototype.revokeResource = function () {
     this.css.stop();
-    this.table && this.table.revokeResource();
+    this.css = null;
+    var row, cell, keys , key;
+    var rows = this._adapterData && this._adapterData.data && this._adapterData.data.body&& this._adapterData.data.body.rows;
+    // if (rows) {
+    //     while (rows.length) {
+    //         row = rows.pop();
+    //         while (row.cells.length) {
+    //             cell = row.cells.pop();
+    //             keys = Object.keys(cell);
+    //             while (keys.length){
+    //                 key = keys.pop();
+    //                 cell[key] = null;
+    //                 delete cell[key];
+    //             }
+    //         }
+    //     }
+    // }
+    revokeResource(rows);
+
+    if (this.table) {
+        this.table.revokeResource();
+        this.table = null;
+    }
+    if (this._adapter) {
+        this._adapter.revoke();
+        this._adapter = null;
+    }
     this.attachSearchInput(null);
     this.filterInputs = [];
+    this.waitingCtl = null;
+    this.layoutCtrl = null;
+    this.pointerCtrl = null;
+    this.colSizeCtrl = null;
+    this.rowDragCtrl =null;
+    manager.removeTrash();
+    ResizeSystem.removeTrash();
+
 };
 
 DynamicTable.prototype.addRowBefore = function (rowData, bf) {

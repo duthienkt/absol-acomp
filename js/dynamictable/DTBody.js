@@ -36,6 +36,8 @@ SearchingMaster.prototype.destroy = function () {
     this.share.instances[this.id] = null;
     this.transferSession = "DIE";
     delete this.share.instances[this.id];
+    this.outputCache = {};
+    this.body = null;
 };
 
 SearchingMaster.prototype.transferFrom = function (offset) {
@@ -43,6 +45,7 @@ SearchingMaster.prototype.transferFrom = function (offset) {
         return;
     }
     this.outputCache = {};
+
 
     if (offset < this.transferred) {
         this.transferred = offset;
@@ -173,6 +176,10 @@ function BaseMode(body) {
 
 BaseMode.prototype.name = 'base';
 
+NormalMode.prototype.revoke = function () {
+    this.body = null;
+};
+
 
 BaseMode.prototype.resetViewParam = function () {
     this.offset = 0;
@@ -258,6 +265,11 @@ function SearchingMode(body) {
 OOP.mixClass(SearchingMode, BaseMode);
 
 SearchingMode.prototype.name = 'search';
+
+SearchingMode.prototype.revoke = function () {
+    this.resultItems = [];
+    this.viewedRows = [];
+};
 
 SearchingMode.prototype.start = function () {
     this.status = "RUNNING";
@@ -369,6 +381,10 @@ SearchingMode.prototype.viewIntoRow = function (row) {
 SearchingMode.prototype.query = function (query) {
     this.waitingCtrl.end(this.waitingToken);
     this.waitingToken = this.waitingCtrl.begin();
+    if (!this.body.master) {
+        this.body.master = new SearchingMaster(this.body);
+        this.body.master.transferFrom(0);
+    }
     var taskHolder = this.body.master.sendTask(query);
     this.taskHash = taskHolder.hash;
 };
@@ -489,7 +505,7 @@ NormalMode.prototype.viewIntoRow = function (o) {
     });
     if (idx <= 0) return;
     var scrollbar = this.body.table.wrapper.$vscrollbar;
-    scrollbar.innerOffset = Math.max(0,Math.min(idx - scrollbar.outerHeight / 3,scrollbar.innerHeight - scrollbar.outerHeight));
+    scrollbar.innerOffset = Math.max(0, Math.min(idx - scrollbar.outerHeight / 3, scrollbar.innerHeight - scrollbar.outerHeight));
     scrollbar.emit('scroll');
 };
 
@@ -508,11 +524,14 @@ function DTBody(table, data) {
     this._elt = null;
     this._fixedXElt = null;
 
-    this.rows = this.data.rows.map(function (rowData, i) {
+    /**
+     * @type {DTBodyRow[]}
+     */
+    this.rows = this.data.rows.map((rowData, i) => {
         var row = new DTBodyRow(this, rowData);
         row.idx = i;
         return row;
-    }.bind(this));
+    });
 
     this.modes = {
         normal: new NormalMode(this),
@@ -523,9 +542,10 @@ function DTBody(table, data) {
     this.curentMode = this.modes.normal;
     this.curentMode.start();
     this.curentMode.render();
+    this.master = null;
     //
-    this.master = new SearchingMaster(this);
-    this.master.transferFrom(0);
+    // this.master = new SearchingMaster(this);
+    // this.master.transferFrom(0);
     /***
      * @name offset
      * @type {number}
@@ -533,8 +553,20 @@ function DTBody(table, data) {
      */
 }
 
+
 DTBody.prototype.revokeResource = function () {
-    this.master.destroy();
+    if (this.master) {
+        this.master.destroy();
+        this.master = null;
+    }
+    while (this.rows.length) {
+        this.rows.pop().revoke();
+    }
+    this.modes.normal.revoke();
+    this.modes.searching.revoke();
+    this.rows = [];
+    this.data = null;
+
 };
 
 DTBody.prototype.requireRows = function (start, end) {
@@ -556,7 +588,7 @@ DTBody.prototype.reindexRows = function (start, end) {
 
 DTBody.prototype.onRowSplice = function (idx) {
     this.curentMode.onRowSplice(idx);
-    this.master.transferFrom(idx);
+    if (this.master) this.master.transferFrom(idx);
     ResizeSystem.requestUpdateSignal();
 }
 

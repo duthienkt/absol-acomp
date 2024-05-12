@@ -36,6 +36,10 @@ DTTable.prototype.updateCopyEltSize = function () {
 
 
 DTTable.prototype.revokeResource = function () {
+    this.wrapper = null;
+    this._elt = null;
+    this.adapter = null;
+    this.data = null;
     this.body.revokeResource();
 };
 
