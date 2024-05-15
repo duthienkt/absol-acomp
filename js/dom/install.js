@@ -166,6 +166,9 @@ import ColorPickerButton from "../colorpicker/ColorPickerButton";
 import SelectColorSchemeMenu from "../colorpicker/SelectColorSchemeMenu";
 import ProgressCircle from "../ProgressCircle";
 import ExpressionInput from "../ExpressionInput";
+import IdentTextInput from "../IdentTextInput";
+import EfficientTable from "../EfficientTable";
+import CompactDataGridEditor from "../CompactDataGridEditor";
 
 
 export var publicCreators = [
@@ -194,7 +197,10 @@ export var publicCreators = [
     DateInYearInput,
     DateTimeInput,
     DropZone,
+
     ExpressionInput,
+    IdentTextInput,
+
     EmojiPickerTooltip,
     FileInputBox,
     FileListItem,
@@ -340,6 +346,7 @@ export var publicCreators = [
     ProcessLBar,
     KVCommentItem,
     DynamicTable,
+    EfficientTable,
     ObjectMergeTool,
     TokenizeHyperInput,
     SelectListBoxV2,
@@ -351,6 +358,7 @@ export var publicCreators = [
 
     TreeChart,
     TableOfTextInput,
+    CompactDataGridEditor,
 
     MHeaderBar,
     MExploreSectionBreak,
