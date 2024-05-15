@@ -6,29 +6,29 @@ import { findMaxZIndex, isNaturalNumber, revokeResource } from "./utils";
 import { isDomNode } from "absol/src/HTML5/Dom";
 import Vec2 from "absol/src/Math/Vec2";
 import Rectangle from "absol/src/Math/Rectangle";
-import { arrayCompare } from "absol/src/DataStructure/Array";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { generateJSVariable } from "absol/src/JSMaker/generator";
 
 
 var EV_SELECTED_CELL_CHANGE = 'SELECTED_CELL_CHANGE'.toLowerCase();
+var EV_CELL_DATA_CHANGE = 'change';
 
 /**
  * loc: [row, col, rowHeight, colHeight]
  * @param {AElement} cell
  * @returns {number[]}
  */
-var locOfCell = cell => cell.getAttribute('data-loc').split(',')
+var locOfCell = cell => (cell.getAttribute('data-loc') || 'Nan,NaN').split(',')
     .concat([cell.getAttribute('rowspan') || '1', cell.getAttribute('colspan') || '1'])
     .map(it => parseInt(it, 10));
 
-var locOfCells = cells =>{
+var locOfCells = cells => {
     return cells.reduce((ac, cell) => {
         var cellLoc = locOfCell(cell);
         if (!ac) return cellLoc;
         return mergeLoc(ac, cellLoc)
     }, null);
 }
+
 function mergeLoc(loc1, loc2) {
     var rowLow = Math.min(loc1[0], loc2[0]);
     var colLow = Math.min(loc1[1], loc2[1]);
@@ -97,6 +97,9 @@ function CompactDataGridEditor() {
     context.varMng = new CDGVariableManager(context);
     OOP.drillProperty(this, context.grid, 'data');
     OOP.drillProperty(this, context.varMng, 'variables');
+    context.lcEmitter.on(EV_CELL_DATA_CHANGE, () => {
+        this.emit('change', { type: 'change', target: this }, this);
+    })
 }
 
 /**
@@ -114,6 +117,7 @@ CompactDataGridEditor.tag = 'CompactDataGridEditor'.toLowerCase();
 CompactDataGridEditor.render = function () {
     return _({
         attr: { tabindex: 1 },
+        extendEvent: ['change'],
         class: 'as-compact-data-grid-editor',
         child: [
             {
@@ -186,20 +190,19 @@ CDGrid.prototype.updateCellLoc = function () {
     var row, cell;
     var body = this.$body;
     var height = Array(100).fill(0);
-    var jj, colspan, rowspan;
+    var jj, loc;
     for (var i = 0; i < body.childNodes.length; ++i) {
         row = body.childNodes[i];
         jj = 0;
         for (var j = 0; j < row.childNodes.length; ++j) {
             cell = row.childNodes[j];
-            colspan = parseInt(cell.attr('colspan'), 10) || 1;
-            rowspan = parseInt(cell.attr('rowspan'), 10) || 1;
-            while (height[jj] > i + 1) jj++;
+            loc = locOfCell(cell);
+            while (height[jj] > i) jj++;
             cell.attr('data-loc', i + ',' + jj);
-            for (var k = 0; k < colspan; ++k) {
-                height[jj + k] = i + rowspan;
+            for (var k = 0; k < loc[3]; ++k) {
+                height[jj + k] = i + loc[2];
             }
-            jj += colspan;
+            jj += loc[3];
         }
     }
     var nCol = height.indexOf(0);
@@ -219,7 +222,7 @@ CDGrid.prototype.fixRowLength = function (rowLength) {
             cell = row.childNodes[j];
             colspan = parseInt(cell.attr('colspan'), 10) || 1;
             rowspan = parseInt(cell.attr('rowspan'), 10) || 1;
-            while (height[jj] > i + 1) jj++;
+            while (height[jj] > i) jj++;
             for (var k = 0; k < colspan; ++k) {
                 height[jj + k] = i + rowspan;
             }
@@ -253,6 +256,275 @@ CDGrid.prototype.getCellsFromLoc = function (loc) {
     return res;
 };
 
+CDGrid.prototype.addRowAt = function (newRowIdx) {
+    var height = Array(50).fill(0);
+    var row, cell, jj;
+    var body = this.$body;
+
+    var loc;
+    if (body.firstChild && body.firstChild.lastChild)
+        loc = locOfCell(body.firstChild.lastChild);
+    else loc = [0, 0, 1, 1];
+    var rowLength = loc[1] + loc[3];
+
+    for (var i = 0; i < body.childNodes.length; ++i) {
+        if (i === newRowIdx) {
+            row = this.makeRow({ cell: [] });
+            body.addChildBefore(row, body.childNodes[i]);
+            jj = 0;
+            while (jj < rowLength) {
+                while (height[jj] > newRowIdx) {
+                    jj++;
+                }
+                row.addChild(this.makeCell({}));
+                height[jj] = i + 1;
+                jj++;
+            }
+            ++i;
+        }
+        row = body.childNodes[i];
+        jj = 0;
+        for (var j = 0; j < row.childNodes.length; ++j) {
+            while (height[jj] > i + 1) jj++;
+            cell = row.childNodes[j];
+            loc = locOfCell(cell);
+
+            if (i <= newRowIdx && i + loc[2] > newRowIdx) {
+                loc[2]++;
+                cell.attr('rowspan', loc[2]);
+            }
+            for (var k = 0; k < loc[3]; ++k) {
+                height[jj + k] = i + loc[2];
+            }
+            jj += loc[3];
+        }
+    }
+
+    if (newRowIdx === body.childNodes.length) {
+        row = this.makeRow({ cell: [] })
+        body.addChild(row);
+        jj = 0;
+        while (jj < rowLength) {
+            while (height[jj] > newRowIdx) jj++;
+            row.addChild(this.makeCell({}));
+            jj++;
+        }
+    }
+
+    this.updateCellLoc();
+}
+
+CDGrid.prototype.addColAt = function (newColIdx) {
+    var height = Array(50).fill(0);
+    var row, cell, jj;
+    var body = this.$body;
+    var colspan, rowspan;
+    for (var i = 0; i < body.childNodes.length; ++i) {
+        row = body.childNodes[i];
+        jj = 0;
+        for (var j = 0; j < row.childNodes.length; ++j) {
+            while (height[jj] > i) jj++;
+            cell = row.childNodes[j];
+            colspan = parseInt(cell.getAttribute('colspan'), 10) || 1;
+            rowspan = parseInt(cell.getAttribute('rowspan'), 10) || 1;
+            if (jj === newColIdx) {
+                row.addChildBefore(this.makeCell({}), cell);
+                height[jj] = i + 1;
+                j++;
+                jj++;
+            }
+            else if (jj <= newColIdx && jj + colspan > newColIdx) {
+                colspan++;
+                cell.attr('colspan', colspan);
+            }
+            height[jj] = i + rowspan;
+            jj += colspan;
+        }
+        if (jj === newColIdx) {
+            row.addChild(this.makeCell({}));
+            height[jj] = i + 1;
+        }
+    }
+
+    this.updateCellLoc();
+};
+
+/**
+ *
+ * @param rowIdx
+ * @param {number=} rowHeight
+ */
+CDGrid.prototype.removeRowAt = function (rowIdx, rowHeight) {
+    if (!isNaturalNumber(rowHeight)) rowHeight = 1;
+    rowHeight = rowHeight || 1;
+    var body = this.$body;
+    var row, cell;
+    var loc;
+    var rmLoc = [rowIdx, 0, rowHeight, 100];
+    var needSplitLocs = [];
+    var needSplitCells = [];
+    var childSplitCells = [];
+    var i, j;
+    for (i = 0; i < body.childNodes.length; ++i) {
+        row = body.childNodes[i];
+        for (j = 0; j < row.childNodes.length; ++j) {
+            cell = row.childNodes[j];
+            loc = locOfCell(cell);
+            if ((loc[2] > 1 || loc[3] > 1) && locCollapse(rmLoc, loc) && !locInLoc(loc, rmLoc)) {
+                needSplitLocs.push(loc);
+                needSplitCells.push(cell);
+                childSplitCells.push(Array.prototype.slice.call(cell.childNodes));
+            }
+        }
+    }
+    for (i = 0; i < needSplitCells.length; ++i) {
+        this.splitCell(needSplitCells[i]);
+        loc = needSplitLocs[i];
+        if (loc[0] < rowIdx) {
+            if (loc[0] + loc[2] <= rowIdx + rowHeight) {
+                loc[2] = rowIdx - loc[0];
+            }
+            else {
+                loc[2] -= rowHeight;
+            }
+        }
+        else {
+            loc[2] -= rowIdx + rowHeight - loc[0];
+        }
+    }
+
+    for (i = rowIdx + rowHeight - 1; i >= rowIdx; --i) {
+        body.childNodes[i].remove();
+    }
+    this.updateCellLoc();
+    var cells;
+    for (i = 0; i < needSplitLocs.length; ++i) {
+        loc = needSplitLocs[i];
+        cells = this.getCellsFromLoc(loc);
+        cells[0].addChild(childSplitCells[i]);
+        this.mergeCells(cells);
+    }
+    this.updateCellLoc();
+};
+
+
+/**
+ *
+ * @param colIdx
+ * @param {number=} colWidth
+ */
+CDGrid.prototype.removeColAt = function (colIdx, colWidth) {
+    if (!isNaturalNumber(colWidth)) colWidth = 1;
+    colWidth = colWidth || 1;
+    var body = this.$body;
+    var row, cell;
+    var loc;
+    var rmLoc = [0, colIdx, 100, colWidth];
+    var needSplitLocs = [];
+    var needSplitCells = [];
+    var childSplitCells = [];
+    var i, j;
+    for (i = 0; i < body.childNodes.length; ++i) {
+        row = body.childNodes[i];
+        for (j = 0; j < row.childNodes.length; ++j) {
+            cell = row.childNodes[j];
+            loc = locOfCell(cell);
+            if ((loc[2] > 1 || loc[3] > 1) && locCollapse(rmLoc, loc) && !locInLoc(loc, rmLoc)) {
+                needSplitLocs.push(loc);
+                needSplitCells.push(cell);
+                childSplitCells.push(Array.prototype.slice.call(cell.childNodes));
+            }
+        }
+    }
+    for (i = 0; i < needSplitCells.length; ++i) {
+        this.splitCell(needSplitCells[i]);
+        loc = needSplitLocs[i];
+        if (loc[1] < colIdx) {
+            if (loc[1] + loc[3] <= colIdx + colWidth) {
+                loc[3] = colIdx - loc[1];
+            }
+            else {
+                loc[3] -= colWidth;
+            }
+        }
+        else {
+            loc[3] -= colIdx + colWidth - loc[1];
+        }
+    }
+
+    var cells = this.getCellsFromLoc(rmLoc);
+    cells.forEach(cell=> cell.remove());
+    this.updateCellLoc();
+    for (i = 0; i < needSplitLocs.length; ++i) {
+        loc = needSplitLocs[i];
+        cells = this.getCellsFromLoc(loc);
+        cells[0].addChild(childSplitCells[i]);
+        this.mergeCells(cells);
+    }
+    this.updateCellLoc();
+
+};
+
+
+CDGrid.prototype.mergeCells = function (cells) {
+    var loc = locOfCells(cells);
+    var cell0 = cells[0];
+    cell0.attr({
+        rowspan: loc[2],
+        colspan: loc[3]
+    });
+    for (var i = 1; i < cells.length; ++i) {
+        cell0.addChild($$('.as-cag-var', cells[i]));
+        cells[i].remove();
+    }
+    this.updateCellLoc();
+};
+
+
+CDGrid.prototype.splitCell = function (originalCell) {
+    // var originalLoc = locOfCell(originalCell);
+    var height = Array(100).fill(0);
+    var loc;
+    var body = this.$body;
+
+    if (body.firstChild && body.firstChild.lastChild)
+        loc = locOfCell(body.firstChild.lastChild);
+    else loc = [0, 0, 1, 1];
+    var rowLength = loc[1] + loc[3];
+    originalCell.attr('rowspan', undefined);
+    originalCell.attr('colspan', undefined);
+    var row, cell;
+    var jj;
+    for (var i = 0; i < body.childNodes.length; ++i) {
+        row = body.childNodes[i];
+        jj = 0;
+        while (height[jj] > i) ++jj;
+        for (var j = 0; j < row.childNodes.length; ++j) {
+            cell = row.childNodes[j];
+            loc = locOfCell(cell);
+            while (jj < loc[1]) {
+                row.addChildBefore(this.makeCell({}), cell);
+                height[jj] = i + 1;
+                ++jj;
+                ++j;
+            }
+            for (var k = 0; k < loc[3]; ++k) {
+                height[jj + k] = i + loc[2];
+            }
+
+            jj += loc[3];
+            while (height[jj] > i) ++jj;
+        }
+        while (jj < rowLength) {
+            row.addChild(this.makeCell({}));
+            height[jj] = i + 1;
+            ++jj;
+            ++j;
+        }
+    }
+    this.updateCellLoc();
+};
+
 /**
  * @typedef CDGData
  * @property {CDGDataRow[]}
@@ -280,7 +552,29 @@ Object.defineProperty(CDGrid.prototype, 'data', {
         this.fixRowLength(nCol);
     },
     get: function () {
-
+        var res = {};
+        res.rows = Array.prototype.map.call(this.$body.childNodes, (rowElt) => {
+            var rowData = {};
+            rowData.cells = Array.prototype.map.call(rowElt.childNodes, cellElt => {
+                var cellData = {};
+                var variables = $$('as-cag-var', cellElt).map(varElt => {
+                    var vData = {};
+                    var name = varElt.attr('data-name');
+                    if (!name) return null;
+                    vData.name = name;
+                    var title = varElt.attr('data-title');
+                    if (typeof title === "string") vData.title = title;
+                    return vData;
+                }).filter(x => !!x);
+                if (variables.length > 0) cellData.variables = variables;
+                var loc = locOfCell(cellElt);
+                if (loc[2] > 1) cellData.rowspan = loc[2];
+                if (loc[3] > 1) cellData.colspan = loc[3];
+                return cellData;
+            });
+            return rowData;
+        })
+        return res;
     }
 });
 
@@ -606,48 +900,6 @@ function CDGFormatTool(context) {
     this.$tool = _({
         class: 'as-table-of-text-input-tool',
         child: [
-            /* {
-                 tag: 'numberinput',
-                 class: 'as-table-of-text-input-tool-font-size',
-                 props: {
-                     value: 14
-                 },
-                 attr: { title: 'Ctrl+< | Ctrl+>' }
-             },
-             {
-                 tag: 'button',
-                 attr: { title: 'Ctrl+B' },
-                 class: ['as-transparent-button', 'as-table-of-text-input-tool-bold'],
-                 child: 'span.mdi.mdi-format-bold'
-             },
-             {
-                 tag: 'button',
-                 attr: { title: 'Ctrl+I' },
-                 class: ['as-transparent-button', 'as-table-of-text-input-tool-italic'],
-                 child: 'span.mdi.mdi-format-italic'
-             },
-
-             {
-                 tag: FontColorButton
-             },
-             {
-                 tag: 'button',
-                 class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
-                 child: 'span.mdi.mdi-format-align-left',
-                 attr: { 'data-align': 'left', title: 'Ctrl+L' }
-             },
-             {
-                 tag: 'button',
-                 class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
-                 child: 'span.mdi.mdi-format-align-center',
-                 attr: { 'data-align': 'center', title: 'Ctrl+E' }
-             },
-             {
-                 tag: 'button',
-                 class: ['as-transparent-button', 'as-table-of-text-input-tool-text-align'],
-                 child: 'span.mdi.mdi-format-align-right',
-                 attr: { 'data-align': 'right', title: 'Ctrl+R' }
-             },*/
             {
                 tag: 'button',
                 class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
@@ -693,7 +945,7 @@ function CDGFormatTool(context) {
             {
                 tag: 'button',
                 class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],//can checked
-                attr: { 'data-command': 'removeRow' },
+                attr: { 'data-command': 'merge' },
                 child: {
                     tag: 'span',
                     class: ['mdi', 'mdi-table-merge-cells'],
@@ -719,112 +971,55 @@ function CDGFormatTool(context) {
 CDGFormatTool.prototype.updateAvailableCommands = function () {
     Object.values(this.$commandBtns).forEach(btn => {
         var name = btn.attr('data-command');
-        var disabled = false;
         if (this.commands[name] && this.commands[name].available) {
-            disabled = !this.commands[name].available.call(this)
+            btn.disabled = !this.commands[name].available.call(this);
         }
-        btn.disabled = disabled;
+        if (this.commands[name] && this.commands[name].checked) {
+            if (this.commands[name].checked.call(this)) {
+                btn.addClass('as-checked');
+            }
+            else {
+                btn.removeClass('as-checked');
+            }
+        }
     });
 };
 
 CDGFormatTool.prototype.addColAt = function (newColIdx) {
-    var height = Array(50).fill(0);
-    var row, cell, jj;
-    var body = this.context.grid.$body;
-    var colspan, rowspan;
-    for (var i = 0; i < body.childNodes.length; ++i) {
-        row = body.childNodes[i];
-        jj = 0;
-        for (var j = 0; j < row.childNodes.length; ++j) {
-            while (height[jj] > i + 1) jj++;
-            cell = row.childNodes[j];
-            colspan = parseInt(cell.getAttribute('colspan'), 10) || 1;
-            rowspan = parseInt(cell.getAttribute('rowspan'), 10) || 1;
-            if (jj === newColIdx) {
-                row.addChildBefore(this.grid.makeCell({}), cell);
-                height[jj] = i + 1;
-                j++;
-                jj++;
-            }
-            else if (jj <= newColIdx && jj + colspan > newColIdx) {
-                colspan++;
-                cell.attr('colspan', colspan);
-            }
-            height[jj] = i + rowspan;
-            jj += colspan;
-        }
-        if (jj === newColIdx) {
-            row.addChild(this.grid.makeCell({}));
-            height[jj] = i + 1;
-        }
-    }
+    this.grid.addColAt(newColIdx);
+    this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
 
-    this.grid.updateCellLoc();
-};
-
-CDGFormatTool.prototype.removeRowAt = function (rowIdx) {
-    //todo
 };
 
 
-CDGFormatTool.prototype.removeColAt = function (rowIdx) {
-    //todo
+CDGFormatTool.prototype.addRowAt = function (newRowIdx) {//todo: wrong
+    this.grid.addRowAt(newRowIdx);
+    this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
 };
 
-CDGFormatTool.prototype.addRowAt = function (newRowIdx) {
-    var height = Array(50).fill(0);
-    var row, cell, jj;
-    var body = this.context.grid.$body;
-    var colspan, rowspan;
 
-    var loc;
-    if (body.firstChild && body.firstChild.lastChild)
-        loc = locOfCell(body.firstChild.lastChild);
-    else loc = [0, 0, 1, 1];
-    var rowLength = loc[1] + loc[3];
+CDGFormatTool.prototype.removeRowAt = function (rowIdx, rowHeight) {
+    this.grid.removeRowAt(rowIdx, rowHeight);
+    this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
 
-    for (var i = 0; i < body.childNodes.length; ++i) {
-        if (i === newRowIdx) {
-            row = this.grid.makeRow({ cell: [] });
-            body.addChildBefore(row, body.childNodes[i]);
-            jj = 0;
-            while (jj < rowLength) {
-                while (height[jj] > newRowIdx + 1) jj++;
-                row.addChild(this.grid.makeCell({}));
-                height[jj] = i + 1;
-                jj++;
-            }
-            ++i;
-        }
-        row = body.childNodes[i];
-        jj = 0;
-        for (var j = 0; j < row.childNodes.length; ++j) {
-            while (height[jj] > i + 1) jj++;
-            cell = row.childNodes[j];
-            colspan = parseInt(cell.getAttribute('colspan'), 10) || 1;
-            rowspan = parseInt(cell.getAttribute('rowspan'), 10) || 1;
-            if (i <= newRowIdx && i + rowspan > newRowIdx) {
-                rowspan++;
-                cell.attr('rowspan', rowspan);
-            }
-            height[jj] = i + rowspan;
-            jj += colspan;
-        }
-    }
-
-    if (newRowIdx === body.childNodes.length) {
-        row = this.grid.makeRow({ cell: [] })
-        body.addChild(row);
-        jj = 0;
-        while (jj < rowLength) {
-            while (height[jj] > newRowIdx + 1) jj++;
-            row.addChild(this.grid.makeCell({}));
-            jj++;
-        }
-    }
-
-    this.grid.updateCellLoc();
 };
+
+
+CDGFormatTool.prototype.removeColAt = function (rowIdx, colWidth) {
+    this.grid.removeColAt(rowIdx, colWidth);
+    this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+};
+
+CDGFormatTool.prototype.mergeCells = function (cells) {
+    this.grid.mergeCells(cells);
+    this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+};
+
+CDGFormatTool.prototype.splitCell = function (originalCell) {
+    this.grid.splitCell(originalCell);
+    this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+};
+
 
 /**
  * @this CDGFormatTool
@@ -836,7 +1031,6 @@ function hasSelectedCell() {
 
 CDGFormatTool.prototype.commands = {
     left: {
-
         available: hasSelectedCell,
         /**
          * @this CDGFormatTool
@@ -857,11 +1051,7 @@ CDGFormatTool.prototype.commands = {
         exec: function () {
             var selectedCells = this.context.selectCtrl.selectedCells;
             if (!selectedCells.length) return;
-            var loc = selectedCells.reduce((ac, cell) => {
-                var cellLoc = locOfCell(cell);
-                if (!ac) return cellLoc;
-                return mergeLoc(ac, cellLoc)
-            }, null);
+            var loc = locOfCells(selectedCells);
             var newColIdx = loc[1] + loc[3];
             this.addColAt(newColIdx);
         }
@@ -874,11 +1064,7 @@ CDGFormatTool.prototype.commands = {
         exec: function () {
             var selectedCells = this.context.selectCtrl.selectedCells;
             if (!selectedCells.length) return;
-            var loc = selectedCells.reduce((ac, cell) => {
-                var cellLoc = locOfCell(cell);
-                if (!ac) return cellLoc;
-                return mergeLoc(ac, cellLoc)
-            }, null);
+            var loc = locOfCells(selectedCells);
             var newRowIdx = loc[0];
             this.addRowAt(newRowIdx);
         }
@@ -891,13 +1077,52 @@ CDGFormatTool.prototype.commands = {
         exec: function () {
             var selectedCells = this.context.selectCtrl.selectedCells;
             if (!selectedCells.length) return;
-            var loc = selectedCells.reduce((ac, cell) => {
-                var cellLoc = locOfCell(cell);
-                if (!ac) return cellLoc;
-                return mergeLoc(ac, cellLoc)
-            }, null);
+            var loc = locOfCells(selectedCells);
             var newRowIdx = loc[0] + loc[2];
             this.addRowAt(newRowIdx);
+
+        }
+    },
+    removeRow: {
+        available: hasSelectedCell,
+        exec: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return;
+            var loc = locOfCells(selectedCells);
+            this.removeRowAt(loc[0], loc[2]);
+        }
+    },
+    removeCol: {
+        available: hasSelectedCell,
+        exec: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return;
+            var loc = locOfCells(selectedCells);
+            this.removeColAt(loc[1], loc[3]);
+        }
+    },
+    merge: {
+        checked: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (selectedCells.length !== 1) return false;
+            var loc = locOfCells(selectedCells);
+            return loc[2] > 1 || loc[3] > 1;
+        },
+        available: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var loc = locOfCells(selectedCells);
+            return loc[2] > 1 || loc[3] > 1;
+        },
+        exec: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var loc = locOfCells(selectedCells);
+            var isMerged = selectedCells.length === 1 && (loc[2] > 1 || loc[3] > 1);
+            if (isMerged) this.splitCell(selectedCells[0])
+            else this.mergeCells(selectedCells);
+            selectedCells = this.context.grid.getCellsFromLoc(loc);
+            this.context.selectCtrl.selectCells(selectedCells);
         }
     }
 };
