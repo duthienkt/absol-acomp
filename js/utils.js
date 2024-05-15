@@ -1370,6 +1370,51 @@ export function replaceFileInObject(o, replacer) {
     });
 }
 
+export function revokeResource(o) {
+    if (!o) return;
+    var oc, ocs;
+    var keys, key;
+    if (Array.isArray(o)) {
+        while (o.length) {
+            oc = o.pop();
+            try {
+                revokeResource(oc);
+            } catch (err) {
+            }
+        }
+    }
+
+    else if (o.removeResource) {
+        o.removeResource();
+    }
+    else if (typeof o === "object") {
+        keys = [];
+        ocs = [];
+        for (key in o) {
+            keys.push(key);
+        }
+        while (keys.length) {
+            key = keys.pop();
+            ocs.push(o[keys]);
+            try {
+                delete o[key];
+            } catch (err) {
+            }
+        }
+        while (ocs.length) {
+            try {
+                revokeResource(ocs.pop());
+            } catch (err) {
+            }
+        }
+    }
+    ocs = undefined;
+    oc = undefined;
+    keys = undefined;
+    key = undefined;
+    o = undefined;
+}
+
 export function isNone(x) {
     return x === null || x === undefined;
 }
