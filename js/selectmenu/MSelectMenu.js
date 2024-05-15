@@ -186,6 +186,7 @@ MSelectMenu.property.isFocus = {
         var thisSM = this;
         value = !!value;
         if (value === this._isFocus) return;
+        if (this.readOnly || this.disabled) return;
         this._isFocus = value;
         if (value) {
             thisSM.$selectlist.viewListAt(0);
