@@ -404,7 +404,9 @@ TableScroller.prototype._updateScrollStatus = function () {
         this.$hscrollbar.outerWidth = bound.width;
         this.removeClass('as-scroll-vertical');
     }
-    this.$vscrollbar.innerHeight = tableBound.height;
+    var paddingBottom = this.getComputedStyleValue('--tvs-scroll-padding-bottom');
+    paddingBottom = parseFloat((paddingBottom||'0px').replace('px', ''));
+    this.$vscrollbar.innerHeight = tableBound.height + paddingBottom;
     this.$hscrollbar.innerWidth = tableBound.width;
 };
 

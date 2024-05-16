@@ -14,6 +14,7 @@
     position: relative;
     padding-right: 17px;
     padding-bottom: 17px;
+    --tvs-scroll-padding-bottom: 0px;
 }
 
 .absol-table-scroller:not(.as-scroll-vertical) {
@@ -23,6 +24,11 @@
 
 .absol-table-scroller:not(.as-scroll-horizontal) {
     padding-bottom: 0;
+}
+
+.as-table-scroller-origin-table-ctn{
+    padding-bottom: var(--tvs-scroll-padding-bottom);
+
 }
 
 
