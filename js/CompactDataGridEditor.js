@@ -207,10 +207,19 @@ CDGrid.prototype.updateCellLoc = function () {
     }
     var nCol = height.indexOf(0);
     height = [];
+    this.$body.attr('data-width', nCol);
     return nCol;
 };
 
+CDGrid.prototype.getSize = function () {
+    return {
+        width: parseInt(this.$body.attr('data-width'), 10),
+        height: this.$body.childNodes.length
+    }
+}
+
 CDGrid.prototype.fixRowLength = function (rowLength) {
+    rowLength = rowLength || 1;
     var row, cell;
     var body = this.$body;
     var height = Array(100).fill(0);
@@ -453,7 +462,7 @@ CDGrid.prototype.removeColAt = function (colIdx, colWidth) {
     }
 
     var cells = this.getCellsFromLoc(rmLoc);
-    cells.forEach(cell=> cell.remove());
+    cells.forEach(cell => cell.remove());
     this.updateCellLoc();
     for (i = 0; i < needSplitLocs.length; ++i) {
         loc = needSplitLocs[i];
@@ -525,6 +534,7 @@ CDGrid.prototype.splitCell = function (originalCell) {
     this.updateCellLoc();
 };
 
+
 /**
  * @typedef CDGData
  * @property {CDGDataRow[]}
@@ -546,7 +556,10 @@ CDGrid.prototype.splitCell = function (originalCell) {
 Object.defineProperty(CDGrid.prototype, 'data', {
     set: function (value) {
         this.$body.clearChild();
-        var rows = value && value.rows;
+        var rows = (value && value.rows) ||[];
+        if (rows.length === 0) rows.push({
+            cells:[{}]
+        });
         this.$body.addChild(rows.map(it => this.makeRow(it)));
         var nCol = this.updateCellLoc();
         this.fixRowLength(nCol);
@@ -557,7 +570,7 @@ Object.defineProperty(CDGrid.prototype, 'data', {
             var rowData = {};
             rowData.cells = Array.prototype.map.call(rowElt.childNodes, cellElt => {
                 var cellData = {};
-                var variables = $$('as-cag-var', cellElt).map(varElt => {
+                var variables = $$('.as-cag-var', cellElt).map(varElt => {
                     var vData = {};
                     var name = varElt.attr('data-name');
                     if (!name) return null;
@@ -690,6 +703,7 @@ CDSelectController.prototype.selectCells = function (cells) {
 function CDGVariableManager(context) {
     this.context = context;
     this.elt = context.elt;
+    this.lcEmitter = context.lcEmitter;
     /**
      *
      * @type {CDGrid}
@@ -859,12 +873,14 @@ CDGVariableManager.prototype.ev_dragEnd = function () {
             this.newLocation.in.addChild(this.draggingElt);
             this.pickVariable(name);
             this.context.selectCtrl.selectCells([this.newLocation.in]);
+            this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
         }
     }
     else {
         if (this.draggingElt.parentElement !== this.$varMng) {
             this.rejectVariable(name);
             this.$varMng.addChild(this.draggingElt);
+            this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
         }
     }
 
@@ -1084,21 +1100,36 @@ CDGFormatTool.prototype.commands = {
         }
     },
     removeRow: {
-        available: hasSelectedCell,
+        available: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var loc = locOfCells(selectedCells);
+            var size = this.context.grid.getSize();
+            return loc[2] < size.height;
+
+        },
         exec: function () {
             var selectedCells = this.context.selectCtrl.selectedCells;
             if (!selectedCells.length) return;
             var loc = locOfCells(selectedCells);
             this.removeRowAt(loc[0], loc[2]);
+            this.context.selectCtrl.selectCells([]);
         }
     },
     removeCol: {
-        available: hasSelectedCell,
+        available: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var loc = locOfCells(selectedCells);
+            var size = this.context.grid.getSize();
+            return loc[3] < size.width;
+        },
         exec: function () {
             var selectedCells = this.context.selectCtrl.selectedCells;
             if (!selectedCells.length) return;
             var loc = locOfCells(selectedCells);
             this.removeColAt(loc[1], loc[3]);
+            this.context.selectCtrl.selectCells([]);
         }
     },
     merge: {
