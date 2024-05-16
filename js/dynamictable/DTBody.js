@@ -284,7 +284,8 @@ SearchingMode.prototype.end = function () {
     this.searchingItems = null;
     this.status = "STOP";
     this.waitingCtrl.end(this.waitingToken);
-    this.body.master.sendTask(null);
+    if (this.body.master)
+        this.body.master.sendTask(null);
 };
 
 
