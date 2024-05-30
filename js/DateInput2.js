@@ -223,7 +223,7 @@ DateInput2.prototype._correctingInput = function () {
     var max = this._max;
     var equalMin;
     var equalMax;
-    if (!isNaN(tkDict.y.value)) {
+    if (tkDict.y && !isNaN(tkDict.y.value)) {
         tkDict.y.value = Math.max(min.getFullYear(), Math.min(max.getFullYear(), tkDict.y.value));
         equalMin = tkDict.y.value === min.getFullYear();
         equalMax = tkDict.y.value === max.getFullYear();
