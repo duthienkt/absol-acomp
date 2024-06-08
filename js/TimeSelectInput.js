@@ -166,8 +166,7 @@ TimeSelectInput.property.isFocus = {
         }
         var thisI = this;
         if (value) {
-            document.body.appendChild(this.$selectlistBox);
-            this.$selectlistBox.domSignal.$attachhook.emit('attached');
+            this.$selectlistBox.addTo(document.body)
             var bound = this.getBoundingClientRect();
             this.$selectlistBox.addStyle('min-width', bound.width + 'px');
             this.$selectlistBox.refollow();
