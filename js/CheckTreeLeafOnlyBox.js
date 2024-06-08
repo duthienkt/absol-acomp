@@ -244,7 +244,7 @@ TreeLeafOnlyNodeHolder.prototype.getViewValues = function (ac) {
         ac.push(this.item.value);
     }
     else if (this.selected === 'child') {
-        this.child.forEach(c => c.getValues(ac));
+        this.child.forEach(c => c.getViewValues(ac));
     }
     return ac;
 };
