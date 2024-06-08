@@ -6,7 +6,6 @@ import Element from "absol/src/HTML5/Element";
 import Rectangle from "absol/src/Math/Rectangle";
 import Dom from "absol/src/HTML5/Dom";
 import EventEmitter, {findChangedTouchByIdent} from "absol/src/HTML5/EventEmitter";
-import {absCeil} from "./utils";
 import Hanger from "./Hanger";
 import AElement from "absol/src/HTML5/Element";
 
@@ -356,6 +355,7 @@ BoardTable.eventHandler.mousedown = function (event) {
                     '--x': mousePos.x + 'px',
                     '--y': mousePos.y + 'px'
                 }).addTo(document.body);
+                if (this._dragEventData)
                 thisBT.eventHandler.readyDrag(cEvent);
             }, 400);
         }
