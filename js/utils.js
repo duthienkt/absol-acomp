@@ -846,7 +846,8 @@ export var millisToClock = mil => {
     if (hour >= 24) {
         res.hour = hour % 24;
         res.isNextDate = true;
-    } else {
+    }
+    else {
         res.hour = hour;
     }
     return res;
@@ -1383,9 +1384,24 @@ export function revokeResource(o) {
             }
         }
     }
-
-    else if (o.removeResource) {
-        o.removeResource();
+    else if (o.revokeResource) {
+        o.revokeResource();
+    }
+    else if (o.nodeType === 1 || o.nodeType === 3) {
+        if (o.revokeResource)
+            o.revokeResource();
+        else {
+            while (o.firstChild) {
+                oc =o.firstChild;
+                revokeResource(oc);
+                if (oc.selfRemove) {
+                    oc.selfRemove();
+                }
+                else {
+                    oc.remove();
+                }
+            }
+        }
     }
     else if (typeof o === "object") {
         keys = [];
