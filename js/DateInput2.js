@@ -15,14 +15,11 @@ import {
     weekInYear,
     beginOfWeek, beginOfMonth, beginOfQuarter, beginOfYear
 } from "absol/src/Time/datetime";
-import ChromeCalendar from "./ChromeCalendar";
 import OOP from "absol/src/HTML5/OOP";
-import DateInput from "./DateInput";
-import AElement from "absol/src/HTML5/AElement";
-import DomSignal from "absol/src/HTML5/DomSignal";
 import DateTimeInput from "./DateTimeInput";
 import { isRealNumber, zeroPadding } from "./utils";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
+import DelaySignal from "absol/src/HTML5/DelaySignal";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
@@ -76,8 +73,7 @@ function DateInput2() {
             event.preventDefault();
         });
 
-    this.$domSignal = _('attachhook').addTo(this);
-    this.domSignal = new DomSignal(this.$domSignal);
+    this.domSignal = new DelaySignal();
     this.domSignal.on('request_auto_select', this._autoSelect.bind(this));
 
     this._min = new Date(1890, 0, 1, 0, 0, 0, 0);
@@ -252,7 +248,7 @@ DateInput2.prototype._correctingInput = function () {
 
     if (tkDict.d && !isNaN(tkDict.d.value)) {
         tkDict.d.value = Math.max(1, Math.min(31, tkDict.d.value));
-        if (!isNaN(tkDict.M.value)) {
+        if (tkDict.M && !isNaN(tkDict.M.value)) {
             tkDict.d.value = Math.min(tkDict.d.value,
                 daysInMonth(isNaN(tkDict.y.value) ? 2020 : tkDict.y.value, tkDict.M.value - 1));
         }
@@ -267,14 +263,14 @@ DateInput2.prototype._correctingInput = function () {
     }
 
     if (tkDict.w && !isNaN(tkDict.w.value)) {
-        if (!isNaN(tkDict.y.value)) {
+        if (tkDict.y && !isNaN(tkDict.y.value)) {
             tkDict.w.value = Math.max(1, Math.min(tkDict.w.value, 1
                 + weekIndexOf(prevDate(new Date(tkDict.y.value + 1, 0, 1)), false, this._startDayOfWeek)));
         }
     }
 
     this.$text.value = this._applyTokenDict(this._format, tkDict);
-}
+};
 
 DateInput2.prototype._correctingCurrentToken = function () {
     var token = this._tokenAt(this.$text.selectionStart);
