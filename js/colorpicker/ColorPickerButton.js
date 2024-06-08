@@ -99,6 +99,9 @@ ColorPickerButton.prototype.openPicker = function () {
 
     this.$follower.addStyle('visibility', 'hidden');
     this.$follower.addTo(document.body);
+    if (ColorPickerButton.$ColorPicker.$attachhook) {//prevent stuck setTimeOut
+        ColorPickerButton.$ColorPicker.$attachhook.emit('attached');
+    }
     this.$follower.followTarget = this;
     this.$follower.sponsorElement = this;
     setTimeout(function () {
@@ -122,7 +125,7 @@ ColorPickerButton.prototype.closePicker = function () {
     this.removeClass('as-color-picker-selecting');
     if (ColorPickerButton.lastOpen === this) {
         ColorPickerButton.lastOpen = null;
-        this.$follower.remove();
+        this.$follower.selfRemove();
     }
     this.$ColorPicker.off('change', this.eventHandler.changeColor)
         .off('submit', this.eventHandler.submit);
@@ -144,11 +147,16 @@ ColorPickerButton.prototype.prepare = function () {
         }
         else {
             ColorPickerButton.$follower = _('follower.as-color-picker-button-follower');
+            ColorPickerButton.$follower.cancelWaiting();
         }
 
         ColorPickerButton.$ColorPicker = _({
             tag: 'solidcolorpicker'
         }).addTo(ColorPickerButton.$follower);
+        if (ColorPickerButton.$ColorPicker.$attachhook) {//prevent stuck setTimeOut
+            ColorPickerButton.$ColorPicker.$attachhook.cancelWaiting();
+        }
+
 
         ColorPickerButton.lastOpen = null;
     }
