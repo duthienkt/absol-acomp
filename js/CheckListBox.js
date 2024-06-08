@@ -10,9 +10,9 @@ import { getScreenSize } from "absol/src/HTML5/Dom";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import ListSearchMaster from "./list/ListSearchMaster";
 import OOP from "absol/src/HTML5/OOP";
-import DomSignal from "absol/src/HTML5/DomSignal";
 import TextMeasurement from "./tool/TextMeasurement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import DelaySignal from "absol/src/HTML5/DelaySignal";
 
 
 var itemPool = [];
@@ -73,6 +73,8 @@ export var measureArial14TextWidth = text => {
  * @constructor
  */
 export function CheckListBox() {
+    if (this.cancelWaiting)
+        this.cancelWaiting();
     this._items = [];
     this._valueDict = {};
     this.itemHolders = [];
@@ -168,8 +170,7 @@ CheckListBox.prototype.footerMinWidth = 110;
 
 
 CheckListBox.prototype._initDomHook = function () {
-    this.$domSignal = $('attachhook.as-dom-signal', this);
-    this.domSignal = new DomSignal(this.$domSignal);
+    this.domSignal = new DelaySignal();
     this.domSignal.on('viewListAt', this.viewListAt.bind(this));
     this.domSignal.on('viewListAtFirstSelected', this.viewListAtFirstSelected.bind(this));
     this.domSignal.on('viewListAtCurrentScrollTop', this.viewListAtCurrentScrollTop.bind(this));
