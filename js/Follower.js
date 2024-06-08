@@ -3,6 +3,7 @@ import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
 import AElement from "absol/src/HTML5/AElement";
+import AttachHook from "absol/src/HTML5/AttachHook";
 
 
 var _ = ACore._;
@@ -34,6 +35,19 @@ function Follower() {
      */
 }
 
+Follower.prototype.cancelWaiting = function () {
+    Array.prototype.forEach.call(this.childNodes, function (elt) {
+        if (elt.emit && elt.isSupportedEvent('attached')) {
+            elt.cancelWaiting();
+        }
+    });
+};
+
+Follower.prototype.revokeResource = function () {
+    this.cancelWaiting();
+    this.followTarget = null;
+};
+
 Follower.tag = 'Follower'.toLowerCase();
 Follower.render = function () {
     return _('.absol-follower');
@@ -44,10 +58,41 @@ Follower.prototype.clearChild = function () {
     var children = Array.prototype.slice.call(this.children);
     var attachhookElt = this.$attachhook;
     children.forEach(function (elt) {
-        if (elt != attachhookElt)
+        if (elt !== attachhookElt)
             elt.remove();
     });
-}
+};
+
+
+Follower.prototype.addTo = function (elt) {
+    if (elt.addChild) {
+        elt.addChild(this);
+    }
+    else if (elt.appendChild) {
+        elt.appendChild(this);
+    }
+    if (this.isDescendantOf(document.body)) {
+        Array.prototype.forEach.call(this.childNodes, function (elt) {
+            if (elt.emit && elt.isSupportedEvent('attached')) {
+                elt.resetState();
+                elt.emit('attached');
+            }
+        });
+    }
+    return this;
+};
+
+
+Follower.prototype.selfRemove = function () {
+    Array.prototype.forEach.call(this.childNodes, function (elt) {
+        if (elt.emit && elt.isSupportedEvent('attached')) {
+            elt.cancelWaiting();
+        }
+    });
+    this.remove();
+    return this;
+};
+
 
 //Todo: remove child, find child....
 
@@ -108,12 +153,11 @@ Follower.prototype.updatePosition = function () {
         }
     }
 
-    if (this._lastAnchor !==bestAnchor){
-        this.removeClass('as-anchor-'+ this._lastAnchor);
+    if (this._lastAnchor !== bestAnchor) {
+        this.removeClass('as-anchor-' + this._lastAnchor);
         this._lastAnchor = bestAnchor;
-        this.addClass('as-anchor-'+ this._lastAnchor);
+        this.addClass('as-anchor-' + this._lastAnchor);
     }
-
 
 
     this.addStyle({

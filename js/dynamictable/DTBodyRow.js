@@ -50,8 +50,11 @@ DTBodyRow.prototype.revoke = function () {
    if (this._elt) this._elt.dtBodyRow = null;
    this._elt = null;
    this.$id = null;
-    this.draggable = null;
+   this.draggable = null;
 };
+
+DTBodyRow.prototype.revokeResource = function () {};
+
 
 DTBodyRow.prototype.remove = function () {
     this.body.removeRow(this);
