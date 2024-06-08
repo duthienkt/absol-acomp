@@ -41,7 +41,6 @@ function TokenField() {
         }
     });
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
-    this.$selectlistBox.followTarget = this;
     this.$selectlistBox.sponsorElement = this;
 
     this.autocomplete = null;
@@ -275,7 +274,8 @@ TokenField.eventHandler.inputInteract = function (event) {
     }
     if (this.$selectlistBox.isDescendantOf(document.body)) return;
     this.$selectlistBox.addTo(document.body);
-    this.$selectlistBox.domSignal.$attachhook.emit('attached');
+    this.$selectlistBox.followTarget = this;
+
     this._searchInList();
     var bound = this.getBoundingClientRect();
     this.$selectlistBox.addStyle('min-width', bound.width + 'px');
@@ -288,7 +288,8 @@ TokenField.eventHandler.inputInteract = function (event) {
 TokenField.eventHandler.inputOut = function (event) {
     if (event && (hitElement(this.$selectlistBox, event) || hitElement(this.$input, event))) return;
     document.removeEventListener('click', this.eventHandler.inputOut);
-    this.$selectlistBox.remove();
+    this.$selectlistBox.selfRemove();
+    this.$selectlistBox.followTarget = null;
     this._lastInteractTime = new Date().getTime();
 };
 
@@ -409,8 +410,10 @@ TokenField.eventHandler.selectListBoxPressItem = function (event) {
     this.updateSize();
     this._notifyChange({ action: 'add', item: text, itemElt: newItem });
     this.eventHandler.inputOut();
-    this.$input.focus();
     this.$input.value = '';
+    setTimeout(()=>{
+        this.$input.focus();
+    }, 30);
 }
 
 ACore.install(TokenField);
