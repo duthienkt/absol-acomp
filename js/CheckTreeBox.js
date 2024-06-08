@@ -1,5 +1,4 @@
 import ACore, { _, $, $$ } from "../ACore";
-import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import CheckTreeItem from "./CheckTreeItem";
 import '../css/checktreebox.css';
@@ -22,6 +21,8 @@ import noop from "absol/src/Code/noop";
  * @constructor
  */
 function CheckTreeBox() {
+    if (this.cancelWaiting)
+        this.cancelWaiting();
     this.listCtrl = new CTBItemListController(this);
     OOP.drillProperty(this, this.listCtrl, ['viewHolders', '$checkAll', 'estimateSize']);
     this.dropdownCtrl = new CTBDropdownController(this);
@@ -67,10 +68,7 @@ CheckTreeBox.prototype.itemInPage = 36;
 
 
 CheckTreeBox.prototype._initDomHook = function () {
-    this.$domSignal = _('attachhook');
-    this.appendChild(this.$domSignal);
-    this.domSignal = new DomSignal(this.$domSignal);
-    this.domSignal.on('viewListAt', this.listCtrl.viewListAt.bind(this.listCtrl));
+
 };
 
 CheckTreeBox.prototype._initProperty = function () {
@@ -945,8 +943,11 @@ CTBItemListController.prototype.updateContentSize = function () {
 
 CTBItemListController.prototype.viewListAt = function (offset) {
     offset = offset || 0;
+    this._pendingOffset = offset;
     if (!this.elt.isDescendantOf(document.body)) {
-        this.elt.domSignal.emit('viewListAt', offset);
+        this.elt.$attachhook.once('attached', ()=>{
+            this.viewListAt(this._pendingOffset);
+        });
         return;
     }
     this.elt.noTransition();
