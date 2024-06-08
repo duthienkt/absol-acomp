@@ -215,7 +215,7 @@ export default SelectTreeLeafMenu;
  * @param {SelectTreeLeafMenu} elt
  * @constructor
  */
-function STLBoxController(elt) {
+export function STLBoxController(elt) {
     this.elt = elt;
     this.ev_click = this.ev_click.bind(this);
     this.ev_clickOut = this.ev_clickOut.bind(this);
