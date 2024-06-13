@@ -8,7 +8,7 @@
 
 
 .as-cag-var-mng {
-    padding: 5px;
+    padding: 10px;
     border-bottom: 1px solid #dddddd;
     background-color: #fefefe;
 }
@@ -26,6 +26,11 @@
 
 .as-cag-var::after {
     content: attr(data-name);
+}
+
+
+.as-cag-var.as-focus{
+    box-shadow:0px 0px 2px 2px rgba(255, 153, 0, 0.75);
 }
 
 /*.as-cag-var::before {*/
@@ -52,7 +57,7 @@
 
 
 .as-cdg-table {
-    margin: 10px;
+    margin: 15px;
     border-collapse: collapse;
     user-select: none;
 }
@@ -84,4 +89,18 @@
 
 .as-ca-cell.as-selected {
     background-color: rgba(78, 222, 246, 0.25);
+}
+
+
+
+.as-cdg-variable-edit-dialog .as-table-grid-cell{
+    padding: 5px 10px;
+}
+.as-cdg-variable-edit-dialog button{
+    min-width: 100px;
+}
+
+
+.as-cdg-variable-edit-dialog input[type="text"] {
+    width: 200px;
 }
