@@ -884,11 +884,13 @@ DateInput2.prototype._prepareCalendar = function () {
         tag: 'chromecalendar',
         class: ['as-date-input-calendar', 'as-dropdown-box-common-style']
     });
+    if (this.share.$calendar.$attachHook) this.share.$calendar.$attachHook.cancelWaiting();
     this.share.$follower = _({
         tag: 'follower',
         class: 'as-date-input-follower',
         child: this.share.$calendar
     });
+    this.share.$follower.cancelWaiting();
 };
 
 DateInput2.prototype._attachCalendar = function () {
@@ -899,6 +901,7 @@ DateInput2.prototype._attachCalendar = function () {
     this.share.$holdingInput = this;
     this.share.$follower.followTarget = this;
     this.share.$follower.sponsorElement = this;
+    if (this.share.$calendar.$attachHook) this.share.$calendar.$attachHook.emit('attached');
     this.share.$calendar.level = this.calendarLevel;
     this.share.$calendar.startDayOfWeek = this.startDayOfWeek || 0;
     this.share.$calendar.min = this._min;

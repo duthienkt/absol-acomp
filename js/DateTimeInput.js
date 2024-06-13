@@ -1037,6 +1037,9 @@ DateTimeInput.prototype._preparePicker = function () {
             tag: ChromeCalendar.tag,
             class: 'as-date-time-input-date-picker'
         });
+        if(this.share.$calendar.$attachHook) {
+            this.share.$calendar.$attachHook.cancelWaiting();
+        }
         this.share.$cancelBtn = _({
             tag: 'a',
             class: 'as-select-list-box-cancel-btn',
@@ -1075,6 +1078,7 @@ DateTimeInput.prototype._preparePicker = function () {
 
             ]
         });
+        this.share.$follower.cancelWaiting();
     }
 };
 
@@ -1092,7 +1096,9 @@ DateTimeInput.prototype._attachPicker = function () {
     this.share.$timePicker.on('change', this.eventHandler.timePick);
     this.share.$okBtn.on('click', this.eventHandler.clickOKBtn);
     this.share.$cancelBtn.on('click', this.eventHandler.clickCancelBtn);
-
+    if(this.share.$calendar.$attachHook) {
+        this.share.$calendar.$attachHook.emit('attached');
+    }
     var tkDict = this._makeTokenDict(this.$text.value);
     if (tkDict.h && !isNaN(tkDict.h.value)) {
         if (tkDict.a && tkDict.a.value === 'PM') {
