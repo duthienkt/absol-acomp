@@ -943,13 +943,6 @@ CTBItemListController.prototype.updateContentSize = function () {
 
 CTBItemListController.prototype.viewListAt = function (offset) {
     offset = offset || 0;
-    this._pendingOffset = offset;
-    if (!this.elt.isDescendantOf(document.body)) {
-        this.elt.$attachhook.once('attached', ()=>{
-            this.viewListAt(this._pendingOffset);
-        });
-        return;
-    }
     this.elt.noTransition();
 
     var midPage = this.$pages.length >> 1;
