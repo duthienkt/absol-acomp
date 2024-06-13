@@ -220,12 +220,14 @@ BaseMode.prototype.render = function () {
             if (this.body.elt.isDescendantOf(document.body)) {
                 this.render();
             }
-        }, 0);
+        }, 5);
         return;
     }
     var dy = 0, rowIdx;
     if (bounds.length > 0) {
         rowIdx = Math.floor(this.offset - this.rowOffset);
+        //todo: fix bounds[rowIdx] undefined
+        if (!bounds[rowIdx]) return;
         dy = bounds[rowIdx].y + (this.offset - this.rowOffset - rowIdx) * bounds[rowIdx].height;
     }
     var availableHeight;
