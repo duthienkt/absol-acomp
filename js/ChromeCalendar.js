@@ -14,9 +14,9 @@ import {
     nextDate, nextMonth,
     prevDate, prevMonth, weekIndexOf
 } from "absol/src/Time/datetime";
-import DomSignal from "absol/src/HTML5/DomSignal";
 import OOP from "absol/src/HTML5/OOP";
 import { keyStringOf, zeroPadding } from "./utils";
+import DelaySignal from "absol/src/HTML5/DelaySignal";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -68,7 +68,7 @@ function ChromeCalendar() {
 
     this.$attachHook = _('attachhook').addTo(this);
 
-    this.domSignal = new DomSignal((this.$attachHook))
+    this.domSignal = new DelaySignal()
         .on('level_change', this.eventHandler.levelChange)
         .on('request_update_buttons', this._updateButtons.bind(this))
         .on('request_update_month', this._updateMonth.bind(this, this.$month))
@@ -80,8 +80,8 @@ function ChromeCalendar() {
     this.sync = new Promise(function (rs) {
         thisCal.$attachHook.on('attached', rs);
     });
-    this.domSignal.emit('level_change');
-    this.sync.then('attached', function () {
+    this.sync.then(function () {
+        thisCal.domSignal.emit('level_change');
         thisCal.$yearScroller.requestUpdateSize();
         thisCal.expandYear(thisCal._viewDate.getFullYear());
         thisCal._updateYearInEra();
