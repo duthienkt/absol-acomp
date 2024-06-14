@@ -5,6 +5,7 @@ import SelectListBox from "../SelectListBox";
 import ACore, { _, $, $$ } from "../../ACore";
 import ListSearchMaster from "../list/ListSearchMaster";
 import { copySelectionItemArray, keyStringOf } from "../utils";
+import DelaySignal from "absol/src/HTML5/DelaySignal";
 
 export var VALUE_HIDDEN = -1;
 export var VALUE_NORMAL = 1;
@@ -72,12 +73,16 @@ MListModal.prototype._initDomHook = function () {
         this.requestUpdateSize();
         this._isAttached = true;
     });
-    this.$domSignal = _('attachhook').addTo(this);
-    this.domSignal = new DomSignal(this.$domSignal);
+
+    this.domSignal = new DelaySignal();
     this.domSignal.on('viewListAt', this.viewListAt.bind(this));
     this.domSignal.on('viewListAtFirstSelected', this.viewListAtFirstSelected.bind(this));
     this.searchMaster = new ListSearchMaster();
 };
+
+MListModal.prototype.cancelWaiting = function () {
+    this.$attachhook.cancelWaiting();
+}
 
 MListModal.prototype._initControl = function () {
     this._currentOffset = 0;
@@ -279,6 +284,7 @@ MListModal.prototype.viewListAtFirstSelected = function () {
 
 
 MListModal.prototype.searchItemByText = SelectListBox.prototype.searchItemByText;
+MListModal.prototype.prepareSearch = SelectListBox.prototype.prepareSearch;
 
 MListModal.prototype.resetSearchState = function () {
     this.$searchInput.value = '';
@@ -340,6 +346,7 @@ MListModal.property.items = {
     },
     set: function (items) {
         items = items || [];
+        if (!Array.isArray(items)) items = [];//no
         items = copySelectionItemArray(items)
         this._items = items;
         this._preDisplayItems = this._listToDisplay(this._items);

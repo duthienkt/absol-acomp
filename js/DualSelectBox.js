@@ -3,16 +3,15 @@ import Follower from "./Follower";
 import '../css/dualselectmenu.css';
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
 import { estimateWidth14, measureText, vScrollIntoView } from "./utils";
-import DomSignal from "absol/src/HTML5/DomSignal";
 import SelectListBox from "./SelectListBox";
+import DelaySignal from "absol/src/HTML5/DelaySignal";
 
 /***
  * @extends Follower
  * @constructor
  */
 function DualSelectBox() {
-    this.$domSignal = _('attachhook').addTo(this);
-    this.domSignal = new DomSignal(this.$domSignal);
+    this.domSignal = new DelaySignal();
     this.domSignal.on('scrollIntoSelected', this.scrollIntoSelected.bind(this));
     this._items = [];
     this._value = [null, null];
