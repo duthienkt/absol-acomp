@@ -159,8 +159,7 @@ MultiCheckMenu.property.isFocus = {
         this._isFocus = !!value;
         if (this._isFocus) {
             thisSM.off('click', this.eventHandler.click);
-            document.body.appendChild(this.$selectlistBox);
-            this.$selectlistBox.domSignal.$attachhook.emit('attached');
+            this.$selectlistBox.addTo(document.body);
             var bound = this.getBoundingClientRect();
             this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 15.5) + 'px');
             this.$selectlistBox.refollow();
