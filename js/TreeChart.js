@@ -189,7 +189,6 @@ TreeChart.prototype._fixWidth = function () {
         bound = elt.$childCtn.getBoundingClientRect();
         cBound = elt.$childCtn.getBoundingRecursiveRect(100);
         if (cBound.width > bound.width) {
-            console.log(elt.$childCtn)
             elt.$childCtn.addStyle('width', cBound.width + 'px');
         }
     };
