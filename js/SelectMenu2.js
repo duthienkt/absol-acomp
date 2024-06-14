@@ -41,16 +41,23 @@ function SelectMenu() {
             preupdateposition: this.eventHandler.preUpdateListPosition
         }
     });
+    if (this.$selectlistBox.cancelWaiting) this.$selectlistBox.cancelWaiting();
     this.widthLimit = this.$selectlistBox.widthLimit;
     this.addStyle('--as-width-limit', this.$selectlistBox.widthLimit + 'px');
 
+    var firstCheckView = false;
+    var this1 = this;
     var checkView = () => {
-        if (this.isDescendantOf(document.body)) {
+        if (this1.isDescendantOf && this1.isDescendantOf(document.body)) {
             setTimeout(checkView, 5000);
+            firstCheckView = true;
+        }
+        else if (firstCheckView) {
+            setTimeout(checkView, 1000);
         }
         else {
-            if (this.$selectlistBox.searchMaster)
-                this.$selectlistBox.searchMaster.destroy();
+            if (this1.$selectlistBox.searchMaster)
+                this1.$selectlistBox.searchMaster.destroy();
         }
     }
     setTimeout(checkView, 3000);
@@ -117,13 +124,14 @@ SelectMenu.prototype.init = function (props) {
 
 
 SelectMenu.prototype.revokeResource = function () {
-    this.$selectlistBox.revokeResource();
+    // return;
+    // this.$selectlistBox.revokeResource();
 };
 
 SelectMenu.prototype.selfRemove = function () {
-    setTimeout(()=>{
+    setTimeout(() => {
         if (!this.parentElement) this.revokeResource();
-    },100);
+    }, 100);
     this.remove();
 }
 
@@ -201,8 +209,8 @@ SelectMenu.property.isFocus = {
         if (this._isFocus === value) return;
         this._isFocus = !!value;
         if (this._isFocus) {
-            document.body.appendChild(this.$selectlistBox);
-            this.$selectlistBox.domSignal.$attachhook.emit('attached');
+            this.$selectlistBox.addTo(document.body);
+            // this.$selectlistBox.domSignal.$attachhook.emit('attached');
             var bound = this.getBoundingClientRect();
             this.$selectlistBox.addStyle('min-width', bound.width + 'px');
             this.$selectlistBox.refollow();
