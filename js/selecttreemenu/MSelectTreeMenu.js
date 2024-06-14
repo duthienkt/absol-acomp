@@ -51,6 +51,7 @@ function MSelectTreeMenu() {
      * @type {MTreeModal}
      */
     this.$selectlist = _({ tag: MTreeModal });
+    this.$selectlist.cancelWaiting();
 
     this.$selectlist.on('pressitem', this.eventHandler.pressItem, true)
         .on('pressout', this.eventHandler.pressOut)
