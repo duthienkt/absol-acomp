@@ -1,5 +1,11 @@
 import TextMeasureData from "./TextMeasureData";
+import { isDomNode } from "absol/src/HTML5/Dom";
 
+
+/**
+ * best module
+ * @constructor
+ */
 function TextMeasure() {
     this.$canvas = null;
     this.data = {};
@@ -8,6 +14,25 @@ function TextMeasure() {
     // this._makeFontSize('Times New Roman');
     // this._makeFontSize('Arial');
 }
+
+TextMeasure.prototype.exportCode = function () {
+    var obj = 'self.absol.TextMeasure';
+    var code = [
+        'if (!self.absol) self.absol = {};',
+        obj + ' = {};',
+        obj+'.data = '+ JSON.stringify(this.data)+';'
+    ];
+    Object.keys(this.constructor.prototype).forEach(key=>{
+        var val = this[key];
+        if (typeof val === "function") {
+            code.push(obj+'.'+key+' = '+ val+';\n');
+        }
+        else if (!isDomNode(val)) {
+            //todo
+        }
+    })
+    return code.join('\n');
+};
 
 TextMeasure.prototype._loadComputedData = function () {
     var thisO = this;
@@ -147,5 +172,7 @@ TextMeasure.prototype.measureTextByCanvas = function (text, font) {
     return metrics;
 };
 
+var instance = new TextMeasure();
 
-export default new TextMeasure();
+export default instance;
+
