@@ -21,6 +21,8 @@ function MSelectMenu() {
         tag: MListModal
     });
 
+    this.$selectlist.cancelWaiting();
+
     var checkView = () => {
         if (this.isDescendantOf(document.body)) {
             setTimeout(checkView, 10000);
@@ -189,9 +191,12 @@ MSelectMenu.property.isFocus = {
         if (this.readOnly || this.disabled) return;
         this._isFocus = value;
         if (value) {
+            this.$selectlist.addTo(document.body);
+            if (this.$selectlist.$attachhook) {
+                this.$selectlist.$attachhook.emit('attached');
+            }
             thisSM.$selectlist.viewListAt(0);
             thisSM.$selectlist.viewListAtFirstSelected();
-            this.$selectlist.addTo(document.body);
         }
         else {
             this.$selectlist.selfRemove();

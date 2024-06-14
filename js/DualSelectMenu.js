@@ -25,6 +25,7 @@ function DualSelectMenu() {
             close: this.eventHandler.boxClose
         }
     });
+    this.$box.cancelWaiting();
     this.$item = $('.absol-selectlist-item', this);
     this.on('click', this.eventHandler.click);
     OOP.drillProperty(this, this.$box, 'enableSearch');
@@ -144,7 +145,7 @@ DualSelectMenu.property.isFocus = {
         }
         else {
             this.removeClass('as-focus');
-            this.$box.remove();
+            this.$box.selfRemove();
             this.$box.resetSearchState();
             document.removeEventListener('click', self.eventHandler.clickOut);
             setTimeout(function () {
