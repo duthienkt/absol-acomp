@@ -35,6 +35,7 @@ function SelectTreeLeafBox() {
     this.$content = $('.as-select-tree-leaf-box-content', this);
     this._savedStatus = {};
     this.estimateSize = { width: 0, height: 0 };
+    if (this.cancelWaiting) this.cancelWaiting();
 
     /**
      * @name items
@@ -126,7 +127,7 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
         status = 'close';
     }
     if (isBranchStatus(status) && isBranchStatus(savedStatus[keyStringOf(item.value)])) {
-        status = savedStatus[item.value];
+        status = savedStatus[keyStringOf(item.value)];
     }
 
     var nodeElt = _({
@@ -148,7 +149,7 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
         press: function (event) {
             if (isBranchStatus(nodeElt.status)) {
                 nodeElt.status = invertStatus(nodeElt.status)
-                savedStatus[item.value] = nodeElt.status;
+                savedStatus[keyStringOf(item.value)] = nodeElt.status;
                 self.updatePosition();
             }
             else if (isLeaf && !item.noSelect) {
@@ -347,11 +348,11 @@ SelectTreeLeafBox.prototype._search = function (query) {
             var item = Object.assign({}, holder.item);
             if (!ignore && holder.children && holder.children.length > 0) {
                 if (holder.childrenScore >= midScore) {
-                    savedStatus[item.value] = 'open';
+                    savedStatus[keyStringOf(item.value)] = 'open';
                     item.items = filterTree(holder.children, false);
                 }
                 else {
-                    savedStatus[item.value] = 'close';
+                    savedStatus[keyStringOf(item.value)] = 'close';
                     item.items = filterTree(holder.children, true);
                 }
             }
@@ -391,6 +392,7 @@ SelectTreeLeafBox.eventHandler.searchModify = function () {
     }
     var searchData = this._searchCache[query];
     searchData.savedStatus = Object.assign(searchData.savedStatus, searchData.originSavedStatus);
+    console.log(searchData)
     for (var val in searchData.dict) {
         if (isBranchStatus(searchData.dict[val].status)) {
             if (searchData.savedStatus[val]) {
