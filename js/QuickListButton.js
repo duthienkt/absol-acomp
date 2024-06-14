@@ -30,11 +30,11 @@ function QuickListButton() {
 }
 
 
-QuickListButton.$follower = _('follower.as-quick-list-button-follower');
 
 QuickListButton.getFollower = function () {
     if (!QuickListButton.$follower)
         QuickListButton.$follower = _('follower.as-quick-list-button-follower');
+    QuickListButton.$follower.cancelWaiting();
     return QuickListButton.$follower;
 };
 

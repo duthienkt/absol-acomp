@@ -1,6 +1,6 @@
 import ACore, { _, $ } from '../ACore';
 import MultiCheckTreeLeafBox from "./MultiCheckTreeLeafBox";
-import SelectTreeLeafMenu from "./SelectTreeLeafMenu";
+import SelectTreeLeafMenu, { STLBoxController } from "./SelectTreeLeafMenu";
 import SelectBoxItem from "./SelectBoxItem";
 import MultiSelectMenu from "./MultiSelectMenu";
 import OOP from "absol/src/HTML5/OOP";
@@ -26,6 +26,8 @@ function MultiCheckTreeLeafMenu() {
 
     this.on('click', this.eventHandler.click);
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
+    this.boxCtrl = new STLBoxController(this);
+    OOP.drillProperty(this, this.boxCtrl, 'isFocus');
 }
 
 MultiCheckTreeLeafMenu.tag = 'MultiCheckTreeLeafMenu'.toLowerCase();
@@ -130,7 +132,6 @@ MultiCheckTreeLeafMenu.property.values = {
 };
 
 
-MultiCheckTreeLeafMenu.property.isFocus = SelectTreeLeafMenu.property.isFocus;
 
 MultiCheckTreeLeafMenu.property.disabled = MultiSelectMenu.property.disabled;
 MultiCheckTreeLeafMenu.property.readOnly = MultiSelectMenu.property.readOnly;

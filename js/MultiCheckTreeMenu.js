@@ -1,6 +1,5 @@
 import CheckTreeBox from "./CheckTreeBox";
 import ACore, { _, $, $$ } from "../ACore";
-import CPUViewer from "./CPUViewer";
 import SelectBoxItem from "./SelectBoxItem";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
@@ -248,13 +247,12 @@ MultiCheckTreeMenu.property.isFocus = {
         value = !!value;
         var c = this.hasClass('as-focus');
         if (value === c) return;
-        CPUViewer.hold();
         if (value) {
             self.off('click', self.eventHandler.click);
             var bound = this.getBoundingClientRect();
             this.$checkTreeBox.addStyle('min-width', bound.width + 'px');
             this.addClass('as-focus');
-            document.body.appendChild(this.$checkTreeBox);
+            this.$checkTreeBox.addTo(document.body);
             this.$checkTreeBox.updatePosition();
             if (this._focusTimeout > 0) {
                 clearTimeout(this._focusTimeout);
@@ -282,7 +280,6 @@ MultiCheckTreeMenu.property.isFocus = {
             // document.addEventListener('mouseup', waitMouseUp);why?
             setTimeout(waitMouseUp, 100);
         }
-        CPUViewer.release();
     },
     get: function () {
         return this.hasClass('as-focus');
@@ -317,7 +314,7 @@ MultiCheckTreeMenu.property.values = {
      * @this MultiCheckTreeMenu
      */
     get: function () {
-        if (this.isFocus) return  this._values.slice();
+        if (this.isFocus) return this._values.slice();
         return this.$checkTreeBox.values.slice();
     }
 };
@@ -353,8 +350,8 @@ MultiCheckTreeMenu.eventHandler = {};
  */
 MultiCheckTreeMenu.eventHandler.clickOut = function (event) {
     if ((event.target.hasClass && event.target.hasClass('am-modal')) || event.target === this || event.target === this.$itemCtn || (!hitElement(this, event) && !hitElement(this.$checkTreeBox, event))) {
-        this.commitView();
         this.isFocus = false;
+        this.commitView();
     }
 };
 
@@ -409,8 +406,7 @@ MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
     var newValues = this.$checkTreeBox.viewValues.slice();
     this.viewValues(newValues);
     this._values = newValues;
-    this.emit('change', { type: 'change', target: this }, this);//todo
-
+    this.emit('change', { type: 'change', target: this }, this);
 };
 
 
