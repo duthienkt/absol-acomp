@@ -128,6 +128,7 @@ function SCSMDropdown(elt) {
         class: ['as-select-color-scheme-menu-dropdown', 'as-dropdown-box-common-style'],
         child: {}
     });
+    this.$follower.cancelWaiting();
 }
 
 
@@ -280,7 +281,7 @@ Object.defineProperty(SCSMComboBoxController.prototype, 'isFocus', {
         else {
             this.elt.on('click', this.ev_click);
             document.removeEventListener('click', this.ev_clickOut);
-            this.elt.dropdown.$follower.remove();
+            this.elt.dropdown.$follower.selfRemove();
             this.elt.dropdown.$follower.followTarget = null;
         }
     },

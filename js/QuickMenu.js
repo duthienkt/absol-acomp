@@ -296,6 +296,8 @@ QuickMenu.$follower = _({
     }
 });
 
+QuickMenu.$follower.cancelWaiting();
+
 /***
  *
  * @type {null|QuickMenuInstance}
