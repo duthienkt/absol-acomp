@@ -1,12 +1,12 @@
 import '../css/selectlistbox.css';
 import ACore from "../ACore";
 import { measureListSize, releaseItem, requireItem } from "./SelectList";
-import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import { depthIndexingByValue, indexingByValue } from "./list/listIndexing";
 import { copySelectionItemArray, keyStringOf, measureText, revokeResource } from "./utils";
 import ListSearchMaster from "./list/ListSearchMaster";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import DelaySignal from "absol/src/HTML5/DelaySignal";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -35,7 +35,7 @@ var makeSearchItem = (it, idx2key) => {
     it.valueKey = valueKey;
     idx2key.push(valueKey);
     if (it.items && it.items.length > 0 && it.items.map) {
-        res.items = it.items.map(makeSearchItem);
+        res.items = it.items.map(cIt=>makeSearchItem(cIt, idx2key));
     }
     return res;
 };
@@ -131,8 +131,8 @@ SelectListBox.prototype.revokeResource = function () {
 };
 
 SelectListBox.prototype._initDomHook = function () {
-    this.$domSignal = $('attachhook.as-dom-signal', this);
-    this.domSignal = new DomSignal(this.$domSignal);
+    if (this.$attachhook) this.$attachhook.cancelWaiting();
+    this.domSignal = new DelaySignal();
     this.domSignal.on('viewListAt', this.viewListAt.bind(this));
     this.domSignal.on('viewListAtFirstSelected', this.viewListAtFirstSelected.bind(this));
     this.domSignal.on('viewListAtCurrentScrollTop', this.viewListAtCurrentScrollTop.bind(this));
@@ -264,14 +264,15 @@ SelectListBox.prototype._updateSelectedItem = function () {
  */
 SelectListBox.prototype.viewListAt = function (offset) {
     if (!this.isDescendantOf(document.body)) {
-        this.domSignal.emit('viewListAt', offset);
+        this.$attachhook.once('attached', ()=>{
+            this.domSignal.emit('viewListAt', offset);
+        });
         return;
     }
     var fontSize = this.$listScroller.getFontSize() || 14;
     offset = Math.max(0, Math.min(offset, this._displayItems.length - 1));
     var screenSize = getScreenSize();
     var maxItem = Math.ceil(Math.max(window.screen.height, screenSize.height) / this.itemHeight);
-    var contentBound = this.$content.getBoundingClientRect();
 
     this._pageOffsets[0] = Math.max(offset - maxItem, 0);
     for (var i = 1; i <= this.preLoadN; ++i) {
