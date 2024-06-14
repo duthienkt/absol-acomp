@@ -1,7 +1,10 @@
-import  '../css/hruler.css';
+import '../css/hruler.css';
 import Dom from "absol/src/HTML5/Dom";
 import ACore from "../ACore";
 import AElement from "absol/src/HTML5/AElement";
+import noop from "absol/src/Code/noop";
+import { revokeResource } from "absol/src/DataStructure/Object";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -11,12 +14,12 @@ var $ = ACore.$;
  * @constructor
  */
 function HRuler() {
-    var self = this;
-    this.$attachHook = _('attachhook').on('error', function () {
-        this.updateSize = self.update.bind(self);
-        Dom.addToResizeSystem(this);
-        this.updateSize();
-    }).addTo(self);
+    this.$attachHook = _('attachhook').on('attached', () => {
+        this.requestUpdateSize = this.update.bind(this);
+        ResizeSystem.add(this.$attachHook);
+        this.requestUpdateSize();
+    }).addTo(this);
+    this.$attachHook.requestRevokeResource = this.revokeResource.bind(this);
 
     this.$lines = [];
     this.$numbers = [];
@@ -26,6 +29,23 @@ function HRuler() {
     this._major = 10;
     this.$measureTarget = null;
     this._valueFloat = 'left';
+
+    /**
+     * @type {number}
+     * @name major
+     * @memberof HRuler#
+     */
+    /**
+     * @type {number}
+     * @name spacing
+     * @memberof HRuler#
+     */
+
+    /**
+     * @type {boolean}
+     * @name inverse
+     * @memberof HRuler#
+     */
 }
 
 HRuler.tag = 'hruler';
@@ -48,6 +68,7 @@ HRuler.prototype.update = function () {
     var fontSize = this.getFontSize();
     var measureBound;
     var bound = this.getBoundingClientRect();
+    if (!bound.width || !bound.height) return;
 
     var contentBound = {
         left: bound.left + 1,
@@ -57,6 +78,8 @@ HRuler.prototype.update = function () {
         width: bound.width - 2,
         height: bound.height - 2
     };
+
+
     if (this.$measureTarget) {
         measureBound = this.$measureTarget.getBoundingClientRect();
     }
@@ -65,13 +88,14 @@ HRuler.prototype.update = function () {
     }
 
 
-    var startOfset = (measureBound[this._valueFloat] - contentBound[this._valueFloat]) * (this.inverse ? -1 : 1) % this._spacing;
-    if (startOfset < 0) startOfset += this._spacing;
+    var startOffset = (measureBound[this._valueFloat] - contentBound[this._valueFloat]) * (this.inverse ? -1 : 1) % this._spacing;
+    if (startOffset < 0) startOffset += this._spacing;
 
 
-    var lineIndexOfset = Math.round(((contentBound[this._valueFloat] - measureBound[this._valueFloat]) * (this.inverse ? -1 : 1) + startOfset) / this._spacing);
+    var lineIndexOffset = Math.round(((contentBound[this._valueFloat] - measureBound[this._valueFloat]) * (this.inverse ? -1 : 1) + startOffset) / this._spacing);
 
-    var lineCount = Math.floor((contentBound.width - startOfset) / this._spacing) + 1;
+    var lineCount = Math.floor((contentBound.width - startOffset) / this._spacing) + 1;
+    lineCount = Math.max(0, lineCount);
 
     while (this.$lines.length < lineCount) {
         this.$lines.push(_('.as-hruler-line'));
@@ -81,13 +105,13 @@ HRuler.prototype.update = function () {
     var lineElt;
     for (i = 0; i < lineCount; ++i) {
         lineElt = this.$lines[i];
-        if ((i + lineIndexOfset) % this._major == 0) {
+        if ((i + lineIndexOffset) % this._major === 0) {
             lineElt.addClass('major');
         }
         else {
             lineElt.removeClass('major');
         }
-        lineElt.addStyle(this._valueFloat, startOfset + this._spacing * i - 0.5 + 'px');
+        lineElt.addStyle(this._valueFloat, startOffset + this._spacing * i - 0.5 + 'px');
     }
 
     while (this._viewingLineCount < lineCount) {
@@ -98,25 +122,25 @@ HRuler.prototype.update = function () {
         this.$lines[--this._viewingLineCount].remove();
     }
 
-    var numberCount = Math.floor((lineCount + lineIndexOfset - 1) / this._major) - Math.ceil(lineIndexOfset / this._major) + 1;
+    var numberCount = Math.floor((lineCount + lineIndexOffset - 1) / this._major) - Math.ceil(lineIndexOffset / this._major) + 1;
 
     while (this.$numbers.length < numberCount) {
         this.$numbers.push(_('.as-hruler-major-number'));
     }
     var numberElt;
     var number;
-    var majorStartOfset = startOfset;
-    if (lineIndexOfset > 0) {
-        majorStartOfset += (this._major - lineIndexOfset % this._spacing) * this._spacing;
+    var majorStartOfset = startOffset;
+    if (lineIndexOffset > 0) {
+        majorStartOfset += (this._major - lineIndexOffset % this._spacing) * this._spacing;
     }
     else {
-        majorStartOfset += (this._major - (this._spacing + lineIndexOfset % this._spacing)) * this._spacing;
+        majorStartOfset += (this._major - (this._spacing + lineIndexOffset % this._spacing)) * this._spacing;
 
     }
 
 
     for (i = 0; i < numberCount; ++i) {
-        number = (Math.ceil(lineIndexOfset / this._major) + i) * this._spacing * this._major;
+        number = (Math.ceil(lineIndexOffset / this._major) + i) * this._spacing * this._major;
         numberElt = this.$numbers[i];
         if (numberElt.__cacheNumber__ != number) {
             numberElt.__cacheNumber__ = number;
@@ -134,6 +158,14 @@ HRuler.prototype.update = function () {
     }
 };
 
+HRuler.prototype.revokeResource = function () {
+  this.$attachHook.cancelWaiting();
+  this.$measureTarget = null;
+  revokeResource(this.$lines);
+  revokeResource(this.$numbers);
+  this.clearChild();
+  this.revokeResource = noop;
+};
 
 HRuler.property = {};
 HRuler.property.major = {
@@ -166,7 +198,7 @@ HRuler.property.inverse = {
         this.update();
     },
     get: function () {
-        return this._valueFloat == 'right';
+        return this._valueFloat === 'right';
     }
 };
 

@@ -1,12 +1,17 @@
 import  '../css/vruler.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
+import { revokeResource } from "./utils";
+import noop from "absol/src/Code/noop";
 
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/**
+ * @extends AElement
+ * @constructor
+ */
 function VRuler() {
     var self = this;
     this.$attachHook = _('attachhook').on('error', function () {
@@ -23,6 +28,23 @@ function VRuler() {
     this._spacing = 10;
     this._major = 10;
     this._valueFloat = 'top';
+
+    /**
+     * @type {number}
+     * @name major
+     * @memberof VRuler#
+     */
+    /**
+     * @type {number}
+     * @name spacing
+     * @memberof VRuler#
+     */
+
+    /**
+     * @type {boolean}
+     * @name inverse
+     * @memberof VRuler#
+     */
 }
 
 VRuler.tag = 'vruler';
@@ -33,6 +55,15 @@ VRuler.render = function () {
     });
 };
 
+VRuler.prototype.revokeResource = function () {
+    this.$measureTarget = null;
+    this.$attachHook.cancelWaiting();
+    revokeResource(this.$lines);
+    revokeResource(this.$numbers);
+    this.clearChild();
+    this.revokeResource = noop;
+}
+
 VRuler.prototype.measureElement = function (elt) {
     if (typeof elt == "string") elt = $(elt);
     this.$measureTarget = elt;
@@ -41,9 +72,11 @@ VRuler.prototype.measureElement = function (elt) {
 
 
 VRuler.prototype.update = function () {
-    var fontSize = this.getFontSize();
+    console.log('update')
+    var fontSize = this.getFontSize() || 14;
     var measureBound;
     var bound = this.getBoundingClientRect();
+    if (!bound.width ||!bound.height) return;
     var contentBound = {
         left: bound.left + 1,
         right: bound.right - 1,
@@ -59,13 +92,13 @@ VRuler.prototype.update = function () {
         measureBound = contentBound;
     }
 
-    var startOfset = (measureBound[this._valueFloat] - contentBound[this._valueFloat]) * (this.inverse ? -1 : 1) % this._spacing;
-    if (startOfset < 0) startOfset += this._spacing;
+    var startOffset = (measureBound[this._valueFloat] - contentBound[this._valueFloat]) * (this.inverse ? -1 : 1) % this._spacing;
+    if (startOffset < 0) startOffset += this._spacing;
 
 
-    var lineIndexOfset = Math.round(((contentBound[this._valueFloat] - measureBound[this._valueFloat]) * (this.inverse ? -1 : 1) + startOfset) / this._spacing);
+    var lineIndexOffset = Math.round(((contentBound[this._valueFloat] - measureBound[this._valueFloat]) * (this.inverse ? -1 : 1) + startOffset) / this._spacing);
 
-    var lineCount = Math.floor((contentBound.height - startOfset) / this._spacing) + 1;
+    var lineCount = Math.floor((contentBound.height - startOffset) / this._spacing) + 1;
 
     while (this.$lines.length < lineCount) {
         this.$lines.push(_('.as-vruler-line'));
@@ -74,40 +107,44 @@ VRuler.prototype.update = function () {
     var lineElt;
     for (i = 0; i < lineCount; ++i) {
         lineElt = this.$lines[i];
-        if ((i + lineIndexOfset) % this._major == 0) {
+        if ((i + lineIndexOffset) % this._major == 0) {
             lineElt.addClass('major');
         }
         else {
             lineElt.removeClass('major');
         }
-        lineElt.addStyle(this._valueFloat, startOfset + this._spacing * i - 0.5 + 'px');
+        lineElt.addStyle(this._valueFloat, startOffset + this._spacing * i - 0.5 + 'px');
+    }
+    try {
+        while (this._viewingLineCount < lineCount) {
+            this.$lines[this._viewingLineCount++].addTo(this);
+        }
+
+        while (this._viewingLineCount > lineCount) {
+            this.$lines[--this._viewingLineCount].remove();
+        }
+    } catch (e) {
+
     }
 
-    while (this._viewingLineCount < lineCount) {
-        this.$lines[this._viewingLineCount++].addTo(this);
-    }
 
-    while (this._viewingLineCount > lineCount) {
-        this.$lines[--this._viewingLineCount].remove();
-    }
-
-    var numberCount = Math.floor((lineCount + lineIndexOfset - 1) / this._major) - Math.ceil(lineIndexOfset / this._major) + 1;
+    var numberCount = Math.floor((lineCount + lineIndexOffset - 1) / this._major) - Math.ceil(lineIndexOffset / this._major) + 1;
 
     while (this.$numbers.length < numberCount) {
         this.$numbers.push(_('.as-vruler-major-number'));
     }
     var numberElt;
     var number;
-    var majorStartOfset = startOfset;
-    if (lineIndexOfset > 0) {
-        majorStartOfset += (this._major - lineIndexOfset % this._spacing) * this._spacing;
+    var majorStartOfset = startOffset;
+    if (lineIndexOffset > 0) {
+        majorStartOfset += (this._major - lineIndexOffset % this._spacing) * this._spacing;
     }
     else {
-        majorStartOfset += (this._major - (this._spacing + lineIndexOfset % this._spacing)) * this._spacing;
+        majorStartOfset += (this._major - (this._spacing + lineIndexOffset % this._spacing)) * this._spacing;
     }
 
     for (i = 0; i < numberCount; ++i) {
-        number = (Math.ceil(lineIndexOfset / this._major) + i) * this._spacing * this._major;
+        number = (Math.ceil(lineIndexOffset / this._major) + i) * this._spacing * this._major;
         numberElt = this.$numbers[i];
         if (numberElt.__cacheNumber__ != number) {
             numberElt.__cacheNumber__ = number;
@@ -120,9 +157,13 @@ VRuler.prototype.update = function () {
         this.$numbers[this._viewingNumberCount++].addTo(this);
     }
 
-    while (this._viewingNumberCount > numberCount) {
-        this.$numbers[--this._viewingNumberCount].remove();
+    try {
+        while (this._viewingNumberCount > numberCount) {
+            this.$numbers[--this._viewingNumberCount].remove();
+        }
+    } catch (e) {
     }
+
 };
 
 
@@ -158,10 +199,10 @@ VRuler.property.inverse = {
         this.update();
     },
     get: function () {
-        return this._valueFloat == 'bottom';
+        return this._valueFloat === 'bottom';
     }
 };
 
-ACore.install('vruler', VRuler);
+ACore.install(VRuler);
 
 export default VRuler;
