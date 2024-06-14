@@ -1,4 +1,8 @@
-
+/**
+ * @deprecated
+ * @param opts
+ * @constructor
+ */
 function TextMeasurement(opts) {
     opts = opts || {};
     this.chars = opts.chars || (" !\"$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
@@ -9,6 +13,7 @@ function TextMeasurement(opts) {
 
     this.computed = Object.assign({}, opts.computed || {});
 }
+
 
 
 TextMeasurement.prototype.compute = function (font) {
@@ -78,3 +83,4 @@ TextMeasurement.prototype.measureTextWidth = function (text, font) {
 };
 
 export default TextMeasurement;
+
