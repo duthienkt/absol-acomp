@@ -6,6 +6,7 @@ import { cleanMenuItemProperty } from "./utils";
 import Follower from "./Follower";
 import { copyEvent, hitElement } from "absol/src/HTML5/EventEmitter";
 import safeThrow from "absol/src/Code/safeThrow";
+import noop from "absol/src/Code/noop";
 
 var isMobile = BrowserDetector.isMobile;
 var _ = ACore._;
@@ -71,6 +72,12 @@ QuickMenuInstance.prototype._init = function () {
     }
     else
         this.elt.addEventListener('click', this._onClick, true);
+    if (!this.elt.revokeResource) {
+        this.elt.revokeResource = ()=>{
+            this.elt.revokeResource = noop;
+            this.remove();
+        }
+    }
 };
 
 QuickMenuInstance.prototype._deinit = function () {
@@ -78,12 +85,16 @@ QuickMenuInstance.prototype._deinit = function () {
     this.elt.classList.remove('as-quick-menu-trigger');
     if (this.opt.triggerEvent) {
         this.elt.removeEventListener(this.opt.triggerEvent, this._onClick, true);
-
-
     }
     else {
         this.elt.removeEventListener('click', this._onClick, true);
-
+    }
+    this.elt = null;
+    this.opt = null;
+    for (var key in this) {
+        if (key.startsWith('_on')) {
+            this[key] = noop;
+        }
     }
 };
 
