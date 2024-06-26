@@ -901,15 +901,19 @@ DateInput2.prototype._attachCalendar = function () {
     this.share.$holdingInput = this;
     this.share.$follower.followTarget = this;
     this.share.$follower.sponsorElement = this;
-    if (this.share.$calendar.$attachHook) this.share.$calendar.$attachHook.emit('attached');
     this.share.$calendar.level = this.calendarLevel;
     this.share.$calendar.startDayOfWeek = this.startDayOfWeek || 0;
     this.share.$calendar.min = this._min;
     this.share.$calendar.max = this._max;
     this.share.$calendar.on('pick', this.eventHandler.calendarPick);
     this.share.$calendar.selectedDates = this.value ? [this.value] : [];
-    this.share.$calendar.viewDate = this.value ? this.value
-        : new Date(Math.max(this._min.getTime(), Math.min(this._max.getTime(), new Date().getTime())));
+    if (this.share.$calendar.$attachHook) this.share.$calendar.$attachHook.emit('attached');
+
+    this.share.$calendar.sync = this.share.$calendar.sync.then(() => {
+        this.share.$calendar.viewDate = this.value ? this.value
+            : new Date(Math.max(this._min.getTime(), Math.min(this._max.getTime(), new Date().getTime())));
+    });
+
     setTimeout(function () {
         document.body.addEventListener('click', this.eventHandler.clickOut);
         this.share.$follower.removeStyle('visibility');
