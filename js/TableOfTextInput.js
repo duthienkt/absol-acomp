@@ -806,6 +806,7 @@ TEIFormatTool.prototype.commands = {
          * @this TEIFormatTool
          */
         exec: function () {
+            if (!this.focusCell) return;
             var colN = this.table.rows[0].cells.length;
             var focusRow = this.focusCell.row;
             var idx = this.table.rows.indexOf(focusRow);
@@ -824,6 +825,7 @@ TEIFormatTool.prototype.commands = {
          * @this TEIFormatTool
          */
         exec: function () {
+            if (!this.focusCell) return;
             var colN = this.table.rows[0].cells.length;
             var focusRow = this.focusCell.row;
             var idx = this.table.rows.indexOf(focusRow);
@@ -848,6 +850,7 @@ TEIFormatTool.prototype.commands = {
          * @this TEIFormatTool
          */
         exec: function () {
+            if (!this.focusCell) return;
             var focusRow = this.focusCell.row;
             var idx = focusRow.cells.indexOf(this.focusCell);
             this.table.rows.forEach(row => {
@@ -871,6 +874,7 @@ TEIFormatTool.prototype.commands = {
          * @this TEIFormatTool
          */
         exec: function () {
+            if (!this.focusCell) return;
             var focusRow = this.focusCell.row;
             var idx = this.table.rows.indexOf(focusRow);
             var colIdx = focusRow.cells.indexOf(this.focusCell);
