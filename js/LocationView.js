@@ -62,7 +62,7 @@ function LVPolyline(viewerElt, data) {
     }));
     this.polyline = new google.maps.Polyline(this.polylineData);
     this.markers = this.polylineData.path.map(function (crd, i) {
-        var mkr = new google.maps.Marker({
+        var mkr = new google.maps.marker.AdvancedMarkerElement({
             position: crd,
             // sName: data.name || data.id || this.id,
             map: this.map,
@@ -154,7 +154,7 @@ function LVPoints(viewerElt, data) {
         return;
     }
     this.map = viewerElt.map;
-    this.marker = new google.maps.Marker({
+    this.marker = new google.maps.marker.AdvancedMarkerElement({
         position: this.latLng,
         // sName: data.name || data.id || this.id,
         // map: this.map,
@@ -272,7 +272,7 @@ LocationView.property.value = {
             this.marker = null;
         }
         if (latlng && value) {
-            this.marker = new google.maps.Marker({
+            this.marker = new google.maps.marker.AdvancedMarkerElement({
                 map: this.map,
                 position: latlng,
             });
