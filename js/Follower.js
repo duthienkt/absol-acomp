@@ -4,6 +4,7 @@ import Dom from "absol/src/HTML5/Dom";
 import Rectangle from "absol/src/Math/Rectangle";
 import AElement from "absol/src/HTML5/AElement";
 import AttachHook from "absol/src/HTML5/AttachHook";
+import { revokeResource } from "./utils";
 
 
 var _ = ACore._;
@@ -212,6 +213,14 @@ Follower.prototype.unfollow = function () {
     this._scrollTrackEventHandler = undefined;
 };
 
+Follower.prototype.revokeResource = function () {
+    this.$attachhook.cancelWaiting();
+    this.followTarget = null;
+    while (this.lastChild) {
+        revokeResource(this.lastChild);
+        this.removeChild(this.lastChild);
+    }
+};
 
 Follower.property = {};
 
@@ -228,7 +237,7 @@ Follower.property.followTarget = {
 
         if (Dom.isDomNode(elt)) {
             this.$followTarget = elt;
-            this._lastAncho = undefined;
+            this._lastAnchor = undefined;
             this.refollow();
         }
         else throw new Error("Invalid element");
