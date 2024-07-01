@@ -72,10 +72,22 @@
     border-bottom: 1px solid #dddddd;
 }
 
-.as-table-of-text-input-tool > button {
+.as-table-of-text-input-tool > button,
+.as-table-of-text-input-tool-group > button {
     height: 30px;
     width: 30px;
     vertical-align: middle;
+}
+
+
+.as-table-of-text-input-tool-group {
+    display: inline-block;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.as-table-of-text-input-tool-group:not(:last-child) {
+    border-right: 1px solid #dddddd;
 }
 
 
