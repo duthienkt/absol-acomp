@@ -3,6 +3,21 @@
 }
 
 
+.as-efficient-table-wrapper {
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    overflow-anchor: none !important;
+    scroll-snap-stop: normal !important;
+    overscroll-behavior: unset !important;
+    scroll-behavior: unset !important;
+}
+
+.as-efficient-table-wrapper > .as-dynamic-table {
+    position: relative;
+}
+
+
 .as-dynamic-table-wrapper {
     --dt-content-height: 0px;
     --dt-scroll-bar-width: 17px;

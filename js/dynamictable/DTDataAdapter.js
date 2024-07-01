@@ -26,6 +26,7 @@
 import DTTable from "./DTTable";
 import { _, $ } from "../../ACore";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import AElement from "absol/src/HTML5/AElement";
 
 
 var overrideNames = ['insertChildBefore', 'appendChild', 'remove', 'removeChild',
@@ -36,14 +37,16 @@ var overrideFunctions = overrideNames.map((name, i) => {
     var name1 = overrideName1s[i];
     if (i < 2) {
         return function () {
-            hookContentChange(arguments[0]);
+            // hookContentChange(arguments[0]);
             ResizeSystem.requestUpdateUpSignal(this, true);
             return this[name1].apply(this, arguments);
         }
     }
     else {
         return function () {
-            ResizeSystem.requestUpdateUpSignal(this, true);
+            if (arguments[0] === 'display') {
+                ResizeSystem.requestUpdateUpSignal(this, true);
+            }
             return this[name1].apply(this, arguments);
         }
     }
@@ -55,16 +58,27 @@ export var hookContentChange = elt => {
     if (elt.contentHooked) return;
     elt.contentHooked = true;
     if (!elt.selfRemove) $(elt);
-    overrideNames.forEach((name, i) => {
-        var name1 = overrideName1s[i];
-        elt[name1] = elt[name];
-        elt[name] = overrideFunctions[i];
-    });
-    if (elt._azar_extendTags)
+
+    if (elt._azar_extendTags) {
+        ['addStyle', 'removeStyle'].forEach((name, i) => {
+            if (elt[name] !== AElement.prototype[name]) return;
+            var name1 = overrideName1s[i];
+            elt[name1] = elt[name];
+            elt[name] = overrideFunctions[i];
+        });
         for (var key in elt._azar_extendTags) {
             return;
         }
-    Array.prototype.map.call(elt.childNodes, sElt => hookContentChange(sElt));
+    }
+    else {
+        overrideNames.forEach((name, i) => {
+            if (elt[name] !== AElement.prototype[name]) return;
+            var name1 = overrideName1s[i];
+            elt[name1] = elt[name];
+            elt[name] = overrideFunctions[i];
+        });
+        Array.prototype.map.call(elt.childNodes, sElt => hookContentChange(sElt));
+    }
 }
 
 
