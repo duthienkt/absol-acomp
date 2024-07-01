@@ -144,6 +144,7 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
             var newText = this.$input.value;
             if (oldText === newText) return;
             var key = newText[sStart];
+            if (!key) return;//todo
             var fakeEvent = {
                 type: 'keydown',
                 preventDefault: noop,
