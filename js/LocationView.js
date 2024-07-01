@@ -4,6 +4,7 @@ import DomSignal from "absol/src/HTML5/DomSignal";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import Color from "absol/src/Color/Color";
 import MarkerClusterer from "./MarkerClusterer";
+import { getGoogleMarkerLib } from "./LocationPicker";
 
 var MARKER_RADIUS = 10;
 var MARKER_BORDER_COLOR = '#4945C8';
@@ -29,7 +30,6 @@ function generateColor(id) {
 // https://lab.daithangminh.vn/home_co/carddone/markerclusterer.js
 
 var loadMarkerClustererSync = null;
-
 
 
 var lastOpenInfo = null;
@@ -62,7 +62,7 @@ function LVPolyline(viewerElt, data) {
     }));
     this.polyline = new google.maps.Polyline(this.polylineData);
     this.markers = this.polylineData.path.map(function (crd, i) {
-        var mkr = new google.maps.marker.AdvancedMarkerElement({
+        var mkr = new google.maps.marker.Marker({
             position: crd,
             // sName: data.name || data.id || this.id,
             map: this.map,
@@ -154,7 +154,7 @@ function LVPoints(viewerElt, data) {
         return;
     }
     this.map = viewerElt.map;
-    this.marker = new google.maps.marker.AdvancedMarkerElement({
+    this.marker = new google.maps.marker.Marker({
         position: this.latLng,
         // sName: data.name || data.id || this.id,
         // map: this.map,
@@ -164,7 +164,7 @@ function LVPoints(viewerElt, data) {
             fillColor: data.color || generateColor(this.id).toString(),
             fillOpacity: 1,
             strokeWeight: 2,
-            strokeColor:  MARKER_BORDER_COLOR
+            strokeColor: MARKER_BORDER_COLOR
         },
     });
     // this.marker.setMap(this.map);
@@ -200,7 +200,12 @@ LVPoints.prototype.remove = function () {
  * @constructor
  */
 function LocationView() {
-    this.map = new google.maps.Map(this, { zoom: 8, center: new google.maps.LatLng(21.018755, 105.839729),  scaleControl: true });
+    this.map = new google.maps.Map(this, {
+        zoom: 8,
+        center: new google.maps.LatLng(21.018755, 105.839729),
+        scaleControl: true,
+        mapId: randomIdent()
+    });
     this.marker = null;
     this._value = null;
     this.$domSignal = _('attachhook').addTo(this);
@@ -267,16 +272,19 @@ LocationView.property.value = {
         latlng = latlng || new google.maps.LatLng(21.018755, 105.839729);
         this.map.setCenter(latlng || new google.maps.LatLng(21.018755, 105.839729));
         this._value = value;
-        if (this.marker) {
-            this.marker.setMap(null);
-            this.marker = null;
-        }
-        if (latlng && value) {
-            this.marker = new google.maps.marker.AdvancedMarkerElement({
-                map: this.map,
-                position: latlng,
-            });
-        }
+        getGoogleMarkerLib().then(() => {
+            if (this.marker) {
+                this.marker.setMap(null);
+                this.marker = null;
+            }
+            if (latlng && value) {
+                this.marker = new google.maps.marker.AdvancedMarkerElement({
+                    map: this.map,
+                    position: latlng,
+                });
+            }
+        })
+
     },
     get: function () {
         return this._value;
@@ -290,35 +298,38 @@ LocationView.property.polylines = {
             pll.remove();
         });
 
+        getGoogleMarkerLib().then(() => {
+            this.$polylines = polylines.map(function (pll) {
+                return new LVPolyline(this, pll);
+            }.bind(this));
+            var zoom;
+            var center;
+            var points = this.$polylines.reduce(function (ac, $polyline) {
+                return ac.concat($polyline.polylineData.path);
+            }, []);
 
-        this.$polylines = polylines.map(function (pll) {
-            return new LVPolyline(this, pll);
-        }.bind(this));
-        var zoom;
-        var center;
-        var points = this.$polylines.reduce(function (ac, $polyline) {
-            return ac.concat($polyline.polylineData.path);
-        }, []);
+            var bounds = points.reduce(function (ac, cr) {
+                ac.extend(cr);
+                return ac;
+            }, new google.maps.LatLngBounds());
 
-        var bounds = points.reduce(function (ac, cr) {
-            ac.extend(cr);
-            return ac;
-        }, new google.maps.LatLngBounds());
+            this.domSignal.once('update_view', function () {
+                if (points.length > 1) {
+                    zoom = getMapZoomLevel(this.getBoundingClientRect(), bounds);
+                    center = bounds.getCenter();
+                }
+                else {
+                    zoom = 17;
+                    center = points[0] || new google.maps.LatLng(21.018755, 105.839729);
+                }
+                zoom = Math.min(zoom, 17);
+                this.map.setZoom(zoom);
+                this.map.setCenter(center);
+            }.bind(this), 100);
+            this.domSignal.emit('update_view');
+        })
 
-        this.domSignal.once('update_view', function () {
-            if (points.length > 1) {
-                zoom = getMapZoomLevel(this.getBoundingClientRect(), bounds);
-                center = bounds.getCenter();
-            }
-            else {
-                zoom = 17;
-                center = points[0] || new google.maps.LatLng(21.018755, 105.839729);
-            }
-            zoom = Math.min(zoom, 17);
-            this.map.setZoom(zoom);
-            this.map.setCenter(center);
-        }.bind(this), 100);
-        this.domSignal.emit('update_view');
+
     },
     get: function () {
         return this._polylines;
@@ -345,57 +356,58 @@ LocationView.property.points = {
         });
         this._points = points || [];
 
+        getGoogleMarkerLib().then(() => {
+            var rp = this._points.reduce(function (ac, pointData) {
+                var id = pointData.id;
+                var point;
+                if (id && ac.dict[id]) {
+                    ac.dict[id].refData.push(pointData);
+                }
+                else {
+                    point = new LVPoints(this, pointData);
+                    ac.dict[point.id] = point;
+                    ac.arr.push(point);
+                }
 
-        var rp = this._points.reduce(function (ac, pointData) {
-            var id = pointData.id;
-            var point;
-            if (id && ac.dict[id]) {
-                ac.dict[id].refData.push(pointData);
-            }
-            else {
-                point = new LVPoints(this, pointData);
-                ac.dict[point.id] = point;
-                ac.arr.push(point);
-            }
+                return ac;
+            }.bind(this), { arr: [], dict: {} });
 
-            return ac;
-        }.bind(this), { arr: [], dict: {} });
+            this.$points = rp.arr;
 
-        this.$points = rp.arr;
+            var zoom;
+            var center;
+            var latLngs = this.$points.map(function (p) {
+                return p.latLng;
+            }, []).filter(function (x) {
+                return !!x;
+            });
+            var bounds = latLngs.reduce(function (ac, cr) {
+                ac.extend(cr);
+                return ac;
+            }, new google.maps.LatLngBounds());
 
-        var zoom;
-        var center;
-        var latLngs = this.$points.map(function (p) {
-            return p.latLng;
-        }, []).filter(function (x) {
-            return !!x;
+            var markers = this.$points.map(function (p) {
+                return p.marker;
+            }, []).filter(function (x) {
+                return !!x;
+            });
+            this.pointsCluster = new MarkerClusterer(this.map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+
+            this.domSignal.once('update_view', function () {
+                if (points.length > 1) {
+                    zoom = getMapZoomLevel(this.getBoundingClientRect(), bounds);
+                    center = bounds.getCenter();
+                }
+                else {
+                    zoom = 17;
+                    center = points[0] || new google.maps.LatLng(21.018755, 105.839729);
+                }
+                zoom = Math.min(zoom, 17);
+                this.map.setZoom(zoom);
+                this.map.setCenter(center);
+            }.bind(this), 100);
+            this.domSignal.emit('update_view');
         });
-        var bounds = latLngs.reduce(function (ac, cr) {
-            ac.extend(cr);
-            return ac;
-        }, new google.maps.LatLngBounds());
-
-        var markers = this.$points.map(function (p) {
-            return p.marker;
-        }, []).filter(function (x) {
-            return !!x;
-        });
-        this.pointsCluster = new MarkerClusterer(this.map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
-
-        this.domSignal.once('update_view', function () {
-            if (points.length > 1) {
-                zoom = getMapZoomLevel(this.getBoundingClientRect(), bounds);
-                center = bounds.getCenter();
-            }
-            else {
-                zoom = 17;
-                center = points[0] || new google.maps.LatLng(21.018755, 105.839729);
-            }
-            zoom = Math.min(zoom, 17);
-            this.map.setZoom(zoom);
-            this.map.setCenter(center);
-        }.bind(this), 100);
-        this.domSignal.emit('update_view');
     },
     get: function () {
         return this._points;

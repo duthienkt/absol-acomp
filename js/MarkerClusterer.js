@@ -495,7 +495,7 @@ Cluster.prototype.remove = function() {
 /**
  * Adds a marker to the cluster.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to be added.
+ * @param {google.maps.marker.Marker} marker The marker to be added.
  * @return {boolean} True if the marker was added.
  * @ignore
  */
@@ -552,7 +552,7 @@ Cluster.prototype.addMarker = function(marker) {
 /**
  * Determines if a marker lies within the cluster's bounds.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to check.
+ * @param {google.maps.marker.Marker} marker The marker to check.
  * @return {boolean} True if the marker lies in the bounds.
  * @ignore
  */
@@ -599,7 +599,7 @@ Cluster.prototype.updateIcon_ = function() {
 /**
  * Determines if a marker has already been added to the cluster.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to check.
+ * @param {google.maps.marker.Marker} marker The marker to check.
  * @return {boolean} True if the marker has already been added.
  */
 Cluster.prototype.isMarkerAlreadyAdded_ = function(marker) {
@@ -691,7 +691,7 @@ Cluster.prototype.isMarkerAlreadyAdded_ = function(marker) {
  * @constructor
  * @extends google.maps.OverlayView
  * @param {google.maps.Map} map The Google map to attach to.
- * @param {Array.<google.maps.marker.AdvancedMarkerElement>} [opt_markers] The markers to be added to the cluster.
+ * @param {Array.<google.maps.marker.Marker>} [opt_markers] The markers to be added to the cluster.
  * @param {MarkerClustererOptions} [opt_options] The optional parameters.
  */
 function MarkerClusterer(map, opt_markers, opt_options) {
@@ -1115,7 +1115,7 @@ MarkerClusterer.prototype.getCalculator = function() {
 /**
  * Sets the value of the <code>calculator</code> property.
  *
- * @param {function(Array.<google.maps.marker.AdvancedMarkerElement>, number)} calculator The value
+ * @param {function(Array.<google.maps.marker.Marker>, number)} calculator The value
  *  of the calculator property.
  */
 MarkerClusterer.prototype.setCalculator = function(calculator) {
@@ -1224,7 +1224,7 @@ MarkerClusterer.prototype.getTotalClusters = function() {
  * Adds a marker to the clusterer. The clusters are redrawn unless
  *  <code>opt_nodraw</code> is set to <code>true</code>.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to add.
+ * @param {google.maps.marker.Marker} marker The marker to add.
  * @param {boolean} [opt_nodraw] Set to <code>true</code> to prevent redrawing.
  */
 MarkerClusterer.prototype.addMarker = function(marker, opt_nodraw) {
@@ -1239,7 +1239,7 @@ MarkerClusterer.prototype.addMarker = function(marker, opt_nodraw) {
  * Adds an array of markers to the clusterer. The clusters are redrawn unless
  *  <code>opt_nodraw</code> is set to <code>true</code>.
  *
- * @param {Array.<google.maps.marker.AdvancedMarkerElement>} markers The markers to add.
+ * @param {Array.<google.maps.marker.Marker>} markers The markers to add.
  * @param {boolean} [opt_nodraw] Set to <code>true</code> to prevent redrawing.
  */
 MarkerClusterer.prototype.addMarkers = function(markers, opt_nodraw) {
@@ -1258,7 +1258,7 @@ MarkerClusterer.prototype.addMarkers = function(markers, opt_nodraw) {
 /**
  * Pushes a marker to the clusterer.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to add.
+ * @param {google.maps.marker.Marker} marker The marker to add.
  */
 MarkerClusterer.prototype.pushMarkerTo_ = function(marker) {
     // If the marker is draggable add a listener so we can update the clusters on the dragend:
@@ -1281,7 +1281,7 @@ MarkerClusterer.prototype.pushMarkerTo_ = function(marker) {
  *  <code>opt_nodraw</code> is set to <code>true</code>. Returns <code>true</code> if the
  *  marker was removed from the clusterer.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to remove.
+ * @param {google.maps.marker.Marker} marker The marker to remove.
  * @param {boolean} [opt_nodraw] Set to <code>true</code> to prevent redrawing.
  * @param {boolean} [opt_noMapRemove] Set to <code>true</code> to prevent removal from map but still removing from cluster management
  * @return {boolean} True if the marker was removed from the clusterer.
@@ -1303,7 +1303,7 @@ MarkerClusterer.prototype.removeMarker = function(marker, opt_nodraw, opt_noMapR
  *  <code>opt_nodraw</code> is set to <code>true</code>. Returns <code>true</code> if markers
  *  were removed from the clusterer.
  *
- * @param {Array.<google.maps.marker.AdvancedMarkerElement>} markers The markers to remove.
+ * @param {Array.<google.maps.marker.Marker>} markers The markers to remove.
  * @param {boolean} [opt_nodraw] Set to <code>true</code> to prevent redrawing.
  * @param {boolean} [opt_noMapRemove] Set to <code>true</code> to prevent removal from map but still removing from cluster management
  * @return {boolean} True if markers were removed from the clusterer.
@@ -1329,7 +1329,7 @@ MarkerClusterer.prototype.removeMarkers = function(markers, opt_nodraw, opt_noMa
 /**
  * Removes a marker and returns true if removed, false if not.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to remove
+ * @param {google.maps.marker.Marker} marker The marker to remove
  * @param {boolean} removeFromMap set to <code>true</code> to explicitly remove from map as well as cluster manangement
  * @return {boolean} Whether the marker was removed or not
  */
@@ -1487,7 +1487,7 @@ MarkerClusterer.prototype.distanceBetweenPoints_ = function(p1, p2) {
 /**
  * Determines if a marker is contained in a bounds.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to check.
+ * @param {google.maps.marker.Marker} marker The marker to check.
  * @param {google.maps.LatLngBounds} bounds The bounds to check against.
  * @return {boolean} True if the marker is in the bounds.
  */
@@ -1518,7 +1518,7 @@ MarkerClusterer.prototype.isMarkerInBounds_ = function(marker, bounds) {
 /**
  * Adds a marker to a cluster, or creates a new cluster.
  *
- * @param {google.maps.marker.AdvancedMarkerElement} marker The marker to add.
+ * @param {google.maps.marker.Marker} marker The marker to add.
  */
 MarkerClusterer.prototype.addToClosestCluster_ = function(marker) {
     var i, d, cluster, center;
@@ -1654,7 +1654,7 @@ MarkerClusterer.prototype.addOrtherMarker = function(data) {
         strokeColor: "white",
         strokeWeight: 4
     };
-    var marker = new google.maps.marker.AdvancedMarkerElement({
+    var marker = new google.maps.marker.Marker({
         position: new google.maps.LatLng(position[0], position[1]),
         draggable: false,
         icon: image,
@@ -1714,7 +1714,7 @@ MarkerClusterer.prototype.extend = function(obj1, obj2) {
  * The default function for determining the label text and style
  * for a cluster icon.
  *
- * @param {Array.<google.maps.marker.AdvancedMarkerElement>} markers The array of markers represented by the cluster.
+ * @param {Array.<google.maps.marker.Marker>} markers The array of markers represented by the cluster.
  * @param {number} numStyles The number of marker styles available.
  * @return {ClusterIconInfo} The information resource for the cluster.
  * @constant
