@@ -3,7 +3,7 @@ import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
-import { buildCss, findMaxZIndex, revokeResource, vScrollIntoView } from "../utils";
+import { buildCss, findMaxZIndex, isNaturalNumber, revokeResource, vScrollIntoView } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
@@ -112,11 +112,15 @@ DynamicTableManager.prototype.commit = function () {
 var manager = new DynamicTableManager();
 
 
+var pendingTables = {};
+
 /***
  * @extends AElement
  * @constructor
  */
 function DynamicTable() {
+    this._pendingId = randomIdent(4);
+    pendingTables[this._pendingId] = this;
     manager.initIfNeed();
     loadStyleSheet();
     this.css = new DynamicCSS();
@@ -146,7 +150,8 @@ function DynamicTable() {
     this.$filterInputs = [];
 
     this.$attachhook = _('attachhook').addTo(this);
-    this.domSignal = new DomSignal(_('attachhook').addTo(this));
+    this.$domSignal = _('attachhook').addTo(this);
+    this.domSignal = new DomSignal(this.$domSignal);
     //controller
     this.table = null;
     this.$space = $('.as-dynamic-table-space', this);
@@ -162,7 +167,15 @@ function DynamicTable() {
 
     // this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
     this.$attachhook.requestUpdateSize = this.requestUpdateSize.bind(this);
+    var trashTO = -1;
     this.$attachhook.once('attached', () => {
+        delete pendingTables[this._pendingId];
+        // setTimeout(()=>{
+        //     Object.values(pendingTables).forEach(table=>{
+        //         if (!table.isDescendantOf(document.body))
+        //         table.revokeResource();
+        //     });
+        // }, 5000);
         ResizeSystem.add(this.$attachhook);
         this.layoutCtrl.onAttached();
         this.colSizeCtrl.onAttached();
@@ -171,6 +184,7 @@ function DynamicTable() {
             this.requestUpdateSize();
         }, 10);
 
+        clearTimeout(trashTO);
 
         var checkAlive = () => {
             if (this.isDescendantOf(document.body)) {
@@ -181,8 +195,8 @@ function DynamicTable() {
             }
         };
         setTimeout(checkAlive, 500);
+    });
 
-    })
     /***
      *
      * @type {{data: DTDataTable}||null}
@@ -286,10 +300,13 @@ DynamicTable.prototype.requestUpdateSize = function () {
 };
 
 DynamicTable.prototype.revokeResource = function () {
+    this.$attachhook.cancelWaiting();
+    delete pendingTables[this._pendingId];
     this.css.stop();
     this.css = null;
-    var row, cell, keys , key;
-    var rows = this._adapterData && this._adapterData.data && this._adapterData.data.body&& this._adapterData.data.body.rows;
+    return;
+    var row, cell, keys, key;
+    var rows = this._adapterData && this._adapterData.data && this._adapterData.data.body && this._adapterData.data.body.rows;
     // if (rows) {
     //     while (rows.length) {
     //         row = rows.pop();
@@ -304,7 +321,7 @@ DynamicTable.prototype.revokeResource = function () {
     //         }
     //     }
     // }
-    revokeResource(rows);
+    // revokeResource(rows);
 
     if (this.table) {
         this.table.revokeResource();
@@ -320,7 +337,7 @@ DynamicTable.prototype.revokeResource = function () {
     this.layoutCtrl = null;
     this.pointerCtrl = null;
     this.colSizeCtrl = null;
-    this.rowDragCtrl =null;
+    this.rowDragCtrl = null;
     manager.removeTrash();
     ResizeSystem.removeTrash();
 
@@ -728,7 +745,6 @@ LayoutController.prototype.ev_wheel = function (event) {
                 this.elt.$hscrollbar.emit('scroll');
             }
         }
-
     }
 };
 
@@ -949,9 +965,9 @@ LayoutController.prototype.ev_hScrollbarScroll = function (event) {
 
 
 LayoutController.prototype.ev_vScrollbarScroll = function () {
+    if (!this.elt.table || !this.elt.table.body) return;
     this.elt.table.body.offset = this.elt.$vscrollbar.innerOffset;
     this.elt.$viewport.emit('scroll');
-
 };
 
 LayoutController.prototype.ev_dragStart = function (event) {
@@ -1153,15 +1169,20 @@ ColSizeController.prototype.onAdapter = function () {
 
 
 ColSizeController.prototype.ev_dragStart = function (event) {
+    this.dragOK = true;
     this.colId = event.target.parentElement.attr('data-col-id') || parseInt(event.target.parentElement.attr('data-col-idx'));
     this.cell = this.elt.table.header.rows[0].cells.find(cell => cell.data.id === this.colId || cell.idx === this.colId);
+    if (!this.cell) {
+        this.dragOK = false;
+        return;
+    }
     this.cellElt = this.cell.copyElt;
     this.startingBound = Rectangle.fromClientRect(this.cellElt.getBoundingClientRect());
-
 };
 
 
 ColSizeController.prototype.ev_drag = function (event) {
+    if (!this.dragOK) return;
     var newWidth = this.startingBound.width + event.currentPoint.sub(event.startingPoint).x;
     this.cellElt.addStyle('width', newWidth + 'px');
     this.elt.table.updateCopyEltSize();
@@ -1170,6 +1191,7 @@ ColSizeController.prototype.ev_drag = function (event) {
 
 
 ColSizeController.prototype.ev_dragEnd = function (event) {
+    if (!this.dragOK) return;
     if (typeof this.colId === "string") {
         manager.commitColWidth(this.elt, this.elt.id, this.cell.data.id, this.cellElt.getBoundingClientRect().width, true);
         this.notifyColResize(event);
