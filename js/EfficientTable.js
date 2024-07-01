@@ -1,20 +1,49 @@
 import '../css/dynamictable.css';
 import { $, _ } from "../ACore";
-import { randomIdent } from "absol/src/String/stringGenerate";
-import Hanger from "./Hanger";
-import { HScrollbar, VScrollbar } from "./Scroller";
+import { randomIdent, randomPhrase } from "absol/src/String/stringGenerate";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
-import { getScreenSize } from "absol/src/HTML5/Dom";
+import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
+import AElement from "absol/src/HTML5/AElement";
+import { parseMeasureValue } from "absol/src/JSX/attribute";
+import Rectangle from "absol/src/Math/Rectangle";
+import safeThrow from "absol/src/Code/safeThrow";
+import { isNaturalNumber, revokeResource } from "./utils";
+import noop from "absol/src/Code/noop";
 
 var execAsync = (commands, whileFunc) => {
     return commands.reduce((ac, act) => {
-        if (!whileFunc()) return;
+        if (whileFunc && !whileFunc()) return;
         if (ac && ac.then) {
-            return ac.then(act);
+            if (typeof act === "function") {
+                return ac.then(act);
+            }
+            else {
+                return ac.then(() => act);
+            }
         }
-        return act();
+        if (typeof act === 'function')
+            return act(ac);
+        else return act;
     }, null);
+}
+
+var getMaxRowCount = () => {
+    var screenSize = getScreenSize();
+    return Math.ceil(Math.max(2048, screenSize.height) / 40.0) * 3;
+}
+
+var waitAll = (variables, thenCb) => {
+    var hasPromise = variables.findIndex(v => v && (typeof v.then === "function"));
+    if (hasPromise >= 0) return Promise.all(variables).then(thenCb);
+    else return thenCb(variables);
+}
+
+var waitValue = (value, thenCb) => {
+    if (value && (typeof value.then === "function")) {
+        return value.then(thenCb);
+    }
+    else return thenCb(value);
 }
 
 /**
@@ -25,7 +54,12 @@ function EfficientTable() {
     this.layoutCtrl = new ETLayoutController(this);
     this._adapter = null;
     this.table = null;
+    this.extendStyle = this.extendStyle || {};
+    this.$attachhook = _('attachhook').addTo(this)
+        .on('attached', () => {
 
+        });
+    this.$attachhook.requestUpdateSize = this.layoutCtrl.requestUpdateSize.bind(this);
     /**
      * @name adapter
      * @type {ETAdapter}
@@ -38,44 +72,46 @@ EfficientTable.tag = 'EfficientTable'.toLowerCase();
 
 EfficientTable.render = function (data, domDesc) {
     var width = domDesc.style && domDesc.style.width;
-    var classList = ['as-dynamic-table-wrapper'];
+    var classList = ['as-efficient-table-wrapper'];
     if (width === 'match_parent') {
         classList.push('as-width-match-parent');
     }
+
     var id = domDesc.id || (domDesc.attr && domDesc.attr.id) || 'no-id-' + randomIdent(10);
     return _({
         id: id,
         extendEvent: ['colresize'],
         class: classList,
+        props: {
+            extendStyle: domDesc.style
+        },
         child: [
             {
-                tag: Hanger.tag,
-                class: 'as-dynamic-table-viewport',
-                child: [
-                    {
-                        class: 'as-dynamic-table-space',
-                    },
-                    {
-                        class: 'as-dynamic-table-fixed-y-ctn'
-                    },
-                    {
-                        class: 'as-dynamic-table-fixed-x-ctn'
-                    },
-                    {
-                        class: 'as-dynamic-table-fixed-xy-ctn'
-                    }
-                ]
-            },
-            {
-                tag: VScrollbar,
-                class: 'as-dynamic-table-vb'
-            },
-            {
-                tag: HScrollbar,
-                class: 'as-dynamic-table-hb'
-            },
+                class: 'as-dynamic-table-fixed-y-ctn'
+            }
         ]
     });
+};
+
+EfficientTable.prototype.addStyle = function (name, value) {
+    if (name === 'width') {
+        this.extendStyle[name] = value;
+    }
+    else {
+        AElement.prototype.addStyle.apply(this, arguments);
+    }
+    return this;
+};
+
+/**
+ *
+ * @param {string|number|function}arg
+ */
+EfficientTable.prototype.findRow = function (arg) {
+    if (this.table) {
+        return this.table.body.findRow(arg);
+    }
+    return null;
 };
 
 
@@ -87,13 +123,31 @@ EfficientTable.prototype.notifyDataSheetChange = function () {
     if (this.adapter) this.adapter.notifyDataSheetChange();
 };
 
+EfficientTable.prototype.notifyRowModifiedAt = function (idx) {
+    if (this.adapter) this.adapter.notifyRowModifiedAt(idx);
+};
+
+EfficientTable.prototype.notifyRowRemoveAt = function (idx) {
+    if (this.adapter) this.adapter.notifyRowRemoveAt(idx);
+};
+
+EfficientTable.prototype.notifyAddRowAt = function (idx) {
+    if (this.adapter) this.adapter.notifyAddRowAt(idx);
+};
+
+
+EfficientTable.prototype.revokeResource = function () {
+
+};
+
+
 EfficientTable.property = {};
 
 EfficientTable.property.adapter = {
     set: function (value) {
         this._adapter = new ETAdapter(this, value);
         this.table = new ETTable(this, this._adapter.data);
-        this.layoutCtrl.$space.addChild(this.table.elt);
+        this.addChild(this.table.elt);
         this._adapter.notifyDataSheetChange();
     },
     get: function () {
@@ -140,13 +194,7 @@ function ETLayoutController(elt) {
     this.$attachhook = _('attachhook').addTo(elt);
     this.domSignal = new DomSignal(_('attachhook').addTo(elt));
     //controller
-    this.$space = $('.as-dynamic-table-space', elt);
     this.$fixedYCtn = $('.as-dynamic-table-fixed-y-ctn', elt);
-    this.$fixedXCtn = $('.as-dynamic-table-fixed-x-ctn', elt);
-    this.$fixedXYCtn = $('.as-dynamic-table-fixed-xy-ctn', elt);
-    this.$viewport = $('.as-dynamic-table-viewport', elt);
-    this.$hscrollbar = $('.as-dynamic-table-hb', elt);
-    this.$vscrollbar = $('.as-dynamic-table-vb', elt);
 
     this.extendStyle = {};
 
@@ -161,55 +209,116 @@ function ETLayoutController(elt) {
             this.requestUpdateSize();
         }, 10);
 
-    })
+    });
+
+    this.ev_scroll = this.ev_scroll.bind(this);
+    this.$BindedScrollers = [];
+    this.stopScrollTO = -1;
+
 }
 
 ETLayoutController.prototype.onAttached = function () {
-    if (this.elt.table) {
-        this.updateOverflowStatus();
-    }
+    this.bindScroller();
 };
 
 ETLayoutController.prototype.requestUpdateSize = function () {
+    this.elt.table.body.updateYOffset(true);
+    var beforeRect = this.elt.table.body.size;
+    this.viewSize();
+    this.viewByScroll();
+    this.elt.table.body.calcSize();
+    var newRect = this.elt.table.body.size;
+    if (newRect.width !== beforeRect.width || newRect.height !== beforeRect.height) {
+        ResizeSystem.updateUp(this.elt.parentElement);
+    }
+};
+
+ETLayoutController.prototype.viewSize = function () {
+    this.elt.table.calcSize();
+    var size = this.elt.table.size;
+    if (size.trueValue) {
+        this.elt.addClass('as-true-size');
+    }
+    this.elt.addStyle('height', size.height + 'px');
 
 };
 
-ETLayoutController.prototype.getMaxHeight = function () {
-    return  Infinity;//ground
-    var screenSize = getScreenSize();
-
-    return screenSize.height;
-
+ETLayoutController.prototype.bindScroller = function () {
+    var p = this.elt.parentElement;
+    while (p) {
+        p.addEventListener('scroll', this.ev_scroll);
+        this.$BindedScrollers.push(p);
+        p = p.parentElement;
+    }
+    document.addEventListener('scroll', this.ev_scroll);
+    this.$BindedScrollers.push(document);
 };
 
 
-ETLayoutController.prototype.updateOverflowStatus = function () {
-    var contentBound = this.elt.table ? this.elt.table.elt.getBoundingClientRect() : { width: 0, height: 0 };
-    this.elt.addStyle('--dt-content-height', contentBound.height + 'px');
-    this.elt.addStyle('--dt-content-width', contentBound.width + 'px');
+ETLayoutController.prototype.unBindScroller = function () {
+    while (this.$BindedScrollers.length) {
+        this.$BindedScrollers.pop().removeEventListener('scroll', this.ev_scroll);
+    }
+};
+
+ETLayoutController.prototype.viewByScroll = function () {
+    if (!this.elt.table) return;
+    if (this.elt.table.size.trueValue) return;
     var bound = this.elt.getBoundingClientRect();
-    if (bound.width < contentBound.width) {
-        this.elt.addClass('as-overflow-x');
+    var outbound = traceOutBoundingClientRect(this.elt);//todo: small than scroller
+    var head = this.elt.table.head;
+    var hs = 0;
+    if (bound.top >= outbound.top) {
+        hs = 0;
+        this.elt.table.elt.addStyle('top', 0);
+        return;
+    }
+    else if (bound.bottom < outbound.bottom) {
+        hs = 1;
     }
     else {
-        this.elt.removeClass('as-overflow-x');
-        this.$space.removeStyle('left');
+        hs = (outbound.top - (bound.top + head.size.height)) / (bound.height - head.size.height - outbound.height);
     }
 
-    if (bound.height < contentBound.height) {
-        this.elt.addClass('as-overflow-y');
-    }
-    else {
-        this.elt.removeClass('as-overflow-y');
-        this.$space.removeStyle('top');
-    }
+    var rowLNIdx = this.elt.adapter.length * hs;
+    var y = outbound.top + head.size.height + hs * (outbound.height - head.size.height);
+    var rowIdx = Math.floor(rowLNIdx);
+    if (hs === 1) rowIdx = this.elt.adapter.length - 1;
+    var body = this.elt.table.body;
+    var currentOffset = body.rowOffset;
+    this.elt.table.body.requestVisible(rowIdx);
+    this.elt.table.body.waitLoaded(() => {
+        if (currentOffset !== body.rowOffset) return;
+        this.elt.table.body.updateYOffset();
+        var row = body.rows[rowIdx - body.rowOffset];
+        if (!row) return;//out of date, don't update
+        var rowLNY = row.offsetY + row.offsetHeight * hs;
+        var dy = y - bound.top - rowLNY;
+        this.elt.table.elt.addStyle('top', dy + 'px');
+    });
+}
+
+
+ETLayoutController.prototype.ev_scroll = function () {
+    this.viewByScroll();
+    clearTimeout(this.stopScrollTO);
+    this.stopScrollTO = setTimeout(() => {
+        this.viewByScroll();
+    }, 100);
 };
 
-
+/**
+ *
+ * @param elt
+ * @param adapterData
+ * @constructor
+ */
 function ETAdapter(elt, adapterData) {
+    this.elt = elt;
     this.data = adapterData.data;
     this.raw = adapterData;
     this.asyncSession = Math.random();
+    this.sync = null;
 }
 
 ETAdapter.prototype.notifyDataSheetChange = function () {
@@ -217,31 +326,99 @@ ETAdapter.prototype.notifyDataSheetChange = function () {
     this.asyncSession = asyncSession;
     var cmdArr = [
         () => this.getLength(),
-        value => {
-            this.length = value;
-        },
         () => {
-            console.log(this.length)
+            var body = this.elt.table.body;
+            var head = this.elt.table.head;
+            body.drawFrom(0);
+            var makeSize = () => {
+                body.waitLoaded(() => {
+                    body.updateYOffset(true);
+                    this.elt.layoutCtrl.requestUpdateSize();
+
+                });
+            }
+            if (this.elt.isDescendantOf(document.body)) {
+                makeSize();
+            }
+            else {
+                this.elt.$attachhook.once('attached', makeSize);
+            }
         }
     ];
     execAsync(cmdArr, () => this.asyncSession === asyncSession);
 };
 
+ETAdapter.prototype.notifyRowModifiedAt = function (idx) {
+    this.sync = execAsync([
+        this.sync,
+        () => {
+            this.elt.table.body.modifiedRowAt(idx);
+            if (this.elt.isDescendantOf(document.body)) {
+                this.elt.table.body.waitLoaded(() => {
+                    this.elt.layoutCtrl.requestUpdateSize();
+                });
+            }
+        }
+    ]);
+};
+
+ETAdapter.prototype.notifyRowRemoveAt = function (idx) {
+    this.sync = execAsync([
+        this.sync,
+        () => this.getLength(),
+        () => {
+            this.elt.table.body.removeRowAt(idx);
+            if (this.elt.isDescendantOf(document.body)) {
+                this.elt.table.body.waitLoaded(() => {
+                    this.elt.layoutCtrl.requestUpdateSize();
+                });
+            }
+        }
+    ]);
+};
+
+ETAdapter.prototype.notifyAddRowAt = function (idx) {
+    this.sync = execAsync([
+        this.sync,
+        () => this.getLength(),
+        () => {
+            this.elt.table.body.addRowAt(idx);
+            if (this.elt.isDescendantOf(document.body)) {
+                this.elt.table.body.waitLoaded(() => {
+                    this.elt.layoutCtrl.viewSize();
+                });
+            }
+        }
+    ]);
+};
+
+
 ETAdapter.prototype.getLength = function () {
-    var body = this.raw.data.body;
-    console.log(body)
-    var length;
-    if (typeof body.length === "number") {
-        length = body.rows.length;
-    }
-    else if (body.length && body.length.then) {
-        length = body.length;
-    }
-    else if (typeof body.getLength === "function") {
-        length = this.raw.data.body.getLength(this);
-    }
-    else if (body.rows) length = body.rows.length;
-    return length;
+    return execAsync([() => {
+        var body = this.raw.data.body;
+        var length;
+        if (typeof body.length === "number") {
+            length = body.rows.length;
+        }
+        else if (body.length && body.length.then) {
+            length = body.length;
+        }
+        else if (typeof body.getLength === "function") {
+            try {
+                length = this.raw.data.body.getLength(this);
+
+            } catch (e) {
+                safeThrow(e);
+            }
+        }
+        else if (body.rows) length = body.rows.length;
+        return length;
+    },
+        l => {
+            this.length = l;
+            return l;
+        }]);
+
 };
 
 ETAdapter.prototype.getRowAt = function (idx) {
@@ -249,9 +426,13 @@ ETAdapter.prototype.getRowAt = function (idx) {
     var body = this.raw.data.body;
 
     if (typeof body.getRowAt === "function") {
-        data = body.getRowAt(idx, this);
+        try {
+            data = body.getRowAt(idx, this);
+        } catch (e) {
+            safeThrow(e);
+        }
     }
-    else if (body.rows) data = body.rows;
+    else if (body.rows) data = body.rows[idx];
     return data;
 };
 
@@ -271,6 +452,32 @@ ETAdapter.prototype.renderHeadCell = function (elt, data, controller) {
     }
 };
 
+ETAdapter.prototype.renderBodyCell = function (elt, data, idx, controller) {
+    var body = this.raw.data.body;
+    var template = body.rowTemplate;
+    var cellTpl = template.cells[idx];
+    if (cellTpl.child) {
+        if (cellTpl.child.map) {
+            elt.addChild(cellTpl.child.map(function (it) {
+                return _(it);
+            }));
+        }
+        else {
+            elt.addChild(_(cellTpl.child));
+        }
+    }
+    if (cellTpl.render) {
+        cellTpl.render.call(null, elt, data, controller);
+    }
+    if (cellTpl.style) elt.addStyle(cellTpl.style);
+};
+
+ETAdapter.prototype.getRowLength = function () {
+    var body = this.raw.data.body;
+    var template = body.rowTemplate;
+    return template.cells.length;
+};
+
 
 /**
  *
@@ -284,6 +491,7 @@ function ETTable(wrapper, data) {
     this.data = data;
     this.head = new ETHead(this, this.data.head);
     this.body = new ETBody(this, this.data.body);
+
     this.elt = _({
         tag: 'table',
         class: 'as-dynamic-table',
@@ -292,7 +500,34 @@ function ETTable(wrapper, data) {
             this.body.elt
         ]
     });
+    this.handleStyle();
+    this.size = new Rectangle(0, 0, 0, 0);
+    this.size.trueValue = false;
 }
+
+
+ETTable.prototype.handleStyle = function () {
+    var style = this.wrapper.extendStyle;
+    var value;
+    if (style.width) {
+        value = parseMeasureValue(style.width);
+        if (value) {
+            if (value.unit === '%') {
+                this.wrapper.style.setProperty('width', value);
+                this.elt.addStyle('width', '100%');
+            }
+        }
+
+    }
+};
+
+ETTable.prototype.calcSize = function () {
+    this.head.calcSize();
+    this.body.calcSize();
+    this.size = this.head.size.clone();
+    this.size.height += this.body.size.height;
+    this.size.trueValue = this.body.size.trueValue;
+};
 
 
 /**
@@ -311,7 +546,13 @@ function ETHead(table, data) {
         class: 'as-dt-header',
         child: this.rows.map(it => it.elt)
     });
+    this.size = new Rectangle(0, 0, 0, 0);
 }
+
+ETHead.prototype.calcSize = function () {
+    var bound = this.elt.getBoundingClientRect();
+    this.size = Rectangle.fromClientRect(bound);
+};
 
 /**
  *
@@ -341,6 +582,14 @@ function ETHeadCell(row, data) {
         tag: 'th',
         class: 'as-dt-header-cell'
     });
+    if (data.attr && isNaturalNumber(data.attr.colspan)) {
+        this.elt.attr('colspan', data.attr.colspan);
+    }
+    if (data.attr && isNaturalNumber(data.attr.rowspan)) {
+        this.elt.attr('colspan', data.attr.rowspan);
+    }
+    if (data.style) this.elt.addStyle(data.style);
+
     this.row.head.table.adapter.renderHeadCell(this.elt, this.data, this);
 }
 
@@ -357,8 +606,234 @@ function ETBody(table, data) {
         tag: 'tbody',
         class: 'as-dt-body'
     });
+
+    this.rowOffset = 0;
+    this.rows = [];
+    /**
+     *
+     * @type {Rectangle|{trueValue:boolean}}
+     */
+    this.size = new Rectangle(0, 0, 0, 0);
+    this.size.trueValue = false;
+
+    this.needUpdateYOffset = false;
+    this.sync = null;
 }
 
+ETBody.prototype.removeRowAt = function (idx) {
+    var localIdx = idx - this.rowOffset;
+    var row = this.rows[localIdx];
+    if (!row) return false;
+    row.elt.selfRemove();
+    this.rows.splice(localIdx, 1);
+    row.revokeResource();
+    for (var i = 0; i < this.rows.length; ++i) {
+        this.rows[i].updateIdx(i + this.rowOffset);
+    }
+    this.drawFrom(this.rowOffset);
+};
+
+
+ETBody.prototype.modifiedRowAt = function (idx) {
+    var localIdx = idx - this.rowOffset;
+    var row = this.rows[localIdx];
+    if (!row) return false;
+    var newRow = new ETBodyRow(this, this.table.wrapper.adapter.getRowAt(idx));
+    newRow.updateIdx(idx);
+    this.rows[localIdx] = newRow;
+    row.elt.selfReplace(newRow.elt);
+    this.needUpdateYOffset = true;
+};
+
+ETBody.prototype.addRowAt = function (idx) {
+    var localIdx = idx - this.rowOffset;
+    var row = this.rows[localIdx];
+    if (!row) return false;
+    var newRow = new ETBodyRow(this, this.table.wrapper.adapter.getRowAt(idx));
+    this.rows.splice(localIdx, 0, newRow) ;
+    row.elt.parentElement.addChildBefore(newRow.elt, row.elt);
+    for (var i = 0; i < this.rows.length; ++i) {
+        this.rows[i].updateIdx(i + this.rowOffset);
+    }
+    this.needUpdateYOffset = true;
+};
+
+
+ETBody.prototype.requestVisible = function (idx) {
+    var maxRow = getMaxRowCount();
+    var length = this.table.wrapper.adapter.length;
+    var pageIdx;
+    var pageN = Math.ceil(Math.max(length / (maxRow / 3)));
+    idx = Math.max(0, idx);
+    idx = Math.min(length - 1, idx);
+
+    pageIdx = Math.floor(idx / (maxRow / 3));
+    pageIdx = Math.min(pageN - 3, pageIdx - 1);
+    pageIdx = Math.max(0, pageIdx);
+    this.drawFrom(pageIdx * Math.floor(maxRow / 3));
+};
+
+
+ETBody.prototype.drawFrom = function (idx) {
+    var adapter = this.table.wrapper.adapter;
+    var maxRowCount = getMaxRowCount();
+    idx = Math.max(0, idx);
+    var endIdx = Math.min(idx + maxRowCount, adapter.length);
+    idx = Math.max(0,Math.min(endIdx - 1, idx));
+
+    var row;
+    while (this.rowOffset + this.rows.length > idx + maxRowCount && this.rows.length) {
+        row = this.rows.pop();
+        row.elt.remove();
+    }
+
+    while (this.rowOffset < idx && this.rows.length) {
+        row = this.rows.shift();
+        this.rowOffset++;
+        row.elt.remove();
+        row.revokeResource();
+        this.needUpdateYOffset = true;
+    }
+
+    if (this.rows.length === 0) this.rowOffset = Math.min(adapter.length, idx + 1);
+    var newRows = [];
+    var newRow;
+    while (this.rowOffset > idx && this.rowOffset > 0) {
+        this.rowOffset--;
+        newRow = new ETBodyRow(this, adapter.getRowAt(this.rowOffset));
+        newRows.push(newRow);
+        newRow.updateIdx(this.rowOffset);
+        this.rows.unshift(newRow);
+        this.elt.addChildBefore(newRow.elt, this.elt.firstChild);
+        this.needUpdateYOffset = true;
+    }
+
+    while (this.rowOffset + this.rows.length < endIdx) {
+        newRow = new ETBodyRow(this, adapter.getRowAt(this.rowOffset + this.rows.length));
+        newRow.updateIdx(this.rowOffset + this.rows.length);
+        newRows.push(newRow);
+        this.rows.push(newRow);
+        this.elt.addChild(newRow.elt);
+        this.needUpdateYOffset = true;
+    }
+
+};
+
+/**
+ *
+ * @param {boolean} force
+ */
+ETBody.prototype.updateYOffset = function (force) {
+    if (!this.needUpdateYOffset && !force) return;
+    this.needUpdateYOffset = false;
+    var tableBound = this.table.elt.getBoundingClientRect();
+    this.rows.forEach((row) => {
+        row.calcSize();
+        var rowBound = row.size;
+        row.offsetY = rowBound.y - tableBound.top;
+        row.offsetHeight = rowBound.height;
+    });
+};
+
+ETBody.prototype.calcSize = function () {
+    var adapter = this.table.wrapper.adapter;
+    var bound = this.elt.getBoundingClientRect();
+    if (this.rows.length === adapter.length) {
+        this.size = Rectangle.fromClientRect(bound);
+        this.size.trueValue = true;
+    }
+    else {
+        this.size = Rectangle.fromClientRect(bound);
+        this.size.height = bound.height / this.rows.length * adapter.length;
+        this.size.trueValue = false;
+    }
+};
+
+
+ETBody.prototype.waitLoaded = function (cb) {
+    waitAll(this.rows.map(row => row.data), cb);
+};
+
 function ETBodyRow(body, data) {
+    this.elt = _({
+        tag: 'tr',
+        class: 'as-dt-body-row'
+    });
+    this.offsetY = 0;
+    this.data = data;
+    this.body = body;
+    this.idx = 0;
+    this.$idx = undefined;
+    waitValue(this.data, data => {
+        this.data = data;
+        var adapter = body.table.wrapper.adapter;
+        var length = adapter.getRowLength();
+        this.cells = Array(length).fill(null).map((u, i) => new ETBodyCell(this, i));
+        this.elt.addChild(this.cells.map(cell => cell.elt));
+        this.$idx = $('.as-dt-row-index', this.elt) || null;
+        if (this.$idx)
+            this.$idx.attr('data-idx', this.idx + 1);
+    });
+    this.size = new Rectangle(0, 0, 0, 0);
+    // this.cells = data.cells.map(cell => new ETBodyCell(this, cell));
+    /**
+     * @name adapter
+     * @type {ETAdapter}
+     * @memberof ETBodyRow#
+     */
+}
+
+ETBodyRow.prototype.updateIdx = function (value) {
+    this.idx = value;
+    if (!this.cells) return;
+    if (this.$idx === undefined) this.$idx = $('.as-dt-row-index', this.elt) || null;
+    if (this.$idx)
+        this.$idx.attr('data-idx', this.idx + 1);
+
+};
+
+ETBodyRow.prototype.calcSize = function () {
+    this.size = Rectangle.fromClientRect(this.elt.getBoundingClientRect());
+};
+
+
+ETBodyRow.prototype.notifyRemove = function () {
+    if (this.adapter)
+        this.adapter.notifyRowRemoveAt(this.idx);
+};
+
+ETBodyRow.prototype.notifyModified = function () {
+    if (this.adapter)
+        this.adapter.notifyRowModifiedAt(this.idx);
+}
+
+ETBodyRow.prototype.revokeResource = function () {
+    // return;
+    this.revokeResource = noop;
+    revokeResource(this.elt);
+    delete this.elt;
+    this.body = null;
+    this.notifyRemove = noop;
+};
+
+
+Object.defineProperty(ETBodyRow.prototype, 'adapter', {
+    /**
+     *
+     * @returns {ETAdapter}
+     */
+    get: function () {
+        return this.body && this.body.table.wrapper && this.body.table.wrapper.adapter;
+    }
+})
+
+function ETBodyCell(row, idx) {
+    this.elt = _({
+        tag: 'td',
+        class: 'as-dt-body-cell'
+    });
+    this.row = row;
+    var adapter = this.row.body.table.wrapper.adapter;
+    adapter.renderBodyCell(this.elt, row.data, idx, this);
 
 }
