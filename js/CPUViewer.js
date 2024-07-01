@@ -1,4 +1,4 @@
-import ACore, {_, $, $$} from "../ACore";
+import ACore, { _, $, $$ } from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import '../css/cpuviewer.css';
 
@@ -146,3 +146,24 @@ CPUViewer.release = function () {
 ACore.install(CPUViewer);
 
 export default CPUViewer;
+
+
+function AttachHookView() {
+
+}
+
+
+Dom.documentReady.then(() => {
+    if (!window.ABSOL_DEBUG && location.href.indexOf('localhost') < 0) {
+        return;
+    }
+
+    var elt = _({
+        class:'as-pending-attachhook-count'
+    }).addTo(document.body);
+
+    setInterval(() => {
+        elt.innerHTML = '' + Object.keys(pendingAttachHooks).length
+    }, 2000);
+});
+

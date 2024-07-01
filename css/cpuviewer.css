@@ -11,3 +11,20 @@
 .as-cpu-viewer canvas{
     display: block;
 }
+
+.as-pending-attachhook-count{
+    padding: 10px;
+    border-radius: 4px;
+    position: fixed;
+    z-index: 1000000;
+    right: 10px;
+    top: 10px;
+    background: white;
+    border: 1px solid red;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.as-pending-attachhook-count:hover {
+    opacity: 0.0;
+}
