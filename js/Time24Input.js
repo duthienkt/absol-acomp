@@ -550,7 +550,6 @@ T24ITextController.prototype.updateTextFromValue = function () {
     var value = this.elt.value;
     var hour = this.elt.hour;
     var minute = this.elt.minute;
-    console.log(this.elt._hour, this.elt._minute, value)
     var isNextDate = this.isNextDate(hour, minute);
     var text = this.formatText(hour, minute);
     if (isNextDate) {
@@ -579,9 +578,8 @@ T24ITextController.prototype.loadValueFromInput = function () {
     if (tkDick.m) {
         minute = Math.min(59, Math.max(0, tkDick.m.value));
     }
-    var end = hour * 36e5 + minute * 6e4;
-    this.elt._value = end >= this.elt.dayOffset ? end - this.elt.dayOffset : end + MILLIS_PER_DAY - this.elt.dayOffset;
-    if (!isNaturalNumber(this.elt._value)) this.elt._value = null;
+    this.elt._hour = hour;
+    this.elt._minute = minute;
 };
 
 
