@@ -38,7 +38,7 @@ function Follower() {
 
 Follower.prototype.cancelWaiting = function () {
     Array.prototype.forEach.call(this.childNodes, function (elt) {
-        if (elt.emit && elt.isSupportedEvent('attached')) {
+        if (elt.emit && elt.isSupportedEvent('attached') && elt.cancelWaiting()) {
             elt.cancelWaiting();
         }
     });
