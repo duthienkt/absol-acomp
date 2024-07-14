@@ -113,6 +113,10 @@
     white-space: nowrap;
 }
 
+.absol-selectbox-item-close:hover {
+    color: var(--as-transparent-button-text-hover-color);
+}
+
 .absol-selectbox-item-close::after,
 .absol-selectbox-item-text::before {
     content: "";
