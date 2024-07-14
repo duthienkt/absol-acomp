@@ -447,7 +447,6 @@ MSMItemsViewController.prototype.ev_pressCloseItem = function (itemElt, event) {
     var data = itemElt.data;
 
     this.elt.$selectlistBox.values = newValues;
-    console.log(this.elt.boxCtrl)
     if (this.elt.boxCtrl.isFocus) {
         this.viewItemsByValues(newValues);
     }
