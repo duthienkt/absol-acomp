@@ -6,6 +6,7 @@ import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import { isNaturalNumber } from "./utils";
 import { arrayCompare } from "absol/src/DataStructure/Array";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 
 var hitItem = event => {
@@ -251,6 +252,7 @@ MultiCheckMenu.property.readOnly = {
  * call after close checklistbox
  * @param event
  */
+
 /*
 MultiCheckMenu.eventHandler.selectListBoxPressItem = function (event) {
     var prevValues = this.commitedValues;
@@ -395,18 +397,19 @@ MSMItemsViewController.prototype.assignItems = function (items) {
 
 
 MSMItemsViewController.prototype.viewItems = function (items) {
+    var cBound = this.elt.getBoundingClientRect();
+
     this.requireListLength(items.length);
     this.assignItems(items);
-    // var cBound = this.getBoundingClientRect();
     // this._requireItem(items.length);
     // this._assignItems(items);
     // if (this.itemFocusable) {
     //     this._updateFocusItem();
     // }
-    // var nBound = this.getBoundingClientRect();
-    // if (nBound.width !== cBound.width || nBound.height !== cBound.height) {
-    //     ResizeSystem.updateUp(this);
-    // }
+    var nBound = this.elt.getBoundingClientRect();
+    if (nBound.width !== cBound.width || nBound.height !== cBound.height) {
+        ResizeSystem.updateUp(this.elt);
+    }
 };
 
 MSMItemsViewController.prototype.viewItemsByIndexes = function (indexes) {
@@ -680,4 +683,4 @@ MSMBoxController.prototype.ev_mouseupOut = function () {
 };
 
 
-export default  MultiCheckMenu;
+export default MultiCheckMenu;
