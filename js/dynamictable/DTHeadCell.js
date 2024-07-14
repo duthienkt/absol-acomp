@@ -47,7 +47,7 @@ DTHeadCell.prototype.makeAutoSortAttribute = function () {
         this.elt.attr('data-sort-key', '[' + idx + ']');
         this.data.sortKey = '[' + idx + ']';
         this._elt.attr('data-sort-order', 'none');
-        this._elt.attr('title', 'Sort');
+        // this._elt.attr('title', 'Sort');
     }
 };
 
@@ -210,7 +210,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
         if (sortKeyArr.length > 0) {
             this._elt.attr('data-sort-key', sortKeyArr.join(';'));
             this._elt.attr('data-sort-order', 'none');
-            this._elt.attr('title', 'Sort');
+            // this._elt.attr('title', 'Sort');
         }
         this.$sortBtn = _({
             tag: 'span',
