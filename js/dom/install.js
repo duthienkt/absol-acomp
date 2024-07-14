@@ -100,7 +100,7 @@ import DateTimeInput from "../DateTimeInput";
 import ChromeTimePicker from "../ChromeTimePicker";
 import DVExpTree from "../DVExpTree";
 import CheckListItem from "../CheckListItem";
-import CheckListBox from "../CheckListBox";
+import { CheckListBox } from "../CheckListBox";
 import MultiCheckMenu from "../MultiCheckMenu";
 import ChromeTime24Picker from "../ChromeTime24Picker";
 import Time24Input from "../Time24Input";
