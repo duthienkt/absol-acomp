@@ -8,8 +8,10 @@ import AElement from "absol/src/HTML5/AElement";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import Rectangle from "absol/src/Math/Rectangle";
 import safeThrow from "absol/src/Code/safeThrow";
-import { isNaturalNumber, revokeResource } from "./utils";
+import { isNaturalNumber, isRealNumber, revokeResource } from "./utils";
 import noop from "absol/src/Code/noop";
+import Attributes from "absol/src/AppPattern/Attributes";
+import OOP from "absol/src/HTML5/OOP";
 
 var execAsync = (commands, whileFunc) => {
     return commands.reduce((ac, act) => {
@@ -52,14 +54,13 @@ var waitValue = (value, thenCb) => {
  */
 function EfficientTable() {
     this.layoutCtrl = new ETLayoutController(this);
+    this.fixHeaderCtrl = new ETFixHeaderController(this);
     this._adapter = null;
     this.table = null;
     this.extendStyle = this.extendStyle || {};
-    this.$attachhook = _('attachhook').addTo(this)
-        .on('attached', () => {
-
-        });
+    this.$attachhook = _('attachhook').addTo(this);
     this.$attachhook.requestUpdateSize = this.layoutCtrl.requestUpdateSize.bind(this);
+    this.colWidth = new ETColWidthDeclaration(this);
     /**
      * @name adapter
      * @type {ETAdapter}
@@ -103,6 +104,21 @@ EfficientTable.prototype.addStyle = function (name, value) {
     return this;
 };
 
+EfficientTable.prototype.getColWidth = function () {
+    var table = this.table;
+    if (!table) return null;
+    if (arguments.length === 0) return this.colWidth.export();
+    else return this.colWidth.getProperty(...arguments);
+};
+
+EfficientTable.prototype.setColWidth = function () {
+    var table = this.table;
+    if (!table) return null;
+    if (arguments.length === 0) Object.assign(this.colWidth);
+    else this.colWidth.setProperty(...arguments);
+};
+
+
 /**
  *
  * @param {string|number|function}arg
@@ -137,7 +153,7 @@ EfficientTable.prototype.notifyAddRowAt = function (idx) {
 
 
 EfficientTable.prototype.revokeResource = function () {
-
+    this.fixHeaderCtrl.revokeResource();
 };
 
 
@@ -145,10 +161,13 @@ EfficientTable.property = {};
 
 EfficientTable.property.adapter = {
     set: function (value) {
+        this.colWidth.revokeResource();
+        this.fixHeaderCtrl.reset();
         this._adapter = new ETAdapter(this, value);
         this.table = new ETTable(this, this._adapter.data);
         this.addChild(this.table.elt);
         this._adapter.notifyDataSheetChange();
+        this.colWidth = new ETColWidthDeclaration(this);
     },
     get: function () {
         return this._adapter;
@@ -159,6 +178,33 @@ export default EfficientTable;
 
 
 // ETAdapter.prototype.
+
+/**
+ *
+ * @param {EfficientTable} elt
+ * @constructor
+ */
+function ETFixHeaderController(elt) {
+    this.elt = elt;
+    this.$cloneTable = null;
+    this.$cloneHead = null;
+}
+
+ETFixHeaderController.prototype.updateSize = function () {
+
+};
+
+ETFixHeaderController.prototype.reset = function () {
+    if (this.isWrapped) {
+
+    }
+};
+
+ETFixHeaderController.prototype.revokeResource = function () {
+    this.revokeResource = noop;
+    this.elt = null;
+
+}
 
 
 /**
@@ -293,7 +339,7 @@ ETLayoutController.prototype.viewByScroll = function () {
         var row = body.rows[rowIdx - body.rowOffset];
         if (!row) return;//out of date, don't update
         var rowLNY = row.offsetY + row.offsetHeight * hs;
-        var dy = y - bound.top - rowLNY;
+        var dy = y - bound.top - rowLNY - hs;//hs for border 1px
         this.elt.table.elt.addStyle('top', dy + 'px');
     });
 }
@@ -650,7 +696,7 @@ ETBody.prototype.addRowAt = function (idx) {
     var row = this.rows[localIdx];
     if (!row) return false;
     var newRow = new ETBodyRow(this, this.table.wrapper.adapter.getRowAt(idx));
-    this.rows.splice(localIdx, 0, newRow) ;
+    this.rows.splice(localIdx, 0, newRow);
     row.elt.parentElement.addChildBefore(newRow.elt, row.elt);
     for (var i = 0; i < this.rows.length; ++i) {
         this.rows[i].updateIdx(i + this.rowOffset);
@@ -679,7 +725,7 @@ ETBody.prototype.drawFrom = function (idx) {
     var maxRowCount = getMaxRowCount();
     idx = Math.max(0, idx);
     var endIdx = Math.min(idx + maxRowCount, adapter.length);
-    idx = Math.max(0,Math.min(endIdx - 1, idx));
+    idx = Math.max(0, Math.min(endIdx - 1, idx));
 
     var row;
     while (this.rowOffset + this.rows.length > idx + maxRowCount && this.rows.length) {
@@ -837,3 +883,142 @@ function ETBodyCell(row, idx) {
     adapter.renderBodyCell(this.elt, row.data, idx, this);
 
 }
+
+
+/**
+ * @extends Attributes
+ * @param {EfficientTable} elt
+ * @constructor
+ */
+function ETColWidthDeclaration(elt) {
+    Attributes.call(this, this);
+
+    if (!elt.table) return;
+    var temp = elt.table.head.rows.reduce((ac, row) => {
+        var l = row.cells.reduce((ac1, cell) => {
+            var colspan = cell.data.attr && (cell.data.attrs.colspan || cell.data.attrs.colSpan);
+            colspan = parseInt(colspan + '', 10);
+            if (!isNaturalNumber(colspan) || !colspan) colspan = 1;
+            var id = cell.data.id;
+            if (id && (typeof id === "string")) {
+                ac.id2idx[id] = ac1;
+            }
+            if (colspan === 1) {
+                if (!ac.idx2cells[ac1]) ac.idx2cells[ac1] = [];
+                ac.idx2cells[ac1].push(cell);
+            }
+
+
+            return ac1 + colspan;
+        }, 0);
+
+        ac.length = (Math.max(ac.length, l));
+        return ac;
+    }, { length: 0, id2idx: {}, idx2cells: {} });
+
+    console.log(temp)
+
+    Array(temp.length).fill(0).forEach((u, i) => {
+        this.defineProperty('' + i, {
+            set: function (value, ...args) {
+                var unit;
+                if (args.length > 1) unit = args[0];
+                var headWith;
+                var originValue = this.getProperty('' + i);
+                var pOValue = parseMeasureValue(originValue);
+                if (!isRealNumber(value) || value < 0) {
+                    value = 'auto';
+                }
+                else if (unit === 'px') {
+                    if (pOValue.unit === '%') {
+                        headWith = elt.table.head.elt.getBoundingClientRect().width;
+                        value = value / headWith * 100 + '%';
+                    }
+                    else {
+                        value = value + 'px';
+                    }
+                }
+                else if (unit === '%') {
+                    headWith = elt.table.head.elt.getBoundingClientRect().width;
+                    if (pOValue.unit === 'px') {
+                        value = value / 188 * headWith;
+                    }
+                    else {
+                        value = value + '%';
+                    }
+                }
+
+                if (typeof value === "number") value = value + 'px';
+                var cells = temp.idx2cells[i] || [];
+                cells.forEach(cell => {
+                    if (value === 'auto') {
+                        if (cell.data.style) {
+                            delete cell.data.style.width;
+                            cell.elt.removeStyle('width');
+                        }
+                    }
+                    else {
+                        if (!cell.data.style) cell.data.style = {};
+                        cell.data.style.width = value;
+                        cell.elt.addStyle('width', value);
+                    }
+
+                });
+
+            },
+            get: function (...args) {
+                var unit;
+                if (args.length > 1) unit = args[0];
+                var ref = args[args.length - 1];
+                var value = ref.get();
+                var cells = temp.idx2cells[i] || [];
+                if (cells.length === 0) return 0;
+                if (unit === 'px') {
+                    value = cells[0].elt.getBoundingClientRect().width;
+                }
+                else if (unit === '%') {
+                    value = cells[0].elt.getBoundingClientRect().width / elt.table.head.elt.getBoundingClientRect().width * 100;
+                }
+                else {
+                    value = cells.reduce((ac, cell) => {
+                        var pValue;
+                        if (cell.data.style && cell.data.style.width) {
+                            pValue = parseMeasureValue(cell.data.style.width);
+                            if (!pValue || pValue.unit !== 'px') return ac;
+                            return pValue.value;
+                        }
+                        return ac;
+                    }, 'auto');
+                }
+                return value;
+            }
+        })
+    });
+
+    Object.keys(temp.id2idx).forEach(id => {
+        var idx = temp.id2idx[id];
+        this.defineProperty(id, {
+            set: function (...args) {
+                return this.setProperty(idx, ...args.slice(1));
+            },
+            get: function (...args) {
+                return this.getProperty(idx, ...args.slice(1));
+            }
+        });
+    });
+}
+
+
+OOP.mixClass(ETColWidthDeclaration, Attributes);
+
+Object.defineProperty(ETColWidthDeclaration.prototype, 'revokeResource', {
+    value: function () {
+        delete this.$node;
+        delete this.revokeResource;
+    },
+    writable: true,
+    enumerable: false,
+    configurable: true
+})
+
+
