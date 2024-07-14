@@ -15,6 +15,11 @@
 
 .as-efficient-table-wrapper > .as-dynamic-table {
     position: relative;
+    table-layout: auto;
+}
+
+.as-efficient-table-wrapper.as-headless .as-dynamic-table {
+    table-layout: fixed;
 }
 
 
