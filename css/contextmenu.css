@@ -97,6 +97,13 @@
 }
 
 
+.absol-context-menu-anchor .absol-dropright > .absol-dropright-content {
+    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+}
+
+
 .as-system-context-menu {
     /** nothing here, to define use system context menu**/
 }
@@ -107,7 +114,7 @@
 }
 
 .as-context-menu-ctn.as-anchor-modal,
-.absol-context-menu-anchor.as-anchor-modal{
+.absol-context-menu-anchor.as-anchor-modal {
     position: fixed;
     z-index: 8000000;
     left: 0 !important;
@@ -120,24 +127,22 @@
 }
 
 .as-context-menu-ctn.as-anchor-modal::before,
-.as-context-menu-ctn.as-anchor-modal > .absol-vmenu ,
+.as-context-menu-ctn.as-anchor-modal > .absol-vmenu,
 .absol-context-menu-anchor.as-anchor-modal::before,
-.absol-context-menu-anchor.as-anchor-modal > .absol-vmenu
-{
+.absol-context-menu-anchor.as-anchor-modal > .absol-vmenu {
     display: inline-block;
     vertical-align: middle;
     white-space: nowrap;
 }
 
 .as-context-menu-ctn.as-anchor-modal > .absol-vmenu,
-.absol-context-menu-anchor.as-anchor-modal > .absol-vmenu
-{
+.absol-context-menu-anchor.as-anchor-modal > .absol-vmenu {
     text-align: left;
 }
 
 
 .as-context-menu-ctn.as-anchor-modal::before,
-.absol-context-menu-anchor.as-anchor-modal::before{
+.absol-context-menu-anchor.as-anchor-modal::before {
     content: "";
     height: 100%;
 }
@@ -153,11 +158,11 @@
     font-size: 1rem;
 }
 
-.as-quick-menu{
+.as-quick-menu {
     --available-height: calc(100vh - 20px);
     max-height: var(--available-height);
 }
 
-.absol-context-menu-anchor.as-anchor-modal  .as-quick-menu{
+.absol-context-menu-anchor.as-anchor-modal .as-quick-menu {
     max-height: calc(100vh - 20px);
 }
