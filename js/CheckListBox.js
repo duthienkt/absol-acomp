@@ -5,7 +5,7 @@ import CheckListItem from "./CheckListItem";
 import '../css/checklistbox.css'
 import noop from "absol/src/Code/noop";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
-import { copySelectionItemArray, keyStringOf, measureText } from "./utils";
+import { copySelectionItemArray, isNaturalNumber, keyStringOf, measureText } from "./utils";
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import ListSearchMaster from "./list/ListSearchMaster";
@@ -13,6 +13,8 @@ import OOP from "absol/src/HTML5/OOP";
 import TextMeasurement from "./tool/TextMeasurement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
+import { arrayUnique } from "absol/src/DataStructure/Array";
+import { stringHashCode } from "absol/src/String/stringUtils";
 
 
 var itemPool = [];
@@ -68,7 +70,12 @@ export var measureArial14TextWidth = text => {
     return mTextMeasurement.measureTextWidth(text, '14px arial');
 }
 
+var keyStringOfItem = item => {
+    return keyStringOf(item.value) + stringHashCode(item.text+'');
+}
+
 /***
+ * TODO: check all duplicate value when select
  * @extends SelectListBox
  * @constructor
  */
@@ -93,11 +100,19 @@ export function CheckListBox() {
     this._initDomHook();
     this._initFooter();
     this.domSignal.on('viewListAtValue', this.viewListAtValue.bind(this));
+    this.domSignal.on('viewListAtItem', this.viewListAtItem.bind(this));
     /***
      * @name selectedAll
      * @type {boolean}
      * @memberOf CheckListBox#
      */
+    /***
+     * @name selectedItems
+     * @type {Array<>}
+     * @memberOf CheckListBox#
+     */
+
+
 }
 
 CheckListBox.tag = 'CheckListBox'.toLowerCase();
@@ -168,6 +183,9 @@ CheckListBox.property = {};
 CheckListBox.eventHandler = {};
 CheckListBox.prototype.footerMinWidth = 110;
 
+CheckListBox.prototype.revokeResource = function () {
+
+};
 
 CheckListBox.prototype._initDomHook = function () {
     this.domSignal = new DelaySignal();
@@ -194,15 +212,38 @@ CheckListBox.prototype._initFooter = function () {
 CheckListBox.prototype.viewListAtFirstSelected = noop;
 
 CheckListBox.prototype.viewListAtValue = function (value) {
-    if (!this.isDescendantOf(document.body)) {
-        this.domSignal.emit('viewListAtValue', value);
+    if (this.isDescendantOf(document.body)) {
+        this.pagingCtrl.viewListAtValue(value);
     }
-    this.pagingCtrl.viewListAtValue(value);
 };
+
+CheckListBox.prototype.viewListAtItem = function (item) {
+    if (this.isDescendantOf(document.body)) {
+        this.pagingCtrl.viewListAtItem(item);
+    }
+};
+
 
 CheckListBox.prototype.findItemsByValue = function (value) {
     return this._holderDict[keyStringOf(value)];
-}
+};
+
+/**
+ *
+ * @param {number | Array<number>}idx
+ */
+CheckListBox.prototype.getItemByIndex = function (idx) {
+    var arr = this._items;
+    if (!Array.isArray(idx)) {
+        idx = [idx];
+    }
+    for (var i = 0; i < idx.length; ++i) {
+        if (!arr) return null;
+        if (i + 1 === idx.length) return arr[idx[i]];
+        arr = arr[idx[i]].items;
+    }
+};
+
 
 CheckListBox.prototype.notifyChange = function (data) {
     this.emit('change', Object.assign({ target: this, type: 'change' }, data), this);
@@ -227,13 +268,46 @@ CheckListBox.property.values = {
         this.domSignal.emit('updateCheckedAll');
     },
     get: function () {
-        return this.itemHolders.reduce(function visit(ac, holder) {
+        var values = this.itemHolders.reduce(function visit(ac, holder) {
             if (holder.selected && !holder.data.noSelect) ac.push(holder.data.value);
             if (holder.children) holder.children.reduce(visit, ac);
             return ac;
         }, []);
+
+        return arrayUnique(values);
     }
 };
+
+CheckListBox.property.selectedIndexes = {
+    set: function (indexes) {
+        if (!Array.isArray(indexes)) indexes = [];
+
+    },
+    get: function () {
+        var genVisit = (rootValue) => {
+            return (ac, holder, i) => {
+                if (holder.selected && !holder.data.noSelect) {
+                    if (rootValue)
+                        ac.push(rootValue.concat([i]));
+                    else
+                        ac.push(i);
+                }
+                if (holder.children) holder.children.reduce(genVisit((rootValue || []).concat([i])), ac);
+                return ac;
+            }
+        };
+
+
+        return this.itemHolders.reduce(genVisit(), []);
+    }
+};
+
+CheckListBox.property.selectedItems = {
+    get: function () {
+        return this.selectedIndexes.map((idx) => this.getItemByIndex(idx)).filter(it => !!it);
+    }
+};
+
 
 CheckListBox.prototype.resetSearchState = function () {
     this.$searchInput.value = '';
@@ -271,7 +345,7 @@ CheckListBox.property.items = {
 
         this._holderDict = res.dict;
         this._estimateWidth = Math.min(this.widthLimit || Infinity, res.textWidth + (res.descWidth ? res.descWidth + 30 : 0));
-
+        this.addStyle('--select-list-estimate-width', this._estimateWidth + 'px');
         this.$scroller.scrollTop = 0;
         this.pagingCtrl.viewArr(this.itemHolders);
         this.searchMaster.transfer(this.itemHolders.map(it => it.getSearchItem()));
@@ -402,6 +476,7 @@ function CLHolder(boxElt, data, parent) {
     this.boxElt = boxElt;
     this.data = data;
     this.valueKey = keyStringOf(data.value);
+    this.itemKey = keyStringOfItem(data);
     this.itemElt = null;
     this.children = null;
     this.selected = this.valueKey in boxElt._valueDict;
@@ -549,21 +624,41 @@ CLPagingController.prototype.update = function () {
 
 };
 
-CLPagingController.prototype.viewListAtValue = function (value) {
-    var idx = this.holderDict[keyStringOf(value)];
-    if (idx === undefined) return;
+CLPagingController.prototype.viewListAtIdx = function (idx) {
     var bound = this.$scroller.getBoundingClientRect();
+    if (!bound.height) return;
     var y = idx * this.itemHeight;
     var maxY = this.holderArr.length * this.itemHeight - bound.height;
     this.$scroller.scrollTop = Math.min(maxY, y);
 };
 
+CLPagingController.prototype.viewListAtValue = function (value) {
+    var idx = this.holderDict[keyStringOf(value)];
+    if (idx === undefined) return;
+    this.viewListAtIdx(idx);
+
+};
+
+CLPagingController.prototype.viewListAtItem = function (item) {
+    var idx = this.holderHashDict[keyStringOfItem(item)];
+    if (idx === undefined) return;
+    this.viewListAtIdx(idx);
+};
+
+
 CLPagingController.prototype.viewArr = function (itemHolders) {
     this.holderArr = itemHolders.reduce((ac, holder) => holder.toArray(ac), []);
     this.holderDict = this.holderArr.reduce((ac, cr, idx) => {
-        ac[cr.valueKey] = idx;
+        if (!isNaturalNumber(ac[cr.valueKey]))
+            ac[cr.valueKey] = idx;
         return ac;
     }, {});
+
+    this.holderHashDict =  this.holderArr.reduce((ac, cr, idx) => {
+        ac[cr.itemKey] = idx;
+        return ac;
+    }, {});
+
     this.pageN = Math.ceil(this.holderArr.length / this.itemPerPage);
     this.$content.addStyle('height', this.holderArr.length * this.itemHeight + 'px');
     this.update();
@@ -698,7 +793,7 @@ CheckListBoxV1.prototype.viewListAtValue = function (value) {
         this.domSignal.emit('viewListAtValue', value);
         return;
     }
-    if (this._displayValue == VALUE_HIDDEN) {
+    if (this._displayValue === VALUE_HIDDEN) {
         return false;
     }
 
@@ -814,7 +909,7 @@ CheckListBoxV1.eventHandler.clickCloseBtn = function (event) {
     this.emit('close', { type: 'close', target: this, originalEvent: event }, this);
 };
 
-ACore.install(CheckListBoxV1);
+ACore.install('checklistboxv1', CheckListBoxV1);
 
 
 export default CheckListBoxV1;
