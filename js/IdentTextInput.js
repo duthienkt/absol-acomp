@@ -23,7 +23,6 @@ IdentTextInput.render = function () {
 };
 
 
-
 IdentTextInput.prototype._filterHistory = function () {
     if (!this.history) return;
     var temp = this.history.filter(function (t) {
@@ -46,36 +45,23 @@ IdentTextInput.prototype._setNewText = function (text, caretPos) {
     }
 };
 
-//
-// IdentTextInput.eventHandler.identTextKeyDown = function (event) {
-//
-// };
-//
-//
-// IdentTextInput.eventHandler.identTextPaste = function (event) {
-//     var prevValue = this.value;
-//     var startPos = this.getSelectionStart();
-//     var endPos = this.getSelectionEnd();
-//     setTimeout(function () {
-//         var newValue = this.value;
-//         var newEndPos = endPos + newValue.length - prevValue.length;
-//         var pastedText = newValue.substr(startPos, newEndPos - startPos).replace(/(^[^a-zA-Z_$])|([^a-zA-Z$_0-9]+)/g, '');
-//         var newValue1 = newValue.substr(0, startPos) + pastedText + newValue.substr(newEndPos);
-//         if (!newValue1 !== newValue) {
-//             this._setNewText(newValue1, startPos + pastedText.length);
-//         }
-//     }.bind(this), 0);
-// };
-//
-// IdentTextInput.eventHandler.identTextPaste1 = function (event) {
-//     var clipboardData = event.clipboardData || window.clipboardData;
-//     var pastedText = clipboardData.getData('text/plain');
-//     var pastedText1 = pastedText.replace(/(^[^a-zA-Z_$])|([^a-zA-Z$_0-9]+)/g, '');
-//     if (pastedText !== pastedText1) {
-//         document.execCommand("insertText", false, pastedText1);
-//         event.preventDefault();
-//     }
-// };
+IdentTextInput.property = {};
+
+IdentTextInput.property.lowerCaseOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-lower-case-only');
+            this.value = this.value.toLowerCase();
+        }
+        else {
+            this.removeClass('as-lower-case-only');
+        }
+    },
+    get: function () {
+        return this.addClass('as-lower-case-only');
+    }
+};
+
 
 ACore.install(IdentTextInput);
 
@@ -103,6 +89,8 @@ function ITITextController(elt) {
     });
     this.elt.on('keydown', this.ev_keydown);
 }
+
+ITITextController.prototype.keyboardRegex = /[a-zA-Z$_0-9]/;
 
 ITITextController.prototype.getSelectionStart = function () {
     var start = 0;
@@ -134,7 +122,7 @@ ITITextController.prototype.ev_keydown = function (event) {
         this.elt.blur();
     }
     else if (!event.ctrlKey && !event.altKey && key.length === 1) {
-        if (key.match(/[a-zA-Z$_0-9]/)) {
+        if (key.match(this.keyboardRegex)) {
             selectedPositionStart = this.getSelectionStart();
             if (selectedPositionStart === 0 && key.match(/[0-9]/)) {
                 event.preventDefault();
