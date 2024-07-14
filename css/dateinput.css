@@ -13,6 +13,11 @@
     overflow: hidden;
 }
 
+.as-date-input[data-format] {
+    --format-width: 8.5em;
+    width: calc(var(--format-width) + 2em + 1em);
+}
+
 .as-date-input-text {
     outline: none;
     width: calc(100% - 29px);

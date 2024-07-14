@@ -17,7 +17,7 @@ import {
 } from "absol/src/Time/datetime";
 import OOP from "absol/src/HTML5/OOP";
 import DateTimeInput from "./DateTimeInput";
-import { isRealNumber, zeroPadding } from "./utils";
+import { isRealNumber, measureText, zeroPadding } from "./utils";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
 
@@ -767,6 +767,12 @@ DateInput2.property.format = {
         this._format = value;
         this._formatTokens = this._format.match(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g')) || [];
         this.value = this.value;//update
+
+        var testData = new Date(2000, 9, 22, 12, 12, 22,335);
+        testData = formatDateTime(testData, value);
+        this.addStyle('--format-width', Math.ceil(measureText(testData.replace(/[a-z0-9]/g, 'M'), '14px arial').width / 14 * 2) / 2 + 'em');
+        this.attr('data-format', value);
+
     },
     get: function () {
         return this._format;
