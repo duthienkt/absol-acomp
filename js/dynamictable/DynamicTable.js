@@ -216,7 +216,7 @@ DynamicTable.tag = 'DynamicTable'.toLowerCase();
 DynamicTable.render = function (data, domDesc) {
     var width = domDesc.style && domDesc.style.width;
     var classList = ['as-dynamic-table-wrapper'];
-    if (width === 'match_parent') {
+    if (width === 'match_parent' || width === '100%') {
         classList.push('as-width-match-parent');
     }
     return _({
@@ -1197,7 +1197,7 @@ ColSizeController.prototype.ev_dragEnd = function (event) {
         this.notifyColResize(event);
     }
     else {
-        this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${this.colId}"]`, 'width', this.cellElt.getBoundingClientRect().width + 'px').commit();
+        this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${this.colId}"]:not([colspan])`, 'width', this.cellElt.getBoundingClientRect().width + 'px').commit();
     }
     this.elt.requestUpdateSize();
     setTimeout(() => {
