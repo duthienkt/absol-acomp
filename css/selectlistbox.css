@@ -28,6 +28,30 @@
     min-width: 10em;
 }
 
+.as-select-list-box.as-text-align-center .absol-selectlist-item {
+    text-align: center;
+}
+
+.as-select-list-box.as-text-align-center .absol-selectlist-item-text {
+    padding-right: calc(0.35em + 28px);
+}
+
+.as-select-menu.as-text-align-center {
+    text-align: center;
+}
+
+.as-select-menu.as-text-align-center .absol-selectlist-item,
+.as-select-list-box.as-text-align-center .absol-selectlist-item {
+    padding-left: 0.35em;
+    padding-right: calc(0.35em + 28px);
+}
+
+.as-select-menu.as-text-align-center .absol-selectlist-item-text,
+.as-select-list-box.as-text-align-center .absol-selectlist-item-text {
+    padding: 0;
+}
+
+
 div.absol-follower.as-select-list-box {
     z-index: 4000000;
 }

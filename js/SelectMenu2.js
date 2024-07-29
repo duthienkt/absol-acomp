@@ -5,6 +5,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom, { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import { measureText } from "./utils";
+import AElement from "absol/src/HTML5/AElement";
 
 
 ACore.creator['dropdown-ico'] = function () {
@@ -103,7 +104,21 @@ SelectMenu.render = function () {
     });
 };
 
-
+SelectMenu.prototype.addStyle = function (arg0, arg1) {
+    if (arg0 === 'textAlign' || arg0 === 'text-align') {
+        if (arg1 === 'center') {
+            this.addClass('as-text-align-center');
+            this.$selectlistBox.addClass('as-text-align-center');
+        }
+        else {
+            this.removeClass('as-text-align-center');
+            this.$selectlistBox.removeClass('as-text-align-center');
+        }
+    }
+    else {
+        return AElement.prototype.addStyle.apply(this, arguments);
+    }
+};
 
 SelectMenu.prototype.init = function (props) {
     props = props || {};
