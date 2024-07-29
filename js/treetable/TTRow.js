@@ -306,7 +306,11 @@ Object.defineProperty(TTRow.prototype, 'elt', {
             if (this.isOpened) this._elt.addClass('as-is-opened');
             if (this.subRows.length > 0) this._elt.addClass('as-has-sub-row');
             this._elt.addChild(this.cells.map((cell, i) => (cell.elt).attr('data-col-idx', i + '')));
-
+            if (this.data.on && (typeof this.data.on.click  === "function")) {
+                this._elt.on('click', (event)=>{
+                    this.data.on.click.call(this._elt, event, this);
+                });
+            }
             this.$toggle = $('.as-tree-table-toggle', this._elt);
             if (this.$toggle) {
                 this.$toggleCell = this.$toggle.parentElement;
