@@ -80,6 +80,7 @@
     padding-right: 0;
     display: inline-block;
     vertical-align: middle;
+    text-align: inherit;
 }
 
 
@@ -88,7 +89,7 @@
     width: calc(100% - 1.5em);
 }
 
-.as-flexicon-input.as-flexicon-input-has-unit input {
+.as-flexicon-input.as-flexicon-input-has-unit {
     text-align: right;
 }
 
