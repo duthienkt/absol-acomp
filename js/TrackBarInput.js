@@ -59,6 +59,17 @@ TrackBarInput.prototype._calInputTextWidth = function () {
     this.inputTextWidth = l;
 };
 
+TrackBarInput.prototype.addStyle = function (arg0, arg1) {
+    if (arg0 === 'textAlign' || arg0 === 'text-align') {
+        this.$input.addStyle('text-align', arg1);
+        return this;
+    }
+    else {
+        AElement.prototype.addStyle.apply(this, arguments);
+        return this;
+    }
+};
+
 // absol.OOP.drillProperty(this, this.$trackbar, ['leftValue', 'rightValue']);
 
 
@@ -140,9 +151,9 @@ TrackBarInput.property.disabled = {
 };
 
 TrackBarInput.property.readOnly = {
-    set: function (value){
+    set: function (value) {
         value = !!value;
-        if (value){
+        if (value) {
             this.addClass('as-read-only');
         }
         else {
@@ -151,7 +162,7 @@ TrackBarInput.property.readOnly = {
         this.$input.readOnly = value;
         this.$trackbar.readOnly = value;
     },
-    get: function (){
+    get: function () {
         return this.hasClass('as-read-only');
     }
 }
