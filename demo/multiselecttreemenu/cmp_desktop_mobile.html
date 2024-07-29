@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CMP</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <script src="../../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+
+</head>
+<body>
+<script>
+    (function () {
+        var _ = absol._;
+        var $ = absol.$;
+
+        var testItems = [
+            {
+                value: 1,
+                text: "Nhóm chung",
+                items: [
+                    {
+                        value: 4,
+                        text: "Bảo vệ",
+                        isLeaf: true
+                    },
+                    {
+                        value: 5,
+                        text: "Giám đôc nội chính",
+                        isLeaf: true
+                    },
+                    {
+                        value: 6,
+                        text: "Phó giám đốc nội chính",
+                        isLeaf: true
+                    }
+                ],
+                noSelect: false
+            },
+            {
+                value: -5,
+                text: "test group 1",
+                items: [
+                    {
+                        value: 5,
+                        text: "Giám đôc nội chính",
+                        isLeaf: true
+                    },
+                    {
+                        value: 6,
+                        text: "Phó giám đốc nội chính",
+                        isLeaf: true
+                    }
+                ],
+                noSelect: false
+            }
+        ];
+
+
+        var items = [
+            {
+                text: 'Root 1',
+                value: 'r1',
+                items: [
+                    {
+                        text: 'Child 1',
+                        value: 'c1',
+                        isLeaf: true
+                    },
+                    {
+                        text: 'Child 1',
+                        value: 'c2'
+                    },
+                    {
+                        text: 'Child 1',
+                        value: 'c3'
+                    },
+
+                    {
+                        text: 'Child 8',
+                        value: 'c8'
+                    },
+                    {
+                        text: 'Child 8',
+                        value: 'c9'
+                    },
+                    {
+                        text: 'Child 8',
+                        value: 'c10'
+                    },
+                ]
+            },
+            {
+                text: 'Root 2',
+                value: 'r2',
+                items: [
+                    {
+                        text: 'Child 4',
+                        value: 'c4',
+                        noSelect: true
+                    },
+                    {
+                        text: 'Child 5',
+                        value: 'c5'
+                    },
+                    {
+                        text: 'Child 6',
+                        value: 'c6'
+                    },
+
+                ]
+            },
+
+        ]
+
+        _('<h3>Normal</h3>').addTo(document.body);
+        var menu0 = _({
+            tag: 'multichecktreemenu',
+            style: {
+                // position: 'relative',
+                // display: 'inline-block'
+                width: '150px',
+                height: '30px',
+                overflow:'hidden'
+            },
+            props: {
+                enableSearch: true,
+                values: [6],
+                items: items
+                // leafOnly: true
+            },
+            on: {
+                change: function () {
+                    menu1.values = this.values.slice();
+                    view0();
+
+                }
+            }
+        }).addTo(document.body);
+
+
+
+        var v0 = _({
+            tag: 'pre'
+        }).addTo(document.body);
+
+        function view0() {
+            v0.innerHTML = absol.generateJSVariable(menu0.values) + '<br>' + absol.generateJSVariable(menu0.viewValues);
+
+        }
+
+        view0();
+
+        _('<h3>LeafOnly</h3>').addTo(document.body);
+
+        var menu1 = _({
+            tag: 'multichecktreemenu',
+            style: {
+                position: 'relative',
+                display: 'inline-block',
+
+            },
+            props: {
+                enableSearch: true,
+                items: testItems,
+                leafOnly: true,
+                version: 2
+            },
+            on:{
+                change: function (){
+                    console.trace(this.values);
+                }
+            }
+        }).addTo(document.body);
+        // var menuv2 = _({
+        //     tag: 'multichecktreemenu',
+        //     style: {
+        //         position: 'relative',
+        //         display: 'inline-block',
+        //         version: 2
+        //     },
+        //     props: {
+        //         enableSearch: true,
+        //         items: testItems,
+        //         leafOnly: true,
+        //     },
+        //     on:{
+        //         change: function (){
+        //             console.log(this.values);
+        //         }
+        //     }
+        // }).addTo(document.body);
+
+    })();
+</script>
+</body>
+</html>

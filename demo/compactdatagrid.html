@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CompactDataGrid</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,minimum-scale=1.0, user-scale=no">
+    <meta charset="UTF-8">
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+</head>
+<body>
+<script>
+    var defaultData = {
+        header: {
+            rows: [
+                {
+                    cells: [
+                        {
+                            text: 'Số TT'
+                        },
+                        {
+                            text: 'Họ và tên'
+                        }
+                    ]
+                }
+            ]
+        },
+        data: {
+            rows: [
+                {
+                    cells: [{
+                        variables: [{ name: 'abc', title: "Tên" }, 'xyz']
+                    }, {}, {}, {}]
+                },
+                { cells: [{}, {}, {}, {}] },
+                { cells: [{}, { colspan: 2, rowspan: 2 }, {}] },
+                { cells: [{}, {}, {}, {}] },
+                { cells: [{}, {}, {}, {}] }
+
+            ]
+        }
+    };
+    try {
+        var data = JSON.parse(localStorage.getItem('cpdg_data_v1'));
+        data = data || defaultData;
+    } catch (err) {
+        data = defaultData;
+    }
+
+
+    var resetBtn = absol._({
+        tag: 'flexiconbutton',
+        props: {
+            text: 'reset'
+        },
+        on: {
+            click: function () {
+                editor.header = defaultData.header;
+                editor.data = defaultData.data;
+                localStorage.setItem('cpdg_data_v1', JSON.stringify({ header: editor.header, data: editor.data }));
+            }
+        }
+    }).addTo(document.body)
+
+    var editor = absol._({
+        tag: 'compactdatagrideditor',
+        props: {
+            data: data.data,
+
+            header: data.header,
+            // data: null,
+            variables: [
+                { name: 'name', title: "Tên" },
+                { name: 'old', title: 'Tuổi' },
+                { name: 'birthday', title: 'Ngày sinh' },
+                {
+                    name: 'date',
+                    title: 'Ngày làm'
+                },
+                {
+                    name: 'department',
+                    title: 'Bộ phận'
+                },
+                {
+                    name: 'position',
+                    title: 'Chức vụ'
+                }
+            ]
+        },
+        on: {
+            change: function () {
+                localStorage.setItem('cpdg_data_v1', JSON.stringify({ header: editor.header, data: editor.data }));
+                updatePreview();
+                preview.updateSize();
+            }
+        }
+    }).addTo(document.body);
+    var preview = absol._({
+        tag: 'textarea2',
+        style: {
+            width: '80vw'
+        }
+    }).addTo(document.body);
+
+    function updatePreview() {
+        preview.value = absol.generateJSVariable({ header: editor.header, data: editor.data });
+        preview.updateSize();
+
+    }
+
+    setTimeout(() => {
+        updatePreview();
+
+    }, 100)
+
+</script>
+</body>
+</html>

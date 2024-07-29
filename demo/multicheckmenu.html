@@ -55,8 +55,8 @@
         var items = Array(1600).fill(null).map(function (u, i) {
             return {
                 icon: 'span.mdi.mdi-account',
-                text: `[${i}] ${absol.string.randomPhrase(30)}`,
-                value: i,
+                text: `[${i}, ${i / 3 >> 0}] ${absol.string.randomPhrase(30)}`,
+                value: i / 3 >> 0,
                 desc: absol.string.randomPhrase(20)
             };
         });
@@ -72,7 +72,7 @@
             },
             on: {
                 change: function (event) {
-                    console.log(this.values);
+                    console.log(this.values, this.selectedIndexes, this.selectedItems);
                 },
                 submit: function () {
                     bt1.innerHTML = this.values.join(', ');
@@ -107,14 +107,36 @@
             props: {
                 enableSearch: true,
                 items: items,
-                itemFocusable: true
+                itemFocusable: true,
+                values: [1, 4, 5, 6]
             },
             on: {
                 change: function (event) {
-                    console.log(event.type, this.values);
+                    console.trace(event.type, this.values);
                 }
             }
         }).addTo(document.body);
+
+
+        var menu4 = _({
+            tag: 'multicheckmenu',
+            style: {
+                'max-height': '300px',
+                marginBottom: '800px'
+            },
+            props: {
+                enableSearch: true,
+                itemFocusable: true,
+                items: Array(100).fill().map((u, i) => ({ text: absol.string.randomPhrase(300), value: i })),
+                values: [1, 2, 3, 4, 5, 6]
+            },
+            on: {
+                change: function (event) {
+                    console.trace(event.type, this.values);
+                }
+            }
+        }).addTo(document.body);
+
         var menu2 = _({
             tag: 'multicheckmenu',
             style: {
@@ -129,7 +151,7 @@
             },
             on: {
                 change: function (event) {
-                    console.log(event.type, this.values);
+                    console.trace(event.type, this.values);
                 }
             }
         }).addTo(document.body);
@@ -150,6 +172,7 @@
                 }
             }
         }).addTo(document.body);
+
 
         return;
         fetch('./demo_tree_list_2.js').then(res => res.text()).then(text => {
