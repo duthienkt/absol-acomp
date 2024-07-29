@@ -1,5 +1,5 @@
 import '../css/dynamictable.css';
-import { $, _ } from "../ACore";
+import ACore, { $, _ } from "../ACore";
 import { randomIdent, randomPhrase } from "absol/src/String/stringGenerate";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
@@ -154,6 +154,7 @@ EfficientTable.prototype.notifyAddRowAt = function (idx) {
 
 EfficientTable.prototype.revokeResource = function () {
     this.fixHeaderCtrl.revokeResource();
+    //todo: revoke all resource
 };
 
 
@@ -175,6 +176,8 @@ EfficientTable.property.adapter = {
 };
 
 export default EfficientTable;
+
+ACore.install(EfficientTable);
 
 
 // ETAdapter.prototype.
@@ -375,6 +378,7 @@ ETAdapter.prototype.notifyDataSheetChange = function () {
         () => {
             var body = this.elt.table.body;
             var head = this.elt.table.head;
+            body.clear();
             body.drawFrom(0);
             var makeSize = () => {
                 body.waitLoaded(() => {
@@ -666,6 +670,20 @@ function ETBody(table, data) {
     this.sync = null;
 }
 
+
+ETBody.prototype.clear = function () {
+    this.rowOffset = 0;
+    var row;
+    while (this.rows.length) {
+        row = this.rows.shift();
+        this.rowOffset++;
+        row.elt.remove();
+        row.revokeResource();
+    }
+    this.needUpdateYOffset = true;
+};
+
+
 ETBody.prototype.removeRowAt = function (idx) {
     var localIdx = idx - this.rowOffset;
     var row = this.rows[localIdx];
@@ -819,6 +837,16 @@ function ETBodyRow(body, data) {
         this.$idx = $('.as-dt-row-index', this.elt) || null;
         if (this.$idx)
             this.$idx.attr('data-idx', this.idx + 1);
+        if (data.on && (data.on.click)) {
+            this.elt.on('click', (event) => {
+                data.on.click.call(this.elt, event, this);
+            });
+        }
+        if (adapter.data.body.rowTemplate.on && (typeof adapter.data.body.rowTemplate.on.click === "function")) {
+            this.elt.on('click', (event) => {
+                adapter.data.body.rowTemplate.on.click.call(this.elt, event, this);
+            });
+        }
     });
     this.size = new Rectangle(0, 0, 0, 0);
     // this.cells = data.cells.map(cell => new ETBodyCell(this, cell));
@@ -916,7 +944,6 @@ function ETColWidthDeclaration(elt) {
         return ac;
     }, { length: 0, id2idx: {}, idx2cells: {} });
 
-    console.log(temp)
 
     Array(temp.length).fill(0).forEach((u, i) => {
         this.defineProperty('' + i, {
