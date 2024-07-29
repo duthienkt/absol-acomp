@@ -51,6 +51,7 @@
     height: 1em;
     width: 1em;
     max-height: 50%;
+    overflow: hidden;
 }
 
 .absol-number-input-button-up-container > button,
