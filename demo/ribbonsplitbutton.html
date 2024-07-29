@@ -304,7 +304,26 @@
         .addChild(button3)
         .addChild(button4)
         .addChild(button5);
+
+    _('<h2>SelectRibbonMenu</h2>').addTo(document.body);
+
+    var menu_5 = _({
+        tag:'selectribbonmenu',
+        props:{
+            items:[
+                {text:'item 1', value: 1},
+                {text: 'item 2', value: 2}
+            ]
+        },
+        on:{
+            change: function (){
+                console.log(this.value);
+            }
+        }
+    }).addTo(document.body);
+
 </script>
+
 <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
 </body>
 

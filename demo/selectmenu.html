@@ -124,6 +124,20 @@
         }
     });
 
+    render('br');
+    render('br');
+    render('<span>text-align: center </span>');
+    render({
+        tag: 'selectmenu',
+        style: {
+           'text-align': 'center'
+        },
+        props: {
+            enableSearch: true,
+            items: makeRandomList(10, false, false)
+        }
+    });
+
 </script>
 
 <h1>Tree list</h1>

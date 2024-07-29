@@ -1,19 +1,39 @@
-var input = absol._({
+function render(...args) {
+    return absol._(...args).addTo(document.body)
+}
+
+var input = render({
     tag: 'timerange24input',
     props: {
         dayOffset: 3600000 * 9.5,
         duration: 3600000
+    },
+    on: {
+        change: function () {
+            console.log(this.value)
+            input3.value = this.value;
+        }
     }
-}).addTo(document.body);
+});
 
-var input = absol._({
+var input2 = render({
     tag: 'timerange24input',
     props: {
         dayOffset: 3600000 * 9.5,
         duration: 3600000,
         notNull: false
     }
-}).addTo(document.body);
+});
+
+render('<h5>Ref</h5>');
+
+var input3 = render({
+    tag: 'timerange24input',
+    props: {
+        value: input.value
+    }
+});
+
 // var input = absol._({
 //     tag: 'time24input',
 //     props: {

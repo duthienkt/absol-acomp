@@ -69,7 +69,7 @@
         var myVruler = absol._({
             tag: 'vruler',
             style: {
-                height: '100%'
+                height: '90vh'
             },
             props: {
                 // inverse: true
@@ -176,10 +176,35 @@
             mouseXLine.addStyle('left', event.clientX - myHrulerBound.left - 1.5 + 'px');
             mouseYLine.addStyle('top', event.clientY - myVrulerBound.top - 1.5 + 'px');
         });
+
+        var bt = absol._({
+            tag:'flexiconbutton',
+            props:{
+                text:'Remove'
+            },
+            on:{
+                click: function () {
+                    myHruler.revokeResource()
+                    myHruler.remove();
+                    myVruler.revokeResource();
+                    myVruler.remove();
+                    // myVruler.remove();
+                }
+            }
+        });
+        document.body.insertBefore(absol._('br'), document.body.firstChild);
+        document.body.insertBefore(bt, document.body.firstChild);
+
     </script>
 
     <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>
+    <script>
+        setTimeout(()=>{
+            dispatchEvent(new Event('resize'));
+            updateResizebox();
 
+        }, 100);
+    </script>
 </body>
 
 </html>
