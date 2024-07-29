@@ -6,6 +6,7 @@ import ext2MineType from "absol/src/Converter/ext2MineType";
 import TextMeasurement from "./tool/TextMeasurement";
 import { MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
 import Rectangle from "absol/src/Math/Rectangle";
+import AElement from "absol/src/HTML5/AElement";
 
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
@@ -1371,7 +1372,7 @@ export function replaceFileInObject(o, replacer) {
     });
 }
 
-export {revokeResource} from 'absol/src/DataStructure/Object';
+export { revokeResource } from 'absol/src/DataStructure/Object';
 
 export function isNone(x) {
     return x === null || x === undefined;
@@ -1458,4 +1459,86 @@ export function wrapText(text, width, font) {
 
 
     return res;
+}
+
+
+var listenMethodNames = ['appendChild', 'insertChildBefore', 'addStyle', 'removeStyle', 'removeChild', 'remove'];
+var originalMethodNames = listenMethodNames.map(x => 'original_' + x);
+
+export function listenDomContentChange(elt, callback) {
+    var overrideMethods = listenMethodNames.map((name, i) => {
+        if (i < 2) {
+            return function (child) {
+                var res = this[originalMethodNames[i]].apply(this, arguments);
+                addHook(child);
+                callback && callback({ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                return res;
+            }
+        }
+        else if (i < 4) {
+            return function () {
+                var res = this[originalMethodNames[i]].apply(this, arguments);
+                callback && callback({ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                return res;
+            }
+        }
+        else if (i < 5) {
+            return function (child) {
+                var res = this[originalMethodNames[i]].apply(this, arguments);
+                removeHook(child);
+                callback && callback({ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                return res;
+            }
+        }
+        else {
+            return function () {
+                var res = this[originalMethodNames[i]].apply(this, arguments);
+                removeHook(this);
+                callback && callback({ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                return res;
+            }
+        }
+    });
+    /**
+     *
+     * @param {HTMLElement|AElement|Node} child
+     */
+    var addHook = (child) => {
+        if (!child) return;
+        if (child.nodeType !== Node.ELEMENT_NODE) return;
+        if (child.domHooked) return;
+        child.domHooked = true;
+        var i;
+        var ln;
+        for (i = 0; i < listenMethodNames.length; ++i) {
+            ln = listenMethodNames[i];
+            if (!AElement.prototype[ln] || AElement.prototype[ln] === child[ln]) {
+                child[originalMethodNames[i]] = child[ln];
+                child[ln] = overrideMethods[i];
+            }
+        }
+
+        if (!child._azar_extendTags || Object.keys(child._azar_extendTags).length === 0) {
+            for (i = 0; i < child.childNodes.length; ++i)
+                addHook(child.childNodes[i]);
+        }
+    }
+
+    var removeHook = (child) => {
+        if (!child) return;
+        if (child.nodeType !== Node.ELEMENT_NODE) return;
+        if (!child.domHooked) return;
+        delete child.domHooked;
+        var i;
+        for (i = 0; i < listenMethodNames.length; ++i) {
+            if (child[originalMethodNames[i]]) {
+                child[listenMethodNames[i]] = child[originalMethodNames[i]];
+                delete child[originalMethodNames[i]];
+            }
+        }
+        for (i = 0; i < child.childNodes.length; ++i)
+            removeHook(child.childNodes[i]);
+    }
+
+    addHook(elt);
 }
