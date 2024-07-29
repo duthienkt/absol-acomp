@@ -7,6 +7,7 @@ function render(o) {
     render('<h2>Basic (auto: desktop/mobile)</h2>');
     var menu = render({
         tag: 'multichecktreemenu',
+        style: { maxWidth: '150px' },
         props: {
             values: [-100037, -100034, -100000],
             enableSearch: true
