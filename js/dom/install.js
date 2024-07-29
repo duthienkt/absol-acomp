@@ -169,6 +169,7 @@ import ExpressionInput from "../ExpressionInput";
 import IdentTextInput from "../IdentTextInput";
 import EfficientTable from "../EfficientTable";
 import CompactDataGridEditor from "../CompactDataGridEditor";
+import SelectRibbonMenu from "../SelectRibbonMenu";
 
 
 export var publicCreators = [
@@ -276,6 +277,7 @@ export var publicCreators = [
     RadioInput,
     RibbonSplitButton,
     RibbonButton,
+    SelectRibbonMenu,
     RotatedText,
     SelectList,
     RemoteSvg,

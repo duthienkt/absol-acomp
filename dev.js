@@ -32,6 +32,7 @@ import { FinderFileSystem } from "./js/finder/Finder";
 import { silentDownloadAsPdf } from "./js/printer";
 import MApplication from "./js/mobile/MApplication";
 import MActivity from "./js/mobile/MActivity";
+import ListSearchMaster from "./js/list/ListSearchMaster";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -60,6 +61,7 @@ window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;
 
 absol.printer.silentDownloadAsPdf = silentDownloadAsPdf;
+absol.ListSearchMaster = ListSearchMaster;
 
 Dom.documentReady.then(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
