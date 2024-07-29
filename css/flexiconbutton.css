@@ -10,6 +10,7 @@
     vertical-align: middle;
     height: var(--as-input-height);
     font-size: 1rem;
+    cursor: pointer;
 }
 
 .as-flexicon-button:disabled {
