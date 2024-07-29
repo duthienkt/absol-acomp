@@ -4,6 +4,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 import { nearFloor, isRealNumber, isNaturalNumber } from "../utils";
 import NITextController from "./NITextController";
 import { numberAutoFixed } from "absol/src/Math/int";
+import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -131,6 +132,16 @@ NumberInput.render = function () {
 
         ]
     });
+};
+
+NumberInput.prototype.addStyle = function (arg0, arg1) {
+  if (arg0 === 'textAlign' || arg0 === 'text-align') {
+      this.$input.addStyle(arg0, arg1);
+      return this;
+  }
+  else {
+      return AElement.prototype.addStyle.apply(this, arguments);
+  }
 };
 
 
