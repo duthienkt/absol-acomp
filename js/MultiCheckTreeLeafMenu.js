@@ -136,6 +136,15 @@ MultiCheckTreeLeafMenu.property.values = {
 MultiCheckTreeLeafMenu.property.disabled = MultiSelectMenu.property.disabled;
 MultiCheckTreeLeafMenu.property.readOnly = MultiSelectMenu.property.readOnly;
 
+MultiCheckTreeLeafMenu.property.placeholder = {
+    set: function (value) {
+        this.$itemCtn.attr('data-placeholder', value || '');
+    },
+    get: function () {
+        return this.$itemCtn.attr('data-placeholder');
+    }
+};
+
 
 MultiCheckTreeLeafMenu.eventHandler = {};
 

@@ -201,3 +201,12 @@
     stroke: #929292;
     fill: #ebebe4;
 }
+
+.as-multi-select-menu-item-ctn:empty::before {
+    content: attr(data-placeholder);
+    display: inline-block;
+    vertical-align: middle;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 0 5px;
+    line-height: 2;
+}

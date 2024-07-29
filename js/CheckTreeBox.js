@@ -6,7 +6,7 @@ import { copySelectionItemArray, estimateWidth14, keyStringOf, measureText } fro
 import { prepareSearchForList, searchTreeListByText } from "./list/search";
 import SelectListBox from "./SelectListBox";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
-import { arrayCompare } from "absol/src/DataStructure/Array";
+import { arrayCompare, arrayUnique } from "absol/src/DataStructure/Array";
 import { measureArial14TextWidth } from "./CheckListBox";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import SearchTextInput from "./Searcher";
@@ -23,7 +23,11 @@ import noop from "absol/src/Code/noop";
 function CheckTreeBox() {
     if (this.cancelWaiting)
         this.cancelWaiting();
-    this.listCtrl = new CTBItemListController(this);
+    /**
+     *
+     * @type {CTBItemListController}
+     */
+    this.listCtrl = new (this.ListControllerClass)(this);
     OOP.drillProperty(this, this.listCtrl, ['viewHolders', '$checkAll', 'estimateSize']);
     this.dropdownCtrl = new CTBDropdownController(this);
     this.actionCtrl = new CTBActionController(this);
@@ -407,14 +411,14 @@ TreeRootHolder.prototype.updateUp = function () {
 TreeRootHolder.prototype.getValues = function (ac) {
     ac = ac || [];
     this.child.forEach(c => c.getValues(ac));
-    return ac;
+    return arrayUnique(ac);
 };
 
 
 TreeRootHolder.prototype.getViewValues = function (ac) {
     ac = ac || [];
     this.child.forEach(c => c.getViewValues(ac));
-    return ac;
+    return arrayUnique(ac);
 };
 
 /***
@@ -550,9 +554,9 @@ TreeNodeHolder.prototype.depthIndexing = function (ac) {
     var key = keyStringOf(this.item.value);
     if (!ac[key]) ac[key] = [];
     ac[key].push(this);
-    if (ac[key].length === 2) {
-        console.warn("Duplicate value", ac[key]);
-    }
+    // if (ac[key].length === 2) {//allow
+    //     console.warn("Duplicate value", ac[key]);
+    // }
     this.child.forEach(c => c.depthIndexing(ac));
     return ac;
 };
@@ -814,7 +818,8 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
     },
     get: function () {
         return this._elt;
-    }
+    },
+    configurable: true
 });
 
 
@@ -851,7 +856,7 @@ TreeNodeHolder.prototype.updateSelectedFromRef = function () {
  * @param {CheckTreeBox} elt
  * @constructor
  */
-function CTBItemListController(elt) {
+export function CTBItemListController(elt) {
     this.elt = elt;
     var RootHolderClass = this.elt.RootHolderClass;
     this._items = [];
@@ -887,6 +892,7 @@ function CTBItemListController(elt) {
 
 }
 
+CheckTreeBox.prototype.ListControllerClass = CTBItemListController;
 
 CTBItemListController.prototype.preLoadN = 3;
 CTBItemListController.prototype.itemHeight = 28;

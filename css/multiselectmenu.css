@@ -36,6 +36,15 @@
     overflow-y: auto;
 }
 
+.as-multi-select-menu-item-ctn.as-has-more::after {
+    content: "...";
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 1.5em;
+    color: rgb(57, 57, 58);
+}
+
 
 .as-multi-select-menu-toggle-btn {
     position: absolute;
@@ -111,4 +120,15 @@
 .as-multi-select-menu.as-border-none .as-multi-select-menu-item-ctn {
     max-height: unset;
     overflow-y: auto;
+}
+
+
+.as-multi-select-menu.as-has-max-width {
+    --max-width: 1024px;
+    max-width: var(--max-width);
+    min-width: 100px !important;
+}
+
+.as-multi-select-menu.as-has-max-width  .absol-selectbox-item-text span{
+    max-width: calc(var(--max-width) - 85px);
 }

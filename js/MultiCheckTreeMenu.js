@@ -8,6 +8,11 @@ import MultiSelectMenu from "./MultiSelectMenu";
 import CheckTreeLeafOnlyBox from "./CheckTreeLeafOnlyBox";
 import { copySelectionItemArray, isNaturalNumber, rootTreeValues2CheckedValues } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import AElement from "absol/src/HTML5/AElement";
+import { parseMeasureValue } from "absol/src/JSX/attribute";
+import CheckUnsafeTreeLeafOnlyBox from "./CheckUnsafeTreeLeafOnlyBox";
+import { arrayCompare, arrayUnique } from "absol/src/DataStructure/Array";
+import LangSys from "absol/src/HTML5/LanguageSystem";
 
 
 /***
@@ -16,15 +21,14 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
  */
 function MultiCheckTreeMenu() {
     this._items = [];
-    this._values = [];
+    this._values = [];//commited value
     this._viewValues = [];
     /***
      * @type {CheckTreeBox|CheckTreeLeafOnlyBox}
      */
     this.$checkTreeBox = _({
-        tag: this.renderProps.leafOnly ? CheckTreeLeafOnlyBox.tag : CheckTreeBox.tag,
+        tag: this.renderProps.leafOnly ? (this.attr('data-version') === '2.0' ? CheckUnsafeTreeLeafOnlyBox.tag : CheckTreeLeafOnlyBox.tag) : CheckTreeBox.tag,
         // forceMobile: true,
-
         on: {
             change: this.eventHandler.boxChange,
             preupdateposition: this.eventHandler.preUpdateListPosition,
@@ -42,6 +46,7 @@ function MultiCheckTreeMenu() {
     this.$checkTreeBox.followTarget = this;
     this.$checkTreeBox.sponsorElement = this;
     this.on('click', this.eventHandler.click);
+    this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
 
 
     /**
@@ -94,7 +99,9 @@ MultiCheckTreeMenu.render = function (data, domDesc) {
             renderProps: props
         }
     });
-
+    if (props.version === 2) {
+        res.attr('data-version', '2');
+    }
     if (leafOnly) res.addClass('as-leaf-only');
     if (BrowserDetector.isMobile) res.addClass('am-multi-select-menu');
 
@@ -102,6 +109,64 @@ MultiCheckTreeMenu.render = function (data, domDesc) {
 };
 
 MultiCheckTreeMenu.prototype.tokenPool = [];
+
+MultiCheckTreeMenu.prototype.styleHandlers = {};
+
+MultiCheckTreeMenu.prototype.styleHandlers.maxWidth = function (value) {
+    var parsedValue = parseMeasureValue(value);
+    if (parsedValue.unit === 'px') {
+        this.addClass('as-has-max-width');
+        this.addStyle('--max-width', value);
+    }
+    else {
+        this.removeClass('as-has-max-width');
+    }
+};
+
+MultiCheckTreeMenu.prototype.styleHandlers['max-width'] = MultiCheckTreeMenu.prototype.styleHandlers.maxWidth;
+
+MultiCheckTreeMenu.prototype.styleHandlers.width = function (value) {
+    var parsedValue = parseMeasureValue(value);
+    if (parsedValue.unit === 'px') {
+        this.addClass('as-has-max-width');
+        this.addStyle('--max-width', value);
+        this.style.width = value;
+    }
+    else {
+        this.removeClass('as-has-max-width');
+    }
+};
+
+MultiCheckTreeMenu.prototype.styleHandlers.overflow = function (value) {
+    if (value === 'hidden') {
+        this.style.overflow = 'hidden';
+    }
+    else {
+        this.style.overflow = '';
+    }
+};
+
+
+MultiCheckTreeMenu.prototype.addStyle = function (arg0, arg1) {
+    if ((typeof arg0 === "string") && (this.styleHandlers[arg0])) {
+        this.styleHandlers[arg0].apply(this, Array.prototype.slice.call(arguments, 1));
+        return this;
+    }
+    else {
+        return AElement.prototype.addStyle.apply(this, arguments);
+    }
+};
+
+MultiCheckTreeMenu.prototype.removeStyle = function (arg0) {
+    if ((typeof arg0 === "string") && (this.styleHandlers[arg0])) {
+        this.styleHandlers[arg0].call(this, '');
+        return this;
+    }
+    else {
+        return AElement.prototype.removeStyle.apply(this, arguments);
+    }
+};
+
 
 MultiCheckTreeMenu.prototype._requestToken = function () {
     var token = this.tokenPool.pop();
@@ -142,6 +207,7 @@ MultiCheckTreeMenu.prototype._assignTokens = function (items) {
     for (var i = 0; i < items.length; ++i) {
         this.$itemCtn.childNodes[i].data = items[i];
     }
+
 };
 
 
@@ -167,24 +233,39 @@ MultiCheckTreeMenu.prototype.viewValues = function (values) {
         this.$checkTreeBox.addStyle('min-width', bound.width + 'px');
         ResizeSystem.update();
     }
+    setTimeout(this._updateOverflow.bind(this), 100)
+};
+
+MultiCheckTreeMenu.prototype._updateOverflow = function () {
+    var bound;
+    if (this.getComputedStyleValue('overflow') === 'hidden') {
+        bound = this.getBoundingClientRect();
+        if (bound.width === 0) return;
+        this.$itemCtn.removeClass('as-has-more');
+        var hasMore = false;
+        var elt;
+        for (var i = 0; i < this.$itemCtn.childNodes.length; ++i) {
+            elt = this.$itemCtn.childNodes[i];
+            if (!hasMore) {
+                elt.removeStyle('display');
+                var cBound = elt.getBoundingClientRect();
+                if (cBound.bottom > bound.bottom) {
+                    hasMore = true;
+                }
+            }
+            if (hasMore) {
+                elt.addStyle('display', 'none');
+            }
+        }
+        if (hasMore) this.$itemCtn.addClass('as-has-more');
+    }
 };
 
 MultiCheckTreeMenu.prototype.commitView = function () {
     var values = this._values;
-    var views = this._viewValues;
-    var changed = values.length !== views.length;
-    var viewDict;
-    if (!changed) {
-        viewDict = views.reduce(function (ac, cr) {
-            ac[cr] = true;
-            return ac;
-        }, {});
-        changed = values.some(function (value) {
-            return !viewDict[value];
-        });
-    }
-    if (changed) {
-        this._values = views.slice();
+    var newValues = this.$checkTreeBox.values.slice();
+    if (!arrayCompare(values, newValues)) {
+        this._values = this.$checkTreeBox.values.slice();
         this.emit('change', { type: 'change', target: this }, this);
     }
 };
@@ -306,7 +387,8 @@ MultiCheckTreeMenu.property.values = {
      */
     set: function (values) {
         if (!(values instanceof Array)) values = [];
-        this.$checkTreeBox.values = values.slice();
+        values = arrayUnique(values);
+        this.$checkTreeBox.values = values;
         this.viewValues(this.$checkTreeBox.viewValues);
         this._values = this.$checkTreeBox.values.slice();
     },
@@ -334,6 +416,15 @@ MultiCheckTreeMenu.property.leafOnly = {
     },
     get: function () {
         return this.hasClass('as-leaf-only');
+    }
+};
+
+MultiCheckTreeMenu.property.placeholder = {
+    set: function (value) {
+        this.$itemCtn.attr('data-placeholder', value || '');
+    },
+    get: function () {
+        return this.$itemCtn.attr('data-placeholder');
     }
 };
 
@@ -405,8 +496,11 @@ MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
     this.$checkTreeBox.updateSelectedInViewIfNeed();
     var newValues = this.$checkTreeBox.viewValues.slice();
     this.viewValues(newValues);
-    this._values = newValues;
-    this.emit('change', { type: 'change', target: this }, this);
+    console.log(this._values, newValues)
+    if (!arrayCompare(this._values, newValues)) {
+        this._values = newValues;
+        this.emit('change', { type: 'change', target: this }, this);
+    }
 };
 
 

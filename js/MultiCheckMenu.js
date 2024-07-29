@@ -7,6 +7,7 @@ import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import { isNaturalNumber } from "./utils";
 import { arrayCompare } from "absol/src/DataStructure/Array";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import LangSys from "absol/src/HTML5/LanguageSystem";
 
 
 var hitItem = event => {
@@ -65,6 +66,8 @@ function MultiCheckMenu() {
     this.disableClickToFocus = false;
     this.orderly = true;//always true
     this.itemFocusable = false;
+    this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
+
 
     /**
      * @type {boolean}
@@ -124,6 +127,15 @@ MultiCheckMenu.property.items = {
     },
     get: function () {
         return this.$selectlistBox.items;
+    }
+};
+
+MultiCheckMenu.property.placeholder = {
+    set: function (value) {
+        this.$itemCtn.attr('data-placeholder', value || '');
+    },
+    get: function () {
+        return this.$itemCtn.attr('data-placeholder');
     }
 };
 

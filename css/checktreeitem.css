@@ -37,6 +37,35 @@
     visibility: hidden;
 }
 
-.absol-checkbox.as-no-select{
+.as-check-tree-item.as-check-unsafe-tree-item {
+    padding-right: 45px;
+}
+
+.as-check-unsafe-tree-item .as-check-unsafe-tree-item-action-ctn {
+    display: none;
+    position: absolute;
+    height: 20px;
+    right: 5px;
+    top: calc(50% - 10px);
+    --as-transparent-button-text-color: rgba(107, 107, 108, 0.3);
+}
+
+/*.as-check-unsafe-tree-item.status-close .as-check-unsafe-tree-item-action-ctn,*/
+/*.as-check-unsafe-tree-item.status-open .as-check-unsafe-tree-item-action-ctn*/
+/*{*/
+/*    display: block;*/
+/*}*/
+
+
+.as-check-unsafe-tree-item-action-ctn >button{
+    width: 25px;
+    height: 20px;
+}
+
+/*.as-check-unsafe-tree-item-action-ctn >button:not(:first-child) {*/
+/*    margin-left: 5px;*/
+/*}*/
+
+.absol-checkbox.as-no-select {
     visibility: hidden;
 }

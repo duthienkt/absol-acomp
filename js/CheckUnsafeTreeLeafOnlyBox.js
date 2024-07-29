@@ -1,11 +1,12 @@
-import ACore, { _ } from "../ACore";
-import CheckTreeBox, { TreeNodeHolder, TreeRootHolder } from "./CheckTreeBox";
-import CheckTreeItem from "./CheckTreeItem";
-import OOP from "absol/src/HTML5/OOP";
+import ACore, { $$, $, _ } from "../ACore";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { keyStringOf } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import SearchTextInput from "./Searcher";
+import CheckTreeBox, { CTBItemListController, TreeNodeHolder, TreeRootHolder } from "./CheckTreeBox";
+import CheckTreeItem from "./CheckTreeItem";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 
 var normalizeItem = item => {
@@ -32,20 +33,89 @@ var verifyItems = items => {
     items.forEach(visit);
 }
 
+/**
+ * @extends AElement
+ * @constructor
+ */
+function CheckUnsafeTreeItem() {
+    CheckTreeItem.apply(this, arguments);
+    this.$actionCtn = $('.as-check-unsafe-tree-item-action-ctn', this);
+    this.$actionBtns = $$('button', this.$actionCtn);
+    this.$actionBtns[0].on('click', this.eventHandler.clickAction.bind(this, 'check_all'));
+    this.$actionBtns[1].on('click', this.eventHandler.clickAction.bind(this, 'uncheck_all'));
+}
+
+CheckUnsafeTreeItem.tag = 'CheckUnsafeTreeItem'.toLowerCase();
+
+CheckUnsafeTreeItem.render = function () {
+    return _({
+        tag: 'button',
+        extendEvent: ['select', 'presstoggle'],
+        class: ['as-check-tree-item', 'as-check-unsafe-tree-item', 'absol-exp-node'],
+        child: [
+            '.absol-exp-node-level',
+            'toggler-ico',
+            'checkboxbutton',
+            'img.absol-exp-node-ext-icon',
+            'div.absol-exp-node-ext-icon',
+            'span.absol-exp-node-name',
+            'span.absol-exp-node-desc',
+            {
+                class: 'as-check-unsafe-tree-item-action-ctn',
+                child: [
+                    { tag: 'button', class: 'as-transparent-button', child: 'span.mdi.mdi-check-all' },
+                    { tag: 'button', class: 'as-transparent-button', child: 'span.mdi.mdi-close' },
+
+                ]
+            }
+        ]
+    });
+};
+
+CheckUnsafeTreeItem.eventHandler = Object.assign({}, CheckTreeItem.eventHandler);
+CheckUnsafeTreeItem.property = Object.assign({}, CheckTreeItem.property);
+
+
+CheckUnsafeTreeItem.eventHandler.click = function (event) {
+    var tBound;
+    if (this.status === 'open' || this.status === 'close') {
+        tBound = this.$toggleIcon.getBoundingClientRect();
+        if (hitElement(this.$actionCtn, event)) {
+        }
+        else if (event.clientX <= tBound.right || this.noSelect) {
+            this.emit('presstoggle', { type: 'presstoggle', target: this, originalEvent: event }, this);
+        }
+        else if (!hitElement(this.$checkbox, event) && !this.$checkbox.disabled) {
+            this.$checkbox.checked = !this.$checkbox.checked;
+            this.eventHandler.checkboxChange(event);
+        }
+    }
+    else {
+        if (!hitElement(this.$checkbox, event) && !this.noSelect && !this.$checkbox.disabled) {
+            this.$checkbox.checked = !this.$checkbox.checked;
+            this.eventHandler.checkboxChange(event);
+        }
+    }
+};
+
+CheckUnsafeTreeItem.eventHandler.clickAction = function (action, event) {
+    console.log(action);
+};
+
 /***
  * Only tree has leaf can be selected
  * @extends CheckTreeBox
  * @constructor
  */
-function CheckTreeLeafOnlyBox() {
+function CheckUnsafeTreeLeafOnlyBox() {
     CheckTreeBox.apply(this, arguments);
 }
 
 
-CheckTreeLeafOnlyBox.tag = 'CheckTreeLeafOnlyBox'.toLowerCase();
+CheckUnsafeTreeLeafOnlyBox.tag = 'CheckUnsafeTreeLeafOnlyBox'.toLowerCase();
 
 
-CheckTreeLeafOnlyBox.render = function () {
+CheckUnsafeTreeLeafOnlyBox.render = function () {
     var mobile = (arguments[1] && arguments[1].forceMobile) || BrowserDetector.isMobile;
 
     var footer = {
@@ -134,13 +204,13 @@ CheckTreeLeafOnlyBox.render = function () {
 };
 
 
-Object.assign(CheckTreeLeafOnlyBox.prototype, CheckTreeBox.prototype);
-CheckTreeLeafOnlyBox.property = Object.assign({}, CheckTreeBox.property);
-CheckTreeLeafOnlyBox.eventHandler = Object.assign({}, CheckTreeBox.eventHandler);
+Object.assign(CheckUnsafeTreeLeafOnlyBox.prototype, CheckTreeBox.prototype);
+CheckUnsafeTreeLeafOnlyBox.property = Object.assign({}, CheckTreeBox.property);
+CheckUnsafeTreeLeafOnlyBox.eventHandler = Object.assign({}, CheckTreeBox.eventHandler);
 
-CheckTreeLeafOnlyBox.prototype._pool = [];
+CheckUnsafeTreeLeafOnlyBox.prototype._pool = [];
 
-CheckTreeLeafOnlyBox.property.items = {
+CheckUnsafeTreeLeafOnlyBox.property.items = {
     get: CheckTreeBox.property.items.get,
     set: function (items) {
         items = normalizeItems(items || []);
@@ -149,7 +219,9 @@ CheckTreeLeafOnlyBox.property.items = {
     }
 };
 
-CheckTreeLeafOnlyBox.prototype._requestItem = function () {
+
+
+CheckUnsafeTreeLeafOnlyBox.prototype._requestItem = function () {
     var res = this._pool.pop() || _({
         tag: CheckTreeItem.tag,
         class: 'as-check-tree-leaf-only-item',
@@ -170,17 +242,53 @@ CheckTreeLeafOnlyBox.prototype._requestItem = function () {
     return res;
 };
 
-CheckTreeLeafOnlyBox.prototype.HolderClass = TreeLeafOnlyNodeHolder;
+CheckUnsafeTreeLeafOnlyBox.prototype.HolderClass = TreeLeafOnlyNodeHolder;
 
 
-ACore.install(CheckTreeLeafOnlyBox);
+ACore.install(CheckUnsafeTreeLeafOnlyBox);
 
-export default CheckTreeLeafOnlyBox;
+export default CheckUnsafeTreeLeafOnlyBox;
+
+/**
+ *
+ * @constructor
+ */
+function CSTBItemListController() {
+    CTBItemListController.apply(this, arguments);
+    console.log(this._requestItem)
+}
+
+mixClass(CSTBItemListController, CTBItemListController);
+
+CheckUnsafeTreeLeafOnlyBox.prototype.ListControllerClass = CSTBItemListController;
+
+CSTBItemListController.prototype._pool = [];
+
+CSTBItemListController.prototype._requestItem = function () {
+    var res = this._pool.pop() || _({
+        tag: CheckUnsafeTreeItem,
+        // tag: CheckTreeItem,
+        props: {
+            menuElt: this
+        },
+        on: {
+            presstoggle: function (event) {
+                this.menuElt.eventHandler.toggleItem(this, event);
+            },
+            select: function (event) {
+                this.menuElt.eventHandler.selectItem(this, event);
+            }
+        }
+    });
+    res.menuElt = this.elt;
+    console.log(res)
+    return res;
+};
 
 
 /***
  * @extends TreeRootHolder
- * @param {CheckTreeLeafOnlyBox} boxElt
+ * @param {CheckUnsafeTreeLeafOnlyBox} boxElt
  * @param items
  * @constructor
  */
@@ -188,7 +296,7 @@ function TreeLeafOnlyRootHolder(boxElt, items) {
     TreeRootHolder.apply(this, arguments);
 }
 
-CheckTreeLeafOnlyBox.prototype.RootHolderClass = TreeLeafOnlyRootHolder;
+CheckUnsafeTreeLeafOnlyBox.prototype.RootHolderClass = TreeLeafOnlyRootHolder;
 
 OOP.mixClass(TreeLeafOnlyRootHolder, TreeRootHolder);
 
