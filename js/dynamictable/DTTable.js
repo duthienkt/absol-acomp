@@ -28,8 +28,7 @@ function DTTable(wrapper, data) {
 DTTable.prototype.updateCopyEltSize = function () {
     if (!this._fixedYElt) return;
     var bound = this._elt.getBoundingClientRect();
-    if (this._fixedYElt)
-        this._fixedYElt.addStyle('width', bound.width + 'px');
+    this._fixedYElt.parentElement.addStyle('width', bound.width + 'px');
     this.header.updateCopyEltSize();
     this.body.updateCopyEltSize();
 }
@@ -97,8 +96,6 @@ Object.defineProperty(DTTable.prototype, 'fixedXYElt', {
         return this._fixedXYElt;
     }
 });
-
-
 
 
 export default DTTable;

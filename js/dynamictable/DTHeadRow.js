@@ -19,10 +19,6 @@ function DTHeadRow(head, data) {
     this.head = head;
     this.data = data;
     this.cells = this.data.cells.map((cellData) => new DTHeadCell(this, cellData));
-    this.cells.reduce((ac, cell) => {
-        cell.idx = ac;
-        return ac + cell.colspan;
-    }, 0);
     this._elt = null;
     this._copyElt = null;
     this._fixedXYElt = null;
@@ -46,8 +42,8 @@ Object.defineProperty(DTHeadRow.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
         var fixedCol = this.adapter.fixedCol || 0;
-        var child = this.cells.slice(0, fixedCol).map(c => c.copyElt1);
-        var child1 = this.cells.slice(fixedCol).map(c => c.elt);
+        var child = this.cells.filter(c=> c.idx < fixedCol).map(c => c.copyElt1);
+        var child1 = this.cells.filter(c=> c.idx >= fixedCol).map(c => c.elt);
         this._elt = _({
             tag: 'tr',
             class: 'as-dt-head-row',
@@ -71,7 +67,7 @@ Object.defineProperty(DTHeadRow.prototype, 'fixedXYElt', {
         this._fixedXYElt = _({
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-xy',
-            child: this.cells.slice(0, fixedCol).map(c => c.elt)
+            child: this.cells.filter(c=> c.idx < fixedCol).map(c => c.elt)
         });
         return this._fixedXYElt;
     }
@@ -84,7 +80,7 @@ Object.defineProperty(DTHeadRow.prototype, 'fixedXElt', {
         this._fixedXElt = _({
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-x',
-            child: this.cells.slice(0, fixedCol).map(c => c.copyElt2)
+            child:this.cells.filter(c=> c.idx < fixedCol).map(c => c.copyElt2)
         });
         return this._fixedXElt;
     }

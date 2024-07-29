@@ -106,8 +106,8 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
         var fixedCol = this.adapter.fixedCol || 0;
-        var child = this.cells.slice(0, fixedCol).map(c => c.copyElt);
-        var child1 = this.cells.slice(fixedCol).map(c => c.elt);
+        var child = this.cells.filter(c=> c.idx < fixedCol).map(c => c.copyElt);
+        var child1 = this.cells.filter(c=> c.idx >= fixedCol).map(c => c.elt);
 
         this._elt = _({
             tag: 'tr', class: 'as-dt-body-row', props: {

@@ -141,10 +141,9 @@ SearchingMaster.prototype.initWorker = function () {
     if (!this.share.thread) {
         this.share.thread = new Thread({
             methods: {
-                init: DTSearchFactor,
                 calcBenchmark: BrowserDetector.calcBenchmark
             },
-            extendCode: 'init(this);'
+            extendCode: DTSearchFactor.exportCode()
         });
 
         this.share.thread.on('alert', function (mess) {

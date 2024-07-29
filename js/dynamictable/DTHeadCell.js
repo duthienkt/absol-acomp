@@ -1,6 +1,7 @@
 import { $$, _, $ } from "../../ACore";
 import Follower from "../Follower";
 import { findMaxZIndex } from "../utils";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 
 var implicitSortKeyArr = key => {
@@ -29,6 +30,13 @@ function DTHeadCell(row, data) {
     this._copyElt1 = null;
     this._copyElt2 = null;
 
+
+    if (data.attr) {
+        Object.keys(data.attr).forEach(key => {
+            var key2 = key.toLowerCase();
+            if (key2 !== key) data.attr[key2] = data.attr[key];
+        })
+    }
 
     this.data = data;
 
@@ -161,16 +169,45 @@ DTHeadCell.prototype.nextSortState = function (event) {
 
 };
 
+DTHeadCell.prototype.updateCopyContent = function () {
+    var makeCopyChildren = () => Array.prototype.map.call(this._elt.childNodes, elt => elt.cloneNode(true));
+    if (this._copyElt1) {
+        this._copyElt1.clearChild().addChild(makeCopyChildren());
+
+    }
+    if (this._copyElt2) {
+        this._copyElt2.clearChild().addChild(makeCopyChildren());
+    }
+    if (this._copyElt) {
+        this._copyElt.clearChild().addChild(makeCopyChildren());
+    }
+    ResizeSystem.updateUp(this._elt);
+};
+
+DTHeadCell.prototype.requestUpdateContent = function () {
+    if (this.ucTO > 0) return;
+    this.ucTO = setTimeout(() => {
+        this.ucTO = -1;
+        this.updateCopyContent();
+    }, 20)
+};
+
+
 DTHeadCell.prototype.updateCopyEltSize = function () {
     if (!this._copyElt && !this._copyElt1 && !this._copyElt2) return;
     // copyElt is in space
     var bound = this._copyElt.getBoundingClientRect();
+    var matchHeight = this._elt.hasClass('as-matched-head-height');
     this._elt.addStyle('width', bound.width + 'px');
+    if (matchHeight) this._elt.addStyle('min-width', bound.width + 'px');
     if (this._copyElt1) {
         this._copyElt1.addStyle('width', bound.width + 'px');
+        if (matchHeight) this._copyElt1.addStyle('min-width', bound.width + 'px');
+
     }
     if (this._copyElt2) {
         this._copyElt2.addStyle('width', bound.width + 'px');
+        if (matchHeight) this._copyElt2.addStyle('min-width', bound.width + 'px');
     }
 };
 
@@ -235,6 +272,20 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
 
         this._elt.addChild(this.$sortBtn);
         this._elt.addChild(this.$resizer);
+        var ctrl = this;
+        setTimeout(() => {
+            var addChild = this._elt.addChild;
+            var clearChild = this._elt.clearChild;
+            this._elt.addChild = function () {
+                ctrl.requestUpdateContent();
+                addChild.apply(this, arguments);
+            };
+            this._elt.clearChild = function () {
+                ctrl.requestUpdateContent();
+                clearChild.apply(this, arguments);
+            };
+        }, 10);
+
         return this._elt;
     }
 });
@@ -278,6 +329,15 @@ Object.defineProperty(DTHeadCell.prototype, 'copyElt2', {
 Object.defineProperty(DTHeadCell.prototype, 'colspan', {
     get: function () {
         var value = this.data.attr && this.data.attr.colspan;
+        if (typeof value === "string") value = parseInt(value);
+        if (typeof value === "number") return value;
+        else return 1;
+    }
+});
+
+Object.defineProperty(DTHeadCell.prototype, 'rowspan', {
+    get: function () {
+        var value = this.data.attr && this.data.attr.rowspan;
         if (typeof value === "string") value = parseInt(value);
         if (typeof value === "number") return value;
         else return 1;

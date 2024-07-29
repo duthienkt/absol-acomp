@@ -1,6 +1,7 @@
 import { $, _ } from "../../ACore";
-import { addElementClassName, jsStringOf } from "../utils";
+import { addElementClassName, jsStringOf, listenDomChange, listenDomContentChange } from "../utils";
 import { formatDateTime } from "absol/src/Time/datetime";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 /***
  *
@@ -13,6 +14,12 @@ function DTBodyCell(row, data) {
     this._elt = null;
     this._copyElt = null;
     this._idx = null;
+    if (data.attr) {
+        Object.keys(data.attr).forEach(key => {
+            var key2 = key.toLowerCase();
+            if (key2 !== key) data.attr[key2] = data.attr[key];
+        })
+    }
     this.data = data;
 }
 
@@ -23,7 +30,7 @@ DTBodyCell.prototype.revoke = function () {
     this._copyElt = null;
     this._idx = null;
     this.data = null;
-}
+};
 
 
 Object.defineProperty(DTBodyCell.prototype, 'elt', {
@@ -33,6 +40,13 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
             tag: 'td', class: 'as-dt-body-cell'
         });
         this._elt.holder = this;
+
+        var addChild = this._elt.addChild;
+        this._elt.addChild = function () {
+            addChild.apply(this, arguments);
+            ResizeSystem.requestUpdateUpSignal(this);
+            return this;
+        };
 
         if (this.data.attr) this._elt.attr(this.data.attr);
         if (typeof this.data.class === "string") addElementClassName(this._elt, this.data.class);
@@ -49,7 +63,9 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
         }
         if (this._idx !== null) this._elt.attr('data-col-idx', this._idx + '');
         this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
-
+        listenDomContentChange(this._elt, (event) => {
+            this.requestUpdateContent();
+        });
         return this._elt;
     }
 });
@@ -61,6 +77,17 @@ Object.defineProperty(DTBodyCell.prototype, 'copyElt', {
         return this._copyElt;
     }
 });
+
+DTBodyCell.prototype.requestUpdateContent = function () {
+    if (!this._copyElt) return;
+    if (this.ucTO > 0) return;
+    this.ucTO = setTimeout(() => {
+        this.ucTO = -1;
+        this._copyElt.clearChild();
+        this._copyElt.addChild(Array.prototype.map.call(this._elt.childNodes, c => c.cloneNode(true)));
+        ResizeSystem.updateUp(this._elt);
+    }, 20);
+}
 
 
 Object.defineProperty(DTBodyCell.prototype, 'innerText', {

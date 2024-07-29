@@ -17,7 +17,32 @@ function DTHead(table, data) {
     this._fixedXElt = null;
     this.data = data;
     this.rows = this.data.rows.map((rowData) => new DTHeadRow(this, rowData));
+    this.makeCellIdx();
 }
+
+DTHead.prototype.makeCellIdx = function () {
+    var height = Array(200).fill(0);
+    var i, j, k, row, cells, colIdx, cell, colspan, rowspan;
+    for (i = 0; i < this.rows.length; ++i) {
+        row = this.rows[i];
+        cells = row.cells;
+        colIdx = 0;
+        for (j = 0; j < cells.length; ++j) {
+            while (height[colIdx] > i) ++colIdx;
+            cell = cells[j];
+            cell.idx = colIdx;
+            colspan = cell.colspan;
+            rowspan = cell.rowspan;
+            if (rowspan ===this.rows.length) {
+                cell.elt.addClass('as-matched-head-height');
+            }
+            for (k = 0; k < colspan; ++k) {
+                height[colIdx] = i + rowspan;
+                ++colIdx;
+            }
+        }
+    }
+};
 
 DTHead.prototype.lockWidth = function () {
     this.rows.forEach(r => r.lockWidth());
