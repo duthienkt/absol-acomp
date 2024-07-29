@@ -596,3 +596,9 @@ function DTSearchFactor(global) {
 }
 
 export default DTSearchFactor;
+
+DTSearchFactor.exportCode = function () {
+    var res = DTSearchFactor + ''
+        + '\n\nDTSearchFactor(this)';
+    return res;
+}
