@@ -41,6 +41,9 @@ MultiCheckTreeLeafMenu.render = function () {
         },
         child: [
             {
+                attr:{
+                    'data-ml-key': 'txt_select_value'
+                },
                 class: ['as-multi-select-menu-item-ctn', 'as-bscroller']
             },
             {
@@ -138,7 +141,12 @@ MultiCheckTreeLeafMenu.property.readOnly = MultiSelectMenu.property.readOnly;
 
 MultiCheckTreeLeafMenu.property.placeholder = {
     set: function (value) {
-        this.$itemCtn.attr('data-placeholder', value || '');
+        if (value){
+            this.$itemCtn.attr('data-placeholder', value+'');
+        }
+        else {
+            this.$itemCtn.attr('data-placeholder', null);
+        }
     },
     get: function () {
         return this.$itemCtn.attr('data-placeholder');

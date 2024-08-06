@@ -46,7 +46,7 @@ function MultiCheckTreeMenu() {
     this.$checkTreeBox.followTarget = this;
     this.$checkTreeBox.sponsorElement = this;
     this.on('click', this.eventHandler.click);
-    this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
+    // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
 
 
     /**
@@ -86,7 +86,10 @@ MultiCheckTreeMenu.render = function (data, domDesc) {
         },
         child: [
             {
-                class: ['as-multi-select-menu-item-ctn', 'as-bscroller']
+                class: ['as-multi-select-menu-item-ctn', 'as-bscroller'],
+                attr:{
+                    "data-ml-key": 'txt_select_value'
+                },
             },
             {
                 tag: 'button',
@@ -421,7 +424,12 @@ MultiCheckTreeMenu.property.leafOnly = {
 
 MultiCheckTreeMenu.property.placeholder = {
     set: function (value) {
-        this.$itemCtn.attr('data-placeholder', value || '');
+        if (value){
+            this.$itemCtn.attr('data-placeholder', value+'');
+        }
+        else {
+            this.$itemCtn.attr('data-placeholder', null);
+        }
     },
     get: function () {
         return this.$itemCtn.attr('data-placeholder');

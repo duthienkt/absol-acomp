@@ -26,7 +26,8 @@ var data = {
     txt_cancel: 'Cancel',
     txt_close: 'Close',
     txt_option: 'Option',
-    txt_check_all: 'Check All'
+    txt_check_all: 'Check All',
+    txt_select_value: '-- Select values --'
 };
 
 

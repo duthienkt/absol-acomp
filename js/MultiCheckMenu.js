@@ -66,7 +66,7 @@ function MultiCheckMenu() {
     this.disableClickToFocus = false;
     this.orderly = true;//always true
     this.itemFocusable = false;
-    this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
+    // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
 
 
     /**
@@ -132,7 +132,12 @@ MultiCheckMenu.property.items = {
 
 MultiCheckMenu.property.placeholder = {
     set: function (value) {
-        this.$itemCtn.attr('data-placeholder', value || '');
+        if (value){
+            this.$itemCtn.attr('data-placeholder', value+'');
+        }
+        else {
+            this.$itemCtn.attr('data-placeholder', null);
+        }
     },
     get: function () {
         return this.$itemCtn.attr('data-placeholder');

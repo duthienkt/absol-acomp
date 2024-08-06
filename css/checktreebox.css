@@ -203,10 +203,19 @@
 }
 
 .as-multi-select-menu-item-ctn:empty::before {
-    content: attr(data-placeholder);
     display: inline-block;
     vertical-align: middle;
     font-family: Arial, Helvetica, sans-serif;
     padding: 0 5px;
     line-height: 2;
+}
+
+.as-multi-select-menu-item-ctn:not(:empty):before,
+.as-multi-select-menu.as-read-only .as-multi-select-menu-item-ctn::before,
+.as-multi-select-menu.as-disabled .as-multi-select-menu-item-ctn::before {
+    display: none;
+}
+
+.as-multi-select-menu-item-ctn[data-placeholder]:empty::before {
+    content: attr(data-placeholder);
 }
