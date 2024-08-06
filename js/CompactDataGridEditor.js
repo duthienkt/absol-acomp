@@ -167,6 +167,30 @@ var hoverXOf = (cell, bf) => {
     }
 }
 
+var defaultTextAlignOfElt = elt => {
+    if (elt.tagName === 'TD') return 'left';
+    return 'center';
+};
+
+var textAlignOfElt = elt => {
+    return elt.style.textAlign || defaultTextAlignOfElt(elt);
+}
+
+var defaultFontWeightOfElt = elt => {
+    if (elt.tagName === 'TD') return 'normal';
+    return 'bold';
+};
+
+
+var fontWeightOfElt = elt => {
+    return elt.style.fontWeight || defaultFontWeightOfElt(elt);
+};
+
+
+var fontStyleOfElt = elt => {
+    return elt.style.fontStyle || 'normal';
+};
+
 
 /**
  * @extends AElement
@@ -199,7 +223,7 @@ function CompactDataGridEditor() {
             set: function (value) {
                 if (value) {
                     context.table.header.data = value;
-
+                    context.table.header.hidden = false;
                 }
                 else {
                     context.table.header.hidden = true;
@@ -368,6 +392,7 @@ CDGrid.prototype.makeCell = function (data) {
         tag: this.cellCt,
         attr: attr,
         class: 'as-ca-cell',
+        style: data.style || {}
         // child:
     });
 };
@@ -376,11 +401,26 @@ CDGrid.prototype.hasCell = function (cell) {
     return cell.isDescendantOf(this.$grid);
 };
 
+CDGrid.prototype.styleOfCell = function (cellElt) {
+    var res = {};
+    ['textAlign', 'color', 'backgroundColor', 'fontWeight', 'whiteSpace'].forEach(key => {
+        if (cellElt.style[key]) res[key] = cellElt.style[key];
+    });
+    if (res.textAlign === defaultTextAlignOfElt(cellElt)) delete res.textAlign;
+    if (res.fontWeight === defaultFontWeightOfElt(cellElt)) delete res.fontWeight;
+    if (res.whiteSpace !== 'nowrap') delete res.whiteSpace;
+    for (var k in res) return res;
+    return null;
+};
+
+
 CDGrid.prototype.dataOfCell = function (cellElt) {
     var cellData = {};
     var loc = locOfCell(cellElt);
     if (loc[2] > 1) cellData.rowSpan = loc[2];
     if (loc[3] > 1) cellData.colSpan = loc[3];
+    var style = this.styleOfCell(cellElt);
+    if (style) cellData.style = style;
     return cellData;
 };
 
@@ -739,7 +779,7 @@ CDGrid.prototype.splitCell = function (originalCell) {
             cell = row.childNodes[j];
             loc = locOfCell(cell);
             while (jj < loc[1]) {
-                if (height[jj] <=i) {
+                if (height[jj] <= i) {
                     row.addChildBefore(this.makeCell({}), cell);
                     height[jj] = i + 1;
                     ++j;
@@ -842,6 +882,7 @@ CDTableBody.prototype.makeCell = function (data) {
         tag: 'td',
         attr: attr,
         class: 'as-ca-cell',
+        style: data.style ||{},
         child: variables.map(it => {
             it = normalizeUsedVariable(it);
             var name = it.name;
@@ -1075,11 +1116,22 @@ CDSelectController.prototype.selectCells = function (cells) {
         this.context.varMng.focus(focsVar || null);
 
     }
+    var sel, range;
     if (!focsVar) {
         focsVar = $('th.as-selected preinput', this.editor);
         if (focsVar) {
-            focsVar.focus();
-            focsVar.select(focsVar.value.length);
+            sel = document.getSelection();
+            if (sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                if (range.startContainer.nodeType !== Node.TEXT_NODE || range.startContainer.parentElement !== focsVar) {
+                    focsVar.focus();
+                    focsVar.select(focsVar.value.length);
+                }
+            }
+            else {
+                focsVar.focus();
+                focsVar.select(focsVar.value.length);
+            }
         }
     }
 
@@ -1655,13 +1707,13 @@ function CDGFormatTool(context) {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
                         child: 'span.mdi.mdi-undo',
-                        attr: { 'data-command': 'undo' }
+                        attr: { 'data-command': 'undo', title: 'Undo' }
                     },
                     {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
                         child: 'span.mdi.mdi-redo',
-                        attr: { 'data-command': 'redo' }
+                        attr: { 'data-command': 'redo', title: 'Redo' }
                     },
                 ]
             },
@@ -1672,30 +1724,30 @@ function CDGFormatTool(context) {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
                         child: 'span.mdi.mdi-table-column-plus-before',
-                        attr: { 'data-command': 'left' }
+                        attr: { 'data-command': 'left', title: 'Insert 1 column left' }
                     },
                     {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
                         child: 'span.mdi.mdi-table-column-plus-after',
-                        attr: { 'data-command': 'right' }
+                        attr: { 'data-command': 'right', title: 'Insert 1 column right' }
                     },
                     {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
                         child: 'span.mdi.mdi-table-row-plus-before',
-                        attr: { 'data-command': 'above' }
+                        attr: { 'data-command': 'above', title: 'Insert 1 row above' }
                     },
                     {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
                         child: 'span.mdi.mdi-table-row-plus-after',
-                        attr: { 'data-command': 'bellow' }
+                        attr: { 'data-command': 'bellow', title: 'Insert 1 row bellow' }
                     },
                     {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command', 'as-variant-danger'],
-                        attr: { 'data-command': 'removeCol' },
+                        attr: { 'data-command': 'removeCol', title: 'Delete column' },
                         child: {
                             tag: 'span',
                             class: ['mdi', 'mdi-table-column-remove'],
@@ -1704,7 +1756,7 @@ function CDGFormatTool(context) {
                     {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command', 'as-variant-danger'],
-                        attr: { 'data-command': 'removeRow' },
+                        attr: { 'data-command': 'removeRow', title: 'Delete row' },
                         child: {
                             tag: 'span',
                             class: ['mdi', 'mdi-table-row-remove'],
@@ -1713,14 +1765,72 @@ function CDGFormatTool(context) {
                     {
                         tag: 'button',
                         class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],//can checked
-                        attr: { 'data-command': 'merge' },
+                        attr: { 'data-command': 'merge', title: 'Merge Cells' },
                         child: {
                             tag: 'span',
                             class: ['mdi', 'mdi-table-merge-cells'],
                         },
                     }]
             },
-
+            {
+                class: 'as-table-of-text-input-tool-group',
+                child: [
+                    {
+                        tag: 'button',
+                        class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],//can checked
+                        attr: { 'data-command': 'textAlignLeft', title: 'Format text align left' },
+                        child: {
+                            tag: 'span',
+                            class: ['mdi', 'mdi-format-align-left'],
+                        }
+                    },
+                    {
+                        tag: 'button',
+                        class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],//can checked
+                        attr: { 'data-command': 'textAlignCenter', title: 'Format text align center' },
+                        child: {
+                            tag: 'span',
+                            class: ['mdi', 'mdi-format-align-center'],
+                        }
+                    },
+                    {
+                        tag: 'button',
+                        class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],//can checked
+                        attr: { 'data-command': 'textAlignRight', title: 'Format text align right' },
+                        child: {
+                            tag: 'span',
+                            class: ['mdi', 'mdi-format-align-right'],
+                        }
+                    },
+                    {
+                        tag: 'button',
+                        class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],//can checked
+                        attr: { 'data-command': 'textFormatBold', title: 'Bold' },
+                        child: {
+                            tag: 'span',
+                            class: ['mdi', 'mdi-format-bold'],
+                        }
+                    },
+                    {
+                        tag: 'button',
+                        class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],//can checked
+                        attr: { 'data-command': 'textFormatItalic', title: 'Italic' },
+                        child: {
+                            tag: 'span',
+                            class: ['mdi', 'mdi-format-italic'],
+                        }
+                    },
+                    {
+                        tag: 'button',
+                        class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],//can checked
+                        attr: { 'data-command': 'wrap', title: 'Allow text wrap', },
+                        child: {
+                            tag: 'span',
+                            class: ['mdi', 'mdi-wrap'],
+                        }
+                    }
+                ]
+            },
             {
                 tag: 'button',
                 class: ['as-transparent-button', 'as-table-of-text-input-tool-command'],
@@ -1740,13 +1850,16 @@ function CDGFormatTool(context) {
             if (btn.isSupportedEvent('select')) {
                 btn.on('select', (event) => {
                     this.commands[value].exec.call(this, event.item.arg);
-                    console.log(event)
                 });
             }
             else
                 btn.on('click', ev => {
-                    this.commands[value].exec.call(this);
-                    // this.ev_clickInsert(value, ev);
+                    if (this.commands[value].checked) {
+                        this.commands[value].exec.call(this, !btn.hasClass('as-checked'));
+                    }
+                    else {
+                        this.commands[value].exec.call(this);
+                    }
                 });
             ac[value] = btn;
             return ac;
@@ -1819,6 +1932,16 @@ function hasSelectedCell() {
     var selectedCells = this.context.selectCtrl.selectedCells;
     return selectedCells.length > 0;
 }
+
+
+var checkTextAlign = alignVal => function () {
+    var selectedCells = this.context.selectCtrl.selectedCells;
+    if (!selectedCells.length) return false;
+    for (var i = 0; i < selectedCells.length; ++i) {
+        if (textAlignOfElt(selectedCells[i]) !== alignVal) return false;
+    }
+    return true;
+};
 
 CDGFormatTool.prototype.commands = {
     undo: {
@@ -2002,7 +2125,7 @@ CDGFormatTool.prototype.commands = {
          */
         available: function () {
             var fv = this.context.varMng && this.context.varMng.focusVariable;
-            return !!(fv && fv.isDescendantOf(this.elt));
+            return !!(fv && fv.isDescendantOf(this.context.editor));
         },
         /**
          * @this CDGFormatTool
@@ -2010,6 +2133,168 @@ CDGFormatTool.prototype.commands = {
         exec: function () {
             this.context.varMng.openEditVariableDialog();
         }
+    },
+
+    textAlignCenter: {
+        checked: checkTextAlign('center'),
+        available: hasSelectedCell,
+        exec: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var changed = false;
+            var cell;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                cell = selectedCells[i];
+                if ((cell.style.textAlign || defaultTextAlignOfElt(cell)) !== 'center') {
+                    cell.style.textAlign = 'center';
+                    changed = true;
+                }
+            }
+            if (changed)
+                this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+
+        }
+    },
+    textAlignRight: {
+        checked: checkTextAlign('right'),
+        available: hasSelectedCell,
+        exec: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var changed = false;
+            var cell;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                cell = selectedCells[i];
+                if ((cell.style.textAlign || defaultTextAlignOfElt(cell)) !== 'right') {
+                    cell.style.textAlign = 'right';
+                    changed = true;
+                }
+            }
+            if (changed)
+                this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+        }
+    },
+    textAlignLeft: {
+        checked: checkTextAlign('left'),
+        available: hasSelectedCell,
+        exec: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var changed = false;
+            var cell;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                cell = selectedCells[i];
+                if ((cell.style.textAlign || defaultTextAlignOfElt(cell)) !== 'left') {
+                    cell.style.textAlign = 'left';
+                    changed = true;
+                }
+            }
+            if (changed)
+                this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+        }
+    },
+    wrap: {
+        checked: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                if (selectedCells[i].style.whiteSpace === 'nowrap') return false;
+            }
+            return true;
+        }, available: hasSelectedCell,
+        exec: function (flag) {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var changed = false;
+            var cell;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                cell = selectedCells[i];
+                if (cell.style.whiteSpace === 'nowrap') {
+                    if (flag) {
+                        cell.style.whiteSpace = null;
+                        changed = true;
+                    }
+                }
+                else {
+                    if (!flag) {
+                        cell.style.whiteSpace = 'nowrap';
+                        changed = true;
+                    }
+                }
+            }
+
+            if (changed)
+                this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+        }
+    },
+    textFormatBold: {
+        checked: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                if (fontWeightOfElt(selectedCells[i]) !== 'bold') return false;
+            }
+            return true;
+        },
+        available: hasSelectedCell,
+        exec: function (flag) {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var changed = false;
+            var cell;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                cell = selectedCells[i];
+                if (fontWeightOfElt(cell) === 'bold') {
+                    if (!flag) {
+                        cell.style.fontWeight = 'normal';
+                        changed = true;
+                    }
+                }
+                else {
+                    if (flag) {
+                        cell.style.fontWeight = 'bold';
+                        changed = true;
+                    }
+                }
+            }
+            if (changed)
+                this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+        }
+    },
+    textFormatItalic: {
+        checked: function () {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                if (fontStyleOfElt(selectedCells[i]) !== 'italic') return false;
+            }
+            return true;
+        },
+        available: hasSelectedCell,
+        exec: function (flag) {
+            var selectedCells = this.context.selectCtrl.selectedCells;
+            if (!selectedCells.length) return false;
+            var changed = false;
+            var cell;
+            for (var i = 0; i < selectedCells.length; ++i) {
+                cell = selectedCells[i];
+                if (fontStyleOfElt(cell) === 'italic') {
+                    if (!flag) {
+                        cell.style.fontStyle = 'normal';
+                        changed = true;
+                    }
+                }
+                else {
+                    if (flag) {
+                        cell.style.fontStyle = 'italic';
+                        changed = true;
+                    }
+                }
+            }
+            if (changed)
+                this.lcEmitter.emit(EV_CELL_DATA_CHANGE);
+        }
     }
+
 };
 

@@ -26,6 +26,8 @@
 
 .as-cag-var::after {
     content: attr(data-default-title);
+    font-weight: inherit;
+    font-style: inherit;
 }
 
 .as-cag-var:not([data-default-title]) {
