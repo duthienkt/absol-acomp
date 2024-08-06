@@ -91,7 +91,8 @@
 }
 
 
-.as-table-of-text-input-tool > button.as-checked {
+.as-table-of-text-input-tool  button.as-checked {
     color: #2977ff;
-    background-color: rgb(240, 247, 255);
+    /*background-color: rgb(240, 247, 255);*/
+    box-shadow: inset gray 0px 0px 4px -2px;
 }
