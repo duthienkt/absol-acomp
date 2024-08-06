@@ -179,6 +179,10 @@ div.kv-document-page.absol-frame {
     font-size: var(--font-size-right-mouse-menu);
 }
 
+.card-mobile-content > div:not([class]):first-child:last-child .as-dynamic-table-wrapper.as-overflow-y {
+    height: 100%;
+}
+
 /* todo: normalize for all module
 .absol-selectmenu-holder-item .absol-selectlist-item-text,
 .absol-selectmenu-holder-item .absol-selectlist-item-desc {

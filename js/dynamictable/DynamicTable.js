@@ -15,7 +15,9 @@ import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import Rectangle from "absol/src/Math/Rectangle";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import AElement from "absol/src/HTML5/AElement";
-import { parseMeasureValue } from "absol/src/JSX/attribute";
+import { computeMeasureExpression, parseMeasureValue } from "absol/src/JSX/attribute";
+import Attributes from "absol/src/AppPattern/Attributes";
+import { kebabCaseToCamelCase } from "absol/src/String/stringFormat";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -163,7 +165,9 @@ function DynamicTable() {
     this.$vscrollbar = $('.as-dynamic-table-vb', this);
 
     this.$pageSelector = new VirtualPageSelector(this);
-    this.extendStyle = {};
+    this.extendStyle = Object.assign(new Attributes(this), this.extendStyle);
+    this.extendStyle.loadAttributeHandlers(this.styleHandlers);
+
 
     // this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
     this.$attachhook.requestUpdateSize = this.requestUpdateSize.bind(this);
@@ -254,44 +258,108 @@ DynamicTable.render = function (data, domDesc) {
     });
 };
 
+DynamicTable.prototype.extendStyle = {};//init value
+
+DynamicTable.prototype.extendStyle.tableLayout = 'fixed';
+DynamicTable.prototype.extendStyle.width = 'auto';
+DynamicTable.prototype.extendStyle.minWidth = 'unset';
 
 DynamicTable.prototype.styleHandlers = {};
 
-/***
- * @this {DynamicTable}
- * @param value
- */
-DynamicTable.prototype.styleHandlers.minWidth = function (value) {
-    this.extendStyle.minWidth = value;
-    //todo
+
+DynamicTable.prototype.styleHandlers.minWidth = {
+    set: function (value) {
+        var parsedValue = parseMeasureValue(value);
+        if (!parsedValue) value = 'unset';
+        else if (parsedValue.value === 'match_parent') value = '100%';
+        else if (parsedValue.unit === 'px') value = parsedValue.value + parsedValue.unit;
+        if (parsedValue && parsedValue.unit) {
+            this.style.minWidth = value;
+            this.addClass('as-has-min-width');
+        }
+        else {
+            this.removeClass('as-has-min-width');
+        }
+        return value;
+    }
 };
 
-DynamicTable.prototype.styleHandlers['min-width'] = DynamicTable.prototype.styleHandlers.minWidth;
-
-/***
- * @this {DynamicTable}
- * @param value
- */
-DynamicTable.prototype.styleHandlers.tableLayout = function (value) {
-    if (value === 'fixed') {
-        this.addClass('as-table-layout-fixed');
+DynamicTable.prototype.styleHandlers.width = {
+    set: function (value) {
+        var parsedValue = parseMeasureValue(value);
+        if (!parsedValue) value = 'auto';
+        else if (parsedValue.value === 'match_parent') value = '100%';
+        else if (parsedValue.unit === 'px') value = parsedValue.value + parsedValue.unit;
+        if (parsedValue && parsedValue.unit) {
+            this.style.width = value;
+            this.removeClass('as-width-auto');
+        }
+        else {
+            this.addClass('as-width-auto');
+        }
+        return value;
     }
-    else {
-        this.removeClass('as-table-layout-fixed');
-    }
-    //todo
 };
 
-DynamicTable.prototype.styleHandlers['table-layout'] = DynamicTable.prototype.styleHandlers.tableLayout;
+DynamicTable.prototype.styleHandlers.height = {
+    set: function (value) {//todo: handle expression
+        var parsedValue;
+        if (value && value.indexOf && value.indexOf('--')) {
+            this.style.height = value;
+        }
+        else {
+            parsedValue = computeMeasureExpression(value, { elt: this, parentSize: 0 });
+            if (!parsedValue) value = 'auto';
+            else if (parsedValue.value === 'match_parent') value = '100%';
+            else if (parsedValue.unit === 'px') value = parsedValue.value + parsedValue.unit;
+            if (parsedValue && parsedValue.unit) {
+                this.style.height = value;
+                this.removeClass('as-auto-height');
+            }
+            else {
+                this.addClass('as-auto-height');
+            }
+        }
+
+        return value;
+    }
+};
+
+//
+// DynamicTable.prototype.width = function (value) {
+//     this.extendStyle.minWidth = value;
+// };
+//
+
+
+DynamicTable.prototype.styleHandlers.tableLayout = {
+
+    /***
+     * @this {DynamicTable}
+     * @param value
+     */
+    set: function (value) {
+        if (value === 'fixed') {
+            this.addClass('as-table-layout-fixed');
+        }
+        else {
+            this.removeClass('as-table-layout-fixed');
+            value = 'auto';
+        }
+        return value;
+    }
+};
 
 
 DynamicTable.prototype.addStyle = function (arg0, arg1) {
-    if (this.styleHandlers[arg0]) {
-        this.styleHandlers[arg0].call(this, arg1);
+    if ((typeof arg0 === "string") && (arg0 in this.extendStyle)) {
+        if (arg0.indexOf('-') > 0) arg0 = kebabCaseToCamelCase(arg0);//not --
+        this.extendStyle[arg0] = arg1;
     }
     else {
         AElement.prototype.addStyle.apply(this, arguments);
     }
+    return this;
 };
 
 
@@ -831,15 +899,10 @@ LayoutController.prototype.handleDisplay = function () {
 };
 
 LayoutController.prototype.onAttached = function () {
-    var c = this.elt.parentElement;
-    while (c) {
-        if (c.isSupportedEvent && c.isSupportedEvent('sizechange')) {
-            c.on('sizechange', () => {
-                this.onResize();
-            });
-        }
-        c = c.parentElement;
-    }
+    ResizeSystem.updateUp(this.elt.parentElement);
+
+    this.update();
+
     if (this.elt.table) {
         this.handleDisplay();
         this.handleMinWidth();
@@ -881,7 +944,87 @@ LayoutController.prototype.onAttached = function () {
 };
 
 
+LayoutController.prototype.update = function () {
+    var stWidth = this.elt.extendStyle.width;
+    var psWidth = parseMeasureValue(this.elt.extendStyle.width);
+    var stHeight = this.elt.extendStyle.height;
+    var psHeight = computeMeasureExpression(stHeight, {
+        elt: this,
+        parentSize: (this.elt.parentElement ? this.elt.parentElement.getBoundingClientRect().height : 0)
+    });
+    var cpStyle = getComputedStyle(this.elt);
+    var psMaxHeight = parseMeasureValue(cpStyle.getPropertyValue('max-height'));
+    var psMinWidth = parseMeasureValue(cpStyle.getPropertyValue('min-width'));
+    var parentElt = this.elt.parentElement;
+    var parentBound;
+    var screenSize;
+    var getMaxBoundHeight = () => {
+        var mxH = Infinity;
+        if (psHeight.unit === 'px') {
+            mxH = psHeight.value;
+        }
+        else if (psHeight.unit === '%' && parentElt) {
+            parentBound = parentBound || parentElt.getBoundingClientRect();
+            mxH = parentBound.height * psHeight.value / 100;
+        }
+        else if (psHeight.unit === 'vh') {
+            screenSize = screenSize || getScreenSize();
+            mxH = screenSize.height * psHeight.value / 100;
+        }
+
+        if (psMaxHeight && psMaxHeight.unit === 'px') {
+            mxH = Math.min(mxH, psHeight.value);
+        }
+        return mxH;
+    }
+
+    var getMinInnerWidth = () => {
+        var mnWidth = 0;
+        if (psWidth.unit === 'px') {
+            mnWidth = psWidth.value;
+        }
+        else if (psWidth.unit === '%' && parentElt) {
+            parentBound = parentBound || parentElt.getBoundingClientRect();
+            mnWidth = parentBound.width * psWidth.value / 100;
+        }
+        else if (psWidth.unit === 'vw') {
+            screenSize = screenSize || getScreenSize();
+            mnWidth = screenSize.width * psWidth.value / 100;
+        }
+
+        if (psMinWidth && psMinWidth.unit === 'px') {
+            mnWidth = Math.max(mnWidth, psMinWidth.value);
+        }
+        return mnWidth;
+    };
+
+
+    var bound, tbBound;
+    var maxHeight;
+    if (!this.elt.table) return;
+    if (stWidth === 'auto') {//table max-width is 100% of parentWidth
+        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - 17 + 'px');
+    }
+    else if (psWidth.unit === 'px' || psWidth.unit === 'vw') {
+        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - 17 + 'px');
+        bound = this.elt.getBoundingClientRect();
+        if (bound.width > 0 && !this.elt.table.body.offset) {//if overflowY this.elt.table.body.offset >0
+            tbBound = this.elt.table.elt.getBoundingClientRect();
+            maxHeight = getMaxBoundHeight();
+            if (!maxHeight || maxHeight.value >= tbBound) {
+                this.elt.table.elt.addStyle('min-width', getMinInnerWidth() + 'px');
+                //isOverflowY = false;
+            }
+            else {
+                //isOverflowY = true;
+            }
+        }
+    }
+};
+
+
 LayoutController.prototype.onResize = function () {
+    this.update();
     this.updateOverflowStatus();
     this.updateScrollbarStatus();
     if (this.elt.table) {
@@ -1511,6 +1654,8 @@ VirtualPageSelector.prototype.selectPage = function (value) {
     this.elt.$vscrollbar.innerOffset = value * 25;
     this.elt.$vscrollbar.emit('scroll');
 };
+
+
 
 
 

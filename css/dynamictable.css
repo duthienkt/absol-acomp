@@ -111,10 +111,13 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     padding-right: var(--dt-scroll-bar-width);
 }
 
+.as-dynamic-table-wrapper.as-overflow-y.as-width-auto{
+    max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
+}
 
 .as-dynamic-table-wrapper.as-overflow-y.as-has-fixed-col,
 .as-dynamic-table-wrapper.as-overflow-y:not(.as-width-match-parent) {
-    max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
+    /*max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));*/
 }
 
 

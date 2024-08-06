@@ -239,6 +239,9 @@ BaseMode.prototype.render = function () {
 
     dy = Math.max(0, dy);
 
+    //small padding top
+    var hs = this.body.table.wrapper.$vscrollbar.innerOffset/ ((this.body.table.wrapper.$vscrollbar.innerHeight - this.body.table.wrapper.$vscrollbar.outerHeight)||1)
+    dy += hs * 100;
 
     this.body.table.wrapper.$space.addStyle('top', -dy + 'px');
     this.body.table.wrapper.$fixedXCtn.addStyle('top', -dy + 'px');
