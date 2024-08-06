@@ -251,7 +251,8 @@ TableScroller.prototype._updateFixedYHeader = function () {
 
 TableScroller.prototype._updateFixedYHeaderSize = function () {
     var bound = this.$originTable.getBoundingClientRect();
-    this.$fixedYHeader.addStyle('width', bound.width + 'px');
+    // this.$fixedYHeader.addStyle('width', bound.width + 'px');
+    if (this.$fixedYHeader.firstChild && this.$fixedYHeader.firstChild.firstChild)
     Array.prototype.forEach.call(this.$fixedYHeader.firstChild.firstChild.childNodes, elt => {
         var bound = elt.$origin.getBoundingClientRect();
         elt.addStyle('width', bound.width + 'px');
@@ -262,6 +263,7 @@ TableScroller.prototype._updateFixedYHeaderSize = function () {
             elt.removeStyle('display');
         }
     });
+
     this.$headLine.addStyle('top', this.$fixedYHeader.getBoundingClientRect().height - 1 + 'px')
         .addStyle('max-width', bound.width + 'px');
 
@@ -313,7 +315,7 @@ TableScroller.prototype._updateFixedXCol = function () {
 TableScroller.prototype._updateFixedXColSize = function () {
     if (this.fixedCol === 0) return;
     var bound = this.$originTable.getBoundingClientRect();
-    this.$fixXCol.addStyle('height', bound.height + 'px');
+    // this.$fixXCol.addStyle('height', bound.height + 'px');
 
     Array.prototype.forEach.call(this.$fixXCol.firstChild.childNodes, elt => {
         elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
@@ -351,9 +353,11 @@ TableScroller.prototype._updateFixedXYHeader = function () {
 
 
 TableScroller.prototype._updateFixedXYHeaderSize = function () {
+    if (this.$fixedXYHeader.firstChild)
     Array.prototype.forEach.call(this.$fixedXYHeader.firstChild.childNodes, elt => {
         elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
     });
+    if (this.$fixedXYHeader.firstChild && this.$fixedXYHeader.firstChild.firstChild)
     Array.prototype.forEach.call(this.$fixedXYHeader.firstChild.firstChild.childNodes, elt => {
         elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
     });
