@@ -44,7 +44,7 @@ LinearColorTinyBar.render = function () {
             {
                 tag: 'span',
                 class: 'as-linear-color-tiny-text',
-                child: { text: '0.00%' }
+                child: { text: '' }
             },
             '.as-linear-color-tiny-bar-rect',
         ]
