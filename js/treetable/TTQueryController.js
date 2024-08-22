@@ -25,8 +25,8 @@ TTQueryController.prototype._waitDestroy = function (){
         else {
             this.searchMaster.destroy();
         }
-    }, 10000)
-}
+    }, 10000);
+};
 
 TTQueryController.prototype.attachFilterInput = function (input) {
     if (this.$filterInputs.indexOf(input) >= 0) return;
