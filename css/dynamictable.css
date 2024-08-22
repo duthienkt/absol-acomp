@@ -35,7 +35,7 @@
     /*padding-right: 17px;*/
     /*padding-bottom: 17px;*/
     box-sizing: border-box;
-    height: var(--dt-content-height);
+    height: calc(var(--dt-content-height) + 1px);
     overflow: hidden;
 }
 
@@ -111,13 +111,17 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     padding-right: var(--dt-scroll-bar-width);
 }
 
-.as-dynamic-table-wrapper.as-overflow-y.as-width-auto{
+.as-dynamic-table-wrapper.as-overflow-y.as-width-auto {
     max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
 }
 
 .as-dynamic-table-wrapper.as-overflow-y.as-has-fixed-col,
 .as-dynamic-table-wrapper.as-overflow-y:not(.as-width-match-parent) {
     /*max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));*/
+}
+
+.as-dynamic-table-wrapper.as-adapt-infinity-grow.as-auto-height {
+    height: calc(var(--dt-content-height) + 1px) !important;
 }
 
 
@@ -451,7 +455,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 
 
 .absol-single-page-scroller-viewport .as-dynamic-table-wrapper:not(.as-adapt-infinity-grow) {
-    max-height: calc(var(--single-page-scroller-height) - 20px);
+    max-height: calc(var(--single-page-scroller-height) - 2px);
 }
 
 .absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper:not(.as-adapt-infinity-grow) {
@@ -459,7 +463,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 .absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper.as-overflow-y:not(.as-adapt-infinity-grow) {
-    max-height: calc(var(--single-page-scroller-height) - 20px - 39px);
+    max-height: calc(var(--single-page-scroller-height) - 2px);
 }
 
 
