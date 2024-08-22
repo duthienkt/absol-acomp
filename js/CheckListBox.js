@@ -184,7 +184,7 @@ CheckListBox.eventHandler = {};
 CheckListBox.prototype.footerMinWidth = 110;
 
 CheckListBox.prototype.revokeResource = function () {
-
+    this.searchMaster.revokeResource();
 };
 
 CheckListBox.prototype._initDomHook = function () {
