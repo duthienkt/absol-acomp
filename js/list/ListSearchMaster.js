@@ -2,15 +2,18 @@ import { randomIdent } from "absol/src/String/stringGenerate";
 import Thread from "absol/src/Network/Thread";
 import ListSearchFactor from "./ListSearchFactor";
 import { calcDTQueryHash, revokeResource } from "../utils";
+import noop from "absol/src/Code/noop";
 
 function ListSearchMaster() {
     this.prepare();
     this.id = randomIdent(8);
     this.cache = {};
+    this.share.instances.push(this.id);
 }
 
 ListSearchMaster.prototype.share = {
-    worker: null
+    worker: null,
+    instances: []
 };
 
 ListSearchMaster.prototype.prepare = function () {
@@ -42,6 +45,21 @@ ListSearchMaster.prototype.query = function (query) {
 ListSearchMaster.prototype.destroy = function () {
     this.cache = {};
     this.share.worker.invoke('destroySlave', this.id);
-}
+    this.destroy = noop;
+    var idx = this.share.instances.indexOf(this.id);
+    if (idx >= 0) {
+        this.share.instances.splice(idx, 1);
+        if (this.share.instances.length === 0) {
+            this.share.worker.revokeResource();
+            this.share.worker = null;
+        }
+    }
+};
+
+ListSearchMaster.prototype.revokeResource = function () {
+    this.destroy();
+    this.revokeResource = noop;
+};
+
 
 export default ListSearchMaster;
