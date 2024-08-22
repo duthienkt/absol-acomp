@@ -1,10 +1,15 @@
 import ACore from "../ACore";
+import { revokeResource } from "./utils";
 
 var $ = ACore.$;
 var _ = ACore._;
 
+/**
+ * @extends {AElement}
+ * @constructor
+ */
 function TabFrame() {
-
+    this.on('remove', this._onRemove);
 }
 
 TabFrame.tag = 'tabframe';
@@ -135,6 +140,23 @@ TabFrame.prototype.requestRemove = function () {
     }
     else {
         this.selfRemove();
+    }
+};
+
+TabFrame.prototype._onRemove = function () {
+    setTimeout(() => {
+        if (!this.isDescendantOf(document.body)) {
+            this.revokeResource();
+        }
+    }, 100);
+};
+
+TabFrame.prototype.revokeResource = function () {
+    this.off('remove', this._onRemove);
+    while (this.lastChild) {
+        if (location.href.indexOf('localhost') >= 0 || location.href.indexOf('lab.') >= 0)//for testing
+            revokeResource(this.lastChild);
+        this.lastChild.remove();
     }
 };
 
