@@ -671,7 +671,7 @@ MSMBoxController.prototype.ev_listCancel = function () {
 
 MSMBoxController.prototype.ev_listClose = function (event) {
     var newValues = this.elt.$selectlistBox.values;
-    if (arrayCompare(this.elt.commitedValues, newValues)) {
+    if (!arrayCompare(this.elt.commitedValues, newValues)) {
         this.elt.commitedValues = newValues;
         this.elt.emit('change', Object.assign({}, event, {
             type: 'change',
