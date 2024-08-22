@@ -1466,19 +1466,30 @@ var listenMethodNames = ['appendChild', 'insertChildBefore', 'addStyle', 'remove
 var originalMethodNames = listenMethodNames.map(x => 'original_' + x);
 
 export function listenDomContentChange(elt, callback) {
+    function emit(name, event) {
+        if (!callback) return;
+        if (name === 'change')  {
+            if (typeof callback === "function") callback(event);
+            else if (callback.change) {
+                callback.change(event);
+            }
+        }
+        else if (typeof callback[name] === "function") callback[name](event);
+    }
+
     var overrideMethods = listenMethodNames.map((name, i) => {
         if (i < 2) {
             return function (child) {
                 var res = this[originalMethodNames[i]].apply(this, arguments);
                 addHook(child);
-                callback && callback({ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                emit('change', { target: this, method: name, args: Array.prototype.slice.call(arguments) })
                 return res;
             }
         }
         else if (i < 4) {
             return function () {
                 var res = this[originalMethodNames[i]].apply(this, arguments);
-                callback && callback({ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                emit('change',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
                 return res;
             }
         }
@@ -1486,7 +1497,7 @@ export function listenDomContentChange(elt, callback) {
             return function (child) {
                 var res = this[originalMethodNames[i]].apply(this, arguments);
                 removeHook(child);
-                callback && callback({ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                emit('change',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
                 return res;
             }
         }
@@ -1494,7 +1505,7 @@ export function listenDomContentChange(elt, callback) {
             return function () {
                 var res = this[originalMethodNames[i]].apply(this, arguments);
                 removeHook(this);
-                callback && callback({ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                emit('change',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
                 return res;
             }
         }
@@ -1518,6 +1529,14 @@ export function listenDomContentChange(elt, callback) {
             }
         }
 
+        if (callback && callback.scrollIntoView) {
+            child.scrollIntoView1 = child.scrollIntoView;
+            child.scrollIntoView = function () {
+                emit('scrollIntoView',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+            };
+        }
+
+
         if (!child._azar_extendTags || Object.keys(child._azar_extendTags).length === 0) {
             for (i = 0; i < child.childNodes.length; ++i)
                 addHook(child.childNodes[i]);
@@ -1535,6 +1554,10 @@ export function listenDomContentChange(elt, callback) {
                 child[listenMethodNames[i]] = child[originalMethodNames[i]];
                 delete child[originalMethodNames[i]];
             }
+        }
+        if (child.scrollIntoView1) {
+            child.scrollIntoView = child.scrollIntoView1;
+            delete child.scrollIntoView1;
         }
         for (i = 0; i < child.childNodes.length; ++i)
             removeHook(child.childNodes[i]);
