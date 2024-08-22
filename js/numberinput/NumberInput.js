@@ -135,13 +135,13 @@ NumberInput.render = function () {
 };
 
 NumberInput.prototype.addStyle = function (arg0, arg1) {
-  if (arg0 === 'textAlign' || arg0 === 'text-align') {
-      this.$input.addStyle(arg0, arg1);
-      return this;
-  }
-  else {
-      return AElement.prototype.addStyle.apply(this, arguments);
-  }
+    if (arg0 === 'textAlign' || arg0 === 'text-align') {
+        this.$input.addStyle(arg0, arg1);
+        return this;
+    }
+    else {
+        return AElement.prototype.addStyle.apply(this, arguments);
+    }
 };
 
 
@@ -451,6 +451,21 @@ NumberInput.property.notNull = {
         return this.hasClass('as-must-not-null');
     }
 };
+
+NumberInput.property.stepper = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-has-stepper');
+        }
+        else {
+            this.removeClass('as-has-stepper');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-has-stepper');
+    }
+}
+
 
 ACore.install('NumberInput'.toLowerCase(), NumberInput);
 
