@@ -240,7 +240,7 @@ BaseMode.prototype.render = function () {
     dy = Math.max(0, dy);
 
     //small padding top
-    var hs = this.body.table.wrapper.$vscrollbar.innerOffset/ ((this.body.table.wrapper.$vscrollbar.innerHeight - this.body.table.wrapper.$vscrollbar.outerHeight)||1)
+    var hs = this.body.table.wrapper.$vscrollbar.innerOffset / ((this.body.table.wrapper.$vscrollbar.innerHeight - this.body.table.wrapper.$vscrollbar.outerHeight) || 1)
     dy += hs * 100;
 
     this.body.table.wrapper.$space.addStyle('top', -dy + 'px');
@@ -331,19 +331,27 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
         this.body.table.updateCopyEltSize();
 
     }
-    if (!bounds) {
-        setTimeout(() => {
-            if (this.body.elt.isDescendantOf(document.body)) {
-                var bounds = this.getBoundOfRows();
-                if (bounds) {
-                    for (var i = 0; i < nRows.length; ++i) {
-                        nRows[i].updateCopyEltSize();
-                    }
-                    this.body.table.wrapper.layoutCtrl.onResize();
-                    this.body.table.updateCopyEltSize();
+    var updateFx = () => {
+        if (counter > 20) return;
+        if (this.body.elt.isDescendantOf(document.body)) {
+            var bounds = this.getBoundOfRows();
+            if (bounds) {
+                for (var i = 0; i < nRows.length; ++i) {
+                    nRows[i].updateCopyEltSize();
                 }
+                this.body.table.wrapper.layoutCtrl.onResize();
+                this.body.table.updateCopyEltSize();
             }
-        }, 0);
+            counter += 3;
+            setTimeout(updateFx, (counter++) * 5);
+        }
+        else {
+            setTimeout(updateFx, (counter++) * 5)
+        }
+    };
+    var counter = 1;
+    if (!bounds) {
+        setTimeout(updateFx, 1);
     }
 };
 
@@ -443,7 +451,7 @@ NormalMode.prototype.end = function () {
 
 NormalMode.prototype.updateRowsIfNeed = function () {
     var screenSize = getScreenSize();
-    var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40) / 25) * 25;
+    var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40 + 1) / 100) * 100;
     if (this.body.table.wrapper.hasClass('as-adapt-infinity-grow')) rowPerPage = 1e7;
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
 
@@ -476,21 +484,32 @@ NormalMode.prototype.updateRowsIfNeed = function () {
         this.body.table.wrapper.layoutCtrl.onResize();
         this.body.table.updateCopyEltSize();
     }
-    if (!bounds) {
-        setTimeout(() => {
-            if (this.body.elt.isDescendantOf(document.body)) {
-                var bounds = this.getBoundOfRows();
-                if (bounds) {
-                    for (var i = start; i < end; ++i) {
-                        rows[i].updateCopyEltSize();
-                    }
-                    this.body.table.wrapper.layoutCtrl.onResize();
-                    this.body.table.updateCopyEltSize();
+
+    var counter = 1;
+    var fx = () => {
+        if (counter> 20) return;
+        if (this.body.elt.isDescendantOf(document.body)) {
+            var bounds = this.getBoundOfRows();
+            if (bounds) {
+                for (var i = start; i < end; ++i) {
+                    rows[i].updateCopyEltSize();
                 }
+                this.body.table.wrapper.layoutCtrl.onResize();
+                this.body.table.updateCopyEltSize();
             }
-        }, 0);
+            counter += 3;
+            setTimeout(fx, counter * 5);
+        }
+        else {
+            setTimeout(fx, (counter++) * 5);
+        }
+    };
+
+    if (!bounds) {
+        setTimeout(fx, 1);
     }
     this.body.table.wrapper.rowDragCtrl.ev_rowRenderChange();
+    ResizeSystem.requestUpdateUpSignal(this.body.elt);
 }
 
 
