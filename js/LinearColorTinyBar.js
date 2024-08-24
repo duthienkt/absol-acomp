@@ -1,6 +1,6 @@
 import LinearColorBar from "./LinearColorBar";
-import ACore, {_, $} from "../ACore";
-import {ShareSerializer} from "absol/src/Print/printer";
+import ACore, { _, $ } from "../ACore";
+import { ShareSerializer } from "absol/src/Print/printer";
 import Rectangle from "absol/src/Math/Rectangle";
 
 /***
@@ -11,11 +11,12 @@ function LinearColorTinyBar() {
     this._value = 0;
     this._colorMapping = 0;
     this._colorMapping = this.BUILDIN_COLORS_RANGE.rainbow;
+    this.$textCtn = $('.as-linear-color-tiny-text', this);
     /***
      *
      * @type {Text}
      */
-    this.$text = $('.as-linear-color-tiny-text', this).firstChild;
+    this.$text = this.$textCtn.firstChild;
     /***
      * @type {string} valueText
      * @memberOf LinearColorTinyBar#
@@ -44,6 +45,7 @@ LinearColorTinyBar.render = function () {
             {
                 tag: 'span',
                 class: 'as-linear-color-tiny-text',
+                style: { display: 'none' },
                 child: { text: '' }
             },
             '.as-linear-color-tiny-bar-rect',
@@ -84,7 +86,14 @@ LinearColorTinyBar.property.value = {
 
 LinearColorTinyBar.property.valueText = {
     set: function (value) {
-        this.$text.data = value;
+        if (typeof value === "string" || typeof value ===  'number') {
+            this.$text.data = value;
+            this.$textCtn.removeStyle('display', 'none');
+        }
+        else {
+            this.$text.data = '';
+            this.$textCtn.addStyle('display', 'none');
+        }
     },
     get: function () {
         return this.$text.data;
