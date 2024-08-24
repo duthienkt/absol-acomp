@@ -268,3 +268,16 @@ export function searchTreeListByText(query, items) {
     return items;
 }
 
+
+/***
+ * checked is bestValue
+ * @param  {String} query
+ * @param {Array<SelectionItem|{checked:boolean, text: string}>} items
+ */
+export function searchCheckListByText(query, items) {
+    var res = items.filter(it=> it.checked);
+    var nItems = items.filter(it=> !it.checked);
+    prepareSearchForList(items);
+    nItems = searchListByText(query, nItems);
+    return res.concat(nItems);
+}
