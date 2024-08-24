@@ -186,6 +186,7 @@ TableScroller.prototype.clearChild = function () {
     this.$fixXCol.clearChild();
     this.$fixedYHeader.clearChild();
     this.$fixedXYHeader.clearChild();
+    if (this.$originTable) this.$originTable.remove();
     this.$originTable = null;
     return this;
 };
