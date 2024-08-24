@@ -113,6 +113,20 @@ MExploreItemBlock.property.name = {
     }
 };
 
+MExploreItemBlock.property.hidden  = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-hidden');
+        }
+        else {
+            this.removeClass('as-hidden');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-hidden');
+    }
+}
+
 
 export function MExploreItemList() {
 
@@ -161,7 +175,14 @@ MExploreGroup.render = function () {
 MExploreGroup.property = {};
 MExploreGroup.property.name = {
     set: function (value) {
+        value = value ||'';
         this.$br.name = value;
+        if (value) {
+            this.$br.removeStyle('display');
+        }
+        else {
+            this.$br.addStyle('display', 'none');
+        }
     },
     get: function () {
         return this.$br.name;
@@ -182,7 +203,8 @@ MExploreGroup.property.items = {
                 props: {
                     data: it,
                     name: it.name,
-                    icon: it.icon
+                    icon: it.icon,
+                    hidden: !!it.hidden
                 },
                 on: {
                     click: event => {
