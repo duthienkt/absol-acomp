@@ -4,7 +4,7 @@ import OOP from "absol/src/HTML5/OOP";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import SelectMenu from "./SelectMenu2";
-import { copySelectionItemArray } from "./utils";
+import { copySelectionItemArray, keyStringOf } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MSelectTreeLeafBox from "./selecttreeleafbox/MSelectTreeLeafBox";
 
@@ -19,7 +19,7 @@ function SelectTreeLeafMenu() {
         on: {
             pressitem: this.eventHandler.pressItem,
             preupdateposition: this.eventHandler.preUpdateListPosition,
-            close: ()=>{
+            close: () => {
                 this.isFocus = false;
             }
         }
@@ -58,6 +58,15 @@ function SelectTreeLeafMenu() {
      * @type {boolean}
      * @memberof SelectTreeLeafMenu#
      */
+    /**
+     * @name openValue
+     * @memberof SelectTreeLeafMenu#
+     * */
+    /**
+     * @name nullValue
+     * @memberof SelectTreeLeafMenu#
+     * */
+
 }
 
 SelectTreeLeafMenu.tag = 'SelectTreeLeafMenu'.toLowerCase();
@@ -114,7 +123,7 @@ SelectTreeLeafMenu.property.items = {
         items = copySelectionItemArray(items || [], { removeNoView: true });
         this.$selectBox.items = items;
         if (!this.mobile)
-        this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.width + 'px');
+            this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.width + 'px');
         var selectedItem = this.$selectBox.selectedItem;
 
         if (selectedItem) {
@@ -249,7 +258,12 @@ Object.defineProperty(STLBoxController.prototype, 'isFocus', {
                 this.elt.$selectBox.removeStyle('visibility');
                 this.elt.$selectBox.focus();
             }.bind(this), 5);
-            this.elt.$selectBox.viewToSelected();
+            if (this.elt.$selectBox.viewToValue
+                && keyStringOf(this.elt.nullValue) === keyStringOf(this.elt.$selectBox.value)) {
+                this.elt.$selectBox.viewToValue(this.elt.openValue);
+            }
+            else
+                this.elt.$selectBox.viewToSelected();
         }
         else {
             this.elt.removeClass('as-focus');

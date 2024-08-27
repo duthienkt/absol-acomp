@@ -201,6 +201,20 @@ SelectTreeLeafBox.prototype.viewToSelected = function () {
 
 };
 
+SelectTreeLeafBox.prototype.viewToValue = function (value) {
+    var viewNode = this.$itemByValue[keyStringOf(value)];
+    console.log(viewNode)
+    if (!viewNode) return;
+    viewNode.scrollIntoView();
+
+    while (viewNode && viewNode.getParent) {
+        if (viewNode.status === 'close') {
+            viewNode.getNode().emit('press');
+        }
+        viewNode = viewNode.getParent();
+    }
+};
+
 SelectTreeLeafBox.prototype._calcEstimateSize = function (items) {
     var self = this;
     var width = 0;
