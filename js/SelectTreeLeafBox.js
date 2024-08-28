@@ -203,7 +203,6 @@ SelectTreeLeafBox.prototype.viewToSelected = function () {
 
 SelectTreeLeafBox.prototype.viewToValue = function (value) {
     var viewNode = this.$itemByValue[keyStringOf(value)];
-    console.log(viewNode)
     if (!viewNode) return;
     viewNode.scrollIntoView();
 
