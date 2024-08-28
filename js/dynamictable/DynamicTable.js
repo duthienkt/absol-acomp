@@ -1098,6 +1098,9 @@ LayoutController.prototype.updateOverflowStatus = function () {
     this.elt.addStyle('--dt-content-height', contentBound.height + 'px');
     this.elt.addStyle('--dt-content-width', contentBound.width + 'px');
     var bound = this.elt.getBoundingClientRect();
+    var cpStyle = getComputedStyle(this.elt);
+    var psMaxHeight = parseMeasureValue(cpStyle.getPropertyValue('max-height'));
+
     if (bound.width < contentBound.width) {
         this.elt.addClass('as-overflow-x');
     }
@@ -1106,7 +1109,7 @@ LayoutController.prototype.updateOverflowStatus = function () {
         this.elt.$space.removeStyle('left');
     }
 
-    if (bound.height < contentBound.height || (bound.width < contentBound.width && bound.height < contentBound.height + 17 )) {
+    if (bound.height < contentBound.height || (psMaxHeight && psMaxHeight.unit === 'px' && bound.width < contentBound.width + 17 && psMaxHeight.value < contentBound.height + 18 )) {
         this.elt.addClass('as-overflow-y');
     }
     else {
