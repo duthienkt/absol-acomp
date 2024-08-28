@@ -7,7 +7,8 @@ import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import { isNaturalNumber } from "./utils";
 import { arrayCompare } from "absol/src/DataStructure/Array";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
-import LangSys from "absol/src/HTML5/LanguageSystem";
+import { parseMeasureValue } from "absol/src/JSX/attribute";
+import AElement from "absol/src/HTML5/AElement";
 
 
 var hitItem = event => {
@@ -100,6 +101,116 @@ MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
 delete MultiCheckMenu.property.isFocus;
 
+MultiCheckMenu.prototype.styleHandlers = {};
+
+MultiCheckMenu.prototype.styleHandlers.maxWidth = function (value) {
+    var parsedValue = parseMeasureValue(value);
+    if (parsedValue.unit === 'px') {
+        this.addClass('as-has-max-width');
+        this.addStyle('--max-width', value);
+    }
+    else {
+        this.removeClass('as-has-max-width');
+    }
+};
+
+MultiCheckMenu.prototype.styleHandlers['max-width'] = MultiCheckMenu.prototype.styleHandlers.maxWidth;
+
+MultiCheckMenu.prototype.styleHandlers.width = function (value) {
+    var parsedValue = parseMeasureValue(value);
+    if (parsedValue.unit === 'px') {
+        this.addClass('as-has-max-width');
+        this.addStyle('--max-width', value);
+        this.style.width = value;
+    }
+    else {
+        this.removeClass('as-has-max-width');
+    }
+};
+
+/**
+ * @this MultiCheckMenu
+ * @param value
+ */
+MultiCheckMenu.prototype.styleHandlers.maxHeight = function (value) {
+    var psValue = parseMeasureValue(value);
+    if (psValue) {
+        switch (psValue.unit) {
+            case 'px':
+                psValue.value = Math.min(psValue.value, 90);
+                break;
+            case 'em':
+            case 'rem':
+                psValue.value = Math.min(psValue.value, 90 / 14);
+                break;
+        }
+        this.$itemCtn.addStyle('max-height', psValue.value + psValue.unit);
+    }
+    else {
+        this.$itemCtn.removeStyle('max-height');
+    }
+};
+
+MultiCheckMenu.prototype.styleHandlers['max-height'] = MultiCheckMenu.prototype.styleHandlers.maxHeight;
+MultiCheckMenu.prototype.styleHandlers.hidden = function (value) {
+    if (value === 'hidden') {
+        this.style.overflow = 'hidden';
+        this.$itemCtn.style.overflow = 'hidden';
+    }
+    else {
+        this.style.overflow = '';
+        this.$itemCtn.style.overflow = '';
+
+    }
+}
+
+
+MultiCheckMenu.prototype.addStyle = function (arg0, arg1) {
+    if ((typeof arg0 === "string") && (this.styleHandlers[arg0])) {
+        this.styleHandlers[arg0].apply(this, Array.prototype.slice.call(arguments, 1));
+        return this;
+    }
+    else {
+        return AElement.prototype.addStyle.apply(this, arguments);
+    }
+};
+
+MultiCheckMenu.prototype.removeStyle = function (arg0) {
+    if ((typeof arg0 === "string") && (this.styleHandlers[arg0])) {
+        this.styleHandlers[arg0].call(this, '');
+        return this;
+    }
+    else {
+        return AElement.prototype.removeStyle.apply(this, arguments);
+    }
+};
+
+MultiCheckMenu.prototype._updateOverflow = function () {
+    var bound;
+    if (this.getComputedStyleValue('overflow') === 'hidden') {
+        bound = this.getBoundingClientRect();
+        if (bound.width === 0) return;
+        this.$itemCtn.removeClass('as-has-more');
+        var hasMore = false;
+        var elt;
+        for (var i = 0; i < this.$itemCtn.childNodes.length; ++i) {
+            elt = this.$itemCtn.childNodes[i];
+            if (!hasMore) {
+                elt.removeStyle('display');
+                var cBound = elt.getBoundingClientRect();
+                if (cBound.bottom > bound.bottom) {
+                    hasMore = true;
+                }
+            }
+            if (hasMore) {
+                elt.addStyle('display', 'none');
+            }
+        }
+        if (hasMore) this.$itemCtn.addClass('as-has-more');
+    }
+};
+
+
 MultiCheckMenu.property.values = {
     set: function (values) {
         if (values === undefined || values === null) values = [];
@@ -132,8 +243,8 @@ MultiCheckMenu.property.items = {
 
 MultiCheckMenu.property.placeholder = {
     set: function (value) {
-        if (value){
-            this.$itemCtn.attr('data-placeholder', value+'');
+        if (value) {
+            this.$itemCtn.attr('data-placeholder', value + '');
         }
         else {
             this.$itemCtn.attr('data-placeholder', null);
@@ -423,6 +534,8 @@ MSMItemsViewController.prototype.viewItems = function (items) {
     // if (this.itemFocusable) {
     //     this._updateFocusItem();
     // }
+    setTimeout(this.elt._updateOverflow.bind(this.elt), 100)
+
     var nBound = this.elt.getBoundingClientRect();
     if (nBound.width !== cBound.width || nBound.height !== cBound.height) {
         ResizeSystem.updateUp(this.elt);
