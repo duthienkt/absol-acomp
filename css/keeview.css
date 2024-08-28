@@ -208,3 +208,7 @@ div.kv-document-page.absol-frame {
 }
 
  */
+
+.absol-single-page.as-has-footer-margin > .absol-single-page-scroller{
+   padding-bottom:  var(--footer-margin);
+}
