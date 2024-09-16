@@ -2,7 +2,7 @@
     --as-path-menu-max-text-width: 150px;
 }
 
-.am-mobile-theme{
+.am-mobile-theme {
     --as-path-menu-max-text-width: 100px;
 }
 
@@ -20,5 +20,96 @@
 }
 
 .as-path-menu-item.as-has-no-item .as-ribbon-split-button-extend {
+    display: none;
+}
+
+
+.as-path-view {
+    white-space: nowrap;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 1em;
+    height: calc(2em + 2px);
+}
+
+.as-path-view-item {
+    display: inline-block;
+    white-space: nowrap;
+    background: transparent;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    height: 100%;
+    position: relative;
+    padding-left: 0.5em;
+    padding-right: 0;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.as-path-view-item:last-child {
+    padding-right: 0.5em;
+}
+
+.as-path-view-item:hover {
+    border-color: #dddddd;
+}
+
+.as-path-view-item::before{
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 1em;
+    top: 0;
+    bottom: 0;
+}
+
+.as-path-view-item:last-child::before{
+    right: 0;
+}
+
+.as-path-view-item:hover::before {
+    background-color: rgba(169, 169, 169, 0.15);
+}
+
+.as-path-view-item:active::before {
+    background-color: rgba(169, 169, 169, 0.3);
+}
+
+.as-path-view-item-icon {
+    margin-right: 0.5em;
+}
+
+span.as-path-view-item-icon,
+i.as-path-view-item-icon {
+    font-size: 1.5em;
+    line-height: 1;
+    text-align: center;
+}
+
+svg.as-path-view-item-icon,
+img.as-path-view-item-icon {
+    width: 1.5em;
+    height: 1.5em;
+}
+
+
+
+.as-path-view-item-text {
+    padding-right: 0.2em;
+}
+
+
+.as-path-view-item-arrow {
+    width: 1em;
+    text-align: center;
+}
+
+.as-path-view-item-icon,
+.as-path-view-item-text,
+.as-path-view-item-arrow {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-path-view-item:last-child .as-path-view-item-arrow {
     display: none;
 }
