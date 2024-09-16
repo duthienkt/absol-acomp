@@ -170,6 +170,7 @@ import IdentTextInput from "../IdentTextInput";
 import EfficientTable from "../EfficientTable";
 import CompactDataGridEditor from "../CompactDataGridEditor";
 import SelectRibbonMenu from "../SelectRibbonMenu";
+import PathView from "../PathView";
 
 
 export var publicCreators = [
@@ -272,6 +273,7 @@ export var publicCreators = [
     QuickMenu,
     QuickPath,
     PathMenu,
+    PathView,
     Radio,
     RadioButton,
     RadioInput,
