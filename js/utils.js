@@ -867,9 +867,12 @@ export function isRealNumber(value) {
 }
 
 export function isNaturalNumber(value) {
-    return (isFinite(value) && (typeof value === "number") && Math.floor(value) === value && value >= 0);
+    return (isInteger(value) && value >= 0);
 }
 
+export function isInteger(value) {
+    return (isFinite(value) && (typeof value === "number") && Math.floor(value) === value);
+}
 
 /****
  *
@@ -1462,7 +1465,7 @@ export function wrapText(text, width, font) {
 }
 
 
-var listenMethodNames = ['appendChild', 'insertChildBefore', 'addStyle', 'removeStyle', 'removeChild', 'remove'];
+var listenMethodNames = ['appendChild', 'insertBefore', 'addStyle', 'removeStyle', 'removeChild', 'remove'];
 var originalMethodNames = listenMethodNames.map(x => 'original_' + x);
 
 export function listenDomContentChange(elt, callback) {
@@ -1489,6 +1492,7 @@ export function listenDomContentChange(elt, callback) {
         else if (i < 4) {
             return function () {
                 var res = this[originalMethodNames[i]].apply(this, arguments);
+                if (arguments[0] === 'display')
                 emit('change',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
                 return res;
             }
@@ -1535,7 +1539,6 @@ export function listenDomContentChange(elt, callback) {
                 emit('scrollIntoView',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
             };
         }
-
 
         if (!child._azar_extendTags || Object.keys(child._azar_extendTags).length === 0) {
             for (i = 0; i < child.childNodes.length; ++i)
