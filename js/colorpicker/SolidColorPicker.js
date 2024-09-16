@@ -96,6 +96,11 @@ function SolidColorPicker() {
      * @memberof SolidColorPicker#
      */
 
+    /**
+     * @name hex8Value
+     * @type {string}
+     * @memberof SolidColorPicker#
+     */
 }
 
 
@@ -341,8 +346,7 @@ SolidColorPicker.prototype.reloadSetting = function () {
 
 
 SolidColorPicker.prototype.notifyCanBeChanged = function () {
-    var value = this.value;
-    var cHex8 = value ? this.rawValue.toHex8() : "null";
+    var cHex8 = this.hex8Value;
     if (cHex8 !== this._lastEmitHex8) {
         this._lastEmitHex8 = cHex8;
         this.notifyChange();
@@ -392,20 +396,11 @@ SolidColorPicker.property.value = {
             }
         }
         this.rawValue = value;
+        this._lastEmitHex8 = this.hex8Value;
 
         this.footerCtrl.viewValue();
         this.pickerMode.viewValue();
         this.swatchMode.viewValue();
-        //
-        // this._lastEmitHex8 = value.toHex8();
-        // this._setValue(value);
-        // this._setRGB(value.toHex6());
-        // this._setOpacityPercent(Math.round(value.rgba[3] * 100));
-        //
-        // var hsba = Color.rgbaToHSBA(value.rgba);
-        // this._setHue(hsba[0] * 360);
-        // this._setSatBrightness(hsba[1] * 100, hsba[2] * 100);
-        // this._updateNear();
     },
     get: function () {
         var nullable = this.nullable;
@@ -414,6 +409,14 @@ SolidColorPicker.property.value = {
         if (!nullable && !value) value = new Color([0, 0, 0, 0]);
         if (!hasOpacity && value) value.rgba[3] = 1;
         return value;
+    }
+};
+
+SolidColorPicker.property.hex8Value = {
+    get: function () {
+        var value = this.value;
+        if (value) return value.toHex8();
+        return 'null';
     }
 };
 
