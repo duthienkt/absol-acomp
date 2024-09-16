@@ -44,6 +44,12 @@ function ColorPickerButton() {
      * @type {boolean}
      * @memberOf ColorPickerButton#
      */
+
+    /***
+     * @name readOnly
+     * @type {boolean}
+     * @memberOf ColorPickerButton#
+     */
 }
 
 ColorPickerButton.tag = 'ColorPickerButton'.toLowerCase();
@@ -85,6 +91,7 @@ ColorPickerButton.prototype.togglePicker = function () {
 
 
 ColorPickerButton.prototype.openPicker = function () {
+    if (this.readOnly) return;
     if (this.hasClass('as-color-picker-selecting')) return;
 
     if (ColorPickerButton.lastOpen) {
@@ -188,7 +195,7 @@ ColorPickerButton.property.value = {
     get: function () {
         var nullable = this.nullable;
         var value = this._value;
-        if (!this._value && nullable) return  value;//null, ""
+        if (!this._value && nullable) return value;//null, ""
         if (!this._value && !nullable) {
             value = new Color([0, 0, 0, 1]);
         }
@@ -232,7 +239,21 @@ ColorPickerButton.property.nullable = {
     get: function () {
         return this.hasClass('as-nullable');
     }
-}
+};
+
+ColorPickerButton.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-readonly');
+        }
+        else {
+            this.removeClass('as-readonly');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-readonly');
+    }
+};
 
 
 ACore.install(ColorPickerButton);

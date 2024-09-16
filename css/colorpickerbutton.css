@@ -42,9 +42,8 @@
     display: none;
 }
 
-
-.absol-selectmenu {
-
+.as-color-picker-button.as-border-none{
+    border: none;
 }
 
 .as-select-color-scheme-menu-dropdown {
