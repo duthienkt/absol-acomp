@@ -1,6 +1,6 @@
 import { $$, _, $ } from "../../ACore";
 import Follower from "../Follower";
-import { findMaxZIndex } from "../utils";
+import { findMaxZIndex, listenDomContentChange } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 
@@ -182,14 +182,15 @@ DTHeadCell.prototype.updateCopyContent = function () {
         this._copyElt.clearChild().addChild(makeCopyChildren());
     }
     ResizeSystem.updateUp(this._elt);
+    ResizeSystem.requestUpdateUpSignal(this._elt);
 };
 
 DTHeadCell.prototype.requestUpdateContent = function () {
     if (this.ucTO > 0) return;
-    this.ucTO = setTimeout(() => {
+    // this.ucTO = setTimeout(() => {
         this.ucTO = -1;
         this.updateCopyContent();
-    }, 20)
+    // }, 20)
 };
 
 
@@ -273,17 +274,25 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
         this._elt.addChild(this.$sortBtn);
         this._elt.addChild(this.$resizer);
         var ctrl = this;
-        setTimeout(() => {
-            var addChild = this._elt.addChild;
-            var clearChild = this._elt.clearChild;
-            this._elt.addChild = function () {
-                ctrl.requestUpdateContent();
-                addChild.apply(this, arguments);
-            };
-            this._elt.clearChild = function () {
-                ctrl.requestUpdateContent();
-                clearChild.apply(this, arguments);
-            };
+        // setTimeout(() => {
+        //     var addChild = this._elt.addChild;
+        //     var clearChild = this._elt.clearChild;
+        //     this._elt.addChild = function () {
+        //         ctrl.requestUpdateContent();
+        //         addChild.apply(this, arguments);
+        //     };
+        //     this._elt.clearChild = function () {
+        //         ctrl.requestUpdateContent();
+        //         clearChild.apply(this, arguments);
+        //     };
+        // }, 10);
+        // listenDomContentChange(this._elt, (event) => {
+        //     this.requestUpdateContent();
+        // });
+        setTimeout(()=>{
+            listenDomContentChange(this._elt, (event) => {
+                this.requestUpdateContent();
+            });
         }, 10);
 
         return this._elt;

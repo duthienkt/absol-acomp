@@ -459,12 +459,12 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 .absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper:not(.as-adapt-infinity-grow) {
-    max-height: calc(var(--single-page-scroller-height) - 20px - 22px);
-}
-
-.absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper.as-overflow-y:not(.as-adapt-infinity-grow) {
     max-height: calc(var(--single-page-scroller-height) - 2px);
 }
+
+/*.absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper.as-overflow-y:not(.as-adapt-infinity-grow) {*/
+/*    max-height: calc(var(--single-page-scroller-height) - 2px);*/
+/*} try remove this*/
 
 
 /*Keeview modal*/

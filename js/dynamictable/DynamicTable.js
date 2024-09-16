@@ -428,10 +428,8 @@ DynamicTable.prototype.getSavedState = function () {
 };
 
 DynamicTable.prototype.setSavedState = function (state) {
-    if (window.ABSOL_DEBUG) console.log('assign saved state', state);
     this.readySync.then(()=>{
         state = state ||{};
-        if (window.ABSOL_DEBUG)  console.log('assign saved state', state);
         this.$vscrollbar.innerOffset = state.scrollTop ||0;
         this.$hscrollbar.innerOffset = state.scrollLeft ||0;
         this.$hscrollbar.emit('scroll');
@@ -1059,7 +1057,7 @@ LayoutController.prototype.update = function () {
     var maxHeight;
     if (!this.elt.table) return;
     if (stWidth === 'auto') {//table max-width is 100% of parentWidth
-        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - 17 + 'px');
+        this.elt.table.elt.addStyle('min-width',Math.max( getMinInnerWidth() - 17, 0) + 'px');
     }
     else if (psWidth.unit === 'px' || psWidth.unit === 'vw' || psWidth.unit === '%') {
         this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - 17 + 'px');
@@ -1095,12 +1093,10 @@ LayoutController.prototype.onResize = function () {
 
 LayoutController.prototype.updateOverflowStatus = function () {
     var contentBound = this.elt.table ? this.elt.table.elt.getBoundingClientRect() : { width: 0, height: 0 };
-    this.elt.addStyle('--dt-content-height', contentBound.height + 'px');
-    this.elt.addStyle('--dt-content-width', contentBound.width + 'px');
+
     var bound = this.elt.getBoundingClientRect();
     var cpStyle = getComputedStyle(this.elt);
     var psMaxHeight = parseMeasureValue(cpStyle.getPropertyValue('max-height'));
-
     if (bound.width < contentBound.width) {
         this.elt.addClass('as-overflow-x');
     }
@@ -1116,6 +1112,9 @@ LayoutController.prototype.updateOverflowStatus = function () {
         this.elt.removeClass('as-overflow-y');
         this.elt.$space.removeStyle('top');
     }
+
+    this.elt.addStyle('--dt-content-height', contentBound.height + 'px');
+    this.elt.addStyle('--dt-content-width', contentBound.width + 'px');
 };
 
 LayoutController.prototype.updateScrollbarStatus = function () {
