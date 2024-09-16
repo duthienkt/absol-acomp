@@ -44,6 +44,7 @@ NITextController.prototype.flushTextToValue = function () {
     var floatText = text.split(thousandsSeparator).join('').split(decimalSeparator).join('.');
     this.elt._value = parseFloat(floatText);
     if (!isRealNumber(this.elt._value)) this.elt._value = null;
+    this.elt._value = this.elt.value;//normalize value
 };
 
 

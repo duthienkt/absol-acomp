@@ -1,10 +1,13 @@
 import '../../css/numberinput.css';
 import ACore from "../../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { nearFloor, isRealNumber, isNaturalNumber } from "../utils";
+import { nearFloor, isRealNumber, isNaturalNumber, findMaxZIndex, isInteger } from "../utils";
 import NITextController from "./NITextController";
 import { numberAutoFixed } from "absol/src/Math/int";
 import AElement from "absol/src/HTML5/AElement";
+import Hanger from "../Hanger";
+import Rectangle from "absol/src/Math/Rectangle";
+import Vec2 from "absol/src/Math/Vec2";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -52,6 +55,8 @@ function NumberInput() {
     this.$domSignal.once('attached', () => {
         this.textCtrl.estimateWidthBy(this.$input.value);
     });
+
+    this.dragCtrl = new NIDragController(this);
 
     /****
      * @name min
@@ -101,6 +106,35 @@ function NumberInput() {
      * @memberOf NumberInput#
      */
 
+    /****
+     * @name notNull
+     * @type {boolean}
+     * @memberOf NumberInput#
+     */
+
+    /****
+     * @name stepper
+     * @type {number}
+     * @memberOf NumberInput#
+     */
+
+    /**
+     * @type {number}
+     * @name step
+     * @memberOf NumberInput#
+     */
+
+    /**
+     * @type {boolean}
+     * @name valueDraggable
+     * @memberOf NumberInput#
+     */
+    this.valueDraggable = false;
+    /***
+     *
+     * @type {number|null}
+     * @name rawValue
+     */
 
 }
 
@@ -149,7 +183,8 @@ NumberInput.prototype._makeDefaultFormat = function () {
     var res = {
         locales: 'vi-VN',
         maximumFractionDigits: 20,
-        minimumFractionDigits: 0
+        minimumFractionDigits: 0,
+        pow10: null//only apply if maximumFractionDigits === 0
     };
 
     if (window['systemconfig'] && window['systemconfig']['numberFormatLocales']) {
@@ -165,8 +200,10 @@ NumberInput.prototype.nextStep = function () {
     if (isRealNumber(this.min)) {
         ofs = this.min;
     }
-    var idx = nearFloor((this.value - ofs) / this._step, 0.01);
-    this._value = Math.min(this._step * (idx + 1) + ofs, this.max);
+    var step = this.step;
+    var idx = nearFloor((this.value - ofs) / step, 0.01);
+    this._value = Math.min(step * (idx + 1) + ofs, this.max);
+    this._value = numberAutoFixed(this._value, (step + '').length);
     this.textCtrl.flushValueToText();
 };
 
@@ -175,8 +212,11 @@ NumberInput.prototype.prevStep = function () {
     if (isRealNumber(this.min)) {
         ofs = this.min;
     }
-    var idx = nearFloor((this.value - ofs) / this._step, 0.01);
-    this._value = Math.max(this._step * (idx - 1) + ofs, this.min);
+    var step = this.step;
+
+    var idx = nearFloor((this.value - ofs) /step, 0.01);
+    this._value = Math.max(step * (idx - 1) + ofs, this.min);
+    this._value = numberAutoFixed(this._value, (step + '').length);
     this.textCtrl.flushValueToText();
 };
 
@@ -233,6 +273,10 @@ NumberInput.eventHandler.mouseDownBtn = function (dir, event) {
     tick();
 };
 
+NumberInput.prototype.focus = function () {
+    this.$input.focus();
+}
+
 
 NumberInput.prototype.notifyChanged = function (option) {
     option = option || {};
@@ -244,18 +288,25 @@ NumberInput.prototype.notifyChanged = function (option) {
             previousValue: this._prevValue
         }, option || {}), this);
         this._prevValue = value;
-        this._prevBy = option.by;
+        // this._prevBy = option.by;
     }
 };
 
 
 NumberInput.property = {};
 
+NumberInput.property.rawValue = {
+    get: function () {
+        return this._prevValue;
+    }
+};
+
 NumberInput.property.value = {
     set: function (value) {
         if (typeof value === "string") value = parseFloat(value);
         if (typeof (value) != 'number' || isNaN(value)) value = null;
         this._value = value;
+
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
@@ -267,15 +318,20 @@ NumberInput.property.value = {
             }
             else {
                 return null;
-
             }
         }
-        value = Math.min(this.max, Math.max(value, this.min));
+
         if (this._format.maximumFractionDigits === 0) {
-            return Math.round(value);
+            if (isNaturalNumber(this._format.pow10)) {
+                value =  Math.round(value / Math.pow(10, this._format.pow10)) *  Math.pow(10, this._format.pow10);
+            }
+            else {
+                value = Math.round(value);
+            }
         }
-        if (this._format.maximumFractionDigits < 20)
-            return numberAutoFixed(value, this._format.maximumFractionDigits);
+        else if (this._format.maximumFractionDigits < 20)
+            value = numberAutoFixed(value, this._format.maximumFractionDigits);
+        value = Math.min(this.max, Math.max(value, this.min));
         return value;
     }
 };
@@ -288,6 +344,9 @@ NumberInput.property.step = {
         this._step = value;
     },
     get: function () {
+        if (this._format.maximumFractionDigits === 0 && isNaturalNumber(this._format.pow10)) {
+            return Math.max(this._step, Math.pow(10, this._format.pow10));
+        }
         return this._step;
     }
 };
@@ -409,6 +468,7 @@ NumberInput.property.format = {
             this._format = Object.assign(this._makeDefaultFormat(), value);
         }
         // console.log(this._format)
+        this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
@@ -419,18 +479,32 @@ NumberInput.property.format = {
 
 NumberInput.property.floatFixed = {
     set: function (value) {
-        if (isNaturalNumber(value) && value >= 0 && value < 20) {
-            this._format.maximumFractionDigits = Math.floor(value);
-            this._format.minimumFractionDigits = Math.floor(value);
+
+        if (isRealNumber(value)) {
+            value = Math.round(value);
+            if (value >= 0) {
+                value = Math.min(value, 20);
+                this._format.maximumFractionDigits = value;
+                this._format.minimumFractionDigits = value;
+                delete this._format.pow10;
+            }
+            else {
+                this._format.maximumFractionDigits = 0;
+                this._format.minimumFractionDigits = 0;
+                this._format.pow10 = -value;
+            }
         }
         else {
             this._format.maximumFractionDigits = 20;
             delete this._format.minimumFractionDigits;
+            delete this._format.pow10;
         }
+        this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
         if (this._format.maximumFractionDigits === 20) return null;
+        if (this._format.maximumFractionDigits === 0 && this._format.pow10 > 0) return -this._format.pow10;
         return this._format.maximumFractionDigits;
     }
 };
@@ -470,4 +544,124 @@ NumberInput.property.stepper = {
 ACore.install('NumberInput'.toLowerCase(), NumberInput);
 
 export default NumberInput;
+
+/**
+ *
+ * @param {NumberInput} elt
+ * @constructor
+ */
+function NIDragController(elt) {
+    this.elt = elt;
+    _({
+        elt: elt,
+        tag: Hanger
+    });
+    Object.keys(this.constructor.prototype).forEach((key) => {
+        if (key.startsWith('ev_')) {
+            this[key] = this[key].bind(this);
+        }
+    });
+    this.elt.on({
+        dragstart: this.ev_dragStart,
+        drag: this.ev_drag,
+        dragend: this.ev_dragEnd,
+        draginit: this.ev_dragInit
+    });
+    this.state = 0;
+    this.prevDistance = 0;
+    this.$mouseLine = null;
+}
+
+NIDragController.prototype.ev_dragInit = function (event) {
+    if (!this.elt.valueDraggable || EventEmitter.isMouseRight(event.originEvent)) {
+        event.cancel();
+    }
+};
+
+NIDragController.prototype.ev_dragStart = function (event) {
+    if (this.elt.valueDraggable === false) return;
+
+
+};
+
+NIDragController.prototype.ev_drag = function (event) {
+    if (this.calcDistance(event) > 0 && !this.isSelecting() && this.state === 0) {
+        this.state = 1;
+        document.body.classList.add('as-number-input-force-dragging');
+        this.$mouseLine = _({
+            tag: 'div',
+            class: 'as-number-input-mouse-line',
+            style: {
+                zIndex: findMaxZIndex(this.elt) + 1
+            }
+        }).addTo(document.body);
+    }
+
+    if (this.state !== 1) return;
+    var distance = this.calcDistance(event);
+    var delta = distance - this.prevDistance;
+    if (delta >= 1) {
+        this.prevDistance = distance;
+        this.elt.nextStep();
+    }
+    else if (delta <= -1) {
+        this.prevDistance = distance;
+        this.elt.prevStep();
+    }
+    var deltaVector = event.currentPoint.sub(event.startingPoint);
+    var length = deltaVector.abs();
+    var angle = deltaVector.direction();
+    this.$mouseLine.addStyle({
+        left: event.startingPoint.x + 'px',
+        top: event.startingPoint.y + 'px',
+        width: length + 'px',
+        transform: 'rotate(' + angle + 'rad)',
+        transformOrigin: '0 0'
+    });
+
+};
+
+
+NIDragController.prototype.ev_dragEnd = function (event) {
+    this.elt.removeClass('as-dragging');
+    document.body.classList.remove('as-number-input-force-dragging');
+    if (this.$mouseLine) {
+        this.$mouseLine.remove();
+        this.$mouseLine = null;
+    }
+    this.state = 0;
+    this.elt.emit('change', { by: 'drag' });
+};
+
+NIDragController.prototype.isSelecting = function () {
+    return this.elt.$input.selectionStart !== this.elt.$input.selectionEnd;
+};
+
+NIDragController.prototype.calcDistance = function (event) {
+    var bound = Rectangle.fromClientRect(this.elt.getBoundingClientRect());
+    var mouse = new Vec2(event.clientX, event.clientY);
+    bound.x -= 10;
+    bound.y -= 10;
+    bound.height += 20;
+    bound.width += 20;
+    if (bound.containsPoint(mouse)) return 0;
+    var res = Infinity;
+    if (mouse.x > bound.x && mouse.x < bound.x + bound.width) {
+        res = Math.min(res, Math.abs(mouse.y - bound.y), Math.abs(mouse.y - bound.y - bound.height));
+    }
+    else if (mouse.y > bound.y && mouse.y < bound.y + bound.height) {
+        res = Math.min(res, Math.abs(mouse.x - bound.x), Math.abs(mouse.x - bound.x - bound.width));
+    }
+    else {
+        res = Math.min(res,
+            mouse.sub(bound.A()).abs(),
+            mouse.sub(bound.B()).abs(),
+            mouse.sub(bound.C()).abs(),
+            mouse.sub(bound.D()).abs(),
+        );
+    }
+
+    return res;
+
+};
 
