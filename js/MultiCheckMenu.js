@@ -9,6 +9,7 @@ import { arrayCompare } from "absol/src/DataStructure/Array";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import AElement from "absol/src/HTML5/AElement";
+import { loadLanguageModule } from "./MultiLanguageCSS";
 
 
 var hitItem = event => {
@@ -33,6 +34,7 @@ var hitClose = event => {
  * @constructor
  */
 function MultiCheckMenu() {
+    loadLanguageModule();
     this.addClass('as-multi-check-menu');
 
     // this.on('click', this.eventHandler.click);
@@ -259,7 +261,7 @@ MultiCheckMenu.prototype.updateSize = function () {
     var bound;
     if (this.boxCtrl.isFocus) {
         bound = this.getBoundingClientRect();
-        this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 15.5) + 'px');
+        this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 18.5) + 'px');
         this.$selectlistBox.refollow();
         this.$selectlistBox.updatePosition();
     }
@@ -693,7 +695,7 @@ MSMBoxController.prototype.open = function () {
     this.elt.$selectlistBox.addTo(document.body);
     this.elt.off('click', this.ev_click);
     var bound = this.elt.getBoundingClientRect();
-    this.elt.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.elt.$selectlistBox.getFontSize() * 15.5) + 'px');
+    this.elt.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.elt.$selectlistBox.getFontSize() * 18.5) + 'px');
     this.elt.$selectlistBox.followTarget = this.elt;
     this.addListennerTO = setTimeout(() => {
         document.addEventListener('mousedown', this.ev_mousedownOut);

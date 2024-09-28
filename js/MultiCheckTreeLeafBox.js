@@ -7,6 +7,7 @@ import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "
 import { copySelectionItemArray, estimateWidth14 } from "./utils";
 import CheckboxInput from "./CheckBoxInput";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { loadLanguageModule } from "./MultiLanguageCSS";
 
 function isBranchStatus(status) {
     return status === 'open' || status === 'close';
@@ -22,6 +23,7 @@ function invertStatus(status) {
  * @constructor
  */
 function MultiCheckTreeLeafBox() {
+    loadLanguageModule();
     this._initControl();
     this._searchCache = {};
     this._items = [];

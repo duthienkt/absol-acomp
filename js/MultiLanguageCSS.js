@@ -30,17 +30,19 @@ var data = {
     txt_select_value: '-- Select values --'
 };
 
-
 makeCss(data);
 
 var overrideData = {};
 
+var LanguageModuleLoaded = false;
 
-function waitLanguage() {
+export function loadLanguageModule() {
+    if (LanguageModuleLoaded) return;
+    var text;
+    var newest = false, key;
     if (window['LanguageModule'] && window['LanguageModule'].data && window['LanguageModule'].data.length > 0) {
-        var text;
-        var newest = false;
-        for (var key in data) {
+        LanguageModuleLoaded = true;
+        for (key in data) {
             text = window['LanguageModule'].text(key);
             if (!text.startsWith('[key:') && text !== data[key]) {
                 overrideData[key] = text;
@@ -49,13 +51,21 @@ function waitLanguage() {
         }
         if (newest) makeCss(overrideData);
     }
+
+}
+
+
+function waitLanguage() {
+    if (window['LanguageModule'] && window['LanguageModule'].data && window['LanguageModule'].data.length > 0) {
+        loadLanguageModule();
+    }
     else {
         if (counter--)
             setTimeout(waitLanguage, 400 + Math.floor(16000 / counter / counter));
     }
 }
 
-waitLanguage()
+waitLanguage();
 
 
 export default {};

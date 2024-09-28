@@ -5,6 +5,7 @@ import SelectBoxItem from "./SelectBoxItem";
 import MultiSelectMenu from "./MultiSelectMenu";
 import OOP from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu2";
+import { loadLanguageModule } from "./MultiLanguageCSS";
 
 /****
  * Only leafs have checkbox
@@ -12,6 +13,7 @@ import SelectMenu from "./SelectMenu2";
  * @constructor
  */
 function MultiCheckTreeLeafMenu() {
+    loadLanguageModule();
     this.$selectBox = _({
         tag: MultiCheckTreeLeafBox.tag,
         on: {
