@@ -122,3 +122,14 @@
 .absol-number-input.absol-disabled .absol-number-input-button-down-container {
     opacity: 0.3;
 }
+
+body.as-number-input-force-dragging {
+    user-select: none;
+    pointer-events: none;
+}
+
+.as-number-input-mouse-line {
+    border: 1px dashed #bfc1c2;
+    position: fixed;
+    z-index: 1e8;
+}
