@@ -5,6 +5,7 @@ import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "
 import { estimateWidth14, measureText, vScrollIntoView } from "./utils";
 import SelectListBox from "./SelectListBox";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
+import LangSys from "absol/src/HTML5/LanguageSystem";
 
 /***
  * @extends Follower
@@ -97,7 +98,7 @@ DualSelectBox.render = function () {
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-close-btn',
-                                child: { text: 'Close' }
+                                child: { text: LangSys.getText('txt_close') }
                             }
                         ]
                     }
