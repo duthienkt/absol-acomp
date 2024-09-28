@@ -124,6 +124,10 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     height: calc(var(--dt-content-height) + 1px) !important;
 }
 
+.as-dynamic-table-wrapper.as-adapt-infinity-grow {
+    max-height: unset !important;
+}
+
 
 .as-dynamic-table-viewport {
     width: 100%;
