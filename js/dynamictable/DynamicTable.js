@@ -428,10 +428,10 @@ DynamicTable.prototype.getSavedState = function () {
 };
 
 DynamicTable.prototype.setSavedState = function (state) {
-    this.readySync.then(()=>{
-        state = state ||{};
-        this.$vscrollbar.innerOffset = state.scrollTop ||0;
-        this.$hscrollbar.innerOffset = state.scrollLeft ||0;
+    this.readySync.then(() => {
+        state = state || {};
+        this.$vscrollbar.innerOffset = state.scrollTop || 0;
+        this.$hscrollbar.innerOffset = state.scrollLeft || 0;
         this.$hscrollbar.emit('scroll');
         this.$vscrollbar.emit('scroll');
     });
@@ -941,7 +941,8 @@ LayoutController.prototype.onAttached = function () {
                 if (this.elt.table.body.rows.length === 0) return;
                 var tableId = this.elt.id;
 
-                var rows = this.elt.table.header.rows[0] && this.elt.table.header.rows;
+                var rows = this.elt.table.header.rows;
+                if (!rows || rows.length === 0) return;
                 var changed = false;
                 var colDict = {};
 
@@ -1004,6 +1005,7 @@ LayoutController.prototype.update = function () {
     var singleViewBound;
     var getMaxBoundHeight = () => {
         var mxH = Infinity;
+        if (this.elt.hasClass('as-adapt-infinity-grow'))  return Infinity;
         if (!psHeight) {
 
         }
@@ -1057,7 +1059,7 @@ LayoutController.prototype.update = function () {
     var maxHeight;
     if (!this.elt.table) return;
     if (stWidth === 'auto') {//table max-width is 100% of parentWidth
-        this.elt.table.elt.addStyle('min-width',Math.max( getMinInnerWidth() - 17, 0) + 'px');
+        this.elt.table.elt.addStyle('min-width', Math.max(getMinInnerWidth() - 17, 0) + 'px');
     }
     else if (psWidth.unit === 'px' || psWidth.unit === 'vw' || psWidth.unit === '%') {
         this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - 17 + 'px');
@@ -1105,7 +1107,11 @@ LayoutController.prototype.updateOverflowStatus = function () {
         this.elt.$space.removeStyle('left');
     }
 
-    if (bound.height < contentBound.height || (psMaxHeight && psMaxHeight.unit === 'px' && bound.width < contentBound.width + 17 && psMaxHeight.value < contentBound.height + 18 )) {
+    if (this.elt.hasClass('as-adapt-infinity-grow')) {
+        this.elt.removeClass('as-overflow-y');
+        this.elt.$space.removeStyle('top');
+    }
+    else if (bound.height < contentBound.height || (psMaxHeight && psMaxHeight.unit === 'px' && bound.width < contentBound.width + 17 && psMaxHeight.value < contentBound.height + 18)) {
         this.elt.addClass('as-overflow-y');
     }
     else {
