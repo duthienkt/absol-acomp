@@ -2,6 +2,7 @@ import { $, _ } from "../../ACore";
 import DTBodyCell from "./DTBodyCell";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import { addElementClassName } from "../utils";
+import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 
 /***
  *
@@ -17,8 +18,14 @@ function DTBodyRow(body, data) {
     this._fixedXElt = null;
     this.filterKeys = Object.assign({}, this.data.keys);
     this.data.cells.reduce((ac, cr, i) => {
-        if (typeof cr.innerText === "string") {
-            ac['[' + i + ']'] = cr.innerText;
+        if (typeof cr.keySort === "string") {
+            ac['[' + i + ']'] = nonAccentVietnamese(cr.keySort).toLowerCase();
+        }
+        else if (typeof cr.keySort === "number") {
+            ac['[' + i + ']'] = cr.keySort;
+        }
+        else if (typeof cr.innerText === "string") {
+            ac['[' + i + ']'] = nonAccentVietnamese(cr.innerText).toLowerCase();
         }
         return ac;
     }, this.filterKeys);
@@ -41,19 +48,20 @@ function DTBodyRow(body, data) {
 }
 
 DTBodyRow.prototype.revoke = function () {
-   while (this.cells.length) {
-       this.cells.pop().revoke();
-   }
-   this.cells = null;
-   this.data = null;
-   this.body = null;
-   if (this._elt) this._elt.dtBodyRow = null;
-   this._elt = null;
-   this.$id = null;
-   this.draggable = null;
+    while (this.cells.length) {
+        this.cells.pop().revoke();
+    }
+    this.cells = null;
+    this.data = null;
+    this.body = null;
+    if (this._elt) this._elt.dtBodyRow = null;
+    this._elt = null;
+    this.$id = null;
+    this.draggable = null;
 };
 
-DTBodyRow.prototype.revokeResource = function () {};
+DTBodyRow.prototype.revokeResource = function () {
+};
 
 
 DTBodyRow.prototype.remove = function () {
@@ -106,8 +114,8 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
         var fixedCol = this.adapter.fixedCol || 0;
-        var child = this.cells.filter(c=> c.idx < fixedCol).map(c => c.copyElt);
-        var child1 = this.cells.filter(c=> c.idx >= fixedCol).map(c => c.elt);
+        var child = this.cells.filter(c => c.idx < fixedCol).map(c => c.copyElt);
+        var child1 = this.cells.filter(c => c.idx >= fixedCol).map(c => c.elt);
 
         this._elt = _({
             tag: 'tr', class: 'as-dt-body-row', props: {
