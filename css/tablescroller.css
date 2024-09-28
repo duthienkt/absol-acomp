@@ -26,7 +26,7 @@
     padding-bottom: 0;
 }
 
-.as-table-scroller-origin-table-ctn{
+.as-table-scroller-origin-table-ctn {
     padding-bottom: var(--tvs-scroll-padding-bottom);
 
 }
@@ -67,6 +67,11 @@
 .as-table-scroller-fixed-y-header-scroller {
     overflow-x: scroll;
     margin-bottom: calc(var(--scrollbar-width) * -1);
+}
+
+.as-mobile-theme .as-table-scroller-fixed-y-header-scroller::-webkit-scrollbar,
+.as-mobile-theme .absol-table-scroller-header-hscroller-viewport::-webkit-scrollbar {
+    display: none;
 }
 
 
