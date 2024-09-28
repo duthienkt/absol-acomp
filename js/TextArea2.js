@@ -47,7 +47,7 @@ TextArea2.eventHandler = {};
 
 TextArea2.eventHandler.keydown = function (event) {
     if (event.altKey || event.ctrlKey) return;
-    var key = event.key;
+    var key = event.key || String.fromCharCode(event.which || event.keyCode);
     var selectPost = this.getInputSelection();
     var leftText = this.value.substring(0, selectPost.start);
     var rightText = this.value.substring(selectPost.end);
