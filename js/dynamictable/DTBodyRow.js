@@ -150,6 +150,47 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
         this.draggable = !!$('.as-drag-zone', this._elt);
         if (this.$idx)
             this.$idx.attr('data-idx', this._idx + 1 + '');
+
+        var originAddStyle = this._elt.addStyle;
+        var originRemoveStyle = this._elt.removeStyle;
+        var originAddClass = this._elt.addClass;
+        var originRemoveClass = this._elt.removeClass;
+
+        var isOverrideStyle = x=> ['background-color', 'backgroundColor', 'color'].includes(x);
+        var thisCTL = this;
+        this._elt.addStyle = function (key, value) {
+            originAddStyle.apply(this, arguments);
+            if (thisCTL._fixedXElt && isOverrideStyle(key)) {
+                thisCTL._fixedXElt.addStyle(key, value);
+            }
+            return this;
+        };
+
+        this._elt.removeStyle = function (key) {
+            originRemoveStyle.apply(this, arguments);
+            if (thisCTL._fixedXElt && isOverrideStyle(key)) {
+                thisCTL._fixedXElt.removeStyle(key);
+            }
+            return this;
+        };
+
+        this._elt.addClass = function () {
+            originAddClass.apply(this, arguments);
+            if (thisCTL._fixedXElt) {
+                thisCTL._fixedXElt.addClass.call(thisCTL._fixedXElt, arguments);
+            }
+            return this;
+        };
+
+        this._elt.removeClass = function () {
+            originRemoveClass.apply(this, arguments);
+            if (thisCTL._fixedXElt) {
+                thisCTL._fixedXElt.removeClass.call(thisCTL._fixedXElt, arguments);
+            }
+            return this;
+        };
+
+
         return this._elt;
     }
 });

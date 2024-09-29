@@ -499,14 +499,14 @@ DynamicTable.prototype.viewIntoRow = function (row) {
     var wait = () => {
         counter--;
         if (this.isDescendantOf(document.body)) {
-            if (this.hasClass('as-adapt-infinity-grow')) {
+            if (this.hasClass('as-adapt-infinity-grow') || !this.hasClass('as-overflow-y')) {
                 row = this.rowOf(row);
                 if (row) {
                     vScrollIntoView(row.elt);
                 }
             }
             else {
-                this.table.body.viewIntoRow(row);
+                this.table.body.viewIntoRow(row);//TODO: CHECK MORE
             }
         }
         else if (counter > 0) {
@@ -514,7 +514,7 @@ DynamicTable.prototype.viewIntoRow = function (row) {
         }
 
     }
-    setTimeout(wait, 10);
+    setTimeout(wait, 130);
 };
 
 DynamicTable.prototype.attachSearchInput = function (inputElt) {
