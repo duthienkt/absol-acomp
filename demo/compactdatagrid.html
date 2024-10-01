@@ -60,13 +60,13 @@
             }
         }
     }).addTo(document.body)
-
+    console.log(data)
     var editor = absol._({
         tag: 'compactdatagrideditor',
         props: {
-            data: data.data,
-
             header: data.header,
+
+            data: data.data,
             // data: null,
             variables: [
                 { name: 'name', title: "Tên" },
@@ -89,6 +89,7 @@
         on: {
             change: function () {
                 localStorage.setItem('cpdg_data_v1', JSON.stringify({ header: editor.header, data: editor.data }));
+
                 updatePreview();
                 preview.updateSize();
             }

@@ -37,6 +37,7 @@ FirstPage.prototype.createView = function () {
               child: [
                   {
                       tag: 'mspringboardmenu',
+                      class:'as-style-desktop',
                       props: {
                           groups: [
                               {

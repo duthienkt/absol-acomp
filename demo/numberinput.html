@@ -13,6 +13,30 @@
 
 <body>
 <h1>Number Input</h1>
+<h3>FloatFixed < 0</h3>
+<script>
+    var mNumberInput1 = absol._({
+        tag: 'numberinput',
+        // class: 'as-width-auto',
+        style: {
+            width: '13em'
+        },
+        props: {
+            value: 1234356.789422,
+            min: 0,
+            max: 1e9,
+            floatFixed: -3,//adapt for old config
+            stepper: true,
+            valueDraggable: true
+        },
+        on: {
+            change: function (event) {
+                console.log(event.by, this.value);
+                absol.require('snackbar').show(this.value + '');
+            }
+        }
+    }).addTo(document.body);
+</script>
 <h3>Format auto</h3>
 <script class="viewable-x">
     var mNumberInput = absol._({
@@ -27,6 +51,75 @@
             min: 0,
             max: 1e9,
             floatFixed: 2//adapt for old config
+        },
+        on: {
+            change: function (event) {
+                console.log(event.by, this.value);
+                absol.require('snackbar').show(this.value + '');
+            }
+        }
+    }).addTo(document.body);
+
+    var mNumberInput1 = absol._({
+        tag: 'numberinput',
+        // class: 'as-width-auto',
+        style: {
+            width: '13em'
+        },
+        props: {
+            value: 1234356.789422,
+            step: 1000,
+            min: 0,
+            max: 1e9,
+            floatFixed: 2,//adapt for old config
+            stepper: true
+        },
+        on: {
+            change: function (event) {
+                console.log(event.by, this.value);
+                absol.require('snackbar').show(this.value + '');
+            }
+        }
+    }).addTo(document.body);
+
+
+    var mNumberInput2 = absol._({
+        tag: 'numberinput',
+        // class: 'as-width-auto',
+        style: {
+            width: '13em'
+        },
+        props: {
+            value: 1234356.789422,
+            step: 1000,
+            min: 0,
+            max: 1e9,
+            floatFixed: 2,//adapt for old config
+            // stepper: true,
+            readOnly: true
+        },
+        on: {
+            change: function (event) {
+                console.log(event.by, this.value);
+                absol.require('snackbar').show(this.value + '');
+            }
+        }
+    }).addTo(document.body);
+
+    var mNumberInput2 = absol._({
+        tag: 'numberinput',
+        // class: 'as-width-auto',
+        style: {
+            width: '13em'
+        },
+        props: {
+            value: 1234356.789422,
+            step: 1000,
+            min: 0,
+            max: 1e9,
+            floatFixed: 2,//adapt for old config
+            // stepper: true,
+            disabled: true
         },
         on: {
             change: function (event) {

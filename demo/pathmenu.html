@@ -23,7 +23,7 @@
                     absol.require('snackbar').show(event.item.name);
                     console.log(event.pathItem, event.item)
                 },
-                press: function (event){
+                press: function (event) {
                     console.log(event.pathItem);
                     absol.require('snackbar').show(event.pathItem.name);
 
@@ -126,6 +126,17 @@
                             }
                         ]
                     }
+                ]
+            }
+        });
+
+        render({
+            tag: 'pathview',
+            props: {
+                items: [
+                    { icon: 'span.mdi.mdi-home' },
+                    { name: 'My laptop', icon: 'span.mdi.mdi-laptop', value: 1 },
+                    { name: 'B', icon: 'span.mdi.mdi-harddisk', value: 2 },
                 ]
             }
         })

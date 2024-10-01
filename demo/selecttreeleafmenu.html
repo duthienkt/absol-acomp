@@ -49,12 +49,20 @@
         // box.followTarget = bt;
         // box.viewToSelected();
 
+        items2.unshift({
+            text:'--chon gia tri--',
+            value:null,
+            isLeaf: true
+        });
+        console.log(items2)
 
         var menu = {
             tag: 'selecttreeleafmenu',
             props: {
                 items: items2,
-                enableSearch: true
+                enableSearch: true,
+                nullValue: null,
+                openValue: 19
             },
             on: {
                 change: function () {

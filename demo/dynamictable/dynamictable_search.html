@@ -17,59 +17,9 @@
     </style>
 </head>
 
-<body class="loading">
+<body class="loading" style="height: 100%">
 <script class="viewable">
-    (function () {
-        var _ = absol._;
-        var $ = absol.$;
-
-        function render(o) {
-            return _(o).addTo(document.body);
-        }
-
-        absol.remoteNodeRequireAsync('./table_sample_data.js').then((items) => {
-            var searchInput = render('searchtextinput');
-            var table = render({
-                tag: 'dynamictable',
-                style:{
-                    height: '700px'
-                },
-                props: {
-                    adapter: {
-                        data: {
-                            head: {
-                                rows:[
-                                    {
-                                        cells: [
-                                            {
-                                                child: { text: 'Tên' }
-                                            },
-                                            {
-                                                child: { text: 'Địa chỉ' }
-                                            }
-                                        ]
-                                    }
-                                ]
-
-                            },
-                            body:{
-                                rows: items.map(item=> ({
-                                    cells: item.map(text=>({
-                                        child:{text: text},
-                                        innerText: text
-                                    }))
-                                }))
-                            }
-                        }
-                    }
-                }
-            })
-            table.attachSearchInput(searchInput);
-
-        });
-        /**  ,**/
-    })();
-
+   absol.remoteNodeRequireAsync(location.href.replace('.html', '.js'));
 </script>
 <!--    <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>-->
 

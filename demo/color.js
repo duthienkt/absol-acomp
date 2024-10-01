@@ -48,3 +48,15 @@ var v2 = __({
 });
 
 
+
+var v3 = __({
+    tag: 'ColorPickerButton'.toLowerCase(),
+    class:'as-border-none',
+    props: {
+        readOnly: true,
+        value: i2.value,
+        mode: 'hex6',
+        nullable: true
+    }
+});
+

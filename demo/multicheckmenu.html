@@ -85,6 +85,26 @@
         /********************************************/
 
         _('<h3>MultiCheckMenu</h3>').addTo(document.body);
+        var menu6 = _({
+            tag: 'multicheckmenu',
+            style: {
+                'height': '30px',
+                width: '300px',
+                overflow: 'hidden'
+            },
+            props: {
+                enableSearch: true,
+                items: items,
+                itemFocusable: true,
+                values: [1, 4, 5, 6]
+            },
+            on: {
+                change: function (event) {
+                    console.trace(event.type, this.values);
+                }
+            }
+        }).addTo(document.body);
+
         var menu0 = _({
             tag: 'multicheckmenu',
             style: {
@@ -116,6 +136,8 @@
                 }
             }
         }).addTo(document.body);
+
+
 
 
         var menu4 = _({
