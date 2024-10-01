@@ -4,18 +4,25 @@ import Time24Input from "./Time24Input";
 import '../css/timerange24input.css';
 import { isRealNumber, millisToClock, normalizeMinuteOfMillis } from "./utils";
 import {
-    beginOfDay,
+    beginOfDay, compareDate,
     formatDateTime,
     MILLIS_PER_DAY,
     MILLIS_PER_HOUR,
     MILLIS_PER_MINUTE
 } from "absol/src/Time/datetime";
+import LangSys from "absol/src/HTML5/LanguageSystem";
 
 /***
  * @extends AElement
  * @constructor
  */
 function TimeRange24Input() {
+    var t = LangSys.getText('txt_next_day');
+    if (t) {
+        t = '(' + t + ')';
+        this.nextDateText = t;
+    }
+
     /***
      *
      * @type {TimeInput}
@@ -64,6 +71,8 @@ TimeRange24Input.render = function () {
     });
 };
 
+TimeRange24Input.prototype.nextDateText = '(Next day)'
+
 
 TimeRange24Input.prototype.init = function (props) {
     props = props || {};
@@ -84,8 +93,13 @@ TimeRange24Input.prototype._updateTextData = function () {
     var duration = this.duration;
     var format = this.format;
     var bD = beginOfDay(new Date()).getTime();
-    var text = formatDateTime(new Date(bD + dayOffset), format || 'HH:mm');
-    text += ' - ' + formatDateTime(new Date(bD + dayOffset + duration), format || 'HH:mm');
+    var startD  = new Date(bD + dayOffset)
+    var text = formatDateTime(startD, format || 'HH:mm');
+    var endD = new Date(bD + dayOffset + duration);
+    text += ' - ' + formatDateTime(endD, format || 'HH:mm');
+    if (compareDate(endD, startD) > 0) {
+        text += ' ' + this.nextDateText;
+    }
     this.attr('data-text', text);
 };
 
