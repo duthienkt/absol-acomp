@@ -821,18 +821,21 @@ export function fileSize2Text(s) {
     return Math.floor(s / b * 10) / 100 + 'PB';
 }
 
+
 export function isDateTimeFormatToken(text) {
-    return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a', 'w', 'ww', 'Q', 'QQ'].indexOf(text) >= 0;
+    //ND: like (Next day)
+    return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a', 'w', 'ww', 'Q', 'QQ', 'ND'].indexOf(text) >= 0;
 }
 
 export var normalizeMinuteOfMillis = mil => {
     mil = mil >> 0;
-    if (mil < 0) {
-        mil += Math.ceil(-mil / MILLIS_PER_DAY) * MILLIS_PER_DAY
-    }
+    mil = Math.floor(mil / 6e4) * 6e4;
+    if (mil === MILLIS_PER_DAY) return mil;
     mil = mil % MILLIS_PER_DAY;
-    return Math.floor(mil / 6e4) * 6e4;
+    if (mil < 0) mil += MILLIS_PER_DAY;
+    return mil;
 };
+
 
 /**
  *
@@ -1471,7 +1474,7 @@ var originalMethodNames = listenMethodNames.map(x => 'original_' + x);
 export function listenDomContentChange(elt, callback) {
     function emit(name, event) {
         if (!callback) return;
-        if (name === 'change')  {
+        if (name === 'change') {
             if (typeof callback === "function") callback(event);
             else if (callback.change) {
                 callback.change(event);
@@ -1493,7 +1496,7 @@ export function listenDomContentChange(elt, callback) {
             return function () {
                 var res = this[originalMethodNames[i]].apply(this, arguments);
                 if (arguments[0] === 'display')
-                emit('change',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                    emit('change', { target: this, method: name, args: Array.prototype.slice.call(arguments) });
                 return res;
             }
         }
@@ -1501,7 +1504,7 @@ export function listenDomContentChange(elt, callback) {
             return function (child) {
                 var res = this[originalMethodNames[i]].apply(this, arguments);
                 removeHook(child);
-                emit('change',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                emit('change', { target: this, method: name, args: Array.prototype.slice.call(arguments) });
                 return res;
             }
         }
@@ -1509,7 +1512,7 @@ export function listenDomContentChange(elt, callback) {
             return function () {
                 var res = this[originalMethodNames[i]].apply(this, arguments);
                 removeHook(this);
-                emit('change',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                emit('change', { target: this, method: name, args: Array.prototype.slice.call(arguments) });
                 return res;
             }
         }
@@ -1536,7 +1539,7 @@ export function listenDomContentChange(elt, callback) {
         if (callback && callback.scrollIntoView) {
             child.scrollIntoView1 = child.scrollIntoView;
             child.scrollIntoView = function () {
-                emit('scrollIntoView',{ target: this, method: name, args: Array.prototype.slice.call(arguments) });
+                emit('scrollIntoView', { target: this, method: name, args: Array.prototype.slice.call(arguments) });
             };
         }
 
