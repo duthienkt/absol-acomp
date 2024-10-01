@@ -2,9 +2,19 @@
     width: 13em;
 }
 
+.as-chrome-time-24-picker {
+    --next-day-h24-width : 120px;
+    --minute-width: 60px;
+    font-size: 14px;
+
+}
 
 .as-chrome-time-24-picker .as-chrome-time-picker-h24 {
-    width: 120px;
+    width: var(--next-day-h24-width);
+}
+
+.as-chrome-time-24-picker .as-chrome-time-picker-list.as-chrome-time-picker-m60 {
+    width: var(--minute-width);
 }
 
 .as-chrome-time-24-picker-tomorrow-text {
