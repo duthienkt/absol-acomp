@@ -112,7 +112,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 .as-dynamic-table-wrapper.as-overflow-y.as-width-auto {
-    max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
+    /*max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width)); disable for resizer testing*/
 }
 
 .as-dynamic-table-wrapper.as-overflow-y.as-has-fixed-col,
@@ -274,10 +274,11 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 
 .as-dt-header-cell-resizer {
     position: absolute;
-    right: -2px;
+    right: -3px;
     top: 0;
     bottom: 0;
-    border-right: 4px solid transparent;
+    width: 6px;
+    /*border-right: 6px solid transparent;*/
     z-index: 5;
     cursor: col-resize;
     /*display: none;*/

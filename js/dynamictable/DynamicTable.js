@@ -1154,6 +1154,14 @@ LayoutController.prototype.updateScrollbarStatus = function () {
         this.elt.$hscrollbar.innerOffset = Math.max(0, this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth);
         this.elt.$hscrollbar.emit('scroll');
     }
+    if (tableBound.width < viewportBound.width) {
+        this.elt.$vscrollbar.addStyle('right', viewportBound.width - tableBound.width + 'px');
+    }
+    else {
+        this.elt.$vscrollbar.removeStyle('right');
+    }
+
+    // this.$vscrollbar
 };
 
 LayoutController.prototype.updateLines = function () {
@@ -1400,6 +1408,18 @@ ColSizeController.prototype.ev_drag = function (event) {
     this.cellElt.addStyle('width', newWidth + 'px');
     this.elt.table.updateCopyEltSize();
 
+
+    //todo: split code
+    var viewportBound = this.elt.$viewport.getBoundingClientRect();
+    var tableBound = this.elt.table.elt.getBoundingClientRect();
+    if (tableBound.width < viewportBound.width) {
+        this.elt.$vscrollbar.addStyle('right', viewportBound.width - tableBound.width + 'px');
+    }
+    else {
+        this.elt.$vscrollbar.removeStyle('right');
+    }
+    this.elt.addStyle('--dt-content-height', tableBound.height + 'px');
+    this.elt.addStyle('--dt-content-width', tableBound.width + 'px');
 };
 
 
