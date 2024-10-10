@@ -180,8 +180,16 @@ VScroller.prototype.scrollBy = function (dy, duration) {
     function onFrame() {
         self.$viewport.scrollTop = Math.max(map(i, 0, frameCount, start, end), 0);
         ++i;
-        if (i <= frameCount)
+        if (i <= frameCount) {
             setTimeout(onFrame, timeOut);
+        }
+        else {
+            setTimeout(finish, timeOut)
+        }
+    }
+
+    function finish(){
+        self.$viewport.scrollTop = Math.max(end, 0);
     }
 
     onFrame();
