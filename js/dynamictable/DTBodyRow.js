@@ -177,7 +177,7 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
         this._elt.addClass = function () {
             originAddClass.apply(this, arguments);
             if (thisCTL._fixedXElt) {
-                thisCTL._fixedXElt.addClass.call(thisCTL._fixedXElt, arguments);
+                thisCTL._fixedXElt.addClass.apply(thisCTL._fixedXElt, arguments);
             }
             return this;
         };
@@ -185,7 +185,7 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
         this._elt.removeClass = function () {
             originRemoveClass.apply(this, arguments);
             if (thisCTL._fixedXElt) {
-                thisCTL._fixedXElt.removeClass.call(thisCTL._fixedXElt, arguments);
+                thisCTL._fixedXElt.removeClass.apply(thisCTL._fixedXElt, arguments);
             }
             return this;
         };
