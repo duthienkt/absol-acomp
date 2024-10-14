@@ -365,11 +365,16 @@ ChromeCalendar.prototype.quarterCmpLimit = function (date) {
  */
 ChromeCalendar.prototype.startViewer = function (key) {
     if (!this.viewers[key]) return;
-    if (this.viewers[key] === this.viewer) return;
-    this.viewer.stop();
-    this.viewer = this.viewers[key];
-    this.viewer.start();
-    this.headerCtrl.updateTitle();
+    if (this.viewers[key] === this.viewer) {
+        this.viewer.start();
+        this.headerCtrl.updateTitle();
+    }
+    else {
+        this.viewer.stop();
+        this.viewer = this.viewers[key];
+        this.viewer.start();
+        this.headerCtrl.updateTitle();
+    }
 };
 
 
@@ -1290,7 +1295,6 @@ CCEraViewer.prototype.start = function () {
     this.updateContent();
     this.viewEra(false);
     this.updatePickedYear();
-    // this.viewEra();
 };
 
 CCEraViewer.prototype.canNext = function () {
