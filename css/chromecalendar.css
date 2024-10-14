@@ -65,13 +65,18 @@
     cursor: pointer;
 }
 
-.absol-chrome-calendar[data-level="day"] .absol-chrome-calendar-title::after {
+.absol-chrome-calendar-title::after {
     content: "\25BC";
 }
 
+.absol-chrome-calendar[data-view="era"] .absol-chrome-calendar-title::after {
+    content: "";
+}
 
 .absol-chrome-calendar-title > span {
     line-height: 1.5em;
+    min-width: 5em;
+    display: inline-block;
 }
 
 .absol-chrome-calendar-instance {
@@ -149,6 +154,22 @@
     /*for header*/
 }
 
+.absol-chrome-calendar-month.as-animation {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    z-index: 8;
+    transition: top 0.2s;
+    /*opacity: 0.5;*/
+}
+
+.absol-chrome-calendar-month.as-animation div {
+    pointer-events: none;
+    transition: color 0.2s;
+}
+
 .absol-chrome-calendar[data-view="month"] .absol-chrome-calendar-month {
     display: table;
 }
@@ -162,6 +183,11 @@
     display: table-row;
     height: 1.2em;
 }
+
+.absol-chrome-calendar-week-in-month > div::before {
+    content: attr(data-date);
+}
+
 
 .absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month::before {
     content: attr(data-week-idx-text);
@@ -180,14 +206,25 @@
     text-align: right;
     padding-right: 0.4em;
     cursor: pointer;
+    box-sizing: border-box;
+    width: calc(100% / 7);
 }
 
-.absol-chrome-calendar-week-in-month > div:hover,
-.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month:hover {
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month > div {
+    width: calc(100% / 8);
+}
+
+
+.absol-chrome-calendar[data-level="day"] .absol-chrome-calendar-week-in-month > div:hover,
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month.as-hover-in-year > div:not(.as-not-in-year),
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month.as-hover-in-year::before,
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month.as-hover-not-in-year > .as-not-in-year
+{
     background-color: rgb(224, 245, 256);
 }
 
-.absol-chrome-calendar[data-level="day"] .absol-chrome-calendar-not-in-month {
+.absol-chrome-calendar[data-level="day"] .absol-chrome-calendar-not-in-month:not(.as-disabled),
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-not-in-month:not(.as-disabled) {
     color: rgb(140, 140, 140);
 }
 
@@ -198,7 +235,9 @@
 
 .absol-chrome-calendar-selected,
 .absol-chrome-calendar[data-level="week"] .as-week-selected,
-.absol-chrome-calendar[data-level="quarter"] .as-quarter-selected {
+.absol-chrome-calendar[data-level="quarter"] .as-quarter-selected,
+.absol-chrome-calendar[data-level="week"] .absol-chrome-calendar-week-in-month.as-selected::before
+{
     background-color: rgb(188, 205, 236) !important;
 }
 
@@ -208,18 +247,15 @@
 
 
 .absol-chrome-calendar-years {
-    width: 100%;
-    height: 100%;
-}
-
-
-.absol-chrome-calendar:not(.view-year) .absol-chrome-calendar-years {
-    /* display: none; */
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
+    z-index: 1;
+}
+
+.absol-chrome-calendar:not([data-view="year"]) .absol-chrome-calendar-years {
     z-index: -10000;
     opacity: 0;
     visibility: hidden;
@@ -252,6 +288,7 @@
     height: 1.5em;
     text-align: center;
     line-height: 1.5em;
+    box-sizing: border-box;
 }
 
 
@@ -275,12 +312,15 @@
 .absol-chrome-calendar-year-months {
     width: 100%;
     display: table;
-    height: 6em;
+    height: calc(6em + 1px);
     border-bottom: solid 1px rgb(191, 191, 191);
+    box-sizing: border-box;
 }
 
 .absol-chrome-calendar-year-row-months {
     display: table-row;
+    line-height: 1.5;
+    height: 2em;
 }
 
 .absol-chrome-calendar-year-month {
@@ -291,10 +331,10 @@
 
 .absol-chrome-calendar-year-month:hover,
 .absol-chrome-calendar-era-year:hover,
-.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-year-months[data-hover-quarter="0"] .absol-chrome-calendar-year-month[data-quarter="0"],
-.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-year-months[data-hover-quarter="1"] .absol-chrome-calendar-year-month[data-quarter="1"],
-.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-year-months[data-hover-quarter="2"] .absol-chrome-calendar-year-month[data-quarter="2"],
-.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-year-months[data-hover-quarter="3"] .absol-chrome-calendar-year-month[data-quarter="3"] {
+.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-years-content[data-hover-quarter="0"] .absol-chrome-calendar-year-month[data-quarter="0"],
+.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-years-content[data-hover-quarter="1"] .absol-chrome-calendar-year-month[data-quarter="1"],
+.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-years-content[data-hover-quarter="2"] .absol-chrome-calendar-year-month[data-quarter="2"],
+.absol-chrome-calendar[data-level="quarter"] .absol-chrome-calendar-years-content[data-hover-quarter="3"] .absol-chrome-calendar-year-month[data-quarter="3"] {
     background-color: rgb(224, 245, 256);
 }
 
@@ -310,6 +350,7 @@
     transition: opacity 0.2s;
 }
 
+.absol-chrome-calendar-week-in-month > div.as-disabled,
 .absol-chrome-calendar-date-disabled,
 .absol-chrome-calendar-era-year.absol-chrome-calendar-date-disabled {
     color: rgb(240, 230, 230);
@@ -342,7 +383,11 @@ button.absol-chrome-calendar-button-disabled,
     font-size: inherit;
 }
 
-.absol-chrome-calendar[data-level="year"]  .absol-chrome-calendar-era {
+.absol-chrome-calendar[data-view="era"] .absol-chrome-calendar-era {
+    display: block;
+}
+
+.absol-chrome-calendar[data-level="year"] .absol-chrome-calendar-era {
     display: block;
 }
 
