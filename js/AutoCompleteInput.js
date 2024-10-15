@@ -116,7 +116,7 @@ AutoCompleteInput.eventHandler.clickOut = function (event) {
 
 AutoCompleteInput.eventHandler.vscrollerClick = function (event) {
     var current = event.target;
-    while (current && !current.hasClass('absol-autocomplete-input-item') && current != this.$vscroller) {
+    while (current && current.hasClass && !current.hasClass('absol-autocomplete-input-item') && current != this.$vscroller) {
         current = current.parentElement;
     }
 
