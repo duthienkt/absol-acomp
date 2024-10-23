@@ -128,6 +128,7 @@ Follower.ANCHOR_PRIORITY = [1, 6, 2, 5, 0, 7, 3, 4, 9, 11, 8, 10, 12, 15, 13, 14
 Follower.prototype.updatePosition = function () {
     if (!this.$followTarget) return;
     this.emit('preupdateposition', { target: this }, this);
+    if (!this.$followTarget) return;// target is removed
     var targetBound = this.$followTarget.getBoundingClientRect();
     var screenSize = Dom.getScreenSize();
     var outRect = new Rectangle(0, 0, screenSize.width, screenSize.height);

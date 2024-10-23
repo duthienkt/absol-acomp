@@ -355,7 +355,7 @@ BoardTable.eventHandler.mousedown = function (event) {
                     '--x': mousePos.x + 'px',
                     '--y': mousePos.y + 'px'
                 }).addTo(document.body);
-                if (this._dragEventData)
+                if (thisBT._dragEventData)
                 thisBT.eventHandler.readyDrag(cEvent);
             }, 400);
         }
