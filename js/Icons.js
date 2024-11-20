@@ -4,6 +4,11 @@ import MdiStoreMarkerOutlineText from '../assets/icon/mdi_store_marker_outline.t
 import FontColorIconText from '../assets/icon/font_color.tpl';
 import InsertColLeftIconText from '../assets/icon/insert_col_left.tpl';
 import InsertColRightIconText from '../assets/icon/insert_col_right.tpl';
+import ProcessOutlineIconText from '../assets/icon/process_outline.tpl';
+import ProcedureOutlineIconText from '../assets/icon/procedure_outline.tpl';
+import MobileFormEditOutlineIconText from '../assets/icon/mobile_form_edit_outline.tpl';
+import WindowsFormEditOutlineIconText from '../assets/icon/windows_form_edit_outline.tpl';
+import TemplateIconText from '../assets/icon/template.tpl';
 import '../css/icons.css';
 import Color from "absol/src/Color/Color";
 
@@ -38,6 +43,44 @@ export function MdiStoreMarkerOutline() {
 MdiStoreMarkerOutline.tag = 'mdi-store-marker-outline';
 
 ACore.install(MdiStoreMarkerOutline);
+
+export function ProcessOutlineIcon() {
+    return _(ProcessOutlineIconText);
+}
+
+ProcessOutlineIcon.tag = 'ProcessOutlineIcon'.toLowerCase();
+
+ACore.install(ProcessOutlineIcon);
+
+export function ProcedureOutlineIcon() {
+    return _(ProcedureOutlineIconText);
+}
+
+ProcedureOutlineIcon.tag = 'ProcedureOutlineIcon'.toLowerCase();
+
+ACore.install(ProcedureOutlineIcon);
+
+export function WindowsFormEditOutlineIcon() {
+    return _(WindowsFormEditOutlineIconText);
+}
+
+WindowsFormEditOutlineIcon.tag = 'WindowsFormEditOutlineIcon'.toLowerCase();
+
+ACore.install(WindowsFormEditOutlineIcon);
+
+export function MobileFormEditOutlineIcon() {
+    return _(MobileFormEditOutlineIconText);
+}
+
+MobileFormEditOutlineIcon.tag = 'MobileFormEditOutlineIcon'.toLowerCase();
+ACore.install(MobileFormEditOutlineIcon);
+
+export function TemplateIcon() {
+    return _(TemplateIconText);
+}
+
+TemplateIcon.tag = 'TemplateIcon'.toLowerCase();
+ACore.install(TemplateIcon);
 
 export function FontColorIcon() {
     this._value = '#000000';

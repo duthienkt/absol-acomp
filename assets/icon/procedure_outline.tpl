@@ -1,0 +1,3 @@
+<svg class="procedure-outline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="24px" height="24px">
+<path d="M183.9,209.9h-72.5l35.9-89.9L111.4,30h72.5l35.9,89.9-35.9,89.9ZM140.9,189.9h29.4l27.9-69.9-27.9-69.9h-29.4l27.9,69.9-27.9,69.9ZM89.8,209.9H17.3l35.9-89.9L17.3,30h72.5l35.9,89.9-35.9,89.9ZM46.8,189.9h29.4l27.9-69.9-27.9-69.9h-29.4l27.9,69.9-27.9,69.9Z" style="stroke:none;fill:currentColor"/>
+</svg>
