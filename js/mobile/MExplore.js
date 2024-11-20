@@ -21,6 +21,7 @@ var makeTextToNode = (data, pElt) => {
 var makeIconToNode = (data, pElt) => {
     var node;
     if (data) node = _(data);
+    pElt.clearChild();
     if (node) pElt.addChild(node);
 }
 
@@ -103,6 +104,7 @@ MExploreItemBlock.property = {};
 MExploreItemBlock.property.icon = {
     set: function (value) {
         value = value || null;
+        this._icon = value;
         makeIconToNode(value, this.$icon)
     },
     get: function () {
@@ -247,6 +249,20 @@ MExploreGroup.property.items = {
     }
 }
 
+MExploreGroup.property.hidden = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-hidden');
+        }
+        else {
+            this.removeClass('as-hidden');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-hidden');
+    }
+};
+
 /**
  * @extends AElement
  * @constructor
@@ -314,12 +330,14 @@ MSpringboardMenu.property.groups = {
         if (!(groups instanceof Array)) groups = [];
         this.$groups.forEach(elt => elt.selfRemove());
         this.$groups = groups.map(group => {
+            var hidden = group.hidden || !group.items || group.items.length === 0 || group.items.every(it => it.hidden);
             var elt = _({
                 tag: MExploreGroup,
                 props: {
                     data: group,
                     name: group.name,
-                    items: group.items || []
+                    items: group.items || [],
+                    hidden: hidden
                 },
                 on: {
                     press: (event) => {
