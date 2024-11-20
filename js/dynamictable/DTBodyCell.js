@@ -79,16 +79,12 @@ Object.defineProperty(DTBodyCell.prototype, 'copyElt', {
 });
 
 DTBodyCell.prototype.requestUpdateContent = function () {
-    if (!this._copyElt) return;
-    if (this.ucTO > 0) return;
-    // this.ucTO = setTimeout(() => {
-        this.ucTO = -1;
+    if (this._copyElt) {
         this._copyElt.clearChild();
         this._copyElt.addChild(Array.prototype.map.call(this._elt.childNodes, c => c.cloneNode(true)));
-        ResizeSystem.updateUp(this._elt);
-    ResizeSystem.requestUpdateUpSignal(this._elt);
-
-    // }, 1);
+    }
+    ResizeSystem.updateUp(this._elt, true);
+    ResizeSystem.requestUpdateUpSignal(this._elt, true);
 }
 
 
