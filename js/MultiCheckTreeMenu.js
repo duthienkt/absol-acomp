@@ -45,7 +45,7 @@ function MultiCheckTreeMenu() {
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.$checkTreeBox.followTarget = this;
     this.$checkTreeBox.sponsorElement = this;
-    this.on('click', this.eventHandler.click);
+    this.on('mousedown', this.eventHandler.click);
     // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
 
 
@@ -332,7 +332,7 @@ MultiCheckTreeMenu.property.isFocus = {
         var c = this.hasClass('as-focus');
         if (value === c) return;
         if (value) {
-            self.off('click', self.eventHandler.click);
+            self.off('mousedown', self.eventHandler.click);
             var bound = this.getBoundingClientRect();
             this.$checkTreeBox.addStyle('min-width', bound.width + 'px');
             this.addClass('as-focus');
@@ -357,7 +357,7 @@ MultiCheckTreeMenu.property.isFocus = {
             function waitMouseUp() {
                 document.removeEventListener('mouseup', waitMouseUp);
                 setTimeout(function () {
-                    self.on('click', self.eventHandler.click);
+                    self.on('mousedown', self.eventHandler.click);
                 }, 5)
             }
 

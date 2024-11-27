@@ -26,7 +26,7 @@ function MultiCheckTreeLeafMenu() {
 
     OOP.drillProperty(this, this.$selectBox, 'enableSearch');
 
-    this.on('click', this.eventHandler.click);
+    this.on('mousedown', this.eventHandler.click);
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.boxCtrl = new STLBoxController(this);
     OOP.drillProperty(this, this.boxCtrl, 'isFocus');

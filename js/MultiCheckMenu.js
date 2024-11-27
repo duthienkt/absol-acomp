@@ -655,7 +655,7 @@ function MSMBoxController(elt) {
     if (this.elt.$selectlistBox.cancelWaiting)
         this.elt.$selectlistBox.cancelWaiting();
     this.lockOpen = false;
-    this.elt.on('click', this.ev_click);
+    this.elt.on('mousedown', this.ev_click);
     this.elt.$selectlistBox.on({
         preupdateposition: this.ev_preUpdateListPosition,
         change: this.ev_listChange,
@@ -693,7 +693,7 @@ MSMBoxController.prototype.open = function () {
     if (this.elt.hasClass('as-focus')) return;
     this.elt.addClass('as-focus');
     this.elt.$selectlistBox.addTo(document.body);
-    this.elt.off('click', this.ev_click);
+    this.elt.off('mousedown', this.ev_click);
     var bound = this.elt.getBoundingClientRect();
     this.elt.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.elt.$selectlistBox.getFontSize() * 18.5) + 'px');
     this.elt.$selectlistBox.followTarget = this.elt;
@@ -813,5 +813,6 @@ MSMBoxController.prototype.ev_mouseupOut = function () {
     }, 50);
 };
 
+ACore.install(MultiCheckMenu);
 
 export default MultiCheckMenu;
