@@ -10,7 +10,7 @@ var $ = ACore.$;
 var warned = false;
 
 /***
- * @extends AElement
+ * @extends TabFrame
  * @constructor
  */
 function SinglePage() {
