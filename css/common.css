@@ -132,7 +132,7 @@ textarea.as-text-input:disabled {
 
 
 .as-transparent-button.as-variant-danger {
-    color: var(--variant-color-danger)
+    color: var(--variant-color-danger);
 }
 
 .as-transparent-button.as-variant-danger:hover {

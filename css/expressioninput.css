@@ -40,9 +40,15 @@
     min-height: 28px;
     outline: none;
     line-height: 28px;
-    padding-left: calc(18px + var(--as-input-horizontal-padding));
     white-space: pre;
+    padding-left: var(--as-input-horizontal-padding);
 }
+
+.as-expression-input.as-has-icon  .as-expression-input-content {
+    padding-left: calc(18px + var(--as-input-horizontal-padding));
+}
+
+
 
 .as-expression-input-content .as-token[data-type="number"] {
     color: #0289f6;
@@ -53,6 +59,15 @@
 }
 
 
+.as-expression-input-content .as-token[data-ex-type="boolean"] {
+    color: #f6a128;
+}
+
+
+.as-expression-input-content .as-token[data-ex-type="function"] {
+    color: #2419c8
+}
+
 .as-expression-input-icon-ctn {
     position: absolute;
     left: 0;
@@ -61,6 +76,12 @@
     pointer-events: none;
     font-size: 1.5em;
     line-height: 28px;
+    display: none;
+}
+
+
+.as-expression-input.as-has-icon .as-expression-input-icon-ctn {
+    display: block;
 }
 
 .as-expression-input-icon-ctn .mdi-equal {
@@ -88,6 +109,49 @@
     animation-name: error_blink;
     animation-duration: 1s;
     animation-iteration-count: infinite;
+}
+
+.as-expression-input-autocomplete {
+    min-width: 10em;
+    position: fixed;
+    z-index: 1000;
+}
+
+.as-expression-input-autocomplete .absol-selectlist-item {
+}
+
+.as-ei-suggestion-item span{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-ei-suggestion-item .mdi {
+    width: 30px;
+    text-align: center;
+}
+
+.as-ei-suggestion-item .mdi.mdi-function {
+    color: #2419c8;
+}
+
+.as-ei-suggestion-item .mdi.mdi-variable {
+    color: #5b5d42;
+}
+
+.as-ei-command-tool {
+    background: #efeded;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.as-ei-command-tool button{
+    font-size: 14px;
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    box-sizing: border-box;
+
 }
 
 @keyframes error_blink {
