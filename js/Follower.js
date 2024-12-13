@@ -62,6 +62,7 @@ Follower.prototype.clearChild = function () {
         if (elt !== attachhookElt)
             elt.remove();
     });
+    return this;
 };
 
 
