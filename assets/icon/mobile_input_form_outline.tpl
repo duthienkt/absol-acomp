@@ -1,0 +1,4 @@
+<svg class="procedure-outline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="24px" height="24px">
+<polygon xmlns="http://www.w3.org/2000/svg" points="190 130 190 119.9 150 119.9 150 130 160 130 160 200 150 200 150 209.9 190 209.9 190 200 180 200 180 130 190 130" style="fill:currentColor; stroke: none"/>
+<path xmlns="http://www.w3.org/2000/svg" d="M60,180V39.9l100,.2v69.7h20c0,0,0-79.7,0-79.7,0-11-8.9-20-20-20H60c-11-.1-20,8.8-20,19.9v159.9c0,11,8.9,20,20,20h40c0,0,40,0,40,0v-29.8H60ZM80,20h60v5.1c0,2.8-2.3,5.1-5.1,5.1h-49.9c-2.8,0-5.1-2.3-5.1-5.1v-5.1ZM65,20c2.8,0,5,2.2,5,5s-2.2,5-5,5-5-2.2-5-5,2.2-5,5-5Z" style="fill:currentColor; stroke: none"/>
+</svg>

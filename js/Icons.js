@@ -8,7 +8,11 @@ import ProcessOutlineIconText from '../assets/icon/process_outline.tpl';
 import ProcedureOutlineIconText from '../assets/icon/procedure_outline.tpl';
 import MobileFormEditOutlineIconText from '../assets/icon/mobile_form_edit_outline.tpl';
 import WindowsFormEditOutlineIconText from '../assets/icon/windows_form_edit_outline.tpl';
+import InputFormOutlineText from '../assets/icon/input_form_outline.tpl';
+import OutputFormOutlineText from '../assets/icon/output_form_outline.tpl';
 import TemplateIconText from '../assets/icon/template.tpl';
+import MobileInputFormOutlineIconText from '../assets/icon/mobile_input_form_outline.tpl';
+import MobileOutputFormOutlineIconText from '../assets/icon/mobile_output_form_outline.tpl';
 import '../css/icons.css';
 import Color from "absol/src/Color/Color";
 
@@ -81,6 +85,34 @@ export function TemplateIcon() {
 
 TemplateIcon.tag = 'TemplateIcon'.toLowerCase();
 ACore.install(TemplateIcon);
+
+export function InputFormOutlineIcon() {
+    return _(InputFormOutlineText);
+}
+
+InputFormOutlineIcon.tag = 'InputFormOutlineIcon'.toLowerCase();
+ACore.install(InputFormOutlineIcon);
+
+export function OutputFormOutlineIcon() {
+    return _(OutputFormOutlineText);
+}
+
+OutputFormOutlineIcon.tag = 'OutputFormOutlineIcon'.toLowerCase();
+ACore.install(OutputFormOutlineIcon);
+
+export function MobileInputFormOutlineIcon() {
+    return _(MobileInputFormOutlineIconText);
+}
+
+MobileInputFormOutlineIcon.tag = 'MobileInputFormOutlineIcon'.toLowerCase();
+ACore.install(MobileInputFormOutlineIcon);
+
+export function MobileOutputFormOutlineIcon() {
+    return _(MobileOutputFormOutlineIconText);
+}
+
+MobileOutputFormOutlineIcon.tag = 'MobileOutputFormOutlineIcon'.toLowerCase();
+ACore.install(MobileOutputFormOutlineIcon);
 
 export function FontColorIcon() {
     this._value = '#000000';
