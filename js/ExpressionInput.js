@@ -14,6 +14,7 @@ import Follower from "./Follower";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import { arrayUnique } from "absol/src/DataStructure/Array";
 
 /***
  * @extends PositionTracker
@@ -21,8 +22,10 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
  */
 function ExpressionInput() {
     this.domSignal = new DelaySignal();
+    this.$rangeCtn = $('.as-expression-input-range-ctn', this);
     this.$content = $('.as-expression-input-content', this);
     this.$iconCtn = $('.as-expression-input-icon-ctn', this);
+    // this.$forground = $('.as-expression-input-foreground', this);
 
     /**
      *
@@ -32,6 +35,7 @@ function ExpressionInput() {
     this.$alertIcon = $('.mdi.mdi-alert-circle', this.$iconCtn);
     this.engine = new EIEngine(this);
     this.userActionCtrl = new EIUserActionController(this);
+    // this.selection = new EISelection(this);
 
     this.autoCompleteCtrl = new EIAutoCompleteController(this);
     this.undoMgn = new EIUndoManager(this);
@@ -47,7 +51,7 @@ function ExpressionInput() {
      */
 
     /**
-     * @type {{variables: string[], functions: string[]}}
+     * @type {{variables: string[], functions: string[], sampleJS?:{getFunctions: function(): string[], getVariables: function(): string[]}}}
      * @memberOf ExpressionInput#
      * @name autocomplete
      */
@@ -73,10 +77,12 @@ ExpressionInput.render = function () {
             {
                 class: 'as-expression-input-content',
                 attr: {
-                    contenteditable: "true",
+                    contenteditable: 'true',
                     spellcheck: 'false'
                 }
-            }
+            }//,
+            // { class: 'as-expression-input-range-ctn' },
+
         ]
     });
 };
@@ -100,6 +106,7 @@ ExpressionInput.prototype.revokeResource = function () {
     revokeResource(this.autoCompleteCtrl);
     revokeResource(this.undoMgn);
     revokeResource(this.cmdTool);
+    revokeResource(this.domSignal);
 };
 
 
@@ -115,6 +122,7 @@ ExpressionInput.property.value = {
     },
     set: function (value) {
         this.engine.value = value;
+        this.undoMgn.reset();
     }
 };
 
@@ -161,10 +169,11 @@ ExpressionInput.property.icon = {
 ExpressionInput.eventHandler = {};
 
 
-ACore.install(ExpressionInput)
+ACore.install(ExpressionInput);
 
 
 export default ExpressionInput;
+
 
 /**
  *
@@ -188,6 +197,7 @@ function EIUserActionController(elt) {
     }
 
     this.elt.on('stopchange', () => {
+        this.elt.undoMgn.commit();
         this.elt.engine.highlightError();
     });
 
@@ -198,6 +208,7 @@ function EIUserActionController(elt) {
         paste: this.ev_paste,
         keydown: this.ev_keydown
     });
+
 
 }
 
@@ -213,14 +224,48 @@ EIUserActionController.prototype.delayNotifyStopChange = function () {
 }
 
 EIUserActionController.prototype.ev_keydown = function (event) {
-    if (event.key === 'Enter') {
+    var key = keyboardEventToKeyBindingIdent(event);
+    // console.log(key)
+    if (key === 'enter') {
         event.preventDefault();
-        this.engine.breakLine();
+        if (this.elt.autoCompleteCtrl.isSelecting()) {
+            this.elt.autoCompleteCtrl.applySelectingSuggestion();
+        }
+        else {
+            this.engine.breakLine();
+        }
+    }
+    else if (key === 'arrowleft' || key === 'arrowright') {
+        this.elt.autoCompleteCtrl.closeDropdownIfNeed();
+    }
+    else if (key === 'arrowup' || key === 'arrowdown') {
+        if (this.elt.autoCompleteCtrl.isSelecting()) {
+            event.preventDefault();
+            this.elt.autoCompleteCtrl.moveSelectingSuggestion(key === 'arrowup' ? 'up' : 'down');
+        }
+    }
+    else if (key === 'ctrl-space') {
+        this.engine.redrawTokens();
+        this.elt.autoCompleteCtrl.openDropdown();
+    }
+    else if (key === 'escape') {
+        if (this.elt.autoCompleteCtrl.isOpen) {
+            this.elt.autoCompleteCtrl.closeDropdown();
+            event.preventDefault();
+        }
+    }
+    else if (key === 'ctrl-z') {
+        event.preventDefault();
+        this.elt.undoMgn.undo();
+    }
+    else if (key === 'ctrl-y') {
+        event.preventDefault();
+        this.elt.undoMgn.redo();
     }
     else if ((event.ctrlKey && event.key === 'X') || (!event.ctrlKey && event.key.length === 1)
         || event.key === 'Delete'
         || event.key === 'Backspace') {
-        this.elt.domSignal.emit('redrawTokens');
+        this.elt.engine.requestRedrawTokens();
     }
     this.delayNotifyStopChange();
     this.elt.notifySizeCanBeChanged();
@@ -233,7 +278,7 @@ EIUserActionController.prototype.ev_paste = function (event) {
     var pos = this.elt.engine.getSelectPosition();
     if (!pos || !paste) return;
     var value = this.elt.value;
-    this.elt.value = value.substring(0, pos.start) + paste + value.substring(pos.end);
+    this.elt.engine.value = value.substring(0, pos.start) + paste + value.substring(pos.end);
     this.elt.engine.setSelectedPosition(pos.start + paste.length);
     this.elt.engine.highlightError();
     this.elt.notifySizeCanBeChanged();
@@ -256,6 +301,10 @@ EIUserActionController.prototype.ev_focus = function (event) {
 
 EIUserActionController.prototype.ev_blur = function (event) {
     this.elt.engine.highlightError();
+};
+
+EIUserActionController.prototype.ev_dragInit = function (event) {
+    console.log('drag init');
 };
 
 
@@ -307,6 +356,10 @@ EIEngine.prototype.revokeResource = function () {
         this._isListenSelectionChange = false;
     }
 };
+
+EIEngine.prototype.requestRedrawTokens = function () {
+    this.elt.domSignal.emit('redrawTokens');
+}
 
 EIEngine.prototype.highlightError = function () {
     var elt = this.elt;
@@ -404,6 +457,7 @@ EIEngine.prototype.updateTokenExType = function () {
     var i, j;
     for (i = 0; i < tokenEltChain.length; ++i) {
         token = tokenEltChain[i];
+        if (this.isTextNode(token)) continue;
         if (token.innerText === "true" || token.innerText === "false") {
             token.setAttribute('data-ex-type', 'boolean');
         }
@@ -467,7 +521,7 @@ EIEngine.prototype.insertText = function (text) {
 
 EIEngine.prototype.appendText = function (text) {
     var newValue = this.value + text;
-    this.elt.value = newValue;
+    this.value = newValue;
     if (document.activeElement === this.$content) {
         this.setSelectedPosition(newValue.length);
     }
@@ -598,19 +652,13 @@ EIEngine.prototype.breakNode = function (node, offset) {
 }
 
 
-
-
 EIEngine.prototype.breakLine = function () {
     var range = this.getRange();
-    if (!range) return;//todo
+    if (!range) return;
     var startCtn = range.startContainer;
     var endCtn = range.endContainer;
     var startOfs = range.startOffset;
     var endOfs = range.endOffset;
-    console.log('==============');
-    console.log(startCtn.cloneNode(true), startOfs, endCtn.cloneNode(true), endOfs);
-
-    var text, lText, rText;
     var newNd;
     var lcaNd = this.lcaOf(startCtn, endCtn);
     while (startCtn !== lcaNd) {
@@ -680,7 +728,6 @@ EIEngine.prototype.breakLine = function () {
         }
     }
 
-    console.log(startCtn, startOfs, endCtn, endOfs);
 
     range = document.createRange();
     range.setStart(startCtn, startOfs);
@@ -694,6 +741,7 @@ EIEngine.prototype.getSelectPosition = function () {
     var range = this.getRange();
     var sel = window.getSelection();
     var direction = 'forward';
+    if (!range) return this.lastSelectedPosition;
     var cmpPosition = sel.anchorNode.compareDocumentPosition(sel.focusNode);
     if (cmpPosition === 4) {
         direction = 'forward';
@@ -726,6 +774,9 @@ EIEngine.prototype.setSelectedPosition = function (pos) {
     if (typeof pos === "number") {
         start = pos;
         end = pos;
+    }
+    else if (pos === null) {
+        return;
     }
     else {
         start = pos.start;
@@ -786,50 +837,6 @@ EIEngine.prototype.setSelectedPosition = function (pos) {
     range.setStart(startCtn, startOfs);
     range.setEnd(endCtn, endOfs);
     this.setRange(range);
-
-
-//     if (pos === null) pos = this.lastSelectedPosition;
-//     if (pos === undefined) pos = this.lastSelectedPosition;
-// //when tokenized
-//     var start;
-//     var end;
-//     if (typeof pos === "number") {
-//         start = pos;
-//         end = pos;
-//     }
-//     else {
-//         start = pos.start;
-//         end = pos.end;
-//     }
-//
-//     var curOffset = 0;
-//     var elt;
-//     var childNodes = this.elt.$content.childNodes;
-//     var content;
-//     var i;
-//     var sel = window.getSelection();
-//     var range = document.createRange();
-//     var d1 = true, d2 = true;
-//     for (i = 0; i < childNodes.length && d1 && d2; ++i) {
-//         elt = childNodes[i];
-//         content = (elt.firstChild && elt.firstChild.data) || '';
-//         if (d1 && curOffset <= start && (curOffset + content.length > start || i + 1 === childNodes.length)) {
-//             range.setStart(elt.firstChild || elt, start - curOffset);
-//             d1 = false;
-//         }
-//         if (d2 && curOffset <= end && (curOffset + content.length > end || i + 1 === childNodes.length)) {
-//             range.setEnd(elt.firstChild || elt, end - curOffset);
-//             d2 = false;
-//         }
-//         curOffset += content.length;
-//     }
-//     if (d1 && d2) {
-//         range.setStart(this.$content, 0);
-//         range.setEnd(this.$content, 0);
-//     }
-//     sel.removeAllRanges();
-//     sel.addRange(range);
-//     this.lastSelectedPosition = { start: start, end: end, direction: 'forward' };
 };
 
 EIEngine.prototype.getPosition = function (node, offset) {
@@ -911,6 +918,7 @@ EIEngine.prototype.tokenAt = function (offset) {
 };
 
 
+
 Object.defineProperty(EIEngine.prototype, 'value', {
     get: function () {
         return Array.prototype.map.call(this.$content.childNodes, nd => this.stringOf(nd)).join('');
@@ -941,10 +949,16 @@ function EIUndoManager(elt) {
     this.reset();
 }
 
-
+/**
+ *
+ * @returns {boolean} is changed value and commit success
+ */
 EIUndoManager.prototype.commit = function () {
     var text = this.elt.value;
     var range = this.elt.engine.getSelectPosition() || { start: text.length, end: text.length };
+
+    var curValue = this.stack[this.idx].value;
+    if (curValue === text) return  false;
 
     var newItem = {
         value: text,
@@ -955,27 +969,15 @@ EIUndoManager.prototype.commit = function () {
     }
     this.idx = this.stack.length;
     this.stack.push(newItem);
-    return this;
+    return true;
 };
 
-EIUndoManager.prototype.modified = function () {
-    var text = this.elt.value;
-    var range = this.elt.engine.getSelectPosition() || { start: text.length, end: text.length };
 
-    var newItem = {
-        value: text,
-        range: { start: range.start, end: range.end, direction: range.direction || 'forward' }
-    };
-    while (this.stack.length > this.idx) {
-        this.stack.pop();
-    }
-    this.idx = this.stack.length;
-    this.stack.push(newItem);
-    return this;
-};
+
 
 EIUndoManager.prototype.reset = function () {
-    this.stack = [{ value: this.elt.value, range: { start: 0, end: 0, direction: "forward" } }];
+    var value = this.elt.value;
+    this.stack = [{ value: value, range: { start: value.length, end: value.length, direction: "forward" } }];
     this.idx = 0;
 };
 
@@ -984,7 +986,7 @@ EIUndoManager.prototype.undo = function () {
     if (this.idx <= 0) return;
     this.idx--;
     var item = this.stack[this.idx];
-    this.elt.value = item.value;
+    this.elt.engine.value = item.value;
     this.elt.engine.setSelectedPosition(item.range);
 };
 
@@ -992,7 +994,7 @@ EIUndoManager.prototype.redo = function () {
     if (this.idx + 1 >= this.stack.length) return;
     this.idx++;
     var item = this.stack[this.idx];
-    this.elt.value = item.value;
+    this.elt.engine.value = item.value;
     this.elt.engine.setSelectedPosition(item.range);
 };
 
@@ -1006,6 +1008,7 @@ function EIAutoCompleteController(elt) {
     this.elt = elt;
     this.$content = elt.$content;
     this.$tokenTarget = null;
+    this.suggestionMode = 'list';
     for (var key in this) {
         if (key.startsWith('ev_')) {
             this[key] = this[key].bind(this);
@@ -1017,7 +1020,6 @@ function EIAutoCompleteController(elt) {
             positionchange: this.ev_positionChange
         }
     });
-    this.$content.on('keydown', this.ev_keydown);
 
 
     this.isOpen = false;
@@ -1029,9 +1031,23 @@ EIAutoCompleteController.prototype.revokeResource = function () {
 
 };
 
-EIAutoCompleteController.prototype.openDropdown = function () {
-    if (this.isOpen) return;
-    if (this.getSuggestionList().length === 0) return;
+/**
+ *
+ * @param {"list"|"tree"=} type
+ */
+EIAutoCompleteController.prototype.openDropdown = function (type) {
+    if (['list', 'tree'].indexOf(type) < 0)  type = 'list';
+    if (this.isOpen) {
+        if (this.suggestionMode !== type) {
+            this.suggestionMode = type;
+            this.updateDropDownContent();
+        }
+        return;
+    }
+    this.suggestionMode = type;
+    if (type === 'list' &&  this.getSuggestionList().length === 0) return;
+    if (type === 'tree' &&  this.getSuggestionTree().length === 0) return;
+
     this.isOpen = true;
     this.dropIsDown = true;
     if (!this.$dropDown) {
@@ -1202,7 +1218,18 @@ EIAutoCompleteController.prototype.getSuggestionList = function (text) {
             temp = temp.filter(x => typeof x === 'string');
             functions = functions.concat(temp);
         }
+
+        if (this.elt.sampleJS && (typeof this.elt.sampleJS.getFunctions === "function")) {
+            temp = this.elt.sampleJS.getFunctions();
+            if (Array.isArray(temp)) {
+                temp = temp.filter(x => typeof x === 'string');
+                functions = functions.concat(temp);
+            }
+        }
     }
+
+    variables = arrayUnique(variables);
+    functions = arrayUnique(functions);
 
     var i;
     var itemText, score;
@@ -1222,6 +1249,20 @@ EIAutoCompleteController.prototype.getSuggestionList = function (text) {
         }
         return b.score - a.score;
     });
+    if (text)
+        res = res.filter(x => x.score > 0);
+    return res;
+};
+
+EIAutoCompleteController.prototype.getSuggestionTree = function (text) {
+    var res = [];
+    var variables = [];
+    var functions = [];
+    var temp;
+    // if (this.elt.autocomplete) {
+    //
+    // }
+
     return res;
 };
 
@@ -1232,7 +1273,8 @@ EIAutoCompleteController.prototype.applySuggestion = function (suggestion) {
     var endToken = this.elt.engine.tokenAt(selected.end);
     var rangeStartCtn, rangeStartOffset, rangeEndCtn, rangeEndOffset;
     var oldValue, newValue;
-    if (((selected.start === selected.end) || (startToken === endToken)) && this.$tokenTarget && this.$tokenTarget.getAttribute('data-type') === 'word') {
+    if (((selected.start === selected.end) || (startToken === endToken)) && this.$tokenTarget && (this.$tokenTarget.getAttribute('data-type') === 'word' ||this.$tokenTarget.getAttribute('data-type') === 'string' )) {
+        this.$tokenTarget.setAttribute('data-type', 'word');
         this.$tokenTarget.innerHTML = suggestion;
         rangeStartCtn = this.$tokenTarget.firstChild;
         rangeStartOffset = suggestion.length;
@@ -1254,58 +1296,34 @@ EIAutoCompleteController.prototype.applySuggestion = function (suggestion) {
     }
 };
 
+EIAutoCompleteController.prototype.isSelecting = function () {
+    return !!(this.isOpen && this.$item && this.$item.length);
+};
 
-EIAutoCompleteController.prototype.ev_keydown = function (event) {
-    var key = keyboardEventToKeyBindingIdent(event);
-    if (key === 'enter') {
-        if (this.isOpen && this.$item && this.$item.length) {
-            this.applySuggestion(this.$item[this.selectedIdx].getAttribute('data-suggestion'));
-            this.closeDropdown();
-        }
-    }
-    else if (key === 'ctrl-space') {
-        this.elt.engine.drawTokensContent();
-        this.openDropdown();
-    }
-    else if (key === 'arrowleft' || key === 'arrowright') {
-        setTimeout(() => {
-            var text = this.getCurrentText();
-            this.$tokenTarget = text && text.tokenElt;
-            if (this.isOpen) {
-                if (!this.$tokenTarget || this.$tokenTarget.getAttribute('data-type') !== 'word') {
-                    this.closeDropdown();
-                }
-            }
-        });
-    }
-    else if (key === 'arrowdown' || key === 'arrowup') {
-        event.preventDefault();
-        if (this.isOpen && this.$item && this.$item.length) {
-            this.$item[this.selectedIdx].removeClass('as-selected');
-            this.selectedIdx = (this.selectedIdx + (key === 'arrowdown' ? 1 : (this.$item.length - 1))) % this.$item.length;
-            this.$item[this.selectedIdx].addClass('as-selected');
-        }
-
-    }
-    else if (key.match(/^[a-zA-Z]$/)) {
-        setTimeout(() => this.openDropdown(), 10);
-    }
-    else if (this.isOpen) {
-        setTimeout(() => {
-            if (this.isOpen) {
-                var text = this.getCurrentText();
-                this.$tokenTarget = text && text.tokenElt;
-                if (!this.$tokenTarget || this.$tokenTarget.getAttribute('data-type') !== 'word') {
-                    this.closeDropdown();
-                }
-                else {
-                    this.updateDropDownContent();
-                }
-            }
-
-        }, 5);
+EIAutoCompleteController.prototype.applySelectingSuggestion = function () {
+    if (this.isSelecting()) {
+        this.applySuggestion(this.$item[this.selectedIdx].getAttribute('data-suggestion'));
+        this.closeDropdown();
     }
 };
+
+EIAutoCompleteController.prototype.closeDropdownIfNeed = function () {
+    setTimeout(() => {
+        var text = this.getCurrentText();
+        this.$tokenTarget = text && text.tokenElt;
+        if (this.isOpen) {
+            if (!this.$tokenTarget || this.$tokenTarget.getAttribute('data-type') !== 'word') {
+                this.closeDropdown();
+            }
+        }
+    }, 5);
+};
+
+EIAutoCompleteController.prototype.moveSelectingSuggestion = function (direction) {
+    this.$item[this.selectedIdx].removeClass('as-selected');
+    this.selectedIdx = (this.selectedIdx + (direction === 'down' ? 1 : (this.$item.length - 1))) % this.$item.length;
+    this.$item[this.selectedIdx].addClass('as-selected');
+}
 
 
 EIAutoCompleteController.prototype.ev_positionChange = function (event) {
@@ -1319,7 +1337,7 @@ EIAutoCompleteController.prototype.ev_positionChange = function (event) {
 EIAutoCompleteController.prototype.ev_clickOut = function (event) {
     if (hitElement(this.$dropDown, event)) return;
     this.closeDropdown();
-}
+};
 
 
 /**
@@ -1342,27 +1360,29 @@ function EICommandTool(elt) {
             anchor: [6, 1]
         },
         child: [
+            // {
+            //     tag: 'button',
+            //     class: 'as-transparent-button',
+            //     child: 'span.mdi.mdi-function-variant',
+            //     attr: {
+            //         title: 'Insert [Ctrl + I]'
+            //     },
+            // },
             {
                 tag: 'button',
                 class: 'as-transparent-button',
                 child: 'span.mdi.mdi-magnify',
-
-            },
-            {
-                tag: 'button',
-                class: 'as-transparent-button',
-                child: 'span.mdi.mdi-lightbulb-on-outline',
                 attr: {
                     title: 'Hint [Ctrl + Space]'
                 },
-
                 on: {
                     click: () => {
                         this.elt.autoCompleteCtrl.openDropdown();
                         this.elt.engine.setSelectedPosition();
                     }
                 }
-            }]
+            }
+        ]
     });
     this.elt.$content.on('focus', this.ev_focus);
 }
@@ -1377,8 +1397,6 @@ EICommandTool.prototype.open = function () {
     var zIndex = findMaxZIndex(this.elt) + 1;
     this.$ctn.addStyle('z-index', zIndex);
     document.addEventListener('click', this.ev_clickOut);
-
-
 };
 
 EICommandTool.prototype.close = function () {
