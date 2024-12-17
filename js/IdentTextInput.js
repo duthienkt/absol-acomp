@@ -122,14 +122,14 @@ ITITextController.prototype.ev_keydown = function (event) {
         this.elt.blur();
     }
     else if (!event.ctrlKey && !event.altKey && key.length === 1) {
-        if (key.match(this.keyboardRegex)) {
-            selectedPositionStart = this.getSelectionStart();
-            if (selectedPositionStart === 0 && key.match(/[0-9]/)) {
-                event.preventDefault();
-            }
-        }
-        else {
-            event.preventDefault();
-        }
+        // if (nonAccentVietnamese(key).match(this.keyboardRegex)) {
+        //     selectedPositionStart = this.getSelectionStart();
+        //     if (selectedPositionStart === 0 && key.match(/[0-9]/)) {
+        //         event.preventDefault();
+        //     }
+        // }
+        // else {
+        //     event.preventDefault();
+        // }
     }
 };
