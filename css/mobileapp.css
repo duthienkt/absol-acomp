@@ -294,6 +294,14 @@ button.am-header-bar-action {
     display: inline-block;
     font-size: 50px;
     vertical-align: middle;
+    line-height: 1;
+}
+
+.am-explore-item-block-icon > svg {
+    width: 50px;
+    height: 50px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 
@@ -355,6 +363,10 @@ button.am-header-bar-action {
 
 .am-explore-group {
     padding: 5px 5px 10px 5px;
+}
+
+.am-explore-group.as-hidden {
+    display: none;
 }
 
 /******************************/
