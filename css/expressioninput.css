@@ -26,7 +26,7 @@
 
 
 .as-expression-input {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Consolas, monospace;
     border-color: var(--as-input-border-color);
     border-style: solid;
     box-sizing: border-box;
@@ -34,19 +34,51 @@
     border-radius: var(--as-input-border-radius);
     font-size: 14px;
     position: relative;
+    line-height: 2;
+    user-select: none;
 }
+
+.as-expression-input-range-ctn{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+    pointer-events: none;
+}
+
+
+.as-expression-input-range {
+    position: absolute;
+    background-color: rgba(19, 176, 233, 0.4);
+}
+
+
 
 .as-expression-input-content {
     min-height: 28px;
     outline: none;
-    line-height: 28px;
+    line-height: inherit;
     white-space: pre;
     padding-left: var(--as-input-horizontal-padding);
+}
+
+.as-expression-input-range-ctn {
+    left: var(--as-input-horizontal-padding);
+
 }
 
 .as-expression-input.as-has-icon  .as-expression-input-content {
     padding-left: calc(18px + var(--as-input-horizontal-padding));
 }
+
+.as-expression-input.as-has-icon  .as-expression-input-range-ctn {
+    left: calc(18px + var(--as-input-horizontal-padding));
+}
+
+
+
 
 
 
@@ -138,11 +170,42 @@
     color: #5b5d42;
 }
 
+.as-expression-input-real-input {
+    position: absolute;
+    z-index: 10;
+    right: 0;
+    top: 0;
+    width: 100px;
+    height: 100px;
+    opacity: 0.5;
+    /*visibility: hidden;*/
+}
+
+.as-expression-input-foreground {
+    position: absolute;
+    z-index: 8;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+}
+
 .as-ei-command-tool {
-    background: #efeded;
+    background: white;
     border: 1px solid #e0e0e0;
     border-radius: 3px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 0 3px;
+    box-sizing: border-box;
+    height: 31px;
+}
+
+.as-ei-command-tool::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
 }
 
 .as-ei-command-tool button{
@@ -151,7 +214,15 @@
     height: 25px;
     padding: 0;
     box-sizing: border-box;
+    display: inline-block;
+    vertical-align: middle;
+}
 
+.as-ei-command-tool button:hover {
+    background-color: #f0f0f0;
+}
+.as-ei-command-tool button:not(:last-child) {
+    margin-right: 3px;
 }
 
 @keyframes error_blink {
