@@ -18,6 +18,10 @@
     --as-transparent-button-text-hover-color: rgb(107, 107, 107);
     --as-transparent-button-text-active-color: rgb(0, 0, 0);
 
+    --as-list-item-hover-background-color: #efefef;
+    --as-list-item-selected-background-color: #dfdfdf;
+
+
     --modal-margin-top: 10vh;
     --icon-font-size: 1.42857142857rem;
 }
