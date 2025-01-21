@@ -19,27 +19,7 @@
 <body>
 
 <script>
-    var input = absol._({
-        tag:'expressioninput',
-        props:{
-            value: ' a + b + c + f <= 1 + 2 + 3 + 4',
-        }
-    }).addTo(document.body);
-
-    var input1 = absol._({
-        tag:'identtextinput',
-        props:{
-            value: 'abczwu',
-        }
-    }).addTo(document.body);
-
-    var input2 = absol._({
-        tag:'identtextinput',
-        props:{
-            value: 'abczwu',
-            lowerCaseOnly: true
-        }
-    }).addTo(document.body);
+   absol.remoteNodeRequireAsync(location.href.replace('.html', '.js'));
 </script>
 
 </body>

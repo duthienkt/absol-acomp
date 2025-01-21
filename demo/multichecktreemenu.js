@@ -5,6 +5,21 @@ function render(o) {
 (function () {
     // return;
     render('<h2>Basic (auto: desktop/mobile)</h2>');
+
+    var menuE = render({
+        tag: 'multichecktreemenu',
+        style: { width: '350px', height: '300px' },
+        props: {
+            values: [],
+            enableSearch: true
+        },
+        on: {
+            change: function () {
+                absol.require('snackbar').show(JSON.stringify(this.values))
+            }
+        }
+    });
+
     var menu = render({
         tag: 'multichecktreemenu',
         style: { maxWidth: '150px' },

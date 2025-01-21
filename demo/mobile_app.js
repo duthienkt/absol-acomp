@@ -45,15 +45,15 @@ FirstPage.prototype.createView = function () {
                                   items: [
                                       {
                                           name: 'Tác vụ',
-                                          icon: 'span.mdi.mdi-format-list-checks'
+                                          icon:  'inputformoutlineicon'.toLowerCase()
                                       },
                                       {
                                           name: 'Check-in đối tác',
-                                          icon: 'span.mdi.mdi-map-marker-check'
+                                          icon: 'mobileinputformoutlineicon'.toLowerCase()
                                       },
                                       {
                                           name: 'Check-in chấm công',
-                                          icon: 'span.mdi.mdi-map-marker-check'
+                                          icon: 'mobileoutputformoutlineicon'.toLowerCase()
 
                                       },
                                       {
