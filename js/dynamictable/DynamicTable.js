@@ -3,7 +3,14 @@ import DTDataAdapter from "./DTDataAdapter";
 import '../../css/dynamictable.css';
 import DTWaitingViewController from "./DTWaitingViewController";
 import noop from "absol/src/Code/noop";
-import { buildCss, findMaxZIndex, isNaturalNumber, revokeResource, vScrollIntoView } from "../utils";
+import {
+    buildCss,
+    findMaxZIndex,
+    findVScrollContainer,
+    isNaturalNumber,
+    revokeResource,
+    vScrollIntoView
+} from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { getScreenSize } from "absol/src/HTML5/Dom";
@@ -790,6 +797,8 @@ function LayoutController(elt) {
  * @param {WheelEvent} event
  */
 LayoutController.prototype.ev_wheel = function (event) {
+    var vScroller = findVScrollContainer(event.target);
+    if (vScroller && vScroller.hasClass && vScroller.hasClass('as-bscroller')) return;
     var isOverflowY = this.elt.hasClass('as-overflow-y');
     var isOverflowX = this.elt.hasClass('as-overflow-x');
     var dy = event.deltaY;
