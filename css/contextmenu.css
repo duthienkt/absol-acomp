@@ -27,7 +27,7 @@
     top: -10000px;
     left: -10000px;
     visibility: hidden;
-    z-index: 55;
+    z-index: 1000000000;
     display: inline-block;
 }
 
@@ -79,7 +79,7 @@
 }
 
 .absol-context-menu-anchor.absol-active {
-    z-index: 100000000 !important;
+    z-index: 1000000000 !important;
     opacity: 1;
     visibility: visible;
 }
@@ -116,7 +116,7 @@
 .as-context-menu-ctn.as-anchor-modal,
 .absol-context-menu-anchor.as-anchor-modal {
     position: fixed;
-    z-index: 8000000;
+    z-index: 800000000;
     left: 0 !important;
     right: 0 !important;;
     top: 0 !important;;
