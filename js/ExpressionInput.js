@@ -3,9 +3,9 @@ import ACore, { _, $ } from "../ACore";
 import '../css/expressioninput.css'
 import DelaySignal from "absol/src/HTML5/DelaySignal";
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
-import { phraseMatch } from "absol/src/String/stringMatching";
+import { phraseMatch, wordLike } from "absol/src/String/stringMatching";
 import PositionTracker from "./PositionTracker";
-import { findMaxZIndex, revokeResource } from "./utils";
+import { findMaxZIndex, revokeResource, vScrollIntoView } from "./utils";
 import { getScreenSize, isDomNode } from "absol/src/HTML5/Dom";
 import SCGrammar from "absol/src/SCLang/SCGrammar";
 import DPParser from "absol/src/Pharse/DPParser";
@@ -15,6 +15,7 @@ import { hitElement } from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { arrayUnique } from "absol/src/DataStructure/Array";
+import { engine } from "absol/src/Detector/BrowserRules";
 
 /***
  * @extends PositionTracker
@@ -67,6 +68,7 @@ ExpressionInput.tag = 'ExpressionInput'.toLowerCase();
 
 ExpressionInput.render = function () {
     return _({
+        tag: PositionTracker,
         extendEvent: ['stopchange', 'blur', 'focus'],
         class: ['as-expression-input'],
         child: [
@@ -116,6 +118,43 @@ ExpressionInput.prototype.focus = function () {
 };
 
 ExpressionInput.property = {};
+
+ExpressionInput.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+            this.$content.removeAttribute('contenteditable');
+        }
+        else {
+            this.removeClass('as-read-only');
+            if (!this.hasClass('as-disabled')) {
+                this.$content.setAttribute('contenteditable', 'true');
+            }
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
+ExpressionInput.property.disabled = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-disabled');
+            this.$content.removeAttribute('contenteditable');
+        }
+        else {
+            this.removeClass('as-disabled');
+            if (!this.hasClass('as-read-only')) {
+                this.$content.setAttribute('contenteditable', 'true');
+            }
+        }
+    },
+    get: function () {
+        return this.hasClass('as-disabled');
+    }
+}
+
 ExpressionInput.property.value = {
     get: function () {
         return this.engine.value;
@@ -221,12 +260,21 @@ EIUserActionController.prototype.delayNotifyStopChange = function () {
         this._stopChangeTO = -1;
         this.elt.emit('stopchange', {}, this.elt);
     }.bind(this), 200);
-}
+};
+
 
 EIUserActionController.prototype.ev_keydown = function (event) {
     var key = keyboardEventToKeyBindingIdent(event);
-    // console.log(key)
-    if (key === 'enter') {
+    if (key.match(/^[a-zA-Z0-9]$/)) {
+        this.elt.engine.requestRedrawTokens();
+        setTimeout(() => {
+            this.elt.autoCompleteCtrl.openDropdownIfNeed();
+            if (this.elt.autoCompleteCtrl.isOpen) {
+                this.elt.autoCompleteCtrl.updateDropDownContent();
+            }
+        }, 200);
+    }
+    else if (key === 'enter') {
         event.preventDefault();
         if (this.elt.autoCompleteCtrl.isSelecting()) {
             this.elt.autoCompleteCtrl.applySelectingSuggestion();
@@ -235,7 +283,7 @@ EIUserActionController.prototype.ev_keydown = function (event) {
             this.engine.breakLine();
         }
     }
-    else if (key === 'arrowleft' || key === 'arrowright') {
+    else if (key === 'arrowleft' || key === 'arrowright' || key.match(/^[^a-zA-Z0-9]$/)) {
         this.elt.autoCompleteCtrl.closeDropdownIfNeed();
     }
     else if (key === 'arrowup' || key === 'arrowdown') {
@@ -266,6 +314,12 @@ EIUserActionController.prototype.ev_keydown = function (event) {
         || event.key === 'Delete'
         || event.key === 'Backspace') {
         this.elt.engine.requestRedrawTokens();
+        setTimeout(() => {
+            this.elt.autoCompleteCtrl.openDropdownIfNeed();
+            if (this.elt.autoCompleteCtrl.isOpen) {
+                this.elt.autoCompleteCtrl.updateDropDownContent();
+            }
+        }, 200);
     }
     this.delayNotifyStopChange();
     this.elt.notifySizeCanBeChanged();
@@ -304,7 +358,6 @@ EIUserActionController.prototype.ev_blur = function (event) {
 };
 
 EIUserActionController.prototype.ev_dragInit = function (event) {
-    console.log('drag init');
 };
 
 
@@ -488,6 +541,11 @@ EIEngine.prototype.redrawTokens = function () {
     this.updateTokenExType();
 };
 
+/**
+ *
+ * @param {{type: string, content: string}} token
+ * @returns {*}
+ */
 EIEngine.prototype.makeTokenElt = function (token) {
     if (token.content === '\n') return _('br');
     return _({
@@ -555,6 +613,11 @@ EIEngine.prototype.isSymbolToken = function (node) {
     if (this.isTextNode(node)) return false;
     return node.getAttribute('data-type') === 'symbol';
 };
+
+EIEngine.prototype.isSkipToken = function (node) {
+    if (this.isTextNode(node)) return false;
+    return node.getAttribute('data-type') === 'skip';
+}
 
 EIEngine.prototype.getRange = function () {
     this.updateRange();
@@ -736,12 +799,11 @@ EIEngine.prototype.breakLine = function () {
 
 };
 
-
-EIEngine.prototype.getSelectPosition = function () {
-    var range = this.getRange();
+EIEngine.prototype.domRange2SelectPosition = function (range) {
     var sel = window.getSelection();
+    if (!range) return null;
     var direction = 'forward';
-    if (!range) return this.lastSelectedPosition;
+    if (!range) return null;
     var cmpPosition = sel.anchorNode.compareDocumentPosition(sel.focusNode);
     if (cmpPosition === 4) {
         direction = 'forward';
@@ -755,14 +817,20 @@ EIEngine.prototype.getSelectPosition = function () {
     }
     var startOffset = this.getPosition(range.startContainer, range.startOffset);
     var endOffset = this.getPosition(range.endContainer, range.endOffset);
-    if (isNaN(startOffset)) return this.lastSelectedPosition;
-    this.lastSelectedPosition = {
+    if (isNaN(startOffset)) return null;
+    return {
         start: startOffset, end: endOffset, direction: direction,
         startCtn: range.startContainer, startOffset: range.startOffset,
         endCtn: range.endContainer, endOffset: range.endOffset
     };
+};
+
+EIEngine.prototype.getSelectPosition = function () {
+    var range = this.getRange();
+    this.lastSelectedPosition = this.domRange2SelectPosition(range) || this.lastSelectedPosition;
     return this.lastSelectedPosition;
 };
+
 
 /**
  *
@@ -901,7 +969,11 @@ EIEngine.prototype.stringOf = function (node) {
     }).join('');
 };
 
-
+/**
+ *
+ * @param offset
+ * @returns {AElement}
+ */
 EIEngine.prototype.tokenAt = function (offset) {
     var l = 0;
     var res = null;
@@ -917,7 +989,51 @@ EIEngine.prototype.tokenAt = function (offset) {
     return res;
 };
 
+/**
+ *
+ * @param {AElement}token
+ * @returns {AElement}
+ */
+EIEngine.prototype.findPrefixWordTokenOf = function (token) {
+    if (!token) return null;
+    if (!this.isWordToken(token) && this.stringOf(token) !== '->') return null;
+    var temp = token;
+    var prefixStartElt = null;
+    var state = this.isWordToken(temp) ? 0 : 1;//0: after is word, 1: symbol
+    temp = temp.previousSibling;
+    while (temp) {
+        if (this.isSkipToken(temp)) {
+            temp = temp.previousSibling;
+            continue;
+        }
+        if (state === 0) {
+            if (this.stringOf(temp) === '->') {
+                state = 1;
+            }
+            else break;
+        }
+        else {
+            if (this.isWordToken(temp)) {
+                prefixStartElt = temp;
+                state = 0;
+            }
+            else break;
+        }
+        temp = temp.previousSibling;
+    }
+    return prefixStartElt || null;
+};
 
+//
+// EIEngine.prototype.selectCurrentMemberExpression = function () {
+//     var rage = this.getRange();
+//     if (!rage) return;
+//     var startCtn = rage.startContainer;
+//     var endCtn = rage.endContainer;
+//     var startOfs = rage.startOffset;
+//     var endOfs = rage.endOffset;
+//
+// };
 
 Object.defineProperty(EIEngine.prototype, 'value', {
     get: function () {
@@ -958,7 +1074,7 @@ EIUndoManager.prototype.commit = function () {
     var range = this.elt.engine.getSelectPosition() || { start: text.length, end: text.length };
 
     var curValue = this.stack[this.idx].value;
-    if (curValue === text) return  false;
+    if (curValue === text) return false;
 
     var newItem = {
         value: text,
@@ -971,8 +1087,6 @@ EIUndoManager.prototype.commit = function () {
     this.stack.push(newItem);
     return true;
 };
-
-
 
 
 EIUndoManager.prototype.reset = function () {
@@ -1008,62 +1122,86 @@ function EIAutoCompleteController(elt) {
     this.elt = elt;
     this.$content = elt.$content;
     this.$tokenTarget = null;
-    this.suggestionMode = 'list';
     for (var key in this) {
         if (key.startsWith('ev_')) {
             this[key] = this[key].bind(this);
         }
     }
-    _({
-        tag: PositionTracker, elt: this.elt,
-        on: {
-            positionchange: this.ev_positionChange
-        }
-    });
 
+    this.rawSuggestionCache = {
+        value: null,
+        time: 0
+    }
+
+    /**
+     *
+     * @type {EISuggestionList |null}
+     */
+    this.$suggestionList = null;
+    this.query = null;
 
     this.isOpen = false;
     this.dropIsDown = true;
-    this.selectedIdx = 0;
 }
 
 EIAutoCompleteController.prototype.revokeResource = function () {
 
+
 };
+
+EIAutoCompleteController.prototype.openDropdownIfNeed = function () {
+    if (this.isOpen) return;
+    var query = this.getCurrentSearch();
+    if (query && query.value && query.value.trim()) {
+        this.openDropdown();
+    }
+}
+
 
 /**
  *
- * @param {"list"|"tree"=} type
  */
-EIAutoCompleteController.prototype.openDropdown = function (type) {
-    if (['list', 'tree'].indexOf(type) < 0)  type = 'list';
+EIAutoCompleteController.prototype.openDropdown = function () {
     if (this.isOpen) {
-        if (this.suggestionMode !== type) {
-            this.suggestionMode = type;
-            this.updateDropDownContent();
-        }
+        this.updateDropDownContent();
         return;
     }
-    this.suggestionMode = type;
-    if (type === 'list' &&  this.getSuggestionList().length === 0) return;
-    if (type === 'tree' &&  this.getSuggestionTree().length === 0) return;
-
+    if (!this.hasSuggestions()) return;
     this.isOpen = true;
     this.dropIsDown = true;
-    if (!this.$dropDown) {
-        this.$dropDown = _({
-            class: ['as-expression-input-autocomplete', 'as-dropdown-box-common-style', 'absol-selectlist', 'as-bscroller'],
-            props: {}
+    if (!this.$suggestionList) {
+        this.$suggestionList = _({
+            tag: EISuggestionList,
+            style: {
+                top: '10px',
+                left: '10px',
+                position: 'fixed'
+            },
+            on: {
+                select: (event) => {
+                    this.applySuggestion(event.data);
+                    this.closeDropdown();
+                }
+            }
         });
     }
+
+    this.$suggestionList.addTo(this.elt);
+
+
     var zIndex = findMaxZIndex(this.elt) + 1;
-    this.$dropDown.addStyle('z-index', zIndex);
-    this.$dropDown.sponsorElement = this.elt;
+    this.$suggestionList.addStyle('z-index', zIndex + '');
+    this.$suggestionList.reset();
+
+
     this.elt.startTrackPosition();
-    this.$dropDown.addTo(this.elt);
+
+
+    // this.$dropDown.addTo(this.elt);
 
     this.$tokenTarget = null;
-    this.selectedIdx = 0;
+
+
     this.updateDropDownContent();
     this.updateDropDownPosition();
     setTimeout(() => {
@@ -1075,11 +1213,54 @@ EIAutoCompleteController.prototype.closeDropdown = function () {
     if (!this.isOpen) return;
     this.isOpen = false;
     this.elt.stopTrackPosition();
-    this.$dropDown.remove();
-    this.$tokenTarget = null;
+    this.$suggestionList.remove();
     document.removeEventListener('click', this.ev_clickOut);
 }
 
+/**
+ *
+ * @returns {null|{prefix: string, value, tokenElt: HTMLElement, prefixStartElt: HTMLElement}}
+ */
+EIAutoCompleteController.prototype.getCurrentSearch = function () {
+    var engine = this.elt.engine;
+    var pos = this.elt.engine.getSelectPosition();
+    if (!pos) return null;//all
+    var tokenElt = this.elt.engine.tokenAt(pos.start);
+    if (!tokenElt) return null;
+    if (!engine.isWordToken(tokenElt)) {
+        tokenElt = tokenElt.previousSibling;
+    }
+    if (!tokenElt || !engine.isWordToken(tokenElt)) return null;
+
+    var res = {
+        prefix: '',
+        value: '',
+        tokenElt: null,
+        prefixStartElt: null
+    };
+
+    var temp = tokenElt;
+    var prefixStartElt = engine.findPrefixWordTokenOf(tokenElt);
+
+    res.value = engine.stringOf(tokenElt);
+    res.tokenElt = tokenElt;
+
+    if (prefixStartElt) {
+        res.prefixStartElt = prefixStartElt;
+        temp = prefixStartElt;
+        while (temp !== tokenElt) {
+            if (engine.isSkipToken(temp)) {
+                temp = temp.nextSibling;
+                continue;
+            }
+
+            res.prefix += engine.stringOf(temp);
+            temp = temp.nextSibling;
+        }
+    }
+
+    return res;
+};
 
 EIAutoCompleteController.prototype.getCurrentText = function () {
     var pos = this.elt.engine.getSelectPosition();
@@ -1108,99 +1289,71 @@ EIAutoCompleteController.prototype.getCurrentText = function () {
 
 EIAutoCompleteController.prototype.updateDropDownContent = function () {
     if (!this.isOpen) return;
-    var text = this.getCurrentText();
-    var value = text.value;
-    var suggestionList = this.getSuggestionList(value);
-    var itemElements = suggestionList.map((suggestion, idx) => {
-        return _({
-            class: ['as-ei-suggestion-item', 'absol-selectlist-item'],
-            child: [
-                suggestion.type === 'variable' ? 'span.mdi.mdi-variable' : 'span.mdi.mdi-function',
-                { text: suggestion.text }
-            ],
-            attr: { "data-suggestion": suggestion.text },
-            on: {
-                click: () => {
-                    this.applySuggestion(suggestion.text);
-                    this.closeDropdown();
-                }
-            }
-        });
-    });
-    if (!itemElements[this.selectedIdx]) {
-        this.selectedIdx = 0;
-    }
-    itemElements[this.selectedIdx].addClass('as-selected');
-    this.$item = itemElements;
-    this.$dropDown.clearChild();
-    this.$dropDown.addChild(itemElements);
-    this.$tokenTarget = text.tokenElt;
+    this.query = this.getCurrentSearch();
+    this.$suggestionList.data = this.getSuggestionTree(this.query);
+    this.$suggestionList.selectMaxScoreItem();
     this.updateDropDownPosition();
 };
 
 EIAutoCompleteController.prototype.updateDropDownPosition = function () {
     if (!this.isOpen) return;
+    var bound;
+    var targetELt = this.query && this.query.tokenElt;
+    var range = this.elt.engine.getRange();
     var selected = this.elt.engine.getSelectPosition();
-    var startToken = this.elt.engine.tokenAt(selected.start) || selected.startCtn;
-    if (startToken && startToken.nodeType === Node.TEXT_NODE) startToken = startToken.parentElement;
-    var bound = null;
-    var dx = 0;
-    if (this.$tokenTarget) {
-        bound = this.$tokenTarget.getBoundingClientRect();
-        dx = -30;
+    var dropBound = this.$suggestionList.getBoundingClientRect();
+    if (targetELt) {
+        bound = targetELt.getBoundingClientRect();
     }
-    else if (startToken) {
-        bound = startToken.getBoundingClientRect();
+    if (!bound) {
+        bound = range.getBoundingClientRect();
+        if (!bound.width || !bound.height) bound = null;
     }
-    else {
+
+    if (!bound && selected) {
+        targetELt = this.elt.engine.tokenAt(selected.start);
+        if (targetELt) {
+            bound = targetELt.getBoundingClientRect();
+        }
+    }
+
+    if (!bound) {
         bound = this.elt.$content.getBoundingClientRect();
     }
-    var x = bound.left;
-    this.$dropDown.addStyle({
-        left: (x + dx) + 'px',
-    });
+
     var screenHeight = getScreenSize().height;
-    var availableHeight;
-    var aTop = bound.top;
-    var aBottom = screenHeight - bound.bottom;
-    var contentHeight = this.$dropDown.scrollHeight;
+    var aTop = bound.top - 10;
+    var aBottom = screenHeight - bound.bottom - 10;
+    var contentHeight = this.$suggestionList.scrollHeight;
     if (this.dropIsDown) {
-        if (aBottom > contentHeight || aBottom > aTop) {
-            this.$dropDown.addStyle('max-height', aBottom + 'px')
-                .removeStyle('bottom')
-                .addStyle('top', bound.bottom + 'px');
-        }
-        else {
+        if (aBottom < contentHeight && aBottom <= aTop) {
             this.dropIsDown = false;
-            this.$dropDown.addStyle('max-height', aTop + 'px')
-                .addStyle('bottom', bound.top + 'px')
-                .removeStyle('top');
         }
     }
     else {
-        if (aTop > contentHeight || aTop > aBottom) {
-            this.$dropDown.addStyle('max-height', aTop + 'px')
-                .removeStyle('top')
-                .addStyle('bottom', bound.top + 'px');
-        }
-        else {
+        if (aTop < contentHeight && aTop <= aBottom) {
             this.dropIsDown = true;
-            this.$dropDown.addStyle('max-height', aBottom + 'px')
-                .addStyle('top', bound.bottom + 'px')
-                .removeStyle('bottom');
         }
+    }
+
+    var screenSize = getScreenSize();
+    this.$suggestionList.addStyle('left', Math.max(0, Math.min(bound.left, screenSize.width - dropBound.width)) + 'px');
+    this.$suggestionList.addStyle('max-height', this.dropIsDown ? aBottom + 'px' : aTop + 'px');
+    var listBound;
+    if (this.dropIsDown) {
+        this.$suggestionList.addStyle('top', bound.bottom + 'px');
+    }
+    else {
+        listBound = this.$suggestionList.getBoundingClientRect();
+        this.$suggestionList.addStyle('top', (bound.top - listBound.height) + 'px');
     }
 };
 
-
-/**
- *
- * @param text
- */
-EIAutoCompleteController.prototype.getSuggestionList = function (text) {
-    text = text || '';
-    text = text.toLowerCase();
-    var res = [];
+EIAutoCompleteController.prototype.getRawSuggestion = function () {
+    var now = Date.now();
+    if (now - this.rawSuggestionCache.time < 3000) {
+        return this.rawSuggestionCache.value;
+    }
     var variables = [];
     var functions = [];
     var temp;
@@ -1230,6 +1383,32 @@ EIAutoCompleteController.prototype.getSuggestionList = function (text) {
 
     variables = arrayUnique(variables);
     functions = arrayUnique(functions);
+    this.rawSuggestionCache.value = {
+        variables: variables,
+        functions: functions
+    }
+    this.rawSuggestionCache.time = now;
+    return this.rawSuggestionCache.value;
+};
+
+EIAutoCompleteController.prototype.hasSuggestions = function () {
+    var rawSuggestions = this.getRawSuggestion();
+    return rawSuggestions.variables.length > 0 || rawSuggestions.functions.length > 0;
+};
+
+/**
+ *
+ * @param {string} text
+ * @param {string} prefix
+ */
+EIAutoCompleteController.prototype.getSuggestionList = function (text, prefix) {
+    var res = [];
+    prefix = prefix || '';
+    text = text || '';
+    text = text.toLowerCase();
+    var rawSuggestion = this.getRawSuggestion();
+    var variables = rawSuggestion.variables;
+    var functions = rawSuggestion.functions;
 
     var i;
     var itemText, score;
@@ -1254,55 +1433,195 @@ EIAutoCompleteController.prototype.getSuggestionList = function (text) {
     return res;
 };
 
-EIAutoCompleteController.prototype.getSuggestionTree = function (text) {
-    var res = [];
-    var variables = [];
-    var functions = [];
-    var temp;
-    // if (this.elt.autocomplete) {
-    //
-    // }
+EIAutoCompleteController.prototype.computeScore = function (queryWords, itemWords) {
+    if (queryWords.length === 0) return 1;
+    queryWords = queryWords.map(x => x.toLowerCase());
+    itemWords = itemWords.map(x => x.toLowerCase());
+    var score = 0;
+    var wordScore = 1 / queryWords.length;
+    var i, j;
+    for (i = 0; i < queryWords.length && i < itemWords.length; ++i) {
+        if (queryWords[i] === itemWords[i]) {
+            score += wordScore;
+        }
+        else {
+            score += wordScore * wordLike(queryWords[i], itemWords[i]);
+        }
+    }
 
-    return res;
+    var qDict = queryWords.reduce((ac, cr) => {
+        ac[cr] = true;
+        return ac;
+    }, {});
+    var iDict = itemWords.reduce((ac, cr) => {
+        ac[cr] = true;
+        return ac;
+    }, {});
+
+    var bestMatch, bestWord, curWordScore;
+    queryWords = Object.keys(qDict);
+    itemWords = Object.keys(iDict);
+    for (i = 0; i < queryWords.length; ++i) {
+        bestMatch = 0;
+        bestWord = '';
+        for (j = 0; j < itemWords.length; ++j) {
+            if (queryWords[i] === itemWords[j]) {
+                bestMatch = wordScore;
+                bestWord = itemWords[j];
+                break;
+            }
+            else {
+                curWordScore = wordScore * wordLike(queryWords[i], itemWords[j]);
+                if (curWordScore > bestMatch) {
+                    bestMatch = curWordScore;
+                    bestWord = itemWords[j];
+                }
+            }
+        }
+
+        if (bestWord) {
+            iDict[bestWord] = false;
+            score += bestMatch;
+        }
+    }
+
+    return score;
+};
+
+EIAutoCompleteController.prototype.getSuggestionTree = function (query) {
+    var splitWords = (text) => text.split(/[^a-zA-Z0-9_$]+/).filter(x => x.length > 0);
+    var queryWords = query ? splitWords(query.prefix + ' ' + query.value) : [];
+    var rawSuggestion = this.getRawSuggestion();
+    var variables = rawSuggestion.variables;
+    var functions = rawSuggestion.functions;
+
+    var items = [];
+    var item;
+    var i;
+    for (i = 0; i < variables.length; ++i) {
+        items.push({ text: variables[i], type: 'variable', words: splitWords(variables[i]) });
+    }
+
+    for (i = 0; i < functions.length; ++i) {
+        items.push({ text: functions[i], type: 'function', words: splitWords(functions[i]) });
+    }
+    var min = Infinity, max = -Infinity;
+    for (i = 0; i < items.length; ++i) {
+        item = items[i];
+        item.score = this.computeScore(queryWords, item.words);
+        if (item.score < min) min = item.score;
+        if (item.score > max) max = item.score;
+    }
+
+    var idx;
+    if (query) {
+        for (i = 0; i < items.length; ++i) {
+            item = items[i];
+            idx = item.text.toLowerCase().indexOf(query.value.toLowerCase());
+            if (idx >= 0) item.score = max - (idx / 1000);
+        }
+    }
+    items.sort((a, b) => b.score - a.score);
+
+    var mid = (max + min) / 2;
+    items = items.filter(x => x.score >= mid);
+
+    var trees = [];
+    var nodeDict = {
+        "*": { text: "", children: trees }
+    };
+    items.forEach(item => {
+        var words = item.words;
+        var k;
+        var key = '';
+        var nd;
+        var parent = nodeDict['*'];
+        for (k = 0; k < words.length; ++k) {
+            if (k > 0) key += '->';
+            key += words[k];
+            nd = nodeDict[key];
+            if (!nd) {
+                nd = { text: words[k], children: [], key: key, score: 0 };
+                nodeDict[key] = nd;
+                parent.children.push(nd);
+            }
+
+            parent = nd;
+        }
+        parent.item = item;
+        parent.score = item.score;
+    });
+    return trees;
 };
 
 
 EIAutoCompleteController.prototype.applySuggestion = function (suggestion) {
+    var engine = this.elt.engine;
+    var key = suggestion.key;
+    var words = key.split('->');
+    var range = engine.getRange();
     var selected = this.elt.engine.getSelectPosition();
     var startToken = this.elt.engine.tokenAt(selected.start);
     var endToken = this.elt.engine.tokenAt(selected.end);
     var rangeStartCtn, rangeStartOffset, rangeEndCtn, rangeEndOffset;
+    var i, tokenElt;
+    var prefixToken = engine.findPrefixWordTokenOf(startToken);
+    if (prefixToken) {
+        startToken = prefixToken;
+    }
     var oldValue, newValue;
-    if (((selected.start === selected.end) || (startToken === endToken)) && this.$tokenTarget && (this.$tokenTarget.getAttribute('data-type') === 'word' ||this.$tokenTarget.getAttribute('data-type') === 'string' )) {
-        this.$tokenTarget.setAttribute('data-type', 'word');
-        this.$tokenTarget.innerHTML = suggestion;
-        rangeStartCtn = this.$tokenTarget.firstChild;
-        rangeStartOffset = suggestion.length;
-        rangeEndCtn = rangeStartCtn;
-        rangeEndOffset = rangeStartOffset;
-        var newRange = document.createRange();
-        newRange.setStart(rangeStartCtn, rangeStartOffset);
-        newRange.setEnd(rangeEndCtn, rangeEndOffset);
-        var sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-        this.elt.engine.getSelectPosition();
+
+
+    if (!startToken || !endToken) {
+        oldValue = this.elt.value;
+        newValue = oldValue + key;
+        this.elt.engine.value = newValue;
+        this.elt.engine.setSelectedPosition(newValue.length);
+    }
+    else if (engine.isWordToken(startToken) && (engine.isWordToken(endToken) || engine.stringOf(endToken) === '->')) {
+        for (i = 0; i < words.length; ++i) {
+            if (i > 0) {
+                tokenElt = engine.makeTokenElt({ type: 'symbol', content: '->' });
+                this.elt.$content.insertBefore(tokenElt, startToken);
+            }
+            tokenElt = engine.makeTokenElt({ type: 'word', content: words[i] });
+            this.elt.$content.insertBefore(tokenElt, startToken);
+            if (i + 1 === words.length) {
+                rangeStartCtn = this.elt.$content;
+                rangeStartOffset = engine.childIndexOf(tokenElt) + 1;
+                rangeEndCtn = rangeStartCtn;
+                rangeEndOffset = rangeStartOffset;
+            }
+        }
+        while (startToken !== endToken) {
+            tokenElt = startToken.nextSibling;
+            startToken.remove();
+            startToken = tokenElt;
+        }
+        endToken.remove();
+        range = document.createRange();
+        range.setStart(rangeStartCtn, rangeStartOffset);
+        range.setEnd(rangeEndCtn, rangeEndOffset);
+        engine.setRange(range);
     }
     else {
         oldValue = this.elt.value;
-        newValue = oldValue.substring(0, selected.start) + suggestion + oldValue.substring(selected.end);
+        newValue = oldValue.substring(0, selected.start) + key + oldValue.substring(selected.end);
         this.elt.engine.value = newValue;
         this.elt.engine.setSelectedPosition(selected.start + suggestion.length);
     }
+    engine.updateTokenExType();
 };
 
 EIAutoCompleteController.prototype.isSelecting = function () {
-    return !!(this.isOpen && this.$item && this.$item.length);
+    return this.isOpen && this.$suggestionList && this.$suggestionList.$selectedNode && true;
 };
 
 EIAutoCompleteController.prototype.applySelectingSuggestion = function () {
     if (this.isSelecting()) {
-        this.applySuggestion(this.$item[this.selectedIdx].getAttribute('data-suggestion'));
+        this.applySuggestion(this.$suggestionList.$selectedNode.data);
+        //todo
+        // this.applySuggestion(this.$item[this.selectedIdx].getAttribute('data-suggestion'));
         this.closeDropdown();
     }
 };
@@ -1319,11 +1638,23 @@ EIAutoCompleteController.prototype.closeDropdownIfNeed = function () {
     }, 5);
 };
 
+/**
+ *
+ * @param {"down"|"up"} direction
+ * @returns {boolean}
+ */
 EIAutoCompleteController.prototype.moveSelectingSuggestion = function (direction) {
-    this.$item[this.selectedIdx].removeClass('as-selected');
-    this.selectedIdx = (this.selectedIdx + (direction === 'down' ? 1 : (this.$item.length - 1))) % this.$item.length;
-    this.$item[this.selectedIdx].addClass('as-selected');
-}
+    if (direction !== 'down' && direction !== 'up') return false;
+    if (!this.hasSuggestions()) return false;
+    if (this.isSelecting()) {
+        if (direction === 'down') {
+            return this.$suggestionList.moveToNextSuggestion();
+        }
+        else {
+            return this.$suggestionList.moveToPrevSuggestion();
+        }
+    }
+};
 
 
 EIAutoCompleteController.prototype.ev_positionChange = function (event) {
@@ -1331,11 +1662,12 @@ EIAutoCompleteController.prototype.ev_positionChange = function (event) {
         this.elt.stopTrackPosition();
         return;
     }
+    //todo
 };
 
 
 EIAutoCompleteController.prototype.ev_clickOut = function (event) {
-    if (hitElement(this.$dropDown, event)) return;
+    if (hitElement(this.$suggestionList, event)) return;
     this.closeDropdown();
 };
 
@@ -1378,7 +1710,7 @@ function EICommandTool(elt) {
                 on: {
                     click: () => {
                         this.elt.autoCompleteCtrl.openDropdown();
-                        this.elt.engine.setSelectedPosition();
+                        this.elt.engine.setSelectedPosition(this.elt.engine.lastSelectedPosition);
                     }
                 }
             }
@@ -1423,6 +1755,318 @@ EICommandTool.prototype.revokeResource = function () {
     this.elt.$content.on('focus', this.ev_focus);
     this.close();
 };
+
+/**
+ * @extends {AElement}
+ * @constructor
+ */
+function EISuggestionList() {
+    /**
+     *
+     * @type {EISuggestionNode}
+     */
+    this.$selectedNode = null;
+    this._data = [];
+    this.$children = [];
+}
+
+EISuggestionList.prototype.reset = function () {
+    //todo: select first suggestion
+}
+
+EISuggestionList.prototype.moveToNextSuggestion = function () {
+    if (this.$selectedNode) {
+        return this.selectElt(this.$selectedNode.nextSibling || this.childNodes[0]);
+    }
+    else {
+        return this.selectElt(this.$children[0]);
+    }
+};
+
+
+EISuggestionList.prototype.moveToPrevSuggestion = function () {
+    if (this.$selectedNode) {
+        return this.selectElt(this.$selectedNode.previousSibling || this.lastChild);
+    }
+    else {
+        return this.selectElt(this.lastChild);
+    }
+};
+
+
+EISuggestionList.render = function () {
+    return _({
+        extendEvent: ['select'],
+        class: ['am-select-tree-leaf-box-list', 'as-bscroller', 'as-dropdown-box-common-style', 'as-ei-suggestion-list'],
+    });
+};
+
+EISuggestionList.prototype.selectElt = function (elt) {
+    elt = elt || null;
+    if (elt === this.$selectedNode) return false;
+    if (this.$selectedNode) {
+        this.$selectedNode.removeClass('as-selected');
+    }
+    this.$selectedNode = elt;
+    if (elt) {
+        elt.addClass('as-selected');
+    }
+    if (this.isDescendantOf(document.body)) {
+        vScrollIntoView(elt);
+    }
+    return true;
+}
+
+EISuggestionList.prototype.selectMaxScoreItem = function () {
+    var maxPath = [];
+    var maxScore = 0;
+    var visit = (nd, path) => {
+        if (nd.data.score > maxScore) {
+            maxScore = nd.data.score;
+            maxPath = path.concat([nd]);
+        }
+        path.push(nd);
+        nd.$children.forEach(child => {
+            visit(child, path);
+        });
+
+        path.pop();
+    }
+
+    this.$children.forEach((node) => {
+        visit(node, []);
+    });
+    maxPath.forEach((node) => {
+        node.open()
+    });
+    if (maxPath.length > 0) {
+        this.selectElt(maxPath[maxPath.length - 1]);
+    }
+};
+
+EISuggestionList.property = {};
+
+EISuggestionList.property.data = {
+    set: function (data) {
+        data = data || [];
+        this._data = data;
+        this.clearChild();
+        this.$children = data.map((it) => {
+            return _({
+                tag: EISuggestionNode,
+                props: {
+                    data: it
+                }
+            })
+        });
+
+        var viewElements = [];
+        this.$children.forEach(function (child) {
+            child.getViewElements(viewElements);
+        });
+
+        this.addChild(viewElements);
+    },
+    get: function () {
+        return this._data;
+    }
+};
+
+EISuggestionList.property.selectedSuggestions = {
+    get: function () {
+        return this.$selectedNode ? this.$selectedNode.data : null;
+    }
+};
+
+
+/**
+ * @typedef {Object} EISuggestionNodeData
+ * @property {string} text
+ * @property {string} value
+ * @property {string} [desc]
+ * @property {string} type
+ * @property {boolean} [noSelect]
+ * @property {EISuggestionNodeData[]} [children]
+ */
+
+/**
+ * @extends {AElement}
+ * @constructor
+ */
+function EISuggestionNode() {
+    this.$text = $('.as-eisli-text', this);
+    this.$desc = $('.as-eisli-desc', this);
+    this.$iconCtn = $('.as-eisli-icon-ctn', this);
+    this._level = 0;
+
+    this._data = { text: '', desc: '' };
+    this.on('click', (event) => {
+        this.parentElement.emit('select', {
+            type: 'select',
+            originalEvent: event,
+            target: this,
+            data: this.data
+        }, this);
+    });
+
+    /**
+     *
+     * @type {EISuggestionNode[]}
+     */
+    this.$children = [];
+    /**
+     * @type {"none"|"open"|"close"}
+     * @name status
+     * @memberOf EISuggestionNode#
+     */
+
+    /**
+     * @type {EISuggestionNodeData}
+     * @name data
+     * @memberOf EISuggestionNode#
+     */
+    /**
+     * @type {number}
+     * @name level
+     * @memberOf EISuggestionNode#
+     */
+}
+
+EISuggestionNode.render = function () {
+    return _({
+        class: ['as-ei-suggestion-list-item'],
+        child: [
+            {
+                class: 'as-eisli-toggler',
+                child: 'toggler-ico'
+            },
+            {
+                class: 'as-eisli-icon-ctn'
+            },
+            {
+                class: 'as-eisli-text',
+                child: { text: '' }
+            },
+            {
+                class: 'as-eisli-desc',
+                child: { text: '' }
+            }
+        ]
+    });
+}
+
+EISuggestionNode.prototype.getViewElements = function (ac) {
+    ac = ac || [];
+    ac.push(this);
+    if (this.status === 'open') {
+        this.$children.forEach(function (child) {
+            child.getViewElements(ac);
+        });
+    }
+
+    return ac;
+};
+
+
+EISuggestionNode.prototype.close = function () {
+    if (!this.hasClass(' as-status-open')) return;
+    var viewElements = this.getViewElements();
+    this.addClass('as-status-close').removeClass('as-status-open');
+    viewElements.shift();
+    for (var i = 0; i < viewElements.length; ++i) {
+        viewElements[i].remove();
+    }
+};
+
+EISuggestionNode.prototype.open = function () {
+    if (!this.hasClass(' as-status-close')) return;
+    this.addClass('as-status-open').removeClass('as-status-close');
+    var nextSibling = this.nextSibling;
+    var viewElements = this.getViewElements();
+    for (var i = 0; i < viewElements.length; ++i) {
+        this.insertBefore(viewElements[i], nextSibling);
+    }
+};
+
+
+EISuggestionNode.property = {};
+
+EISuggestionNode.property.data = {
+    /**
+     * @this {EISuggestionNode}
+     * @param {EISuggestionNodeData} data
+     */
+    set: function (data) {
+        this._data = data || {};
+        this.$text.firstChild.data = data.text || '';
+        this.$desc.firstChild.data = data.desc || '';
+        if (data.noSelect) {
+            this.addClass('as-no-select');
+        }
+
+        this.$children = (data.children || []).map((childData) => {
+            return _({
+                tag: EISuggestionNode,
+                props: {
+                    data: childData,
+                    level: this.level + 1
+                }
+            });
+        });
+        this.$iconCtn.clearChild();
+
+        if (data.item) {
+            switch (data.item.type) {
+                case 'variable':
+                    this.$iconCtn.addChild(_('span.mdi.mdi-variable'));
+                    if (data.children && data.children.length > 0) {
+                        this.status = 'open';
+                    }
+                    break;
+                case 'function':
+                    this.$iconCtn.addChild(_('span.mdi.mdi-function'));
+                    break;
+            }
+        }
+        else {
+            this.status = 'open';
+            this.$iconCtn.addChild(_('span.mdi.mdi-code-json'));
+        }
+    },
+    get: function () {
+        return this._data;
+    }
+};
+
+
+EISuggestionNode.property.level = {
+    set: function (value) {
+        this.addStyle('--level', value + '');
+        this._level = value;
+        this.$children.forEach((child) => {
+            child.level = value + 1;
+        });
+    },
+    get: function () {
+        return this._level;
+    }
+}
+
+EISuggestionNode.property.status = {
+    set: function (value) {
+        if (value === 'open') {
+            this.addClass('as-status-open').removeClass('as-status-close');
+        }
+        else if (value === 'close') {
+            this.addClass('as-status-close').removeClass('as-status-open');
+        }
+    },
+    get: function () {
+        if (this.hasClass('as-status-open')) return 'open';
+        if (this.hasClass('as-status-close')) return 'close';
+        return 'none';
+    }
+}
 
 
 /*********************************
@@ -1791,7 +2435,7 @@ rules.push({
 
 rules.push({
     target: 'mem_exp',
-    elements: ['ident', '_.', 'ident'],
+    elements: ['ident', '_->', 'ident'],
     toAST: function (parsedNode) {
         return {
             type: "MemberExpression",
@@ -1818,7 +2462,7 @@ rules.push({
 
 rules.push({
     target: 'mem_exp',
-    elements: ['new_expression', '_.', 'ident'],
+    elements: ['new_expression', '_->', 'ident'],
     toAST: function (parsedNode) {
         return {
             type: "MemberExpression",
@@ -1845,7 +2489,7 @@ rules.push({
 
 rules.push({
     target: 'mem_exp',
-    elements: ['mem_exp', '_.', 'ident'],
+    elements: ['mem_exp', '_->', 'ident'],
     longestOnly: true,
     ident: 'mem_exp_ident_rev',
     toAST: function (parsedNode) {
@@ -1874,7 +2518,7 @@ rules.push({
 
 rules.push({
     target: 'mem_exp',
-    elements: ['bracket_group', '_.', 'ident'],
+    elements: ['bracket_group', '_->', 'ident'],
     toAST: function (parsedNode) {
         return {
             type: "MemberExpression",
@@ -2046,7 +2690,7 @@ var elementRegexes = [
     ['number', /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/],
     ['word', /[_a-zA-Z][_a-zA-Z0-9]*/],
     ['skip', /([\s\r\n])|(\/\/[^\n]*)|(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)/],
-    ['dsymbol', /\+\+|--|==|!=|<=|>=|\|\||&&/],
+    ['dsymbol', /\+\+|--|==|!=|<=|>=|\|\||&&|->/],
     ['tsymbol', /\.\.\./],
     ['symbol', /[^\s_a-zA-Z0-9]/],
 ];

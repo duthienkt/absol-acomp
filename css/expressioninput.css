@@ -35,10 +35,24 @@
     font-size: 14px;
     position: relative;
     line-height: 2;
+    background-color: white;
+}
+
+.as-expression-input.as-disabled {
+    background-color: var(--as-disabled-background-color);
+    color: var(--as-disabled-text-color);
+    pointer-events: none;
+}
+
+.as-expression-input.as-border-none {
+    border: none;
+}
+
+.as-expression-input:not(.as-read-only):not(.as-disabled){
     user-select: none;
 }
 
-.as-expression-input-range-ctn{
+.as-expression-input-range-ctn {
     position: absolute;
     top: 0;
     left: 0;
@@ -55,12 +69,11 @@
 }
 
 
-
 .as-expression-input-content {
     min-height: 28px;
     outline: none;
     line-height: inherit;
-    white-space: pre;
+    white-space: pre-wrap;
     padding-left: var(--as-input-horizontal-padding);
 }
 
@@ -69,17 +82,13 @@
 
 }
 
-.as-expression-input.as-has-icon  .as-expression-input-content {
+.as-expression-input.as-has-icon .as-expression-input-content {
     padding-left: calc(18px + var(--as-input-horizontal-padding));
 }
 
-.as-expression-input.as-has-icon  .as-expression-input-range-ctn {
+.as-expression-input.as-has-icon .as-expression-input-range-ctn {
     left: calc(18px + var(--as-input-horizontal-padding));
 }
-
-
-
-
 
 
 .as-expression-input-content .as-token[data-type="number"] {
@@ -150,24 +159,77 @@
 }
 
 .as-expression-input-autocomplete .absol-selectlist-item {
+    padding-right: 0.3em;
 }
 
-.as-ei-suggestion-item span{
+.as-ei-suggestion-list-item {
+    --level: 0;
+    height: 30px;
+    padding-right: 1em;
+    min-width: 10em;
+    white-space: nowrap;
+}
+
+.as-ei-suggestion-list-item:hover {
+    background-color: var(--as-list-item-hover-background-color);
+}
+
+.as-ei-suggestion-list-item.as-selected {
+    background-color: var(--as-list-item-selected-background-color);
+}
+
+
+.as-ei-suggestion-list-item::before {
+    content: "";
+    height: 100%;
+}
+
+.as-ei-suggestion-list-item > *,
+.as-ei-suggestion-list-item::before
+{
     display: inline-block;
     vertical-align: middle;
 }
 
-.as-ei-suggestion-item .mdi {
-    width: 30px;
-    text-align: center;
+.as-ei-suggestion-list-item:not(.as-status-open):not(.as-status-close)  .as-eisli-toggler{
+    visibility: hidden;
 }
 
-.as-ei-suggestion-item .mdi.mdi-function {
+.as-ei-suggestion-list-item.as-status-open .toggle-close,
+.as-ei-suggestion-list-item.as-status-close .toggle-open
+{
+    display: none;
+}
+
+
+
+.as-eisli-toggler {
+    text-align: right;
+    width: calc(1em * var(--level) + 1.5em);
+    padding-right: 0.5em;
+}
+
+.as-ei-suggestion-list {
+    max-height: calc(100vh - 100px);
+    overflow-y:auto ;
+}
+
+.as-ei-suggestion-list .mdi {
+    width: 30px;
+    text-align: center;
+    font-size: 1em;
+}
+
+.as-ei-suggestion-list .mdi.mdi-function {
     color: #2419c8;
 }
 
-.as-ei-suggestion-item .mdi.mdi-variable {
+.as-ei-suggestion-list .mdi.mdi-variable {
     color: #5b5d42;
+}
+
+.as-ei-suggestion-list .am-select-tree-leaf-item-icon-ctn {
+    left: calc(2em * var(--level) - 14px)
 }
 
 .as-expression-input-real-input {
@@ -208,7 +270,7 @@
     height: 100%;
 }
 
-.as-ei-command-tool button{
+.as-ei-command-tool button {
     font-size: 14px;
     width: 25px;
     height: 25px;
@@ -221,6 +283,7 @@
 .as-ei-command-tool button:hover {
     background-color: #f0f0f0;
 }
+
 .as-ei-command-tool button:not(:last-child) {
     margin-right: 3px;
 }
