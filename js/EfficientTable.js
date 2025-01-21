@@ -288,7 +288,7 @@ ETLayoutController.prototype.viewSize = function () {
     if (size.trueValue) {
         this.elt.addClass('as-true-size');
     }
-    this.elt.addStyle('height', size.height + 'px');
+    this.elt.addStyle('height', (size.height + 1) + 'px');
 
 };
 
