@@ -19,6 +19,7 @@ import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "
  */
 function MCTBItemListController(elt) {
     this.elt = elt;
+    this.items = [];
 }
 
 OOP.mixClass(MCTBItemListController, ListDictionary);
@@ -53,7 +54,7 @@ MCTBItemListController.prototype.update = function () {
 };
 
 MCTBItemListController.prototype.getItems = function () {
-    return copySelectionItemArray(this.items);
+    return copySelectionItemArray(this.items||[]);
 };
 
 MCTBItemListController.prototype.makeSearch = function (query) {
