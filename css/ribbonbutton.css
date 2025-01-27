@@ -77,6 +77,9 @@ svg.as-ribbon-button-icon {
 
 .as-ribbon-button.as-big span.as-ribbon-button-icon {
     font-size: 2em;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .as-ribbon-button.as-big .as-ribbon-button-text {
@@ -87,6 +90,7 @@ svg.as-ribbon-button-icon {
 .as-ribbon-button.as-big svg.as-ribbon-button-icon,
 .as-ribbon-button.as-big img.as-ribbon-button-icon {
     height: 2em;
+    width: 2em;
     display: block;
     margin-left: auto;
     margin-right: auto;
