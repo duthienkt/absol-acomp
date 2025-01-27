@@ -1,4 +1,4 @@
-import ACore from "../ACore";
+import ACore, { _ } from "../ACore";
 import Element from "absol/src/HTML5/Element";
 import AElement from "absol/src/HTML5/Element";
 
