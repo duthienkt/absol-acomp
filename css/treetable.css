@@ -40,6 +40,8 @@
 
 .as-tree-table-row {
     height: calc(40em / 14);
+    page-break-inside: avoid;
+    break-inside: avoid;
 }
 
 .as-tree-table-row:nth-child(odd) {
@@ -54,6 +56,8 @@
     padding: 5px;
     border: 1px solid #ddd;
     position: relative;
+    page-break-inside: avoid;
+    break-inside: avoid;
 }
 
 .as-tree-table-cell[data-type="number"] {
@@ -87,4 +91,30 @@
 .as-printer-content .as-tree-table-head-cell,
 .as-printer-content .as-tree-table-cell{
     border-color: black;
+}
+
+.as-tree-table-cell>span:first-child:last-child{
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+@media print {
+    div[align="center"]> .as-tree-table{
+        display: block !important;
+    }
+    /*trick avoid break row*/
+    .as-tree-table tbody tr td:before,
+    .as-tree-table tbody tr td:after {
+        content: "";
+        height: 4px;
+        display: block;
+    }
+
+    .as-tree-table-head {
+        display: table-header-group  !important;
+    }
+
+    .as-tree-table-head + tbody tr:first-child th {
+        display: none;
+    }
 }
