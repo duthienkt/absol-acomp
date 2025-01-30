@@ -3,6 +3,7 @@ import ACore from "../ACore";
 import OOP from "absol/src/HTML5/OOP";
 import TabBar from "./TabBar";
 import { forwardEvent } from "./utils";
+import TextMeasure from "./TextMeasure";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -20,6 +21,7 @@ function TabView() {
         close: TabView.eventHandler.closeTab.bind(thisTV),
         active: TabView.eventHandler.activeTab.bind(thisTV)
     });
+    this._title = '';
     this._frameHolders = [];
     this._history = [];
     forwardEvent(this, 'inactivetab', 'deactivetab');
@@ -59,12 +61,12 @@ TabView.prototype.activeTab = function (id, userActive) {
     var needActiveHolder = [];
     this._frameHolders.forEach(function (holder) {
         if (holder.containerElt.hasClass('absol-tabview-container-hidden')) {
-            if (holder.id == id) {
+            if (holder.id + '' === id + '') {
                 needActiveHolder.push(holder);
             }
         }
         else {
-            if (holder.id != id) {
+            if (holder.id + '' !== id + '') {
                 needDeactivatedHolder.push(holder);
             }
         }
@@ -111,7 +113,7 @@ TabView.prototype.removeTab = function (id, userActive) {
     var self = this;
     var resPromise = [];
     this._frameHolders.forEach(function (holder) {
-        if (holder.id == id) {
+        if (holder.id + '' === id + '') {
             var eventData = {
                 type: 'requestremove',
                 id: id,
@@ -147,7 +149,7 @@ TabView.prototype.removeTab = function (id, userActive) {
                     if (!holder.containerElt.hasClass('absol-tabview-container-hidden'))
                         self.emit('inactivetab', eventData2, self);
                     self._frameHolders = self._frameHolders.filter(function (x) {
-                        return x.id != id;
+                        return x.id + '' !== id + '';
                     });
                     holder.tabFrame.notifyDetached();
                     self.$tabbar.removeTab(holder.id);
@@ -203,7 +205,7 @@ TabView.prototype.notifyUpdatePreventClosing = function (elt) {
 TabView.prototype.findHolder = function (elt) {
     for (var i = 0; i < this._frameHolders.length; ++i) {
         var holder = this._frameHolders[i];
-        if (holder.tabFrame == elt) {
+        if (holder.tabFrame === elt) {
             return holder;
         }
     }
@@ -346,6 +348,42 @@ TabView.property.historyOfTab = {
     }
 };
 
+TabView.property.tvTitle = {
+    set: function (value) {
+        this._title = value + '';
+        var width;
+        if (this._title.length > 0) {
+            this.$tille = _({
+                class: 'as-tabview-title',
+                child: { text: this._title }
+            });
+            width = TextMeasure.measureWidth(this._title, 'Arial', 14);
+            this.$tabbar.addStyle('right', width + 10 + 'px');
+            this.insertBefore(this.$tille, this.$tabbar.nextSibling);
+        }
+        else {
+            if (this.$tille) this.$tille.remove();
+            this.$tabbar.removeStyle('right');
+        }
+    },
+    get: function () {
+        return this._title;
+    }
+};
+
+
 ACore.install('tabview', TabView);
 
 export default TabView;
+
+function TabViewUser() {
+
+}
+
+
+TabViewUser.tag = 'TabViewUser'.toLowerCase();
+
+TabViewUser.render = function () {
+};
+
+

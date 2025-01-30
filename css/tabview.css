@@ -166,6 +166,17 @@
     position: relative;
 }
 
+.as-tabview-title {
+    position: absolute;
+    padding: 5px;
+    right: 0;
+    top: 0;
+    font-weight: bold;
+    font-size: 14px;
+    color: rgb(230, 230, 205);
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
 
 .absol-tabview-container {
     position: absolute;
