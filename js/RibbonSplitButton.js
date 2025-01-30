@@ -19,7 +19,7 @@ function RibbonSplitButton() {
     this.$primaryBtn = $('.as-ribbon-split-button-primary', this)
         .on('click', this.eventHandler.clickPrimaryBtn);
     this.$extendBtn = $('.as-ribbon-split-button-extend', this);
-    this.$extendText = $('.as-ribbon-split-button-text', this.$extendBtn);
+    this.$extendText = $('.as-ribbon-split-button-text', this.$extendBtn);//for big style
     this._menuHolder = null;
 }
 

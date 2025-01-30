@@ -156,3 +156,12 @@ svg.as-ribbon-split-button-icon {
     width: 2em;
     height: 2em;
 }
+
+.as-ribbon-split-button.as-big .as-ribbon-split-button-extend,
+.as-ribbon-split-button.as-big.as-no-dropdown .as-ribbon-split-button-extend {
+    display: block;
+}
+
+.as-ribbon-split-button.as-big.as-no-dropdown .as-ribbon-split-button-extend .mdi-chevron-down {
+    display: none;
+}
