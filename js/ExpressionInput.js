@@ -15,7 +15,7 @@ import { hitElement } from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { arrayUnique } from "absol/src/DataStructure/Array";
-import { engine } from "absol/src/Detector/BrowserRules";
+
 
 /***
  * @extends PositionTracker
