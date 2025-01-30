@@ -245,6 +245,9 @@
             style: {
                 height: '800px'
             },
+            props:{
+                tvTitle: 'admin'
+            },
             child: [frame1, frame2].concat(Array(20).fill(0).map(function (u, i) {
                 return {
                     tag: 'tabframe', props: { name: 'Tab ' + i, desc: 'Descript of Tab ' + i }, child: {
