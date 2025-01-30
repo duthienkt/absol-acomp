@@ -254,7 +254,7 @@ Object.defineProperty(STLBoxController.prototype, 'isFocus', {
             }
 
             setTimeout(function () {
-                document.addEventListener('click', this.ev_clickOut);
+                document.addEventListener('mousedown', this.ev_clickOut);
                 this.elt.$selectBox.removeStyle('visibility');
                 this.elt.$selectBox.focus();
             }.bind(this), 5);
@@ -268,7 +268,7 @@ Object.defineProperty(STLBoxController.prototype, 'isFocus', {
         else {
             this.elt.removeClass('as-focus');
             this.elt.$selectBox.remove();
-            document.removeEventListener('click', this.ev_clickOut);
+            document.removeEventListener('mousedown', this.ev_clickOut);
             if (this.elt.mobile) {
 
             }
