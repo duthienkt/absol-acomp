@@ -1,5 +1,5 @@
 /**
- * @deprecated
+ * @deprecated use TextMeasure instead
  * @param opts
  * @constructor
  */
