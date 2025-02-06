@@ -13,6 +13,8 @@ import OutputFormOutlineText from '../assets/icon/output_form_outline.tpl';
 import TemplateIconText from '../assets/icon/template.tpl';
 import MobileInputFormOutlineIconText from '../assets/icon/mobile_input_form_outline.tpl';
 import MobileOutputFormOutlineIconText from '../assets/icon/mobile_output_form_outline.tpl';
+import CityIconText from '../assets/icon/city.tpl';
+import CountryIconText from '../assets/icon/country.tpl';
 import '../css/icons.css';
 import Color from "absol/src/Color/Color";
 
@@ -110,6 +112,22 @@ ACore.install(MobileInputFormOutlineIcon);
 export function MobileOutputFormOutlineIcon() {
     return _(MobileOutputFormOutlineIconText);
 }
+
+export function CityIcon() {
+    return _(CityIconText);
+}
+
+CityIcon.tag = 'CityIcon'.toLowerCase();
+
+ACore.install(CityIcon);
+
+export function CountryIcon() {
+    return _(CountryIconText);
+}
+
+CountryIcon.tag = 'CountryIcon'.toLowerCase();
+
+ACore.install(CountryIcon);
 
 MobileOutputFormOutlineIcon.tag = 'MobileOutputFormOutlineIcon'.toLowerCase();
 ACore.install(MobileOutputFormOutlineIcon);
