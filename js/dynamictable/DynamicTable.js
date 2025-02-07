@@ -490,7 +490,7 @@ DynamicTable.prototype.rowIndexOf = function (o) {
 
 
 DynamicTable.prototype.getRows = function () {
-    return this.table.body.rows;
+    return this.table.body.rows.slice();
 };
 
 DynamicTable.prototype.requireRows = function (start, end) {
@@ -1677,7 +1677,8 @@ RowDragController.prototype.ev_drag = function (event) {
         var dy = ctnBound.D().y - this.viewportRect.D().y;
         dy /= 1000 / 60 / 4 * this.rowRect.height;
         dy = Math.min(dy, this.elt.$vscrollbar.innerHeight - this.elt.$vscrollbar.outerHeight - this.elt.$vscrollbar.innerOffset);
-        if (dy > 0) {
+
+        if (dy > 0.5) {//dy may be very small
             this.elt.$vscrollbar.innerOffset += dy;
             this.elt.$vscrollbar.emit('scroll');
         }
@@ -1691,7 +1692,7 @@ RowDragController.prototype.ev_drag = function (event) {
         var dy = ctnBound.y - this.headerRect.D().y;
         dy /= 1000 / 60 / 4 * this.rowRect.height;
         dy = Math.max(dy, -this.elt.$vscrollbar.innerOffset);
-        if (dy < 0) {
+        if (dy < -0.5) {//dy may be very small
             this.elt.$vscrollbar.innerOffset += dy;
             this.elt.$vscrollbar.emit('scroll');
         }
