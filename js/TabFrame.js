@@ -153,7 +153,7 @@ TabFrame.prototype._onRemove = function () {
 
 TabFrame.prototype.revokeResource = function () {
     this.off('remove', this._onRemove);
-    while (this.lastChild) {
+    while (this.lastChild && false) {
         if (location.href.indexOf('localhost') >= 0 || location.href.indexOf('lab.') >= 0)//for testing
             revokeResource(this.lastChild);
         this.lastChild.remove();
