@@ -353,6 +353,10 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     box-sizing: border-box;
 }
 
+.as-dt-body-row .as-drag-zone{
+    user-select: none;
+}
+
 .as-dt-body-row .as-drag-zone .mdi,
 .as-tree-table-row .as-drag-zone .mdi {
     font-size: 25px;
