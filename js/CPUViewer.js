@@ -154,6 +154,7 @@ function AttachHookView() {
 
 
 Dom.documentReady.then(() => {
+    return;
     if (!window.ABSOL_DEBUG && location.href.indexOf('localhost') < 0) {
         return;
     }
