@@ -34,7 +34,7 @@ RibbonButton.render = function () {
                 tag: 'span', class: 'as-ribbon-button-text',
                 child: { text: '' }
             },
-            'span.mdi.mdi-chevron-down'
+            'span.mdi.mdi-chevron-down.as-ribbon-dropdown-icon'
         ]
     });
 };

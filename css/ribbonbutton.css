@@ -63,7 +63,7 @@ svg.as-ribbon-button-icon {
     content: attr(data-text);
 }
 
-.as-ribbon-button.as-no-dropdown .mdi.mdi-chevron-down {
+.as-ribbon-button.as-no-dropdown .as-ribbon-dropdown-icon {
     display: none;
 }
 

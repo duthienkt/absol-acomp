@@ -49,7 +49,7 @@ RibbonSplitButton.render = function () {
                         'tabindex': '-1'
                     },
                     class: 'as-ribbon-split-button-extend',
-                    child: ['span.as-ribbon-split-button-text', 'span.mdi.mdi-chevron-down']
+                    child: ['span.as-ribbon-split-button-text', 'span.mdi.mdi-chevron-down.as-ribbon-dropdown-icon']
                 }
             ]
         }
