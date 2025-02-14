@@ -72,7 +72,6 @@ VRuler.prototype.measureElement = function (elt) {
 
 
 VRuler.prototype.update = function () {
-    console.log('update')
     var fontSize = this.getFontSize() || 14;
     var measureBound;
     var bound = this.getBoundingClientRect();
