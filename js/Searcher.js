@@ -62,6 +62,11 @@ function SearchTextInput() {
             thisSTI.focus();
         }, 50);
     });
+    /**
+     * @type {string}
+     * @name value
+     * @memberOf SearchTextInput#
+     */
 }
 
 SearchTextInput.tag = 'SearchTextInput'.toLowerCase();
