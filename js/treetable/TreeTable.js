@@ -168,6 +168,10 @@ TreeTable.prototype.replaceRow = function (rowData, oldRowData) {
     if (row) row.replace(rowData);
 };
 
+TreeTable.prototype.getRows = function () {
+    return this.table.body.rows.slice();
+};
+
 /***
  *
  * @param rowData
@@ -430,6 +434,7 @@ TTRowMoveTool.prototype.ev_dragInit = function (event) {
     this.inParent = row.parentRow;
     this.row = row;
     this.$body.on(this.dragListenners);
+    event.preventDefault();
 };
 
 TTRowMoveTool.prototype.ev_dragDeinit = function () {
