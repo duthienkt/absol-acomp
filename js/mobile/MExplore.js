@@ -4,6 +4,11 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import Context from "absol/src/AppPattern/Context";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
+import SearchTextInput from "../Searcher";
+import { phraseMatch, wordLike, wordsMatch } from "absol/src/String/stringMatching";
+import { harmonicMean } from "absol/src/Math/int";
 
 
 var makeTextToNode = (data, pElt) => {
@@ -240,6 +245,9 @@ MExploreGroup.property.items = {
                     }
                 }
             });
+            if (window.ABSOL_DEBUG) {
+                elt.attr('title', 'score: ' + it.score);
+            }
             return elt;
         });
         this.$itemCtn.addChild(this.$items);
@@ -280,6 +288,13 @@ export function MSpringboardMenu() {
         this.keyboardCtrl.lowPriorityFocus();
     });
     this.$attachHook.requestUpdateSize = this.updateSize.bind(this);
+
+    this.searchingPlugin = new MSMSearchingPlugin(this);
+    /**
+     * @name searching
+     * @type {{input: SearchTextInput, items: []}}
+     * @memberof MSpringboardMenu#
+     */
 }
 
 MSpringboardMenu.tag = 'MSpringboardMenu'.toLowerCase();
@@ -355,6 +370,7 @@ MSpringboardMenu.property.groups = {
     }
 };
 
+ACore.install(MSpringboardMenu);
 
 /**
  *
@@ -482,6 +498,7 @@ MSMKeyboardController.prototype.positionOf = function (elt) {
 };
 
 MSMKeyboardController.prototype.ev_keydown = function (event) {
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
     var key = keyboardEventToKeyBindingIdent(event);
     var focusElt = document.activeElement;
     if (!focusElt || !focusElt.hasClass) focusElt = null;
@@ -547,5 +564,273 @@ MSMKeyboardController.prototype.ev_keydown = function (event) {
         event.preventDefault();
         if (focusElt) focusElt.click();
     }
-
 };
+
+/**
+ * @extends Context
+ * @param {MSpringboardMenu} elt
+ * @constructor
+ */
+function MSMSearchingPlugin(elt) {
+    Context.call(this);
+    this.elt = elt;
+    this._data = null;
+    OOP.drillProperty(this.elt, this, 'searching', 'data');
+    this.ev_inputStopTyping = this.ev_inputStopTyping.bind(this);
+    /**
+     * @type {SearchTextInput|null}
+     */
+    this.$input = null;
+    this.itemHolders = [];
+    this.$seachGroups = [];
+}
+
+
+mixClass(MSMSearchingPlugin, Context);
+
+MSMSearchingPlugin.prototype.onStart = function () {
+    this.$input = this._data && this._data.input;
+    if (!this.$input) {
+        this.$input = _({
+            tag: SearchTextInput
+        });
+        this.elt.addChildBefore(this.$input, this.elt.firstChild);
+    }
+
+    this.$input.on('stoptyping', this.ev_inputStopTyping);
+    this.calcItemHoldersFromItems();
+};
+
+MSMSearchingPlugin.prototype.calcItemHoldersFromItems = function () {
+    // var holders = [];
+    var count = 0;
+
+    var virtualGroups = [];
+
+
+    var visit = (item, parent) => {
+        if (item.hidden) return;
+        count++;
+        var holder = this.makeHolder(item);
+        holder.path = parent.path.concat([parent.item.name]);
+        holder.count = count;
+        if (holder.type === 'group') {
+            virtualGroups.push(holder);
+        }
+        else {
+            parent.children = parent.children || [];
+            parent.children.push(holder);
+        }
+
+        if (item.items && item.items.length > 0) {
+            if (holder.type !== 'group') {
+                holder = Object.assign({}, holder, { type: 'group', children: [] });
+                virtualGroups.push(holder);
+            }
+            item.items.forEach((child) => visit(child, holder));
+        }
+    }
+
+    var rootHolder = Object.assign({},
+        this.makeHolder({ name: 'root' }),
+        {
+            children: [],
+            path: [],
+            type: 'group'
+        });
+    virtualGroups.push(rootHolder);
+    this._data.items.forEach((item) => visit(item, rootHolder));
+    virtualGroups = virtualGroups.filter(it => it.children && it.children.length > 0);
+    this.itemHolders = virtualGroups;
+};
+
+MSMSearchingPlugin.prototype.onResume = function () {
+    this.elt.addClass('as-searching');
+    //view search
+};
+
+
+MSMSearchingPlugin.prototype.onPause = function () {
+    this.elt.removeClass('as-searching');
+    //view origin
+};
+
+MSMSearchingPlugin.prototype.onStop = function () {
+    this.$input.on('stopchange', this.ev_inputStopTyping);
+    if (this.$input.isDescendantOf(this.elt)) {
+        this.$input.remove();
+    }
+
+    //turn off event
+};
+
+MSMSearchingPlugin.prototype.makeHolder = function (item) {
+    var spliter = /[\s,-\.+?\_]+/;
+    var notEmp = function (e) {
+        return e.length > 0;
+    };
+    var res = {
+        item: item,
+        text: item.name || item.searchName || '',
+        hidden: !!item.hidden,
+        type: item.type
+    };
+    if (item.hidden) return res;
+    res.text = res.text.toLowerCase();
+    res.words = res.text.split(spliter).filter(notEmp);
+    res.text = res.words.join(' ');
+    res.nacWords = res.words.map(txt => nonAccentVietnamese(txt));
+    res.nacText = res.nacWords.join(' ');
+    res.wordDict = res.words.reduce((ac, cr) => {
+        ac[cr] = true;
+        return ac;
+    }, {});
+    res.nacWordDict = res.nacWords.reduce((ac, cr) => {
+        ac[cr] = true;
+        return ac;
+    }, {});
+    return res;
+};
+
+MSMSearchingPlugin.prototype.calcScore = function (queryHolder, itemHolder) {
+    var score = 0;
+    var mustIncluded = false;
+    if (itemHolder.nacText.indexOf(queryHolder.nacText) >= 0) mustIncluded = true;
+    if (itemHolder.text.indexOf(queryHolder.text) >= 0) mustIncluded = true;
+    score += wordsMatch(queryHolder.words, itemHolder.words) / harmonicMean(queryHolder.words.length, itemHolder.words.length);
+    score += wordsMatch(queryHolder.nacWords, itemHolder.nacWords) / harmonicMean(queryHolder.nacWords.length, itemHolder.nacWords.length);
+    var dict = Object.keys(itemHolder.nacWordDict);
+    Object.keys(queryHolder.nacWordDict).forEach(function (qWord) {
+        var bestWordScore = 0;
+        var bestWord = '';
+        var word;
+        for (word in dict) {
+            if (wordLike(qWord, word) > bestWordScore) {
+                bestWordScore = wordLike(qWord, word);
+                bestWord = word;
+            }
+        }
+        if (bestWordScore > 0) {
+            score += bestWordScore / harmonicMean(qWord.length, bestWord.length);
+            delete dict[bestWord];
+        }
+    });
+
+    return { score: score, mustIncluded: mustIncluded };
+};
+
+
+MSMSearchingPlugin.prototype.ev_inputStopTyping = function () {
+    var query = this.$input.value;
+    this.query(query);
+};
+
+MSMSearchingPlugin.prototype.query = function (query) {
+    query = query || '';
+    query = query.trim();
+
+    if (query && query.length > 0 && this.state !== 'RUNNING') {
+        this.start();
+    }
+    else if (!query || query.length === 0) {
+        this.pause();
+        return;
+    }
+
+    var scoreList = [];
+    var queryHolder = this.makeHolder({ name: query }, -1);
+    var visit2calcScore = (holder) => {
+        var res = Object.assign({
+            item: holder.item,
+            type: holder.type,
+            path: holder.path
+        }, this.calcScore(queryHolder, holder));
+        scoreList.push(res.score);
+        if (holder.children) {
+            res.children = holder.children.map(visit2calcScore);
+            res.childrenScore = res.children.reduce((ac, cr) => Math.max(ac, cr.score, cr.childrenScore || 0), 0);
+            res.treeScore = Math.max(res.score, res.childrenScore || 0);
+        }
+        return res;
+    };
+
+    var itemsHolders = this.itemHolders.map(visit2calcScore);
+    scoreList.push(0);
+    scoreList.sort((a, b) => b - a);
+    var maxScore = scoreList[0] || 0;
+    var midScore;
+    if (maxScore < 1) {
+        midScore = Math.max(maxScore - 0.2, 0.1);
+        midScore = Math.max(midScore, scoreList[Math.floor(scoreList.length * 0.2 * maxScore)] - 0.01);
+
+    }
+    else {
+        midScore = maxScore * 0.6;
+        midScore = Math.max(midScore, scoreList[Math.floor(scoreList.length * 0.3)] - 0.1);
+    }
+
+    var visit2filter = function (holder) {
+        var score = holder.score;
+        var childrenScore = holder.childrenScore || 0;
+        if (holder.mustIncluded) return true;
+        if (score >= midScore && childrenScore <= score) return true;
+        if (holder.children) {
+            holder.children = holder.children.filter(visit2filter);
+            return holder.children.length > 0;
+        }
+        return false;
+    };
+
+    itemsHolders = itemsHolders.filter(visit2filter);
+
+    itemsHolders.forEach(holder => {
+        if (holder.children)
+            holder.children.sort((a, b) => b.treeScore - a.treeScore);
+    });
+
+    itemsHolders.sort((a, b) => b.treeScore - a.treeScore);
+
+    this.$seachGroups.forEach(elt => elt.remove());
+    this.$seachGroups = itemsHolders.map(holder => {
+        var elt = _({
+            tag: MExploreGroup,
+            class: 'as-search-result',
+            props: {},
+            on: {
+                press: (event) => {
+                    this.elt.emit('press', Object.assign({ groupElt: elt, groupData: holder.item }, event), this.elt);
+                }
+            }
+        });
+        if (window.ABSOL_DEBUG) {
+            elt.attr('title', 'score: ' + holder.score + ', childrenScore: ' + holder.childrenScore);
+        }
+        if (holder.item.name === 'root') {
+            elt.name = '/';
+        }
+        else {
+            elt.name = holder.path.slice(1).concat(holder.item.name).join(' / ');
+        }
+        if (holder.children) {
+            elt.items = holder.children.map(child => Object.assign({ score: child.score }, child.item));
+        }
+
+        return elt;
+    });
+    this.elt.addChild(this.$seachGroups);
+};
+
+
+Object.defineProperty(MSMSearchingPlugin.prototype, 'data', {
+    get: function () {
+        return this._data;
+    },
+    set: function (value) {
+        this.stop();
+        value = value || null;
+        if (value && !value.items) value = null;
+        if (value && !value.items.length) value = null;
+        this._data = value;
+        if (value) this.start(true);
+    }
+});
