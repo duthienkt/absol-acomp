@@ -373,6 +373,7 @@ button.am-header-bar-action {
 .am-springboard-menu {
     --item-width: 150px;
     outline: none;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 
 .am-springboard-menu.am-style-simple {
@@ -434,5 +435,21 @@ button.am-header-bar-action {
     background-color: var(--as-transparent-button-active-color);
 }
 
+.am-springboard-menu > .absol-search-text-input {
+    margin: 10px;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+.am-springboard-menu::before{
+    content: "";
+    display: block;
+    height: 1px;
+}
 
 /*justify-content: space-between;*/
+
+
+.am-springboard-menu.as-searching .am-explore-group:not(.as-search-result),
+.am-springboard-menu:not(.as-searching) .am-explore-group.as-search-result {
+    display: none;
+}
