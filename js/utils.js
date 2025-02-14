@@ -770,6 +770,7 @@ export function replaceChildrenInElt(elt, childNodes) {
 }
 
 export function findVScrollContainer(elt) {
+    if (!elt) return  null;
     var parent = elt.parentElement;
     var overflowStyle;
     while (parent) {
