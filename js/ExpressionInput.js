@@ -614,6 +614,11 @@ EIEngine.prototype.isSymbolToken = function (node) {
     return node.getAttribute('data-type') === 'symbol';
 };
 
+EIEngine.prototype.isMemberSymbolToken = function (node) {
+    return this.isSymbolToken(node) && node.innerText === '->';
+};
+
+
 EIEngine.prototype.isSkipToken = function (node) {
     if (this.isTextNode(node)) return false;
     return node.getAttribute('data-type') === 'skip';
@@ -1230,7 +1235,27 @@ EIAutoCompleteController.prototype.getCurrentSearch = function () {
     if (!engine.isWordToken(tokenElt)) {
         tokenElt = tokenElt.previousSibling;
     }
-    if (!tokenElt || !engine.isWordToken(tokenElt)) return null;
+    if (!tokenElt) return null;
+    var temp = tokenElt;
+    while (temp) {
+        if (engine.isSymbolToken(temp)) {
+            if ((engine.stringOf(temp) === '->')) {
+                tokenElt = temp;
+            }
+            else {
+                break;
+            }
+        }
+        else if (engine.isSkipToken(temp)) {
+
+        }
+        else if (engine.isWordToken(temp)) {
+            tokenElt = temp;
+        }
+        temp = temp.nextSibling;
+    }
+
+    if (!engine.isWordToken(tokenElt) && !engine.isMemberSymbolToken(tokenElt)) return null;
 
     var res = {
         prefix: '',
@@ -1239,7 +1264,7 @@ EIAutoCompleteController.prototype.getCurrentSearch = function () {
         prefixStartElt: null
     };
 
-    var temp = tokenElt;
+    temp = tokenElt;
     var prefixStartElt = engine.findPrefixWordTokenOf(tokenElt);
 
     res.value = engine.stringOf(tokenElt);
@@ -1265,6 +1290,7 @@ EIAutoCompleteController.prototype.getCurrentSearch = function () {
 EIAutoCompleteController.prototype.getCurrentText = function () {
     var pos = this.elt.engine.getSelectPosition();
     if (!pos) return '';
+
     var res = {
         value: '',
         tokenElt: null
@@ -1283,6 +1309,8 @@ EIAutoCompleteController.prototype.getCurrentText = function () {
         res.value = tokenElt.innerText;
         res.tokenElt = tokenElt;
     }
+
+    console.log(res);
 
     return res;
 };
@@ -1557,28 +1585,23 @@ EIAutoCompleteController.prototype.getSuggestionTree = function (query) {
 
 EIAutoCompleteController.prototype.applySuggestion = function (suggestion) {
     var engine = this.elt.engine;
+    var query = this.query;
     var key = suggestion.key;
     var words = key.split('->');
-    var range = engine.getRange();
-    var selected = this.elt.engine.getSelectPosition();
-    var startToken = this.elt.engine.tokenAt(selected.start);
-    var endToken = this.elt.engine.tokenAt(selected.end);
+    var startToken = query && query.prefixStartElt;
+    var endToken = query && query.tokenElt;
+    startToken = startToken || endToken;
+    var range;
+
     var rangeStartCtn, rangeStartOffset, rangeEndCtn, rangeEndOffset;
     var i, tokenElt;
-    var prefixToken = engine.findPrefixWordTokenOf(startToken);
-    if (prefixToken) {
-        startToken = prefixToken;
-    }
+
     var oldValue, newValue;
+    var selected;
 
 
-    if (!startToken || !endToken) {
-        oldValue = this.elt.value;
-        newValue = oldValue + key;
-        this.elt.engine.value = newValue;
-        this.elt.engine.setSelectedPosition(newValue.length);
-    }
-    else if (engine.isWordToken(startToken) && (engine.isWordToken(endToken) || engine.stringOf(endToken) === '->')) {
+    if (startToken && endToken && engine.isWordToken(startToken)
+        && (engine.isWordToken(endToken) || engine.stringOf(endToken) === '->')) {
         for (i = 0; i < words.length; ++i) {
             if (i > 0) {
                 tokenElt = engine.makeTokenElt({ type: 'symbol', content: '->' });
@@ -1606,9 +1629,10 @@ EIAutoCompleteController.prototype.applySuggestion = function (suggestion) {
     }
     else {
         oldValue = this.elt.value;
+        selected = engine.getSelectPosition();
         newValue = oldValue.substring(0, selected.start) + key + oldValue.substring(selected.end);
         this.elt.engine.value = newValue;
-        this.elt.engine.setSelectedPosition(selected.start + suggestion.length);
+        this.elt.engine.setSelectedPosition(selected.start + key.length);
     }
     engine.updateTokenExType();
 };
