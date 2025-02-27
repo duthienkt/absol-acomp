@@ -322,7 +322,9 @@ EIUserActionController.prototype.ev_keydown = function (event) {
         }, 200);
     }
     this.delayNotifyStopChange();
-    this.elt.notifySizeCanBeChanged();
+    setTimeout(() => {
+        this.elt.notifySizeCanBeChanged();
+    }, 1);
 };
 
 EIUserActionController.prototype.ev_paste = function (event) {
@@ -430,8 +432,8 @@ EIEngine.prototype.highlightError = function () {
         elt.removeClass('as-error');
     }
 
-    for (i = 0; i < contentElt.childNodes.length; ++i) {
-        if (contentElt.childNodes[i].classList.contains('as-token') && contentElt.childNodes[i].getAttribute('data-type') !== 'skip') {
+    for (i = 0; i < contentElt.childNodes.length; ++i) {//todo: fix conflict (run before redraw)
+        if (contentElt.childNodes[i].getAttribute &&contentElt.childNodes[i].classList.contains('as-token') && contentElt.childNodes[i].getAttribute('data-type') !== 'skip') {
             if (notSkipCount === tokenErrorIdx) {
                 contentElt.childNodes[i].classList.add('as-unexpected-token');
             }
@@ -539,6 +541,8 @@ EIEngine.prototype.updateTokenExType = function () {
 EIEngine.prototype.redrawTokens = function () {
     this.drawTokensContent();
     this.updateTokenExType();
+    this.elt.notifySizeCanBeChanged();
+
 };
 
 /**
@@ -717,7 +721,7 @@ EIEngine.prototype.breakNode = function (node, offset) {
     else {
         return this.breakElement(node, offset);
     }
-}
+};
 
 
 EIEngine.prototype.breakLine = function () {
@@ -1296,7 +1300,7 @@ EIAutoCompleteController.prototype.getCurrentText = function () {
         tokenElt: null
     };
     var tokenElt = this.elt.engine.tokenAt(pos.start);
-    if (!tokenElt || tokenElt.getAttribute('data-type') !== 'word') {
+    if (!tokenElt || !tokenElt.getAttribute || tokenElt.getAttribute('data-type') !== 'word') {
         res.tokenElt = tokenElt;
         res.value = '';
         tokenElt = null;
@@ -1305,7 +1309,7 @@ EIAutoCompleteController.prototype.getCurrentText = function () {
         tokenElt = this.elt.engine.tokenAt(pos.start - 1);
     }
 
-    if (tokenElt && tokenElt.getAttribute('data-type') === 'word') {
+    if (tokenElt && tokenElt.getAttribute && tokenElt.getAttribute('data-type') === 'word') {
         res.value = tokenElt.innerText;
         res.tokenElt = tokenElt;
     }
