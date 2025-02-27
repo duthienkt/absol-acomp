@@ -15,6 +15,10 @@ import MobileInputFormOutlineIconText from '../assets/icon/mobile_input_form_out
 import MobileOutputFormOutlineIconText from '../assets/icon/mobile_output_form_outline.tpl';
 import CityIconText from '../assets/icon/city.tpl';
 import CountryIconText from '../assets/icon/country.tpl';
+import ConfigurationFormOutlineIconText from '../assets/icon/configuration_form_outline.tpl';
+import FunctionManagerText from '../assets/icon/function_manager.tpl';
+import DataTypeConfiguratorOutlineIconText from '../assets/icon/data_type_configuration_outline.tpl';
+import TimeBasedPayrollReportIconText from '../assets/icon/time_based_payroll_report.tpl';
 import '../css/icons.css';
 import Color from "absol/src/Color/Color";
 
@@ -177,3 +181,34 @@ FontColorIcon.property.value = {
     }
 };
 
+export function ConfigurationFormOutlineIcon() {
+    return _(ConfigurationFormOutlineIconText);
+}
+
+ConfigurationFormOutlineIcon.tag = 'ConfigurationFormOutlineIcon'.toLowerCase();
+
+ACore.install(ConfigurationFormOutlineIcon);
+
+export function FunctionManagerIcon() {
+    return _(FunctionManagerText);
+}
+
+FunctionManagerIcon.tag = 'FunctionManagerIcon'.toLowerCase();
+
+ACore.install(FunctionManagerIcon);
+
+export function DataTypeConfiguratorOutlineIcon() {
+    return _(DataTypeConfiguratorOutlineIconText);
+}
+
+DataTypeConfiguratorOutlineIcon.tag = 'DataTypeConfiguratorOutlineIcon'.toLowerCase();
+
+ACore.install(DataTypeConfiguratorOutlineIcon);
+
+export function TimeBasedPayrollReportIcon() {
+    return _(TimeBasedPayrollReportIconText);
+}
+
+TimeBasedPayrollReportIcon.tag = 'TimeBasedPayrollReportIcon'.toLowerCase();
+
+ACore.install(TimeBasedPayrollReportIcon);
