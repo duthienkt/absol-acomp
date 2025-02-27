@@ -636,7 +636,7 @@ CDGrid.prototype.addColAt = function (newColIdx) {
 CDGrid.prototype.removeRowAt = function (rowIdx, rowHeight) {
     if (!isNaturalNumber(rowHeight)) rowHeight = 1;
     rowHeight = rowHeight || 1;
-    var body = this.$body;
+    var body = this.$grid;
     var row, cell;
     var loc;
     var rmLoc = [rowIdx, 0, rowHeight, 100];
