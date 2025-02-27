@@ -171,6 +171,7 @@ import EfficientTable from "../EfficientTable";
 import CompactDataGridEditor from "../CompactDataGridEditor";
 import SelectRibbonMenu from "../SelectRibbonMenu";
 import PathView from "../PathView";
+import FontInput, { FontFamilySelectList } from "../FontInput";
 
 
 export var publicCreators = [
@@ -208,6 +209,8 @@ export var publicCreators = [
     FileListItem,
     FileListInput,
     Finder,
+    FontFamilySelectList,
+    FontInput,
     Scrollbar,
     VScrollbar,
     HScrollbar,
