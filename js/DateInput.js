@@ -1,15 +1,16 @@
 import '../css/dateinput.css';
 
 import ACore from "../ACore";
-import {daysInMonth, beginOfDay, compareDate, formatDateString} from "absol/src/Time/datetime";
+import { daysInMonth, beginOfDay, compareDate, formatDateString, implicitDate } from "absol/src/Time/datetime";
 import ChromeCalendar from "./ChromeCalendar";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { drillProperty } from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 /**
+ * @deprecated
  * @extends AElement
  * @constructor
  */
@@ -23,19 +24,59 @@ function DateInput() {
         .on('paste', this.eventHandler.paste)
         .on('cut', this.eventHandler.cut)
         .on('focus', this.eventHandler.focus);
-    this._minLimitDate = new Date(1890, 0, 1, 0, 0, 0, 0);
-    this._maxLimitDate = new Date(2090, 0, 1, 0, 0, 0, 0);
+    this._min = new Date(1890, 0, 1, 0, 0, 0, 0);
+    this._max = new Date(2090, 0, 1, 0, 0, 0, 0);
     this.$calendarBtn = $('.as-date-input-icon-ctn', this)
         .on('mousedown', this.eventHandler.mousedownCalendarBtn);
     this._calendarHolder = ChromeCalendar.showWhenClick(this.$calendarBtn, {
-        minLimitDate: this._minLimitDate,
-        maxLimitDate: this._maxLimitDate,
+        minLimitDate: this.min,
+        maxLimitDate: this.max,
         selectedDates: [new Date()],
     }, 'auto', this.eventHandler.calendarSelect);
     this._calendarHolder.element = this;
     this._formater = DateInput.formaters[this._format];
-    OOP.drillProperty(this, this._calendarHolder.calendarProps, ['minLimitDate', 'maxLimitDate']);
+
+
+    OOP.drillProperty(this, 'minLimitDate', 'min');
+    OOP.drillProperty(this, 'maxLimitDate', 'max');
+
     this.value = null;
+    /**
+     * @type {Date}
+     * @name min
+     * @memberOf DateInput#
+     */
+
+    /**
+     * @type {Date}
+     * @name max
+     * @memberOf DateInput#
+     */
+
+    /**
+     * @type {Date}
+     * @name value
+     * @memberOf DateInput#
+     */
+
+    /**
+     * @type {string}
+     * @name format
+     * @memberOf DateInput#
+     */
+
+    /**
+     * @deprecated
+     * @type {Date}
+     * @name minLimitDate
+     * @memberOf DateInput#
+     */
+    /**
+     * @deprecated
+     * @type {Date}
+     * @name maxLimitDate
+     * @memberOf DateInput#
+     */
 }
 
 DateInput.formaters = {
@@ -98,7 +139,7 @@ DateInput.render = function () {
             }
         },
             {
-                tag:'button',
+                tag: 'button',
                 class: 'as-date-input-icon-ctn',
                 child: 'span.mdi.mdi-calendar'
             }
@@ -240,7 +281,7 @@ DateInput.eventHandler.blur = function () {
     }
     if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
         var dateValue = new Date(year, month - 1, day, 0, 0, 0, 0);
-        if (this._lastValue == null || compareDate(dateValue, this._lastValue) != 0) {
+        if (this._lastValue == null || compareDate(dateValue, this._lastValue) !== 0) {
             this.value = dateValue;
             this.notifyChange();
         }
@@ -297,17 +338,17 @@ DateInput.eventHandler.keydown = function (event) {
 
     var i0 = indexOf(slStart);
     var i1 = indexOf(slEnd);
-    if (event.key == 'Enter') {
+    if (event.key === 'Enter') {
         event.preventDefault();
         this.$input.blur();
     }
-    else if (event.key == 'Meta') {
+    else if (event.key === 'Meta') {
         event.preventDefault();
     }
-    else if (event.key == 'Backspace') {
-        if (slStart == slEnd) {
+    else if (event.key === 'Backspace') {
+        if (slStart === slEnd) {
             if (slStart > 0) {
-                if (value.charAt(slStart - 1) == this._formater.separator) {
+                if (value.charAt(slStart - 1) === this._formater.separator) {
                     event.preventDefault();
                     this.$input.value = value;
                     this.$input.selectionStart = slStart - 1;
@@ -315,15 +356,15 @@ DateInput.eventHandler.keydown = function (event) {
                 }
             }
         }
-        else if (i0 != i1) {
+        else if (i0 !== i1) {
             event.preventDefault();
             this.$input.value = value.substr(0, sStart) + this._onlySeparator(selectedValue) + value.substr(sEnd);
             this.$input.selectionStart = slStart;
             this.$input.selectionEnd = slStart;
         }
     }
-    else if (event.key == 'Delete') {
-        if (slStart == slEnd) {
+    else if (event.key === 'Delete') {
+        if (slStart === slEnd) {
             if (slStart < value.length) {
                 if (value.charAt(slStart) == this._formater.separator) {
                     event.preventDefault();
@@ -333,7 +374,7 @@ DateInput.eventHandler.keydown = function (event) {
                 }
             }
         }
-        else if (i0 != i1) {
+        else if (i0 !== i1) {
             event.preventDefault();
             this.$input.value = value.substr(0, sStart) + this._onlySeparator(selectedValue) + value.substr(sEnd);
             this.$input.selectionStart = slStart;
@@ -342,11 +383,11 @@ DateInput.eventHandler.keydown = function (event) {
     }
     else if (!event.ctrlKey && !event.altKey && event.key && event.key.length == 1) {
         if (this._isAcceptKey(event.key)) {
-            if (event.key == this._formater.separator) {
-                if (slashSelectedCount == 0 && slashValueCount >= 2 && value.charAt(slEnd) != this._formater.separator) {
+            if (event.key === this._formater.separator) {
+                if (slashSelectedCount === 0 && slashValueCount >= 2 && value.charAt(slEnd) !== this._formater.separator) {
                     event.preventDefault();
                 }
-                else if (value.charAt(slEnd) == this._formater.separator) {
+                else if (value.charAt(slEnd) === this._formater.separator) {
                     event.preventDefault();
                     this.$input.selectionStart = lTexts[i1];
                     this.$input.selectionEnd = lTexts[i1 + 1] - 1;
@@ -357,7 +398,7 @@ DateInput.eventHandler.keydown = function (event) {
             event.preventDefault();
         }
     }
-    else if (!event.ctrlKey && !event.altKey && event.key == "Tab") {
+    else if (!event.ctrlKey && !event.altKey && event.key === "Tab") {
         if (event.shiftKey) {
             if (i0 > 1) {
                 event.preventDefault();
@@ -403,7 +444,7 @@ DateInput.property.value = {
 DateInput.property.format = {
     set: function (value) {
         value = value || 'dd/mm/yyyy';
-        if (value == this._format) return;
+        if (value === this._format) return;
         if (DateInput.formaters[value]) {
             this._formater = DateInput.formaters[value];
             this._format = value;
@@ -429,6 +470,38 @@ DateInput.property.disabled = {
         return this.$input.disabled;
     }
 };
+
+DateInput.property.max = {
+    set: function (value) {
+        value = implicitDate(value);
+        this._max = value;
+
+        //update calendar
+        this._calendarHolder.opt.props.minLimitDate = this.min;
+        this._calendarHolder.opt.props.maxLimitDate = this.max;
+    },
+    get: function () {
+        var value = this._max;
+        if (compareDate(value, this._min) < 0) value = this._min;
+        return value;
+    }
+};
+
+
+DateInput.property.min = {
+    set: function (value) {
+        value = implicitDate(value);
+        this._min = value;
+
+        //update calendar
+        this._calendarHolder.opt.props.minLimitDate = this.min;
+        this._calendarHolder.opt.props.maxLimitDate = this.max;
+    },
+    get: function () {
+        return this._min;
+    }
+};
+
 
 ACore.install(DateInput);
 
