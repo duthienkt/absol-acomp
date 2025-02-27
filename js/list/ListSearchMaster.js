@@ -27,6 +27,7 @@ ListSearchMaster.prototype.prepare = function () {
 };
 
 ListSearchMaster.prototype.transfer = function (items) {
+    this.prepare();
     this.cache = {};
     return this.share.worker.invoke('transferSearchItems', this.id, items);
 };
@@ -43,8 +44,10 @@ ListSearchMaster.prototype.query = function (query) {
 
 
 ListSearchMaster.prototype.destroy = function () {
+    // return;
     this.cache = {};
     this.share.worker.invoke('destroySlave', this.id);
+    return;
     this.destroy = noop;
     var idx = this.share.instances.indexOf(this.id);
     if (idx >= 0) {
@@ -57,6 +60,7 @@ ListSearchMaster.prototype.destroy = function () {
 };
 
 ListSearchMaster.prototype.revokeResource = function () {
+   return;
     this.destroy();
     this.revokeResource = noop;
 };
