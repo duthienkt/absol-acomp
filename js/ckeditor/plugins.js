@@ -59,10 +59,12 @@ export function ckInit() {
     ckContentStyleUrl = URL.createObjectURL(stringToBlob(styleCode, 'css'));
     ckPluginInitialized = true;
     document.head.appendChild(_('<link rel="stylesheet" href="' + ckContentStyleUrl + '">'));
-    CKEDITOR.stylesSet.add('as_styles_set_default', CKStylesSetDefault);
+    if (!CKEDITOR.stylesSet.get('as_styles_set_default')) {
+        CKEDITOR.stylesSet.add('as_styles_set_default', CKStylesSetDefault);
+    }
     CKExtensions.forEach(function (e) {
         if (e.plugin) {
-            CKEDITOR.plugins.add(e.name, e.plugin)
+            CKEDITOR.plugins.add(e.name, e.plugin);
         }
     })
 }
