@@ -1,0 +1,61 @@
+.as-font-input {
+    display: inline-block;
+    vertical-align: middle;
+    height: calc(2em + 2px);
+    width: 12em;
+    border-radius: 3px;
+    border: 1px solid #ddd;
+
+}
+
+.as-font-input-family {
+
+}
+
+.as-font-input-size {
+
+}
+
+
+
+.as-font-family-select-list {
+    font-size: 16px;
+    cursor: default;
+    user-select: none;
+    min-width: 12em;
+    padding-top: 40px;
+
+}
+
+.as-font-family-select-list-header{
+    padding: 5px;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    height: 40px;
+    top: 0;
+}
+
+.as-font-family-select-list-content {
+    overflow-y: auto;
+}
+
+.as-font-family-select-item {
+    height: 2em;
+    line-height: 2em;
+    padding: 0 20px 0 10px;
+
+}
+
+.as-font-family-select-item:hover {
+    background-color: var(--as-list-item-hover-background-color);
+}
+
+.as-font-family-select-item:active {
+    /*background-color: var(--as-list-item-active-background-color);*/
+}
+
+.as-font-family-select-item.as-selected {
+    background-color: var(--as-list-item-selected-background-color);
+}
