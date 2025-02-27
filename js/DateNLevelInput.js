@@ -1,6 +1,7 @@
 import ACore, { _, $ } from "../ACore";
 import { compareDate } from "absol/src/Time/datetime";
 import QuickMenu from "./QuickMenu";
+import { drillProperty } from "absol/src/HTML5/OOP";
 
 /**
  * @extends {AElement}
@@ -8,9 +9,39 @@ import QuickMenu from "./QuickMenu";
  */
 function DateNLevelInput() {
     this.$level = $('.as-date-n-level-input-select-level', this);
+    /**
+     *
+     * @type {DateInput}
+     */
     this.$date = $('dateinput', this);
     this.ctrl = new DateNLevelInputCtrl(this);
     this._allowLevels = this.defaultAllowLevels.slice();
+    drillProperty(this, this.$date, 'min');
+    drillProperty(this, this.$date, 'max');
+    /**
+     * @name level
+     * @type {"date"| "week" | "month" | "quarter" | "year"}
+     * @memberOf DateNLevelInput#
+     * */
+
+    /**
+     * @name allowLevels
+     * @type {Array<"date"| "week" | "month" | "quarter" | "year">}
+     * @memberOf DateNLevelInput#
+     * */
+
+    /**
+     * @name value
+     * @type {Date}
+     * @memberOf DateNLevelInput#
+     * */
+
+    /**
+     * @readonly
+     * @name format
+     * @type {string}
+     * @memberOf DateNLevelInput#
+     * */
 }
 
 
