@@ -1588,7 +1588,15 @@ CCHeaderController.prototype.ev_clickTitle = function () {
 
 };
 
-
+/**
+ *
+ * @param {AElement|HTMLElement} element
+ * @param calendarProps
+ * @param anchor
+ * @param {function} calendarPickListener
+ * @param {boolean=} darkTheme
+ * @returns {CCShareDropDownInstance}
+ */
 ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calendarPickListener, darkTheme) {
     var opt = {
         props: calendarProps,
