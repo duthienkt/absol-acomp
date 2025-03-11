@@ -176,6 +176,7 @@ export function searchListByText(query, items) {
         return items;
     var queryItem = prepareSearchForItem({ text: query });
     var its = items.map(function (item) {
+        if (!item.__text__) prepareSearchForItem(item);
         return {
             item: item,
             score: calcItemMatchScore(queryItem, item),
