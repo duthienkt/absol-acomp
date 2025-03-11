@@ -1,0 +1,231 @@
+.as-collapsible-tree-navigator {
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    border-bottom: 1px solid #aaaaaa;
+    /*border-left: 1px solid #aaaaaa;*/
+    user-select: none;
+    padding-right: 4px;
+    position: relative;
+    box-sizing: border-box;
+    --level: 0;
+    --selected-y: 0;
+}
+
+.as-collapsible-tree-navigator::after {
+    content: "";
+    position: absolute;
+    transition: top 0.2s;
+    top: var(--selected-y);
+    height: 30px;
+    border-right: 4px solid rgb(20, 100, 246);
+    right: 0;
+}
+
+
+.as-ctn-collapse-node {
+    --children-height: 1000px;
+}
+
+
+.as-ctn-right > span.mdi {
+    font-size: 20px;
+    vertical-align: middle;
+    transition: transform 0.2s ease-in-out;
+    transform: rotate(0deg);
+    visibility: hidden;
+    display: inline-block;
+
+}
+
+.as-ctn-collapse-node.as-close .as-ctn-right > span.mdi-chevron-right {
+    visibility: visible;
+}
+
+.as-ctn-collapse-node.as-open .as-ctn-right > span.mdi-chevron-right {
+    visibility: visible;
+    transform: rotate(90deg);
+}
+
+.as-ctn-collapse-node-content {
+    height: 31px;
+    box-sizing: border-box;
+    padding: 0 50px 0 8px;
+    position: relative;
+    background-color: rgb(240, 240, 242);
+    border-top: 1px solid #aaaaaa;
+    /*border-right: 1px solid #aaaaaa;*/
+}
+
+
+.as-ctn-collapse-node-content:hover,
+.as-ctn-node-content:hover {
+    background-color: var(--as-transparent-button-hover-color);
+}
+
+.as-ctn-collapse-node-content::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.as-ctn-collapse-node.as-open .as-ctn-collapse-node-children-ctn {
+    /*max-height: calc(var(--children-height) + 1px);*/
+}
+
+
+.as-ctn-collapse-node.as-close .as-ctn-collapse-node-children-ctn,
+.as-ctn-node.as-close .as-ctn-node-children-ctn {
+    /*max-height: 0;*/
+    display: none;
+}
+
+
+.as-ctn-collapse-node-children-ctn,
+.as-ctn-node-children-ctn
+{
+    box-sizing: border-box;
+
+}
+
+.as-ctn-collapse-node.as-open .as-ctn-collapse-node-content,
+.as-ctn-collapse-node:not(:last-child) {
+    /*border-bottom: 1px solid rgb(60, 60, 62);*/
+}
+
+.as-ctn-right {
+    position: absolute;
+    right: 10px;
+    top: 0;
+    height: 100%;
+}
+
+.as-ctn-right::after {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.as-ctn-text {
+    margin-left: 7px;
+}
+
+.as-ctn-text, .as-ctn-icon-ctn {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-ctn-count {
+    font-size: 14px;
+    box-sizing: border-box;
+    text-align: center;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: rgb(113, 148, 169);
+    line-height: 20px;
+    min-width: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 20px;
+    border-radius: 10px;
+    margin-left: 5px;
+    color: white;
+}
+
+
+.as-ctn-node {
+    position: relative;
+}
+
+.as-ctn-node::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    height: 15px;
+    border-left: 1px solid #ccc;
+}
+
+.as-ctn-node-children-ctn:empty,
+.as-ctn-node-children-ctn:empty {
+    display: none;
+}
+
+.as-ctn-node-children-ctn .as-ctn-node:first-child::before {
+    top: -15px;
+    height: 30px;
+}
+
+.as-ctn-node:not(:last-child)::before {
+    height: 100%;
+}
+
+
+.as-ctn-node-content {
+    height: 30px;
+    padding-right: 10px;
+    box-sizing: border-box;
+    padding-left: calc(15px * var(--level) + 25px);
+}
+
+.as-ctn-node-content::after {
+    content: "";
+    position: absolute;
+    width: 35px;
+    border-top: 1px solid #ccc;
+    top: 15px;
+}
+
+.as-ctn-node::before,
+.as-ctn-node-content::after {
+    left: calc(15px * var(--level) - 15px);
+}
+
+
+.as-ctn-node-content::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.as-ctn-node-children-ctn {
+    box-sizing: border-box;
+
+}
+
+
+.as-ctn-collapse-node.as-selected > .as-ctn-collapse-node-content .as-ctn-text,
+.as-ctn-node.as-selected > .as-ctn-node-content .as-ctn-text {
+    text-shadow: 1px 0 0 currentColor;
+}
+
+.as-ctn-node-children-ctn .as-ctn-node-content::after,
+.as-ctn-node-children-ctn .as-ctn-node::before {
+    left: calc(15px * var(--level) - 10px);
+}
+
+
+.as-ctn-node-children-ctn .as-ctn-node-content {
+    padding-left: calc(15px * var(--level) + 30px);
+}
+
+.as-ctn-collapse-node-content .toggler-ico,
+.as-ctn-node-content .toggler-ico {
+    display: inline-block;
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+}
+
+.as-ctn-collapse-node-content .toggler-ico g,
+.as-ctn-node-content .toggler-ico g {
+    visibility: hidden;
+}
+
+.as-ctn-collapse-node.as-open > .as-ctn-collapse-node-content .toggler-ico .toggle-open,
+.as-ctn-collapse-node.as-close > .as-ctn-collapse-node-content .toggler-ico .toggle-close,
+.as-ctn-node.as-open > .as-ctn-node-content .toggler-ico .toggle-open,
+.as-ctn-node.as-close > .as-ctn-node-content .toggler-ico .toggle-close {
+    visibility: visible;
+}

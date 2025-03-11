@@ -172,6 +172,7 @@ import CompactDataGridEditor from "../CompactDataGridEditor";
 import SelectRibbonMenu from "../SelectRibbonMenu";
 import PathView from "../PathView";
 import FontInput, { FontFamilySelectList } from "../FontInput";
+import CollapsibleTreeNavigator from "../CollapsibleTreeNavigator";
 
 
 export var publicCreators = [
@@ -196,6 +197,7 @@ export var publicCreators = [
     CircleSectionLabel,
     CountdownClock,
     CountdownText,
+    CollapsibleTreeNavigator,
     DateInYearPicker,
     DateInYearInput,
     DateTimeInput,
@@ -396,6 +398,7 @@ function install(core) {
     core.install('MSelectTreeLeafMenu'.toLowerCase(), SelectTreeLeafMenu);
     core.install('MMultiCheckTreeMenu'.toLowerCase(), MultiCheckTreeMenu);
     core.install('MMultiCheckTreeLeafMenu'.toLowerCase(), MultiCheckTreeLeafMenu);
+    core.install('mknav', MKNavigator);
 }
 
 export default install;
