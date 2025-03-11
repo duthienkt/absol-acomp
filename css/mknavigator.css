@@ -12,6 +12,10 @@
     -ms-user-select: none;
     -moz-user-select: none;
     --mk-navigator-bound-left: 0;
+    padding-right: 4px;
+    box-sizing: border-box;
+    --max-text-width: 10px;
+    min-width: calc(var(--max-text-width) + 96px);
 }
 
 .mk-nav::after {
@@ -21,7 +25,7 @@
     top: var(--mk-nav-line-top);
     height:  calc(2em + 12px);
     border-right: 4px solid rgb(20, 100, 246);
-    right: -3px;
+    right: 0px;
 }
 
 .mk-nav.mk-has-draggable .mk-nav-item {

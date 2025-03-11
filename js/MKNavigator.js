@@ -2,6 +2,7 @@ import ACore, { $, $$, _ } from "../ACore";
 import '../css/mknavigator.css';
 import BoardTable from "./BoardTable";
 import MKNavigatorItem from "./MKNavigatorItem";
+import { measureText } from "./utils";
 
 /***
  * @typedef MKNavigatorItemData
@@ -25,6 +26,9 @@ function MKNavigator() {
         .on('orderchange', this.eventHandler.bodyOrderChange)
         .on('dragitemstart', this.eventHandler.dragItemStart);
     this.$footer = $('.mk-nav-footer', this);
+    this.on('press', (event, sender) => {
+        this.emit('clickitem', event, sender);
+    });
     /***
      * @type {MKNavigatorItemData[]}
      * @name item
@@ -44,7 +48,7 @@ MKNavigator.tag = 'MKNavigator'.toLowerCase();
 MKNavigator.render = function () {
     return _({
         class: 'mk-nav',
-        extendEvent: ['orderchange', 'checkedchange', 'press'],
+        extendEvent: ['orderchange', 'checkedchange', 'press', 'clickitem'],
         child: [
             {
                 class: 'mk-nav-header'
@@ -160,6 +164,12 @@ MKNavigator.property.items = {
         this.$body.clearChild();
         this.$footer.clearChild();
         var draggable = false;
+        var maxTextWidth = items.reduce((ac, it) => {
+            var tw = measureText(it.text || '').width;
+            return Math.max(ac, tw);
+        }, 0);
+        this.addStyle('--max-text-width', Math.ceil(maxTextWidth) + 'px');
+
         while (i < items.length) {
             if (items[i].draggable) break;
             item = items[i];
@@ -262,6 +272,7 @@ MKNavigator.eventHandler.dragItemStart = function (event) {
 
 
 ACore.install(MKNavigator);
+ACore.install('mknav',MKNavigator);
 
 
 export default MKNavigator;
