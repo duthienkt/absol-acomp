@@ -54,7 +54,6 @@ function MultiSelectMenu() {
     this.itemFocusable = false;
     this._activeValue = undefined;
     this.strictValue = true;
-    // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
 }
 
 MultiSelectMenu.tag = 'MultiSelectMenu'.toLowerCase();
@@ -68,7 +67,6 @@ MultiSelectMenu.render = function () {
         child: [
             {
                 attr:{
-                  'data-placeholder': '',
                   'data-ml-key': 'txt_select_value'
                 },
                 class: ['as-multi-select-menu-item-ctn', 'as-bscroller']

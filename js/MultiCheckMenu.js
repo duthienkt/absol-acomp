@@ -245,6 +245,7 @@ MultiCheckMenu.property.items = {
 
 MultiCheckMenu.property.placeholder = {
     set: function (value) {
+        if (typeof value === "string") value = value.trim();
         if (value) {
             this.$itemCtn.attr('data-placeholder', value + '');
         }
@@ -253,7 +254,7 @@ MultiCheckMenu.property.placeholder = {
         }
     },
     get: function () {
-        return this.$itemCtn.attr('data-placeholder');
+        return this.$itemCtn.attr('data-placeholder')||'';
     }
 };
 
