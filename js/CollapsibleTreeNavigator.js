@@ -191,12 +191,26 @@ Object.defineProperty(CTRoot.prototype, 'contentHeight', {
 Object.defineProperty(CTRoot.prototype, 'items', {
     set: function (items) {
         this.looked = true;
+        var prevState = Object.keys(this.nodeByValue).reduce((ac, key) => {
+            ac[key] = this.nodeByValue[key].status;
+            return ac;
+        }, {});
+
         this.clear();
         this.children = items.map(function (item) {
             return new CTCollapsibleNode(this, item);
         }, this);
         this.elt.addChild(this.children.map(nd => nd.domElt));
-        this.children.forEach(nd => nd.select(this.value));
+        this.select(this.value);
+        Object.keys(this.nodeByValue).forEach(key => {
+           var nd = this.nodeByValue[key];
+           if (prevState[key] === 'open' && nd.status === 'close') {
+               nd.status = 'open';
+           }
+           else if (prevState === 'close' && nd.status === 'open') {
+               nd.status = 'close';
+           }
+        });
         this.looked = false;
         this.elt.addStyle('min-width', Math.ceil(this.minWidth) + 'px');
         this.updateSelectedLine();
@@ -307,12 +321,14 @@ function CTCollapsibleNode(parent, data) {
 }
 
 CTCollapsibleNode.prototype.remove = function () {
+    this.children.slice().forEach(child => child.remove());
     var idx = this.parent.children.indexOf(this);
+    var value = this.value;
     if (idx >= 0) {
+        delete this.nodeByValue[keyStringOf(value)];
         this.parent.children.splice(idx, 1);
         this.domElt.remove();
     }
-
 };
 
 CTCollapsibleNode.prototype.select = function (value) {
@@ -581,7 +597,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'offsetY', {
 
 Object.defineProperty(CTCollapsibleNode.prototype, 'minWidth', {
     get: function () {
-        var res = 50 + 10;//padding
+        var res = 50 + 8;//padding
         res += 14;//tg icon
         res += 7;//text margin
         res += Math.ceil(measureText(this.text, '14px arial').width);
@@ -590,7 +606,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'minWidth', {
         if (this.count) {
             countWidth = measureText(this.count + '', '14px arial').width + 10;//padding 5
             countWidth = Math.ceil(countWidth);
-            countWidth = Math.min(countWidth, 20);//min-width
+            countWidth = Math.max(countWidth, 20);//min-width
             countWidth += 5; //margin
         }
         res += countWidth;
@@ -691,9 +707,35 @@ CTNNode.prototype.ev_click = function (event) {
 
 //copy
 ['status', 'offsetHeight', 'childrenHeight', 'offsetY', 'select',
-    'text', 'count', 'icon', 'value', 'data', 'items', 'actions'].forEach(method => {
+    'text', 'count', 'icon', 'value', 'data', 'items', 'actions', 'remove'].forEach(method => {
     Object.defineProperty(CTNNode.prototype, method, Object.getOwnPropertyDescriptor(CTCollapsibleNode.prototype, method));
 });
+
+
+Object.defineProperty(CTNNode.prototype, 'minWidth', {
+    get: function () {
+        var res = this.level * 25 - 20 + 10;//padding
+        res += 14;//tg icon
+        res += 7;//text margin
+        res += Math.ceil(measureText(this.text, '14px arial').width);
+        this.domElt.attr('data-text-width', Math.ceil(measureText(this.text, '14px arial').width))
+        var countWidth = 0;
+        if (this.count) {
+            countWidth = measureText(this.count + '', '14px arial').width + 10;//padding 5
+            countWidth = Math.ceil(countWidth);
+            countWidth = Math.max(countWidth, 20);//min-width
+            countWidth += 5; //margin-left
+        }
+        res += countWidth;
+        this.domElt.attr('data-local-min-width', res + '');
+
+        res = this.children.reduce((ac, cr) => Math.max(ac, cr.minWidth), res);
+        this.domElt.attr('data-min-width', res + '');
+
+        return res;
+    }
+});
+
 
 Object.defineProperty(CTNNode.prototype, 'contentHeight', {
     get: function () {
