@@ -53,15 +53,15 @@
     box-sizing: border-box;
     border-radius: var(--select-box-item-border-radius);
     overflow: hidden;
-    background-color: #5bc0de;
-    border-color: #46b8da;
+    background-color: rgb(113, 148, 169);
+    border-color: rgb(121, 165, 192);
     vertical-align: top;
     white-space: normal;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    color: black;
+    color: white;
     cursor: pointer;
 }
 
