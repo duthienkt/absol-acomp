@@ -6,6 +6,7 @@ import VariantColors from "./VariantColors";
 import {buildCss} from "./utils";
 import Dom, {isDomNode} from "absol/src/HTML5/Dom";
 import Color from "absol/src/Color/Color";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 
 var $ = ACore.$;
@@ -62,6 +63,10 @@ function Toast() {
     this.timeText = new Date();
     this.message = null;
     this.variant = null;
+    this.addEventListener('click', (event)=>{
+       if (hitElement(this.$closeBtn, event)) return;
+       this.emit('click', event, this);
+    });
 }
 
 Toast.tag = 'toast';
@@ -74,7 +79,7 @@ Toast.tag = 'toast';
 
 Toast.render = function () {
     return _({
-        extendEvent: ['appeared', 'disappeared'],
+        extendEvent: ['appeared', 'disappeared', 'click'],
         class: ['as-toast', 'as-not-appeared'],
         child: [
             {
