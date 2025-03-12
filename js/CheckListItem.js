@@ -113,6 +113,7 @@ CheckListItem.property = {
     text: SelectListItem.property.text,
     value: SelectListItem.property.value,
     icon: SelectListItem.property.icon,
+    lastInGroup: SelectListItem.property.lastInGroup,
 };
 
 CheckListItem.property.data = {
@@ -125,6 +126,7 @@ CheckListItem.property.data = {
             extendStyle: null,
             extendClasses: null,
             icon: null,
+            lastInGroup:false
         };
         if (typeof value === 'string') {
             viewData.text = value
@@ -228,6 +230,15 @@ CheckListItem.prototype.viewHandlers.icon = {
     },
     get: function (){
         return this.icon;
+    }
+};
+
+CheckListItem.prototype.viewHandlers.lastInGroup = {
+    set: function (value){
+        this.lastInGroup = value;
+    },
+    get: function (){
+        return this.lastInGroup;
     }
 }
 
