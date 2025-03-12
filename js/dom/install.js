@@ -88,7 +88,13 @@ import SnackBar from "../Snackbar";
 import MultiSelectMenu from "../MultiSelectMenu";
 import CountdownClock from "../CountdownClock";
 import Toast from "../Toast";
-import { MdiStoreMarkerOutline, ProcedureOutlineIcon, ProcessOutlineIcon, SpinnerIco } from "../Icons";
+import {
+    ImportantOutlineIcon,
+    MdiStoreMarkerOutline,
+    ProcedureOutlineIcon,
+    ProcessOutlineIcon,
+    SpinnerIco
+} from "../Icons";
 import EmojiPickerTooltip from "../EmojiPickerTooltip";
 import PageIndicator from "../PageIndicator";
 import EmojiCounter from "../EmojiCounter";
@@ -334,6 +340,7 @@ export var publicCreators = [
     SpinnerIco,
     ProcessOutlineIcon,
     ProcedureOutlineIcon,
+    ImportantOutlineIcon,
     VerticalTreeDiagramNode,
     VerticalTreeDiagram,
     MultiCheckMenu,

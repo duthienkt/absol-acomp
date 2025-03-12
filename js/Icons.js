@@ -19,6 +19,7 @@ import ConfigurationFormOutlineIconText from '../assets/icon/configuration_form_
 import FunctionManagerText from '../assets/icon/function_manager.tpl';
 import DataTypeConfiguratorOutlineIconText from '../assets/icon/data_type_configuration_outline.tpl';
 import TimeBasedPayrollReportIconText from '../assets/icon/time_based_payroll_report.tpl';
+import ImportantOutlineIconText from '../assets/icon/important_outline.tpl';
 import '../css/icons.css';
 import Color from "absol/src/Color/Color";
 
@@ -212,3 +213,14 @@ export function TimeBasedPayrollReportIcon() {
 TimeBasedPayrollReportIcon.tag = 'TimeBasedPayrollReportIcon'.toLowerCase();
 
 ACore.install(TimeBasedPayrollReportIcon);
+
+export function ImportantOutlineIcon() {
+    return _(ImportantOutlineIconText).addStyle({
+        width: '1em', height: '1em'
+    });
+}
+
+ImportantOutlineIcon.tag = 'ImportantOutlineIcon'.toLowerCase();
+
+
+ACore.install(ImportantOutlineIcon);
