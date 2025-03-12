@@ -304,20 +304,20 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     position: absolute;
     right: 0.25em;
     top: calc(50% - 0.75em);
-    /*color: #a9a9a9;*/
+    color: #a9a9a9;
 
     height: 1.5em;
     width: 1.5em;
     pointer-events: none;
-    color: transparent;
+    /*color: transparent;*/
 }
 
 .as-dt-header-cell[data-sort-key] .as-dt-sort-btn {
     display: inline-block;
 }
 
-.as-dt-header-cell[data-sort-order="ascending"] .as-dt-sort-btn .mdi-menu-down,
-.as-dt-header-cell[data-sort-order="descending"] .as-dt-sort-btn .mdi-menu-up {
+.as-dt-header-cell[data-sort-order="ascending"] .as-dt-sort-btn .mdi-menu-up,
+.as-dt-header-cell[data-sort-order="descending"] .as-dt-sort-btn .mdi-menu-down {
     color: #007bff;
 }
 
