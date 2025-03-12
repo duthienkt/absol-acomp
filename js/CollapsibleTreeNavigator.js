@@ -62,6 +62,7 @@ CollapsibleTreeNavigator.prototype.updateNode = function (nodeValue, fieldName, 
     nd.rawData[fieldName] = value;
     if (['items', 'text', 'icon', 'value'].indexOf(fieldName) >= 0) {
         nd[fieldName] = value;
+        this.root.updateSize();
     }
 };
 
@@ -123,7 +124,7 @@ function CTRoot(elt) {
     this.nodeByValue = {};
     this.iconCount = 0;
     this.level = 0;
-    this.looked = false;
+    this.looked = 0;
 }
 
 CTRoot.prototype.nodeOf = function (nodeValue) {
@@ -151,7 +152,14 @@ CTRoot.prototype.updateSelectedLine = function () {
 
     if (!viewingNode) return;
     this.elt.addStyle('--selected-y', viewingNode.offsetY + 'px');
+};
 
+CTRoot.prototype.updateSize = function () {
+    if (this.looked) return;
+    this.elt.addStyle('min-width', Math.ceil(this.minWidth) + 'px');
+    if (this.elt.isDescendantOf(document.body)) {
+        window.dispatchEvent(new Event('resize'));
+    }
 };
 
 
@@ -190,7 +198,7 @@ Object.defineProperty(CTRoot.prototype, 'contentHeight', {
 
 Object.defineProperty(CTRoot.prototype, 'items', {
     set: function (items) {
-        this.looked = true;
+        this.looked++;
         var prevState = Object.keys(this.nodeByValue).reduce((ac, key) => {
             ac[key] = this.nodeByValue[key].status;
             return ac;
@@ -203,16 +211,16 @@ Object.defineProperty(CTRoot.prototype, 'items', {
         this.elt.addChild(this.children.map(nd => nd.domElt));
         this.select(this.value);
         Object.keys(this.nodeByValue).forEach(key => {
-           var nd = this.nodeByValue[key];
-           if (prevState[key] === 'open' && nd.status === 'close') {
-               nd.status = 'open';
-           }
-           else if (prevState === 'close' && nd.status === 'open') {
-               nd.status = 'close';
-           }
+            var nd = this.nodeByValue[key];
+            if (prevState[key] === 'open' && nd.status === 'close') {
+                nd.status = 'open';
+            }
+            else if (prevState === 'close' && nd.status === 'open') {
+                nd.status = 'close';
+            }
         });
-        this.looked = false;
-        this.elt.addStyle('min-width', Math.ceil(this.minWidth) + 'px');
+        this.looked--;
+        this.updateSize();
         this.updateSelectedLine();
     },
     get: function () {
@@ -226,9 +234,9 @@ Object.defineProperty(CTRoot.prototype, 'items', {
 Object.defineProperty(CTRoot.prototype, 'value', {
     set: function (value) {
         this._value = value;
-        this.looked = true;
+        this.looked++;
         this.select(value);
-        this.looked = false;
+        this.looked--;
         this.updateSelectedLine();
     },
     get: function () {
