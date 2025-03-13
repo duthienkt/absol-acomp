@@ -309,16 +309,25 @@ DateTimeInput.prototype._applyTokenDict = function (format, dict, debug) {
 DateTimeInput.prototype._loadValueFromInput = function () {
     var tkDict = this._makeTokenDict(this.$text.value);
     var H = NaN;
+    var m = NaN;
     if (tkDict.H && isRealNumber(tkDict.H.value)) {
         H = tkDict.H.value;
     }
-    else if (tkDict.a.value === 'AM') {
+    else if (tkDict.h && tkDict.a && tkDict.a.value === 'AM') {
         H = tkDict.h.value % 12;
     }
-    else if (tkDict.a.value === 'PM') {
+    else if (tkDict.h && tkDict.a && tkDict.a.value === 'PM') {
         H = tkDict.h.value + (tkDict.h.value === 12 ? 0 : 12);
     }
-    var date = new Date(tkDict.y.value, tkDict.M.value - 1, tkDict.d.value, H, tkDict.m.value);
+    if (!tkDict.h || !tkDict.H) H = 0;
+    if (tkDict.m) {
+        m = tkDict.m.value;
+    }
+    else {
+        m = 0;
+    }
+
+    var date = new Date(tkDict.y.value, tkDict.M.value - 1, tkDict.d.value, H, m);
     if (isNaN(date.getTime())) {
         this._value = null;
     }
@@ -515,6 +524,7 @@ DateTimeInput.property.notNull = {
 DateTimeInput.property.format = {
     set: function (value) {
         value = value || 'dd/MM/yyyy HH:mm';
+
         var dict;
         if (this._value) {
             dict = this._makeValueDict(this._value);
@@ -987,6 +997,7 @@ DateTimeInput.eventHandler.calendarPick = function (event) {
     }
 
     this.share.pickedValeText = this._applyTokenDict(this._format, tkDict);
+    if (this.share.dateOnly) this.eventHandler.clickOKBtn({});
 };
 
 DateTimeInput.eventHandler.clickOKBtn = function (event) {
@@ -1037,7 +1048,7 @@ DateTimeInput.prototype._preparePicker = function () {
             tag: ChromeCalendar.tag,
             class: 'as-date-time-input-date-picker'
         });
-        if(this.share.$calendar.$attachHook) {
+        if (this.share.$calendar.$attachHook) {
             this.share.$calendar.$attachHook.cancelWaiting();
         }
         this.share.$cancelBtn = _({
@@ -1078,6 +1089,7 @@ DateTimeInput.prototype._preparePicker = function () {
 
             ]
         });
+        this.share.$footer = $('.as-dropdown-box-footer', this.share.$follower);
         this.share.$follower.cancelWaiting();
     }
 };
@@ -1096,10 +1108,12 @@ DateTimeInput.prototype._attachPicker = function () {
     this.share.$timePicker.on('change', this.eventHandler.timePick);
     this.share.$okBtn.on('click', this.eventHandler.clickOKBtn);
     this.share.$cancelBtn.on('click', this.eventHandler.clickCancelBtn);
-    if(this.share.$calendar.$attachHook) {
+    if (this.share.$calendar.$attachHook) {
         this.share.$calendar.$attachHook.emit('attached');
     }
     var tkDict = this._makeTokenDict(this.$text.value);
+    this.share.dateOnly = !tkDict.m && !tkDict.H && !tkDict.h;
+
     if (tkDict.h && !isNaN(tkDict.h.value)) {
         if (tkDict.a && tkDict.a.value === 'PM') {
             this.share.$timePicker.hour = 12 + tkDict.h.value % 12;
@@ -1111,18 +1125,33 @@ DateTimeInput.prototype._attachPicker = function () {
     else if (tkDict.H && isRealNumber(tkDict.H.value)) {
         this.share.$timePicker.hour = tkDict.H.value;
     }
+    else if (!tkDict.H && !tkDict.h) {
+        this.share.$timePicker.hour = 0;
+    }
     else {
         this.share.$timePicker.hour = null;
     }
-    this.share.$timePicker.s24 = !!tkDict.H;
+    this.share.$timePicker.s24 = !!tkDict.H || !tkDict.a;
 
     if (tkDict.m && !isNaN(tkDict.m.value)) {
         this.share.$timePicker.minute = tkDict.m.value;
     }
+    else if (!tkDict.m) {
+        this.share.$timePicker.minute = 0;
+    }
     else {
         this.share.$timePicker.minute = null;
     }
-    this.share.$timePicker.scrollIntoSelected();
+    if (this.share.dateOnly) {
+        this.share.$timePicker.addStyle('display', 'none');
+        this.share.$footer.addStyle('display', 'none');
+
+    }
+    else {
+        this.share.$timePicker.removeStyle('display');
+        this.share.$footer.removeStyle('display');
+        this.share.$timePicker.scrollIntoSelected();
+    }
 
     var date = null;
     if (tkDict.d && !isNaN(tkDict.d.value)

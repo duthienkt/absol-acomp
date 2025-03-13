@@ -110,7 +110,6 @@ function ChromeCalendar() {
 
     this.domSignal = new DelaySignal()
         .on(EV_CONTENT_CHANGE, () => {
-            console.log(EV_CONTENT_CHANGE, this.viewDate, this.level);
             switch (this.level) {
                 case 'day':
                 case 'week':

@@ -36,6 +36,23 @@
                         'margin-bottom': '10px'
                     },
                     child: [
+                    {
+                            tag: 'label',
+                            style: { width: '10em', 'line-height': '30px', display: 'inline-block' },
+                            child: { text: format }
+                        },
+                        {
+                            tag: 'datetimeinput',
+                            props: {
+                                value: new Date(),
+                                format: format 
+                            },
+                            on: {
+                                change: function () {
+                                    absol.require('snackbar').show(this.value + '');
+                                }
+                            }
+                        },
                         {
                             tag: 'label',
                             style: { width: '10em', 'line-height': '30px', display: 'inline-block' },
