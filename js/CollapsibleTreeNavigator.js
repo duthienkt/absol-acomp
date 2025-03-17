@@ -3,7 +3,7 @@ import '../css/collapsibletreenavigator.css';
 import { isNaturalNumber, keyStringOf, measureText } from "./utils";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
-import { numberAutoFixed } from "absol/src/Math/int";
+import Color from "absol/src/Color/Color";
 
 /**
  * note
@@ -58,9 +58,9 @@ CollapsibleTreeNavigator.prototype.nodeOf = function (nodeValue) {
 
 CollapsibleTreeNavigator.prototype.updateNode = function (nodeValue, fieldName, value) {
     var nd = this.nodeOf(nodeValue);
-    if (nd) return;
+    if (!nd) return;
     nd.rawData[fieldName] = value;
-    if (['items', 'text', 'icon', 'value'].indexOf(fieldName) >= 0) {
+    if (['items', 'text', 'icon', 'value', 'count', 'color'].indexOf(fieldName) >= 0) {
         nd[fieldName] = value;
         this.root.updateSize();
     }
@@ -357,21 +357,34 @@ CTCollapsibleNode.prototype.select = function (value) {
 };
 
 CTCollapsibleNode.prototype.ev_click = function (event) {
-    var target = event.target;
-    if (target.tagName === 'BUTTON') return;
-    if (target.parentElement.tagName === 'BUTTON') return;
+    if (this.$right && hitElement(this.$right, event)) return;
     var rootElt;
     if (this.domElt.hasClass('as-closing')) return;
-    if (this.status === 'open') {
-        this.status = 'close;'
+    var isClickItem = false;
+    var noSelect = this.rawData && this.rawData.noSelect;
+    var tgBound;
+    if (this.status === 'none') {
+        isClickItem = !noSelect;
     }
-    else if (this.status === 'close') {
-        this.status = 'open';
+    else {
+        tgBound = this.$toggler.getBoundingClientRect();
+        if (noSelect || event.clientX < tgBound.right) {
+            if (this.status === 'open') {
+                this.status = 'close';
+            }
+            else if (this.status === 'close') {
+                this.status = 'open';
+            }
+        }
+        else {
+            isClickItem = true;
+        }
+
     }
-    else if (!this.rawData || !this.rawData.noSelect) {
+    if (isClickItem) {
         rootElt = this.root.elt;
-        if (rootElt && rootElt.value !== this.data.value) {
-            rootElt.value = this.data.value;
+        if (rootElt && rootElt.value !== this.value) {
+            rootElt.value = this.value;
             rootElt.notifyChange(this.data);
         }
     }
@@ -482,6 +495,37 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'value', {
     }
 });
 
+
+Object.defineProperty(CTCollapsibleNode.prototype, 'color', {
+    get: function () {
+        return this._color;
+    },
+    set: function (value) {
+        if (typeof value === 'string') {
+            try {
+                value = Color.parse(value)
+            } catch (e) {
+                value = null;
+            }
+        }
+        else if (!value || !value.getContrastYIQ) {
+            value = null;
+        }
+        var textColor;
+        if (value) {
+            textColor = value.getContrastYIQ();
+            this.$content.addStyle('color', textColor + '');
+            this.$content.addStyle('background-color', value + '');
+        }
+        else {
+            this.$content.removeStyle('color');
+            this.$content.removeStyle('background-color');
+
+        }
+        this._color = value + '';
+    }
+});
+
 Object.defineProperty(CTCollapsibleNode.prototype, 'items', {
     set: function (items) {
         while (this.children.length > 0) {
@@ -548,6 +592,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'data', {
         this.icon = data.icon;
         this.count = data.count;
         this.items = data.items;
+        this.color = data.color;
         this.actions = data.actions;
     },
     get: function () {
@@ -560,9 +605,10 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'data', {
         }
         if (this.icon) res.icon = this.icon;
         if (this.count) res.count = this.count;
+        if (this.color) res.color = this.color;
         return res;
     }
-})
+});
 
 
 Object.defineProperty(CTCollapsibleNode.prototype, 'contentHeight', {
@@ -617,6 +663,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'minWidth', {
             countWidth = Math.max(countWidth, 20);//min-width
             countWidth += 5; //margin
         }
+        if (this.icon) res += 21;
         res += countWidth;
         res = this.children.reduce((ac, cr) => Math.max(ac, cr.minWidth), res);
         this.domElt.attr('data-min-width', res + '');
@@ -682,40 +729,9 @@ function CTNNode(parent, data) {
     this.data = data;
 }
 
-CTNNode.prototype.ev_click = function (event) {
-    if (hitElement(this.$right, event)) return;
-    var tgBound;
-    var isClickItem = false;
-    if (this.status === 'none') {
-        isClickItem = true;
-    }
-    else {
-        tgBound = this.$toggler.getBoundingClientRect();
-        if (event.clientX > tgBound.right) {
-            isClickItem = true;
-        }
-        else {
-            if (this.status === 'open') {
-                this.status = 'close';
-            }
-            else {
-                this.status = 'open';
-            }
-        }
-    }
-    var rootElt;
-    if (isClickItem) {
-        rootElt = this.root.elt;
-        if (rootElt && rootElt.value !== this.data.value) {
-            rootElt.value = this.data.value;
-            rootElt.notifyChange(this.data);
-        }
-    }
-};
-
 //copy
 ['status', 'offsetHeight', 'childrenHeight', 'offsetY', 'select',
-    'text', 'count', 'icon', 'value', 'data', 'items', 'actions', 'remove'].forEach(method => {
+    'text', 'count', 'icon', 'value', 'data', 'items', 'actions', 'remove', 'ev_click', 'color'].forEach(method => {
     Object.defineProperty(CTNNode.prototype, method, Object.getOwnPropertyDescriptor(CTCollapsibleNode.prototype, method));
 });
 
