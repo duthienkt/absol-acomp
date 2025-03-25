@@ -1,10 +1,13 @@
 import '../css/exptree.css';
 import ACore from "../ACore";
-import {contenteditableTextOnly} from "./utils";
+import { contenteditableTextOnly } from "./utils";
 import OOP from "absol/src/HTML5/OOP";
-import EventEmitter, {copyEvent} from "absol/src/HTML5/EventEmitter";
+import EventEmitter, { copyEvent } from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
 import AElement from "absol/src/HTML5/AElement";
+import { randomIdent } from "absol/src/String/stringGenerate";
+import prepareSearchForItem, { searchTreeListByText } from "./list/search";
+import { stringHashCode } from "absol/src/String/stringUtils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -42,19 +45,19 @@ export function ExpNode() {
     this.$level = $('.absol-exp-node-level', this);
     this.$removeIcon = $('remove-ico', this)
         .on('click', function (event) {
-            thisEN.emit('pressremove', {target: thisEN, type: 'pressremove'}, this);
+            thisEN.emit('pressremove', { target: thisEN, type: 'pressremove' }, this);
         });
     this.on('keydown', this.eventHandler.buttonKeydown);
 
     this.$toggleIcon = $('toggler-ico', this);
 
-    this.on('click', (event)=> {
+    this.on('click', (event) => {
         var toggleBound = this.$toggleIcon.getBoundingClientRect();
         if (toggleBound.width > 0 && event.clientX <= toggleBound.right) {
-            this.emit('presstoggle', copyEvent(event, {target: thisEN, type: 'pressremove'}), this);
+            this.emit('presstoggle', copyEvent(event, { target: thisEN, type: 'pressremove' }), this);
         }
         else if (!EventEmitter.hitElement(thisEN.$removeIcon, event)) {
-            this.emit('press', copyEvent(event, {target: thisEN, type: 'press'}), this);
+            this.emit('press', copyEvent(event, { target: thisEN, type: 'press' }), this);
         }
     });
 
@@ -110,7 +113,8 @@ ExpNode.property.icon = {
             this.$iconP = newE;
             this.$iconCtn.addChild(newE);
             this._icon = value;
-        } else {
+        }
+        else {
             this._icon = undefined;
         }
     },
@@ -140,7 +144,7 @@ ExpNode.property.name = {
         this._name = value;
         this.$name.clearChild();
         if (value && value.length > 0)
-            this.$name.addChild(_({text: value}));
+            this.$name.addChild(_({ text: value }));
     },
     get: function () {
         return this._name || '';
@@ -150,7 +154,7 @@ ExpNode.property.desc = {
     set: function (value) {
         this._desc = (value || '') + '';
         this.$desc.clearChild();
-        this.$desc.addChild(_({text: this._desc}));
+        this.$desc.addChild(_({ text: this._desc }));
     },
     get: function () {
         return this._desc || '';
@@ -167,15 +171,20 @@ ExpNode.property.status = {
         if (!value || value == 'none') {
             //todo
 
-        } else if (value == 'close') {
+        }
+        else if (value == 'close') {
             this.addClass('status-close')
-        } else if (value == 'open') {
+        }
+        else if (value == 'open') {
             this.addClass('status-open');
-        } else if (value == 'removable') {
+        }
+        else if (value == 'removable') {
             this.addClass('status-removable');
-        } else if (value == 'modified') {
+        }
+        else if (value == 'modified') {
             this.addClass('status-modified');
-        } else {
+        }
+        else {
             throw new Error('Invalid status ' + value)
         }
         this._status = value;
@@ -190,7 +199,8 @@ ExpNode.property.active = {
         if (value) {
             this.addClass('as-active');
             this.addClass('active');
-        } else {
+        }
+        else {
             this.removeClass('as-active');
             this.removeClass('active');
         }
@@ -214,7 +224,8 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
             event.preventDefault();
             span.blur();
             span.attr('contenteditable', undefined);
-        } else if (key == "ESC") {
+        }
+        else if (key == "ESC") {
             event.preventDefault();
             span.innerHTML = lastName;
             span.blur();
@@ -227,20 +238,24 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
         var curentName = span.innerHTML.replace(/[\\\/\|\?\:\<\>\*\r\n]/, '').trim();
         if (curentName == lastName) {
             rejectCallback && rejectCallback();
-        } else {
+        }
+        else {
             if (curentName.length == 0) {
                 span.innerHTML = lastName;
                 rejectCallback && rejectCallback();
-            } else {
+            }
+            else {
                 var res = resolveCallback && resolveCallback(curentName);
                 if (res === false) {
                     span.innerHTML = lastName;
-                } else if (res && res.then) {
+                }
+                else if (res && res.then) {
                     res.then(function (result) {
                         if (result === false) {
                             span.innerHTML = lastName;
                             //faile
-                        } else {
+                        }
+                        else {
                             //success
                         }
                     }, function () {
@@ -248,7 +263,8 @@ ExpNode.prototype.rename = function (resolveCallback, rejectCallback) {
                         span.innerHTML = lastName;
 
                     })
-                } else {
+                }
+                else {
                     //success
                 }
             }
@@ -321,7 +337,8 @@ ExpNode.eventHandler.buttonKeydown = function (event) {
                     if (tree.status === 'open') {
                         tree.status = 'close';
                         tree.notifyStatusChange();
-                    } else {
+                    }
+                    else {
                         destNode = parentTree && parentTree.getNode();
                     }
                     break;
@@ -329,7 +346,8 @@ ExpNode.eventHandler.buttonKeydown = function (event) {
                     if (tree.status === 'close') {
                         tree.status = 'open';
                         tree.notifyStatusChange();
-                    } else {
+                    }
+                    else {
                         destNode = this.findNodeAfter();
                     }
                     break;
@@ -418,7 +436,8 @@ ExpTree.property.status = {
         this.$node.status = value;
         if (value != 'open') {
             this.addClass('hide-children');
-        } else {
+        }
+        else {
             this.removeClass('hide-children');
         }
     },
@@ -533,14 +552,14 @@ ExpTree.prototype.toggle = function () {
 
 
 ExpTree.prototype.notifyStatusChange = function (props) {
-    this.emit('statuschange', Object.assign({type: 'statuschange', target: this}, props), this);
+    this.emit('statuschange', Object.assign({ type: 'statuschange', target: this }, props), this);
 };
 
 ExpTree.eventHandler = {};
 
 ExpTree.eventHandler.nodePressToggle = function (event) {
     this.toggle();
-    this.notifyStatusChange({originEvent: event});
+    this.notifyStatusChange({ originEvent: event });
 };
 
 /***
@@ -588,3 +607,158 @@ ACore.install(ExpGroup);
 
 
 export default ExpTree;
+
+
+/**
+ *
+ * @param {ExpTree|AElement} elt
+ * @param {{inputElt: SearchTextInput}=} opt
+ * @constructor
+ */
+export function ExpSearcher(elt, opt) {
+    this.elt = elt;
+    this.cache = {};
+    this.prevHash = null;
+    this.searching = false;
+    this.state = {};
+    this.ev_stopTyping = this.ev_stopTyping.bind(this);
+    this.inputElt = opt && opt.inputElt;
+}
+
+ExpSearcher.prototype.reset = function () {
+    if (!this.searching) return;
+    this.cache = {};
+    this.searching = false;
+    this.elt.removeClass('as-searching')
+
+    var visit = treeNode => {
+        treeNode.removeClass('as-in-search-result').removeStyle('order');
+        if (this.state[treeNode.id]) {
+            if (treeNode.status === 'open' || treeNode.status === 'close' && this.state[treeNode.id] !== 'none') {
+                treeNode.status = this.state[treeNode.id];
+            }
+        }
+        this.getChildrenOf(treeNode).forEach(c => visit(c));
+    }
+    visit(this.elt);
+};
+
+
+ExpSearcher.prototype.backupState = function () {
+    this.state = {};
+    var visit = treeNode => {
+        if (!treeNode.id) treeNode.id = randomIdent(5);
+        this.state[treeNode.id] = treeNode.status;
+        this.getChildrenOf(treeNode).forEach(c => visit(c));
+    }
+    visit(this.elt);
+
+};
+
+/**
+ *
+ * @param {ExpTree|AElement} nd
+ * @returns {Array<ExpTree|AElement>}
+ */
+ExpSearcher.prototype.getChildrenOf = function (nd) {
+    if (nd.getChildren) return nd.getChildren();
+    return Array.prototype.slice.call(nd.childNodes);
+};
+
+
+/**
+ *
+ * @param {ExpTree|AElement} nd
+ * @returns {ExpTree|AElement}
+ */
+ExpSearcher.prototype.getParentOf = function (nd) {
+    if (nd.getParent) return nd.getParent();
+    return nd.parentElement;
+};
+
+
+ExpSearcher.prototype.query = function (text) {
+    text = text || '';
+    text = text.trim();
+    if (text.length === 0) {
+        this.reset();
+        return;
+    }
+    if (!this.searching) {
+        this.backupState();
+        this.searching = true;
+    }
+
+    var newHash = 0;
+    var makeItem = treeNode => {
+        if (!treeNode.id) treeNode.id = randomIdent(5);
+        if (!treeNode.__searchItem__) {
+            treeNode.__searchItem__ = {
+                text: treeNode.name.replace(/[_-]/g, ' '),
+                value: treeNode.id
+            };
+            prepareSearchForItem(treeNode.__searchItem__);
+        }
+        var item = treeNode.__searchItem__;
+        newHash = stringHashCode(newHash + item.text);
+
+        var children = this.getChildrenOf(treeNode);
+        if (children.length > 0) {
+            item.items = children.map(c => makeItem(c));
+        }
+        else {
+            delete item.items;
+        }
+        return item;
+    }
+    var items = [makeItem(this.elt)];
+    if (newHash !== this.prevHash) {
+        this.prevHash = newHash;
+        this.cache = {};
+    }
+    var searchRes = this.cache[text] || searchTreeListByText(text, items);
+
+    var dict = searchRes.reduce(function cb(ac, cr, i) {
+        ac[cr.value] = i;
+        if (cr.items) cr.items.reduce(cb, ac);
+        return ac;
+    }, {});
+
+    var visit = treeNode => {
+        if (treeNode.id in dict) {
+            treeNode.addClass('as-in-search-result').addStyle('order', dict[treeNode.id]);
+
+        }
+        else {
+            treeNode.removeClass('as-in-search-result').removeStyle('order');
+        }
+        this.getChildrenOf(treeNode).forEach(c => visit(c));
+    };
+    visit(this.elt);
+    this.elt.addClass('as-searching');
+};
+
+ExpSearcher.prototype.ev_stopTyping = function () {
+    this.query(this.inputElt.value);
+};
+
+ExpSearcher.prototype.destroy = function () {
+    this.inputElt = null;
+    this.query('');
+}
+
+Object.defineProperty(ExpSearcher.prototype, 'inputElt', {
+    set: function (elt) {
+        if (this._inputElt) {
+            this._inputElt.off('stoptyping', this.ev_stopTyping);
+            this._inputElt = null;
+        }
+        if (elt) {
+            this._inputElt = elt;
+            elt.on('stoptyping', this.ev_stopTyping);
+        }
+    },
+    get: function () {
+        return this._inputElt;
+    }
+})
