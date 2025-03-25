@@ -104,31 +104,90 @@ function DTSearchFactor(global) {
 
     /***
      *
-     * @param {SelectionItem2} item
+     * @param {SelectionItem} item
      * @returns {*}
      */
     function prepareSearchForItem(item) {
         if (!item.text || !item.text.charAt) item.text = item.text + '';
-        var spliter = /[\s/]+/;
-        var __text__ = item.text.replace(/([\s\b\-()\[\]"']|&#8239;|&nbsp;|&#xA0;|\s")+/g, ' ').trim().toLowerCase();
+        var splitter = /([_\s\b\-()\[\]"']|&#8239;|&nbsp;|&#xA0;")+/g;
+        var text = item.text.replace(splitter, ' ');
+        var __words__ = text.split(/\s+/).filter(w=>!!w).map(w=>w.toLowerCase());
+        var __text__ = __words__.join(' ');
+        var __wordDict__ = __words__.reduce((ac, cr, i) => {
+            ac[cr] = ac[cr] || i + 1;
+            return ac;
+        }, {});
+
         var __nvnText__ = nonAccentVietnamese(__text__);
 
-        item.__words__ = __text__.split(spliter);
-        item.__text__ = item.__words__.join(' ');
-        item.__words__.sort();
-        item.__wordDict__ = item.__words__.reduce((ac, cr, i) => {
-            ac[cr] = i + 1;
+        var __nvnWords__ =  __words__.map(w=>nonAccentVietnamese(w));
+        var __nvnWordDict__ = __nvnWords__.reduce((ac, cr, i) => {
+            ac[cr] = ac[cr] || i + 1;
             return ac;
         }, {});
 
-        item.__nvnWords__ = __nvnText__.split(spliter);
-        item.__nvnText__ = item.__nvnWords__.join(' ')
-        item.__nvnWords__.sort();
-        item.__nvnWordDict__ = item.__nvnWords__.reduce((ac, cr, i) => {
-            ac[cr] = i + 1;
-            return ac;
-
-        }, {});
+        Object.defineProperties(item, {
+            __text__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __text__
+            },
+            __words__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __words__
+            },
+            __wordDict__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __wordDict__
+            },
+            __textNoneCase__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __text__
+            },
+            __wordsNoneCase__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __words__
+            },
+            __nvnText__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __nvnText__
+            },
+            __nvnWords__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __nvnWords__
+            },
+            __nvnWordDict__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __nvnWordDict__
+            },
+            __nvnTextNoneCase__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __nvnText__
+            },
+            __nvnWordsNoneCase__: {
+                configurable: true,
+                enumerable: false,
+                writable: true,
+                value: __nvnWords__
+            }
+        });
 
         return item;
     }
@@ -149,21 +208,37 @@ function DTSearchFactor(global) {
         return true;
     }
 
+
     function calcItemMatchScore(queryItem, item) {
         var score = 0;
         if (!item.__text__) return 0;
-        var hwScore = 0;
-        var i;
-        for (i = 0; i < queryItem.__words__.length; ++i) {
-            if (item.__wordDict__[queryItem.__words__[i]]) {
-                hwScore += HAS_WORD_SCORE;
+
+        function calcByWordDict(queryWords, wordDict) {
+            var hwScore = 0;
+            var i;
+            wordDict = Object.assign({}, wordDict);
+            var bestWordMatched, bestWordMatchScore = 0;
+            var word, wordScore;
+            for (i = 0; i < queryWords.length; ++i) {
+                bestWordMatchScore = 0;
+                bestWordMatched = null;
+                for (word in wordDict) {
+                    wordScore = wordLike(word, queryWords[i]) - 1e-3 * wordDict[word];
+                    if (wordScore > bestWordMatchScore) {
+                        bestWordMatched = word;
+                        bestWordMatchScore = wordScore;
+                    }
+                }
+                if (bestWordMatchScore >0) {
+                    hwScore += bestWordMatchScore * WORD_MATCH_SCORE;
+                    delete wordDict[bestWordMatched];
+                }
             }
-            else if (item.__nvnWordDict__[queryItem.__nvnWords__[i]]) {
-                hwScore += HAS_NVN_WORD_SCORE;
-            }
+            return hwScore;
         }
 
-        score = hwScore;
+        score += calcByWordDict(queryItem.__words__, item.__wordDict__);
+        score += calcByWordDict(queryItem.__nvnWords__, item.__nvnWordDict__);
 
         if (item.__text__ === queryItem.__text__) {
             score += EQUAL_MATCH_SCORE;
@@ -172,18 +247,16 @@ function DTSearchFactor(global) {
         var extraIndex = item.__text__.indexOf(queryItem.__text__);
 
         if (extraIndex >= 0) {
-            score += EXTRA_MATCH_SCORE + 200 - extraIndex - (item.__text__.length - queryItem.__text__.length);
-
+            score += EXTRA_MATCH_SCORE;
         }
 
         extraIndex = item.__nvnText__.indexOf(queryItem.__nvnText__);
         if (extraIndex >= 0) {
-            score += EXTRA_MATCH_SCORE + 200 - extraIndex - (item.__text__.length - queryItem.__text__.length);
-
+            score += EXTRA_MATCH_SCORE;
         }
 
-        var n = Math.max(queryItem.__words__.length + 1, 1);
-        score = Math.max(score, wordsMatch(queryItem.__words__, item.__words__), wordsMatch(queryItem.__nvnWords__, item.__nvnWords__)) / n * 2 * WORD_MATCH_SCORE;
+        score += Math.max(wordsMatch(queryItem.__words__, item.__words__), wordsMatch(queryItem.__nvnWords__, item.__nvnWords__))/ Math.max(queryItem.__words__.length + 1, 1);
+
         return score;
     }
 
