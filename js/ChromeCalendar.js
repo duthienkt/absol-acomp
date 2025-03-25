@@ -1602,6 +1602,7 @@ ChromeCalendar.showWhenClick = function (element, calendarProps, anchor, calenda
         anchor: anchor,
         onPick: calendarPickListener,
         darkTheme: darkTheme,
+        triggerElt: element
     };
 
     return new CCShareDropDownInstance(element, opt);
@@ -1717,6 +1718,15 @@ CCShareDropDownInstance.prototype.show = function () {
     share.$follower.anchor = this.opt.anchor;
     share.$follower.followTarget = this.elt;
     share.$follower.updatePosition();
+    share.onPick = ()=>{
+        var value = share.$picker.selectedDates[0];
+        if (value && this.opt.onPick) {
+            this.opt.onPick(value);
+            if (this.opt.triggerElt) {
+                this.close();
+            }
+        }
+    }
     setTimeout(() => {
         if (share.holder === this) {
             share.$follower.removeStyle('visibility', 'hidden');
@@ -1725,7 +1735,7 @@ CCShareDropDownInstance.prototype.show = function () {
 };
 
 
-CCShareDropDownInstance.prototype.close = function (session) {
+CCShareDropDownInstance.prototype.close = function () {
     var share = this.share;
     if (!share.$follower) return;
     if (share.holder !== this) return;
@@ -1734,6 +1744,7 @@ CCShareDropDownInstance.prototype.close = function (session) {
         document.removeEventListener('click', this.ev_clickOut, false);
     }
     share.onPick = null;
+    share.$follower.selfRemove();
 };
 
 /**

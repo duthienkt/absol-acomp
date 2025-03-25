@@ -17,7 +17,6 @@ function CalendarInput() {
     var thisCI = this;
     this.$input = $('input', this);
     this._value = null;
-
     this._quickOption = ChromeCalendar.showWhenClick(this, {
         minLimitDate: this.minLimitDate || this.minDateLimit,
         maxLimitDate: this.maxLimitDate || this.maxDateLimit,
@@ -25,11 +24,11 @@ function CalendarInput() {
     }, 'auto', function (value) {
         thisCI._value = value;
         thisCI.$input.value = thisCI.formatDateString(value);
-        thisCI._quickOption.calendarProps.selectedDates = [value];//change new option
+        thisCI._quickOption.opt.selectedDates = [value];//change new option
         thisCI.emit('change', { target: thisCI, value: value }, thisCI);
     });
 
-    OOP.drillProperty(this, this._quickOption.calendarProps, {
+    OOP.drillProperty(this, this._quickOption.opt, {
         minLimitDate: 'minLimitDate',
         maxLimitDate: 'maxLimitDate',
         minDateLimit: 'minLimitDate',
@@ -54,15 +53,15 @@ CalendarInput.property.value = {
     set: function (value) {
         if (value === null || value === undefined) {
             this.$input.value = this.formatDateString(value);
-            this._quickOption.calendarProps.selectedDates = [];
+            this._quickOption.opt.selectedDates = [];
             this._value = value;
-            this._quickOption.calendarProps.selectedDates = [new Date()]
+            this._quickOption.opt.selectedDates = [new Date()]
         }
         else {
             if (typeof value == 'number') value = new Date(value);
             this._value = value;
             this.$input.value = this.formatDateString(value);
-            this._quickOption.calendarProps.selectedDates = [value];
+            this._quickOption.opt.selectedDates = [value];
         }
     },
     get: function () {
