@@ -429,6 +429,7 @@ DateTimeInput.prototype._correctingInput = function () {
     }
 
     this.$text.value = this._applyTokenDict(this._format, tkDict);
+    this.attr('data-text', this.$text.value);
 };
 
 DateTimeInput.prototype._correctingCurrentToken = function () {
@@ -534,6 +535,7 @@ DateTimeInput.property.format = {
         }
         this._format = value;
         this.$text.value = this._applyTokenDict(value, dict);
+        this.attr('data-text', this.$text.value);
 
     },
     get: function () {
@@ -553,9 +555,11 @@ DateTimeInput.property.value = {
         }
         if (value) {
             this.$text.value = this._applyTokenDict(this._format, dict, true);
+            this.attr('data-text', this.$text.value);
         }
         else {
             this.$text.value = this.format;
+            this.attr('data-text', this.$text.value);
         }
         this._lastEmitValue = this._value;
     },
@@ -765,6 +769,7 @@ DateTimeInput.eventHandler.keydown = function (event) {
             else {
                 this.$text.value = this._format;
             }
+            this.attr('data-text', this.$text.value);
             this.$text.select();
         }
         else {
@@ -823,6 +828,7 @@ DateTimeInput.eventHandler.keydown = function (event) {
             case 'X':
                 this.domSignal.once('clear_value', function () {
                     this.$text.value = this._format;
+                    this.attr('data-text', this.$text.value);
                     this.$text.select();
                 }.bind(this));
                 this.domSignal.emit('clear_value');
@@ -1002,6 +1008,7 @@ DateTimeInput.eventHandler.calendarPick = function (event) {
 
 DateTimeInput.eventHandler.clickOKBtn = function (event) {
     this.$text.value = this.share.pickedValeText;
+    this.attr('data-text', this.$text.value);
     this._correctingInput();
     this._loadValueFromInput();
     this._notifyIfChange(event);
