@@ -1,0 +1,113 @@
+.as-form-cmd-tool-window .absol-onscreen-window-body-container {
+    overflow-y: auto;
+}
+
+
+.as-from-tool-button:not(:disabled) > span.mdi-delete-variant {
+    color: red;
+}
+
+.as-from-tool-button:disabled > span {
+    color: #c4c4c4 !important;
+}
+
+.as-from-tool-button:disabled > svg > path {
+    fill: #c4c4c4;
+}
+
+.as-form-cmd-tool .as-from-tool-ribbon-button,
+.bsc-white .as-form-cmd-tool .as-from-tool-ribbon-button,
+.as-form-cmd-tool .as-from-tool-ribbon-button {
+    font-size: 12px;
+    height: 2em;
+    width: 3em;
+    padding-right: 0.2em;
+    /**override theme*/
+    min-width: unset !important;
+    white-space: nowrap;
+    border: none !important;
+    background-color: transparent;
+}
+
+.as-form-cmd-tool .as-ribbon-button,
+.as-form-cmd-tool .as-ribbon-split-button {
+    font-size: 12px;
+    width: 6.5em;
+    vertical-align: top;
+}
+
+
+.as-form-cmd-tool .as-ribbon-button.as-checked.as-type-toggle-switch,
+.as-form-cmd-tool .as-ribbon-button.as-checked.as-type-color {
+    -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.6);
+    box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.6);
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #1e65ea;
+}
+
+
+.as-from-tool-group-buttons {
+    margin-right: 2px;
+
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-from-tool-group-buttons .as-from-tool-group-buttons:not(:last-child) {
+    border-right: 0.5px solid #ddd;
+}
+
+.as-from-tool-group-buttons .as-from-tool-group-buttons:not(:first-child) {
+    border-left: 0.5px solid #ddd;
+}
+
+.absol-tooltip-root {
+    z-index: 100;
+}
+
+.as-from-tool-group-buttons:empty {
+    display: none;
+}
+
+
+.as-form-cmd-tool-menu-trigger {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    color: #ddd;
+}
+
+.as-form-cmd-tool-window .absol-onscreen-window-head-bar-button-dock {
+    display: none;
+}
+
+
+.as-form-cmd-tool-window .as-form-cmd-tool-menu-trigger {
+    display: none;
+}
+
+.as-cmd-tool-group-x2 {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+}
+
+.as-cmd-tool-tab .as-cmd-tool-group-x2 {
+    min-height: 60px;
+}
+
+
+.as-cmd-tool-group-x2::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1px;
+    border: 1px solid #ddd;
+}
+
+.as-cmd-tool-tab {
+    overflow: hidden;
+}
