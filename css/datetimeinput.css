@@ -156,3 +156,22 @@
     width: 100%;
     padding-left: 0;
 }
+
+.as-date-time-input[data-text].as-read-only.as-border-none input {
+    display: none;
+}
+
+
+.as-date-time-input[data-text].as-read-only.as-border-none {
+    width: auto;
+}
+
+.as-date-time-input[data-text].as-read-only.as-border-none::before {
+    content: attr(data-text);
+    line-height: 30px;
+}
+
+
+.as-relative-time-text[data-time-text]::after {
+    content: attr(data-time-text);
+}
