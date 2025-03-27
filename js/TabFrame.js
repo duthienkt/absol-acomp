@@ -144,11 +144,13 @@ TabFrame.prototype.requestRemove = function () {
 };
 
 TabFrame.prototype._onRemove = function () {
+    /* bug auto revoke
     setTimeout(() => {
         if (!this.isDescendantOf(document.body)) {
             this.revokeResource();
         }
     }, 100);
+*/
 };
 
 TabFrame.prototype.revokeResource = function () {
