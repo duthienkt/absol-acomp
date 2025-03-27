@@ -108,7 +108,7 @@ SelectListBox.prototype.revokeResource = function () {
         this.searchMaster.destroy();
         this.searchMaster = null;
     }
-
+    /* return
     revokeResource(this._items);
 
     // var n = items.length;
@@ -128,6 +128,7 @@ SelectListBox.prototype.revokeResource = function () {
     this._displayItems = undefined;
     revokeResource(this._searchCache)
     this._searchCache = undefined;
+     */
 };
 
 SelectListBox.prototype._initDomHook = function () {
