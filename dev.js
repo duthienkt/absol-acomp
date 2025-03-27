@@ -33,6 +33,7 @@ import { silentDownloadAsPdf } from "./js/printer";
 import MApplication from "./js/mobile/MApplication";
 import MActivity from "./js/mobile/MActivity";
 import ListSearchMaster from "./js/list/ListSearchMaster";
+import { ExpSearcher } from "./js/ExpTree";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -79,7 +80,7 @@ Dom.documentReady.then(function () {
 });
 
 Object.assign(absol.$, utils);
-
+absol.ExpSearcher = ExpSearcher;
 // materializeIconTrigger();
 
 absol.openFileDialog = openFileDialog;

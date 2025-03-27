@@ -179,6 +179,7 @@ import SelectRibbonMenu from "../SelectRibbonMenu";
 import PathView from "../PathView";
 import FontInput, { FontFamilySelectList } from "../FontInput";
 import CollapsibleTreeNavigator from "../CollapsibleTreeNavigator";
+import NotificationPanel, { NPSection, NPDropdownButton, NPMessage, NPItem, NPList } from "../NotificationPanel";
 
 
 export var publicCreators = [
@@ -387,7 +388,13 @@ export var publicCreators = [
     SolidColorPicker,
     ColorPickerButton,
     ColorCell,
-    SelectColorSchemeMenu
+    SelectColorSchemeMenu,
+
+    NPDropdownButton,
+    NotificationPanel,
+    NPSection,
+    NPItem,
+    NPList
 ];
 
 /***

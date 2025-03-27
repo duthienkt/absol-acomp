@@ -52,7 +52,11 @@ export function QuickMenuInstance(elt, opt) {
     this.state = 'CLOSE';
     this._willAddClickOut = -1;
     this.elt = elt;
-    this.opt = opt;
+    /**
+     *
+     * @type {object|{triggerEvent:string, menuProps,getMenuProps, anchor,  onClick, onSelect,onOpen, onClose, menuCtn, getAnchor}}
+     */
+    this.opt = Object.assign({}, opt);
     for (var key in this) {
         if (key.startsWith('_on')) {
             this[key] = this[key].bind(this);
@@ -193,7 +197,7 @@ QuickMenuInstance.prototype.open = function () {
     followerElt.followTarget = this.elt;
     followerElt.sponsorElement = this.elt;
     menuElt.addStyle('visibility', 'hidden');
-    followerElt.addTo(document.body);
+    followerElt.addTo(this.opt.menuCtn || document.body);
     followerElt.addClass('absol-active');
     if (this.opt.onOpen) {
         try {
