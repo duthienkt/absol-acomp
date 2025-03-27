@@ -167,14 +167,18 @@
 }
 
 .as-tabview-title {
-    position: absolute;
-    padding: 5px 10px;
-    right: 0;
-    top: 0;
+    padding: 10px 10px;
     font-weight: bold;
     font-size: 14px;
     color: rgb(230, 230, 205);
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.bsc-white .as-tabview-title,
+.bsc-white .as-np-db-btn{
+    color: var(--tab-button-font-color-hover);
 }
 
 
@@ -458,4 +462,29 @@
     color: white;
     background-color: #3B4453;
     font-weight: bold;
+}
+
+.as-tabview-right-ctn {
+    position: absolute;
+    z-index: 30;
+    right: 0;
+    top: 0;
+}
+
+
+
+.bsc-white .as-tabview-right-ctn {
+    top: -10px;
+}
+
+.as-tabview-right-ctn> div{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.bsc-white .as-tabview-right-ctn::before {
+    content: "";
+    height: 50px;
+    display: inline-block;
+    vertical-align: middle;
 }

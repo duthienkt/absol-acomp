@@ -1,14 +1,18 @@
 import '../css/tabview.css';
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { drillProperty } from "absol/src/HTML5/OOP";
 import TabBar from "./TabBar";
 import { forwardEvent } from "./utils";
 import TextMeasure from "./TextMeasure";
+import NotificationPanel from "./NotificationPanel";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/**
+ * @extends AElement
+ * @constructor
+ */
 function TabView() {
     var thisTV = this;
     /***
@@ -25,6 +29,9 @@ function TabView() {
     this._frameHolders = [];
     this._history = [];
     forwardEvent(this, 'inactivetab', 'deactivetab');
+    this.rightCtnPlugin = new TabviewRightCtnPlugin(this);
+    drillProperty(this, this.rightCtnPlugin, ['tvTitle', 'notificationPanel']);
+
 }
 
 TabView.tag = 'TabView'.toLowerCase();
@@ -348,42 +355,83 @@ TabView.property.historyOfTab = {
     }
 };
 
-TabView.property.tvTitle = {
-    set: function (value) {
-        this._title = value + '';
-        var width;
-        if (this._title.length > 0) {
-            this.$tille = _({
-                class: 'as-tabview-title',
-                child: { text: this._title }
-            });
-            width = TextMeasure.measureWidth(this._title, 'Arial', 14);
-            this.$tabbar.addStyle('right', width + 10 + 'px');
-            this.insertBefore(this.$tille, this.$tabbar.nextSibling);
-        }
-        else {
-            if (this.$tille) this.$tille.remove();
-            this.$tabbar.removeStyle('right');
-        }
-    },
-    get: function () {
-        return this._title;
-    }
-};
-
 
 ACore.install('tabview', TabView);
 
 export default TabView;
 
-function TabViewUser() {
-
+/**
+ *
+ * @param {TabView} elt
+ * @constructor
+ */
+function TabviewRightCtnPlugin(elt) {
+    this.elt = elt;
+    this.$rightCtn = null;
+    this.$title = null;
+    this.$notificationPanel = null;
+    this._title = '';
 }
 
+TabviewRightCtnPlugin.prototype.initCtn = function () {
+    if (this.$rightCtn) return;
+    this.$rightCtn = _({
+        class: 'as-tabview-right-ctn'
+    });
+    this.$rightCtn.requestUpdateSize = this.updateSize.bind(this);
 
-TabViewUser.tag = 'TabViewUser'.toLowerCase();
-
-TabViewUser.render = function () {
+    this.elt.insertBefore(this.$rightCtn, this.elt.$tabbar.nextSibling);
 };
 
+TabviewRightCtnPlugin.prototype.updateSize = function () {
+    var width = 0;
+    if (this.$title) {
+        width += TextMeasure.measureWidth(this._title, 'Arial', 14) + 20;
+    }
+    if (this.$notificationPanel) {
+        width += 20;
+        width += this.$notificationPanel.childNodes.length * 40;
+        if (this.$notificationPanel.childNodes.length >0)
+            width += (this.$notificationPanel.childNodes.length - 1) * 10;
+    }
+
+    this.elt.$tabbar.addStyle('right', width + 'px');
+};
+
+
+Object.defineProperty(TabviewRightCtnPlugin.prototype, 'tvTitle', {
+    set: function (value) {
+        this.initCtn();
+        this._title = value + '';
+        if (!this.$title) {
+            this.$title = _({
+                class: 'as-tabview-title',
+                child: { text: '' }
+            });
+            this.$rightCtn.addChild(this.$title);
+        }
+
+        this.$title.firstChild.data = value;
+        this.updateSize();
+
+    },
+    get: function () {
+        return this._title;
+    }
+});
+
+Object.defineProperty(TabviewRightCtnPlugin.prototype, 'notificationPanel', {
+    get: function () {
+        this.initCtn();
+        if (!this.$notificationPanel) {
+            this.$notificationPanel = _({
+                tag: NotificationPanel,
+            });
+            this.$rightCtn.addChildBefore(this.$notificationPanel, this.$title);
+            this.updateSize();
+        }
+
+        return this.$notificationPanel;
+    }
+});
 
