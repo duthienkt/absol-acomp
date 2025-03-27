@@ -99,14 +99,19 @@
     margin-left: 0.25em;
     margin-bottom: 0.25em;
     font-size: inherit;
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
 }
 
 .as-toast-close-btn:hover {
     color: black;
+    background-color: var(--icon-background-cover-hover);
 }
 
 .as-toast-close-btn span {
-    font-size: 1.5em;
+    /*font-size: 1.5em;*/
+    font-size: 20px;
     text-shadow: 0 1px 0 currentColor;
 }
 

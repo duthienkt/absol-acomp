@@ -1,12 +1,13 @@
 import '../css/toast.css';
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
-import AElement from "absol/src/HTML5/Element";
+import OOP, { drillProperty } from "absol/src/HTML5/OOP";
 import VariantColors from "./VariantColors";
-import {buildCss} from "./utils";
-import Dom, {isDomNode} from "absol/src/HTML5/Dom";
+import { buildCss } from "./utils";
+import Dom, { isDomNode } from "absol/src/HTML5/Dom";
 import Color from "absol/src/Color/Color";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { implicitDate } from "absol/src/Time/datetime";
+import RelativeTimeText from "./RelativeTimeText";
 
 
 var $ = ACore.$;
@@ -60,13 +61,17 @@ function Toast() {
     this.$message = null;
     this.disappearTimeout = 0;
     this.htitle = 'Toast.htitle';
-    this.timeText = new Date();
     this.message = null;
     this.variant = null;
-    this.addEventListener('click', (event)=>{
-       if (hitElement(this.$closeBtn, event)) return;
-       this.emit('click', event, this);
+    this.addEventListener('click', (event) => {
+        if (hitElement(this.$closeBtn, event)) return;
+        this.emit('click', event, this);
     });
+    _({
+        tag: RelativeTimeText,
+        elt: this.$timeText
+    });
+    drillProperty(this, this.$timeText, ['timeText', 'time']);
 }
 
 Toast.tag = 'toast';
@@ -93,13 +98,13 @@ Toast.render = function () {
                     },
                     {
                         tag: 'smal',
-                        class: 'as-toast-time-text',
-                        child: { text: '20 mis ago' }
+                        class: 'as-toast-time-text'
                     },
                     {
                         tag: 'button',
                         class: 'as-toast-close-btn',
-                        child: { tag: 'span', child: { text: '×' } }
+                        child: 'span.mdi.mdi-close'
+                        // child: { tag: 'span', child: { text: '×' } }
                     }
                 ]
             },
@@ -187,23 +192,6 @@ Toast.property.message = {
 };
 
 
-Toast.property.timeText = {
-    set: function (value) {
-        if (value instanceof Date) {
-            value = value.toLocaleTimeString();
-
-        }
-        else {
-            value = value + '';
-        }
-        this.$timeText.firstChild.data = value;
-
-    },
-    get: function () {
-        return this.$timeText.firstChild.data;
-    }
-};
-
 Toast.$toastList = _('.as-toast-list.as-se.as-bscroller');
 Toast.$toastList4Pos = {
     se: Toast.$toastList,
@@ -231,7 +219,7 @@ Toast.make = function (aObject, pos) {
     if (!Toast.$toastList4Pos[pos]) pos = "se";
 
     aObject = aObject || {};
-    if (typeof aObject !== "object") throw  new Error("param must be AbsolConstructDescriptor object!");
+    if (typeof aObject !== "object") throw new Error("param must be AbsolConstructDescriptor object!");
 
     if (isDomNode(aObject)) {
 
