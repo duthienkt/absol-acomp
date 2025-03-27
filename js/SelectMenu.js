@@ -97,7 +97,7 @@ SelectMenu.optimizeResource = true;
 // //will remove after SelectMenu completed
 SelectMenu.getRenderSpace = function () {
     if (!SelectMenu.getRenderSpace.warned) {
-        console.warn('SelectMenu.getRenderSpace() will be removed in next version');
+        // console.warn('SelectMenu.getRenderSpace() will be removed in next version');
     }
     SelectMenu.getRenderSpace.warned = true;
     if (!SelectMenu.$renderSpace) {
