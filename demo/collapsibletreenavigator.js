@@ -2,85 +2,163 @@ function render(o) {
     return absol._(o).addTo(document.body);
 }
 
-var items = [
+var items =[
     {
-        text: 'Tất cả',
-        value: 'all',
-        icon: 'span.mdi.folder-multiple',
-        testRaw: 123
-    },
-    {
-        text: 'Đã nhận',
-        count: 5,
-        value: 'received'
-    },
-    {
-        text: 'Đã gởi',
-        value: 'sent'
-    },
-    {
-        text: 'Lưu tạm',
-        count: 4,
-        value: 'draft'
-
-    },
-    {
-        text: "No Select",
-        value: 'no_click',
-        noSelect: true
-    },
-    {
-        text: 'Nhóm',
-        actions: [
-            { name: "option", icon: 'span.mdi.mdi-cog-outline' },
-        ],
-        // initOpened: true,
+        value: "over_due",
+        text: "Quá hạn",
+        color: "#F28B82",
+        count: 0,
         items: [
             {
-                text: 'Nhãn mẹ',
-                value: 'parent_stamp',
+                value: 0,
+                text: "Đề xuất đi"
+            },
+            {
+                value: 0,
+                text: "Đề xuất đến"
+            }
+        ]
+    },
+    {
+        value: "waiting_approval",
+        color: "#FBCDA4",
+        text: "Chờ duyệt",
+        count: 0,
+        items: [
+            {
+                value: 0,
+                text: "Đề xuất đi"
+            },
+            {
+                value: 0,
+                text: "Đề xuất đến"
+            }
+        ]
+    },
+    {
+        value: "denied",
+        color: "#D1C4E9",
+        text: "Từ chối",
+        count: 0,
+        items: [
+            {
+                value: 0,
+                text: "Đề xuất đi"
+            },
+            {
+                value: 0,
+                text: "Đề xuất đến"
+            }
+        ]
+    },
+    {
+        value: "approved",
+        color: "#A7E6A5",
+        text: "Đã duyệt",
+        count: 0,
+        items: [
+            {
+                value: 0,
+                text: "Đề xuất đi"
+            },
+            {
+                value: 0,
+                text: "Đề xuất đến"
+            }
+        ]
+    },
+    {
+        value: "total_all",
+        text: "Tổng số",
+        count: 0,
+        items: [
+            {
+                value: 0,
+                text: "Đề xuất đi"
+            },
+            {
+                value: undefined,
+                text: "Đề xuất đến"
+            },
+            {
+                value: undefined,
+                text: "Người tham khảo"
+            }
+        ],
+        color: "null"
+    },
+    {
+        value: "draft",
+        text: "Nháp",
+        count: 0,
+        color: "null"
+    },
+    {
+        value: "group",
+        text: "Nhóm",
+        items: [
+            {
+                value: "group_9",
+                text: "Đi muộn về sớm",
+                count: 0,
+                items: []
+            },
+            {
+                value: "group_5",
+                text: "Khác",
+                count: 0,
+                items: []
+            },
+            {
+                value: "group_3",
+                text: "Nghỉ ngày",
+                count: 0,
                 items: [
                     {
-                        text: 'Nhãn con',
-                        count: 1,
-                        value: 'child_stamp'
+                        value: "group_7",
+                        text: "Nghỉ không lương",
+                        count: 0,
+                        items: []
+                    },
+                    {
+                        value: "group_6",
+                        text: "Nghỉ phép",
+                        count: 0,
+                        items: []
                     }
                 ]
             },
             {
-                text: 'Marketing',
-                value: 'marketing',
-                items: [
-                    {
-                        text: 'Nhãn con',
-                        count: 1,
-                        value: 'child_stamp'
-                    }
-                ]
+                value: "group_10",
+                text: "Tạm ứng",
+                count: 0,
+                items: []
+            },
+            {
+                value: "group_8",
+                text: "Tăng ca",
+                count: 0,
+                items: []
             }
-
-        ]
+        ],
+        initOpened: true,
+        noSelect: true,
+        color: "null"
     },
     {
-        text: 'Nhãn',
-        value: 'stamp',
-        initOpened: true,//nếu muốn khởi tạo tự mở
-        items: [
-            { text: 'item 1' },
-            { text: 'item 2' },
-            { text: 'item 3' },
-            { text: 'item 4' },
-        ]
-    },
-    {
-        text: 'Nhãn 2',
-        value: 'stamp_2',
-        items: [
-            { text: 'item 1' },
-            { text: 'item 2' },
-            { text: 'item 3' },
-            { text: 'item 4' },
-        ]
+        value: "label",
+        id: "label",
+        text: "Nhãn",
+        items: [],
+        initOpened: true,
+        noSelect: true,
+        actions: [
+            {
+                name: "label_config",
+                icon: "span.mdi.mdi-cog-outline"
+            }
+        ],
+        color: "null"
     }
 ];
 
@@ -125,3 +203,4 @@ window.navigator2 = render({
         }
     }
 });
+

@@ -57,7 +57,8 @@
                 icon: 'span.mdi.mdi-account',
                 text: `[${i}, ${i / 3 >> 0}] ${absol.string.randomPhrase(30)}`,
                 value: i / 3 >> 0,
-                desc: absol.string.randomPhrase(20)
+                desc: absol.string.randomPhrase(20),
+                lastInGroup: i % 8 == 2
             };
         });
         var now = new Date().getTime();

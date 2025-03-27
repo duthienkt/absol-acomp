@@ -49,6 +49,45 @@
             }
         }
     }).addTo($('#demo0'));
+
+    var button9 = _({
+        tag: 'ribbonbutton',
+        class: 'as-big',
+        style: {
+            marginLeft: '20px',
+        },
+        props: {
+            text: 'Dictate Text',
+            icon: 'span.mdi.mdi-microphone-outline',
+            items: [
+                { text: "Dicate Text", icon: 'span.mdi.mdi-microphone-outline' },
+                '-------',
+                {
+                    icon: 'span.mdi.mdi-google-translate',
+                    text: 'Google Translator'
+                },
+                {
+                    icon: 'span.mdi.mdi-translate',
+                    text: 'Bing Translator'
+                }
+            ]
+        },
+        on: {
+            select: function (event) {
+                //select a item in menu
+                console.log(event.item);
+                var item = event.item;
+                this.text = item.text;
+                this.icon = item.icon;
+            },
+            press: function (event) {
+                //click on primary button
+                console.log(event.item);
+            }
+        }
+    }).addTo($('#demo0'));
+    
+
     var button01 = _({
         tag: 'ribbonbutton',
         style: {
@@ -298,6 +337,9 @@
             }
         }
     });
+
+    
+
     var demo1Div = $('#demo1');
     demo1Div.addChild(button1)
         .addChild(button2)

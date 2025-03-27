@@ -43,7 +43,6 @@ function makeRowData(i, id) {
         },
         cells: [
             {
-                innerText: '',
                 style: {
                     textAlign: 'center'
                 },

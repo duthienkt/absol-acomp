@@ -98,6 +98,36 @@
             });
         }
 
+        
+        var editor3 = render({
+            tag: 'ckplaceholder',
+            props: {
+                extensions: ['dynamic_link'],
+                dynamicLinks: pages,
+                config: {
+                    toolbar: 'BASIC'
+                }
+            },
+            on: {
+                command: function (event) {
+                    var self = this;
+                    switch (event.command) {
+                        case 'insert_dynamic_link':
+                            var selectedLink = this.getSelectedDynamicLink();
+                            user_chose_page(selectedLink).then(function (result) {
+                                if (result) {
+                                    self.insertDynamicLink(result.pageId);
+                                    self.selectNext();
+                                }
+                            })
+                            break;
+                    }
+                }
+            }
+        });
+
+        editor3.data = 'Link mở HR: <a class="as-ck-widget-dynamic-link" data-link-id="hr"></a>';
+
 
         var editor = render({
             tag: 'ckplaceholder',
