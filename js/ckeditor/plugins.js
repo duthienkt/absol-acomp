@@ -117,6 +117,33 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
             }
         ];
     }
+    else if (config.toolbar === 'BASIC') {
+        config.toolbar = [
+            {
+                name: 'basicstyles',
+                items: ['Bold', 'Italic', 'Underline', 'TextColor', 'BGColor', 'NumberedList', 'BulletedList',
+                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+                    userImageFileDialog ? 'image_mgn_dialog' : 'Image']
+            },
+            { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
+            {
+                name: "paragraph",
+                items: ['Paragraph']
+            },
+            {
+                name: "extensions", items: extensions.map(function (eName) {
+                    if (CKExtensionDict[eName] && CKExtensionDict[eName].command) {
+                        return CKExtensionDict[eName].command;
+                    }
+                }).filter(function (u) {
+                    return !!u;
+                })
+            },
+            {
+                name: 'tools', items: ['Maximize']
+            }
+        ];
+    }
     else if (!config.toolbar || config.toolbar === "ADVANCED") {
         config.toolbar = [
             { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strike', 'Subscript', 'Superscript'] },
@@ -187,7 +214,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
     config.contentsCss = contentsCss;
 
     var extraPlugins = ['image_mgn'];
-    if (holderElt.stickyToolbar){
+    if (holderElt.stickyToolbar) {
         extraPlugins.push('autogrow');
         config.autoGrow_minHeight = 400;
     }
