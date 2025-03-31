@@ -168,7 +168,12 @@ QuickMenuInstance.prototype.open = function () {
 
     this.originProps = this.getMenuProps();
     this.copyProps = Object.assign({}, this.originProps);
-    this.copyProps.items = this.originProps.items || [];
+    if (typeof  this.originProps.items === "function") {
+        this.copyProps.items = this.originProps.items.call(this);
+    }
+    else {
+        this.copyProps.items = this.originProps.items || [];
+    }
     this.copyProps.items = this.copyProps.items.map(function visit(item) {
         var cpyItem = item;
         if (typeof item === "string") cpyItem = item;
