@@ -120,12 +120,39 @@
 }
 
 
+.cke_button_icon.cke_button__mdi_dialog_icon {
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTIsMkg4VjRIMTZWMkgyMlY4SDIwVjE2SDIyVjIySDE2VjIwSDhWMjJIMlYxNkg0VjhIMlYyTTE2LDhWNkg4VjhINlYxNkg4VjE4SDE2VjE2SDE4VjhIMTZNNCw0VjZINlY0SDRNMTgsNFY2SDIwVjRIMThNNCwxOFYyMEg2VjE4SDRNMTgsMThWMjBIMjBWMThIMThaIiAvPjwvc3ZnPg==');
+    background-position: 0 0px;
+    background-size: 16px;
+}
+
+
+
 .as-ck-widget-expression {
     color: #1da1ff;
 }
 
 .as-ck-widget-variable {
     color: #144f25;
+}
+
+.as-ck-widget-mdi {
+    display: inline-block;
+    width: 1.5em;
+    height: 1.5em;
+    position: relative;
+    vertical-align: baseline;
+}
+.as-ck-widget-mdi.mdi::before {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 1.5em;
+    line-height: 1;
 }
 
 

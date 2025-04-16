@@ -65,3 +65,23 @@ div.as-ck-inline-short-text {
     border-top: 1px solid #d1d1d1;
     z-index: 100;
 }
+
+
+.as-mdi-picker {
+    background-color: white;
+    border: 1px solid #dddddd;
+    padding: 10px 0  10px 10px;
+    min-width: 267px;
+    box-sizing: border-box;
+}
+
+.as-mdi-picker-body {
+    max-height: 40vh;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.as-mdi-picker button {
+    width: 30px;
+    height: 30px;
+}

@@ -8,16 +8,19 @@ import VariableExtension from "./VariableExtension";
 import DynamicLinkExtension from "./DynamicLinkExtension";
 import ImageFileExtension from "./ImageFileExtension";
 import VideoExtension from "./VideoExtension";
+import MDIExtension from "./MDIExtension";
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 
 var ckContentStyleUrl;
 var ckPluginInitialized = false;
 
-export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension, VideoExtension];
+export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension, VideoExtension, MDIExtension];
 
 export var CKExtensionDict = CKExtensions.reduce(function (ac, cr) {
     ac[cr.name] = cr;
     return ac;
 }, {});
+
 
 
 export var CKStylesSetDefault = [
@@ -56,6 +59,7 @@ export function ckInit() {
     if (ckPluginInitialized) return;
     var styleCode = ckContentStyleText
         .replace(/\$basePath/g, CKEDITOR.basePath);
+
     ckContentStyleUrl = URL.createObjectURL(stringToBlob(styleCode, 'css'));
     ckPluginInitialized = true;
     document.head.appendChild(_('<link rel="stylesheet" href="' + ckContentStyleUrl + '">'));
@@ -91,6 +95,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
             return !!c;
         }).join(',');
     if (extensions) extensions.push('video');
+    if (extensions) extensions.push('mdi');
     if (extensions && extensions.indexOf(VariableExtension.name) >= 0) {
         config.title = false;
     }
@@ -172,6 +177,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
             },
             { name: 'document', items: ['Source'] }
         ];
+        console.log(config.toolbar)
     }
 
     config.toolbar = config.toolbar.filter(function (i) {
@@ -197,9 +203,17 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
     }
     else if (config.contentsCss instanceof Array) {
         contentsCss.push.apply(contentsCss, config.contentsCss);
+
     }
 
     var has = contentsCss.some(function (url) {
+        return url.indexOf('materialdesignicons') >= 0;
+    });
+    if (!has) {
+        contentsCss.push('https://absol.cf/vendor/materialdesignicons/materialdesignicons.css');
+    }
+
+    has = contentsCss.some(function (url) {
         return url.indexOf('family=Material+Icons') >= 0;
     });
     if (!has) {
@@ -211,6 +225,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
     if (!has) {
         contentsCss.push(CKEDITOR.basePath + 'contents.css?time=' + Math.random());
     }
+
     config.contentsCss = contentsCss;
 
     var extraPlugins = ['image_mgn'];
