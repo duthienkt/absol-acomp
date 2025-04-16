@@ -5,7 +5,7 @@ import Vec2 from "absol/src/Math/Vec2";
 import Element from "absol/src/HTML5/Element";
 import Rectangle from "absol/src/Math/Rectangle";
 import Dom from "absol/src/HTML5/Dom";
-import EventEmitter, {findChangedTouchByIdent} from "absol/src/HTML5/EventEmitter";
+import EventEmitter, { findChangedTouchByIdent } from "absol/src/HTML5/EventEmitter";
 import Hanger from "./Hanger";
 import AElement from "absol/src/HTML5/Element";
 
@@ -165,6 +165,7 @@ BoardTable.prototype.addChildBefore = function (elt, at) {
 };
 
 BoardTable.prototype.addChildAfter = function (elt, at) {
+    //todo: testing
     elt.selfRemove();
     var atIndex = this.findChildHolderIndex(at);
     var afterAt = this.findDomChildAfter(at);
@@ -182,7 +183,10 @@ BoardTable.prototype.addChildAfter = function (elt, at) {
         var holder = {
             elt: elt
         };
-        if (!afterAt) {
+        if (atIndex === -1) {
+            this.insertBefore(elt, afterAt || this.firstChild);
+        }
+        else if (!afterAt) {
             this.appendChild(elt);
         }
         else {
@@ -356,7 +360,7 @@ BoardTable.eventHandler.mousedown = function (event) {
                     '--y': mousePos.y + 'px'
                 }).addTo(document.body);
                 if (thisBT._dragEventData)
-                thisBT.eventHandler.readyDrag(cEvent);
+                    thisBT.eventHandler.readyDrag(cEvent);
             }, 400);
         }
         else {
