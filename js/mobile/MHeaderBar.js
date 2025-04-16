@@ -1,6 +1,9 @@
 import '../../css/mobileapp.css';
-import ACore, {_, $} from "../../ACore";
+import ACore, { _, $ } from "../../ACore";
 import QuickMenu from "../QuickMenu";
+import { isNaturalNumber } from "../utils";
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
+import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 /**
  * @exatends AElement
@@ -19,6 +22,9 @@ function MHeaderBar() {
     this.$titleCtn = null;
     this.$title = null;
     this.$titleDesc = null;
+    this.$notificationActionBtn = $(".as-header-bar-notification-action", this).on('click', (event) => {
+        MHeaderBar.emit('clicknotification', { type: 'clicknotification', target: this }, this);
+    });
     this.$commands = [];
 }
 
@@ -29,7 +35,17 @@ MHeaderBar.render = function () {
         class: 'am-header-bar',
         child: [
             {
-                class: 'am-header-bar-right'
+                class: 'am-header-bar-right',
+                child: [
+                    {
+                        tag: 'button',
+                        class: ['am-header-bar-command', 'as-header-bar-notification-action'],
+                        child: [
+                            'span.mdi.mdi-bell',
+                            '.as-header-bar-notification-action-count',
+                        ]
+                    }
+                ]
             }
         ]
     });
@@ -113,12 +129,11 @@ MHeaderBar.prototype.showQuickMenu = function (flag) {
     }
 
     if (flag) {
-        this.$right.addChild(this.$quickmenuBtn);
+        this.$right.addChildBefore(this.$quickmenuBtn, this.$notificationActionBtn);
     }
     else {
         if (this.$quickmenuBtn) this.$quickmenuBtn.remove();
     }
-
 };
 
 
@@ -264,16 +279,17 @@ MHeaderBar.property.commands = {
         });
         this.$commands = [];
         var commandBtn;
+        var i;
         if (value) {
             var firstChild = this.$right.firstChild;
             if (firstChild) {
-                for (var i = 0; i < value.length; ++i) {
+                for (i = 0; i < value.length; ++i) {
                     commandBtn = this._makeCommandBtn(value[i]);
                     this.$right.addChildBefore(commandBtn, firstChild)
                 }
             }
             else {
-                for (var i = 0; i < value.length; ++i) {
+                for (i = 0; i < value.length; ++i) {
                     commandBtn = this._makeCommandBtn(value[i]);
                     this.$right.addChild(commandBtn);
                 }
@@ -293,3 +309,40 @@ MHeaderBar.property.commands = {
 ACore.install(MHeaderBar);
 
 export default MHeaderBar;
+
+
+var notyEmitter = new EventEmitter();
+
+MHeaderBar.on = notyEmitter.on.bind(notyEmitter);
+MHeaderBar.once = notyEmitter.once.bind(notyEmitter);
+MHeaderBar.off = notyEmitter.off.bind(notyEmitter);
+MHeaderBar.emit = notyEmitter.emit.bind(notyEmitter);
+
+
+var notificationCount = 0;
+/**
+ *
+ * @type {null|DynamicCSS}
+ */
+var ncCSS = null;
+
+function updateNotificationCountText() {
+    if (!ncCSS) ncCSS = new DynamicCSS();
+    console.log("notificationCount", notificationCount);
+    ncCSS.setRule("button .as-header-bar-notification-action-count::before", {
+        display: notificationCount > 0 ? 'block' : 'none',
+        content: `"${notificationCount > 9 ? "+9" : notificationCount}"`,
+    }).commit();
+}
+
+Object.defineProperty(MHeaderBar, 'notificationCount', {
+    set: function (value) {
+        value = Math.round(value);
+        if (!isNaturalNumber(value)) value = 0;
+        notificationCount = value;
+        updateNotificationCountText();
+    },
+    get: function () {
+        return notificationCount;
+    }
+});
