@@ -1,0 +1,284 @@
+.as-list-compare-tool {
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    font-size: 14px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+
+    --item-min-width: 10px;
+    min-width: calc(var(--item-min-width) + var(--item-min-width) + 122px + 44px);
+    overflow: hidden;
+    --list-max-height: auto;
+    position: relative;
+}
+
+.as-remove-line-tool-active .as-list-compare-tool-body,
+.as-remove-line-tool-active .as-lct-item {
+    cursor: none;
+}
+
+.as-lct-cursor {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1e9;
+    top: -100px;
+    left: -100px;
+    font-size: 25px;
+    width: 30px;
+    height: 30px;
+    color: rgba(0, 0, 0, 0.75);
+}
+
+.as-list-compare-tool-header {
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+}
+
+.as-list-compare-tool-header .as-form-cmd-tool,
+.as-list-compare-tool-check-ctn {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.as-list-compare-tool-header .as-cmd-tool-group-x2::before {
+    display: none;
+}
+
+.as-list-compare-tool-body {
+    width: 100%;
+    white-space: nowrap;
+    position: relative;
+    padding: 30px 10px 10px 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.as-list-compare-tool-before-title,
+.as-list-compare-tool-after-title{
+    position: absolute;
+    top: 5px;
+    line-height: 20px;
+    background-color: white;
+    z-index: 11;
+}
+
+.as-list-compare-tool-before-title {
+    left: 10px;
+    line-height: 20px;
+}
+
+.as-list-compare-tool-after-title {
+    left: calc(50% + 60px);
+}
+
+.as-list-compare-tool-before-title::before {
+    content: "Form cũ";
+}
+
+
+.as-list-compare-tool-after-title::before {
+    content: "Form mới";
+}
+
+/*.as-list-compare-tool.as-display-inline {*/
+/*    display: inline-block;*/
+/*}*/
+
+.as-list-compare-tool-before,
+.as-list-compare-tool-after,
+.as-list-compare-tool-spacing {
+    display: inline-block;
+    vertical-align: top;
+    position: relative;
+
+}
+
+
+.as-list-compare-tool-before,
+.as-list-compare-tool-after {
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    width: calc(50% - 60px);
+    max-height: var(--list-max-height);
+    overflow-block: auto;
+}
+
+
+.as-list-compare-tool-before .as-lct-item:not(:last-child),
+.as-list-compare-tool-after .as-lct-item:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+    height: 29px;
+}
+
+
+.as-list-compare-tool-spacing {
+    width: 120px;
+    height: 30px;
+}
+
+.as-list-compare-tool-operators > svg {
+    width: 100%;
+    height: 100%;
+}
+
+.as-list-compare-tool-operators {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.as-list-compare-tool-operators > svg .as-lct-line-group:not(.as-same-value) .as-lct-line-hit-box {
+    pointer-events: all;
+}
+
+.as-list-compare-tool.as-view-changed {
+
+}
+
+
+.as-list-compare-tool.as-view-unchanged {
+
+}
+
+
+.as-list-compare-tool.as-remove-line-tool-active .as-lct-line-group:hover:not(.as-same-value) .as-lct-line-hit-box {
+    stroke: rgba(255, 100, 0, 0.5);
+}
+
+
+.as-lct-line {
+    fill: none;
+    stroke: blue;
+}
+
+.as-lct-line-hit-box {
+    stroke-width: 8px;
+    stroke: transparent;
+}
+
+.as-lct-line-group.as-same-value .as-lct-line {
+    stroke: #9cf6b6;
+}
+
+.as-lct-line.as-new-line {
+    stroke: #c07777;
+}
+
+.as-lct-arrow {
+    fill: blue;
+    stroke: none;
+}
+
+.as-lct-same-value-arrow {
+    fill: #9cf6b6;
+    stroke: none;
+}
+
+.as-lct-new-line-arrow {
+    stroke: none;
+    fill: #c07777;
+}
+
+
+.as-lct-item {
+    white-space: nowrap;
+    height: 28px;
+    box-sizing: border-box;
+    padding-right: 10px;
+    position: relative;
+    overflow: visible;
+    padding-left: 10px;
+}
+
+
+.as-list-compare-tool.as-view-changed-only .as-lct-item:not(.as-mapped):not(.as-removed):not(.as-added) {
+    display: none;
+}
+
+.as-lct-item.as-removed {
+    background-color: #fbcece;
+}
+
+.as-lct-item.as-added {
+    background-color: #cedbfb;
+}
+
+
+.as-lct-item:hover {
+    background-color: var(--as-transparent-button-hover-color);
+}
+
+.as-lct-item.as-active {
+    background-color: var(--as-transparent-button-active-color);
+}
+
+.as-lct-item::before {
+    content: "";
+    display: inline-block;
+    vertical-align: middle;
+    height: 100%;
+}
+
+.as-lct-item::after {
+    content: "";
+    display: block;
+    position: absolute;
+    z-index: 5;
+    top: calc(50% - 5px);
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    background-color: #cdcdcd;
+    border-radius: 50%;
+}
+
+
+.as-lct-item.as-removed,
+.as-lct-item.as-added {
+    cursor: pointer;
+}
+
+.as-lct-item.as-removed::after,
+.as-lct-item.as-added::after {
+    background-color: #37e0e0;
+
+}
+
+
+
+.as-list-compare-tool-after .as-lct-item::after {
+    left: 5px;
+}
+
+.as-list-compare-tool-after .as-lct-item {
+    padding-left: 15px;
+}
+
+
+.as-lct-item-text {
+    padding-right: 20px;
+}
+
+.as-lct-item-text,
+.as-lct-item-icon-ctn {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-lct-item-icon-ctn {
+    width: 25px;
+    height: 20px;
+    text-align: left;
+}
+
+.as-lct-item-icon-ctn > * {
+    font-size: 20px;
+    display: block;
+}
+
+.as-lct-item-text::before {
+    content: attr(data-text);
+}
