@@ -9,6 +9,7 @@ import QuickMenu, { QuickMenuInstance } from "./QuickMenu";
 import { implicitDate } from "absol/src/Time/datetime";
 import RelativeTimeText from "./RelativeTimeText";
 import FlexiconButton from "./FlexiconButton";
+import MHeaderBar from "./mobile/MHeaderBar";
 
 /**
  * @extends AElement
@@ -73,6 +74,7 @@ NPDropdownButton.tag = 'NPDropdownButton'.toLowerCase();
 NPDropdownButton.render = function () {
     return _({
         class: 'as-np-dropdown-button',
+        extendEvent: ['click', 'close', 'open'],
         child: [
             {
                 tag: 'button',
@@ -173,7 +175,7 @@ NPDropdownButton.prototype.open = function () {
         if (this.hasClass('as-active'))
             window.addEventListener('click', this.eventHandler.clickOut);
     }, 3);
-
+    this.emit('open', { type: 'open' }, this);
 };
 
 
@@ -181,7 +183,7 @@ NPDropdownButton.prototype.close = function () {
     if (!this.hasClass('as-active')) return;
     this.removeClass('as-active');
     window.removeEventListener('click', this.eventHandler.clickOut);
-
+    this.emit('close', { type: 'close' }, this);
 };
 
 NPDropdownButton.property = {};
@@ -270,6 +272,7 @@ NPDropdownButton.eventHandler = {};
  * @param {MouseEvent} event
  */
 NPDropdownButton.eventHandler.click = function (event) {
+    this.emit('click', { type: 'click', originalEvent: event }, this);
     if (this.hasClass('as-active')) {
         this.close();
     }
@@ -632,3 +635,112 @@ NPItem.property.quickmenu = {
         return this._quickmenu;
     }
 };
+
+
+/**
+ * similar to NPDropdownButton interface
+ * @extends AElement
+ * @constructor
+ */
+export function MNPNotificationVirtualDropdown() {
+    document.body.appendChild(this);
+    this.$body = $('.as-mb-vd-body', this);
+    this.$headerBar = $('.as-mb-vd-header-bar', this)
+        .on('action', this.eventHandler.action);
+    MHeaderBar.on('clicknotification', () => {
+        this.open();
+    });
+}
+
+MNPNotificationVirtualDropdown.tag = 'MNPNotificationVirtualDropdown'.toLowerCase();
+
+MNPNotificationVirtualDropdown.render = function () {
+    return _({
+        extendEvent: ['click', 'close', 'open'],
+        class: ['as-mobile-notification-virtual-dropdown', 'as-hidden'],
+        child: [
+            {
+                tag: MHeaderBar,
+                class: 'as-mb-vd-header-bar',
+                props: {
+                    actionIcon: 'span.mdi.mdi-arrow-left'
+                }
+            },
+            {
+                class: 'as-mb-vd-body'
+            }
+        ]
+    });
+};
+
+MNPNotificationVirtualDropdown.prototype.open = function () {
+    this.emit('click', { type: 'click' }, this);
+    if (!this.hasClass('as-hidden')) return;
+    this.removeClass('as-hidden');
+    this.emit('open', { type: 'close' }, this);
+};
+
+
+MNPNotificationVirtualDropdown.prototype.close = function () {
+    this.emit('click', { type: 'click' }, this);
+    if (this.hasClass('as-hidden')) return;
+    this.addClass('as-hidden');
+    this.emit('close', { type: 'close' }, this);
+};
+
+MNPNotificationVirtualDropdown.prototype.getChildNodes = function () {
+    return Array.prototype.slice.call(this.$body.childNodes);
+};
+
+
+MNPNotificationVirtualDropdown.prototype.getChildren = function () {
+    return this.getChildNodes();
+};
+
+MNPNotificationVirtualDropdown.prototype.getFirstChild = function () {
+    return this.$body.firstChild;
+};
+
+
+MNPNotificationVirtualDropdown.prototype.getLastChild = function () {
+    return this.$body.lastChild;
+};
+
+MNPNotificationVirtualDropdown.prototype.addChild = function (elt) {
+    if (elt.tagName === 'H3' || elt.tagName === 'H4') {
+        this.$headerBar.title = elt.innerText;
+        elt.addStyle('display', 'none');
+    }
+
+    return this.$body.addChild(...arguments);
+}
+
+
+MNPNotificationVirtualDropdown.property = {};
+
+MNPNotificationVirtualDropdown.property.count = {
+    set: function (value) {
+        MHeaderBar.notificationCount = value;
+    },
+    get: function () {
+        return MHeaderBar.notificationCount;
+    }
+};
+
+
+MNPNotificationVirtualDropdown.property.quickmenu = {
+    set: function (value) {
+        this.$headerBar.quickmenu = value;
+    },
+    get: function () {
+        return this.$headerBar.quickmenu
+    }
+};
+MNPNotificationVirtualDropdown.eventHandler = {};
+
+MNPNotificationVirtualDropdown.eventHandler.action = function () {
+    this.close();
+};
+
+
+ACore.install(MNPNotificationVirtualDropdown);
