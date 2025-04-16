@@ -1,0 +1,58 @@
+.as-picking-list {
+    font-size: 14px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+
+
+.as-picking-list-item {
+    height: 30px;
+    position: relative;
+    padding-right: 40px;
+    padding-left: 10px;
+    white-space: nowrap;
+}
+
+.as-picking-list-item::before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.as-picking-list-item-text {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+.as-picking-list-item:hover {
+    background-color: var(--as-transparent-button-hover-color);
+}
+
+.as-picking-list-item:active {
+    background-color: var(--as-transparent-button-active-color);
+}
+
+.as-picking-list-item-checked {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    bottom: 0;
+    font-size: 20px;
+}
+
+.as-picking-list-item-checked::before {
+    content: "";
+    height: 100%;
+}
+
+.as-picking-list-item-checked::before,
+.as-picking-list-item-checked span {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: inherit;
+}
+
+.as-picking-list-item:not(.as-checked) .as-picking-list-item-checked {
+    display: none;
+}
