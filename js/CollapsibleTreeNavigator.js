@@ -48,7 +48,7 @@ CollapsibleTreeNavigator.tag = 'CollapsibleTreeNavigator'.toLowerCase();
 CollapsibleTreeNavigator.render = function () {
     return _({
         class: 'as-collapsible-tree-navigator',
-        extendEvent: ['change', 'action']
+        extendEvent: ['change', 'action', 'clickitem']
     });
 };
 
@@ -81,6 +81,14 @@ CollapsibleTreeNavigator.prototype.notifyChange = function (data) {
     var value = this.value;
     if (data) value = data.value;
     this.emit('change', { type: 'change', value: value, data: data }, this);
+};
+
+/**
+ *
+ * @param {any=}data
+ */
+CollapsibleTreeNavigator.prototype.notifyClick = function (data) {
+    this.emit('clickitem', { type: 'clickitem', data: data }, this);
 };
 
 
@@ -387,6 +395,7 @@ CTCollapsibleNode.prototype.ev_click = function (event) {
             rootElt.value = this.value;
             rootElt.notifyChange(this.data);
         }
+        rootElt.notifyClick(this.data);
     }
 
 };
