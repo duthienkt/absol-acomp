@@ -89,6 +89,10 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     max-width: var(--dt-content-width);
 }
 
+.as-dynamic-table-wrapper.as-has-fixed-col.as-overflow-y {
+    max-width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
+}
+
 
 .as-dynamic-table-wrapper.as-inline {
 }
