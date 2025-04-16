@@ -697,8 +697,8 @@ MSMSearchingPlugin.prototype.calcScore = function (queryHolder, itemHolder) {
     var mustIncluded = false;
     if (itemHolder.nacText.indexOf(queryHolder.nacText) >= 0) mustIncluded = true;
     if (itemHolder.text.indexOf(queryHolder.text) >= 0) mustIncluded = true;
-    score += wordsMatch(queryHolder.words, itemHolder.words) / harmonicMean(queryHolder.words.length, itemHolder.words.length);
-    score += wordsMatch(queryHolder.nacWords, itemHolder.nacWords) / harmonicMean(queryHolder.nacWords.length, itemHolder.nacWords.length);
+    score += wordsMatch(queryHolder.words, itemHolder.words) / (harmonicMean(queryHolder.words.length, itemHolder.words.length) || 1);
+    score += wordsMatch(queryHolder.nacWords, itemHolder.nacWords) / (harmonicMean(queryHolder.nacWords.length, itemHolder.nacWords.length) || 1);
     var dict = Object.keys(itemHolder.nacWordDict);
     Object.keys(queryHolder.nacWordDict).forEach(function (qWord) {
         var bestWordScore = 0;
@@ -711,7 +711,7 @@ MSMSearchingPlugin.prototype.calcScore = function (queryHolder, itemHolder) {
             }
         }
         if (bestWordScore > 0) {
-            score += bestWordScore / harmonicMean(qWord.length, bestWord.length);
+            score += bestWordScore / (harmonicMean(qWord.length, bestWord.length) || 1);
             delete dict[bestWord];
         }
     });
