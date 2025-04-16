@@ -71,7 +71,7 @@ CMDTool.prototype.updateVisibility = function (...args) {
     if (!delegate) return;
     var keys = [];
     if (args.length === 0) {
-        keys = Object.keys(this.$nodes)
+        keys = Object.keys(this.$nodes).filter(k=>k !== 'undefined');//remove apt nodes
     }
     else {
         keys = args.reduce((ac, cr) => {
@@ -80,6 +80,7 @@ CMDTool.prototype.updateVisibility = function (...args) {
             return ac;
         }, []);
     }
+
     keys.forEach((name) => {
         if (!this.$nodes[name]) return;
         var descriptor = delegate.getCmdDescriptor(name);
@@ -113,10 +114,14 @@ CMDTool.prototype.createNode = function (nd, par) {
     }
     else if (typeof nd === "string") {
         nd = Object.assign({ name: nd, type: 'trigger' }, this.delegate.getCmdDescriptor(nd));
+        if (typeof nd.desc === "function") {
+            nd.desc = nd.desc.call(this.delegate);
+        }
         handler = this.cmdNodeHandlers[nd.type];
     }
     else
         handler = this.cmdNodeHandlers[nd.type];
+
 
     var nodeElt = null;
     if (handler) {
@@ -135,6 +140,9 @@ CMDTool.prototype.createNode = function (nd, par) {
 CMDTool.prototype.updateNode = function (nodeElt, nd) {
     if (!nodeElt) return;
     nd = Object.assign({}, nodeElt.descriptor,{disabled: false}, nd);//default disabled = false
+    if (typeof nd.desc === "function") {
+        nd.desc = nd.desc.call(this.delegate);
+    }
     nodeElt.descriptor = nd;
     var par = nodeElt.parentDescriptor;
     var handler = this.cmdNodeHandlers[nd.type];
