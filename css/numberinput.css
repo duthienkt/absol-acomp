@@ -14,7 +14,7 @@
 }
 
 .absol-number-input.as-width-auto {
-    width: calc(var(--text-width));
+    width: calc(var(--text-width) + 1em);
 }
 
 .absol-number-input.as-has-stepper.as-width-auto {
