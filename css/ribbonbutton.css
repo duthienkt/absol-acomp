@@ -16,6 +16,10 @@
     background-color: transparent;
 }
 
+.as-ribbon-button:disabled .as-ribbon-button-icon {
+    color: rgba(16, 16, 16, 0.3) !important;
+}
+
 .as-ribbon-button div,
 .as-ribbon-button span {
     font-weight: inherit;
@@ -124,4 +128,30 @@ svg.as-ribbon-button-icon {
 
 .as-ribbon-selected {
     background-color: #dfdfdf;
+}
+
+.as-mobile-ribbon-list > button {
+    font-size: 12px;
+}
+
+@media screen and (min-width: 350px) {
+    .as-mobile-ribbon-list .as-ribbon-button.as-big {
+        width: 25%;
+    }
+}
+
+
+@media screen and (max-width: 350px) {
+    .as-mobile-ribbon-list .as-ribbon-button.as-big {
+        width: 33%;
+    }
+}
+
+.as-mobile-ribbon-list .as-ribbon-button {
+    vertical-align: top;
+    font-size: 13px;
+}
+
+.as-mobile-ribbon-list .as-ribbon-button.as-big span.as-ribbon-button-icon {
+    font-size: 20px;
 }
