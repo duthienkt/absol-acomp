@@ -221,6 +221,11 @@ DateInput2.prototype.clear = function () {
  */
 DateInput2.prototype._applyValue = function (value) {
     this._value = value;
+    this._loadTextFromValue();
+};
+
+DateInput2.prototype._loadTextFromValue = function () {
+  var value = this.value;
     if (!value) {
         this.$input.value = this.format;
     }
@@ -229,6 +234,7 @@ DateInput2.prototype._applyValue = function (value) {
     }
     this._updateNullClass();
 };
+
 
 DateInput2.prototype._updateNullClass = function () {
     var value = this._value;
@@ -419,7 +425,7 @@ DateInput2.prototype._explicit = function (value) {
     var time = value.getTime();
     time = Math.max(this._min.getTime(), time);
     time = Math.min(this._max.getTime(), time);
-    return dateByLevel(new Date(time), this.calendarLevel);
+    return dateByLevel(beginOfDay(new Date(time)), this.calendarLevel);
 };
 
 DateInput2.prototype._applyTokenDict = function (format, dict, debug) {
@@ -776,8 +782,9 @@ DateInput2.property.value = {
     set: function (value) {
         value = this._normalizeValue(value);
         if (!value && this.notNull) value = beginOfDay(new Date());
-        this._lastValue = value;
-        this._applyValue(value);
+        this._value = value;
+        this._lastValue = this._explicit(this._value);
+        this._loadTextFromValue();
     },
     get: function () {
         return this._explicit(this._value);
@@ -871,6 +878,8 @@ DateInput2.property.calendarLevel = {
 DateInput2.property.min = {
     set: function (value) {
         this._min = this._normalizeValue(value) || new Date(1890, 0, 1);
+        this._lastValue = this._explicit(this._value);
+        this._applyValue(this._lastValue);
     },
     get: function () {
         return this._min;
@@ -880,6 +889,8 @@ DateInput2.property.min = {
 DateInput2.property.max = {
     set: function (value) {
         this._max = this._normalizeValue(value) || new Date(2090, 0, 1);
+        this._lastValue = this._explicit(this._value);
+        this._applyValue(this._lastValue);
     },
     get: function () {
         var max = this._max;
