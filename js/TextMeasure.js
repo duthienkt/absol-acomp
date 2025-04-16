@@ -15,6 +15,9 @@ function TextMeasure() {
     // this._makeFontSize('Arial');
 }
 
+TextMeasure.prototype.FONT_ARIAL = 'Arial';
+TextMeasure.prototype.FONT_TIMES_NEW_ROMAN = 'Times New Roman';
+
 TextMeasure.prototype.exportCode = function () {
     var obj = 'self.absol.TextMeasure';
     var code = [
