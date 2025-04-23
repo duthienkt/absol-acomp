@@ -3,8 +3,8 @@ import { getMapZoomLevel, implicitLatLng, isRealNumber, latLngDistance } from ".
 import DomSignal from "absol/src/HTML5/DomSignal";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import Color from "absol/src/Color/Color";
-import MarkerClusterer from "./MarkerClusterer";
 import { getGoogleMarkerLib } from "./LocationPicker";
+import Svg from "absol/src/HTML5/Svg";
 
 var MARKER_RADIUS = 10;
 var MARKER_BORDER_COLOR = '#4945C8';
@@ -25,6 +25,29 @@ function generateColor(id) {
         }
     }
     return res;
+}
+
+function distanceInPixels(zoom, latLng1, latLng2) {
+    // Calculate the geographical distance in meters
+    var R = 6371000; // Earth's radius in meters
+    var lat1 = latLng1.lat() * Math.PI / 180;
+    var lat2 = latLng2.lat() * Math.PI / 180;
+    var deltaLat = (latLng2.lat() - latLng1.lat()) * Math.PI / 180;
+    var deltaLng = (latLng2.lng() - latLng1.lng()) * Math.PI / 180;
+
+    var a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+        Math.cos(lat1) * Math.cos(lat2) *
+        Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var distanceInMeters = R * c;
+
+
+    // Calculate the resolution (meters per pixel)
+    var scale = 156543.03392 * Math.cos(lat1) / Math.pow(2, zoom);
+
+    // Convert meters to pixels
+    return distanceInMeters / scale;
+
 }
 
 // https://lab.daithangminh.vn/home_co/carddone/markerclusterer.js
@@ -61,25 +84,38 @@ function LVPolyline(viewerElt, data) {
         strokeWeight: 5
     }));
     this.polyline = new google.maps.Polyline(this.polylineData);
+    this.template = _({
+        style: {
+            position: 'relative',
+        },
+        child: {
+            tag: 'div',
+            style: {
+                width: `${MARKER_RADIUS * 2}px`,
+                height: `${MARKER_RADIUS * 2}px`,
+                position: 'absolute',
+                top: `${-MARKER_RADIUS}px`,
+                left: `${-MARKER_RADIUS}px`,
+                borderRadius: '50%',
+                backgroundColor: this.polylineData.strokeColor,
+                border: `2px solid ${MARKER_BORDER_COLOR}`,
+                boxSizing: 'border-box',
+            }
+        }
+    });
     this.markers = this.polylineData.path.map(function (crd, i) {
-        var mkr = new google.maps.marker.Marker({
+        var anchor = this.template.cloneNode(true);
+        var mkr = new google.maps.marker.AdvancedMarkerElement({
             position: crd,
-            // sName: data.name || data.id || this.id,
             map: this.map,
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: MARKER_RADIUS,
-                fillColor: this.polylineData.strokeColor,
-                fillOpacity: 1,
-                strokeWeight: 2,
-                strokeColor: MARKER_BORDER_COLOR
-            },
+            content: anchor,
         });
-        mkr.setMap(this.map);
+
+
         var infoWindow;
         if (data.path[i] && data.path[i].info) {
             infoWindow = new google.maps.InfoWindow(data.path[i].info);
-            mkr.addListener('mouseover', function () {
+            anchor.addEventListener('mouseover', function () {
                 if (lastOpenInfo === infoWindow) return;
                 try {
                     if (lastOpenInfo) lastOpenInfo.close();
@@ -93,7 +129,7 @@ function LVPolyline(viewerElt, data) {
                     map: this.map,
                     shouldFocus: true
                 });
-            }.bind(this))
+            })
         }
         return mkr;
     }.bind(this));
@@ -154,46 +190,282 @@ function LVPoints(viewerElt, data) {
         return;
     }
     this.map = viewerElt.map;
-    this.marker = new google.maps.marker.Marker({
-        position: this.latLng,
-        // sName: data.name || data.id || this.id,
-        // map: this.map,
-        icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: MARKER_RADIUS,
-            fillColor: data.color || generateColor(this.id).toString(),
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: MARKER_BORDER_COLOR
+    this.viewNumber = 0;
+
+
+}
+
+LVPoints.prototype.numberToHue = function (number) {
+    var res = 0;
+
+    var hs = 1;
+    for (var i = 0; (i < 4 && number > 1); ++i) {
+        hs *= 10;
+        res += Math.log(Math.min(number, hs)) / Math.log(hs) * 0.25;
+        number -= hs;
+    }
+
+    res = Math.min(0.8, res);
+    return res;
+};
+
+LVPoints.prototype.number2Image = function (number) {
+    var data = this.data;
+    var color = number === 1 ? data.color || generateColor(this.id).toString() : Color.fromHSL(this.numberToHue(number), 1, 0.5).toString();
+    try {
+        color = Color.parse(color);
+    } catch (e) {
+        color = number === 1 ? generateColor(this.id) : Color.fromHSL(this.numberToHue(number), 1, 0.4)
+    }
+    var textColor = color.getContrastYIQ().toString('hex8');
+    color = color.toString('hex8');
+
+    var outLineCount;
+    var radius;
+    if (number <= 1) {
+        outLineCount = 0;
+        radius = 10;
+    }
+    else {
+        outLineCount = ((number + '').length);
+        radius = 5 + outLineCount * 2;
+
+    }
+    var canvasSize = 2 * (radius + 5 * outLineCount + 2);
+
+    var res = {
+        tag: 'svg',
+        style: {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            cursor: 'pointer'
         },
+        attr: {
+            width: canvasSize + '',
+            height: canvasSize + '',
+            viewBox: [-canvasSize / 2, -canvasSize / 2, canvasSize, canvasSize].join(' ')
+        },
+        child: [
+            {
+                tag: 'circle',
+                attr: {
+                    cx: 0,
+                    cy: 0,
+                    r: radius,
+                },
+                style: {
+                    fill: color,
+                    stroke: number === 1 ? 'white' : 'none',
+                    'stroke-width': number === 1 ? 4 : 0,
+                }
+            }
+        ]
+    };
+
+    var path, r;
+    var j, sAngle, eAngle;
+    var angle;
+    var delta = 2 * Math.PI / 5;
+    for (var i = 0; i < outLineCount; ++i) {
+        angle = -Math.PI / 2 - delta / 2;
+        r = radius + 3 + i * 5;
+        path = '';
+        for (j = 0; j < 5; ++j) {
+            angle += delta;
+            sAngle = angle + 0.1;
+            eAngle = angle + delta - 0.1;
+            path += ['M', Math.cos(sAngle) * r, Math.sin(sAngle) * r].join(' ') + ' ';
+            path += ['A', r, r, 0, 0, 1, Math.cos(eAngle) * r, Math.sin(eAngle) * r].join(' ') + ' ';
+        }
+        res.child.push({
+            tag: 'path',
+            style: {
+                fill: 'none',
+                stroke: color,
+                'stroke-width': 4
+            },
+            attr: {
+                d: path,
+                opacity: 0.5 - 0.5 * i / outLineCount,
+            },
+        });
+    }
+
+
+    if (number > 1) {
+        res.child.push({
+            tag: 'text',
+            attr: {
+                x: 0,
+                y: 0,
+                'dominant-baseline': 'middle',
+                'text-anchor': 'middle',
+                fill: textColor,
+                'font-size': 10,
+                'font-weight': 'bold'
+            },
+            child: {
+                text: number + ''
+            }
+        })
+    }
+
+
+    return Svg.ShareInstance._(res);
+};
+
+/**
+ *
+ * @param {number} number - <0: not show>
+ */
+LVPoints.prototype.view = function (number) {
+    if (!isRealNumber(number)) number = 0;
+    number = Math.max(0, Math.floor(number));
+    if (this.viewNumber === number) return;
+    this.viewNumber = number;
+    var data = this.data;
+    if (this.marker) {
+        this.marker.setMap(null);
+        this.marker = null;
+        this.content = null;
+    }
+    if (number <= 0) return;
+
+
+    this.content = this.number2Image(number);
+
+    this.marker = new google.maps.marker.AdvancedMarkerElement({
+        position: this.latLng,
+        map: this.map,
+        content: this.content,
     });
-    // this.marker.setMap(this.map);
 
-    if (!data.info) return;
-    var infoWindow = new google.maps.InfoWindow(data.info);
-    this.marker.addListener('mouseover', function () {
-        if (lastOpenInfo === infoWindow) return;
-        try {
-            if (lastOpenInfo) lastOpenInfo.close();
-        } catch (e) {
+    this.marker.getMap = this.marker.getMap || (function () {
+        return this.map;
+    });
 
+
+    this.marker.getPosition = () => {
+        return this.latLng;
+    }
+    this.marker.setMap(this.map);
+
+    if (number === 1) {
+        if (this.data.info && !this.infoWindow) {
+            this.infoWindow = new google.maps.InfoWindow(this.data.info);
         }
 
-        lastOpenInfo = infoWindow;
-        infoWindow.open({
-            anchor: this.marker,
-            map: this.map,
-            shouldFocus: true
-        });
-    }.bind(this))
+        if (this.infoWindow ) {
+            this.content.on('mouseover', () => {
+                if (lastOpenInfo === this.infoWindow) return;
+                try {
+                    if (lastOpenInfo) lastOpenInfo.close();
+                } catch (e) {
 
+                }
+
+                lastOpenInfo = this.infoWindow;
+                this.infoWindow.open({
+                    anchor: this.marker,
+                    map: this.map,
+                    shouldFocus: true
+                });
+            })
+        }
+
+    }
+    else if (number >1) {
+        this.content.on('click', ()=>{
+            this.map.setCenter(this.latLng);
+            this.map.setZoom(this.map.getZoom()+1);
+        })
+    }
 }
 
 
 LVPoints.prototype.remove = function () {
     if (this.marker)
         this.marker.setMap(null);
+    this.content = null;
+    this.marker = null;
+    this.infoWindow = null;
+
 }
+
+
+/**
+ *
+ * @param {LocationView} lvElt
+ * @param {LVPoints[]} points
+ * @constructor
+ */
+function LVCluster(lvElt, points) {
+    this.lvElt = lvElt;
+    this.points = points;
+    /**
+     *
+     * @type {Object<string, LVPoints>}
+     */
+    this.pointDict = this.points.reduce((ac, cr) => {
+        ac[cr.id] = cr;
+        return ac;
+    }, {})
+
+    this.viewingPoints = {};
+    this.map = lvElt.map;
+    this.zoom = this.map.getZoom();
+    this.bounds = this.map.getBounds();
+    this.idleTO = -1;
+    this.onIdle = this.onIdle.bind(this);
+}
+
+
+LVCluster.prototype.onProcessed = function () {
+    if (this.idleTO >= 0) {
+        clearTimeout(this.idleTO);
+    }
+    this.idleTO = setTimeout(this.onIdle, 500);
+};
+
+LVCluster.prototype.onIdle = function () {
+    this.idleTO = -1;
+    this.bounds = this.map.getBounds();
+    this.zoom = this.map.getZoom();
+    if (!this.bounds) return;
+    var newViewPoints = this.points.reduce((ac, point) => {
+        if (!this.bounds.contains(point.latLng)) return ac;
+        var rPoint;
+        for (var rId in ac) {
+            rPoint = this.pointDict[rId];
+            if (distanceInPixels(this.zoom, rPoint.latLng, point.latLng) < 50) {
+                ac[rId]++;
+                return ac;
+            }
+        }
+        ac[point.id] = 1;
+        return ac;
+    }, {});
+
+    var id;
+    var oldViewPoints = this.viewingPoints;
+    for (id in oldViewPoints) {
+        if (!newViewPoints[id]) {
+            if (this.pointDict[id]) {
+                this.pointDict[id].view(0);
+            }
+        }
+    }
+
+    for (id in newViewPoints) {
+        if (this.pointDict[id]) {
+            this.pointDict[id].view(newViewPoints[id]);
+        }
+    }
+    this.viewingPoints = newViewPoints;
+};
+
 
 /***
  * @extends AElement
@@ -206,6 +478,9 @@ function LocationView() {
         scaleControl: true,
         mapId: randomIdent()
     });
+    google.maps.event.addListener(this.map, "zoom_changed", this.eventHandler.mapZoomChanged);
+    google.maps.event.addListener(this.map, 'bounds_changed', this.eventHandler.mapBoundsChanged);
+
     this.marker = null;
     this._value = null;
     this.$domSignal = _('attachhook').addTo(this);
@@ -343,6 +618,10 @@ LocationView.property.showPolylineRoute = {
             pll.showRoute = value;
         })
     },
+    /**
+     * @this LocationView
+     * @returns {*|boolean}
+     */
     get: function () {
         return this._showPolylineRoute;
     }
@@ -350,6 +629,10 @@ LocationView.property.showPolylineRoute = {
 
 
 LocationView.property.points = {
+    /**
+     * @this LocationView
+     * @param points
+     */
     set: function (points) {
         this.$points.forEach(function (point) {
             point.remove();
@@ -357,6 +640,7 @@ LocationView.property.points = {
         this._points = points || [];
 
         getGoogleMarkerLib().then(() => {
+            var now = Date.now();
             var rp = this._points.reduce(function (ac, pointData) {
                 var id = pointData.id;
                 var point;
@@ -373,7 +657,6 @@ LocationView.property.points = {
             }.bind(this), { arr: [], dict: {} });
 
             this.$points = rp.arr;
-
             var zoom;
             var center;
             var latLngs = this.$points.map(function (p) {
@@ -386,12 +669,9 @@ LocationView.property.points = {
                 return ac;
             }, new google.maps.LatLngBounds());
 
-            var markers = this.$points.map(function (p) {
-                return p.marker;
-            }, []).filter(function (x) {
-                return !!x;
-            });
-            this.pointsCluster = new MarkerClusterer(this.map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
+
+            this.pointsCluster = new LVCluster(this, this.$points);
+            console.log('set points', Date.now() - now);
 
             this.domSignal.once('update_view', function () {
                 if (points.length > 1) {
@@ -405,6 +685,7 @@ LocationView.property.points = {
                 zoom = Math.min(zoom, 17);
                 this.map.setZoom(zoom);
                 this.map.setCenter(center);
+                if (this.pointsCluster) this.pointsCluster.onProcessed();
             }.bind(this), 100);
             this.domSignal.emit('update_view');
         });
@@ -413,6 +694,26 @@ LocationView.property.points = {
         return this._points;
     }
 }
+
+LocationView.eventHandler = {};
+
+LocationView.eventHandler.mapZoomChanged = function () {
+    if (this.pointsCluster)
+        this.pointsCluster.onProcessed();
+    // var now = Date.now();
+    // var eltRect = Rectangle.fromClientRect(this.getBoundingClientRect());
+    // var bounds = this.map.getBounds();
+    // // var mapRect = new Rectangle()
+    //
+    // console.log('zoom changed', Date.now() - now);
+
+};
+
+LocationView.eventHandler.mapBoundsChanged = function () {
+    if (this.pointsCluster)
+        this.pointsCluster.onProcessed();
+};
+
 
 ACore.install(LocationView);
 
