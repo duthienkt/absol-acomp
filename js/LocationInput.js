@@ -1,8 +1,7 @@
 import ACore, { $, _ } from "../ACore";
 import LocationPicker from "./LocationPicker";
 import '../css/locationinput.css';
-import { hitElement } from "absol/src/HTML5/EventEmitter";
-import { isRealNumber } from "./utils";
+import { isRealNumber, normalizeLatLngString, parseDMS, parseLatLng } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 function LocationInput() {
@@ -176,35 +175,15 @@ LocationInput.property.value = {
         }
     },
     get: function () {
-        var nums = this.$text.value.split(/\s*,\s*/);
-        var lat = parseFloat(nums[0]);
-        var lng = parseFloat(nums[1]);
-        if (isRealNumber(lat) && isRealNumber(lng)) {
-            lat = Math.max(-90, Math.min(90, lat));
-            if (lng < 180 && lng > 180)
-                lng = (lng + 180 + 360 * Math.ceil(Math.abs(lng) / 360 + 2)) % 360 - 180;
-            return [lat, lng].join(', ');
-        }
-        else {
-            return '';
-        }
+        var text = this.$text.value;
+        return normalizeLatLngString(text);
     }
 };
 
 LocationInput.property.latLng = {
     get: function () {
-        var nums = this.$text.value.split(/\s*,\s*/);
-        var lat = parseFloat(nums[0]);
-        var lng = parseFloat(nums[1]);
-        if (isRealNumber(lat) && isRealNumber(lng)) {
-            lat = Math.max(-90, Math.min(90, lat));
-            if (lng < 180 && lng > 180)
-                lng = (lng + 180 + 360 * Math.ceil(Math.abs(lng) / 360 + 2)) % 360 - 180;
-            return { latitude: lat, longitude: lng };
-        }
-        else {
-            return null;
-        }
+        var text = this.$text.value;
+        return  parseDMS(text) || parseLatLng(text);
     }
 };
 
