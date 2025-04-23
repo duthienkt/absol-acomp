@@ -9,7 +9,7 @@ import { copySelectionItemArray, isNaturalNumber, keyStringOf, measureText } fro
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import ListSearchMaster from "./list/ListSearchMaster";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { drillProperty } from "absol/src/HTML5/OOP";
 import TextMeasurement from "./tool/TextMeasurement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
@@ -70,8 +70,8 @@ export var measureArial14TextWidth = text => {
     return mTextMeasurement.measureTextWidth(text, '14px arial');
 }
 
-var keyStringOfItem = item => {
-    return keyStringOf(item.value) + stringHashCode(item.text+'');
+export var keyStringOfItem = item => {
+    return keyStringOf(item.value) + stringHashCode(item.text + '');
 }
 
 /***
@@ -224,7 +224,17 @@ CheckListBox.prototype.viewListAtItem = function (item) {
 };
 
 
+/**
+ * wrong function name
+ * @deprecated
+ * @param value
+ * @returns {*}
+ */
 CheckListBox.prototype.findItemsByValue = function (value) {
+    return this._holderDict[keyStringOf(value)];
+};
+
+CheckListBox.prototype.findItemHoldersByValue = function (value) {
     return this._holderDict[keyStringOf(value)];
 };
 
@@ -350,7 +360,6 @@ CheckListBox.property.items = {
         this.pagingCtrl.viewArr(this.itemHolders);
         this.searchMaster.transfer(this.itemHolders.map(it => it.getSearchItem()));
         this.domSignal.emit('updateCheckedAll');
-
     },
     get: function () {
         return copySelectionItemArray(this._items);
@@ -417,6 +426,7 @@ CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
     else {
         delete this._valueDict[holder.valueKey];
     }
+    this.$checkAll.checked = this.selectedAll;
     this.notifyChange({
         originalEvent: event.originalEvent || event.originEvent || event,
         action: selected ? 'check' : 'uncheck',
@@ -424,7 +434,6 @@ CheckListBox.eventHandler.itemSelect = function (itemElt, event) {
         itemData: holder.data
     });
     this.domSignal.emit('updateCheckedAll');
-
 };
 
 
@@ -452,6 +461,7 @@ CheckListBox.eventHandler.searchModify = function () {
     if (text) {
         this.searchMaster.query({ text: text }).then(result => {
             if (text !== this.$searchInput.value) return;
+            if (!result) return;//why?
             var arr = this.itemHolders.filter(it => !!result[it.id]);
             arr.sort((a, b) => result[b.id][1] - result[a.id][1]);
             var searchHolders = arr.map(holder => new CLHolderRef(this, holder, null, result));
@@ -468,20 +478,27 @@ CheckListBox.eventHandler.searchModify = function () {
 
 ACore.install(CheckListBox);
 
-
-function CLHolder(boxElt, data, parent) {
+/**
+ * @param boxElt
+ * @param data
+ * @param parent
+ * @constructor
+ */
+export function CLHolder(boxElt, data, parent) {
     this.id = randomIdent(8);
     this.parent = parent;
     this.level = parent ? parent.level + 1 : 0;
     this.boxElt = boxElt;
     this.data = data;
+    drillProperty(this, this, 'item', 'data');//adapt mobile and desktop
     this.valueKey = keyStringOf(data.value);
     this.itemKey = keyStringOfItem(data);
     this.itemElt = null;
     this.children = null;
     this.selected = this.valueKey in boxElt._valueDict;
+    var Clazz = this.constructor;
     if (data.items && data.items.length > 0) {
-        this.children = data.items.map(it => new CLHolder(boxElt, it, this));
+        this.children = data.items.map(it => new Clazz(boxElt, it, this));
     }
 }
 
@@ -491,7 +508,14 @@ CLHolder.prototype.toArray = function (ac) {
     ac.push(this);
     if (this.children) this.children.reduce((ac, holder) => holder.toArray(ac), ac);
     return ac;
-}
+};
+
+CLHolder.prototype.toDictionary = function (ac) {
+    ac = ac || {};
+    ac[this.valueKey] = this;
+    if (this.children) this.children.reduce((ac, holder) => holder.toDictionary(ac), ac);
+    return ac;
+};
 
 
 CLHolder.prototype.attachView = function (itemElt) {
@@ -528,19 +552,19 @@ CLHolder.prototype.getSearchItem = function () {
 };
 
 
-function CLHolderRef(boxElt, origin, parent, result) {
+export function CLHolderRef(boxElt, origin, parent, result) {
     this.boxElt = boxElt;
     this.origin = origin;
     this.data = origin.data;
     this.parent = parent;
     this.level = origin.level;
     OOP.drillProperty(this, origin, 'selected');
-
+    var Clazz = this.constructor;
     var arr, children;
     if (origin.children) {
         arr = origin.children.filter(it => !!result[it.id]);
         arr.sort((a, b) => result[b.id][1] - result[a.id][1]);
-        children = arr.map(holder => new CLHolderRef(boxElt, holder, this, result));
+        children = arr.map(holder => new Clazz(boxElt, holder, this, result));
         if (children.length > 0) this.children = children;
     }
 }
@@ -654,7 +678,7 @@ CLPagingController.prototype.viewArr = function (itemHolders) {
         return ac;
     }, {});
 
-    this.holderHashDict =  this.holderArr.reduce((ac, cr, idx) => {
+    this.holderHashDict = this.holderArr.reduce((ac, cr, idx) => {
         ac[cr.itemKey] = idx;
         return ac;
     }, {});
