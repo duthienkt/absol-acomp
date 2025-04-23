@@ -770,7 +770,7 @@ export function replaceChildrenInElt(elt, childNodes) {
 }
 
 export function findVScrollContainer(elt) {
-    if (!elt) return  null;
+    if (!elt) return null;
     var parent = elt.parentElement;
     var overflowStyle;
     while (parent) {
@@ -1216,15 +1216,76 @@ export function isScrolledToBottom(element, padding) {
     return (element.scrollHeight - element.scrollTop - padding <= element.clientHeight);
 }
 
+/**
+ * parse a DMS string into latitude and longitude from google maps
+ * @param {string} input
+ * @returns {{latitude: number, longitude: number}|null}
+ */
+export function parseDMS(input) {
+    input = input.trim();
+    var regex = /([+-]?\d+)°(\d+)'([\d.]+)"([NS])\s*,?\s*([+-]?\d+)°(\d+)'([\d.]+)"([EW])/;
+    var match = input.match(regex);
+
+    if (!match) {
+        return null;
+    }
+
+    var [, latDeg, latMin, latSec, latDir, lngDeg, lngMin, lngSec, lngDir] = match;
+
+    // Convert DMS to decimal
+    var lat = (parseInt(latDeg) + parseInt(latMin) / 60 + parseFloat(latSec) / 3600) * (latDir === "N" ? 1 : -1);
+    var lng = (parseInt(lngDeg) + parseInt(lngMin) / 60 + parseFloat(lngSec) / 3600) * (lngDir === "E" ? 1 : -1);
+
+    return { latitude: lat, longitude: lng };
+}
+
+export function parseLatLng(value) {
+    value = value.trim();
+    value = value.replace(/(^\(\s*)|(\s*\)*)/g, '');
+    var nums = value.split(/\s*,\s*/);
+    if (nums.length !== 2) return null;
+    nums = nums.map((t) => {
+        return parseFloat(t);
+    });
+    if (isRealNumber(nums[0]) && isRealNumber(nums[1])) {
+        return { latitude: nums[0], longitude: nums[1] };
+    }
+    return null;
+}
+
+export function normalizeLatLngString(text) {
+    var latLgn = parseDMS(text) || parseLatLng(text);
+    var lat, lng;
+    if (latLgn) {
+        lat = latLgn.latitude;
+        lng = latLgn.longitude;
+        lat = Math.max(-90, Math.min(90, lat));
+        if (lng < 180 && lng > 180)
+            lng = (lng + 180 + 360 * Math.ceil(Math.abs(lng) / 360 + 2)) % 360 - 180;
+        return [lat, lng].join(', ');
+    }
+    else return '';
+}
+
 export function implicitLatLng(value) {
     var latlng = null;
     var nums;
     if (typeof value === "string") {
-        nums = value.split(/\s*,\s*/).map(function (t) {
-            return parseFloat(t);
-        });
-        if (isRealNumber(nums[0]) && isRealNumber(nums[1])) {
-            latlng = new google.maps.LatLng(nums[0], nums[1]);
+        latlng = parseDMS(value);
+        if (latlng) {
+            latlng = new google.maps.LatLng(latlng.latitude, latlng.longitude);
+        }
+        else {
+            latlng = parseLatLng(value);
+            if (latlng) {
+
+            }
+            nums = value.split(/\s*,\s*/).map(function (t) {
+                return parseFloat(t);
+            });
+            if (isRealNumber(nums[0]) && isRealNumber(nums[1])) {
+                latlng = new google.maps.LatLng(nums[0], nums[1]);
+            }
         }
     }
     else if (value instanceof google.maps.LatLng) {
@@ -1256,8 +1317,12 @@ export function getMapZoomLevel(mapDim, bounds) {
         return Math.floor(Math.log(mapPx / worldPx / fraction) / Math.LN2);
     }
 
+    if (!bounds) return 17;
+    if (!mapDim) return 17;
     var ne = bounds.getNorthEast();
     var sw = bounds.getSouthWest();
+    if (!ne) return 17;
+    if (!sw) return 17;
 
     var latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
 
@@ -1571,4 +1636,26 @@ export function listenDomContentChange(elt, callback) {
     }
 
     addHook(elt);
+}
+
+var mdiLoadSync;
+
+export function getMaterialDesignIconNames() {
+    if (mdiLoadSync) return mdiLoadSync;
+    mdiLoadSync = fetch('https://absol.cf/vendor/materialdesignicons/materialdesignicons.css')
+        .then(res => res.text()).then(text => {
+            var regex = /\.mdi-([^:]+)::before/g;
+            var iconNames = [];
+            var iconNameMatch;
+            do {
+                iconNameMatch = regex.exec(text);
+                if (iconNameMatch)
+                    iconNames.push(iconNameMatch[1]);
+
+            } while (iconNameMatch);
+            return iconNames;
+        }).catch(err => {
+            mdiLoadSync = null;
+        });
+    return mdiLoadSync;
 }
