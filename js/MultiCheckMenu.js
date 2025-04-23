@@ -1,6 +1,6 @@
 import MultiSelectMenu from "./MultiSelectMenu";
 import ACore, { _, $ } from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { drillProperty } from "absol/src/HTML5/OOP";
 import { CheckListBox } from "./CheckListBox";
 import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
@@ -10,6 +10,8 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import AElement from "absol/src/HTML5/AElement";
 import { loadLanguageModule } from "./MultiLanguageCSS";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import MCheckListModal from "./multicheckmenu/MCheckListModal";
 
 
 var hitItem = event => {
@@ -39,15 +41,17 @@ function MultiCheckMenu() {
 
     // this.on('click', this.eventHandler.click);
     /***
-     * @type {CheckListBox}
+     * @type {CheckListBox|MCheckListModal}
      */
     this.$selectlistBox = _({
-        tag: CheckListBox,//use new version
+        tag: BrowserDetector.isMobile ? MCheckListModal : CheckListBox,//use new version//TODO: in process
         props: {
             anchor: [1, 6, 2, 5],
         }
     });
-    this.addStyle('--as-width-limit', this.$selectlistBox.widthLimit + 'px');
+    drillProperty(this, this.$selectlistBox, 'debug')
+
+    this.addStyle('--as-width-limit', Math.max(140, (this.$selectlistBox.widthLimit || 0)) + 'px');
 
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.$attachhook = $('attachhook', this)
@@ -69,7 +73,6 @@ function MultiCheckMenu() {
     this.disableClickToFocus = false;
     this.orderly = true;//always true
     this.itemFocusable = false;
-    // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
 
 
     /**
@@ -102,6 +105,8 @@ Object.assign(MultiCheckMenu.prototype, MultiSelectMenu.prototype);
 MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
 delete MultiCheckMenu.property.isFocus;
+delete MultiCheckMenu.property.orderly;
+
 
 MultiCheckMenu.prototype.styleHandlers = {};
 
@@ -235,7 +240,7 @@ MultiCheckMenu.property.items = {
         this.$selectlistBox.items = items;
         this.commitedValues = this.$selectlistBox.values;
 
-        this.addStyle('--list-min-width', this.$selectlistBox._estimateWidth + 'px');
+        this.addStyle('--list-min-width', Math.max(140, this.$selectlistBox._estimateWidth || 0) + 'px');
         this.itemsViewCtrl.update();
     },
     get: function () {
@@ -254,7 +259,7 @@ MultiCheckMenu.property.placeholder = {
         }
     },
     get: function () {
-        return this.$itemCtn.attr('data-placeholder')||'';
+        return this.$itemCtn.attr('data-placeholder') || '';
     }
 };
 
@@ -262,7 +267,8 @@ MultiCheckMenu.prototype.updateSize = function () {
     var bound;
     if (this.boxCtrl.isFocus) {
         bound = this.getBoundingClientRect();
-        this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 18.5) + 'px');
+        if (!BrowserDetector.isMobile)
+            this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 18.5) + 'px');
         this.$selectlistBox.refollow();
         this.$selectlistBox.updatePosition();
     }
@@ -273,97 +279,6 @@ MultiCheckMenu.prototype.findItemsByValue = function (value) {
     return this.$selectlistBox.findItemsByValue(value);
 };
 
-
-/**
- * @this MultiCheckMenu
- * @param event
- */
-// MultiCheckMenu.eventHandler.selectListBoxChange = function (event) {
-//     var idx;
-//     switch (event.action) {
-//         case 'check':
-//             idx = this._tempValues.indexOf(event.value);
-//             if (idx < 0) {
-//                 this._tempValues.push(event.value);
-//             }
-//             break;
-//         case 'uncheck':
-//             idx = this._tempValues.indexOf(event.value);
-//             if (idx >= 0) {
-//                 this._tempValues.splice(idx, 1);
-//             }
-//             break;
-//         case 'check_all':
-//             this._tempValues = this.$selectlistBox.values;
-//             break;
-//         case 'uncheck_all':
-//             this._tempValues = [];
-//             break;
-//     }
-//
-//     setTimeout(function () {
-//         this.viewItemsByValues(this._tempValues);
-//         var bound = this.getBoundingClientRect();
-//         this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 15.5) + 'px');
-//         this.$selectlistBox.refollow();
-//         this.$selectlistBox.updatePosition();
-//         ResizeSystem.requestUpdateSignal();
-//     }.bind(this), 1);
-// };
-//
-// MultiCheckMenu.eventHandler.selectListBoxCancel = function (event) {
-//     this.viewItemsByValues(this.commitedValues);
-//     this.isFocus = false;
-//     this.$selectlistBox.values = this.commitedValues;
-// };
-//
-// MultiCheckMenu.eventHandler.selectListBoxClose = function (event) {
-//     this.eventHandler.selectListBoxPressItem(event);//to notify something remove, add
-//     this.isFocus = false;
-// };
-
-/*
-MultiCheckMenu.property.isFocus = {
-    set: function (value) {
-        if (value && (this.disabled || this.readOnly)) return;
-        if (!this._isFocus && value) {
-            this._tempValues = this._values.slice();
-            this.$selectlistBox.values = this._values;
-            this.activeValue = null;
-        }
-        var thisSM = this;
-        if (!this.items || this.items.length === 0) value = false;//prevent focus
-        if (this._isFocus === value) return;
-        this._isFocus = !!value;
-        if (this._isFocus) {
-            thisSM.off('click', this.eventHandler.click);
-            this.$selectlistBox.addTo(document.body);
-            var bound = this.getBoundingClientRect();
-            this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 15.5) + 'px');
-            this.$selectlistBox.refollow();
-            this.$selectlistBox.updatePosition();
-            setTimeout(function () {
-                thisSM.$selectlistBox.focus();
-                document.addEventListener('mousedown', thisSM.eventHandler.bodyClick);
-            }, 100);
-            this.$selectlistBox.viewListAtFirstSelected();
-        }
-        else {
-            document.removeEventListener('mousedown', thisSM.eventHandler.bodyClick);
-
-            document.addEventListener('mouseup', function mup() {
-                setTimeout(function () {
-                    thisSM.on('click', thisSM.eventHandler.click);
-                    document.removeEventListener('mouseup', mup);
-                }, 5);
-            });
-            this.$selectlistBox.selfRemove();
-            this.$selectlistBox.unfollow();
-            this.$selectlistBox.resetSearchState();
-        }
-    },
-    get: MultiSelectMenu.property.isFocus.get
-};*/
 
 MultiCheckMenu.property.readOnly = {
     set: function (value) {
@@ -384,8 +299,9 @@ MultiCheckMenu.property.readOnly = {
  * @param event
  */
 
-/*
+
 MultiCheckMenu.eventHandler.selectListBoxPressItem = function (event) {
+    console.log('press')
     var prevValues = this.commitedValues;
     var prevDict = prevValues.reduce(function (ac, cr) {
         ac[cr + ''] = cr;
@@ -529,14 +445,8 @@ MSMItemsViewController.prototype.assignItems = function (items) {
 
 MSMItemsViewController.prototype.viewItems = function (items) {
     var cBound = this.elt.getBoundingClientRect();
-
     this.requireListLength(items.length);
     this.assignItems(items);
-    // this._requireItem(items.length);
-    // this._assignItems(items);
-    // if (this.itemFocusable) {
-    //     this._updateFocusItem();
-    // }
     setTimeout(this.elt._updateOverflow.bind(this.elt), 100)
 
     var nBound = this.elt.getBoundingClientRect();
@@ -556,10 +466,11 @@ MSMItemsViewController.prototype.viewItemsByIndexes = function (indexes) {
 };
 
 MSMItemsViewController.prototype.viewItemsByValues = function (values) {
+    values = values || [];
     var items = [];
     var holders;
     for (var i = 0; i < values.length; ++i) {
-        holders = this.elt.$selectlistBox.findItemsByValue(values[i]);
+        holders = this.elt.$selectlistBox.findItemHoldersByValue(values[i]);
         if (holders) {
             holders = holders.map(hd => hd.item);
             items = items.concat(holders);
@@ -696,12 +607,15 @@ MSMBoxController.prototype.open = function () {
     this.elt.$selectlistBox.addTo(document.body);
     this.elt.off('mousedown', this.ev_click);
     var bound = this.elt.getBoundingClientRect();
-    this.elt.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.elt.$selectlistBox.getFontSize() * 18.5) + 'px');
+    if (!BrowserDetector.isMobile)// not modal
+        this.elt.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.elt.$selectlistBox.getFontSize() * 18.5) + 'px');
     this.elt.$selectlistBox.followTarget = this.elt;
     this.addListennerTO = setTimeout(() => {
         document.addEventListener('mousedown', this.ev_mousedownOut);
-        this.elt.$selectlistBox.focus();
-        this.elt.$selectlistBox.viewListAtFirstSelected();
+        if (!BrowserDetector.isMobile) {
+            this.elt.$selectlistBox.focus();
+            this.elt.$selectlistBox.viewListAtFirstSelected();
+        }
     }, 50);
 };
 
@@ -713,7 +627,7 @@ MSMBoxController.prototype.close = function () {
     this.elt.$selectlistBox.selfRemove();
     clearTimeout(this.addListennerTO);
     document.removeEventListener('mousedown', this.ev_mousedownOut);
-    this.elt.on('click', this.ev_click);
+    this.elt.on('mousedown', this.ev_click);
     var values = this.elt.$selectlistBox.values;
     if (!arrayCompare(values, this.elt.commitedValues)) {
         this.elt.commitedValues = values;
@@ -738,7 +652,8 @@ MSMBoxController.prototype.ev_preUpdateListPosition = function () {
     this.elt.$selectlistBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
     var outBound = traceOutBoundingClientRect(this.elt);
     if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
-        this.close();
+        if (!BrowserDetector.isMobile)
+            this.close();
     }
 };
 
@@ -747,36 +662,6 @@ MSMBoxController.prototype.ev_listChange = function (event) {
     setTimeout(() => {
         this.elt.itemsViewCtrl.viewItems(this.elt.$selectlistBox.selectedItems);
     }, 1);
-    // var idx;
-    // switch (event.action) {
-    //     case 'check':
-    //         idx = this._tempValues.indexOf(event.value);
-    //         if (idx < 0) {
-    //             this._tempValues.push(event.value);
-    //         }
-    //         break;
-    //     case 'uncheck':
-    //         idx = this._tempValues.indexOf(event.value);
-    //         if (idx >= 0) {
-    //             this._tempValues.splice(idx, 1);
-    //         }
-    //         break;
-    //     case 'check_all':
-    //         this._tempValues = this.$selectlistBox.values;
-    //         break;
-    //     case 'uncheck_all':
-    //         this._tempValues = [];
-    //         break;
-    // }
-    //
-    // setTimeout(function () {
-    //     this.viewItemsByValues(this._tempValues);
-    //     var bound = this.getBoundingClientRect();
-    //     this.$selectlistBox.addStyle('min-width', Math.max(bound.width, this.$selectlistBox.getFontSize() * 15.5) + 'px');
-    //     this.$selectlistBox.refollow();
-    //     this.$selectlistBox.updatePosition();
-    //     ResizeSystem.requestUpdateSignal();
-    // }.bind(this), 1);
 };
 
 MSMBoxController.prototype.ev_listCancel = function () {
@@ -815,5 +700,3 @@ MSMBoxController.prototype.ev_mouseupOut = function () {
 };
 
 ACore.install(MultiCheckMenu);
-
-export default MultiCheckMenu;
