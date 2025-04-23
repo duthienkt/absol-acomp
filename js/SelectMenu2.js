@@ -6,6 +6,7 @@ import Dom, { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/
 import OOP from "absol/src/HTML5/OOP";
 import { measureText } from "./utils";
 import AElement from "absol/src/HTML5/AElement";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 
 ACore.creator['dropdown-ico'] = function () {
@@ -231,7 +232,8 @@ SelectMenu.property.isFocus = {
             this.$selectlistBox.refollow();
             this.$selectlistBox.updatePosition();
             setTimeout(function () {
-                thisSM.$selectlistBox.focus();
+                if (!BrowserDetector.isMobile)
+                    thisSM.$selectlistBox.focus();
                 document.addEventListener('click', thisSM.eventHandler.bodyClick);
             }, 100);
             this.$selectlistBox.viewListAtFirstSelected();
@@ -367,6 +369,7 @@ SelectMenu.eventHandler.preUpdateListPosition = function () {
     this.$selectlistBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
     var outBound = traceOutBoundingClientRect(this);
     if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
+        if (!BrowserDetector.isMobile)
         this.isFocus = false;
     }
 };
