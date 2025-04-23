@@ -1,5 +1,5 @@
 import ACore, { _ } from "../ACore";
-import { getMapZoomLevel, isRealNumber } from "./utils";
+import { getMapZoomLevel, implicitLatLng, isRealNumber, parseDMS, parseLatLng } from "./utils";
 import '../css/locationinput.css';
 import AutoCompleteInput from "./AutoCompleteInput";
 import FlexiconButton from "./FlexiconButton";
@@ -20,7 +20,7 @@ export function getGoogleMapLib() {
         }
         else {
             jsElt = Array.prototype.find.call(document.head.childNodes, elt=>{
-                if (typeof  elt.src && elt.src.startsWith('https://maps.googleapis.com/maps/api/js')) return jsElt;
+                if ((typeof  elt.src === "string") && elt.src.startsWith('https://maps.googleapis.com/maps/api/js')) return jsElt;
             });
             if (jsElt) {
                 return new Promise((resolve, reject)=>{
@@ -216,6 +216,22 @@ LocationPicker.render = function () {
 
 
 LocationPicker.prototype.queryItems = function (query) {
+    var latLng = parseDMS(query) || parseLatLng(query);
+    if (latLng) {
+        return  new Promise(resolve=>{
+            this.geocoder.geocode({ location: implicitLatLng(latLng) }, (results, status) => {
+                if (status === google.maps.GeocoderStatus.OK) {
+                     results.forEach(it=>{
+                        it.description = it.formatted_address;
+                    });
+                    resolve (results); // Returns an array of place predictions
+                }
+                return resolve([]);
+            });
+        })
+
+    }
+
     var request = {
         input: query,
         locationBias : this.map.getBounds()
