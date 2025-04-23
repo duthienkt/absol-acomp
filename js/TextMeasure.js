@@ -158,6 +158,48 @@ TextMeasure.prototype.measureWidth = function (text, fontName, fontSize) {
     }
     return res * fontSize / 20;
 }
+TextMeasure.prototype.wrapText = function (text, fontName, fontSize, maxWidth) {
+    var width = this.data.fonts[fontName].width;
+    var spacing = this.data.fonts[fontName].spacing;
+    var lines = [];
+    var currentLine = '';
+    var currentWidth = 0;
+    var prevC = null;
+    var c, charWidth, charSpacing;
+
+    for (var i = 0; i < text.length; i++) {
+        c = text[i];
+        charWidth = (width[c] !== undefined?width[c] : width['a']) * fontSize / 20;
+        charSpacing = prevC ? (spacing[prevC + c] || 0) * fontSize / 20 : 0;
+
+        if (currentWidth + charWidth + charSpacing > maxWidth) {
+            // Find the last space in the current line
+            var lastSpaceIndex = currentLine.lastIndexOf(' ');
+            if (lastSpaceIndex !== -1) {
+                // Break at the last space
+                lines.push(currentLine.slice(0, lastSpaceIndex).trim());
+                currentLine = currentLine.slice(lastSpaceIndex + 1) + c;
+                currentWidth = this.measureWidth(currentLine, fontName, fontSize);
+            } else {
+                // No spaces, break the word
+                lines.push(currentLine.trim());
+                currentLine = c;
+                currentWidth = charWidth;
+            }
+        } else {
+            currentLine += c;
+            currentWidth += charWidth + charSpacing;
+        }
+
+        prevC = c;
+    }
+
+    if (currentLine.trim()) {
+        lines.push(currentLine.trim());
+    }
+
+    return lines;
+};
 
 /***
  *
@@ -178,4 +220,3 @@ TextMeasure.prototype.measureTextByCanvas = function (text, font) {
 var instance = new TextMeasure();
 
 export default instance;
-
