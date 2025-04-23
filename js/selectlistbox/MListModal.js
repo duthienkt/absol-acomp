@@ -1,11 +1,14 @@
-import Dom from "absol/src/HTML5/Dom";
+import Dom, { getScreenSize } from "absol/src/HTML5/Dom";
 import { measureListSize, releaseItem, requireItem } from "./MSelectList";
-import DomSignal from "absol/src/HTML5/DomSignal";
 import SelectListBox from "../SelectListBox";
 import ACore, { _, $, $$ } from "../../ACore";
 import ListSearchMaster from "../list/ListSearchMaster";
 import { copySelectionItemArray, keyStringOf } from "../utils";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
+import TextMeasure from "../TextMeasure";
+import { drillProperty } from "absol/src/HTML5/OOP";
+import { prepareSearchForList, searchListByText, searchTreeListByText } from "../list/search";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 export var VALUE_HIDDEN = -1;
 export var VALUE_NORMAL = 1;
@@ -124,7 +127,7 @@ MListModal.prototype._initProperty = function () {
 };
 
 
-MListModal.prototype.findItemsByValue = function (value) {
+MListModal.prototype.findItemsByValue = function (value) {//keep
     return this._itemsByValue[keyStringOf(value)];
 };
 
@@ -150,7 +153,7 @@ MListModal.prototype._requireItem = function (pageElt, n) {
 };
 
 
-MListModal.prototype._listToDisplay = function (items) {
+MListModal.prototype._listToDisplay = function (items) {//keep
     return items;
 };
 
@@ -370,7 +373,7 @@ MListModal.property.items = {
             res.text = it.text + '';
             if (it.desc) res.text += it.desc;
             valueKey = keyStringOf(it.value);
-            it.valueKey = valueKey;
+            it.keyValue = valueKey;
             this.idx2key.push(valueKey);
             if (it.items && it.items.length > 0 && it.items.map) {
                 res.items = it.items.map(makeSearchItem);
@@ -545,3 +548,611 @@ export default MListModal;
 
 ACore.install('mlistmodal', MListModal);
 Dom.ShareInstance.install('mlistmodal', MListModal);
+
+/**
+ * @extends AElement
+ * @constructor
+ */
+export function MListModalV2() {
+    this.estimateSize = { textWidth: 0, descWidth: 0 };
+    this.itemHolders = [];
+    this.itemHolderByValue = {};
+    this.screenSize = getScreenSize();
+    this.pagingCtrl = new MLMPagingController(this);
+    this.layoutCtrl = new MLMLayoutController(this);
+    this.on('pressitem', this.eventHandler.selectItem);
+    this._value = undefined;
+    this.selectedHolder = null;
+    this.searchCtrl = new MLMSearchController(this);
+    this.$closeBtn = $('.am-list-popup-close-btn', this)
+    this.on('click', this.eventHandler.click);
+    this.$closeBtn.on('click', this.eventHandler.clickCloseBtn);
+    /**
+     * @type {any}
+     * @name value
+     * @memberof MListModalV2#
+     */
+
+    /**
+     * @type {Array}
+     * @name items
+     * @memberof MListModalV2#
+     */
+
+    /**
+     * @type {boolean}
+     * @name enableSearch
+     * @memberof MListModalV2#
+     */
+
+    /**
+     * @type {boolean}
+     * @name strictValue
+     * @memberof MListModalV2#
+     */
+
+    /**
+     * @type {number}
+     * @name selectedIndex
+     * @memberof MListModalV2#
+     */
+}
+
+MListModalV2.tag = 'MListModalV2'.toLowerCase();
+
+MListModalV2.render = function () {
+    return _({
+        extendEvent: ['pressitem', 'pressclose', 'pressout'],
+        class: 'am-list-modal-v2',
+        child: [
+            {
+                class: ['am-list-popup-box'],
+                child: [
+                    {
+                        class: 'am-list-popup-header',
+                        child: [
+                            {
+                                tag: 'searchtextinput'
+                            },
+                            {
+                                tag: 'button',
+                                class: 'am-list-popup-close-btn',
+                                child: 'span.mdi.mdi-close'
+                            }
+                        ]
+                    },
+                    {
+                        class: 'am-list-popup-list-scroller',
+                        child: {
+                            class: 'am-list-popup-content',
+                            child: Array(MListModal.prototype.preLoadN).fill('.am-list-popup-list-page.am-selectlist')
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+};
+
+
+MListModalV2.prototype.resetSearchState = function () {
+    this.searchCtrl.resetSearchState();
+};
+
+MListModalV2.prototype.cancelWaiting = function () {
+
+}
+
+MListModalV2.prototype.findItemsByValue = function (value) {
+    var holder = this.itemHolderByValue[keyStringOf(value)];
+    if (!holder) return null;
+    return [holder.data];
+};
+
+
+MListModalV2.prototype.viewListAt = function (idx) {
+    var offset = this.pagingCtrl.offsetTopOfHolders[idx];
+    offset = offset || 0;
+    this.pagingCtrl.$listScroller.scrollTop = offset;
+    this.pagingCtrl.update();
+};
+
+MListModalV2.prototype.viewListAtFirstSelected = function () {
+    var selectedIndex = this.selectedIndex;
+    this.viewListAt(selectedIndex);
+};
+
+MListModalV2.prototype.updateSelectedItem = function () {
+    if (this.selectedHolder) {
+        this.selectedHolder.selected = false;
+        this.selectedHolder.updateView();
+    }
+    var value = this.value;//computed value
+    this.selectedHolder = this.itemHolderByValue[keyStringOf(value)];
+    if (this.selectedHolder) {
+        this.selectedHolder.selected = true;
+        this.selectedHolder.updateView();
+    }
+};
+
+MListModalV2.property = {};
+
+MListModalV2.property.items = {
+    set: function (items) {
+        this.itemHolders.forEach(holder => {
+            holder.detachView();
+        });
+        this.selectedHolder = null;
+
+        if (!Array.isArray(items)) items = [];
+        this.itemHolders = items.map(it => new MLMHolder(this, it));
+        this.itemHolders.forEach((holder, i) => {
+            holder.idx = i;
+        });
+
+        this.itemHolderByValue = this.itemHolders.reduce(function reducer(ac, cr) {
+            ac[cr.keyValue] = cr;
+            return ac;
+        }, {});
+        this.updateSelectedItem();
+
+        this.layoutCtrl.calcSize();
+        this.pagingCtrl.viewArr(this.itemHolders);
+    },
+    get: function () {
+        return this.itemHolders.map(it => it.data);
+    }
+};
+
+MListModalV2.property.enableSearch = {
+    /***
+     * @this SelectListBox
+     * @param {boolean} value
+     */
+    set: function (value) {
+        if (value) this.addClass('as-enable-search');
+        else this.removeClass('as-enable-search');
+    },
+    /***
+     * @this SelectListBox
+     */
+    get: function () {
+        return this.hasClass('as-enable-search');
+    }
+};
+
+MListModalV2.property.values = {
+    set: function (values) {
+        values = values || [];
+        this.value = values[0];
+    },
+    get: function () {
+        return [this.value];
+    }
+}
+
+MListModalV2.property.value = {
+    set: function (value) {
+        this._value = value;
+        this.updateSelectedItem();
+
+    },
+    /**
+     * @this MListModalV2
+     * @returns {*}
+     */
+    get: function () {
+        var value = this._value;
+        var holder;
+        if (this.strictValue) {
+            holder = this.itemHolderByValue[keyStringOf(value)];
+            if (holder) return value;
+            if (this.itemHolders.length > 0) {
+                return this.itemHolders[0].data.value;
+            }
+            else {
+                return value;
+            }
+        }
+        else return value;
+    }
+};
+
+MListModalV2.property.strictValue = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-strict-value');
+        }
+        else {
+            this.removeClass('as-strict-value');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-strict-value');
+    }
+};
+
+MListModalV2.property.selectedItem = {
+    get: function () {
+        var value = this._value;
+        var holder;
+        holder = this.itemHolderByValue[keyStringOf(value)] || null;
+        if (this.strictValue) {
+            if (!holder && this.itemHolders.length > 0)
+                holder = this.itemHolders[0];
+
+        }
+        if (holder) return holder.data;
+        return null;
+    }
+};
+
+MListModalV2.property.selectedIndex = {
+    get: function () {
+        var value = this._value;
+        var holder;
+        holder = this.itemHolderByValue[keyStringOf(value)] || null;
+        if (this.strictValue) {
+            if (!holder && this.itemHolders.length > 0)
+                holder = this.itemHolders[0];
+
+        }
+        if (holder) return holder.idx;
+        return 0;
+    }
+};
+
+
+MListModalV2.eventHandler = {};
+
+MListModalV2.eventHandler.selectItem = function (event) {
+    var value = event.value;
+    var holder = this.itemHolderByValue[keyStringOf(value)];
+    if (this.selectedHolder !== holder && this.selectedHolder) {
+        this.selectedHolder.selected = false;
+        this.selectedHolder.updateView();
+    }
+    if (holder) {
+        holder.selected = true;
+        holder.updateView();
+    }
+};
+
+MListModalV2.eventHandler.click = function (event) {
+    if (event.target === this) {
+        this.emit('pressclose', { target: this, type: 'pressclose' }, this);
+    }
+};
+
+MListModalV2.eventHandler.clickCloseBtn = function (event) {
+    this.emit('pressclose', { target: this, type: 'pressclose' }, this);
+};
+
+/**
+ *
+ * @param {MListModalV2} boxElt
+ * @constructor
+ */
+function MLMLayoutController(boxElt) {
+    this.boxElt = boxElt;
+}
+
+MLMLayoutController.prototype.calcSize = function () {
+    var holders = this.boxElt.itemHolders;
+    var screenSize = this.boxElt.screenSize;
+    var maxAvailableWidth = Math.max(0, screenSize.width - 20);
+    var col1maxWidth = 0;
+    var col2maxWidth = 0;
+
+    var visit = (nd) => {
+        if (nd.computedSize.col1maxWidth > col1maxWidth) {
+            col1maxWidth = nd.computedSize.col1maxWidth;
+        }
+        if (nd.computedSize.col2maxWidth > col2maxWidth) {
+            col2maxWidth = nd.computedSize.col2maxWidth;
+        }
+    }
+    holders.forEach(visit);
+    var col1Width = col1maxWidth;
+    var col2Width = col2maxWidth;
+
+    if (col1maxWidth + col2maxWidth > maxAvailableWidth) {
+        col1Width = col1maxWidth / ((col1maxWidth + col2maxWidth) || 1) * maxAvailableWidth;
+        col2Width = Math.max(maxAvailableWidth - col1Width, 0);
+    }
+
+    var visit2 = (nd) => {
+        nd.applyViewWidth(col1Width, col2Width);
+        if (nd.children && nd.children.length) {
+            nd.children.forEach(visit2);
+        }
+    }
+    holders.forEach(visit2);
+    this.boxElt.estimateSize.textWidth = col1maxWidth - 30;
+    this.boxElt.estimateSize.descWidth = Math.max(0, col2maxWidth - 20);
+    this.boxElt.addStyle('--col1-width', col1Width + 'px');
+    this.boxElt.addStyle('--col2-width', col2Width + 'px');
+};
+
+/**
+ *
+ * @param {MListModalV2} boxElt
+ * @constructor
+ */
+function MLMPagingController(boxElt) {
+    this.boxElt = boxElt;
+    this.$content = $('.am-list-popup-content', this.boxElt);
+    this.$listScroller = $('.am-list-popup-list-scroller', this.boxElt);
+    this.holderArr = [];
+    this.$listPages = [];
+    this.$listScroller.on('scroll', this.ev_scroll.bind(this));
+}
+
+MLMPagingController.prototype.itemPerPage = 100;
+MLMPagingController.prototype.preloadN = 5;
+
+MLMPagingController.prototype.fillPage = function (pageElt, n) {
+    var itemElt;
+    while (pageElt.childNodes.length > n) {
+        itemElt = pageElt.lastChild;
+        itemElt.selfRemove();
+        releaseItem(itemElt);
+    }
+    while (pageElt.childNodes.length < n) {
+        itemElt = requireItem(this.boxElt);
+        pageElt.addChild(itemElt);
+    }
+}
+
+MLMPagingController.prototype.viewArr = function (itemHolders) {
+    this.holderArr = itemHolders;
+    var pageN = Math.ceil(this.holderArr.length / this.itemPerPage);
+    while (this.$listPages.length > pageN) {
+        this.$listPages.pop().remove();
+    }
+    var pageElt;
+    while (this.$listPages.length < pageN) {
+        pageElt = _({
+            class: 'am-check-list-page',
+            child: []
+        }).addTo(this.$content);
+        this.$listPages.push(pageElt);
+    }
+    // console.log('viewArr', holderArr.length);
+    var itemIdx = 0;
+    var k;
+    var pageHeights = Array(pageN).fill(0);
+    var pageIdx;
+    this.offsetTopOfHolders = [0];
+    for (pageIdx = 0; pageIdx < pageN; ++pageIdx) {
+        pageElt = this.$listPages[pageIdx];
+        pageElt.clearChild();
+        for (k = 0; (k < this.itemPerPage) && (itemIdx < this.holderArr.length); ++k, ++itemIdx) {
+            pageHeights[pageIdx] += this.holderArr[itemIdx].computedSize.height;
+            this.offsetTopOfHolders[itemIdx + 1] = this.offsetTopOfHolders[itemIdx] + this.holderArr[itemIdx].computedSize.height;
+        }
+    }
+
+    for (pageIdx = 0; pageIdx < pageN; ++pageIdx) {
+        pageElt = this.$listPages[pageIdx];
+        pageElt.addStyle('height', pageHeights[pageIdx] + 'px');
+    }
+    this.$listScroller.scrollTop = 0;
+    this.update();
+};
+
+MLMPagingController.prototype.update = function () {
+    //by scrollTop
+    var offset = this.$listScroller.scrollTop;
+    var low = 0;
+    var high = this.offsetTopOfHolders.length - 1;
+    var mid;
+    while (low < high) {
+        mid = Math.floor((low + high) / 2);
+        if (this.offsetTopOfHolders[mid] < offset) {
+            low = mid + 1;
+        }
+        else {
+            high = mid;
+        }
+    }
+    var itemPerPage = this.itemPerPage;
+    var startPageIdx = Math.max(0, Math.floor(low / this.itemPerPage - 1));
+    var endPageIdx = Math.min(this.$listPages.length, startPageIdx + this.preloadN);
+    var pageIdx;
+    var pageLength;
+    var itemStartIdx, itemEndIdx;
+    var itemIdx;
+    for (pageIdx = 0; pageIdx < startPageIdx; pageIdx++) {
+        this.fillPage(this.$listPages[pageIdx], 0);
+    }
+    for (pageIdx = endPageIdx; pageIdx < this.$listPages.length; pageIdx++) {
+        this.fillPage(this.$listPages[pageIdx], 0);
+    }
+
+    for (pageIdx = startPageIdx; pageIdx < endPageIdx; pageIdx++) {
+        itemStartIdx = pageIdx * itemPerPage;
+        itemEndIdx = Math.min(itemStartIdx + itemPerPage, this.holderArr.length);
+        pageLength = itemEndIdx - itemStartIdx;
+        this.fillPage(this.$listPages[pageIdx], pageLength);
+        for (itemIdx = itemStartIdx; itemIdx < itemEndIdx; itemIdx++) {
+            this.holderArr[itemIdx].attachView(this.$listPages[pageIdx].childNodes[itemIdx - itemStartIdx]);
+        }
+    }
+};
+
+MLMPagingController.prototype.ev_scroll = function () {
+    this.update();
+}
+
+/**
+ *
+ * @param {MListModalV2} boxElt
+ * @param data
+ * @constructor
+ */
+function MLMHolder(boxElt, data) {
+    this.boxElt = boxElt;
+    this.id = randomIdent(6);
+    this.idx = 0;
+    this.data = data;
+    this.selected = false;
+    drillProperty(this, this, 'item', 'data');//adapt old
+    this.value = data.value;
+    this.wrappedText = [this.data.text];
+    this.wrappedDesc = [this.data.desc];
+    this.keyValue = keyStringOf(data.value);
+    this.itemElt = null;
+    this.computedSize = { width: 0, height: 30, col1maxWidth: 0, col2maxWidth: 0 };
+    this.calcInitSize();
+}
+
+MLMHolder.prototype.getSearchItem = function () {
+    var res = { value: this.id };
+    res.text = this.data.text + '';
+    if (this.data.desc) res.text += " " + this.data.desc;
+    return res;
+};
+
+MLMHolder.prototype.calcInitSize = function () {
+    this.computedSize.textWidth = Math.ceil(TextMeasure.measureWidth(this.data.text + '', TextMeasure.FONT_ARIAL, 14));
+    //- 30px  - 21px - 10px
+    this.computedSize.col1maxWidth = this.computedSize.textWidth + 30;
+    if (this.data.desc) {
+        this.computedSize.descWidth = Math.ceil(TextMeasure.measureWidth((this.data.desc || '') + '', TextMeasure.FONT_ARIAL, 14));
+        this.computedSize.col2maxWidth = this.computedSize.descWidth + 20;
+    }
+    else {
+        this.computedSize.descWidth = 0;
+    }
+}
+
+
+MLMHolder.prototype.applyViewWidth = function (col1Width, col2Width) {
+    this.computedSize.availableTextWidth = col1Width - 30;
+    this.computedSize.availableDescWidth = col2Width - 20;
+    if (this.computedSize.availableTextWidth < this.computedSize.textWidth) {
+        this.wrappedText = TextMeasure.wrapText(this.data.text + '', TextMeasure.FONT_ARIAL, 14, this.computedSize.availableTextWidth);
+    }
+    else {
+        this.wrappedText = [this.data.text + ''];
+    }
+    if (this.data.desc && this.computedSize.availableDescWidth < this.computedSize.descWidth) {
+        this.wrappedDesc = TextMeasure.wrapText((this.data.desc || '') + '', TextMeasure.FONT_ARIAL, 14, this.computedSize.availableDescWidth);
+    }
+    else {
+        this.wrappedDesc = [(this.data.desc || '') + ''];
+    }
+    this.computedSize.height = Math.max(this.wrappedText.length, this.wrappedDesc.length) * 20 + 10;
+};
+
+MLMHolder.prototype.attachView = function (itemElt) {
+    if (this.itemElt === itemElt) {
+        this.updateView();
+        return;
+    }
+    if (itemElt.mlmHolder) {
+        itemElt.mlmHolder.detachView();
+    }
+    this.itemElt = itemElt;
+    this.itemElt.mlmHolder = this;
+    this.itemElt.data = this.data;
+    this.itemElt.selected = this.data.selected;
+    this.itemElt.addStyle('height', this.computedSize.height + 'px');
+    this.itemElt.$text.firstChild.data = this.wrappedText.join('\n');
+    this.itemElt.$desc.firstChild.data = this.wrappedDesc.join('\n');
+};
+
+MLMHolder.prototype.detachView = function () {
+    if (this.itemElt) {
+        this.itemElt.mlmHolder = null;
+        this.itemElt = null;
+    }
+};
+
+MLMHolder.prototype.updateView = function () {
+    if (this.itemElt) {
+        this.itemElt.selected = this.selected;
+    }
+};
+
+
+/**
+ *
+ * @param {MListModalV2} boxElt
+ * @constructor
+ */
+function MLMSearchController(boxElt) {
+    this.boxElt = boxElt;
+    this.$searchInput = $('searchtextinput', this.boxElt)
+        .on('stoptyping', this.ev_searchModify.bind(this));
+    this.cache = {};
+    this.searchItems = null;
+    this.holderDict = {};
+}
+
+MLMSearchController.prototype.reset = function () {
+    this.cache = {};
+    this.searchItems = null;
+    this.holderDict = {};
+}
+
+MLMSearchController.prototype.prepareSearchingHolders = function () {
+    if (this.searchItems) return;
+    this.searchItems = [];
+    this.holderDict = {};
+    var visit = holder => {
+        var it = holder.getSearchItem();
+        this.holderDict[it.value] = holder;
+        this.searchItems.push(it);
+    };
+
+    this.boxElt.itemHolders.forEach(visit);
+    prepareSearchForList(this.searchItems);
+};
+
+MLMSearchController.prototype.resetSearchState = function () {
+    this.$searchInput.value = '';
+    this.ev_searchModify();
+
+};
+
+/**
+ *
+ * @param query
+ * @returns {string[]} array of id
+ */
+MLMSearchController.prototype.query = function (query) {
+    this.prepareSearchingHolders();
+    var result = this.cache[query];
+    var lcList;
+    var visit;
+    if (!result) {
+        lcList = searchListByText(query, this.searchItems);
+        result = [];
+        visit = (it) => {
+            result.push(it.value)
+        };
+        lcList.forEach(visit);
+        this.cache[query] = result;
+    }
+
+    return result;
+};
+
+MLMSearchController.prototype.ev_searchModify = function () {
+    var query = this.$searchInput.value;
+    query = query.trim();
+    if (query.length === 0) {
+        this.boxElt.pagingCtrl.viewArr(this.boxElt.itemHolders);
+        return;
+    }
+    var result = this.query(query);
+    var arr = [];
+    for (var i = 0; i < result.length; ++i) {
+        arr.push(this.holderDict[result[i]]);
+    }
+
+    this.boxElt.pagingCtrl.viewArr(arr);
+};
+
