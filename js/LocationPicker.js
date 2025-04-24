@@ -19,11 +19,11 @@ export function getGoogleMapLib() {
             return Promise.resolve(window.google.maps);
         }
         else {
-            jsElt = Array.prototype.find.call(document.head.childNodes, elt=>{
-                if ((typeof  elt.src === "string") && elt.src.startsWith('https://maps.googleapis.com/maps/api/js')) return jsElt;
+            jsElt = Array.prototype.find.call(document.head.childNodes, elt => {
+                if ((typeof elt.src === "string") && elt.src.startsWith('https://maps.googleapis.com/maps/api/js')) return jsElt;
             });
             if (jsElt) {
-                return new Promise((resolve, reject)=>{
+                return new Promise((resolve, reject) => {
                     if (jsElt.readyState) {  //IE
                         jsElt.onreadystatechange = function () {
                             if (jsElt.readyState === "loaded" ||
@@ -34,7 +34,7 @@ export function getGoogleMapLib() {
                         };
                     }
                     else {  //Others
-                        var onLoad = ()=>{
+                        var onLoad = () => {
                             resolve();
                             jsElt.removeEventListener('load', onLoad);
                         }
@@ -64,6 +64,25 @@ export function getGoogleMarkerLib() {
                 return mdl;
             });
 
+    return googleMarkerLibSync;
+}
+
+var googlePlacesLibSync;
+
+export function getGooglePlacesLib() {
+    if (!googlePlacesLibSync)
+        googlePlacesLibSync = getGoogleMapLib()
+            .then(() => {
+                if (google.maps.places) {
+
+                }
+                else {
+                    return google.maps.importLibrary("places").then((mdl) => {
+                        google.maps.places = mdl;
+                        return mdl;
+                    });
+                }
+            });
     return googleMarkerLibSync;
 }
 
@@ -214,29 +233,27 @@ LocationPicker.render = function () {
     });
 };
 
-
 LocationPicker.prototype.queryItems = function (query) {
     var latLng = parseDMS(query) || parseLatLng(query);
     if (latLng) {
-        return  new Promise(resolve=>{
+        return new Promise(resolve => {
             this.geocoder.geocode({ location: implicitLatLng(latLng) }, (results, status) => {
                 if (status === google.maps.GeocoderStatus.OK) {
-                     results.forEach(it=>{
+                    results.forEach(it => {
                         it.description = it.formatted_address;
                     });
-                    resolve (results); // Returns an array of place predictions
+                    resolve(results); // Returns an array of place predictions
                 }
                 return resolve([]);
             });
-        })
-
+        });
     }
 
     var request = {
         input: query,
-        locationBias : this.map.getBounds()
+        locationBias: this.map.getBounds()
     };
-    return new Promise(function (resolve) {
+    return new Promise( (resolve)=> {
         this.autoCompleteService.getPlacePredictions(request, function (results, status) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
                 resolve(results);
@@ -244,7 +261,7 @@ LocationPicker.prototype.queryItems = function (query) {
             else
                 resolve([]);
         });
-    }.bind(this));
+    });
 };
 
 LocationPicker.prototype.getItemText = function (item, mInput) {
@@ -283,7 +300,7 @@ LocationPicker.prototype.clearSearchingMarkers = function () {
  */
 LocationPicker.prototype.selectPlace = function (place, panTo) {
     if (arguments.length === 1) panTo = true;
-    return getGoogleMarkerLib().then(()=>{
+    return getGoogleMarkerLib().then(() => {
         this.selectedPlace = place || null;
         if (this.selectedMarker) {
             this.selectedMarker.setMap(null);
@@ -350,18 +367,18 @@ LocationPicker.prototype.showSearchPlaces = function (places) {
  */
 LocationPicker.prototype.selectPlaceId = function (placeId, panTo) {
     if (arguments.length === 1) panTo = true;
-    return new Promise( (resolve)=> {
+    return new Promise((resolve) => {
         this.placeService.getDetails({
             placeId: placeId,
             fields: ["name", "formatted_address", "place_id", "geometry"]
-        },  (place, status)=> {
+        }, (place, status) => {
             if (
                 status === google.maps.places.PlacesServiceStatus.OK &&
                 place &&
                 place.geometry &&
                 place.geometry.location
             ) {
-                this.selectPlace(place, panTo).then(()=>{
+                this.selectPlace(place, panTo).then(() => {
                     resolve(true);
                 });
             }
@@ -382,7 +399,7 @@ LocationPicker.prototype.selectLocation = function (latLng, panTo) {
 
     if (arguments.length === 1) panTo = true;
 
-    return getGoogleMarkerLib().then(()=>{
+    return getGoogleMarkerLib().then(() => {
         if (this.selectedMarker) {
             this.selectedMarker.setMap(null);
         }
@@ -405,7 +422,6 @@ LocationPicker.prototype.selectLocation = function (latLng, panTo) {
             position: latLng
         });
     });
-
 
 
     // this.infoWindow.open(this.map, this.selectedMarker);
