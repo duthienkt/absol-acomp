@@ -46,7 +46,20 @@ function MultiCheckTreeMenu() {
     this.$checkTreeBox.followTarget = this;
     this.$checkTreeBox.sponsorElement = this;
     this.on('mousedown', this.eventHandler.click);
+    this.dropdownCtrl = new MCTMDropController(this);
     // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
+
+    /**
+     * @name readOnly
+     * @type {boolean}
+     * @memberOf MultiCheckTreeMenu#
+     */
+
+    /**
+     * @name disabled
+     * @type {boolean}
+     * @memberOf MultiCheckTreeMenu#
+     */
 
 
     /**
@@ -87,7 +100,7 @@ MultiCheckTreeMenu.render = function (data, domDesc) {
         child: [
             {
                 class: ['as-multi-select-menu-item-ctn', 'as-bscroller'],
-                attr:{
+                attr: {
                     "data-ml-key": 'txt_select_value'
                 },
             },
@@ -307,6 +320,7 @@ MultiCheckTreeMenu.property = {};
 
 MultiCheckTreeMenu.property.initOpened = {
     set: function (value) {
+        if (value === true) value = 100;
         if (isNaturalNumber(value)) {
             this._initOpened = value;
         }
@@ -326,47 +340,10 @@ MultiCheckTreeMenu.property.isFocus = {
      * @param value
      */
     set: function (value) {
-        if (value && (this.disabled || this.readOnly)) return;
-        var self = this;
-        value = !!value;
-        var c = this.hasClass('as-focus');
-        if (value === c) return;
-        if (value) {
-            self.off('mousedown', self.eventHandler.click);
-            var bound = this.getBoundingClientRect();
-            this.$checkTreeBox.addStyle('min-width', bound.width + 'px');
-            this.addClass('as-focus');
-            this.$checkTreeBox.addTo(document.body);
-            this.$checkTreeBox.updatePosition();
-            if (this._focusTimeout > 0) {
-                clearTimeout(this._focusTimeout);
-            }
-            this._focusTimeout = setTimeout(function () {
-                document.addEventListener('mousedown', this.eventHandler.clickOut);
-                this._focusTimeout = -1;
-                this.$checkTreeBox.focus();
-            }.bind(this), 5);
-
-        }
-        else {
-            this.removeClass('as-focus');
-            this.$checkTreeBox.selfRemove();
-            this.$checkTreeBox.resetSearchState();
-            document.removeEventListener('mousedown', this.eventHandler.clickOut);
-
-            function waitMouseUp() {
-                document.removeEventListener('mouseup', waitMouseUp);
-                setTimeout(function () {
-                    self.on('mousedown', self.eventHandler.click);
-                }, 5)
-            }
-
-            // document.addEventListener('mouseup', waitMouseUp);why?
-            setTimeout(waitMouseUp, 100);
-        }
+       this.dropdownCtrl.isFocus = value;
     },
     get: function () {
-        return this.hasClass('as-focus');
+        return this.dropdownCtrl.isFocus;
     }
 };
 
@@ -424,8 +401,8 @@ MultiCheckTreeMenu.property.leafOnly = {
 
 MultiCheckTreeMenu.property.placeholder = {
     set: function (value) {
-        if (value){
-            this.$itemCtn.attr('data-placeholder', value+'');
+        if (value) {
+            this.$itemCtn.attr('data-placeholder', value + '');
         }
         else {
             this.$itemCtn.attr('data-placeholder', null);
@@ -516,7 +493,7 @@ MultiCheckTreeMenu.eventHandler.preUpdateListPosition = function () {
     var bound = this.getBoundingClientRect();
     var screenSize = getScreenSize();
     var availableTop = bound.top - 5;
-    var availableBot = screenSize.height - 5 - bound.bottom;
+    var availableBot = screenSize.height - 5 - bound.bottom - 50;
     this.$checkTreeBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
     var outBound = traceOutBoundingClientRect(this);
     if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
@@ -548,3 +525,69 @@ ACore.install(MultiCheckTreeMenu);
 
 export default MultiCheckTreeMenu;
 
+
+/**
+ * @constructor
+ * @param {MultiCheckTreeMenu} elt
+ * @constructor
+ */
+function MCTMDropController(elt) {
+    this.elt = elt;
+}
+
+
+MCTMDropController.prototype.open = function () {
+    if (this.elt.readOnly || this.elt.disabled) return;
+    if (this.elt.hasClass('as-focus')) return;
+    this.elt.addClass('as-focus');
+    this.elt.off('mousedown', this.elt.eventHandler.click);
+    var bound = this.elt.getBoundingClientRect();
+    this.elt.$checkTreeBox.addStyle('min-width', bound.width + 'px'); // Set dropdown width
+    this.elt.$checkTreeBox.addTo(document.body); // Attach dropdown to the body
+    this.elt.$checkTreeBox.updatePosition(); // Update dropdown position
+
+    if (this.elt._focusTimeout > 0) {
+        clearTimeout(this.elt._focusTimeout); // Clear any existing timeout
+    }
+
+    // Set a timeout to handle focus and add event listener for clicking outside
+    this.elt._focusTimeout = setTimeout(() => {
+        document.addEventListener('mousedown', this.elt.eventHandler.clickOut);
+        this.elt._focusTimeout = -1;
+        this.elt.$checkTreeBox.focus(); // Focus on the dropdown
+    }, 5);
+
+};
+
+MCTMDropController.prototype.close = function () {
+    if (!this.elt.hasClass('as-focus')) return;
+    this.elt.removeClass('as-focus');
+    this.elt.$checkTreeBox.selfRemove(); // Detach dropdown from the body
+    this.elt.$checkTreeBox.resetSearchState(); // Reset search state
+    document.removeEventListener('mousedown', this.elt.eventHandler.clickOut); // Remove click-out listener
+
+    // Re-enable the click event after a delay
+    const waitMouseUp = () => {
+        document.removeEventListener('mouseup', waitMouseUp);
+        setTimeout(() => {
+            this.elt.on('mousedown', this.elt.eventHandler.click);
+        }, 5);
+    };
+
+    setTimeout(waitMouseUp, 100);
+};
+
+MCTMDropController.prototype.ev_clickOut = function (event) {
+
+};
+
+
+Object.defineProperty(MCTMDropController.prototype, "isFocus", {
+    set: function (value) {
+        if (value) this.open();
+        else this.close();
+    },
+    get: function () {
+        return this.elt.hasClass('as-focus');
+    }
+});
