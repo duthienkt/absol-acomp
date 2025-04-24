@@ -14,6 +14,7 @@ import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import noop from "absol/src/Code/noop";
+import TextMeasure from "./TextMeasure";
 
 
 /***
@@ -731,14 +732,7 @@ TreeNodeHolder.prototype.updateUp = function () {
 };
 
 TreeNodeHolder.prototype.calcEstimateWidth = function () {
-    var width = 12;//padding
-    width += 23 * this.level;
-    width += 14.7 + 5;//toggle icon
-    width += 16;//checkbox
-    if (this.item.icon) width += 21;//icon
-    width += 7 + estimateWidth14(this.item.text);//margin-text
-    if (this.item.desc) width += 6 + estimateWidth14(this.item.desc) * 0.85;
-    return width;
+    return this.calcWidth();//because new version use TextMeasure.measureWidth, better performance
 };
 
 TreeNodeHolder.prototype.calcWidth = function () {
@@ -748,8 +742,9 @@ TreeNodeHolder.prototype.calcWidth = function () {
     width += 14.7 + 5;//toggle icon
     width += 16;//checkbox
     if (this.item.icon) width += 21;//icon
-    width += 7 + measureArial14TextWidth(this.item.text);//margin-text
-    if (this.item.desc) width += 6 + measureArial14TextWidth(this.item.desc/*, '11.9px arial'*/).width * 0.85;
+    width += 7 + TextMeasure.measureWidth(this.item.text||'', TextMeasure.FONT_ARIAL, 14);//margin-text
+
+    if (this.item.desc) width += 6 + TextMeasure.measureWidth(this.item.desc||'',TextMeasure.FONT_ARIAL, 11.9);
     return width;
 };
 
