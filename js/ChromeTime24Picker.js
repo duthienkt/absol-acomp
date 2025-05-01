@@ -69,35 +69,32 @@ ChromeTime24Picker.render = function () {
         class: ['as-chrome-time-24-picker', 'as-chrome-time-picker'],
         child: [
             {
-                class: ['as-chrome-time-picker-scroller', 'as-chrome-time-24-picker-hour'],
+                class: ['as-chrome-time-picker-scroller', 'as-chrome-time-24-picker-hour',  'as-chrome-time-picker-infinity-scroller'],
                 child: [
                     { tag: 'button', class: 'as-chrome-time-picker-scroller-up', child: 'span.mdi.mdi-chevron-up' },
                     { tag: 'button', class: 'as-chrome-time-picker-scroller-down', child: 'span.mdi.mdi-chevron-down' },
                     {
-                        class: ['as-chrome-time-picker-viewport', 'as-chrome-time-picker-h24'],
-                        child: {
-                            class: 'as-chrome-time-picker-list',
-                            child: Array(25).fill(0).map(function (u, i) {
-                                return {
-                                    tag: 'button',
-                                    class: 'as-chrome-time-picker-btn',
-                                    child: [
-                                        {
-                                            tag: 'span',
-                                            child: { text: i + '' }
-                                        },
-                                        {
-                                            tag: 'span',
-                                            class: 'as-chrome-time-24-picker-tomorrow-text',
-                                            child: { text: ` (${LangSys.getText('txt_next_day') || 'Next day'})` }
-                                        }
-                                    ],
-                                    props: {
-                                        __hour__: i
+                        class: ['as-chrome-time-picker-infinity-viewport', 'as-chrome-time-picker-h24', 'as-chrome-time-picker-list'],
+                        child: Array(25).fill(0).map(function (u, i) {
+                            return {
+                                tag: 'button',
+                                class: 'as-chrome-time-picker-btn',
+                                child: [
+                                    {
+                                        tag: 'span',
+                                        child: { text: i + '' }
+                                    },
+                                    {
+                                        tag: 'span',
+                                        class: 'as-chrome-time-24-picker-tomorrow-text',
+                                        child: { text: ` (${LangSys.getText('txt_next_day') || 'Next day'})` }
                                     }
+                                ],
+                                props: {
+                                    __hour__: i
                                 }
-                            })
-                        }
+                            }
+                        })
                     }
                 ]
 
@@ -262,12 +259,14 @@ function CTPHourListController(elt) {
         }
     }
     this.elt = elt;
-    this.$list = $('.as-chrome-time-picker-h24 >.as-chrome-time-picker-list', elt);
+    this.hourScroller = new CTPInfinityVerticalScroller(this.elt.$scrollers[0]);
+    this.$list = $('.as-chrome-time-picker-h24.as-chrome-time-picker-list', elt);
     this.$items = Array.prototype.slice.call(this.$list.childNodes);
     this.$list.on('click', this.ev_clickList);
     this._offset = 0;
     this.selectedValue = null;
     this.$selectedItem = null;
+    this.itemLength = this.$items.length;
     /**
      * @type {number}
      * @name hour - from 0 to 23, 24... is next day
@@ -282,7 +281,6 @@ Object.defineProperty(CTPHourListController.prototype, 'hourOffset', {
         value = value % 24;
         if (value < 0) value += 24;
         this._offset = value;
-
         for (var i = 0; i < this.$items.length; ++i) {
             this.$items[i].firstChild.firstChild.data = (i + value)% 24;
             this.$items[i].__hour__ = i + value;
@@ -349,8 +347,34 @@ CTPHourListController.prototype.ev_clickList = function (event) {
 };
 
 CTPHourListController.prototype.scrollIntoSelected = function (onTop) {
-    if (this.$selectedItem)
-        vScrollIntoView(this.$selectedItem);
+    if (this.selectedValue == null) return;
+    var curOffset = this.hourScroller.offset;
+    var targetOffset = this.selectedValue - this.hourOffset;
+    var k, minCost = Infinity;
+    var cost;
+    var t;
+    for (k = -2; k <= 2; ++k) {
+        t = (this.selectedValue  - this.hourOffset)+ k * this.itemLength;
+        if (t >= curOffset && t <= curOffset + 3 && !onTop) {
+            minCost = 0;
+            targetOffset = curOffset;
+        }
+        else {
+            cost = Math.abs(t - curOffset);
+            if (cost < minCost) {
+                minCost = cost;
+                targetOffset = t;
+            }
+            cost = Math.abs(t - curOffset - 3);
+            if (cost < minCost && !onTop) {
+                minCost = cost;
+                targetOffset = t - 3;
+            }
+        }
+    }
+
+    this.hourScroller.makeAnimation(targetOffset, 200);
+
 };
 
 CTPHourListController.prototype.itemValueOf = function (itemElt) {
