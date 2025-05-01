@@ -68,7 +68,16 @@ Dom.documentReady.then(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
         if (e.href && e.href.toLowerCase().indexOf('materialdesignicons') >= 0) return true;
     });
-    if (!mdiLink) {
+    var href;
+    if (mdiLink) {
+        if (location.href && (location.href.indexOf('localhost') >= 0 || location.href.startsWith('file:'))) {
+            href = mdiLink.getAttribute('href') || 'https';
+            if (!href.startsWith('http')) {
+                mdiLink.href = 'https://absol.cf/vendor/materialdesignicons/materialdesignicons.css';
+            }
+        }
+    }
+    else {
         mdiLink = absol._({
             tag: 'link',
             attr: {
