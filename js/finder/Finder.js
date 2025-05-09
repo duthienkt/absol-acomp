@@ -1654,21 +1654,24 @@ UploadController.prototype.upload = function (files) {
         }
     }).addTo(document.body);
 
-    var syncs = files.map((file, i) => {
+    //because file system in keeview not allow writing multiple file at the same time
+    var syncs = files.reduce((sync, file, i) => {
         var percentText = $('.as-upload-percent', contentElt.firstChild.childNodes[i]);
-        return this.elt.fileSystem.writeFile(this.elt.path + '/' + file.name, file, done => {
-            var textBound = percentText.getBoundingClientRect();
-            var ctnBound = contentElt.getBoundingClientRect();
-            if (textBound.bottom > ctnBound.bottom) {
-                contentElt.scrollTop += textBound.bottom - ctnBound.bottom;
-            }
-            percentText.firstChild.data = Math.round(done * 100) + '%';
+        return sync.then(()=>{
+            return this.elt.fileSystem.writeFile(this.elt.path + '/' + file.name, file, done => {
+                var textBound = percentText.getBoundingClientRect();
+                var ctnBound = contentElt.getBoundingClientRect();
+                if (textBound.bottom > ctnBound.bottom) {
+                    contentElt.scrollTop += textBound.bottom - ctnBound.bottom;
+                }
+                percentText.firstChild.data = Math.round(done * 100) + '%';
+            });
         });
-    });
-    Promise.all(syncs).then(() => {
+    }, Promise.resolve());
+    syncs.then(() => {
         this.elt.navCtrl.reload(this.elt.path, true).then(() => modal.remove());
     });
-}
+};
 
 
 UploadController.prototype.ev_fileEnter = function (event) {
