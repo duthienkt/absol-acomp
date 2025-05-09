@@ -418,6 +418,7 @@ CMDTool.prototype.cmdNodeHandlers = {
     },
     ribbon: {
         create: function (nd, par) {
+            var name = nd.name;
             var self = this;
             var btn = _({
                 tag: RibbonButton.tag,
