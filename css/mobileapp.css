@@ -79,6 +79,36 @@ button.am-header-bar-command:active {
     color: rgb(220, 220, 222);
 }
 
+
+.as-header-bar-notification-action {
+    white-space: nowrap;
+}
+
+.as-header-bar-notification-action-count {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.as-header-bar-notification-action-count::before {
+        display: none;
+        content: "0";
+        position: absolute;
+        font-size: 12px;
+        line-height: 18px;
+        bottom: 5px;
+        right: -8px;
+        background-color: rgb(221, 35, 52);
+        color: white;
+        text-align: center;
+        min-width: 18px;
+        height: 18px;
+        padding-left: 2px;
+        padding-right: 2px;
+        box-sizing: border-box;
+        border-radius: 9px;
+}
+
 .am-header-bar-title-ctn {
     flex-grow: 1;
     white-space: nowrap;
@@ -440,7 +470,8 @@ button.am-header-bar-action {
     max-width: 400px;
     box-sizing: border-box;
 }
-.am-springboard-menu::before{
+
+.am-springboard-menu::before {
     content: "";
     display: block;
     height: 1px;
