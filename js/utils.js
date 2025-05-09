@@ -1321,8 +1321,8 @@ export function getMapZoomLevel(mapDim, bounds) {
     if (!mapDim) return 17;
     var ne = bounds.getNorthEast();
     var sw = bounds.getSouthWest();
-    if (!ne) return 17;
-    if (!sw) return 17;
+    if (!ne || !ne.lat) return 17;
+    if (!sw || !sw.lat) return 17;
 
     var latFraction = (latRad(ne.lat()) - latRad(sw.lat())) / Math.PI;
 
