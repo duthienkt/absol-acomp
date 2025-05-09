@@ -1,5 +1,5 @@
 import SelectMenu from '../SelectMenu';
-import MListModal from "../selectlistbox/MListModal";
+import  { MListModalV2 } from "../selectlistbox/MListModal";
 import ACore, { _, $ } from "../../ACore";
 import '../../css/selectmenu.css';
 import MSelectListItem from "../selectlistbox/MSelectListItem";
@@ -18,7 +18,7 @@ function MSelectMenu() {
      * @type {MListModal}
      */
     this.$selectlist = _({
-        tag: MListModal
+        tag: MListModalV2
     });
 
     this.$selectlist.cancelWaiting();
