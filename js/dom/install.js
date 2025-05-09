@@ -89,6 +89,7 @@ import MultiSelectMenu from "../MultiSelectMenu";
 import CountdownClock from "../CountdownClock";
 import Toast from "../Toast";
 import {
+    EmojiMutedIcon,
     ImportantOutlineIcon,
     MdiStoreMarkerOutline,
     ProcedureOutlineIcon,
@@ -179,7 +180,16 @@ import SelectRibbonMenu from "../SelectRibbonMenu";
 import PathView from "../PathView";
 import FontInput, { FontFamilySelectList } from "../FontInput";
 import CollapsibleTreeNavigator from "../CollapsibleTreeNavigator";
-import NotificationPanel, { NPSection, NPDropdownButton, NPMessage, NPItem, NPList } from "../NotificationPanel";
+import NotificationPanel, {
+    NPSection,
+    NPDropdownButton,
+    NPMessage,
+    NPItem,
+    NPList,
+    MNPNotificationVirtualDropdown
+} from "../NotificationPanel";
+import PickingList from "../PickingList";
+import ListCompareTool from "../ListCompareTool";
 
 
 export var publicCreators = [
@@ -342,6 +352,7 @@ export var publicCreators = [
     ProcessOutlineIcon,
     ProcedureOutlineIcon,
     ImportantOutlineIcon,
+    EmojiMutedIcon,
     VerticalTreeDiagramNode,
     VerticalTreeDiagram,
     MultiCheckMenu,
@@ -375,6 +386,8 @@ export var publicCreators = [
     MSelectTreeLeafBox,
     MDualSelectBox,
 
+    PickingList,
+
     TreeChart,
     TableOfTextInput,
     CompactDataGridEditor,
@@ -390,11 +403,13 @@ export var publicCreators = [
     ColorCell,
     SelectColorSchemeMenu,
 
+    MNPNotificationVirtualDropdown,
     NPDropdownButton,
     NotificationPanel,
     NPSection,
     NPItem,
-    NPList
+    NPList,
+    ListCompareTool
 ];
 
 /***
@@ -407,12 +422,16 @@ function install(core) {
     core.install('selectbox', MultiSelectMenu);
     if (BrowserDetector.isMobile) {
         core.install('selectmenu', MSelectMenu);
-        core.install('selecttreemenu', MSelectTreeMenu)
+        // core.install('selecttreemenu', MSelectTreeMenu)
     }
+    // core.install('mselectmenu', SelectMenu2);
+    core.install('mselecttreemenu', SelectTreeMenu)
+
     core.install('MSelectTreeLeafMenu'.toLowerCase(), SelectTreeLeafMenu);
     core.install('MMultiCheckTreeMenu'.toLowerCase(), MultiCheckTreeMenu);
     core.install('MMultiCheckTreeLeafMenu'.toLowerCase(), MultiCheckTreeLeafMenu);
     core.install('mknav', MKNavigator);
+
 }
 
 export default install;

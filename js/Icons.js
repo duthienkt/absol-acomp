@@ -20,6 +20,7 @@ import FunctionManagerText from '../assets/icon/function_manager.tpl';
 import DataTypeConfiguratorOutlineIconText from '../assets/icon/data_type_configuration_outline.tpl';
 import TimeBasedPayrollReportIconText from '../assets/icon/time_based_payroll_report.tpl';
 import ImportantOutlineIconText from '../assets/icon/important_outline.tpl';
+import EmojiMutedIconText from '../assets/icon/emoji_muted.tpl';
 import '../css/icons.css';
 import Color from "absol/src/Color/Color";
 
@@ -224,3 +225,11 @@ ImportantOutlineIcon.tag = 'ImportantOutlineIcon'.toLowerCase();
 
 
 ACore.install(ImportantOutlineIcon);
+
+export function EmojiMutedIcon(){
+    return _(EmojiMutedIconText);
+}
+
+EmojiMutedIcon.tag = 'EmojiMutedIcon'.toLowerCase();
+
+ACore.install(EmojiMutedIcon);
