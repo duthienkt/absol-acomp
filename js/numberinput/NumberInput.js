@@ -114,7 +114,7 @@ function NumberInput() {
 
     /****
      * @name stepper
-     * @type {number}
+     * @type {boolean}
      * @memberOf NumberInput#
      */
 
