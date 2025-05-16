@@ -526,6 +526,14 @@ SelectListBox.prototype.findItemsByValue = function (value) {
     return (this._itemNodeHolderByValue[value] || []).slice();
 };
 
+SelectListBox.prototype.findItemByValue = function (value) {
+    var t = this._itemNodeHolderByValue[value];
+    if (t && t.length > 0) {
+        return t[0].item;
+    }
+    else return null;
+};
+
 SelectListBox.property = {};
 
 /***

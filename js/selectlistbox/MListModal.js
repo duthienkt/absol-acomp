@@ -649,6 +649,11 @@ MListModalV2.prototype.findItemsByValue = function (value) {
     return [holder.data];
 };
 
+MListModalV2.prototype.findItemByValue = function (value) {
+    var holder = this.itemHolderByValue[keyStringOf(value)];
+    if (!holder) return null;
+    return holder.data;
+};
 
 MListModalV2.prototype.viewListAt = function (idx) {
     var offset = this.pagingCtrl.offsetTopOfHolders[idx];

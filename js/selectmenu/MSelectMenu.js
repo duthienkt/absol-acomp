@@ -15,7 +15,7 @@ function MSelectMenu() {
     this.$holderItem = $('.am-selectmenu-holder-item', this);
 
     /***
-     * @type {MListModal}
+     * @type {MListModalV2}
      */
     this.$selectlist = _({
         tag: MListModalV2
@@ -73,6 +73,10 @@ MSelectMenu.render = function () {
 
 MSelectMenu.prototype.findItemsByValue = function (value) {
     return this.$selectlist.findItemsByValue(value);
+};
+
+MSelectMenu.prototype.findItemByValue = function (value) {
+    return this.$selectlist.findItemByValue(value);
 };
 
 MSelectMenu.prototype.updateItem = function () {

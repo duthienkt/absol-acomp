@@ -176,6 +176,11 @@ SelectMenu.prototype.findItemsByValue = function (value) {
 };
 
 
+SelectMenu.prototype.findItemByValue = function (value) {
+    return this.$selectlistBox.findItemByValue(value);
+}
+
+
 SelectMenu.prototype._explicit = function (value) {
     var items = this.$selectlistBox.findItemsByValue(value);
     if (items.length > 0 || !this.strictValue || this.items.length === 0) {
