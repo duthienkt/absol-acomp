@@ -188,6 +188,13 @@ MCheckListModal.prototype.findItemsByValue = function (value) {
     return null;
 };
 
+MCheckListModal.prototype.findItemByValue = function (value) {
+    var holder = this.itemHolderByValue[keyStringOf(value)];
+    if (holder) return holder.data;
+    return null;
+};
+
+
 MCheckListModal.prototype.refollow = noop;
 MCheckListModal.prototype.updatePosition = noop;
 

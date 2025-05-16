@@ -237,6 +237,10 @@ MultiCheckTreeMenu.prototype.findItemsByValues = function (values) {
     });
 };
 
+MultiCheckTreeMenu.prototype.findItemByValue = function (value) {
+    return this.$checkTreeBox.findItemByValue(value);
+};
+
 
 MultiCheckTreeMenu.prototype.viewValues = function (values) {
     values = values.slice();
@@ -340,7 +344,7 @@ MultiCheckTreeMenu.property.isFocus = {
      * @param value
      */
     set: function (value) {
-       this.dropdownCtrl.isFocus = value;
+        this.dropdownCtrl.isFocus = value;
     },
     get: function () {
         return this.dropdownCtrl.isFocus;

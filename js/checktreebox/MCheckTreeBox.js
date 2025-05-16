@@ -10,6 +10,7 @@ import CTIPropHandlers from "./CTIPropHandlers";
 import OOP from "absol/src/HTML5/OOP";
 import ListDictionary from "../list/ListDictionary";
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "../list/search";
+import ItemDictionary from "../list/ListDictionary";
 
 
 /***
@@ -20,6 +21,8 @@ import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "
 function MCTBItemListController(elt) {
     this.elt = elt;
     this.items = [];
+    ListDictionary.call(this, this.items, { depth: true });
+
 }
 
 OOP.mixClass(MCTBItemListController, ListDictionary);
@@ -29,10 +32,12 @@ MCTBItemListController.prototype.setItems = function (items) {
     items = items || [];
     if (!items.forEach || !items.map) items = [];
     this.items = copySelectionItemArray(items, { removeNoView: true });
+    this.arr = this.items;
     this.update();
 };
 
 MCTBItemListController.prototype.update = function () {
+    ItemDictionary.prototype.update.call(this);
     var mode = new this.elt.classes.ModeNormal(this.elt, this.items);
     this.elt.modes.normal = mode;
     if (mode.hasDesc) {

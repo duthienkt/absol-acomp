@@ -281,6 +281,12 @@ MultiCheckTreeLeafBox.prototype._updateSelectedItems = function () {
     }
 };
 
+MultiCheckTreeLeafBox.prototype.findItemByValue = function (value) {
+    var itemElt = this.$itemByValue[value];
+    if (!itemElt) return null;
+    return itemElt.itemData;
+};
+
 MultiCheckTreeLeafBox.property = {};
 
 MultiCheckTreeLeafBox.eventHandler = {};
@@ -295,7 +301,7 @@ MultiCheckTreeLeafBox.property.items = {
         var self = this;
         this._savedStatus = {};
         this._searchCache = {};
-        items = copySelectionItemArray(items ||[], { removeNoView: true });
+        items = copySelectionItemArray(items || [], { removeNoView: true });
         this._items = items;
         prepareSearchForList(items);
         this.$content.clearChild();

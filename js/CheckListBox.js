@@ -238,6 +238,14 @@ CheckListBox.prototype.findItemHoldersByValue = function (value) {
     return this._holderDict[keyStringOf(value)];
 };
 
+CheckListBox.prototype.findItemByValue = function (value) {
+    var holders = this._holderDict[keyStringOf(value)];
+    if (holders && holders.length > 0) {
+        return holders[0].item;
+    }
+    else return null;
+};
+
 /**
  *
  * @param {number | Array<number>}idx

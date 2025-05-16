@@ -30,6 +30,10 @@ MCheckTreeLeafBox.render = function () {
 
 MCheckTreeLeafBox.property = CTLBPropHandlers;
 
+MCheckTreeLeafBox.prototype.findItemByValue = function (value) {
+    return this.itemListCtrl.getItemByValue(value);
+};
+
 
 MCheckTreeLeafBox.eventHandler = Object.assign({}, MCheckTreeBox.eventHandler);
 

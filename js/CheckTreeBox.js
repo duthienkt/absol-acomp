@@ -192,6 +192,15 @@ CheckTreeBox.prototype.findItemHoldersByValue = function (value) {
     return this.listCtrl.findItemHoldersByValue(value);
 };
 
+CheckTreeBox.prototype.findItemByValue = function (value) {
+    var holders = this.listCtrl.findItemHoldersByValue(value);
+    if (holders && holders.length > 0) {
+        return holders[0].item;
+    }
+    else return null;
+};
+
+
 CheckTreeBox.prototype.viewListAt = function (offset) {
     this.listCtrl.viewListAt(offset);
 };

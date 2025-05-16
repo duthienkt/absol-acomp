@@ -193,27 +193,45 @@ MultiCheckMenu.prototype.removeStyle = function (arg0) {
 };
 
 MultiCheckMenu.prototype._updateOverflow = function () {
-    var bound;
+    //todo: calc item size before render
+    var bound, i;
+    var fromIdx = Infinity;
     if (this.getComputedStyleValue('overflow') === 'hidden') {
         bound = this.getBoundingClientRect();
         if (bound.width === 0) return;
         this.$itemCtn.removeClass('as-has-more');
         var hasMore = false;
         var elt;
-        for (var i = 0; i < this.$itemCtn.childNodes.length; ++i) {
+        for (i = 0; i < this.$itemCtn.childNodes.length; ++i) {
             elt = this.$itemCtn.childNodes[i];
             if (!hasMore) {
                 elt.removeStyle('display');
                 var cBound = elt.getBoundingClientRect();
                 if (cBound.bottom > bound.bottom) {
                     hasMore = true;
+                    fromIdx = i - 1;
+                    break;
                 }
             }
-            if (hasMore) {
-                elt.addStyle('display', 'none');
+        }
+        if (hasMore) {
+            this.$itemCtn.addClass('as-has-more');
+            for (i = 0; i < this.$itemCtn.childNodes.length; ++i) {
+                elt = this.$itemCtn.childNodes[i];
+                if (i > 0 && i >= fromIdx) {
+                    elt.addStyle('display', 'none');
+                }
+                else {
+                    elt.removeStyle('display');
+                }
             }
         }
-        if (hasMore) this.$itemCtn.addClass('as-has-more');
+        else {
+            for (i = 0; i < this.$itemCtn.childNodes.length; ++i) {
+                elt = this.$itemCtn.childNodes[i];
+                elt.removeStyle('display');
+            }
+        }
     }
 };
 
@@ -278,6 +296,11 @@ MultiCheckMenu.prototype.updateSize = function () {
 MultiCheckMenu.prototype.findItemsByValue = function (value) {
     return this.$selectlistBox.findItemsByValue(value);
 };
+
+
+MultiCheckMenu.prototype.findItemByValue = function (value) {
+    return this.$selectlistBox.findItemByValue(value);
+}
 
 
 MultiCheckMenu.property.readOnly = {
@@ -447,7 +470,9 @@ MSMItemsViewController.prototype.viewItems = function (items) {
     var cBound = this.elt.getBoundingClientRect();
     this.requireListLength(items.length);
     this.assignItems(items);
+    setTimeout(this.elt._updateOverflow.bind(this.elt), 10)
     setTimeout(this.elt._updateOverflow.bind(this.elt), 100)
+    setTimeout(this.elt._updateOverflow.bind(this.elt), 150)
 
     var nBound = this.elt.getBoundingClientRect();
     if (nBound.width !== cBound.width || nBound.height !== cBound.height) {

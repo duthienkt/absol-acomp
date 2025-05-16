@@ -43,7 +43,7 @@ MultiCheckTreeLeafMenu.render = function () {
         },
         child: [
             {
-                attr:{
+                attr: {
                     'data-ml-key': 'txt_select_value'
                 },
                 class: ['as-multi-select-menu-item-ctn', 'as-bscroller']
@@ -91,6 +91,10 @@ MultiCheckTreeLeafMenu.prototype._makeItem = function () {
     return itemElt;
 };
 
+MultiCheckTreeLeafMenu.prototype.findItemByValue = function (value) {
+    return this.$selectBox.findItemByValue(value);
+};
+
 MultiCheckTreeLeafMenu.prototype.init = function (props) {
     props = props || {};
     var cProps = Object.assign({}, props);
@@ -122,20 +126,19 @@ MultiCheckTreeLeafMenu.property.items = {
 
 MultiCheckTreeLeafMenu.property.values = {
     set: function (values) {
-        values = values ||[];
-        this.pendingValues = values ;
-        this.$selectBox.values = values ;
+        values = values || [];
+        this.pendingValues = values;
+        this.$selectBox.values = values;
         this._updateSelectedItems();
 
     },
     get: function () {
         if ('pendingValues' in this) return this.pendingValues;
-        return this.$selectBox.values.slice().filter(value=>{
+        return this.$selectBox.values.slice().filter(value => {
             return !!this.$selectBox.$itemByValue[value];
         });
     }
 };
-
 
 
 MultiCheckTreeLeafMenu.property.disabled = MultiSelectMenu.property.disabled;
@@ -143,8 +146,8 @@ MultiCheckTreeLeafMenu.property.readOnly = MultiSelectMenu.property.readOnly;
 
 MultiCheckTreeLeafMenu.property.placeholder = {
     set: function (value) {
-        if (value){
-            this.$itemCtn.attr('data-placeholder', value+'');
+        if (value) {
+            this.$itemCtn.attr('data-placeholder', value + '');
         }
         else {
             this.$itemCtn.attr('data-placeholder', null);
@@ -162,7 +165,7 @@ MultiCheckTreeLeafMenu.eventHandler.clickOut = SelectTreeLeafMenu.eventHandler.c
 MultiCheckTreeLeafMenu.eventHandler.preUpdateListPosition = SelectMenu.eventHandler.preUpdateListPosition;
 
 MultiCheckTreeLeafMenu.eventHandler.click = function (event) {
-    if (!this.readOnly&&(event.target === this || event.target === this.$itemCtn)) {
+    if (!this.readOnly && (event.target === this || event.target === this.$itemCtn)) {
         this.isFocus = true;
     }
 };

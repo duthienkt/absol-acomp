@@ -140,6 +140,16 @@ CheckTreeLeafOnlyBox.eventHandler = Object.assign({}, CheckTreeBox.eventHandler)
 
 CheckTreeLeafOnlyBox.prototype._pool = [];
 
+CheckTreeLeafOnlyBox.prototype.findItemByValue = function (value) {
+    var holders = this.listCtrl.findItemHoldersByValue(value);
+    if (holders && holders.length > 0) {
+        return holders[0].item;
+    }
+    else {
+        return null;
+    }
+};
+
 CheckTreeLeafOnlyBox.property.items = {
     get: CheckTreeBox.property.items.get,
     set: function (items) {
