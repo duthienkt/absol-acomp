@@ -12,7 +12,8 @@ var $ = ACore.$;
 function PageSelector() {
     this.$pageCount = $('.absol-page-count', this);
     this.$pageInput = $('.absol-page-number-input input', this);
-    this.$pageInput.on('keyup', this.eventHandler.pressEnterKey);
+    this.$pageInput.on('keyup', this.eventHandler.pressEnterKey)
+        .on('change', this.eventHandler.pressEnterKey);
     this.$prevBtn = $('li.page-previous', this);
     this.$nextBtn = $('li.page-next', this);
     this.$firstBtn = $('li.page-first', this);
@@ -98,12 +99,16 @@ PageSelector.render = function () {
 
 PageSelector.eventHandler = {};
 
+/**
+ *
+ * @param {KeyboardEvent} event
+ */
 PageSelector.eventHandler.pressEnterKey = function (event) {
-    if (event.keyCode != 13) return;
+    if (event.key !== 'Enter' && event.type !== 'change') return;
     var index = parseInt(this.$pageInput.value.trim(), 10);
     if ((index < 1) || (index > this._pageCount)) {
-        this.$pageInput.value = this._selectedIndex;
-        return;
+        index = Math.max(1, Math.min(this._pageCount, index));
+        this.$pageInput.value = index;
     }
     this.selectPage(index, true);
 }
@@ -150,7 +155,7 @@ PageSelector.prototype._createButton = function (index) {
 PageSelector.prototype.setPageRange = function (pageCount) {
     this._pageRange = pageCount;
     while (this._buttons.length < pageCount) {
-        this._buttons.push(this._createButton(this._buttons.length ));
+        this._buttons.push(this._createButton(this._buttons.length));
 
     }
     while (this._buttons.length > pageCount) {
@@ -241,7 +246,21 @@ PageSelector.property.pageRange = {
     get: function () {
         return this._pageRange;
     }
-}
+};
+
+PageSelector.property.simpleMode = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-simple-mode');
+        }
+        else {
+            this.removeClass('as-simple-mode');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-simple-mode');
+    }
+};
 
 
 PageSelector.prototype.init = function (props) {
@@ -260,6 +279,7 @@ PageSelector.prototype.init = function (props) {
     delete props.pageRange;
     delete props.pageCount;
     delete props.selectedIndex;
+    Object.assign(this, props);
 };
 
 
