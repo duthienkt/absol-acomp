@@ -3,6 +3,7 @@ import '../../css/ckplaceholder.css';
 import { CKExtensionDict, CKExtensions, ckInit, ckMakeDefaultConfig } from "./plugins";
 import CKStickyToolbarController from "./CKStickyToolbarController";
 import Dom from "absol/src/HTML5/Dom";
+import { isRealNumber } from "../utils";
 
 Dom.documentReady.then(function () {
     setTimeout(ckInit, 100);
@@ -120,7 +121,14 @@ CKPlaceholder.eventHandler = {};
  */
 CKPlaceholder.eventHandler.attached = function () {
     this.$attachhook.remove();
-    this.editor = this.mode === 'replace' ? CKEDITOR.replace(this, ckMakeDefaultConfig(this.config, this.extensions, this)) : CKEDITOR.inline(this, ckMakeDefaultConfig(this.config, this.extensions, this));
+    console.log(this.style.width, this.style.height);
+    var config = this.config;
+    var width = this.style.width;
+    if (width.endsWith('px')) config.width = width;
+    var height = this.style.height;
+    if (height.endsWith('px')) config.height = height;
+    config = ckMakeDefaultConfig(this.config, this.extensions, this);
+    this.editor = this.mode === 'replace' ? CKEDITOR.replace(this, config) : CKEDITOR.inline(this, config);
     this.editor.placeHolderElt = this;
     this.editor.on('instanceReady', this.eventHandler.instanceReady);
     this.editor.on('change', this.eventHandler.change);
@@ -140,6 +148,13 @@ CKPlaceholder.eventHandler.attached = function () {
 };
 
 CKPlaceholder.eventHandler.instanceReady = function () {
+    var width = this.style.width;
+    if (width.endsWith('px')) width = parseFloat(width.replace('px'));
+    var height = this.style.height;
+    if (height.endsWith('px')) height = parseFloat(height.replace('px'));
+    if (isRealNumber(width) && isRealNumber(height)) {
+        this.editor.resize(width, height);
+    }
     this.isReady = true;
     if (this._pendingData && this._pendingData.length > 0) {
         this.editor.setData(this._implicit(this._pendingData));
