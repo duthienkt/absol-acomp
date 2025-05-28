@@ -1,33 +1,33 @@
-.absol-page-selector{
+.absol-page-selector {
     white-space: normal;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
-    font-size: 1rem;
+    font-size: 14px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-.absol-page-selector > ul{
+.absol-page-selector > ul {
     margin-bottom: 0px;
     margin-top: 0;
 }
 
-.absol-page-number-buttons{
+.absol-page-number-buttons {
     display: inline-block;
     vertical-align: middle;
     white-space: nowrap;
 }
 
-.absol-page-number-input > label{
+.absol-page-number-input > label {
     font-weight: 100;
 }
 
-.absol-page-number-buttons > li.page-previous, 
+.absol-page-number-buttons > li.page-previous,
 .absol-page-number-buttons > li.page-next,
 .absol-page-number-buttons > li.page-first,
-.absol-page-number-buttons > li.page-last
-{
+.absol-page-number-buttons > li.page-last {
     display: inline-block;
-    height:  calc(2em + 2px);;
+    height: calc(2em + 2px);;
     padding-left: 10px;
     padding-right: 10px;
     text-align: center;
@@ -36,7 +36,7 @@
     cursor: pointer;
 }
 
-.absol-page-number-buttons > li.absol-page-number{
+.absol-page-number-buttons > li.absol-page-number {
     font-size: inherit;
     display: inline-block;
     height: calc(2em + 2px);
@@ -47,40 +47,40 @@
     cursor: pointer;
 }
 
-li.absol-page-number>a{
+li.absol-page-number > a {
     font-size: inherit;
 }
 
 
-.absol-page-number-buttons > li.absol-page-number.active{
-    box-shadow:  0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+.absol-page-number-buttons > li.absol-page-number.active {
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
     background-color: #4285f4;
-    border-radius:2px; 
-    
+    border-radius: 2px;
+
 }
 
-.absol-page-number-buttons > li.absol-page-number.active > a{
-	color: white;
-    
+.absol-page-number-buttons > li.absol-page-number.active > a {
+    color: white;
+
 }
 
-.absol-page-number-buttons > li> a{
+.absol-page-number-buttons > li > a {
     line-height: calc(2em + 2px);
-    text-decoration:none;
+    text-decoration: none;
     outline: none;
 }
 
-.absol-page-number-buttons > li:not(.active):hover{
-    background-color: #eee;
+.absol-page-number-buttons > li:not(.active):hover {
+    background-color: var(--icon-background-cover-hover);
 
 }
 
-.absol-page-selector .absol-page-number-input{
+.absol-page-selector .absol-page-number-input {
     display: inline-block;
     vertical-align: middle;
 }
 
-.absol-page-selector .absol-page-number-input  input[type="text"]{
+.absol-page-selector .absol-page-number-input input[type="text"] {
     font-size: inherit;
     width: 3em;
     margin-left: 0.3em;
@@ -103,6 +103,17 @@ li.absol-page-number>a{
     cursor: pointer;
 }
 
-.absol-page-number a::before{
+.absol-page-number a::before {
     content: attr(data-index-text);
+}
+
+.absol-page-selector.as-simple-mode .absol-page-number,
+.absol-page-selector.as-simple-mode .page-first,
+.absol-page-selector.as-simple-mode  .page-last{
+    display: none;
+}
+
+.absol-page-selector.as-simple-mode  .mdi{
+    font-size: 20px;
+    line-height: 1.5;
 }
