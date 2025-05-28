@@ -119,6 +119,11 @@ MSelectTreeLeafBox.prototype.getItemByValue = function (value) {
     return this.modes.normal.getItemByValue(value);
 };
 
+
+MSelectTreeLeafBox.prototype.findItemByValue = function (value) {
+    return  this.modes.normal.getItemByValue(value);
+};
+
 MSelectTreeLeafBox.prototype.resetSearchState = MCheckTreeBox.prototype.resetSearchState;
 
 MSelectTreeLeafBox.property = STLBPropsHandlers;
