@@ -121,7 +121,6 @@ CKPlaceholder.eventHandler = {};
  */
 CKPlaceholder.eventHandler.attached = function () {
     this.$attachhook.remove();
-    console.log(this.style.width, this.style.height);
     var config = this.config;
     var width = this.style.width;
     if (width.endsWith('px')) config.width = width;
