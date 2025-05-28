@@ -36,6 +36,10 @@
     overflow-y: auto;
 }
 
+.as-multi-select-menu-item-ctn.as-has-more {
+    white-space: nowrap;
+}
+
 .as-multi-select-menu-item-ctn.as-has-more::after {
     content: "...";
     display: inline-block;
@@ -43,6 +47,7 @@
     font-weight: bold;
     font-size: 1.5em;
     color: rgb(57, 57, 58);
+    box-sizing: border-box;
 }
 
 
