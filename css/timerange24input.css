@@ -4,6 +4,10 @@
     min-width: 318px;
 }
 
+.as-time-range-24-input.as-read-only.as-border-none {
+    min-width: unset;
+}
+
 .as-time-range-24-input > div:first-child {
     margin-right: 10px;
 }
