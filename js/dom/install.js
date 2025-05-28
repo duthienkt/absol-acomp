@@ -422,6 +422,7 @@ function install(core) {
     core.install('selectbox', MultiSelectMenu);
     if (BrowserDetector.isMobile) {
         core.install('selectmenu', MSelectMenu);
+        core.install('mselectmenu', MSelectMenu);
         // core.install('selecttreemenu', MSelectTreeMenu)
     }
     // core.install('mselectmenu', SelectMenu2);
