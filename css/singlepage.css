@@ -1,5 +1,6 @@
 .absol-single-page {
     position: relative;
+    overflow: hidden;
 }
 
 
@@ -26,13 +27,21 @@
 }
 
 .absol-single-page-scroller {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    position: relative;
     overflow-y: auto;
 }
+
+.absol-single-page.as-has-header {
+    display: grid;
+    grid-template-rows: auto 1fr;
+}
+
+.absol-single-page:not(.as-has-header) .absol-single-page-scroller{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
 
 .absol-single-page.as-viewport-full > .absol-single-page-scroller > .absol-single-page-scroller-viewport {
     height: 100%;

@@ -69,9 +69,6 @@ SinglePage.prototype.updateSize = function () {
 
     if (this.$header) {
         var headerBound = this.$header.getBoundingClientRect();
-        var headerMarginTop = parseFloat(this.$header.getComputedStyleValue('margin-top').replace('px', '')) || 0;
-        var headerMarginBottom = parseFloat(this.$header.getComputedStyleValue('margin-bottom').replace('px', '')) || 0;
-        this.$scroller.addStyle('top', (headerBound.height + headerMarginTop + headerMarginBottom + paddingTop) + 'px');
         this._prevHeaderHeight = headerBound.height;
     }
     if (this.$footer) {
@@ -84,8 +81,24 @@ SinglePage.prototype.updateSize = function () {
 
 };
 
+SinglePage.prototype.isHeader = function (elt) {
+    return elt && elt.classList && elt.classList.contains('absol-single-page-header');
+};
+
+SinglePage.prototype.updateLayoutStyle = function () {
+  if (this.$header) {
+      this.addClass('as-has-header');
+  }
+  else {
+      this.removeClass('as-has-header');
+  }
+};
+
 SinglePage.prototype.addChild = function (elt) {
-    if (elt.classList.contains('absol-single-page-header')) {
+    if (this.isHeader(elt)) {
+        if (this.$header) {
+            this.$header.remove();
+        }
         if (this.firstChild) {
             this.addChildBefore(elt, this.firstChild);
         }
@@ -93,11 +106,13 @@ SinglePage.prototype.addChild = function (elt) {
             this.appendChild(elt);
         }
         this.$header = $(elt);
+        this.updateLayoutStyle();
         this.updateSize();
     }
     else if (elt.classList.contains('absol-single-page-footer')) {
         this.$viewport.addChild(elt);
         this.$footer = $(elt);
+        this.updateLayoutStyle();
         this.updateSize();
     }
     else {
