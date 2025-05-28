@@ -96,6 +96,9 @@ SelectTreeLeafMenu.render = function () {
     });
 };
 
+SelectTreeLeafMenu.prototype.findItemByValue = function (value) {
+    return this.$selectBox.findItemByValue(value);
+};
 
 SelectTreeLeafMenu.prototype.init = function (props) {
     props = props || {};
@@ -214,6 +217,8 @@ SelectTreeLeafMenu.eventHandler.preUpdateListPosition = function () {
         this.isFocus = false;
     }
 };
+
+
 
 
 ACore.install(SelectTreeLeafMenu);

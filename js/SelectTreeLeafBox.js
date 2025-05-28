@@ -251,6 +251,12 @@ SelectTreeLeafBox.prototype._updateSelectedItem = function () {
     }
 };
 
+SelectTreeLeafBox.prototype.findItemByValue = function (value) {
+    var holder = this.$itemByValue[keyStringOf(value)];
+    if (holder) return holder.itemData;
+    return null;
+};
+
 SelectTreeLeafBox.prototype.focus = SelectListBox.prototype.focus;
 
 SelectTreeLeafBox.property = {};
