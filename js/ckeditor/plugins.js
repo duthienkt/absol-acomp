@@ -229,7 +229,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
     config.contentsCss = contentsCss;
 
     var extraPlugins = ['image_mgn'];
-    if (holderElt.stickyToolbar) {
+    if (holderElt.stickyToolbar && !config.height) {
         extraPlugins.push('autogrow');
         config.autoGrow_minHeight = 400;
     }
