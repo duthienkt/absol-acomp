@@ -22,9 +22,14 @@ function render(o) {
 
     var menu = render({
         tag: 'multichecktreemenu',
-        style: { maxWidth: '150px' },
+        style: { width: '250px', height: '100px' },
+        class:'as-border-none',
         props: {
-            values: [-100037, -100034, -100000],
+            values:[-100072, -100073, -100074, -100075, -100085, -10,
+                -100086, -100087, -100088, -100089, -100090, -55, -100091,
+                -100092, -100093, -100094, -46, -100095, -100096, -41,
+                -100097, -100098, -39, -100099, -100037, -100034, -100000],
+            readOnly: true,
             enableSearch: true
         },
         on: {

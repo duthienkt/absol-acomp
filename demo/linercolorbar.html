@@ -116,6 +116,15 @@
                     colorMapping: 'rainbow-invert'
                 }
             }).addTo(document.body);
+
+              absol._({
+                tag: 'stackedhorizontalbar',
+                props: {
+                    values: [3,5,8, 6],
+                    colors:['red', 'green', 'blue', 'yellow'],
+                    pxPerUnit: 20
+                }
+            }).addTo(document.body);
         }
     </script>
     <script src="https://absol.cf/absol/demo/autohightlighting.js"></script>

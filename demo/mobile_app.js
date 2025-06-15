@@ -41,71 +41,7 @@ FirstPage.prototype.createView = function () {
                         props: {
                             searching: {
                                 // input: imputElement,//mặc định tự xử lý không cần truyền
-                                items: [
-                                    {
-                                        name: 'Công việc',
-                                        icon: '...',
-                                        items: [
-                                            {
-                                                name: "Công việc",
-                                                type: 'group',//mặc định không có thì nó là chức năng
-                                                items: [
-                                                    { name: 'Tác vụ', icon: 'ConfigurationFormOutlineIcon'.toLowerCase() },
-                                                    { name: 'Check-in đối tác', icon: '...' },
-                                                ]
-
-                                            },
-                                            {
-                                                name: 'Đề xuất - Duyệt',
-                                                type: 'group',
-                                                items: [
-                                                    { name: 'Đề xuất làm thêm', icon: '...' },
-                                                    { name: 'Đề xuất nghỉ ngày', icon: '...' },
-                                                    { name: 'Đề xuất đi muộn về sớm', icon: '...' },
-                                                    { name: 'Đề xuất tạm ứng', icon: '...' },
-                                                ]
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Nhân sự',
-                                        icon: '...',
-                                        items: [
-                                            {
-                                                name: "Nhân sự", type: 'group',
-                                                items: [
-                                                    { name: 'Sơ đồ tổ chức', icon: '...' },
-                                                    { name: ""}
-                                                ]
-                                            },
-                                            { name: "Chấm công", icon: '...' },
-                                            { name: 'Tính lương', icon: '...' },
-                                            { name: "Báo cáo", icon: '...' },
-                                            { name: "Hệ thống", icon: '...' }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Quy trình và CRM',
-                                        items: [
-                                            {
-                                                name: "Quy trình và CRm", type: 'group',
-                                                items: [
-                                                    { name: 'Quy trình', icon: '...' },
-                                                    { name: 'Đối tác', icon: '...' },
-                                                    { name: 'Check-in đối tác', icon: '...' },
-                                                    { name: 'Liên hệ', icon: '...' }
-                                                ]
-                                            },
-                                            {
-                                                name: "Báo cáo", type: 'group',
-                                                items: [
-                                                    { name: 'Đối tượng', icon: '...' },
-                                                    { name: 'Đối tác', icon: '...' },
-                                                ]
-                                            },
-                                        ]
-                                    }
-                                ]
+                                items: require('./mobileappmenu')
                             },
                             groups: [
                                 {
@@ -113,7 +49,7 @@ FirstPage.prototype.createView = function () {
                                     items: [
                                         {
                                             name: 'Tác vụ',
-                                            icon: 'ConfigurationFormOutlineIcon'.toLowerCase()
+                                            icon: 'EmojiMutedIcon'.toLowerCase()
                                         },
                                         {
                                             name: 'Check-in đối tác',

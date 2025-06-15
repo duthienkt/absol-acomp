@@ -60,12 +60,12 @@
                 c002: {
                     name: "Thẻ 2",
                     desc: "Thẻ này có hình bé bé",
-                    image: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+                    image: 'https://absol.cf/share/ezgif-3-ab0038d67e.gif'
                 },
                 c003: {
                     name: "Thẻ 3",
                     desc: "Thẻ này dùng hình nền",
-                    background: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+                    background: 'https://absol.cf/share/ezgif-3-ab0038d67e.gif'
                 },
                 c004: {
                     name: "Thẻ 4"
@@ -77,12 +77,12 @@
                 c006: {
                     name: "Thẻ 6",
                     desc: "Thẻ này có hình bé bé",
-                    image: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+                    image: 'https://absol.cf/share/ezgif-3-ab0038d67e.gif'
                 },
                 c007: {
                     name: "Thẻ 7",
                     desc: "Thẻ này dùng hình nền",
-                    background: 'https://icatcare.org/app/uploads/2018/07/Thinking-of-getting-a-cat.png'
+                    background: 'https://absol.cf/share/ezgif-3-ab0038d67e.gif'
                 },
                 c008: {
                     name: "Thẻ 8"
@@ -117,7 +117,7 @@
                     res.child.push({
                         tag: 'img',
                         style: {
-                            width: 'calc(100% - 10px)'
+                            width: 'calc(50% - 10px)'
                         },
                         props: {
                             src: data.image
@@ -475,6 +475,22 @@
                     }
                 }
             });
+
+            var firstPlusButton = _({
+                tag:'flexiconbutton',
+                props:{
+                    text:"Thêm vào đầu",
+                },
+                on:{
+                    click:function(){
+                        var newBoard = makeBoard(mBoardTable, {
+                            name: 'Task ' + autoNameTaskIndex,
+                            desc: "Nội dung công việc " + (autoNameTaskIndex++)
+                        });
+                        mBoardTable.addChildAfter(newBoard, null);
+                    }
+                }
+            }).addTo(simpleDemo1Div);
 
             mBoardTable.addChild(plusButton);
             updateBoardBox();

@@ -23,16 +23,17 @@
         }
         absol._({
             tag: 'pageselector',
-            props: {
-                pageRange: 10,
-                pageOffset: 1,
+           
+            props: {           
+                simpleMode:true,     
                 selectedIndex: 1,
                 pageCount: 15
             },
             on: {
                 change: function (event, sender) {
                     console.log(event);
-                    console.log(sender);
+                    console.log(sender, this.selectedIndex);
+                    
                 }
             }
         }).addTo(absol.$('#test-div'));

@@ -78,6 +78,7 @@ module.exports = {
         compress: true,
         disableHostCheck: true,
         host: '0.0.0.0',
+        // port:8080,
         // public: 'https://c9.absol.cf'
     },
     performance: {

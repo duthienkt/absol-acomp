@@ -147,6 +147,9 @@ var addRowBtn = render({
 });
 var table = render({
     tag: 'treetable',
+    style:{
+        whiteSpace: 'nowrap',
+    },
     props: {
         searchInput: searchInput,
         adapter: {
@@ -179,10 +182,13 @@ var table = render({
 });
 
 render({
-    tag: 'tablevscroller',
-
+    tag: 'tablescroller',
     style: {
-        height: '50vh',
+        maxHeight: '50vh',
+        width: '90vw'
+    },
+    props:{
+        fixedCol: 1
     },
     child: table
 });

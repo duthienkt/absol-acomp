@@ -7,7 +7,8 @@ var items =[
         value: "over_due",
         text: "Quá hạn",
         color: "#F28B82",
-        count: 0,
+        count: 10,
+        countDesc: "10 đề xuất quá hạn",
         items: [
             {
                 value: 0,
@@ -179,6 +180,9 @@ window.navigator1 = render({
         },
         action: function (event) {
             console.log('action', event.action, event.data);
+        },
+        clickitem: function (event) {
+            console.log('clickitem', event.data);
         }
     }
 })
