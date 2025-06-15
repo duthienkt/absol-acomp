@@ -316,14 +316,18 @@ MSpringboardMenu.prototype.updateSize = function () {
     var maxChildLength = 0;
     var longestGroupElt = this.$groups[0];
     var groupElt;
+    var childN;
     for (var i = 0; i < this.$groups.length; ++i) {
         groupElt = this.$groups[i];
-        if (groupElt.$items.length > maxChildLength) {
+        if (groupElt.hasClass('as-hidden')) continue;
+        childN = groupElt.$items.filter(e => !e.hasClass('as-hidden')).length;
+        if (childN > maxChildLength) {
             longestGroupElt = groupElt;
-            maxChildLength = groupElt.$items.length;
+            if (groupElt)
+                maxChildLength = childN;
         }
     }
-    var style = getComputedStyle(groupElt.$itemCtn);
+    var style = getComputedStyle(longestGroupElt.$itemCtn);
     var width = parseFloat(style.width.replace('px', ''));
     if (width < 10) return;
     var paddingLeft = parseFloat(style.paddingLeft.replace('px', ''));
