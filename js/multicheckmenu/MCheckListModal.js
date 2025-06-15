@@ -238,10 +238,14 @@ MCheckListModal.property.values = {
             ac[keyStringOf(cr)] = cr;
             return ac;
         }, {});
-        this.itemHolders.forEach(holder => {
+        var visit = holder =>{
             holder.selected = holder.valueKey in this._valueDict;
             holder.updateView();
-        });
+            if (holder.children && holder.children.length) {
+                holder.children.forEach(visit);
+            }
+        };
+        this.itemHolders.forEach(visit);
         this.$checkAll.checked = this.selectedAll;
     },
     get: function () {

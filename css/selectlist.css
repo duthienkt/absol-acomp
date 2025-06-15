@@ -542,7 +542,7 @@ input[type="number"].am-list-popup-paging-offset {
     border-bottom: 1px solid #eee;
 }
 
-.am-check-list-modal .am-selectlist-item.as-last-in-group::after{
+.am-check-list-modal .am-selectlist-item.as-last-in-group::after {
     content: "";
     display: block;
     position: absolute;
@@ -581,6 +581,10 @@ input[type="number"].am-list-popup-paging-offset {
     min-height: calc(2em + 10px);
 }
 
-.am-selectlist-item.as-disabled .as-checkbox-input{
+.am-selectlist-item.as-disabled .as-checkbox-input {
     visibility: hidden;
+}
+
+.am-selectlist-item.as-disabled {
+    pointer-events: none;
 }
