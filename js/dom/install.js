@@ -190,6 +190,7 @@ import NotificationPanel, {
 } from "../NotificationPanel";
 import PickingList from "../PickingList";
 import ListCompareTool from "../ListCompareTool";
+import StackedHorizontalBar from "../StackedHorizontalBar";
 
 
 export var publicCreators = [
@@ -409,7 +410,9 @@ export var publicCreators = [
     NPSection,
     NPItem,
     NPList,
-    ListCompareTool
+    ListCompareTool,
+
+    StackedHorizontalBar
 ];
 
 /***
