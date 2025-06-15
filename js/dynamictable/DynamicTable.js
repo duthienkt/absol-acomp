@@ -1014,7 +1014,7 @@ LayoutController.prototype.update = function () {
     var singleViewBound;
     var getMaxBoundHeight = () => {
         var mxH = Infinity;
-        if (this.elt.hasClass('as-adapt-infinity-grow'))  return Infinity;
+        if (this.elt.hasClass('as-adapt-infinity-grow')) return Infinity;
         if (!psHeight) {
 
         }
@@ -1513,6 +1513,8 @@ ColSizeController.prototype.notifyColResize = function (originalEvent) {
 function RowDragController(elt) {
     this.elt = elt;
     this._isDragging = false;
+    this.prevDragedRow = null;
+    this.ev_clickOutDraggedRow  = this.ev_clickOutDraggedRow.bind(this);
 }
 
 RowDragController.prototype._findRow = function (cElt) {
@@ -1605,6 +1607,10 @@ RowDragController.prototype._computeNewIdx = function () {
 
 RowDragController.prototype.ev_dragStart = function (event) {
     if (this.elt.table.body.curentMode.name !== 'normal') return;
+    if (this.prevDragRow) {
+        this.prevDragRow.elt.removeClass('as-dragged');
+        this.prevDragRow = null;
+    }
     this.elt.addClass('as-row-dragging');
     this.row = this._findRow(event.target);
     this.body = this.row.body;
@@ -1656,7 +1662,7 @@ RowDragController.prototype._cloneTableRow = function (row) {
     tableElt.addChild(tBodyElt);
     var rowElt = $(this.row.elt.cloneNode(false)).addStyle({
         height: this.row.elt.getBoundingClientRect().height + 'px',
-        backgroundColor: this.row.elt.getComputedStyleValue('background-color')
+        backgroundColor: '#FFF9C4'//this.row.elt.getComputedStyleValue('background-color')
     });
     tBodyElt.addChild(rowElt);
     this.row.cells.forEach(cell => {
@@ -1744,7 +1750,42 @@ RowDragController.prototype.ev_dragEnd = function (event) {
         if (this.row.data.on && this.row.data.on.orderchange) {
             this.row.data.on.orderchange.call(this.row, eventData, this.row)
         }
+        if (this.prevDragRow) {
+            this.prevDragRow.elt.removeClass('as-dragged');
+        }
+
+        this.prevDragRow = this.row;
+        this.prevDragRow.elt.addClass('as-dragged');
+
         this.elt.emit('orderchange', eventData, this.body.table.wrapper);
+        setTimeout(() => {
+            document.addEventListener('click', this.ev_clickOutDraggedRow);
+        }, 400);
+    }
+};
+
+RowDragController.prototype.ev_clickOutDraggedRow = function (event) {
+    var finished = false;
+    if (!this.prevDragRow) {
+        finished = true;
+    }
+    else if (event.target && AElement.prototype.isDescendantOf.call(event.target, this.prevDragRow.elt)) {
+        finished = false;
+    }
+    else if (event.target && event.target.classList
+        && (event.target.classList.contains('absol-scrollbar-button') || event.target.classList.contains('absol-scrollbar'))) {
+        finished = false;
+    }
+    else {
+        finished = true;
+    }
+
+    if (finished) {
+        if (this.prevDragRow) {
+            this.prevDragRow.elt.removeClass('as-dragged');
+            this.prevDragRow = null;
+        }
+        document.removeEventListener('click', this.ev_clickOutDraggedRow);
     }
 };
 
