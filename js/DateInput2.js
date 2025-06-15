@@ -292,7 +292,7 @@ DateInput2.prototype._correctingInput = function () {
         tkDict.d.value = Math.max(1, Math.min(31, tkDict.d.value));
         if (tkDict.M && !isNaN(tkDict.M.value)) {
             tkDict.d.value = Math.min(tkDict.d.value,
-                daysInMonth(isNaN(tkDict.y.value) ? 2020 : tkDict.y.value, tkDict.M.value - 1));
+                daysInMonth((!tkDict.y ||isNaN(tkDict.y.value) )? 2020 : tkDict.y.value, tkDict.M.value - 1));
         }
 
         if (equalMin) {

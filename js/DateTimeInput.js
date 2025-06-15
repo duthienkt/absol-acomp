@@ -319,7 +319,7 @@ DateTimeInput.prototype._loadValueFromInput = function () {
     else if (tkDict.h && tkDict.a && tkDict.a.value === 'PM') {
         H = tkDict.h.value + (tkDict.h.value === 12 ? 0 : 12);
     }
-    if (!tkDict.h || !tkDict.H) H = 0;
+    if (!tkDict.h && !tkDict.H) H = 0;
     if (tkDict.m) {
         m = tkDict.m.value;
     }
