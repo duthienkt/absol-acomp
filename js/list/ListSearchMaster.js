@@ -47,22 +47,14 @@ ListSearchMaster.prototype.destroy = function () {
     // return;
     this.cache = {};
     this.share.worker.invoke('destroySlave', this.id);
-    return;
-    this.destroy = noop;
     var idx = this.share.instances.indexOf(this.id);
+    this.destroy = noop;
     if (idx >= 0) {
         this.share.instances.splice(idx, 1);
-        if (this.share.instances.length === 0) {
-            this.share.worker.revokeResource();
-            this.share.worker = null;
-        }
     }
 };
 
 ListSearchMaster.prototype.revokeResource = function () {
-   return;
-    this.destroy();
-    this.revokeResource = noop;
 };
 
 
