@@ -360,7 +360,7 @@ MultiCheckTreeMenu.property.items = {
         this._values = this.$checkTreeBox.values.slice();
     },
     get: function () {
-        return this.$checkTreeBox.items;
+        return this.$checkTreeBox.items ||[];
     }
 };
 
