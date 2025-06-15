@@ -12,7 +12,7 @@ var _ = ACore._;
 
 var sliceCellArray = (cells, start, end) => {
     if (typeof start !== "number") start = 0;
-    if (typeof end !== "number")  end = Infinity;
+    if (typeof end !== "number") end = Infinity;
     var res = [];
     cells = cells.slice();
     var cell, colSpan;
@@ -199,7 +199,6 @@ TableScroller.prototype.addChild = function (elt) {
     this.$originTable = $('table', this.$originContent);
     this.$originCtn.addChild(this.$originTable);
     this.requestUpdateContent();
-
 };
 
 
@@ -252,20 +251,23 @@ TableScroller.prototype._updateFixedYHeader = function () {
 
 TableScroller.prototype._updateFixedYHeaderSize = function () {
     var bound = this.$originTable.getBoundingClientRect();
-    // this.$fixedYHeader.addStyle('width', bound.width + 'px');
+    this.$fixedYHeader.addStyle('width', bound.width + 'px');
     if (this.$fixedYHeader.firstChild && this.$fixedYHeader.firstChild.firstChild)
-    Array.prototype.forEach.call(this.$fixedYHeader.firstChild.firstChild.childNodes, elt => {
-        var bound = elt.$origin.getBoundingClientRect();
-        elt.addStyle('width', bound.width + 'px');
-        if (bound.width + bound.height === 0) {
-            elt.addStyle('display', 'none');
-        }
-        else {
-            elt.removeStyle('display');
-        }
-    });
+        Array.prototype.forEach.call(this.$fixedYHeader.firstChild.firstChild.childNodes, elt => {
+            var bound = elt.$origin.getBoundingClientRect();
+            elt.addStyle('width', bound.width + 'px');
+            if (bound.width + bound.height === 0) {
+                elt.addStyle('display', 'none');
+            }
+            else {
+                elt.removeStyle('display');
+            }
+        });
+    var headBound = this.$originTableThead.getBoundingClientRect();
+    this.$fixedYHeader.addStyle('height', headBound.height + 'px');
+    // this.$fixedYHeader
 
-    this.$headLine.addStyle('top', this.$fixedYHeader.getBoundingClientRect().height - 1 + 'px')
+    this.$headLine.addStyle('top',headBound.height - 1 + 'px')
         .addStyle('max-width', bound.width + 'px');
 
 };
@@ -317,17 +319,21 @@ TableScroller.prototype._updateFixedXColSize = function () {
     if (this.fixedCol === 0) return;
     var bound = this.$originTable.getBoundingClientRect();
     // this.$fixXCol.addStyle('height', bound.height + 'px');
-
+    var width = 0;
     Array.prototype.forEach.call(this.$fixXCol.firstChild.childNodes, elt => {
         elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
     });
 
     Array.prototype.forEach.call(this.$fixXCol.firstChild.firstChild.childNodes, elt => {
-        elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
+        var bound = elt.$origin.getBoundingClientRect();
+        width += bound.width + 1;//1 is border
+        elt.addStyle('width', bound.width + 'px');
     });
     Array.prototype.forEach.call(this.$fixXCol.lastChild.childNodes, elt => {
         elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
     });
+    this.$fixXCol.addStyle('width', width + 'px');
+    this.$fixedXYHeader.addStyle('width', width + 'px');
 };
 
 TableScroller.prototype._updateFixedXYHeader = function () {
@@ -354,14 +360,15 @@ TableScroller.prototype._updateFixedXYHeader = function () {
 
 
 TableScroller.prototype._updateFixedXYHeaderSize = function () {
-    if (this.$fixedXYHeader.firstChild)
-    Array.prototype.forEach.call(this.$fixedXYHeader.firstChild.childNodes, elt => {
-        elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
-    });
+    if (this.$fixedXYHeader.firstChild) {
+        Array.prototype.forEach.call(this.$fixedXYHeader.firstChild.childNodes, elt => {
+            elt.addStyle('height', elt.$origin.getBoundingClientRect().height + 'px');
+        });
+    }
     if (this.$fixedXYHeader.firstChild && this.$fixedXYHeader.firstChild.firstChild)
-    Array.prototype.forEach.call(this.$fixedXYHeader.firstChild.firstChild.childNodes, elt => {
-        elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
-    });
+        Array.prototype.forEach.call(this.$fixedXYHeader.firstChild.firstChild.childNodes, elt => {
+            elt.addStyle('width', elt.$origin.getBoundingClientRect().width + 'px');
+        });
     this.$leftLine.addStyle('left', this.$fixedXYHeader.getBoundingClientRect().width - 1 + 'px');
 };
 
@@ -383,7 +390,7 @@ TableScroller.prototype.updateContent = function () {
     this.reindexRows();
 
     this.updateContentSize();
-    requestAnimationFrame(()=> {
+    requestAnimationFrame(() => {
         this.updateContentSize();
     });
 
@@ -410,9 +417,12 @@ TableScroller.prototype._updateScrollStatus = function () {
         this.removeClass('as-scroll-vertical');
     }
     var paddingBottom = this.getComputedStyleValue('--tvs-scroll-padding-bottom');
-    paddingBottom = parseFloat((paddingBottom||'0px').replace('px', ''));
+    paddingBottom = parseFloat((paddingBottom || '0px').replace('px', ''));
     this.$vscrollbar.innerHeight = tableBound.height + paddingBottom;
     this.$hscrollbar.innerWidth = tableBound.width;
+    if (this.style.maxHeight) {
+        this.addStyle('height', tableBound.height + 17 + 'px');
+    }
 };
 
 

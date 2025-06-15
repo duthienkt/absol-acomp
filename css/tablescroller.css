@@ -15,6 +15,7 @@
     padding-right: 17px;
     padding-bottom: 17px;
     --tvs-scroll-padding-bottom: 0px;
+    overflow: hidden;
 }
 
 .absol-table-scroller:not(.as-scroll-vertical) {
@@ -47,6 +48,21 @@
     right: 0;
     overflow: hidden;
 }
+
+.as-table-scroller-fixed-y-header,
+.as-table-scroller-fixed-xy-header {
+    table-layout: fixed;
+}
+
+.as-table-scroller-fixed-y-header td,
+.as-table-scroller-fixed-y-header tr,
+.as-table-scroller-fixed-y-header th,
+.as-table-scroller-fixed-xy-header td,
+.as-table-scroller-fixed-xy-header tr,
+.as-table-scroller-fixed-xy-header th {
+    box-sizing: border-box;
+}
+
 
 .as-table-scroller-fixed-x-col-ctn {
     position: absolute;
