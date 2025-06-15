@@ -28,8 +28,11 @@ function TTRow(body, data, parentRow) {
         this.isOpened = data.initOpened;
     } else if (typeof body.table.data.initOpened === "boolean") {
         this.isOpened = body.table.data.initOpened;
-    } else if (typeof body.table.elt.initOpen === 'boolean') {
-        this.isOpened = body.table.elt.initOpen;
+    } else if (typeof body.table.elt.initOpened === 'boolean') {
+        this.isOpened = body.table.elt.initOpened;
+    }
+    else if ((typeof body.table.data.initOpened  === 'number')) {
+        this.isOpened = this.level < body.table.data.initOpened ;
     }
 }
 
@@ -71,6 +74,7 @@ TTRow.prototype.open = function () {
         bodyElt.addChild(rowElements);
     }
     this.updateSizeUp();
+    this.requestParentUpdateContent();
 };
 
 
@@ -84,12 +88,25 @@ TTRow.prototype.close = function () {
         this.body.table.elt.savedState[this.data.id] = this.isOpened;
     this._elt.removeClass('as-is-opened');
     this.updateSizeUp();
+    this.requestParentUpdateContent();
 };
 
 TTRow.prototype.updateSizeUp = function () {
     this.body.table.elt.notifySizeChange();
 };
 
+TTRow.prototype.requestParentUpdateContent = function () {
+    var c = this.body.table.elt.parentElement;
+    while (c) {
+        if (c.updateContent) {
+            console.log('update content');
+            c.updateContent();
+            break;
+        }
+        else
+        c = c.parentElement;
+    }
+};
 
 TTRow.prototype.remove = function () {
     var idx = -1;
