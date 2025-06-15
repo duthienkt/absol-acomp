@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <title>Map Polyline</title>
+
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+ </head>
+<body>
+<script>
+    window.mapSync = new Promise(rs=>{
+        window.initMap =  () =>{
+rs();
+        };
+
+    });
+   
+   absol.remoteNodeRequireAsync(location.href.replace(".html", ".js"));
+</script>
+
+<script src="data:application/javascript;base64,ZG9jdW1lbnQud3JpdGVsbignPHNjcmlwdCBhc3luYyBkZWZlclxuJyArCiAgICAnICAgICAgICBzcmM9Imh0dHBzOi8vbWFwcy5nb29nbGVhcGlzLmNvbS9tYXBzL2FwaS9qcz9rZXk9QUl6YVN5RGEta1RRR0szN0JETWVONGtuRUhiSGF5RHJia2VlNnVVJmxpYnJhcmllcz1wbGFjZXMmY2FsbGJhY2s9aW5pdE1hcCI+PC9zY3JpcHQ+Jyk7">
+</script>
+<script>
+</script>
+</body>
+</html>

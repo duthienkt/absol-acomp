@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <title>MulticheckTreeMenu e1</title>
+
+    <script src="../dist/absol-acomp.js?<?php  echo stat('../dist/absol-acomp.js')['mtime'];?>"></script>
+	<style>
+	html, body{
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	}
+	
+	body {
+	padding: 10px;
+	overflow: auto;
+	}
+	</style>
+ </head>
+<body>
+<script>
+    window.mapSync = new Promise(rs=>{
+        window.initMap =  () =>{
+rs();
+        };
+
+    });
+   
+   absol.remoteNodeRequireAsync(location.href.replace(".html", ".js"));
+</script>
+
+</body>
+</html>

@@ -62,26 +62,26 @@
             };
         });
         var now = new Date().getTime();
-        var clb1 = _({
-            tag: 'checklistbox',
-            style: {
-                '--max-height': '300px'
-            },
-            props: {
-                enableSearch: true,
-                items: items
-            },
-            on: {
-                change: function (event) {
-                    console.log(this.values, this.selectedIndexes, this.selectedItems);
-                },
-                submit: function () {
-                    bt1.innerHTML = this.values.join(', ');
-                    this.updatePosition();
-                }
-            }
-        }).addTo(document.body);
-        clb1.followTarget = bt1;
+        // var clb1 = _({
+        //     tag: 'checklistbox',
+        //     style: {
+        //         '--max-height': '300px'
+        //     },
+        //     props: {
+        //         enableSearch: true,
+        //         items: items
+        //     },
+        //     on: {
+        //         change: function (event) {
+        //             console.log(this.values, this.selectedIndexes, this.selectedItems);
+        //         },
+        //         submit: function () {
+        //             bt1.innerHTML = this.values.join(', ');
+        //             this.updatePosition();
+        //         }
+        //     }
+        // }).addTo(document.body);
+        // clb1.followTarget = bt1;
         console.log("build list", new Date().getTime() - now);
         /********************************************/
 
@@ -97,7 +97,8 @@
                 enableSearch: true,
                 items: items,
                 itemFocusable: true,
-                values: [1, 4, 5, 6]
+                values: [1, 4, 5, 6],
+            
             },
             on: {
                 change: function (event) {
@@ -181,11 +182,14 @@
 
         var menu3 = _({
             tag: 'multicheckmenu',
+            attr:{'data-debug': 'true'},
             style: {
                 'max-height': '300px',
-                marginBottom: '800px'
+                marginBottom: '800px',
+            
             },
             props: {
+                debug: true,
                 enableSearch: false,
                 items: Array(100).fill().map((u, i) => ({ text: absol.string.randomPhrase(300), value: i }))
             },
@@ -195,6 +199,8 @@
                 }
             }
         }).addTo(document.body);
+        window.menu3 = menu3;
+        console.log("menu3", menu3)
 
 
         return;
