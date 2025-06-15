@@ -4,12 +4,20 @@ import { isNaturalNumber, keyStringOf, measureText } from "./utils";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import Color from "absol/src/Color/Color";
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 /**
  * note
  * CTCollapsibleNode can only be selected when it has no children and noSelect = false.
  * CTNNode can be selected and can have children.
  */
+
+var NODE_CONTENT_HEIGHT = BrowserDetector.isMobile? 45: 30;
+var css = new DynamicCSS();
+css.setRule('div.as-collapsible-tree-navigator', {
+    '--node-content-height': NODE_CONTENT_HEIGHT + 'px'
+}).commit();
 
 /**
  * @typedef {Object} CTNItemData
@@ -483,6 +491,24 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'count', {
     }
 });
 
+
+Object.defineProperty(CTCollapsibleNode.prototype, 'countDesc', {
+    get: function () {
+        return this._countDesc;
+    },
+    set: function (value) {
+       value = value || null;
+       this._countDesc = value;
+         if (value) {
+              this.$count.attr('title', value);
+         }
+         else {
+              this.$count.removeAttribute('title');
+         }
+    }
+});
+
+
 Object.defineProperty(CTCollapsibleNode.prototype, 'value', {
     get: function () {
         return this._value;
@@ -603,6 +629,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'data', {
         this.items = data.items;
         this.color = data.color;
         this.actions = data.actions;
+        this.countDesc = data.countDesc || null;
     },
     get: function () {
         var res = Object.assign({}, this.rawData, {
@@ -622,7 +649,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'data', {
 
 Object.defineProperty(CTCollapsibleNode.prototype, 'contentHeight', {
     get: function () {
-        return 31;
+        return NODE_CONTENT_HEIGHT + 1;//+1 for border
     }
 });
 
@@ -740,7 +767,7 @@ function CTNNode(parent, data) {
 
 //copy
 ['status', 'offsetHeight', 'childrenHeight', 'offsetY', 'select',
-    'text', 'count', 'icon', 'value', 'data', 'items', 'actions', 'remove', 'ev_click', 'color'].forEach(method => {
+    'text', 'count', 'countDesc','icon', 'value', 'data', 'items', 'actions', 'remove', 'ev_click', 'color'].forEach(method => {
     Object.defineProperty(CTNNode.prototype, method, Object.getOwnPropertyDescriptor(CTCollapsibleNode.prototype, method));
 });
 
@@ -772,6 +799,6 @@ Object.defineProperty(CTNNode.prototype, 'minWidth', {
 
 Object.defineProperty(CTNNode.prototype, 'contentHeight', {
     get: function () {
-        return 30;
+        return NODE_CONTENT_HEIGHT;
     }
 });

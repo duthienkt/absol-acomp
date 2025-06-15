@@ -7,6 +7,7 @@
     padding-right: 4px;
     position: relative;
     box-sizing: border-box;
+    --node-content-height: 30px;
     --level: 0;
     --selected-y: 0;
 }
@@ -16,7 +17,7 @@
     position: absolute;
     transition: top 0.2s;
     top: var(--selected-y);
-    height: 30px;
+    height: var(--node-content-height);
     border-right: 4px solid rgb(20, 100, 246);
     right: 0;
 }
@@ -34,7 +35,6 @@
     transform: rotate(0deg);
     visibility: hidden;
     display: inline-block;
-
 }
 
 .as-ctn-collapse-node.as-close .as-ctn-right > span.mdi-chevron-right {
@@ -47,7 +47,7 @@
 }
 
 .as-ctn-collapse-node-content {
-    height: 31px;
+    height: calc(var(--node-content-height) + 1px);
     box-sizing: border-box;
     padding: 0 50px 0 8px;
     position: relative;
@@ -90,8 +90,7 @@
 
 
 .as-ctn-collapse-node-children-ctn,
-.as-ctn-node-children-ctn
-{
+.as-ctn-node-children-ctn {
     box-sizing: border-box;
 
 }
@@ -107,13 +106,14 @@
     top: 0;
     height: 100%;
 }
-.as-ctn-right>button {
+
+.as-ctn-right > button {
     width: 30px;
     height: 30px;
 
 }
 
-.as-ctn-right>button *{
+.as-ctn-right > button * {
     font-size: 20px;
 }
 
@@ -125,7 +125,7 @@
     height: 100%;
 }
 
-.as-ctn-right>button:hover {
+.as-ctn-right > button:hover {
     background-color: var(--icon-background-cover-hover);
 
 }
@@ -139,17 +139,15 @@
 }
 
 
-.as-ctn-icon-ctn>*{
+.as-ctn-icon-ctn > * {
     font-size: 1.5em;
 }
 
-.as-ctn-icon-ctn>img,
-.as-ctn-icon-ctn>svg {
+.as-ctn-icon-ctn > img,
+.as-ctn-icon-ctn > svg {
     width: 1em;
     height: 1em;
 }
-
-
 
 
 .as-ctn-text, .as-ctn-icon-ctn {
@@ -197,10 +195,10 @@
 
 .as-ctn-node-content {
     position: relative;
-    height: 30px;
+    height: var(--node-content-height);
     padding-right: 10px;
     box-sizing: border-box;
-    padding-left: calc(25px * var(--level) - 20px);/*5 is padding in level 0*/
+    padding-left: calc(25px * var(--level) - 20px); /*5 is padding in level 0*/
 }
 
 
