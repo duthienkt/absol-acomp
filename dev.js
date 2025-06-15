@@ -34,6 +34,7 @@ import MApplication from "./js/mobile/MApplication";
 import MActivity from "./js/mobile/MActivity";
 import ListSearchMaster from "./js/list/ListSearchMaster";
 import { ExpSearcher } from "./js/ExpTree";
+import { openDebugDeviceInfo } from "./js/DebugDeviceInfo";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -63,6 +64,7 @@ absol.TextMeasure = TextMeasure;
 
 absol.printer.silentDownloadAsPdf = silentDownloadAsPdf;
 absol.ListSearchMaster = ListSearchMaster;
+absol.openDebugDeviceInfo = openDebugDeviceInfo;
 
 Dom.documentReady.then(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
