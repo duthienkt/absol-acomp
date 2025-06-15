@@ -78,3 +78,24 @@
     display: inline-block;
     vertical-align: middle;
 }
+
+.as-stacked-horizontal-bar {
+    position: relative;
+    white-space: nowrap;
+    --px-per-unit: 1px;
+    --value: 0;
+    font-size: 14px;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    line-height: 18px;
+}
+
+.as-stacked-horizontal-bar-rect{
+    height: 20px;
+    vertical-align: top;
+    display: inline-block;
+    width: calc(var(--px-per-unit) * var(--value));
+    box-sizing: border-box;
+    text-align: center;
+    overflow: hidden;
+
+}
