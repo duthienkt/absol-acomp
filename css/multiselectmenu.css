@@ -123,8 +123,8 @@
 }
 
 .as-multi-select-menu.as-border-none .as-multi-select-menu-item-ctn {
-    max-height: unset;
-    overflow-y: auto;
+    /*max-height: unset;*/
+    /*overflow-y: auto;*/
 }
 
 
