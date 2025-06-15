@@ -475,6 +475,12 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     max-height: calc(var(--single-page-scroller-height) - 2px);
 }
 
+
+.as-dynamic-table-wrapper tr.as-dragged,
+.as-dynamic-table-wrapper tr.as-dragging{
+    background-color: #FFF9C4;
+}
+
 /*.absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper.as-overflow-y:not(.as-adapt-infinity-grow) {*/
 /*    max-height: calc(var(--single-page-scroller-height) - 2px);*/
 /*} try remove this*/

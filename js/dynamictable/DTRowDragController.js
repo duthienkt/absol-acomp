@@ -27,7 +27,7 @@ function DTRowDragController(body) {
             }
         }
     );
-
+    this.prevDragRow = null;
 }
 
 DTRowDragController.prototype.ev_preDrag = function (event) {
@@ -175,8 +175,13 @@ DTRowDragController.prototype.ev_dragEnd = function (event) {
         if (dragData.row.data.on && dragData.row.data.on.orderchange) {
             dragData.row.data.on.orderchange.call(dragData.row, eventData, dragData.row)
         }
+
         this.body.table.wrapper.emit('orderchange', eventData, this.body.table.wrapper);
     }
+};
+
+DTRowDragController.prototype.ev_clickOutDraggedRow = function (event) {
+
 };
 
 
