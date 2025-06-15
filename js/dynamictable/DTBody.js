@@ -192,6 +192,7 @@ BaseMode.prototype.getBoundOfRows = function () {
     if (this.boundCache) return this.boundCache;
     if (!this.body.table.wrapper.isDescendantOf(document.body)) return null;
     var bodyBound = this.body.elt.getBoundingClientRect();
+    if (!bodyBound || bodyBound.width <= 0 || bodyBound.height <= 0) return null;
     var elt = this.body.elt;
     var childNodes = elt.childNodes;
     this.boundCache = Array.prototype.map.call(childNodes, elt => {
