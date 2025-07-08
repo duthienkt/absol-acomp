@@ -1,6 +1,9 @@
 import '../css/flexiconbutton.css';
 import ACore from "../ACore";
 import AElement from "absol/src/HTML5/AElement";
+import Attributes from "absol/src/AppPattern/Attributes";
+import { mixClass } from "absol/src/HTML5/OOP";
+import { AbstractStyleExtended } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -14,9 +17,21 @@ function FlexiconButton() {
     this.$content = $('.as-flexicon-button-content', this);
     this.$iconCtn = $('.as-flexicon-button-icon-container', this);
     this.$textCtn = $('.as-flexicon-button-text-container', this);
+
+    AbstractStyleExtended.call(this);
 }
 
+mixClass(FlexiconButton, AbstractStyleExtended);
+
 FlexiconButton.tag = 'FlexiconButton'.toLowerCase();
+
+/**
+ *
+ * @type {Attributes &any}
+ */
+FlexiconButton.prototype.extendStyle.variant = 'v0';
+FlexiconButton.prototype.extendStyle.iconPosition = 'start';
+
 
 FlexiconButton.render = function () {
     return _({
@@ -35,6 +50,32 @@ FlexiconButton.render = function () {
     });
 };
 
+
+FlexiconButton.prototype.styleHandlers.variant = {
+    set: function (value) {
+        if (['v0', 'primary', 'tertiary', 'secondary', 'light', 'link', 'danger'].indexOf(value) < 0) {
+            value = 'v0';
+        }
+        this.attr('data-variant', value);
+        return value;
+    },
+};
+
+FlexiconButton.prototype.styleHandlers.iconPosition = {
+    /**
+     * @this {FlexiconButton}
+     * @param value
+     */
+    set: function (value) {
+        if (['right', 'end'].indexOf(value) >= 0) {
+            value = 'end';
+        }
+        else value = 'start';
+        this.attr('data-icon-position', value);
+    }
+};
+
+
 FlexiconButton.property = {};
 
 FlexiconButton.property.icon = {
@@ -43,7 +84,11 @@ FlexiconButton.property.icon = {
         this._icon = value;
         this.$iconCtn.clearChild();
         if (value !== null) {
+            this.addClass('as-has-icon');
             this.$iconCtn.addChild(_(value));
+        }
+        else {
+            this.removeClass('as-has-icon');
         }
     },
     get: function () {
