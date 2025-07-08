@@ -3,10 +3,11 @@ import '../css/selectmenu.css';
 import ACore, { _, $ } from "../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 import Dom, { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import { measureText } from "./utils";
 import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import { AbstractStyleExtended } from "./Abstraction";
 
 
 ACore.creator['dropdown-ico'] = function () {
@@ -21,6 +22,7 @@ ACore.creator['dropdown-ico'] = function () {
 
 
 /***
+ * @augments {AbstractStyleExtended}
  * @extends AElement
  * @constructor
  */
@@ -81,7 +83,11 @@ function SelectMenu() {
      * @memberOf SelectMenu#
      */
 
+    AbstractStyleExtended.call(this);
 }
+
+mixClass(SelectMenu, AbstractStyleExtended);
+
 
 SelectMenu.tag = 'selectmenu';
 SelectMenu.render = function () {

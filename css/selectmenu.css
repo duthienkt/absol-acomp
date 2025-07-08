@@ -93,6 +93,25 @@
     background-color: white;
 }
 
+.absol-selectmenu[data-size="large"] {
+    height: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+.absol-selectmenu[data-size="regular"] {
+    height: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
+.absol-selectmenu[data-size="small"] {
+    height: var(--small-size);
+    border-radius: var(--small-radius);
+}
+
+.absol-selectmenu:not[data-size="v0"] {
+    border-color: var(--border-color);
+}
+
 .absol-selectmenu.as-border-none {
     border: none;
 }
@@ -398,3 +417,13 @@
     pointer-events: none;
     background-color: #ebebe4;
 }
+
+
+.as-select-tree-leaf-menu[data-size="large"] {
+    height: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+/*.as-select-tree-leaf-menu[data-size="large"] {*/
+/*    */
+/*}*/
