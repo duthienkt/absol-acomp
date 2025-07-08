@@ -1,11 +1,13 @@
 import ACore, { _, $ } from "../ACore";
 import '../css/collapsibletreenavigator.css';
-import { isNaturalNumber, keyStringOf, measureText } from "./utils";
+import { isNaturalNumber, keyStringOf, measureText, swapElt } from "./utils";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import Color from "absol/src/Color/Color";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import { AbstractStyleExtended } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 /**
  * note
@@ -13,10 +15,9 @@ import BrowserDetector from "absol/src/Detector/BrowserDetector";
  * CTNNode can be selected and can have children.
  */
 
-var NODE_CONTENT_HEIGHT = BrowserDetector.isMobile? 45: 30;
 var css = new DynamicCSS();
-css.setRule('div.as-collapsible-tree-navigator', {
-    '--node-content-height': NODE_CONTENT_HEIGHT + 'px'
+css.setRule('.as-collapsible-tree-navigator[data-size="v0"]', {
+    '--node-content-height': (BrowserDetector.isMobile ? 45 : 30) + 'px'
 }).commit();
 
 /**
@@ -32,11 +33,16 @@ css.setRule('div.as-collapsible-tree-navigator', {
  * @constructor
  */
 function CollapsibleTreeNavigator() {
+    this.nodeContentHeight = 30;
+    this.nodeBorder = 1;
     /**
      *
      * @type {CTRoot}
      */
     this.root = new CTRoot(this);
+
+
+    AbstractStyleExtended.call(this);
 
     /**
      * @type {{text:string, id:any, actiions:{}[]}[]}
@@ -51,7 +57,39 @@ function CollapsibleTreeNavigator() {
      */
 }
 
+mixClass(CollapsibleTreeNavigator, AbstractStyleExtended);
+
 CollapsibleTreeNavigator.tag = 'CollapsibleTreeNavigator'.toLowerCase();
+
+CollapsibleTreeNavigator.prototype.share = {
+    bodyStyle: null
+};
+CollapsibleTreeNavigator.prototype.extendStyle.size = 'regular';
+
+CollapsibleTreeNavigator.prototype.styleHandlers.size = {
+    set: function (value) {
+        var styleKey, styleValue;
+        if (['regular', 'small', 'large', 'v0'].indexOf(value) < 0) {
+            value = 'regular';
+        }
+        this.attr('data-size', value);
+        if (value === 'v0') {
+            this.nodeContentHeight = BrowserDetector.isMobile ? 45 : 30;
+            this.nodeBorder = 1;
+        }
+        else {
+            this.nodeBorder = 0;
+            styleKey = '--' + (value === 'regular' ? 'default' : value) + '-size';
+            if (!this.share.bodyStyle) {
+                this.share.bodyStyle = getComputedStyle(document.body);
+            }
+            styleValue = this.share.bodyStyle.getPropertyValue(styleKey);
+            this.addStyle('--node-content-height', styleValue);
+            this.nodeContentHeight = parseInt(styleValue.replace('px', ''));
+        }
+        return value;
+    }
+};
 
 CollapsibleTreeNavigator.render = function () {
     return _({
@@ -132,6 +170,7 @@ export default CollapsibleTreeNavigator;
  */
 function CTRoot(elt) {
     this.elt = elt;
+    this.navElt = elt;
     /**
      *
      * @type {CTCollapsibleNode[]}
@@ -290,6 +329,7 @@ Object.defineProperty(CTRoot.prototype, 'minWidth', {
  */
 function CTCollapsibleNode(parent, data) {
     this.parent = parent;
+    this.navElt = parent.navElt;
     this.nodeByValue = parent.nodeByValue;
     this.root = parent;
     this.level = parent.level + 1;
@@ -301,29 +341,41 @@ function CTCollapsibleNode(parent, data) {
             {
                 class: 'as-ctn-collapse-node-content',
                 child: [
-                    'toggler-ico',
                     {
-                        class: 'as-ctn-icon-ctn'
+                        class: 'as-ctn-left',
+                        child: [
+                            {
+                                class: 'as-ctn-icon-ctn'
+                            },
+                            {
+                                tag: 'span',
+                                class: 'as-ctn-text',
+                                child: {
+                                    text: ''
+                                }
+                            },
+                            {
+                                tag: 'span',
+                                class: 'as-ctn-count',
+                                style: {
+                                    display: 'none'
+                                },
+                                child: {
+                                    text: ''
+                                }
+                            }
+                        ]
                     },
-                    {
-                        tag: 'span',
-                        class: 'as-ctn-text',
-                        child: {
-                            text: ''
-                        }
-                    },
-                    {
-                        tag: 'span',
-                        class: 'as-ctn-count',
-                        style: {
-                            display: 'none'
-                        },
-                        child: {
-                            text: ''
-                        }
-                    },
+
                     {
                         class: 'as-ctn-right',
+                    },
+                    {
+                        class: 'as-ctn-toggle-icon-ctn',
+                        child: [
+                            'span.mdi.mdi-menu-down',
+                            'span.mdi.mdi-menu-up'
+                        ]
                     }
                 ],
 
@@ -333,7 +385,7 @@ function CTCollapsibleNode(parent, data) {
             }
         ]
     });
-    this.$toggler = $('toggler-ico', this.domElt);
+    this.$toggler = $('.as-ctn-toggle-icon-ctn', this.domElt);
     this.$content = $('.as-ctn-collapse-node-content', this.domElt);
     this.$childrenCtn = $('.as-ctn-collapse-node-children-ctn', this.domElt);
     this.$iconCtn = $('.as-ctn-icon-ctn', this.domElt);
@@ -384,7 +436,7 @@ CTCollapsibleNode.prototype.ev_click = function (event) {
     }
     else {
         tgBound = this.$toggler.getBoundingClientRect();
-        if (noSelect || event.clientX < tgBound.right) {
+        if (noSelect || event.clientX > tgBound.left) {
             if (this.status === 'open') {
                 this.status = 'close';
             }
@@ -497,14 +549,14 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'countDesc', {
         return this._countDesc;
     },
     set: function (value) {
-       value = value || null;
-       this._countDesc = value;
-         if (value) {
-              this.$count.attr('title', value);
-         }
-         else {
-              this.$count.removeAttribute('title');
-         }
+        value = value || null;
+        this._countDesc = value;
+        if (value) {
+            this.$count.attr('title', value);
+        }
+        else {
+            this.$count.removeAttribute('title');
+        }
     }
 });
 
@@ -546,15 +598,20 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'color', {
         else if (!value || !value.getContrastYIQ) {
             value = null;
         }
-        var textColor;
+        var yiqColor;
         if (value) {
-            textColor = value.getContrastYIQ();
-            this.$content.addStyle('color', textColor + '');
-            this.$content.addStyle('background-color', value + '');
+            yiqColor = value.getContrastYIQ();
+            this.$content.addStyle('--color', value + '');
+            this.$content.addStyle('--yiq-color', yiqColor + '');
+            this.$content.addStyle('--op-10pc-color', value.withAlpha(0.1) + '');
+            this.$count.addStyle('background-color', value + '');
+            // this.$count.addStyle('color', yiqColor + '');
+
         }
         else {
-            this.$content.removeStyle('color');
-            this.$content.removeStyle('background-color');
+            this.$content.removeStyle('--color');
+            this.$content.removeStyle('--yiq-color');
+            this.$content.removeStyle('--op-10pc-color');
 
         }
         this._color = value + '';
@@ -649,7 +706,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'data', {
 
 Object.defineProperty(CTCollapsibleNode.prototype, 'contentHeight', {
     get: function () {
-        return NODE_CONTENT_HEIGHT + 1;//+1 for border
+        return this.navElt.nodeContentHeight + this.navElt.nodeBorder;//+1 for border
     }
 });
 
@@ -714,6 +771,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'minWidth', {
  * @constructor
  */
 function CTNNode(parent, data) {
+    this.navElt = parent.navElt;
     this.parent = parent;
     this.nodeByValue = parent.nodeByValue;
     this.root = parent.root;
@@ -727,26 +785,37 @@ function CTNNode(parent, data) {
             {
                 class: 'as-ctn-node-content',
                 child: [
-                    'toggler-ico',
                     {
-                        class: 'as-ctn-icon-ctn'
+                        class: 'as-ctn-left',
+                        child: [
+                            {
+                                class: 'as-ctn-icon-ctn'
+                            },
+                            {
+                                tag: 'span',
+                                class: 'as-ctn-text',
+                                child: {
+                                    text: ''
+                                }
+                            },
+                            {
+                                tag: 'span',
+                                class: 'as-ctn-count',
+                                style: {
+                                    display: 'none'
+                                },
+                                child: { text: '' }
+                            }
+                        ]
                     },
+                    '.as-ctn-right',
                     {
-                        tag: 'span',
-                        class: 'as-ctn-text',
-                        child: {
-                            text: ''
-                        }
-                    },
-                    {
-                        tag: 'span',
-                        class: 'as-ctn-count',
-                        style: {
-                            display: 'none'
-                        },
-                        child: { text: '' }
-                    },
-                    '.as-ctn-right'
+                        class: 'as-ctn-toggle-icon-ctn',
+                        child: [
+                            'span.mdi.mdi-menu-down',
+                            'span.mdi.mdi-menu-up'
+                        ]
+                    }
                 ]
             },
             {
@@ -755,7 +824,7 @@ function CTNNode(parent, data) {
         ]
     });
     this.$content = $('.as-ctn-node-content', this.domElt);
-    this.$toggler = $('toggler-ico', this.domElt);
+    this.$toggler = $('.as-ctn-toggle-icon-ctn', this.domElt);
     this.$content.on('click', this.ev_click.bind(this));
     this.$childrenCtn = $('.as-ctn-node-children-ctn', this.domElt);
     this.$iconCtn = $('.as-ctn-icon-ctn', this.domElt);
@@ -767,7 +836,7 @@ function CTNNode(parent, data) {
 
 //copy
 ['status', 'offsetHeight', 'childrenHeight', 'offsetY', 'select',
-    'text', 'count', 'countDesc','icon', 'value', 'data', 'items', 'actions', 'remove', 'ev_click', 'color'].forEach(method => {
+    'text', 'count', 'countDesc', 'icon', 'value', 'data', 'items', 'actions', 'remove', 'ev_click', 'color'].forEach(method => {
     Object.defineProperty(CTNNode.prototype, method, Object.getOwnPropertyDescriptor(CTCollapsibleNode.prototype, method));
 });
 
@@ -799,6 +868,6 @@ Object.defineProperty(CTNNode.prototype, 'minWidth', {
 
 Object.defineProperty(CTNNode.prototype, 'contentHeight', {
     get: function () {
-        return NODE_CONTENT_HEIGHT;
+        return this.navElt.nodeContentHeight;
     }
 });
