@@ -1,4 +1,5 @@
 import TTHeadRow from "./TTHeadRow";
+import { addElementClassName } from "../utils";
 
 /***
  *
@@ -12,6 +13,9 @@ function TTHead(table, data) {
     this.elt = this.table.elt.$head;
     this.rows = (this.data.rows || []).map(rowData => new TTHeadRow(this, rowData));
     this.elt.clearChild().addChild(this.rows.map(r=> r.elt));
+    if (this.data.class) {
+        addElementClassName(this.elt, this.data.class);
+    }
 }
 
 

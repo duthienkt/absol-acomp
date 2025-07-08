@@ -31,7 +31,7 @@ Object.defineProperty(TTCell.prototype, 'elt', {
                     }
                 }
             });
-            if (typeof this.data.class === "string") {
+            if (this.data.class) {
                 addElementClassName(this._elt, this.data.class);
             }
             if (this.data.attr) this._elt.attr(this.data.attr);

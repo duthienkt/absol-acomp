@@ -1,4 +1,5 @@
 import { _ } from "../../ACore";
+import { addElementClassName } from "../utils";
 
 /***
  *
@@ -15,6 +16,9 @@ function TTHeadCell(row, data){
     });
     if (data.attr) this.elt.attr(data.attr);
     if (data.style) this.elt.addStyle(data.style);
+    if (this.data.class) {
+        addElementClassName(this.elt, this.data.class);
+    }
     this.row.head.table.elt.mAdapter.renderHeadCell(this.elt, this.data, this);
 }
 
