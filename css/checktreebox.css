@@ -213,6 +213,10 @@
     line-height: 2;
 }
 
+.as-multi-select-menu-item-ctn:empty {
+    min-width: 108px;
+}
+
 .as-multi-select-menu-item-ctn:not(:empty):before,
 .as-multi-select-menu.as-read-only .as-multi-select-menu-item-ctn::before,
 .as-multi-select-menu.as-disabled .as-multi-select-menu-item-ctn::before {
