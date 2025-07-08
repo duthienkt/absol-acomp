@@ -1,7 +1,7 @@
 import '../../css/messageinput.css';
 import ACore from "../../ACore";
 import EventEmitter from 'absol/src/HTML5/EventEmitter';
-import { fileSize2Text, openFileDialog } from "../utils";
+import { autoNormalizeFileName, fileSize2Text, normalizeFileName, openFileDialog } from "../utils";
 import { EmojiAnimByIdent } from "../EmojiAnims";
 import EmojiPicker from "../EmojiPicker";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
@@ -279,7 +279,11 @@ MessageInput.prototype._updateSize = function () {
 MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
     var thisMi = this;
     Array.prototype.forEach.call(imageFiles, function (file, index) {
+        autoNormalizeFileName(file);
         thisMi._imageFiles.push(file);
+        if (file.name && !file.converted_name) {
+            file.converted_name = normalizeFileName(file.name);
+        }
         var src;
         if (urls) {
             src = urls[index];
@@ -342,6 +346,7 @@ MessageInput.prototype.addImageFiles = function (imageFiles, urls) {
 MessageInput.prototype.addFiles = function (files) {
     var thisMi = this;
     Array.prototype.forEach.call(files, function (file, index) {
+        autoNormalizeFileName(file)
         thisMi._files.push(file);
         MessageInput.iconSupportAsync.then(function (ExtensionIcons) {
             var src;

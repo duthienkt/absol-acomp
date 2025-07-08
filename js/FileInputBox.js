@@ -1,7 +1,7 @@
 import '../css/fileinputbox.css';
 import ACore, { _, $ } from "../ACore";
 import DropZone from "./DropZone";
-import { fileAccept, fileInfoOf, fileSize2Text, isRealNumber, isURLAddress } from "./utils";
+import { autoNormalizeFileName, fileAccept, fileInfoOf, fileSize2Text, isRealNumber, isURLAddress } from "./utils";
 import ExtIcons from '../assets/exticons/catalog.json';
 import { saveAs } from "absol/src/Network/FileSaver";
 import MessageInput from "./messageinput/MessageInput";
@@ -231,6 +231,7 @@ FileInputBox.property = {};
 FileInputBox.property.value = {
     set: function (value) {
         value = value || null;
+        autoNormalizeFileName(value);
         this._value = value;
         this._valueInfo = fileInfoOf(value);
         this._updateThumbnail();
@@ -244,7 +245,9 @@ FileInputBox.property.value = {
         }
     },
     get: function () {
-        return this._value;
+        var value = this._value;
+        autoNormalizeFileName(value);
+        return value;
     }
 };
 

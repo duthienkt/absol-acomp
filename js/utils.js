@@ -7,6 +7,7 @@ import TextMeasurement from "./tool/TextMeasurement";
 import { MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
 import Rectangle from "absol/src/Math/Rectangle";
 import AElement from "absol/src/HTML5/AElement";
+import { nonAccentVietnamese, normalizeFileName, normalizeIdent } from "absol/src/String/stringFormat";
 
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
@@ -301,7 +302,10 @@ export function openFileDialog(props, unSafe) {
         function changeHandler() {
             input.off('change', changeHandler);
             window.removeEventListener('focus', focusHandler);
-            var files = Array.prototype.slice.call(input.files)
+            var files = Array.prototype.slice.call(input.files);
+            if (files && files.forEach) {
+                files.forEach(f => autoNormalizeFileName(f));
+            }
             resolve(files);
             input.remove();
         }
@@ -1658,4 +1662,16 @@ export function getMaterialDesignIconNames() {
             mdiLoadSync = null;
         });
     return mdiLoadSync;
+}
+
+
+
+/**
+ *
+ * @param {File|{name: string|converted_name:string}|null|undefined} file
+ */
+export function autoNormalizeFileName(file) {
+    if (file && file.name && !file.converted_name) {
+        file.converted_name = normalizeFileName(file.name);
+    }
 }

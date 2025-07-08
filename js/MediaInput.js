@@ -8,6 +8,7 @@ import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 import {getTextIn, setSelectionRange} from 'absol/src/HTML5/Text';
 import BScroller from "./BScroller";
+import { normalizeFileName } from "./utils";
 
 var MediACore = new Dom();
 MediACore.install(ACore);
@@ -57,6 +58,7 @@ function openFileDialog(props) {
         MediACore.$fileInput.once('change', function () {
             finish = true;
             resolve(Array.prototype.map.call(this.files, function (file) {
+                file.converted_name = normalizeFileName(file.name);
                 return file;
             }));
         });

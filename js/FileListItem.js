@@ -2,7 +2,7 @@ import ACore, { $, _ } from "../ACore";
 import '../css/filelistinput.css';
 import ExtIcons from "../assets/exticons/catalog.json";
 import MessageInput from "./messageinput/MessageInput";
-import { fileInfoOf, isURLAddress } from "./utils";
+import { autoNormalizeFileName, fileInfoOf, isURLAddress } from "./utils";
 import QuickMenu from "./QuickMenu";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import CheckboxInput from "./CheckBoxInput";
@@ -157,6 +157,7 @@ FileListItem.property.fileName = {
 FileListItem.property.value = {
     set: function (value) {
         value = value || null;
+        autoNormalizeFileName(value);
         var info = fileInfoOf(value);
         var type = info.type || null;
         var size = info.size || null;

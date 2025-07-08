@@ -7,6 +7,7 @@ import { saveAs } from "absol/src/Network/FileSaver";
 import DropZone from "./DropZone";
 import { fileAccept, isNaturalNumber } from "./utils";
 import FileInputBox from "./FileInputBox";
+import { convertToSafeFile } from "absol/src/Converter/file";
 
 
 /***
@@ -131,6 +132,7 @@ FileListInput.prototype.updateSize = function () {
 };
 
 FileListInput.prototype._makeFileItem = function (file) {
+    file = convertToSafeFile(file);
     var fileElt = _({
         tag: FileListItem.tag,
         props: {
