@@ -107,13 +107,22 @@ li.absol-page-number > a {
     content: attr(data-index-text);
 }
 
-.absol-page-selector.as-simple-mode .absol-page-number,
-.absol-page-selector.as-simple-mode .page-first,
-.absol-page-selector.as-simple-mode  .page-last{
+.absol-page-selector[data-mode="simple"] .absol-page-number,
+.absol-page-selector[data-mode="simple"] .page-first,
+.absol-page-selector[data-mode="simple"] .page-last,
+.absol-page-selector[data-mode="buttons_only"] .absol-page-number,
+.absol-page-selector[data-mode="buttons_only"] .page-first,
+.absol-page-selector[data-mode="buttons_only"] .page-last,
+.absol-page-selector[data-mode="buttons_only"] .absol-page-number-input {
     display: none;
 }
 
-.absol-page-selector.as-simple-mode  .mdi{
+.absol-page-selector[data-mode="simple"] .mdi,
+.absol-page-selector[data-mode="buttons_only"] .mdi {
     font-size: 20px;
     line-height: 1.5;
+}
+
+.absol-page-selector[data-mode="buttons_only"] .absol-page-number-buttons {
+    padding-left: 0;
 }

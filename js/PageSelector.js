@@ -250,17 +250,22 @@ PageSelector.property.pageRange = {
 
 PageSelector.property.simpleMode = {
     set: function (value) {
-        if (value) {
-            this.addClass('as-simple-mode');
-        }
-        else {
-            this.removeClass('as-simple-mode');
-        }
+        if (value) this.mode = 'simple';
+        else this.mode = 'default';
     },
     get: function () {
-        return this.hasClass('as-simple-mode');
+        return this.mode === 'simple';
     }
 };
+
+PageSelector.property.mode = {
+    set: function (value) {
+        this.attr('data-mode', value || 'default');
+    },
+    get: function () {
+        return this.attr('data-mode') || 'default';
+    }
+}
 
 
 PageSelector.prototype.init = function (props) {
