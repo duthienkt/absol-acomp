@@ -49,7 +49,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
         };
 
         if (this.data.attr) this._elt.attr(this.data.attr);
-        if (typeof this.data.class === "string") addElementClassName(this._elt, this.data.class);
+        if (typeof this.data.class) addElementClassName(this._elt, this.data.class);
         if (this.data.style) this._elt.addStyle(this.data.style);
 
         if (this.data.on) {

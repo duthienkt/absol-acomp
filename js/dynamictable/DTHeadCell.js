@@ -1,6 +1,6 @@
 import { $$, _, $ } from "../../ACore";
 import Follower from "../Follower";
-import { findMaxZIndex, listenDomContentChange } from "../utils";
+import { addElementClassName, findMaxZIndex, listenDomContentChange } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
 
@@ -244,6 +244,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
             this._elt.attr('data-col-id', this.data.id + '');
         }
         this.row.head.table.adapter.renderHeadCell(this._elt, this.data, this);
+        if (typeof this.data.class) addElementClassName(this._elt, this.data.class);
         var sortKeyArr = implicitSortKeyArr(this.data.sortKey)
         if (sortKeyArr.length > 0) {
             this._elt.attr('data-sort-key', sortKeyArr.join(';'));
@@ -251,18 +252,18 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
             // this._elt.attr('title', 'Sort');
         }
         this.$sortBtn = _({
-            tag: 'span',
+            // tag: 'span',
             class: 'as-dt-sort-btn',
 
             child: [
                 {
                     tag: 'span',
-                    class: ['mdi', 'mdi-menu-up']
+                    class: ['mdi', 'mdi-chevron-up']
                     // child: { text: '🡑' }
                 },
                 {
                     tag: 'span',
-                    class: ['mdi', 'mdi-menu-down']
+                    class: ['mdi', 'mdi-chevron-down']
                 }
             ]
         });

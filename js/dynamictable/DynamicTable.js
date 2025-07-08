@@ -25,6 +25,7 @@ import AElement from "absol/src/HTML5/AElement";
 import { computeMeasureExpression, parseMeasureValue } from "absol/src/JSX/attribute";
 import Attributes from "absol/src/AppPattern/Attributes";
 import { kebabCaseToCamelCase } from "absol/src/String/stringFormat";
+import { AbstractStyleExtended } from "../Abstraction";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -365,6 +366,16 @@ DynamicTable.prototype.styleHandlers.tableLayout = {
     }
 };
 
+DynamicTable.prototype.styleHandlers.variant = {
+    set: function (value) {
+        value = value || 'v0';
+        this.attr('data-variant', value);
+    },
+    get: function () {
+        return this.attr('data-variant') || 'v0';
+    }
+};
+
 
 DynamicTable.prototype.addStyle = function (arg0, arg1) {
     if ((typeof arg0 === "string") && (arg0 in this.extendStyle)) {
@@ -376,6 +387,27 @@ DynamicTable.prototype.addStyle = function (arg0, arg1) {
     }
     return this;
 };
+
+DynamicTable.prototype.addClass = function (className) {
+    if (className && className.forEach && className.map) {
+        for (var i = 0; i < className.length; ++i)
+            if (className[i] === 'as-table-new'){
+                this.extendStyle.variant = 'secondary';
+            }
+        else {
+                this.classList.add(className[i]);
+            }
+    }
+    else {
+        if (className === 'as-table-new') {
+            this.extendStyle.variant = 'secondary';
+        }
+        else {
+            this.classList.add(className);
+        }
+    }
+    return this;
+}
 
 
 DynamicTable.prototype.requestUpdateSize = function () {
@@ -1514,7 +1546,7 @@ function RowDragController(elt) {
     this.elt = elt;
     this._isDragging = false;
     this.prevDragedRow = null;
-    this.ev_clickOutDraggedRow  = this.ev_clickOutDraggedRow.bind(this);
+    this.ev_clickOutDraggedRow = this.ev_clickOutDraggedRow.bind(this);
 }
 
 RowDragController.prototype._findRow = function (cElt) {

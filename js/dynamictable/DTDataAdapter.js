@@ -61,15 +61,22 @@ DTDataAdapter.prototype.render = function () {
     this.tableElt.table = new DTTable(this.tableElt, this.data);
 };
 
+var safeWrapTextNode = function (c) {
+    if (c.nodeType === Node.TEXT_NODE) {
+        c = _({tag:'span', child:c})
+    }
+    return c;
+}
+
 DTDataAdapter.prototype.renderHeadCell = function (elt, data, controller) {
     if (data.child) {
         if (data.child.map) {
             elt.addChild(data.child.map(function (it) {
-                return _(it);
+                return  safeWrapTextNode(_(it));
             }));
         }
         else {
-            elt.addChild(_(data.child));
+            elt.addChild(safeWrapTextNode(_(data.child)));
         }
     }
     if (data.render) {

@@ -121,7 +121,19 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
             tag: 'tr', class: 'as-dt-body-row', props: {
                 dtBodyRow: this
             },
-            child: child.concat(child1)
+            child: child.concat(child1),
+            on: {
+                mouseenter: () => {
+                    if (this._fixedXElt) {
+                        this._fixedXElt.classList.add('as-hover');
+                    }
+                },
+                mouseleave: () => {
+                    if (this._fixedXElt) {
+                        this._fixedXElt.classList.remove('as-hover');
+                    }
+                }
+            }
         });
         this._elt.attr('data-id', this.id + '');
         if (this.data.class) {
@@ -156,7 +168,7 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
         var originAddClass = this._elt.addClass;
         var originRemoveClass = this._elt.removeClass;
 
-        var isOverrideStyle = x=> ['background-color', 'backgroundColor', 'color'].includes(x);
+        var isOverrideStyle = x => ['background-color', 'backgroundColor', 'color'].includes(x);
         var thisCTL = this;
         this._elt.addStyle = function (key, value) {
             originAddStyle.apply(this, arguments);
@@ -203,7 +215,15 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXElt', {
         this._fixedXElt = _({
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-x',
-            child: this.cells.slice(0, fixedCol).map(cell => cell.elt)
+            child: this.cells.slice(0, fixedCol).map(cell => cell.elt),
+           on:{
+               mouseenter: () => {
+                   this._elt.classList.add('as-hover');
+               },
+               mouseleave: () => {
+                   this._elt.classList.remove('as-hover');
+               }
+           }
         });
 
         return this._fixedXElt;
