@@ -13,6 +13,42 @@
     overflow: hidden;
 }
 
+.as-date-input[data-size] {
+    height: var(--base-size);
+}
+
+
+.as-date-input[data-size="v0"] {
+    --base-size: 30px;
+    border-radius: 3px;
+}
+
+.as-date-input[data-size="large"] {
+    --base-size: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+.as-date-input[data-size="regular"] {
+    --base-size: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
+.as-date-input[data-size="small"] {
+    --base-size: var(--small-size);
+    border-radius: var(--small-radius);
+}
+
+.as-date-input[data-size] .as-date-input-text {
+    width: calc(100% - var(--base-size));
+}
+
+
+.as-date-input[data-size] .as-date-input-icon-ctn {
+    width: calc(var(--base-size) - 1px);
+}
+
+
+
 .as-date-input[data-format] {
     --format-width: 8.5em;
     width: calc(var(--format-width) + 2em + 1em);
