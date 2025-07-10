@@ -1,4 +1,4 @@
-import ACore, { _, $ } from "../ACore";
+import ACore, { _, $, $$ } from "../ACore";
 import SpinnerIcoText from '../assets/icon/spinner.tpl';
 import MdiStoreMarkerOutlineText from '../assets/icon/mdi_store_marker_outline.tpl';
 import FontColorIconText from '../assets/icon/font_color.tpl';
@@ -25,10 +25,78 @@ import '../css/icons.css';
 import Color from "absol/src/Color/Color";
 
 export function SpinnerIco() {
-    return ACore._(SpinnerIcoText);
+    this._circleRadius = 4;
+    this.$circles = $$('circle', this);
+
+    //default
+    this.color = '#2E9DB5';
+    this.circleRadius = 6;
 }
 
 SpinnerIco.tag = 'SpinnerIco'.toLowerCase();
+
+SpinnerIco.prototype.variant2colors = {
+    rainbow: [
+        '#e15b64', '#f47e60', '#f8b26a',
+        '#abbd81', '#849b87', '#6492ac',
+        '#637cb5', '#6a63b6'
+    ]
+};
+
+SpinnerIco.render = function () {
+    return _(SpinnerIcoText);
+};
+
+SpinnerIco.property = {};
+
+SpinnerIco.property.circleRadius = {
+    /**
+     * @this SpinnerIco
+     * @param value
+     */
+    set: function (value) {
+        if (typeof value !== 'number' || value < 0) {
+            value = 4;
+        }
+        this._circleRadius = value;
+        this.$circles.forEach(elt => {
+            elt.attr('r', value);
+        })
+    },
+    /**
+     * @this SpinnerIco
+     */
+    get: function () {
+        return this._circleRadius;
+    }
+};
+
+SpinnerIco.property.color = {
+    set: function (cl) {
+        if (this.variant2colors[cl]) {
+            cl = this.variant2colors[cl];
+        }
+        else if (typeof cl === 'string') {
+            try {
+                cl = Color.parse(cl);
+                cl = Array(8).fill(cl)
+                    .map((c, i) => c.withAlpha(1 / 8 * (i+ 1)));
+            } catch (e) {
+                cl = this.variant2colors['rainbow'];
+            }
+        }
+        cl = cl || [];
+        if (!Array.isArray(cl)) cl = [];
+        var n = Math.min(this.$circles.length, cl.length);
+        for (var i = 0; i < n; i++) {
+            this.$circles[i].attr('fill', cl[i]);
+        }
+    },
+    get: function () {
+        return this.$circles.map(elt => elt.attr('fill'));
+    }
+};
+
 
 ACore.install(SpinnerIco);
 
@@ -226,7 +294,7 @@ ImportantOutlineIcon.tag = 'ImportantOutlineIcon'.toLowerCase();
 
 ACore.install(ImportantOutlineIcon);
 
-export function EmojiMutedIcon(){
+export function EmojiMutedIcon() {
     return _(EmojiMutedIconText);
 }
 
