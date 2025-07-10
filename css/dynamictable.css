@@ -605,3 +605,7 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
 }
 
 
+.hr-modal-body-ctn .as-dynamic-table-wrapper{
+    width:var(--dt-content-width);
+    max-width: calc(var(--modal-content-max-width) - var(--distance-6) * 2 - 2px);/*border*/
+}
