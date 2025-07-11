@@ -1,9 +1,10 @@
 import '../css/searcher.css';
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
 import { SpinnerIco } from "./Icons";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
+import { AbstractStyleExtended } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -34,6 +35,7 @@ ACore.creator['times-circle-ico'] = function () {
 
 
 /**
+ * @augments {AbstractStyleExtended}
  * @extends {AElement}
  * @constructor
  */
@@ -62,12 +64,17 @@ function SearchTextInput() {
             thisSTI.focus();
         }, 50);
     });
+
+   AbstractStyleExtended.call(this);
     /**
      * @type {string}
      * @name value
      * @memberOf SearchTextInput#
      */
 }
+
+
+mixClass(SearchTextInput, AbstractStyleExtended);
 
 SearchTextInput.tag = 'SearchTextInput'.toLowerCase();
 

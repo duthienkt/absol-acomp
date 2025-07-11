@@ -1,10 +1,15 @@
 .absol-search-text-input {
+    box-sizing: border-box;
     position: relative;
-    height: 2em;
-    border-radius: 0.3em;
-    border: solid 1px #a9a9a9;
-    font-size: 1rem;
+    --base-size: 30px;
+    height: var(--base-size);
+    border: solid 1px var(--border-color);
+    font-size: var(--default-font-size);
     background-color: white;
+}
+
+.absol-search-text-input:not([data-size="v0"]) {
+    border-radius: var(--default-radius);
 }
 
 .absol-search-text-input.focus {
@@ -16,15 +21,15 @@
     left: 0;
     top: 0;
     bottom: 0;
-    right: 2em;
+    right: var(--base-size);
 }
 
 .absol-search-text-button-container {
     position: absolute;
     top: 0;
     right: 0;
-    width: 2em;
-    bottom: 0em;
+    width: var(--base-size);
+    bottom: 0;
 }
 
 .absol-search-text-button-container button {
@@ -74,4 +79,25 @@
 
 .absol-search-text-input-container input::-webkit-search-cancel-button {
     display: none;
+}
+
+
+.absol-search-text-input[data-size="large"] {
+    font-size: var(--large-font-size);
+    --base-size: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+.absol-search-text-input[data-size="regular"] {
+    font-size: var(--default-font-size);
+    --base-size: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
+
+
+.absol-search-text-input[data-size="small"] {
+    font-size: var(--small-font-size);
+    --base-size: var(--small-size);
+    border-radius: var(--small-radius);
 }
