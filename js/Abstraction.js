@@ -1,5 +1,6 @@
 import Attributes from "absol/src/AppPattern/Attributes";
 import AElement from "absol/src/HTML5/AElement";
+import { kebabCaseToCamelCase } from "absol/src/String/stringFormat";
 
 /**
  * @extends AElement
@@ -32,6 +33,12 @@ AbstractStyleExtended.prototype.styleHandlers.size = {
 };
 
 AbstractStyleExtended.prototype.addStyle = function (name, value) {
+    var kbName;
+    if (typeof name === 'string') {
+        kbName = kebabCaseToCamelCase(name);
+        if (this.styleHandlers[name])
+            name = kbName;
+    }
     if (this.styleHandlers[name]) {
         this.extendStyle[name] = value;
     }
