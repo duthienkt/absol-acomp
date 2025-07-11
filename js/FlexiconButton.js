@@ -56,6 +56,9 @@ FlexiconButton.prototype.styleHandlers.variant = {
         if (['v0', 'primary', 'tertiary', 'secondary', 'light', 'link', 'danger'].indexOf(value) < 0) {
             value = 'v0';
         }
+        if (value !== 'v0' && this.extendStyle.size === 'v0') {
+            this.extendStyle.size = 'regular';//auto set new style
+        }
         this.attr('data-variant', value);
         return value;
     },

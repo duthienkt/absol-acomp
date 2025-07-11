@@ -216,7 +216,7 @@
     /*height: auto;*/
 }
 
-.as-flexicon-button[data-variant="link"]  .as-flexicon-button-content {
+.as-flexicon-button[data-variant="link"] .as-flexicon-button-content {
     padding-left: 0;
     padding-right: 0;
 }
@@ -253,7 +253,7 @@
 
 
 .as-flexicon-button[data-variant="v0"]:hover {
-    background-color: var( --button-background-color_2);
+    background-color: var(--button-background-color_2);
 }
 
 
