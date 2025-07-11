@@ -11,6 +11,40 @@
     overflow: hidden;
 }
 
+.as-date-time-input[data-size] {
+    --base-size: 30px;
+    height: var(--base-size);
+    border-radius: 3px;
+}
+
+.as-date-time-input[data-size="large"] {
+    --base-size: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+.as-date-time-input[data-size="regular"] {
+    --base-size: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
+
+.as-date-time-input[data-size="small"] {
+    --base-size: var(--small-size);
+    border-radius: var(--small-radius);
+}
+
+.as-date-time-input[data-size] input {
+    width: calc(100% - var(--base-size));
+}
+
+.as-date-time-input[data-size] .as-date-time-input-icon-btn {
+    width: calc(var(--base-size));
+}
+
+.as-date-time-input[data-size] .as-time-input-clear-btn {
+    right: calc(var(--base-size) + 1px);
+}
+
 .as-date-time-input.as-disabled {
     color: var(--as-disabled-text-color);
     pointer-events: none;

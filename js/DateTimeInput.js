@@ -8,6 +8,8 @@ import ChromeCalendar from "./ChromeCalendar";
 import Follower from "./Follower";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
+import { AbstractStyleExtended } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 
 var STATE_NEW = 1;
@@ -15,6 +17,7 @@ var STATE_EDITED = 2;
 var STATE_NONE = 0;
 
 /***
+ * @augments AbstractStyleExtended
  * @extends AElement
  * @constructor
  */
@@ -47,7 +50,10 @@ function DateTimeInput() {
     this.notNull = false;
     this.min = this._min;
     this.max = this._max;
+    AbstractStyleExtended.call(this);
 }
+
+mixClass(DateTimeInput, AbstractStyleExtended);
 
 DateTimeInput.tag = 'DateTimeInput'.toLowerCase();
 
