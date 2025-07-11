@@ -8,6 +8,8 @@
     --level: 0;
     --selected-y: 0;
     background-color: white;
+    min-width: 220px;
+    color: #313030;
 }
 
 .as-collapsible-tree-navigator[data-size="v0"] {
@@ -72,7 +74,7 @@
     display: flex;
     align-items: center;
     background-color: white;
-    --color: black;
+    --color: #313030;
     --yiq-color: white;
     --op-10pc-color: rgb(70, 70, 75, 0.1);
     color: var(--color);
@@ -86,7 +88,7 @@
     height: calc(var(--node-content-height) + 1px);
     border-top: 1px solid #aaaaaa;
     --color: white;
-    --yiq-color: black;
+    --yiq-color: #313030;
     --op-10pc-color: var(--color);
     background-color: var(--color);
     color: var(--yiq-color);
@@ -94,7 +96,7 @@
 
 .as-collapsible-tree-navigator[data-size="v0"] .as-ctn-node-content {
     background-color: white;
-    --color: black;
+    --color: #313030;
     --yiq-color: white;
     --op-10pc-color: rgb(70, 70, 75, 0.1);
     color: var(--color);
@@ -172,12 +174,18 @@
     display: inline-block;
 }
 
+.as-ctn-toggle-icon-ctn {
+    width: var(--node-content-height);
+    visibility: hidden;
+}
+
 .as-ctn-collapse-node.as-open > .as-ctn-collapse-node-content .as-ctn-toggle-icon-ctn,
 .as-ctn-collapse-node.as-close > .as-ctn-collapse-node-content .as-ctn-toggle-icon-ctn,
 .as-ctn-node.as-open > .as-ctn-node-content .as-ctn-toggle-icon-ctn,
 .as-ctn-node.as-close > .as-ctn-node-content .as-ctn-toggle-icon-ctn {
-    width: var(--node-content-height);
+    visibility: visible;
 }
+
 
 .as-ctn-right {
     height: 100%;
@@ -288,7 +296,9 @@
     box-sizing: border-box;
 
 }
-
+.as-ctn-collapse-node > .as-ctn-collapse-node-content .as-ctn-text {
+    font-weight: bold;
+}
 
 .as-ctn-collapse-node.as-selected > .as-ctn-collapse-node-content .as-ctn-text,
 .as-ctn-node.as-selected > .as-ctn-node-content .as-ctn-text {
