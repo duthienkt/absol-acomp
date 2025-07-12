@@ -115,7 +115,7 @@
     height: var(--height);
     border: none;
     background-color: transparent;
-    color: black;
+    color:  var(--dark-color);
 }
 
 .as-button-range-item.as-active {
