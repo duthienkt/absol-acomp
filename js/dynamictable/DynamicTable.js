@@ -533,6 +533,13 @@ DynamicTable.prototype.clearRows = function () {
     return this.table.body.clearRows();
 };
 
+DynamicTable.prototype.isLastRow = function (o){
+    var row = this.rowOf(o);
+    var rows = this.table.body.rows;
+    return row === rows[rows.length - 1];
+};
+
+
 DynamicTable.prototype.viewIntoRow = function (row) {
     var counter = 300;
     var wait = () => {
@@ -962,7 +969,12 @@ LayoutController.prototype.handleDisplay = function () {
         this.elt.table.elt.addStyle('width', viewportWidth - 17 + 'px');
     }
     if (!this.elt.hasClass('as-table-layout-fixed')) {
-        this.elt.table.elt.addStyle('min-width', viewportWidth - 17 + 'px');
+        if (this.elt.hasClass('as-adapt-infinity-grow')) {
+            this.elt.table.elt.addStyle('min-width', viewportWidth  + 'px');
+        }
+        else {
+            this.elt.table.elt.addStyle('min-width', viewportWidth - 17 + 'px');
+        }
     }
 };
 
@@ -1100,10 +1112,11 @@ LayoutController.prototype.update = function () {
     var maxHeight;
     if (!this.elt.table) return;
     if (stWidth === 'auto') {//table max-width is 100% of parentWidth
-        this.elt.table.elt.addStyle('min-width', Math.max(getMinInnerWidth() - 17, 0) + 'px');
+        this.elt.table.elt.addStyle('min-width', Math.max(getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow')?0:17), 0) + 'px');
+
     }
     else if (psWidth.unit === 'px' || psWidth.unit === 'vw' || psWidth.unit === '%') {
-        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - 17 + 'px');
+        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow')?0:17) + 'px');
         bound = this.elt.getBoundingClientRect();
         if (bound.width > 0 && !this.elt.table.body.offset) {//if overflowY this.elt.table.body.offset >0
             tbBound = this.elt.table.elt.getBoundingClientRect();
