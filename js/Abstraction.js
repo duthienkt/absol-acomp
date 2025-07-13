@@ -24,6 +24,7 @@ AbstractStyleExtended.prototype.styleHandlers.size = {
      * @param value
      */
     set: function (value) {
+        if (value === 'default') value = 'regular';
         if (['v0', 'small', 'regular', 'large'].indexOf(value) < 0) {
             value = 'regular';
         }
