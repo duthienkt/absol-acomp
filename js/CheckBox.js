@@ -2,8 +2,9 @@ import '../css/checkbox.css';
 import ACore from "../ACore";
 import AElement from "absol/src/HTML5/AElement";
 import CheckboxInput from "./CheckBoxInput";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
+import { AbstractStyleExtended } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -27,6 +28,7 @@ function CheckBox() {
     this.on('click', this.eventHandler.click);
     OOP.drillProperty(this, this.$input, ['checked']);
     OOP.drillProperty(this, this.$input, ['minus']);
+    AbstractStyleExtended.call(this);
     /***
      * @type {boolean}
      * @name checked
@@ -39,6 +41,8 @@ function CheckBox() {
      * @memberOf CheckBox#
      */
 }
+
+mixClass(CheckBox, AbstractStyleExtended);
 
 CheckBox.tag = 'checkbox';
 
@@ -60,6 +64,39 @@ CheckBox.render = function () {
         ]
     });
 };
+
+
+CheckBox.prototype.extendStyle.variant = 'v0'; // default variant
+CheckBox.prototype.extendStyle.checkPosition = 'left'; // default variant
+
+CheckBox.prototype.styleHandlers.variant = {
+    set: function (value) {
+        this.$input.extendStyle.variant = value;
+        this.attr('data-variant', this.$input.extendStyle.variant);
+    },
+    get: function () {
+        return this.$input.extendStyle.variant;
+    }
+};
+
+CheckBox.prototype.styleHandlers.checkPosition = {
+    set: function (value) {
+        if (value === 'right' || value === 'end') {
+            value = 'end';
+        }
+        else {
+            value = 'start';
+        }
+        if (value === 'end') {
+            this.addClass('right');
+        }
+        else {
+            this.removeClass('right');
+        }
+        return value;
+    }
+};
+
 
 
 CheckBox.prototype.notifyChange = function () {

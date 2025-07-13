@@ -54,18 +54,19 @@ label.as-checkbox-input[data-variant="v0"] {
 }
 
 
-label.as-checkbox-input[data-variant="check-box"] {
+label.as-checkbox-input[data-variant="check-box"],
+label.as-checkbox-input[data-variant="check-circle"] {
     border: none;
     color: white;
 }
 
-label.as-checkbox-input.as-checked[data-variant="check-box"] {
+label.as-checkbox-input.as-checked[data-variant="check-box"],
+label.as-checkbox-input.as-checked[data-variant="check-circle"] {
     background-color: var(--primary-color);
 }
 
 
-label.as-checkbox-input[data-variant="v0"]::after,
-label.as-checkbox-input[data-variant="check-box"]::after {
+label.as-checkbox-input::after {
     content: "";
     position: absolute;
     top: 0;
@@ -74,23 +75,46 @@ label.as-checkbox-input[data-variant="check-box"]::after {
     height: 100%;
     border-radius: 5px;
     box-sizing: border-box;
+    border: 1px solid #525866;
+}
+
+label.as-checkbox-input[data-variant="v0"]::after {
+    border: 1px solid #ddd;
+}
+
+
+label.as-checkbox-input.as-checked::after {
     border: 1px solid #52586633;
 }
 
-label.as-checkbox-input.as-checked[data-variant="v0"]:hover {
+
+label.as-checkbox-input[data-variant="check-circle"] {
+    border-radius: 50%;
+}
+
+label.as-checkbox-input[data-variant="check-circle"]::after {
+    border-radius: 50%;
+}
+
+label.as-checkbox-input.as-checked[data-variant="v0"]:not(.as-read-only):hover {
     background-color: var(--candy-hover-background-color);
 }
 
-label.as-checkbox-input.as-checked[data-variant="check-box"]:hover {
+label.as-checkbox-input.as-checked[data-variant="check-box"]:not(.as-read-only):hover,
+label.as-checkbox-input.as-checked[data-variant="check-circle"]:not(.as-read-only):hover {
     background-color: #18D2FA;
 }
 
-label.as-checkbox-input.as-checked[data-variant="check-box"]:not(.as-read-only):active {
+label.as-checkbox-input.as-checked[data-variant="check-box"]:not(.as-read-only):active,
+label.as-checkbox-input.as-checked[data-variant="check-circle"]:not(.as-read-only):active {
     background-color: var(--active-primary-color);
 }
 
-label.as-checkbox-input[data-variant="check-box"].as-disabled {
-    background-color: var(--candy-disabled-background-color);
+label.as-checkbox-input[data-variant="check-box"].as-disabled,
+label.as-checkbox-input[data-variant="check-circle"].as-disabled,
+label.as-checkbox-input[data-variant="check-box"].as-checked.as-disabled,
+label.as-checkbox-input[data-variant="check-circle"].as-checked.as-disabled {
+    background-color: var(--border-color);
     color: white;
 }
 
@@ -103,13 +127,12 @@ label.as-checkbox-input[data-variant="check-box"].as-disabled {
     white-space: nowrap;
     text-align: center;
     pointer-events: none;
-
 }
 
 
-.as-checkbox-input-check-icon  > * {
+.as-checkbox-input-check-icon > * {
     display: inline-block;
-    vertical-align:  middle;
+    vertical-align: middle;
     font-size: 1em;
 }
 
@@ -117,7 +140,7 @@ label.as-checkbox-input[data-variant="check-box"].as-disabled {
     content: "";
     display: inline-block;
     height: 100%;
-    vertical-align:  middle;
+    vertical-align: middle;
 }
 
 
@@ -147,7 +170,7 @@ label.as-checkbox-input:hover:not(.as-read-only) .bound,
 }
 
 input.as-checkbox-input-value:not(:checked) ~ div .tick {
-    display:  none;
+    display: none;
 }
 
 .as-checkbox-input.as-has-minus .minus {
@@ -174,7 +197,7 @@ label.as-checkbox-input .minus {
     transition: opacity 0.1s;
 }
 
-label.as-checkbox-input.as-disabled ,
+label.as-checkbox-input.as-disabled,
 label.as-checkbox-input.as-disabled:hover {
     background-color: var(--as-disabled-background-color);
     color: var(--as-disabled-text-color);
