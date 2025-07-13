@@ -2,6 +2,8 @@ import '../css/checkboxinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import AElement from "absol/src/HTML5/AElement";
+import { AbstractStyleExtended } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 
 var _ = ACore._;
@@ -18,7 +20,19 @@ var tickIcon = _(['<svg class="as-checkbox-input-check-icon" width="18px" height
 );
 
 
+tickIcon = _({
+    class:'as-checkbox-input-check-icon',
+    child:[
+        'span.mdi.mdi-check.tick',
+        'span.mdi.mdi-minus.minus'
+
+    ]
+});
+
+
+
 /***
+ * @augments AbstractStyleExtended
  * @extends AElement
  * @constructor
  */
@@ -30,9 +44,13 @@ function CheckboxInput() {
     this.readOnly = false;
     this.on('click', this.eventHandler.click);
     this.onchange = null;
+    AbstractStyleExtended.call(this);
 }
 
+mixClass(CheckboxInput,AbstractStyleExtended);
+
 CheckboxInput.tag = "CheckboxInput".toLowerCase();
+CheckboxInput.prototype.extendStyle.variant = 'v0'; // default variant
 
 CheckboxInput.render = function (data) {
     return _({
@@ -68,6 +86,19 @@ CheckboxInput.prototype._updateCheckedClass = function () {
     }
     else {
         this.removeClass('as-checked');
+    }
+};
+
+CheckboxInput.prototype.styleHandlers.variant = {
+    set: function (value) {
+        if (['v0', 'check-box', 'check-circle', 'reject-circle'].indexOf(value) < 0) {
+            value = 'v0';
+        }
+        if (value !== 'v0' && this.extendStyle.size === 'v0') {
+            this.extendStyle.size = 'regular';//auto set new style
+        }
+        this.attr('data-variant', value);
+        return value;
     }
 };
 
