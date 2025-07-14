@@ -44,9 +44,12 @@
 
 
 .as-date-input[data-size] .as-date-input-icon-ctn {
-    width: calc(var(--base-size) - 1px);
+    width: calc(var(--base-size));
 }
 
+.as-date-input[data-size]  .as-date-input-clear-btn {
+    right: var(--base-size);
+}
 
 
 .as-date-input[data-format] {
