@@ -118,3 +118,13 @@
         display: none;
     }
 }
+
+.as-tree-table.as-table-new .as-tree-table-cell,
+.as-tree-table.as-table-new .as-tree-table-head-cell{
+    border-right: none;
+    border-left: none;
+}
+
+.as-tree-table.as-table-new .as-tree-table-head-cell {
+    border-top: none;
+}
