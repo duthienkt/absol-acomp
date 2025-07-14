@@ -75,7 +75,7 @@ label.as-checkbox-input::after {
     height: 100%;
     border-radius: 5px;
     box-sizing: border-box;
-    border: 1px solid #525866;
+    border: 1px solid var(--border-color);
 }
 
 label.as-checkbox-input[data-variant="v0"]::after {
@@ -100,10 +100,18 @@ label.as-checkbox-input.as-checked[data-variant="v0"]:not(.as-read-only):hover {
     background-color: var(--candy-hover-background-color);
 }
 
+label.as-checkbox-input[data-variant="check-box"]:not(.as-read-only):hover,
+label.as-checkbox-input[data-variant="check-circle"]:not(.as-read-only):hover {
+    background-color: var(--candy-hover-background-color);
+}
+
+
 label.as-checkbox-input.as-checked[data-variant="check-box"]:not(.as-read-only):hover,
 label.as-checkbox-input.as-checked[data-variant="check-circle"]:not(.as-read-only):hover {
-    background-color: #18D2FA;
+    background-color: #1E7183;
 }
+
+
 
 label.as-checkbox-input.as-checked[data-variant="check-box"]:not(.as-read-only):active,
 label.as-checkbox-input.as-checked[data-variant="check-circle"]:not(.as-read-only):active {
@@ -184,7 +192,7 @@ input.as-checkbox-input-value:checked ~ .as-checkbox-input-check-icon .minus {
 
 
 label.as-checkbox-input .bound {
-    stroke: var(--candy-border-color);
+    stroke: var(--border-color);
     fill: white;
 }
 
