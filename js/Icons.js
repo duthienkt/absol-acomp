@@ -20,9 +20,11 @@ import FunctionManagerText from '../assets/icon/function_manager.tpl';
 import DataTypeConfiguratorOutlineIconText from '../assets/icon/data_type_configuration_outline.tpl';
 import TimeBasedPayrollReportIconText from '../assets/icon/time_based_payroll_report.tpl';
 import ImportantOutlineIconText from '../assets/icon/important_outline.tpl';
+import SmileIconText from '../assets/icon/smile.tpl';
 import EmojiMutedIconText from '../assets/icon/emoji_muted.tpl';
 import '../css/icons.css';
 import Color from "absol/src/Color/Color";
+import { isNaturalNumber } from "./utils";
 
 export function SpinnerIco() {
     this._circleRadius = 4;
@@ -80,7 +82,7 @@ SpinnerIco.property.color = {
             try {
                 cl = Color.parse(cl);
                 cl = Array(8).fill(cl)
-                    .map((c, i) => c.withAlpha(1 / 8 * (i+ 1)));
+                    .map((c, i) => c.withAlpha(1 / 8 * (i + 1)));
             } catch (e) {
                 cl = this.variant2colors['rainbow'];
             }
@@ -301,3 +303,54 @@ export function EmojiMutedIcon() {
 EmojiMutedIcon.tag = 'EmojiMutedIcon'.toLowerCase();
 
 ACore.install(EmojiMutedIcon);
+
+/**
+ * @extends AElement
+ * @constructor
+ */
+export function SmileIcon() {
+    this.$frames = $$('g', this);
+    this.frame = 0;
+}
+
+SmileIcon.tag = 'SmileIcon'.toLowerCase();
+
+SmileIcon.render = function () {
+    return _(SmileIconText);
+};
+
+SmileIcon.property = {};
+
+SmileIcon.property.frame = {
+    set: function (value) {
+        if (!isNaturalNumber(value)) value = 0;
+        value = Math.min(4, Math.max(value, 0));
+        this._frame = value;
+        for (var i = 0; i < this.$frames.length; i++) {
+            if (value === i) {
+                this.$frames[i].removeStyle('display');
+            }
+            else {
+                this.$frames[i].addStyle('display', 'none');
+            }
+        }
+    },
+    get: function () {
+        return this._frame || 0;
+    }
+};
+
+ACore.install(SmileIcon);
+
+function SmileRate() {
+
+}
+
+SmileRate.tag = 'SmileRate'.toLowerCase();
+
+SmileRate.render = function () {
+    return _({
+        class: 'as-smile-rate',
+        child: Array(5).fill(SmileIcon.tag)
+    });
+};
