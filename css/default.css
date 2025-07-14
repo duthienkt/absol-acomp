@@ -8,7 +8,7 @@
     --as-input-border-radius: 3px;
     --as-context-menu-font-size: 1rem;
     --as-context-font-family: Arial, Helvetica, sans-serif;
-    --as-disabled-background-color: #EDEDED;
+    --as-disabled-background-color: #D5D7DA;/*#EDEDED;/**/
     --as-disabled-text-color: #ACACAC;
     --icon-background-cover-hover: #91e4fb;
     --as-transparent-button-hover-color: rgba(169, 169, 172, 0.25);
@@ -27,6 +27,9 @@
 
     --dropdown-icon-font-size: 24px;
     --dropdown-icon-color:  #525866;
+
+    --dark-color: #313030;
+
     /******* KEVIEW OLD FORMAT **************/
     --button-min-width: 110px;
     --button-round-coner: 3px;
@@ -79,7 +82,7 @@
     --primary-color: #2E9DB5;
     --hover-primary-color: #1294B1FF;
     --disabled-primary-color: #97CEDAFF;
-    --active-primary-color: #1d6677;
+    --active-primary-color: #1d6677;/*#07A9CD*/
 
     --secondary-color: #EEF5FB;
     --hover-secondary-color: white;
