@@ -111,8 +111,8 @@ SelectMenu.render = function () {
     });
 };
 
-SelectMenu.prototype.addStyle = function (arg0, arg1) {
-    if (arg0 === 'textAlign' || arg0 === 'text-align') {
+SelectMenu.prototype.styleHandlers.textAlign = {
+    set: function (arg1) {
         if (arg1 === 'center') {
             this.addClass('as-text-align-center');
             this.$selectlistBox.addClass('as-text-align-center');
@@ -121,9 +121,7 @@ SelectMenu.prototype.addStyle = function (arg0, arg1) {
             this.removeClass('as-text-align-center');
             this.$selectlistBox.removeClass('as-text-align-center');
         }
-    }
-    else {
-        return AElement.prototype.addStyle.apply(this, arguments);
+        return arg1;
     }
 };
 
