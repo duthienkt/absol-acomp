@@ -1,12 +1,17 @@
 import '../css/switch.css';
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import CheckBoxInput from "./CheckBoxInput";
+import { AbstractStyleExtended } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
 
-
+/**
+ * @augments AbstractStyleExtended
+ * @extends AElement
+ * @constructor
+ */
 function Switch() {
     var thisS = this;
     this.$input = $('input', this);
@@ -18,7 +23,10 @@ function Switch() {
     this.on('click', function (event){
         if (this.readOnly) event.preventDefault();
     }, true);
+    AbstractStyleExtended.call(this);
 }
+
+mixClass(Switch, AbstractStyleExtended);
 
 
 Switch.tag = 'switch';
