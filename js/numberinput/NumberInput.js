@@ -8,6 +8,8 @@ import AElement from "absol/src/HTML5/AElement";
 import Hanger from "../Hanger";
 import Rectangle from "absol/src/Math/Rectangle";
 import Vec2 from "absol/src/Math/Vec2";
+import { AbstractStyleExtended } from "../Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -36,6 +38,10 @@ function NumberInput() {
     // .on('change', this.eventHandler.change);
     this.$input.value = '0';
 
+    this.$input.on('blur', ()=>{
+        this.emit('blur', {target: this, type: 'blur'}, this);//todo: check
+    });
+
     this._prevValue = 0;//to know whenever the value changed
     this._value = 0;
     this._max = Infinity;
@@ -57,7 +63,7 @@ function NumberInput() {
     });
 
     this.dragCtrl = new NIDragController(this);
-
+    AbstractStyleExtended.call(this);
     /****
      * @name min
      * @type {number}
@@ -138,12 +144,14 @@ function NumberInput() {
 
 }
 
+mixClass(NumberInput, AbstractStyleExtended);
+
 NumberInput.tag = 'NumberInput'.toLowerCase();
 
 NumberInput.render = function () {
     return _({
         class: ['absol-number-input', 'as-must-not-null'],
-        extendEvent: ['change'],
+        extendEvent: ['change', 'blur', 'focus'],
         child: [
             {
                 class: 'absol-number-input-text-container',
@@ -168,13 +176,9 @@ NumberInput.render = function () {
     });
 };
 
-NumberInput.prototype.addStyle = function (arg0, arg1) {
-    if (arg0 === 'textAlign' || arg0 === 'text-align') {
-        this.$input.addStyle(arg0, arg1);
-        return this;
-    }
-    else {
-        return AElement.prototype.addStyle.apply(this, arguments);
+NumberInput.prototype.styleHandlers.textAlign = {
+    set: function (value) {
+        this.$input.addStyle('textAlign', value);
     }
 };
 
@@ -214,7 +218,7 @@ NumberInput.prototype.prevStep = function () {
     }
     var step = this.step;
 
-    var idx = nearFloor((this.value - ofs) /step, 0.01);
+    var idx = nearFloor((this.value - ofs) / step, 0.01);
     this._value = Math.max(step * (idx - 1) + ofs, this.min);
     this._value = numberAutoFixed(this._value, (step + '').length);
     this.textCtrl.flushValueToText();
@@ -323,7 +327,7 @@ NumberInput.property.value = {
 
         if (this._format.maximumFractionDigits === 0) {
             if (isNaturalNumber(this._format.pow10)) {
-                value =  Math.round(value / Math.pow(10, this._format.pow10)) *  Math.pow(10, this._format.pow10);
+                value = Math.round(value / Math.pow(10, this._format.pow10)) * Math.pow(10, this._format.pow10);
             }
             else {
                 value = Math.round(value);

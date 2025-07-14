@@ -11,7 +11,26 @@
     width: 4em;
     --text-width: 0.5em;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    overflow: hidden;
 }
+
+.absol-number-input[data-size="large"] {
+    height: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+
+.absol-number-input[data-size="regular"] {
+    height: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
+
+.absol-number-input[data-size="small"] {
+    height: var(--small-size);
+    border-radius: var(--small-radius);
+}
+
 
 .absol-number-input.as-width-auto {
     width: calc(var(--text-width) + 1em);

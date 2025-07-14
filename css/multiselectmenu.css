@@ -20,6 +20,23 @@
     max-width: var(--as-width-limit);
 }
 
+
+
+.as-multi-select-menu[data-size="large"] {
+    min-height: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+.as-multi-select-menu[data-size="regular"] {
+    min-height: var(--default-size);
+    border-radius: var(--default-radius);
+}
+.as-multi-select-menu[data-size="small"] {
+    min-height: var(--small-size);
+    border-radius: var(--small-radius);
+}
+
+
 .as-multi-select-menu.am-multi-select-menu {
     min-width: unset;
 }
@@ -131,9 +148,12 @@
 .as-multi-select-menu.as-has-max-width {
     --max-width: 1024px;
     max-width: var(--max-width);
-    min-width: 100px !important;
+    overflow: hidden;
+    min-width: unset !important;
 }
 
 .as-multi-select-menu.as-has-max-width  .absol-selectbox-item-text span{
     max-width: calc(var(--max-width) - 85px);
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

@@ -1,6 +1,6 @@
 import MultiSelectMenu from "./MultiSelectMenu";
 import ACore, { _, $ } from "../ACore";
-import OOP, { drillProperty } from "absol/src/HTML5/OOP";
+import OOP, { drillProperty, mixClass } from "absol/src/HTML5/OOP";
 import { CheckListBox } from "./CheckListBox";
 import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
@@ -12,6 +12,8 @@ import AElement from "absol/src/HTML5/AElement";
 import { loadLanguageModule } from "./MultiLanguageCSS";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MCheckListModal from "./multicheckmenu/MCheckListModal";
+import { AbstractStyleExtended } from "./Abstraction";
+import TIHistory from "./tokenizeiput/TIHistory";
 
 
 var hitItem = event => {
@@ -32,6 +34,7 @@ var hitClose = event => {
 
 
 /***
+ * @augments AbstractStyleExtended
  * @extends AElement
  * @constructor
  */
@@ -74,7 +77,7 @@ function MultiCheckMenu() {
     this.orderly = true;//always true
     this.itemFocusable = false;
 
-
+    AbstractStyleExtended.call(this);
     /**
      * @type {boolean}
      * @memberof MultiCheckMenu#
@@ -96,6 +99,7 @@ function MultiCheckMenu() {
 
 }
 
+mixClass(MultiCheckMenu, AbstractStyleExtended);
 
 MultiCheckMenu.tag = 'MultiCheckMenu'.toLowerCase();
 
@@ -108,30 +112,41 @@ delete MultiCheckMenu.property.isFocus;
 delete MultiCheckMenu.property.orderly;
 
 
-MultiCheckMenu.prototype.styleHandlers = {};
 
-MultiCheckMenu.prototype.styleHandlers.maxWidth = function (value) {
-    var parsedValue = parseMeasureValue(value);
-    if (parsedValue.unit === 'px') {
-        this.addClass('as-has-max-width');
-        this.addStyle('--max-width', value);
+MultiCheckMenu.prototype.styleHandlers.maxWidth = {
+    set:  function (value) {
+        var parsedValue = parseMeasureValue(value);
+        if (parsedValue && parsedValue.unit === 'px') {
+            this.addClass('as-has-max-width');
+            this.addStyle('--max-width', value);
+        }
+        else {
+            this.removeClass('as-has-max-width');
+        }
+        if (value === 'unset') {
+            this.style.maxWidth = "unset";
+        }
+        return value;
     }
-    else {
-        this.removeClass('as-has-max-width');
-    }
-};
+}
 
 MultiCheckMenu.prototype.styleHandlers['max-width'] = MultiCheckMenu.prototype.styleHandlers.maxWidth;
 
-MultiCheckMenu.prototype.styleHandlers.width = function (value) {
-    var parsedValue = parseMeasureValue(value);
-    if (parsedValue.unit === 'px') {
-        this.addClass('as-has-max-width');
-        this.addStyle('--max-width', value);
-        this.style.width = value;
-    }
-    else {
-        this.removeClass('as-has-max-width');
+MultiCheckMenu.prototype.styleHandlers.width = {
+    set: function (value) {
+        var parsedValue = parseMeasureValue(value);
+        if (parsedValue.unit === 'px') {
+            this.addClass('as-has-max-width');
+            this.addStyle('--max-width', value);
+            this.style.width = value;
+        }
+        else if(parsedValue && parsedValue.unit === '%'){
+            this.style.width = value;
+        }
+        else {
+            this.removeClass('as-has-max-width');
+        }
+        return value;
     }
 };
 
@@ -139,58 +154,45 @@ MultiCheckMenu.prototype.styleHandlers.width = function (value) {
  * @this MultiCheckMenu
  * @param value
  */
-MultiCheckMenu.prototype.styleHandlers.maxHeight = function (value) {
-    var psValue = parseMeasureValue(value);
-    if (psValue) {
-        switch (psValue.unit) {
-            case 'px':
-                psValue.value = Math.min(psValue.value, 90);
-                break;
-            case 'em':
-            case 'rem':
-                psValue.value = Math.min(psValue.value, 90 / 14);
-                break;
+MultiCheckMenu.prototype.styleHandlers.maxHeight = {
+    set: function (value) {
+        var psValue = parseMeasureValue(value);
+        if (psValue) {
+            switch (psValue.unit) {
+                case 'px':
+                    psValue.value = Math.min(psValue.value, 90);
+                    break;
+                case 'em':
+                case 'rem':
+                    psValue.value = Math.min(psValue.value, 90 / 14);
+                    break;
+            }
+            this.$itemCtn.addStyle('max-height', psValue.value + psValue.unit);
         }
-        this.$itemCtn.addStyle('max-height', psValue.value + psValue.unit);
-    }
-    else {
-        this.$itemCtn.removeStyle('max-height');
+        else {
+            this.$itemCtn.removeStyle('max-height');
+        }
+        return value;
     }
 };
 
 MultiCheckMenu.prototype.styleHandlers['max-height'] = MultiCheckMenu.prototype.styleHandlers.maxHeight;
-MultiCheckMenu.prototype.styleHandlers.hidden = function (value) {
-    if (value === 'hidden') {
-        this.style.overflow = 'hidden';
-        this.$itemCtn.style.overflow = 'hidden';
-    }
-    else {
-        this.style.overflow = '';
-        this.$itemCtn.style.overflow = '';
+MultiCheckMenu.prototype.styleHandlers.overflow = {
+    set: function (value) {
+        if (value === 'hidden') {
+            this.style.overflow = 'hidden';
+            this.$itemCtn.style.overflow = 'hidden';
+        }
+        else {
+            this.style.overflow = '';
+            this.$itemCtn.style.overflow = '';
 
-    }
-}
-
-
-MultiCheckMenu.prototype.addStyle = function (arg0, arg1) {
-    if ((typeof arg0 === "string") && (this.styleHandlers[arg0])) {
-        this.styleHandlers[arg0].apply(this, Array.prototype.slice.call(arguments, 1));
-        return this;
-    }
-    else {
-        return AElement.prototype.addStyle.apply(this, arguments);
+        }
+        return value;
     }
 };
 
-MultiCheckMenu.prototype.removeStyle = function (arg0) {
-    if ((typeof arg0 === "string") && (this.styleHandlers[arg0])) {
-        this.styleHandlers[arg0].call(this, '');
-        return this;
-    }
-    else {
-        return AElement.prototype.removeStyle.apply(this, arguments);
-    }
-};
+
 
 MultiCheckMenu.prototype._updateOverflow = function () {
     //todo: calc item size before render

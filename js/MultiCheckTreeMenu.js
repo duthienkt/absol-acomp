@@ -13,9 +13,12 @@ import { parseMeasureValue } from "absol/src/JSX/attribute";
 import CheckUnsafeTreeLeafOnlyBox from "./CheckUnsafeTreeLeafOnlyBox";
 import { arrayCompare, arrayUnique } from "absol/src/DataStructure/Array";
 import LangSys from "absol/src/HTML5/LanguageSystem";
+import { AbstractStyleExtended } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 
 /***
+ * @augments AbstractStyleExtended
  * @extends AElement
  * @constructor
  */
@@ -48,7 +51,7 @@ function MultiCheckTreeMenu() {
     this.on('mousedown', this.eventHandler.click);
     this.dropdownCtrl = new MCTMDropController(this);
     // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
-
+    AbstractStyleExtended.call(this);
     /**
      * @name readOnly
      * @type {boolean}
@@ -81,6 +84,7 @@ function MultiCheckTreeMenu() {
 
 }
 
+mixClass(MultiCheckTreeMenu, AbstractStyleExtended);
 
 MultiCheckTreeMenu.tag = 'MultiCheckTreeMenu'.toLowerCase();
 
@@ -126,62 +130,50 @@ MultiCheckTreeMenu.render = function (data, domDesc) {
 
 MultiCheckTreeMenu.prototype.tokenPool = [];
 
-MultiCheckTreeMenu.prototype.styleHandlers = {};
 
-MultiCheckTreeMenu.prototype.styleHandlers.maxWidth = function (value) {
-    var parsedValue = parseMeasureValue(value);
-    if (parsedValue.unit === 'px') {
-        this.addClass('as-has-max-width');
-        this.addStyle('--max-width', value);
-    }
-    else {
-        this.removeClass('as-has-max-width');
-    }
-};
-
-MultiCheckTreeMenu.prototype.styleHandlers['max-width'] = MultiCheckTreeMenu.prototype.styleHandlers.maxWidth;
-
-MultiCheckTreeMenu.prototype.styleHandlers.width = function (value) {
-    var parsedValue = parseMeasureValue(value);
-    if (parsedValue.unit === 'px') {
-        this.addClass('as-has-max-width');
-        this.addStyle('--max-width', value);
-        this.style.width = value;
-    }
-    else {
-        this.removeClass('as-has-max-width');
-    }
-};
-
-MultiCheckTreeMenu.prototype.styleHandlers.overflow = function (value) {
-    if (value === 'hidden') {
-        this.style.overflow = 'hidden';
-    }
-    else {
-        this.style.overflow = '';
+MultiCheckTreeMenu.prototype.styleHandlers.maxWidth = {
+    set: function (value) {
+        var parsedValue = parseMeasureValue(value);
+        if (parsedValue.unit === 'px') {
+            this.addClass('as-has-max-width');
+            this.addStyle('--max-width', value);
+        }
+        else {
+            this.removeClass('as-has-max-width');
+        }
+        return value;
     }
 };
 
 
-MultiCheckTreeMenu.prototype.addStyle = function (arg0, arg1) {
-    if ((typeof arg0 === "string") && (this.styleHandlers[arg0])) {
-        this.styleHandlers[arg0].apply(this, Array.prototype.slice.call(arguments, 1));
-        return this;
-    }
-    else {
-        return AElement.prototype.addStyle.apply(this, arguments);
+MultiCheckTreeMenu.prototype.styleHandlers.width = {
+    set: function (value) {
+        var parsedValue = parseMeasureValue(value);
+        if (parsedValue.unit === 'px') {
+            this.addClass('as-has-max-width');
+            this.addStyle('--max-width', value);
+            this.style.width = value;
+        }
+        else {
+            this.removeClass('as-has-max-width');
+        }
+        return value;
     }
 };
 
-MultiCheckTreeMenu.prototype.removeStyle = function (arg0) {
-    if ((typeof arg0 === "string") && (this.styleHandlers[arg0])) {
-        this.styleHandlers[arg0].call(this, '');
-        return this;
-    }
-    else {
-        return AElement.prototype.removeStyle.apply(this, arguments);
+MultiCheckTreeMenu.prototype.styleHandlers.overflow = {
+    set: function (value) {
+        if (value === 'hidden') {
+            this.style.overflow = 'hidden';
+        }
+        else {
+            this.style.overflow = '';
+        }
+        return value;
     }
 };
+
+
 
 
 MultiCheckTreeMenu.prototype._requestToken = function () {
@@ -360,7 +352,7 @@ MultiCheckTreeMenu.property.items = {
         this._values = this.$checkTreeBox.values.slice();
     },
     get: function () {
-        return this.$checkTreeBox.items ||[];
+        return this.$checkTreeBox.items || [];
     }
 };
 
