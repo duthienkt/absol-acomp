@@ -1,12 +1,13 @@
 import ACore, { _, $ } from '../ACore';
 import SelectTreeLeafBox from "./SelectTreeLeafBox";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import SelectMenu from "./SelectMenu2";
 import { copySelectionItemArray, keyStringOf } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MSelectTreeLeafBox from "./selecttreeleafbox/MSelectTreeLeafBox";
+import { AbstractStyleExtended } from "./Abstraction";
 
 
 /***
@@ -31,7 +32,7 @@ function SelectTreeLeafMenu() {
     // this.on('click', this.eventHandler.click.bind(this));
     this.boxCtrl = new STLBoxController(this);
     OOP.drillProperty(this, this.boxCtrl, 'isFocus');
-
+    AbstractStyleExtended.call(this);
     /**
      * @name items
      * @type {Array}
@@ -69,13 +70,15 @@ function SelectTreeLeafMenu() {
 
 }
 
+mixClass(SelectTreeLeafMenu, AbstractStyleExtended);
+
 SelectTreeLeafMenu.tag = 'SelectTreeLeafMenu'.toLowerCase();
 
 SelectTreeLeafMenu.render = function () {
     var mobile = BrowserDetector.isMobile;
     return _({
         class: ['absol-selectmenu', 'as-select-menu', 'as-select-tree-leaf-menu', 'as-strict-value'],
-        extendEvent: ['change'],
+        extendEvent: ['change', 'blur', 'focus'],
         props: {
             mobile: mobile
         },
@@ -284,7 +287,8 @@ Object.defineProperty(STLBoxController.prototype, 'isFocus', {
                 this.elt.on('click', this.ev_click);
             }, 100);
             this.elt.$selectBox.resetSearchState();
-
+            this.elt.defineEvent('blur');
+            this.elt.emit('blur', {type:'blur'}, this.elt);
         }
     },
     get: function () {
