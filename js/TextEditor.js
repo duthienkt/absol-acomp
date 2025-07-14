@@ -1,10 +1,34 @@
 import '../css/texteditor.css';
+import '../css/common.css';
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import { getTextNodesIn, getTextIn, measureText } from "absol/src/HTML5/Text";
+import { AbstractStyleExtended } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
+
+/**
+ * @augments
+ * @extends AElement
+ * @constructor
+ */
+export function TextInput() {
+    AbstractStyleExtended.call(this);
+}
+
+mixClass(TextInput, AbstractStyleExtended);
+
+TextInput.tag = 'textinput';
+TextInput.render = function () {
+    return _({
+        tag: 'input',
+        class: 'as-text-input',
+        attr: {
+            type: 'text'
+        }
+    });
+};
 
 
 function TextEditor() {
@@ -90,7 +114,7 @@ TextEditor.eventHandler.paste = function (event) {
     setTimeout(this._normalizeLineElt.bind(this, this._lineOf(event.target)), 1);
 };
 
-TextEditor.prototype._normalizeLineEltFrom = function (elt){
+TextEditor.prototype._normalizeLineEltFrom = function (elt) {
 
 }
 
@@ -132,12 +156,11 @@ TextEditor.prototype._normalizeLineElt = function (elt) {
     }
 
     var range = document.createRange();
-    
+
     range.setStart(cLine.childNodes[0], newOffset);
     var sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
-
 
 
 };
@@ -175,8 +198,6 @@ TextEditor.prototype._lineOf = function (node) {
     }
     return undefined;
 };
-
-
 
 
 TextEditor.prototype.getSelection = function () {
