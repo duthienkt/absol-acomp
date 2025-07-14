@@ -98,8 +98,8 @@
     position: relative;
 }
 
-.as-chrome-time-picker-list.as-chrome-time-picker-m60>button,
-.as-chrome-time-picker-list.as-chrome-time-picker-h24>button{
+.as-chrome-time-picker-list.as-chrome-time-picker-m60 > button,
+.as-chrome-time-picker-list.as-chrome-time-picker-h24 > button {
     display: block;
     position: absolute;
     left: 0;
@@ -120,7 +120,7 @@
     padding: 0;
     border: none;
     background-color: transparent;
-    color: black;
+    color: var(--dark-color);
 }
 
 .as-chrome-time-picker-btn:disabled {

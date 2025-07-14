@@ -411,7 +411,7 @@ button.absol-chrome-calendar-button-disabled,
 
 
 .absol-chrome-calendar-in-decade:not(.absol-chrome-calendar-date-disabled) {
-    color: black;
+    color:  var(--dark-color);
 }
 
 /*.absol-chrome-calendar-era*/
