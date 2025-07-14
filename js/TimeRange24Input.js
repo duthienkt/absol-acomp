@@ -11,8 +11,11 @@ import {
     MILLIS_PER_MINUTE
 } from "absol/src/Time/datetime";
 import LangSys from "absol/src/HTML5/LanguageSystem";
+import { AbstractStyleExtended } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 /***
+ * @augments
  * @extends AElement
  * @constructor
  */
@@ -35,6 +38,7 @@ function TimeRange24Input() {
      */
     this.$duration = $(Time24Input.tag, this);
     this.$duration.on('change', this.eventHandler.durationChange);
+    AbstractStyleExtended.call(this);
     /***
      * @type {number}
      * @name dayOffset
@@ -51,6 +55,8 @@ function TimeRange24Input() {
      * @memberOf TimeRange24Input#
      */
 }
+
+mixClass(TimeRange24Input, AbstractStyleExtended);
 
 TimeRange24Input.tag = 'TimeRange24Input'.toLowerCase();
 
@@ -69,6 +75,22 @@ TimeRange24Input.render = function () {
             Time24Input.tag
         ]
     });
+};
+
+/**
+ * @this TimeRange24Input
+ * @param value
+ * @returns {string}
+ */
+TimeRange24Input.prototype.styleHandlers.size.set = function (value) {
+    if (value === 'default') value = 'regular';
+    if (['v0', 'small', 'regular', 'large'].indexOf(value) < 0) {
+        value = 'regular';
+    }
+    this.attr('data-size', value);
+    this.$offset.extendStyle.size = value;
+    this.$duration.extendStyle.size = value;
+    return value;
 };
 
 TimeRange24Input.prototype.nextDateText = '(Next day)'

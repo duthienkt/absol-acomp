@@ -12,8 +12,9 @@ import DomSignal from "absol/src/HTML5/DomSignal";
 import DateTimeInput from "./DateTimeInput";
 import { isRealNumber, zeroPadding } from "./utils";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import { AbstractStyleExtended } from "./Abstraction";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
@@ -59,6 +60,7 @@ function TimeInput() {
     this.minute = null;
     this.disabled = false;
     this.notNull = true;
+    AbstractStyleExtended.call(this);
     /***
      * @memberOf TimeInput#
      * @name min
@@ -71,10 +73,9 @@ function TimeInput() {
      * @type {boolean}
      * @readonly
      */
-
-
 }
 
+mixClass(TimeInput, AbstractStyleExtended);
 
 TimeInput.tag = 'timeinput';
 

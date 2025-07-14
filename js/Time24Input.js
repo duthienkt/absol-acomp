@@ -19,6 +19,8 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
 import LangSys from "absol/src/HTML5/LanguageSystem";
 import { loadLanguageModule } from "./MultiLanguageCSS";
+import { AbstractStyleExtended } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 
 /**
@@ -52,7 +54,7 @@ function Time24Input() {
     setTimeout(() => {
     }, 1000);
 
-
+    AbstractStyleExtended.call(this);
     /**
      * @type {string}
      * @name format
@@ -91,6 +93,8 @@ function Time24Input() {
      * @memberof Time24Input#
      */
 }
+
+mixClass(Time24Input, AbstractStyleExtended);
 
 Time24Input.tag = 'Time24Input'.toLowerCase();
 
@@ -269,7 +273,7 @@ Time24Input.property.value = {
     get: function () {
         if (!isRealNumber(this._hour) || !isRealNumber(this._minute)) return null;
         var mil = clockToMillis(this._hour, this._minute);
-        if (mil < this.dayOffset||(mil === this.dayOffset && this._nd)) mil += MILLIS_PER_DAY;
+        if (mil < this.dayOffset || (mil === this.dayOffset && this._nd)) mil += MILLIS_PER_DAY;
         mil -= this.dayOffset;
         return mil;
     }
@@ -901,7 +905,7 @@ T24ITextController.prototype.ev_keydown = function (event) {
                     token.replace(CHAR_NBSP, true);
                 }
                 else
-                token.replace(token.ident === 'a' ? 'AM' : zeroPadding((token.ident === 'hh' || token.ident === 'h') ? 12 : 0, token.ident.length), true);
+                    token.replace(token.ident === 'a' ? 'AM' : zeroPadding((token.ident === 'hh' || token.ident === 'h') ? 12 : 0, token.ident.length), true);
             }
             else {
                 token.replace(token.ident, true);

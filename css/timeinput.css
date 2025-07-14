@@ -1,6 +1,7 @@
 .ac-time-input {
     box-sizing: border-box;
-    height: calc(2em + 2px);
+    --base-size: calc(2em + 2px);
+    height: var(--base-size);
     width: 9em;
     border: solid 1px #d6d6d6;
     border-radius: 2px;
@@ -11,7 +12,27 @@
     vertical-align: middle;
     background-color: white;
     position: relative;
+    overflow: hidden;
 }
+
+.ac-time-input[data-size="large"] {
+    --base-size: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+
+.ac-time-input[data-size="regular"] {
+    --base-size: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
+
+
+.ac-time-input[data-size="small"] {
+    --base-size: var(--small-size);
+    border-radius: var(--small-radius);
+}
+
 
 .ac-time-input.as-disabled {
     color: rgb(102, 102, 102);
@@ -37,7 +58,7 @@
 .ac-time-input input {
     font: inherit;
     outline: none;
-    width: calc(100% - 2em - 2px);
+    width: calc(100% - var(--base-size));
     height: 100%;
     border: none;
     display: block;
@@ -64,7 +85,7 @@
     top: 0;
     bottom: 0;
     right: 0;
-    width: calc(2em + 1px);
+    width: var(--base-size);
     box-sizing: border-box;
     background-color: rgba(169, 169, 169, 0.1);
     cursor: pointer;
@@ -101,7 +122,7 @@
 .as-time-input-clear-btn {
     font-size: inherit;
     position: absolute;
-    right: calc(2em + 2px);
+    right: var(--base-size);
     height: 2em;
     top: calc(50% - 1em);
     box-sizing: border-box;
