@@ -93,7 +93,7 @@ import {
     ImportantOutlineIcon,
     MdiStoreMarkerOutline,
     ProcedureOutlineIcon,
-    ProcessOutlineIcon,
+    ProcessOutlineIcon, SmileIcon,
     SpinnerIco
 } from "../Icons";
 import EmojiPickerTooltip from "../EmojiPickerTooltip";
@@ -191,6 +191,9 @@ import NotificationPanel, {
 import PickingList from "../PickingList";
 import ListCompareTool from "../ListCompareTool";
 import StackedHorizontalBar from "../StackedHorizontalBar";
+import FolderLikeTabBar from "../FolderLikeTabBar";
+import { TextInput } from "../TextEditor";
+import PositionTracker from "../PositionTracker";
 
 
 export var publicCreators = [
@@ -271,6 +274,7 @@ export var publicCreators = [
     FrameView,
     TabFrame,
     TabView,
+    FolderLikeTabBar,
     SinglePage,
     HexaSectionLabel,
     VRuler,
@@ -334,6 +338,7 @@ export var publicCreators = [
     TreeTable,
     TextArea2,
     TextClipboard,
+    TextInput,
     TimeInput,
     Time24Input,
     TimeRange24Input,
@@ -350,9 +355,11 @@ export var publicCreators = [
     TrackBar,
     TrackBarInput,
     SpinnerIco,
+    SmileIcon,
     ProcessOutlineIcon,
     ProcedureOutlineIcon,
     ImportantOutlineIcon,
+    PositionTracker,
     EmojiMutedIcon,
     VerticalTreeDiagramNode,
     VerticalTreeDiagram,
