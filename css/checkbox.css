@@ -44,10 +44,10 @@
     padding-left: 0.3em;
 }
 
-.absol-checkbox.as-no-label {
-    width: calc(1em + 2px);
-    height: calc(1em + 2px);
-}
+/*.absol-checkbox.as-no-label {*/
+/*    width: calc(1em + 2px);*/
+/*    height: calc(1em + 2px);*/
+/*}*/
 
 
 .absol-checkbox.as-no-label .absol-checkbox-label {
