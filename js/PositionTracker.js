@@ -11,6 +11,7 @@ function PositionTracker() {
     this.defineEvent('positionchange');
     this.$trackScrollParents = [];
     this._scrollTrackEventHandler = this.notifyPositionChange.bind(this);
+    this.autoStop = true;
 }
 
 PositionTracker.tag = 'PositionTracker'.toLowerCase();
@@ -25,6 +26,10 @@ PositionTracker.render = function () {
 
 
 PositionTracker.prototype.notifyPositionChange = function (event) {
+    if (!this.isDescendantOf(document.body)) {
+        this.stopTrackPosition();
+        return;
+    }
     this.emit('positionchange', { type: 'positionchange', originEvent: event });
 };
 
