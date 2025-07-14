@@ -13,7 +13,7 @@
     height: var(--base-size);
     font-size: 1rem;
     cursor: pointer;
-    color: black;
+    color:  var(--dark-color);
     font-family: Arial, Helvetica, sans-serif;
     white-space: nowrap;
 }
@@ -171,7 +171,7 @@
 .as-flexicon-button[data-variant="light"] {
     background-color: white;
     border: 1px solid var(--border-color);
-    color: black;
+    color:  var(--dark-color);
 }
 
 .as-flexicon-button[data-variant="light"]:hover {
@@ -187,7 +187,7 @@
 
 
 .as-flexicon-button[data-variant="light"]:active {
-    color: black;
+    color:  var(--dark-color);
     background-color: #9A9C9E;
 }
 
@@ -247,7 +247,7 @@
     border: var(--button-border);
     border-radius: var(--button-round-coner);
     background-color: var(--button-background-color_1);
-    color: black;
+    color:  var(--dark-color);
 
 }
 
@@ -423,7 +423,7 @@ div.as-flexicon-button-text-container {
 .as-flexicon-button.warning {
     border-color: #9e7700;
     background-color: #e0a800;
-    color: black;
+    color:  var(--dark-color);
 }
 
 .as-flexicon-button.warning .as-flexicon-button-icon-container {

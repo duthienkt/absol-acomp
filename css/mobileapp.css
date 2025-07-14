@@ -446,7 +446,7 @@ button.am-header-bar-action {
 
 .am-springboard-menu.as-style-desktop .am-explore-section-break-name {
     background-color: white;
-    color: black;
+    color: var(--dark-color);
     font-weight: bold;
     font-size: 14px;
 }
