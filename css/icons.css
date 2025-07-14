@@ -1,0 +1,20 @@
+.as-smile-ico path {
+    fill: currentColor;
+}
+
+
+.as-smile-rate .as-smile-ico {
+    display: inline-block;
+    vertical-align: middle;
+    height: 1em;
+    width: 1em;
+}
+
+.as-smile-rate .as-smile-ico:not(:last-child) {
+    margin-right: 0.5em;
+}
+
+.as-smile-rate .as-smile-ico:not(.as-active) {
+    color: var(--border-color);
+}
+
