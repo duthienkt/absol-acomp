@@ -21,6 +21,22 @@ textarea.as-text-input:disabled {
     background-color: var(--as-disabled-background-color);
 }
 
+.as-text-input[data-size="large"] {
+    font-size: var(--large-font-size);
+    height: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
+.as-text-input[data-size="regular"] {
+    font-size: var(--default-font-size);
+    height: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
+.as-text-input:focus {
+
+}
+
 
 .as-blink-text {
     --blink-duration: 1s;
@@ -172,4 +188,8 @@ button.as-transparent-button:disabled {
     right: 0;
     top: calc(50% - 1px);
     border-top: 1px solid #dddddd;
+}
+
+.as-display-hidden {
+    display: none !important;
 }
