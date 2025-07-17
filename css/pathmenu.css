@@ -31,7 +31,20 @@
     height: calc(2em + 2px);
 }
 
+.as-path-view[data-size="large"] {
+    font-size: var(--large-font-size);
+    height: var(--large-size);
+}
+
+/*span.as-path-view-item-icon, i.as-path-view-item-icon*/
+/*.as-path-view[data-size="large"] span.as-path-view-item-icon,*/
+/*.as-path-view[data-size="large"] i.as-path-view-item-icon*/
+/*{*/
+/*    font-size: var(--large-font-size);*/
+/*}*/
+
 .as-path-view-item {
+    color: var(--dark-color);
     display: inline-block;
     white-space: nowrap;
     background: transparent;

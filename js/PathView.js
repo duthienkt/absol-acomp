@@ -1,14 +1,20 @@
 import ACore, { _, $ } from "../ACore";
 import '../css/pathmenu.css';
+import { AbstractStyleExtended } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 /***
+ * @augments AbstractStyleExtended
  * @extends AElement
  * @constructor
  */
 function PathView() {
     this._items = [];
     this.$items = [];
+    AbstractStyleExtended.call(this);
 }
+
+mixClass(PathView, AbstractStyleExtended);
 
 PathView.tag = 'PathView'.toLowerCase();
 
