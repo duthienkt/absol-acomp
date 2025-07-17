@@ -95,6 +95,18 @@
 }
 
 
+.as-flexicon-button[data-size="text"] {
+    font-size: inherit;
+    --base-size: calc(2em + 2px);
+    --base-padding: calc(1em + 2px);
+    min-width: var(--default-button-min-width);
+}
+
+.as-flexicon-button[data-size="text"] .as-flexicon-button-icon-container {
+    font-size: calc(20em / 14);
+}
+
+
 .as-flexicon-button[data-variant="primary"] {
     background-color: var(--primary-color);
     color: white;

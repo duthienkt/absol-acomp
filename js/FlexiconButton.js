@@ -51,6 +51,37 @@ FlexiconButton.render = function () {
 };
 
 
+FlexiconButton.prototype.styleHandlers.fontSize = {
+    set: function (value) {
+        if (value) {
+            if (typeof value === 'number') {
+                value = value + 'px';
+            }
+            this.style.fontSize = value;
+            this.extendStyle.size = 'text';
+            console.log('set font size', value);
+        }
+        else {
+            this.style.fontSize = '';
+        }
+    }
+};
+
+FlexiconButton.prototype.styleHandlers.size = {
+    /**
+     * @this {AbstractStyleExtended}
+     * @param value
+     */
+    set: function (value) {
+        if (value === 'default') value = 'regular';
+        if (['v0', 'small', 'regular', 'large', 'text'].indexOf(value) < 0) {
+            value = 'regular';
+        }
+        this.attr('data-size', value);
+        return value;
+    }
+};
+
 FlexiconButton.prototype.styleHandlers.variant = {
     set: function (value) {
         if (['v0', 'primary', 'tertiary', 'secondary', 'light', 'link', 'danger'].indexOf(value) < 0) {
