@@ -91,22 +91,22 @@ button.am-header-bar-command:active {
 }
 
 .as-header-bar-notification-action-count::before {
-        display: none;
-        content: "0";
-        position: absolute;
-        font-size: 12px;
-        line-height: 18px;
-        bottom: 5px;
-        right: -8px;
-        background-color: rgb(221, 35, 52);
-        color: white;
-        text-align: center;
-        min-width: 18px;
-        height: 18px;
-        padding-left: 2px;
-        padding-right: 2px;
-        box-sizing: border-box;
-        border-radius: 9px;
+    display: none;
+    content: "0";
+    position: absolute;
+    font-size: 12px;
+    line-height: 18px;
+    bottom: 5px;
+    right: -8px;
+    background-color: rgb(221, 35, 52);
+    color: white;
+    text-align: center;
+    min-width: 18px;
+    height: 18px;
+    padding-left: 2px;
+    padding-right: 2px;
+    box-sizing: border-box;
+    border-radius: 9px;
 }
 
 .am-header-bar-title-ctn {
@@ -327,7 +327,8 @@ button.am-header-bar-action {
     line-height: 1;
 }
 
-.am-explore-item-block-icon > svg {
+.am-explore-item-block-icon > svg,
+.am-explore-item-block-icon > img {
     width: 50px;
     height: 50px;
     display: inline-block;

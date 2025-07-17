@@ -286,8 +286,19 @@ export function MSpringboardMenu() {
         ResizeSystem.add(this);
         this.updateSize();
         this.keyboardCtrl.lowPriorityFocus();
+        if (obs) {
+            obs.disconnect();
+            obs = null;
+        }
     });
     this.$attachHook.requestUpdateSize = this.updateSize.bind(this);
+    var obs = new  IntersectionObserver(entries => {
+        this.updateSize();
+    }, {
+        root: document.body,
+    });
+
+    obs.observe(this);
 
     this.searchingPlugin = new MSMSearchingPlugin(this);
     /**
