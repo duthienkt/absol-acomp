@@ -36,11 +36,14 @@ QuickMenu.render = function () {
 
 ACore.install(QuickMenu);
 
+/**
+ * @typedef {object|{triggerEvent:string, menuProps,getMenuProps, anchor,  onClick, onSelect,onOpen, onClose, menuCtn, getAnchor}} QuickMenuOptions
+ */
 
 /***
  *
  * @param {AElement} elt
- * @param opt
+ * @param  {QuickMenuOptions} opt
  * @constructor
  */
 export function QuickMenuInstance(elt, opt) {
@@ -54,7 +57,7 @@ export function QuickMenuInstance(elt, opt) {
     this.elt = elt;
     /**
      *
-     * @type {object|{triggerEvent:string, menuProps,getMenuProps, anchor,  onClick, onSelect,onOpen, onClose, menuCtn, getAnchor}}
+     * @type {QuickMenuOptions}
      */
     this.opt = Object.assign({}, opt);
     for (var key in this) {
@@ -71,7 +74,7 @@ QuickMenuInstance.prototype._init = function () {
         $(this.elt).on('contextmenu', function (event) {
             event.preventDefault();
         }).attr('oncontextmenu', "return false;");
-    if (this.opt.triggerEvent) {
+    if (this.opt.triggerEvent && this.opt.triggerEvent !== 'none') {
         this.elt.addEventListener(this.opt.triggerEvent, this._onClick, true);
     }
     else
@@ -87,7 +90,7 @@ QuickMenuInstance.prototype._init = function () {
 QuickMenuInstance.prototype._deinit = function () {
     if (this.state === "OPEN") this.close();
     this.elt.classList.remove('as-quick-menu-trigger');
-    if (this.opt.triggerEvent) {
+    if (this.opt.triggerEvent && this.opt.triggerEvent !== 'none') {
         this.elt.removeEventListener(this.opt.triggerEvent, this._onClick, true);
     }
     else {
