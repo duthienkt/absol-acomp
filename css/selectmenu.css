@@ -112,6 +112,35 @@
     border-color: var(--border-color);
 }
 
+.absol-selectmenu[data-variant="secondary"] {
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.absol-selectmenu[data-variant="secondary"] path {
+    fill: var(--primary-color);
+}
+
+.absol-selectmenu[data-variant="secondary"] .absol-selectlist-item-desc {
+    color: var(--primary-color);
+    opacity: 0.5;
+}
+
+.absol-selectmenu[data-variant="secondary"]:hover {
+    background-color: var(--hover-secondary-color);
+    color: var(--hover-primary-color);
+    border-color: var(--hover-primary-color);
+}
+
+
+.absol-selectmenu[data-variant="secondary"]:active,
+.absol-selectmenu[data-variant="secondary"].as-focus {
+    background-color: var(--active-secondary-color);
+    color: var(--active-primary-color);
+    border-color: var(--active-primary-color);
+}
+
 .absol-selectmenu.as-border-none {
     border: none;
 }
@@ -257,6 +286,10 @@
     --select-list-desc-width: 0px;
     width: calc(var(--select-list-estimate-width) + 32px);
     min-width: calc(var(--select-list-estimate-width) + 32px);
+}
+
+.as-select-menu.as-background-none {
+    background-color: transparent;
 }
 
 /***********************************************************************************************************************/

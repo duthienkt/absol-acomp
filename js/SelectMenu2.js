@@ -7,7 +7,7 @@ import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import { measureText } from "./utils";
 import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput } from "./Abstraction";
 
 
 ACore.creator['dropdown-ico'] = function () {
@@ -22,7 +22,7 @@ ACore.creator['dropdown-ico'] = function () {
 
 
 /***
- * @augments {AbstractStyleExtended}
+ * @augments {AbstractInput}
  * @extends AElement
  * @constructor
  */
@@ -83,11 +83,12 @@ function SelectMenu() {
      * @memberOf SelectMenu#
      */
 
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
 }
 
-mixClass(SelectMenu, AbstractStyleExtended);
-
+mixClass(SelectMenu, AbstractInput);
+SelectMenu.prototype.extendStyle.variant = 'v0';
+SelectMenu.prototype.extendStyle.variant = 'v0';
 
 SelectMenu.tag = 'selectmenu';
 SelectMenu.render = function () {
@@ -124,6 +125,19 @@ SelectMenu.prototype.styleHandlers.textAlign = {
         return arg1;
     }
 };
+
+SelectMenu.prototype.styleHandlers.variant = {
+    set: function (value) {
+        if (['v0', 'secondary'].indexOf(value) < 0) {
+            value = 'v0';
+        }
+        this.attr('data-variant', value);
+        if (value !== 'v0' && this.extendStyle.size === 'v0') {
+            this.extendStyle.size = 'regular';
+        }
+        return value;
+    },
+}
 
 SelectMenu.prototype.init = function (props) {
     props = props || {};
@@ -196,7 +210,6 @@ SelectMenu.prototype._explicit = function (value) {
 };
 
 
-SelectMenu.property = {};
 SelectMenu.property.items = {
     set: function (items) {
         items = items || [];
@@ -234,6 +247,7 @@ SelectMenu.property.isFocus = {
         if (this._isFocus === value) return;
         this._isFocus = !!value;
         if (this._isFocus) {
+            this.addClass('as-focus');
             this.$selectlistBox.addTo(document.body);
             // this.$selectlistBox.domSignal.$attachhook.emit('attached');
             var bound = this.getBoundingClientRect();
@@ -248,6 +262,7 @@ SelectMenu.property.isFocus = {
             this.$selectlistBox.viewListAtFirstSelected();
         }
         else {
+            this.removeClass('as-focus');
             document.removeEventListener('click', thisSM.eventHandler.bodyClick);
             this.$selectlistBox.selfRemove();
             this.$selectlistBox.unfollow();
@@ -379,7 +394,7 @@ SelectMenu.eventHandler.preUpdateListPosition = function () {
     var outBound = traceOutBoundingClientRect(this);
     if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
         if (!BrowserDetector.isMobile)
-        this.isFocus = false;
+            this.isFocus = false;
     }
 };
 
