@@ -1,6 +1,7 @@
 import Attributes from "absol/src/AppPattern/Attributes";
 import AElement from "absol/src/HTML5/AElement";
 import { kebabCaseToCamelCase } from "absol/src/String/stringFormat";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 /**
  * @extends AElement
@@ -37,7 +38,7 @@ AbstractStyleExtended.prototype.addStyle = function (name, value) {
     var kbName;
     if (typeof name === 'string') {
         kbName = kebabCaseToCamelCase(name);
-        if (this.styleHandlers[name])
+        if (this.styleHandlers[kbName])
             name = kbName;
     }
     if (this.styleHandlers[name]) {
@@ -54,3 +55,53 @@ AbstractStyleExtended.prototype.removeStyle = function (name) {
     else AElement.prototype.addStyle.apply(this, arguments);
     return this;
 };
+
+/**
+ * @augments AbstractStyleExtended
+ * @constructor
+ */
+export function AbstractInput() {
+    AbstractStyleExtended.call(this);
+    /**
+     * true: default; borderless: no border, no padding, false: normal
+     * @type {"borderless"|boolean}
+     * @name outputMode
+     * @memberOf AbstractInput#
+     */
+}
+
+AbstractInput.property = {};
+
+AbstractInput.property.outputMode = {
+    set: function (value) {
+        if (value === 'borderless') {
+            this.addClass('as-border-none');
+            this.removeClass('as-background-none');
+
+        }
+        else if (value === "true" || value === true) {
+            this.removeClass('as-border-none');
+            this.addClass('as-background-none');
+        }
+        else if (value === 'default') {
+            this.removeClass('as-background-none');
+            this.removeClass('as-border-none');
+        }
+        else {
+            value = false;
+        }
+        this.readOnly = !!value;
+        this._outputMode = value;
+    },
+    get: function () {
+        if (this.readOnly) {
+            return this._outputMode || 'default';
+        }
+        else {
+            return false;
+        }
+    }
+};
+
+
+mixClass(AbstractInput, AbstractStyleExtended);
