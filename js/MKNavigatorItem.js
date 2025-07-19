@@ -32,6 +32,10 @@ MKNavigatorItem.render = function () {
                 child: '<i class="material-icons">drag_indicator</i>'
             },
             {
+                class: 'mk-nav-item-icon-ctn',
+                child:'span.mdi.mdi-chevron-down-circle'
+            },
+            {
                 class: 'mk-nav-item-text-ctn',
                 child: {
                     tag: 'span',
@@ -74,6 +78,26 @@ MKNavigatorItem.prototype.updateDraggable = function () {
 
 
 MKNavigatorItem.property = {};
+
+MKNavigatorItem.property.level = {
+    set: function (value) {
+        if (!value) value = 0;
+        if (value < 0) value = 0;
+        if (value) {
+            this.addStyle('--level', value);
+            this.addClass('as-children');
+        }
+        else {
+            this.removeStyle('--level', value);
+            this.removeClass('as-children')
+        }
+
+        this._level = value;
+    },
+    get: function (){
+        return this._level || 0;
+    }
+}
 
 MKNavigatorItem.property.data = {
     /**

@@ -103,7 +103,8 @@ MKNavigator.prototype.mkItem = function (data) {
             "data-value": data && data.value
         },
         props: {
-            data: data
+            data: data,
+            level: data.level || 0,
         },
         on: {
             checkedchange: function (event) {
@@ -155,7 +156,23 @@ MKNavigator.property.items = {
      */
     set: function (items) {
         items = items || [];
-        this._items = items;
+        this.rawItems = items;
+
+        var flatList = (items, level, ac) => {
+            ac = ac || [];
+            level = level || 0;
+            items.forEach((it) => {
+                ac.push(Object.assign({}, it, { level: level }));
+                if (it.items && it.items.length > 0) {
+                    flatList(it.items, level + 1, ac);
+                }
+            });
+
+            return ac;
+        }
+
+        this._items = flatList(items, 0, []);
+        items = this._items;
         this.$itemByValue = {};
         var i = 0;
         var item;
@@ -164,8 +181,12 @@ MKNavigator.property.items = {
         this.$body.clearChild();
         this.$footer.clearChild();
         var draggable = false;
+        var bodyStyle = getComputedStyle(document.body);
+        var levelWidth = bodyStyle.getPropertyValue('--distance-4') || '16px';
+        levelWidth = levelWidth.replace('px', '');
+        levelWidth = parseFloat(levelWidth) || 16;
         var maxTextWidth = items.reduce((ac, it) => {
-            var tw = measureText(it.text || '').width;
+            var tw = measureText(it.text || '', it.level ? '14px Arial' : '16px Arial').width + (it.level || 0) * levelWidth;
             return Math.max(ac, tw);
         }, 0);
         this.addStyle('--max-text-width', Math.ceil(maxTextWidth) + 'px');
@@ -204,7 +225,7 @@ MKNavigator.property.items = {
         this._updateHiddenValues();
     },
     get: function () {
-        return this._items;
+        return this.rawItems || [];
     }
 };
 
@@ -272,7 +293,12 @@ MKNavigator.eventHandler.dragItemStart = function (event) {
 
 
 ACore.install(MKNavigator);
-ACore.install('mknav',MKNavigator);
+ACore.install('mknav', MKNavigator);
 
 
 export default MKNavigator;
+
+function MKNDragTool(elt) {
+    this.elt = elt;
+}
+

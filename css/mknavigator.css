@@ -12,29 +12,24 @@
     -ms-user-select: none;
     -moz-user-select: none;
     --mk-navigator-bound-left: 0;
-    padding-right: 4px;
     box-sizing: border-box;
     --max-text-width: 10px;
-    min-width: calc(var(--max-text-width) + 96px);
+    min-width: calc(var(--max-text-width) + var(--distance-3) *2 + 20px + var(--distance-2) * 2 + 2px);
+    color: var(--dark-color);
+    border-radius: var(--large-radius);
+    background-color: white;
+    overflow: hidden;
 }
 
-.mk-nav::after {
-    content: "";
-    position: absolute;
-    transition: top 0.2s;
-    top: var(--mk-nav-line-top);
-    height:  calc(2em + 12px);
-    border-right: 4px solid rgb(20, 100, 246);
-    right: 0px;
-}
 
 .mk-nav.mk-has-draggable .mk-nav-item {
     padding-left: calc(2em + 2px);
 }
 
 .mk-nav-item {
-    height: calc(2em + 12px);
-    padding-left: var(--control-horizontal-distance-2);
+    font-size: 16px;
+    height: var(--large-size);
+    padding-left: var(--distance-3);
     padding-right: 20px;
     min-width: 100px;
     cursor: pointer;
@@ -44,7 +39,14 @@
     display: flex;
     align-items: center;
     background-color: white;
+    border-radius: var(--large-radius);
 }
+
+.mk-nav-item.as-children {
+    font-size: 14px;
+    padding-left: calc(var(--distance-3) + var(--distance-4) * 2 * var(--level));
+}
+
 
 .mk-nav-item.as-board-moving {
     transform: none;
@@ -53,19 +55,29 @@
 }
 
 .mk-nav-item:hover {
-    background-color: rgb(169, 169, 172, 0.3);
+    background-color: var(--space-backgroudcolor);
 }
 
-.mk-nav-item.as-hidden{
+.mk-nav-item.as-hidden {
     display: none;
 }
 
-.mk-nav-item-text-ctn {
-    flex-grow: 1;
-    padding-right: var(--control-horizontal-distance-2);
-    padding-left: var(--control-horizontal-distance-2)
+.mk-nav-item-icon-ctn {
+    color: var(--gray-clor)
 }
 
+.mk-nav-item-text-ctn {
+    font-weight: bold;
+    flex-grow: 1;
+    padding-right: var(--distance-2);
+    padding-left: var(--distance-2);
+    text-shadow: none !important;/*override markup style*/
+}
+
+
+.mk-nav-item-icon-ctn span {
+    font-size: 20px;
+}
 
 .mk-nav-item-switch-ctn {
 
@@ -93,8 +105,11 @@
 
 
 .mk-nav-item.mk-current {
-    color: rgb(20, 100, 246);
-    text-shadow: 1px 0 0 currentColor;
+    color: var(--primary-color);
+}
+
+.mk-nav-item.mk-current .mk-nav-item-icon-ctn {
+    color: inherit;
 }
 
 .mk-nav-item-drag-zone {
