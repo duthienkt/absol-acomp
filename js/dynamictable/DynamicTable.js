@@ -186,12 +186,7 @@ function DynamicTable() {
     });
     this.$attachhook.once('attached', () => {
         delete pendingTables[this._pendingId];
-        // setTimeout(()=>{
-        //     Object.values(pendingTables).forEach(table=>{
-        //         if (!table.isDescendantOf(document.body))
-        //         table.revokeResource();
-        //     });
-        // }, 5000);
+
         ResizeSystem.add(this.$attachhook);
         this.layoutCtrl.onAttached();
         this.colSizeCtrl.onAttached();
@@ -216,7 +211,18 @@ function DynamicTable() {
         };
         setTimeout(checkAlive, 500);
     });
-
+    var obs = new IntersectionObserver(entries => {
+        if (this.isDescendantOf(document.body)) {
+            this.$attachhook.emit('attached');
+        }
+        else {
+            if (obs) {
+                obs.disconnect();
+                obs = null;
+            }
+        }
+    }, { root: document.body });
+    obs.observe(this);
     /***
      *
      * @type {{data: DTDataTable}||null}
@@ -391,10 +397,10 @@ DynamicTable.prototype.addStyle = function (arg0, arg1) {
 DynamicTable.prototype.addClass = function (className) {
     if (className && className.forEach && className.map) {
         for (var i = 0; i < className.length; ++i)
-            if (className[i] === 'as-table-new'){
+            if (className[i] === 'as-table-new') {
                 this.extendStyle.variant = 'secondary';
             }
-        else {
+            else {
                 this.classList.add(className[i]);
             }
     }
@@ -533,7 +539,7 @@ DynamicTable.prototype.clearRows = function () {
     return this.table.body.clearRows();
 };
 
-DynamicTable.prototype.isLastRow = function (o){
+DynamicTable.prototype.isLastRow = function (o) {
     var row = this.rowOf(o);
     var rows = this.table.body.rows;
     return row === rows[rows.length - 1];
@@ -970,7 +976,7 @@ LayoutController.prototype.handleDisplay = function () {
     }
     if (!this.elt.hasClass('as-table-layout-fixed')) {
         if (this.elt.hasClass('as-adapt-infinity-grow')) {
-            this.elt.table.elt.addStyle('min-width', viewportWidth  + 'px');
+            this.elt.table.elt.addStyle('min-width', viewportWidth + 'px');
         }
         else {
             this.elt.table.elt.addStyle('min-width', viewportWidth - 17 + 'px');
@@ -1112,11 +1118,11 @@ LayoutController.prototype.update = function () {
     var maxHeight;
     if (!this.elt.table) return;
     if (stWidth === 'auto') {//table max-width is 100% of parentWidth
-        this.elt.table.elt.addStyle('min-width', Math.max(getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow')?0:17), 0) + 'px');
+        this.elt.table.elt.addStyle('min-width', Math.max(getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow') ? 0 : 17), 0) + 'px');
 
     }
     else if (psWidth.unit === 'px' || psWidth.unit === 'vw' || psWidth.unit === '%') {
-        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow')?0:17) + 'px');
+        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow') ? 0 : 17) + 'px');
         bound = this.elt.getBoundingClientRect();
         if (bound.width > 0 && !this.elt.table.body.offset) {//if overflowY this.elt.table.body.offset >0
             tbBound = this.elt.table.elt.getBoundingClientRect();

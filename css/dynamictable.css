@@ -135,6 +135,10 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     height: calc(var(--dt-content-height) + 1px) !important;
 }
 
+.as-dynamic-table-wrapper.as-adapt-infinity-grow.as-auto-height.as-overflow-x {
+    height: calc(var(--dt-content-height) + 17px) !important;
+}
+
 .as-dynamic-table-wrapper.as-adapt-infinity-grow {
     max-height: unset !important;
 }
@@ -152,6 +156,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 .as-dynamic-table.as-fixed-x {
     table-layout: fixed;
     width: auto;
+    overflow: hidden;
     /*display: inline-block;*/
 }
 
@@ -479,7 +484,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 .absol-single-page-scroller-viewport > div:last-child .as-dynamic-table-wrapper:not(.as-adapt-infinity-grow) {
-    max-height: calc(var(--single-page-scroller-height) - 20px);
+    max-height: calc(var(--single-page-scroller-height) - 26px);
 }
 
 
