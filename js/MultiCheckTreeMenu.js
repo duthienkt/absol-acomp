@@ -52,6 +52,20 @@ function MultiCheckTreeMenu() {
     this.dropdownCtrl = new MCTMDropController(this);
     // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
     AbstractStyleExtended.call(this);
+    var options = {
+        root: document.body,
+    };
+
+    this.observer = new IntersectionObserver((entries, observer) => {
+        if (entries.length >0) {
+            this.eventHandler.viewChange();
+        }
+    }, options);
+
+    this.observer.observe(this.$itemCtn);
+
+    //todo: auto disconnect observer when not needed
+
     /**
      * @name readOnly
      * @type {boolean}
@@ -134,7 +148,7 @@ MultiCheckTreeMenu.prototype.tokenPool = [];
 MultiCheckTreeMenu.prototype.styleHandlers.maxWidth = {
     set: function (value) {
         var parsedValue = parseMeasureValue(value);
-        if (parsedValue.unit === 'px') {
+        if (parsedValue && parsedValue.unit === 'px') {
             this.addClass('as-has-max-width');
             this.addStyle('--max-width', value);
         }
@@ -149,17 +163,36 @@ MultiCheckTreeMenu.prototype.styleHandlers.maxWidth = {
 MultiCheckTreeMenu.prototype.styleHandlers.width = {
     set: function (value) {
         var parsedValue = parseMeasureValue(value);
-        if (parsedValue.unit === 'px') {
+        if (parsedValue &&parsedValue.unit === 'px') {
             this.addClass('as-has-max-width');
             this.addStyle('--max-width', value);
             this.style.width = value;
         }
+        else if (parsedValue && parsedValue.unit === '%') {
+            this.style.width = value;
+            this.classList.add('as-width-percent');
+        }
         else {
+            this.style.width = value;
             this.removeClass('as-has-max-width');
+            this.classList.remove('as-width-percent');
         }
         return value;
     }
 };
+
+MultiCheckTreeMenu.prototype.styleHandlers.flexGrow = {
+    set: function (value) {
+        if (value !== 'auto' && value) {
+            this.classList.add('as-width-percent');
+        }
+        else {
+            this.classList.remove('as-width-percent');
+        }
+        this.style.flexGrow = value;
+        return value;
+    }
+}
 
 MultiCheckTreeMenu.prototype.styleHandlers.overflow = {
     set: function (value) {
@@ -172,8 +205,6 @@ MultiCheckTreeMenu.prototype.styleHandlers.overflow = {
         return value;
     }
 };
-
-
 
 
 MultiCheckTreeMenu.prototype._requestToken = function () {
@@ -246,6 +277,7 @@ MultiCheckTreeMenu.prototype.viewValues = function (values) {
         ResizeSystem.update();
     }
     setTimeout(this._updateOverflow.bind(this), 100)
+    this.eventHandler.viewChange();
 };
 
 MultiCheckTreeMenu.prototype._updateOverflow = function () {
@@ -350,6 +382,7 @@ MultiCheckTreeMenu.property.items = {
         this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.width) + 'px');
         this.viewValues(this.$checkTreeBox.viewValues);
         this._values = this.$checkTreeBox.values.slice();
+        this.eventHandler.viewChange();
     },
     get: function () {
         return this.$checkTreeBox.items || [];
@@ -367,6 +400,7 @@ MultiCheckTreeMenu.property.values = {
         this.$checkTreeBox.values = values;
         this.viewValues(this.$checkTreeBox.viewValues);
         this._values = this.$checkTreeBox.values.slice();
+        this.eventHandler.viewChange();
     },
     /***
      * @this MultiCheckTreeMenu
@@ -424,6 +458,7 @@ MultiCheckTreeMenu.eventHandler.clickOut = function (event) {
     if ((event.target.hasClass && event.target.hasClass('am-modal')) || event.target === this || event.target === this.$itemCtn || (!hitElement(this, event) && !hitElement(this.$checkTreeBox, event))) {
         this.isFocus = false;
         this.commitView();
+        this.eventHandler.viewChange();
     }
 };
 
@@ -455,6 +490,7 @@ MultiCheckTreeMenu.eventHandler.click = function (event) {
 MultiCheckTreeMenu.eventHandler.boxChange = function (event) {
     this.viewValues(this.$checkTreeBox.viewValues);
     ResizeSystem.update();
+    this.eventHandler.viewChange();
 };
 
 MultiCheckTreeMenu.eventHandler.boxCancel = function (event) {
@@ -477,7 +513,6 @@ MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
     this.$checkTreeBox.updateSelectedInViewIfNeed();
     var newValues = this.$checkTreeBox.viewValues.slice();
     this.viewValues(newValues);
-    console.log(this._values, newValues)
     if (!arrayCompare(this._values, newValues)) {
         this._values = newValues;
         this.emit('change', { type: 'change', target: this }, this);
@@ -504,6 +539,16 @@ MultiCheckTreeMenu.eventHandler.boxToggleItem = function (event) {
     var availableBot = screenSize.height - 5 - bound.bottom;
     this.$checkTreeBox.addStyle('--max-height', (this.$checkTreeBox._lastAnchor < 4 ? availableBot : availableTop) + 'px');
     this.$checkTreeBox.updatePosition();
+};
+
+
+/**
+ * @this MultiCheckTreeMenu
+ */
+MultiCheckTreeMenu.eventHandler.viewChange = function () {
+    var height = this.$itemCtn.scrollHeight;
+    if (!height) return;
+    this.addStyle('--content-height', Math.min(height, 90) + 'px');
 };
 
 
