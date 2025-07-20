@@ -1,7 +1,9 @@
 import '../css/textarea2.css';
 import ACore from "../ACore";
 import SelectMenu from "./SelectMenu";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import { AbstractInput } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -15,10 +17,24 @@ var $ = ACore.$;
  * @constructor
  */
 function TextArea2() {
+    this.obs = new IntersectionObserver(() => {
+        if (this.isDescendantOf(document.body)) {
+            this.updateSize();
+            ResizeSystem.add(this);
+        }
+        else {
+            this.obs.disconnect();
+        }
+    }, { root: document.documentElement });
+    this.obs.observe(this);
     this.on('keydown', this.eventHandler.keydown);
     this.on('paste', this.eventHandler.paste);
     this.on('cut', this.eventHandler.paste);
+    this.requestUpdateSize = this.updateSize.bind(this);
+    AbstractInput.call(this);
 }
+
+mixClass(TextArea2, AbstractInput);
 
 TextArea2.tag = 'TextArea2'.toLowerCase();
 

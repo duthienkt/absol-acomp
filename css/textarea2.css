@@ -2,14 +2,31 @@
     overflow: hidden;
     resize: none;
     box-sizing: border-box;
-    --content-height: 1.425em;
+    --content-height: var(--default-size);
+    min-height: var(--default-size);
     height: var(--content-height);
     font: inherit;
+    border: 1px solid var(--border-color);
+    border-radius: var(--default-radius);
+    outline: none;
+    padding: 10px 10px;
+}
+
+.absol-textarea2[data-size="small"] {
+    height:  var(--small-size);
+    border-radius: var(--small-radius);
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.absol-textarea2.as-background-none {
+    background-color: transparent;
 }
 
 .absol-textarea2.as-border-none {
     border: none;
     outline: none;
+    padding: 0;
 }
 
 .absol-textarea2:disabled {
