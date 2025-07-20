@@ -38,8 +38,16 @@ function SinglePage() {
             if (thisSP._updateIntv < 0) {
                 thisSP._updateIntv = setInterval(thisSP._tick, 200);
             }
+            if (obs) {
+                obs.disconnect();
+                obs = null;
+            }
 
         });
+    var obs = new IntersectionObserver( (entries) =>{
+        this.updateSize();
+    }, {root: document.body});
+    obs.observe(this);
     this.$attachhook.updateSize = this.updateSize.bind(this);
     this.$header = null;
     this.$footer = null;
