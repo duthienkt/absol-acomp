@@ -66,6 +66,10 @@ div.absol-follower.as-select-list-box {
     right: 0;
 }
 
+.as-select-list-box-search-ctn .absol-search-text-input{
+    height: 30px;/*avoid breaking layout*/
+}
+
 .as-select-list-box.as-enable-search.as-anchor-6 .as-select-list-box-search-ctn,
 .as-select-list-box.as-enable-search.as-anchor-5 .as-select-list-box-search-ctn {
     bottom: 0;
@@ -144,7 +148,7 @@ div.absol-follower.as-select-list-box {
 }
 
 
-.as-select-list-box .absol-selectlist-item:hover {
+.as-select-list-box .absol-selectlist-item:not(.as-read-only):hover {
     background-color: #efefef;
 }
 
