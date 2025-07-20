@@ -1,14 +1,16 @@
 import '../css/selecttreemenu.css';
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu2";
 import SelectTreeBox from "./SelectTreeBox";
+import { AbstractInput } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 
 /***
+ * @augments AbstractStyleExtended
  * @extends SelectMenu
  * @constructor
  */
@@ -41,16 +43,22 @@ function SelectTreeMenu() {
     this.isFocus = false;
 
     this.on('mousedown', this.eventHandler.click, true);
+    AbstractInput.call(this);
 }
 
+mixClass(SelectTreeMenu, AbstractInput);
+
 SelectTreeMenu.tag = 'SelectTreeMenu'.toLowerCase();
+
+SelectTreeMenu.prototype.styleHandlers = Object.assign({},SelectMenu.property.styleHandlers);
+SelectTreeMenu.prototype.extendStyle = Object.assign({}, SelectMenu.property.extendStyle);
 
 SelectTreeMenu.render = function () {
     return SelectMenu.render().addClass('as-select-tree-menu');
 };
 
 SelectTreeMenu.eventHandler = Object.assign({}, SelectMenu.eventHandler);
-SelectTreeMenu.property = Object.assign({}, SelectMenu.property);
+SelectTreeMenu.property = Object.assign(SelectTreeMenu.property || {}, SelectMenu.property);
 
 
 Object.assign(SelectTreeMenu.prototype, SelectMenu.prototype);
