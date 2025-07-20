@@ -21,6 +21,10 @@ textarea.as-text-input:disabled {
     background-color: var(--as-disabled-background-color);
 }
 
+input[type="text"].as-text-input.as-background-none {
+    background-color: transparent;
+}
+
 .as-text-input[data-size="large"] {
     font-size: var(--large-font-size);
     height: var(--large-size);
@@ -156,8 +160,7 @@ textarea.as-text-input:disabled {
 }
 
 
-
-.as-transparent-button.as-variant-danger:active{
+.as-transparent-button.as-variant-danger:active {
     color: #ef0d23;
 }
 
