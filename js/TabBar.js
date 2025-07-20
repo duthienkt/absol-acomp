@@ -80,8 +80,8 @@ TabBar.property.tabs = {
 
 /***
  *
- * @param {{text}}
- * @return {tabbar}
+ * @param {{name: string, desc?: string, tabIcon?: string, preventClosing?: boolean, id?: string}|string} value
+ * @return {TabButton}
  */
 TabBar.prototype.addTab = function (value) {
     var self = this;
@@ -152,7 +152,7 @@ TabBar.prototype.addTab = function (value) {
 
 TabBar.prototype.removeTab = function (id) {
     this._tabs = this._tabs.filter(function (value) {
-        return value == id;
+        return value === id;
     });
     $('#tabbuton-' + id, this).remove();
     this.requestUpdateSize();
