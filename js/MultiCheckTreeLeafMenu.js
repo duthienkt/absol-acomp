@@ -3,9 +3,10 @@ import MultiCheckTreeLeafBox from "./MultiCheckTreeLeafBox";
 import SelectTreeLeafMenu, { STLBoxController } from "./SelectTreeLeafMenu";
 import SelectBoxItem from "./SelectBoxItem";
 import MultiSelectMenu from "./MultiSelectMenu";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu2";
 import { loadLanguageModule } from "./MultiLanguageCSS";
+import { AbstractInput } from "./Abstraction";
 
 /****
  * Only leafs have checkbox
@@ -30,7 +31,10 @@ function MultiCheckTreeLeafMenu() {
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.boxCtrl = new STLBoxController(this);
     OOP.drillProperty(this, this.boxCtrl, 'isFocus');
+    AbstractInput.call(this);
 }
+
+mixClass(MultiCheckTreeLeafMenu, AbstractInput);
 
 MultiCheckTreeLeafMenu.tag = 'MultiCheckTreeLeafMenu'.toLowerCase();
 
@@ -111,7 +115,6 @@ MultiCheckTreeLeafMenu.prototype.init = function (props) {
 };
 
 
-MultiCheckTreeLeafMenu.property = {};
 
 MultiCheckTreeLeafMenu.property.items = {
     set: function (items) {
