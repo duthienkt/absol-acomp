@@ -107,6 +107,20 @@ SelectBoxItem.property.active = {
 };
 
 
+SelectBoxItem.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        } else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+};
+
+
 ACore.install(SelectBoxItem);
 
 export default SelectBoxItem;

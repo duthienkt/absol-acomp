@@ -6,7 +6,7 @@
     box-sizing: border-box;
 }
 
-.absol-selectlist .absol-selectlist-item:hover {
+.absol-selectlist .absol-selectlist-item:not(.as-read-only):hover {
     background-color: #efefef;
 }
 
