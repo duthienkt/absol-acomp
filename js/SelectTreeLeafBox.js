@@ -59,6 +59,12 @@ function SelectTreeLeafBox() {
      * @name selectedItem
      * @memberof MSelectTreeLeafBox#
      */
+
+    /**
+     * @type {boolean|number}
+     * @name initOpened
+     * @memberof MSelectTreeLeafBox#
+     */
 }
 
 
@@ -119,7 +125,8 @@ SelectTreeLeafBox.prototype._findFirstLeaf = function () {
     return found;
 };
 
-SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
+SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus, level) {
+    level = level || 0;
     var self = this;
     var status = 'none';
     var isLeaf = item.isLeaf;
@@ -128,6 +135,9 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
     }
     if (isBranchStatus(status) && isBranchStatus(savedStatus[keyStringOf(item.value)])) {
         status = savedStatus[keyStringOf(item.value)];
+    }
+    if (status === 'close' && ((level < this.initOpened) || (this.initOpened === true))) {
+        status = 'open';
     }
 
     var nodeElt = _({
@@ -170,7 +180,7 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
 
     if (item.items && item.items.length > 0) {
         item.items.forEach(function (item1) {
-            nodeElt.addChild(self._makeTree(item1, dict, savedStatus));
+            nodeElt.addChild(self._makeTree(item1, dict, savedStatus, level + 1));
         });
     }
 
@@ -281,7 +291,7 @@ SelectTreeLeafBox.property.items = {
         this.$dislayItemByValue = this.$itemByValue;
 
         this.$items = items.map(function (item) {
-            return self._makeTree(item, self.$itemByValue, self._savedStatus);
+            return self._makeTree(item, self.$itemByValue, self._savedStatus, 0);
         });
         this.$dislayItems = this.$items;
         this.$content.addChild(this.$items);
@@ -320,7 +330,7 @@ SelectTreeLeafBox.property.selectedItem = {
             return this.$itemByValue[key].itemData;
         }
         else if (!this.strictValue) {
-            return  null;
+            return null;
         }
         else {
             firstLeaf = this._findFirstLeaf();

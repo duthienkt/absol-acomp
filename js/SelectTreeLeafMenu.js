@@ -7,10 +7,11 @@ import SelectMenu from "./SelectMenu2";
 import { copySelectionItemArray, keyStringOf } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MSelectTreeLeafBox from "./selecttreeleafbox/MSelectTreeLeafBox";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput } from "./Abstraction";
 
 
 /***
+ * @augments
  * @extends AElement
  * @constructor
  */
@@ -27,12 +28,12 @@ function SelectTreeLeafMenu() {
     });
     this.$selectBox.sponsorElement = this;
 
-    OOP.drillProperty(this, this.$selectBox, ['enableSearch', 'selectedItem']);
+    OOP.drillProperty(this, this.$selectBox, ['enableSearch', 'selectedItem', 'initOpened']);
     this.$holderItem = $('selectlistitem', this);
     // this.on('click', this.eventHandler.click.bind(this));
     this.boxCtrl = new STLBoxController(this);
     OOP.drillProperty(this, this.boxCtrl, 'isFocus');
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
     /**
      * @name items
      * @type {Array}
@@ -70,7 +71,7 @@ function SelectTreeLeafMenu() {
 
 }
 
-mixClass(SelectTreeLeafMenu, AbstractStyleExtended);
+mixClass(SelectTreeLeafMenu, AbstractInput);
 
 SelectTreeLeafMenu.tag = 'SelectTreeLeafMenu'.toLowerCase();
 
@@ -108,6 +109,12 @@ SelectTreeLeafMenu.prototype.init = function (props) {
     Object.keys(props).forEach(function (key) {
         if (props[key] === undefined) delete props[key];
     });
+
+    if (props.initOpened) {
+        this.initOpened = props.initOpened;
+        delete props.initOpened;
+    }
+
     if (props.strictValue) {
         this.strictValue = props.strictValue;
         delete props.strictValue;
@@ -122,7 +129,6 @@ SelectTreeLeafMenu.prototype.init = function (props) {
 };
 
 
-SelectTreeLeafMenu.property = {};
 
 SelectTreeLeafMenu.property.items = {
     set: function (items) {
