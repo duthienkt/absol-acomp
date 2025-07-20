@@ -11,11 +11,11 @@ import {
     MILLIS_PER_MINUTE
 } from "absol/src/Time/datetime";
 import LangSys from "absol/src/HTML5/LanguageSystem";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
 
 /***
- * @augments
+ * @augments AbstractInput
  * @extends AElement
  * @constructor
  */
@@ -38,7 +38,8 @@ function TimeRange24Input() {
      */
     this.$duration = $(Time24Input.tag, this);
     this.$duration.on('change', this.eventHandler.durationChange);
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
+
     /***
      * @type {number}
      * @name dayOffset
@@ -56,7 +57,7 @@ function TimeRange24Input() {
      */
 }
 
-mixClass(TimeRange24Input, AbstractStyleExtended);
+mixClass(TimeRange24Input, AbstractInput);
 
 TimeRange24Input.tag = 'TimeRange24Input'.toLowerCase();
 
@@ -115,7 +116,7 @@ TimeRange24Input.prototype._updateTextData = function () {
     var duration = this.duration;
     var format = this.format;
     var bD = beginOfDay(new Date()).getTime();
-    var startD  = new Date(bD + dayOffset)
+    var startD = new Date(bD + dayOffset)
     var text = formatDateTime(startD, format || 'HH:mm');
     var endD = new Date(bD + dayOffset + duration);
     text += ' - ' + formatDateTime(endD, format || 'HH:mm');
@@ -125,8 +126,6 @@ TimeRange24Input.prototype._updateTextData = function () {
     this.attr('data-text', text);
 };
 
-
-TimeRange24Input.property = {};
 
 TimeRange24Input.property.notNull = {
     /***
@@ -149,7 +148,8 @@ TimeRange24Input.property.disabled = {
         value = !!value;
         if (value) {
             this.addClass('as-disabled');
-        } else {
+        }
+        else {
             this.removeClass('as-disabled');
         }
         this.$offset.disabled = value;
@@ -166,7 +166,8 @@ TimeRange24Input.property.dayOffset = {
         var notNull = this.notNull;
         if (isRealNumber(value)) {
             value = normalizeMinuteOfMillis(value);
-        } else {
+        }
+        else {
             value = notNull ? 0 : null;
         }
         this.$offset.dayOffset = value;
@@ -188,7 +189,8 @@ TimeRange24Input.property.duration = {
         if (isRealNumber(value)) {
             value = Math.floor(Math.min(MILLIS_PER_DAY, Math.max(0, value)));
             value = Math.floor(value / MILLIS_PER_MINUTE) * MILLIS_PER_MINUTE;
-        } else {
+        }
+        else {
             value = notNull ? 0 : null;
         }
         this.$duration.value = value;
@@ -207,7 +209,8 @@ TimeRange24Input.property.readOnly = {
             this.$offset.readOnly = true;
             this.$duration.readOnly = true;
 
-        } else {
+        }
+        else {
             this.removeClass('as-read-only');
             this.$offset.readOnly = false;
             this.$duration.readOnly = false;
@@ -218,16 +221,47 @@ TimeRange24Input.property.readOnly = {
     }
 };
 
+TimeRange24Input.property.outputMode = {
+    set: function (value) {
+        this.$offset.outputMode = value;
+        this.$duration.outputMode = value;
+        if (value === 'borderless') {
+            this.addClass('as-border-none');
+            this.removeClass('as-background-none');
+
+        }
+        else if (value === "true" || value === true) {
+            this.removeClass('as-border-none');
+            this.addClass('as-background-none');
+        }
+        else if (value === 'default') {
+            this.removeClass('as-background-none');
+            this.removeClass('as-border-none');
+        }
+        else {
+            value = false;
+        }
+        this.readOnly = !!value;
+        this.$offset.outputMode = value;
+        this.$duration.outputMode = value;
+    },
+    get: function () {
+        return this.$offset;
+    }
+};
+
 
 TimeRange24Input.property.value = {
     set: function (value) {
         var rangeValue = null;
         if (isRealNumber(value)) rangeValue = { dayOffset: value, duration: 0 };
         else if (!value) {
-        } else if (typeof rangeValue === "object") {
+        }
+        else if (typeof rangeValue === "object") {
             if (isRealNumber(value.dayOffset)) {
                 rangeValue = { dayOffset: value.dayOffset, duration: 0 };
-            } else {
+            }
+            else {
                 rangeValue = { dayOffset: 0, duration: 0 };
             }
             if (isRealNumber(value.duration)) {
@@ -237,7 +271,8 @@ TimeRange24Input.property.value = {
         if (rangeValue) {
             this.dayOffset = rangeValue.dayOffset;
             this.duration = rangeValue.duration;
-        } else {
+        }
+        else {
             this.dayOffset = null;
             this.duration = null;
         }
@@ -260,12 +295,14 @@ TimeRange24Input.eventHandler.offsetChange = function (event) {
     if (isRealNumber(newStart)) {
         if (isRealNumber(prevEnd)) {
             newEnd = Math.max(newStart, Math.min(newStart + MILLIS_PER_DAY - MILLIS_PER_MINUTE, prevEnd));
-        } else {
+        }
+        else {
             newEnd = newStart;
         }
         this.$duration.dayOffset = newStart;
         this.$duration.value = newEnd - newStart;
-    } else {
+    }
+    else {
         this.$duration.dayOffset = 0;
         this.$duration.value = isRealNumber(prevEnd) ? Math.min(prevEnd, MILLIS_PER_DAY - MILLIS_PER_MINUTE) : null;
     }
@@ -278,7 +315,7 @@ TimeRange24Input.eventHandler.offsetChange = function (event) {
 };
 
 TimeRange24Input.eventHandler.durationChange = function (event) {
-    if (!isRealNumber(this.$offset.dayOffset) ) {
+    if (!isRealNumber(this.$offset.dayOffset)) {
         this.$offset.dayOffset = this.$duration.dayOffset;
     }
     this._updateTextData();

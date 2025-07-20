@@ -14,7 +14,7 @@ import { isRealNumber, zeroPadding } from "./utils";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput } from "./Abstraction";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
@@ -24,6 +24,7 @@ var _ = ACore._;
 var $ = ACore.$;
 
 /***
+ * @augments AbstractInput
  * @extends {AElement}
  * @constructor
  */
@@ -60,7 +61,7 @@ function TimeInput() {
     this.minute = null;
     this.disabled = false;
     this.notNull = true;
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
     /***
      * @memberOf TimeInput#
      * @name min
@@ -75,7 +76,7 @@ function TimeInput() {
      */
 }
 
-mixClass(TimeInput, AbstractStyleExtended);
+mixClass(TimeInput, AbstractInput);
 
 TimeInput.tag = 'timeinput';
 
@@ -271,7 +272,6 @@ TimeInput.prototype._notifyIfChange = function (event) {
 };
 
 
-TimeInput.property = {};
 
 TimeInput.property.hour = {
     set: function (value) {

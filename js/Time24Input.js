@@ -19,11 +19,12 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
 import LangSys from "absol/src/HTML5/LanguageSystem";
 import { loadLanguageModule } from "./MultiLanguageCSS";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
 
 
 /**
+ * @augments AbstractInput
  * @extends AElement
  * @constructor
  */
@@ -51,10 +52,7 @@ function Time24Input() {
     this.notNull = true;
     this.dropdownCtn = new T24DropdownController(this);
 
-    setTimeout(() => {
-    }, 1000);
-
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
     /**
      * @type {string}
      * @name format
@@ -94,7 +92,7 @@ function Time24Input() {
      */
 }
 
-mixClass(Time24Input, AbstractStyleExtended);
+mixClass(Time24Input, AbstractInput);
 
 Time24Input.tag = 'Time24Input'.toLowerCase();
 
@@ -163,7 +161,6 @@ Time24Input.prototype.share = {
 };
 
 
-Time24Input.property = {};
 
 Time24Input.property.hour = {
     set: function (value) {

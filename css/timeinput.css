@@ -27,7 +27,6 @@
 }
 
 
-
 .ac-time-input[data-size="small"] {
     --base-size: var(--small-size);
     border-radius: var(--small-radius);
@@ -45,6 +44,10 @@
 
 .ac-time-input.as-read-only.as-border-none {
     border: none;
+}
+
+.ac-time-input.as-background-none {
+    background-color: transparent;
 }
 
 .ac-time-input.as-read-only.as-border-none .as-time-input-icon-btn {
@@ -95,9 +98,17 @@
 }
 
 .ac-time-input.as-read-only .as-time-input-icon-btn {
-    pointer-events: none;
+    display: none;
 }
 
+.ac-time-input input.as-read-only input {
+    width: 100%;
+}
+
+.ac-time-input.as-read-only .as-time-input-clear-btn,
+.ac-time-input.as-disabled .as-time-input-clear-btn {
+    display:  none;
+}
 
 .as-time-input-icon-btn > span {
     font-size: calc(16em / 14);
