@@ -3,21 +3,21 @@ import '../css/common.css';
 import ACore from "../ACore";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import { getTextNodesIn, getTextIn, measureText } from "absol/src/HTML5/Text";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 /**
- * @augments
+ * @augments AbstractInput
  * @extends AElement
  * @constructor
  */
 export function TextInput() {
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
 }
 
-mixClass(TextInput, AbstractStyleExtended);
+mixClass(TextInput, AbstractInput);
 
 TextInput.tag = 'textinput';
 TextInput.render = function () {
