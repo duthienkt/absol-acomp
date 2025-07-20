@@ -38,6 +38,23 @@
             }
         }).addTo(absol.$('#test-div'));
 
+        absol._({
+            tag: 'pageselector',
+           
+            props: {           
+                mode:"buttons_only",     
+                selectedIndex: 1,
+                pageCount: 15
+            },
+            on: {
+                change: function (event, sender) {
+                    console.log(event);
+                    console.log(sender, this.selectedIndex);
+                    
+                }
+            }
+        }).addTo(absol.$('#test-div'));
+
         var pageIndicator = absol._({
             tag: 'pageindicator',
             props:{

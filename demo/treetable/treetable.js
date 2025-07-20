@@ -147,6 +147,7 @@ var addRowBtn = render({
 });
 var table = render({
     tag: 'treetable',
+    class:'as-table-new',
     style:{
         whiteSpace: 'nowrap',
     },

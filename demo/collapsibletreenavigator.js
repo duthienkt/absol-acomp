@@ -12,7 +12,17 @@ var items =[
         items: [
             {
                 value: 0,
-                text: "Đề xuất đi"
+                text: "Đề xuất đi",
+                items: [
+                    {
+                        value: 0,
+                        text: "Đề xuất đi 1"
+                    },
+                    {
+                        value: 0,
+                        text: "Đề xuất đi 2"
+                    }
+                ]
             },
             {
                 value: 0,
@@ -166,7 +176,9 @@ var items =[
 render('<h3>block(default)</h3>')
 window.navigator1 = render({
     tag: 'CollapsibleTreeNavigator'.toLowerCase(),
-    style: {},
+    style: {
+        size:'regular',
+    },
     props: {
         value: 'child_stamp',// tự động mở nếu con của group được chọn
         items: items

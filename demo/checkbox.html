@@ -43,7 +43,7 @@
             --breakpoint-xl: 85.7143rem;
             --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
             --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-            --border-color: #253863;
+            /* --border-color: #253863; */
             --color-body: #eef5f9;
             --color-input-color: #d6d6d6;
             --control-height: 30px;
@@ -55,6 +55,9 @@
 </head>
 
 <body>
+    <script>
+   absol.remoteNodeRequireAsync(location.href.replace('.html', '.js'));
+    </script>
 
     <h1>Checkbox</h1>
     <div class="checkbox-row">

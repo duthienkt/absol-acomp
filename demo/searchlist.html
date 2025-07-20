@@ -228,6 +228,9 @@
 
     var queryElt = _({
         tag:'searchtextinput',
+        style:{
+            size:'large',
+        },
         on:{
             stoptyping: function(){
                 var query = this.value.trim();
@@ -235,6 +238,34 @@
             }
         }
     }).addTo(document.body);
+
+  var queryElt1 = _({
+        tag:'searchtextinput',
+        style:{
+            size:'regular',
+        },
+        on:{
+            stoptyping: function(){
+                var query = this.value.trim();
+                makeSearch(query);
+            }
+        }
+    }).addTo(document.body);
+
+     var queryElt2 = _({
+        tag:'searchtextinput',
+        style:{
+            size:'small',
+        },
+        on:{
+            stoptyping: function(){
+                var query = this.value.trim();
+                makeSearch(query);
+            }
+        }
+    }).addTo(document.body);
+
+
 
     var listElt = _('selectlist').addTo(document.body);
 

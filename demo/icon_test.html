@@ -76,6 +76,19 @@
         width: '48px',
         height: '48px'
     });
+    var smile = absol._({
+        tag:'smileicon',
+        style:{
+            height: '16px',
+            width: '16px'
+        },
+        props:{
+            frame: 2
+        }
+
+    }).addTo(document.body);
+   var sp =   absol._('spinnerico').addTo(document.body).addStyle('width', '48px');
+   sp.circleRadius = 8;
     absol._('span.mdi.mdi-account-search-outline').addTo(document.body).addStyle('font-size', '48px');
 </script>
 </body>

@@ -411,6 +411,7 @@ var table0 = render({
     tag: 'dynamictable',
     // id:'dt_000',
     style: {
+        variant:'secondary',
         height: '500px',
         'min-width': '800px'
     },
@@ -463,7 +464,7 @@ var table0 = render({
                     ]
                 },
                 body: {
-                    rows: Array(100).fill(0).map(function (u, i) {
+                    rows: Array(0).fill(0).map(function (u, i) {
                         var id = 'row_' + i;
                         return makeRowData(i, id);
                     })
