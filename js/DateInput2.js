@@ -20,7 +20,7 @@ import DateTimeInput from "./DateTimeInput";
 import { isRealNumber, measureText, zeroPadding } from "./utils";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput } from "./Abstraction";
 
 var STATE_NEW = 1;
 var STATE_EDITED = 2;
@@ -54,7 +54,7 @@ var _ = ACore._;
 var $ = ACore.$;
 
 /**
- * @extends AbstractStyleExtended
+ * @extends AbstractInput
  * @extends AElement
  * @constructor
  */
@@ -92,7 +92,7 @@ function DateInput2() {
     OOP.drillProperty(this, this, 'minDateLimit', 'min');
     OOP.drillProperty(this, this, 'maxLimitDate', 'max');
     OOP.drillProperty(this, this, 'maxDateLimit', 'max');
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
     /**
      * @type {Date}
      * @name min
@@ -131,7 +131,7 @@ function DateInput2() {
      */
 }
 
-mixClass(DateInput2, AbstractStyleExtended);
+mixClass(DateInput2, AbstractInput);
 
 DateInput2.tag = 'dateinput';
 DateInput2.render = function () {
@@ -781,7 +781,6 @@ DateInput2.eventHandler.calendarPick = function (event) {
 };
 
 
-DateInput2.property = {};
 
 DateInput2.property.value = {
     set: function (value) {
