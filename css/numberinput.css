@@ -12,6 +12,12 @@
     --text-width: 0.5em;
     font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
     overflow: hidden;
+    background-color: white;
+}
+
+.absol-number-input.as-background-none,
+.absol-number-input.as-background-none input {
+    background-color: transparent;
 }
 
 .absol-number-input[data-size="large"] {
@@ -36,7 +42,7 @@
     width: calc(var(--text-width) + 1em);
 }
 
-.absol-number-input.as-has-stepper.as-width-auto {
+.absol-number-input.as-has-stepper.as-width-auto:not(.as-read-only) {
     width: calc(var(--text-width) + 2.2em);
 }
 
@@ -73,8 +79,8 @@
     bottom: 0;
 }
 
-.absol-number-input.as-has-stepper .absol-number-input-button-up-container,
-.absol-number-input.as-has-stepper .absol-number-input-button-down-container {
+.absol-number-input.as-has-stepper:not(.as-read-only) .absol-number-input-button-up-container,
+.absol-number-input.as-has-stepper:not(.as-read-only) .absol-number-input-button-down-container {
     right: 0;
     position: absolute;
     height: 1em;
@@ -108,7 +114,7 @@
     background-color: rgba(101, 101, 101, 0.3);
 }
 
-.absol-number-input.as-has-stepper .absol-number-input-text-container {
+.absol-number-input.as-has-stepper:not(.as-read-only) .absol-number-input-text-container {
     right: 1.2em;
 }
 

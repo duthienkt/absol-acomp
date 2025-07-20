@@ -8,7 +8,7 @@ import AElement from "absol/src/HTML5/AElement";
 import Hanger from "../Hanger";
 import Rectangle from "absol/src/Math/Rectangle";
 import Vec2 from "absol/src/Math/Vec2";
-import { AbstractStyleExtended } from "../Abstraction";
+import { AbstractInput, AbstractStyleExtended } from "../Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
 
 var _ = ACore._;
@@ -23,6 +23,7 @@ var $ = ACore.$;
  */
 
 /***
+ * @augments AbstractInput
  * @extends AElement
  * @constructor
  */
@@ -63,7 +64,8 @@ function NumberInput() {
     });
 
     this.dragCtrl = new NIDragController(this);
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
+
     /****
      * @name min
      * @type {number}
@@ -142,9 +144,10 @@ function NumberInput() {
      * @name rawValue
      */
 
+
 }
 
-mixClass(NumberInput, AbstractStyleExtended);
+mixClass(NumberInput, AbstractInput);
 
 NumberInput.tag = 'NumberInput'.toLowerCase();
 
@@ -297,7 +300,6 @@ NumberInput.prototype.notifyChanged = function (option) {
 };
 
 
-NumberInput.property = {};
 
 NumberInput.property.rawValue = {
     get: function () {
