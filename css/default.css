@@ -29,6 +29,7 @@
     --dropdown-icon-color:  #525866;
 
     --dark-color: #313030;
+    --gray-clor: #D5D7DA;
 
     /******* KEVIEW OLD FORMAT **************/
     --button-min-width: 110px;
@@ -51,11 +52,11 @@
     --tab-padding-left: 24px;
     --tab-padding-right: 24px;
 
-    --large-size: 44px;
+    --large-size: 36px;
     --default-size: 36px;
     --small-size: 32px;
 
-    --large-font-size: 16px;
+    --large-font-size: 14px;
     --default-font-size: 14px;
     --small-font-size: 14px;
 
@@ -111,6 +112,27 @@
     --table-new-row-height: 44px;
     --table-new-row-selected: #C5E5EC;
 
+
+
+
+
+    --icon-color: #525866;
+    --quickmenu-icon-color: #525866;
+
+
+    --space-backgroud-color: #F6F4F4;
+    --cover-backgroud-color: #00000033;
+
+
+    --table-icon-size: 24px;
+    --table-icon-backgroud-hover: #F4F4F4;
+
+    --modal-content-max-width: 75vw;
+    --modal-content-max-height: calc(100vh - 300px);
+
+    --hr-sunday-bgcolor: #FBF4EE;
+
+    --require-color: #FF1300;
 
 }
 
