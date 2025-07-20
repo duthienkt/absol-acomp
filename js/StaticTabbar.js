@@ -1,6 +1,8 @@
 import '../css/statictabbar.css';
 import ACore from "../ACore";
-import {randomIdent} from 'absol/src/String/stringGenerate';
+import { randomIdent } from 'absol/src/String/stringGenerate';
+import { AbstractStyleExtended } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 
 var $ = ACore.$;
@@ -20,8 +22,14 @@ function StaticTabbar() {
             resolve();
         }).addTo(thisST);
     });
+    AbstractStyleExtended.call(this);
     return this;
 }
+
+mixClass(StaticTabbar, AbstractStyleExtended);
+
+StaticTabbar.prototype.extendStyle = {};
+StaticTabbar.prototype.extendStyle.variant = 'secondary';
 
 StaticTabbar.tag = 'StaticTabbar'.toLowerCase();
 
@@ -37,6 +45,15 @@ StaticTabbar.render = function () {
         ]
     });
 };
+
+
+StaticTabbar.prototype.styleHandlers.variant = {
+    set: function (value) {
+        if (value !== 'secondary') value = 'v0';
+        this.attr('data-variant', value);
+        return value;
+    }
+}
 
 StaticTabbar.prototype.fireChange = function (data) {
     this.emit('change', { target: this, data, value: this.value }, self);

@@ -17,14 +17,14 @@
 }
 
 .absol-static-tabbar-button.active {
-    color: black;
+    color: var(--dark-color);
 }
 
 .absol-static-tabbar-button:focus {
     outline: none;
 }
 
-.absol-static-tabbar-button>span {
+.absol-static-tabbar-button > span {
     font-size: 0.7em;
 }
 
@@ -46,14 +46,34 @@
     /* z-index: 1; */
 }
 
-.absol-static-tabbar.dark .absol-static-tabbar-hline{
+.absol-static-tabbar.dark .absol-static-tabbar-hline {
     border-bottom-color: white;
 }
 
-.absol-static-tabbar.dark .absol-static-tabbar-button.active{
+.absol-static-tabbar.dark .absol-static-tabbar-button.active {
     color: white;
 }
 
 .absol-static-tabbar.dark .absol-static-tabbar-button {
     color: rgb(204, 204, 204);
+}
+
+.absol-static-tabbar[data-variant="secondary"] {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.absol-static-tabbar[data-variant="secondary"] .absol-static-tabbar-button {
+    font-size: inherit;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.absol-static-tabbar[data-variant="secondary"] .absol-static-tabbar-button span{
+    font-size: inherit;
+}
+
+.absol-static-tabbar[data-variant="secondary"] .absol-static-tabbar-hline {
+    border-bottom-width: 2px;
+    border-bottom-color: var(--primary-color);
 }
