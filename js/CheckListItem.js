@@ -1,12 +1,12 @@
 import '../css/checklistitem.css';
-import ACore, {_, $} from "../ACore";
+import ACore, { _, $ } from "../ACore";
 import CheckboxButton from "./CheckboxButton";
 import Attributes from "absol/src/AppPattern/Attributes";
 import SelectListItem from "./SelectListItem";
 import OOP from "absol/src/HTML5/OOP";
-import {estimateWidth14, measureText} from "./utils";
-import {measureListHeight, measureMaxDescriptionWidth} from "./SelectList";
-import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { estimateWidth14, measureText } from "./utils";
+import { measureListHeight, measureMaxDescriptionWidth } from "./SelectList";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
 
 export function measureMaxCheckboxTextWidth(items) {
     var maxTextWidth = 0;
@@ -94,14 +94,14 @@ CheckListItem.render = function () {
             {
                 tag: 'span',
                 class: 'absol-selectlist-item-text',
-                child: {text: ''}
+                child: { text: '' }
             },
             {
                 class: 'absol-selectlist-item-desc-container',
                 child: {
                     tag: 'span',
                     class: 'absol-selectlist-item-desc',
-                    child: {text: ''}
+                    child: { text: '' }
                 }
             }
         ]
@@ -120,17 +120,18 @@ CheckListItem.property.data = {
     set: function (value) {
         this._data = value;
         var viewData = {
-            text:'',
+            text: '',
             desc: '',
             noSelect: false,
             extendStyle: null,
             extendClasses: null,
             icon: null,
-            lastInGroup:false
+            lastInGroup: false
         };
         if (typeof value === 'string') {
             viewData.text = value
-        } else {
+        }
+        else {
             Object.assign(viewData, value);
         }
         Object.assign(this._viewData, viewData);
@@ -157,6 +158,21 @@ CheckListItem.property.level = {
     },
     get: function () {
         return this._level;
+    }
+};
+
+CheckListItem.property.readOnly = {
+    set: function (value) {
+        this.$checkbox.readOnly = !!value;
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.$checkbox.readOnly;
     }
 };
 
@@ -216,28 +232,28 @@ CheckListItem.prototype.viewHandlers.extendStyle = {
 };
 
 CheckListItem.prototype.viewHandlers.noSelect = {
-    set: function (value){
+    set: function (value) {
         if (value) this.addClass('as-no-select');
-        else  this.removeClass('as-no-select');
+        else this.removeClass('as-no-select');
         return value;
     }
 };
 
 
 CheckListItem.prototype.viewHandlers.icon = {
-    set: function (icon){
+    set: function (icon) {
         this.icon = icon;
     },
-    get: function (){
+    get: function () {
         return this.icon;
     }
 };
 
 CheckListItem.prototype.viewHandlers.lastInGroup = {
-    set: function (value){
+    set: function (value) {
         this.lastInGroup = value;
     },
-    get: function (){
+    get: function () {
         return this.lastInGroup;
     }
 }
@@ -246,6 +262,7 @@ CheckListItem.eventHandler = {};
 
 CheckListItem.eventHandler.clickText = function (event) {
     if (hitElement(this.$checkbox, event)) return;
+    if (this.readOnly) return;
     this.$checkbox.checked = !this.$checkbox.checked;
     this.emit('select', {
         target: this,

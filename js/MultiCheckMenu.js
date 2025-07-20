@@ -4,7 +4,7 @@ import OOP, { drillProperty, mixClass } from "absol/src/HTML5/OOP";
 import { CheckListBox } from "./CheckListBox";
 import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
-import { isNaturalNumber } from "./utils";
+import { isNaturalNumber, keyStringOf } from "./utils";
 import { arrayCompare } from "absol/src/DataStructure/Array";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
@@ -78,6 +78,8 @@ function MultiCheckMenu() {
     this.itemFocusable = false;
 
     AbstractStyleExtended.call(this);
+
+
     /**
      * @type {boolean}
      * @memberof MultiCheckMenu#
@@ -95,6 +97,13 @@ function MultiCheckMenu() {
      * @memberof MultiCheckMenu#
      * @name values
      */
+
+    /**
+     * @type {Array<number|null|string|Date>}
+     * @memberof MultiCheckMenu#
+     * @name readOnlyValues
+     */
+
 
 
 }
@@ -242,12 +251,13 @@ MultiCheckMenu.property.values = {
     set: function (values) {
         if (values === undefined || values === null) values = [];
         else if (!Array.isArray(values)) values = [values];
+        values = values.slice();
         this.$selectlistBox.values = values;
         this.commitedValues = this.$selectlistBox.values;
         this.itemsViewCtrl.update();
     },
     get: function () {
-        return this.commitedValues;
+        return this.commitedValues.slice();
     }
 };
 
@@ -282,6 +292,21 @@ MultiCheckMenu.property.placeholder = {
         return this.$itemCtn.attr('data-placeholder') || '';
     }
 };
+
+MultiCheckMenu.property.readOnlyValues = {
+    set: function (value) {
+        if (!Array.isArray(value)) {
+            value  = [];
+        }
+        this.$selectlistBox.readOnlyValues = value.slice();
+        this.itemsViewCtrl.updateReadOnlyItems();
+    },
+    get: function () {
+        return (this.$selectlistBox.readOnlyValues || []).slice();
+    }
+};
+
+
 
 MultiCheckMenu.prototype.updateSize = function () {
     var bound;
@@ -326,7 +351,6 @@ MultiCheckMenu.property.readOnly = {
 
 
 MultiCheckMenu.eventHandler.selectListBoxPressItem = function (event) {
-    console.log('press')
     var prevValues = this.commitedValues;
     var prevDict = prevValues.reduce(function (ac, cr) {
         ac[cr + ''] = cr;
@@ -369,7 +393,7 @@ MultiCheckMenu.eventHandler.selectListBoxPressItem = function (event) {
         }), this);
         changed = true;
     }.bind(this));
-    this._updateItems();
+    this.itemsViewCtrl.update();
     this.isFocus = false;
     if (changed)
         this.emit('change', Object.assign({}, event, {
@@ -508,7 +532,30 @@ MSMItemsViewController.prototype.viewItemsByValues = function (values) {
 
 MSMItemsViewController.prototype.update = function () {
     this.viewItemsByValues(this.elt.values);
+    this.updateReadOnlyItems();
 };
+
+MSMItemsViewController.prototype.updateReadOnlyItems = function () {
+    var itemElt, valueKey;
+    var readOnlyValueDict = this.elt.readOnlyValues.reduce((ac, cr)=> {
+        ac[keyStringOf(cr)] = true;
+        return ac;
+    }, {});
+    console.log('readOnlyValueDict', readOnlyValueDict);
+
+    for (var i = 0; i < this.$items.length ; ++i) {
+        itemElt = this.$items[i];
+        if (itemElt.data) {
+            valueKey = keyStringOf(itemElt.data.value);
+            if (readOnlyValueDict[valueKey]) {
+                itemElt.readOnly = true;
+            }
+            else {
+                itemElt.readOnly = false;
+            }
+        }
+    }
+}
 
 
 MSMItemsViewController.prototype.ev_pressCloseItem = function (itemElt, event) {

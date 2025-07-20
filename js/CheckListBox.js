@@ -283,6 +283,7 @@ CheckListBox.property.values = {
             if (holder.children) holder.children.forEach(visit);
         });
         this.pagingCtrl.updateSelected();
+        this.updateReadOnlyItems();
         this.domSignal.emit('updateCheckedAll');
     },
     get: function () {
@@ -336,6 +337,21 @@ CheckListBox.prototype.resetSearchState = function () {
 CheckListBox.property.enableSearch = SelectListBox.property.enableSearch;
 
 
+CheckListBox.prototype.updateReadOnlyItems = function () {
+    var readOnlyValueDict = (this._readOnlyValues||[]).reduce((ac, cr)=>{
+        ac[keyStringOf(cr)] = true;
+        return ac;
+    }, {});
+    var visit = (holder) => {
+        holder.readOnly = !!readOnlyValueDict[holder.valueKey];
+        if (holder.children) {
+            holder.children.forEach(visit);
+        }
+    }
+    this.itemHolders.forEach(visit);
+};
+
+
 CheckListBox.property.items = {
     set: function (items) {
         items = items || [];
@@ -383,6 +399,18 @@ CheckListBox.property.selectedAll = {
             }
             return res;
         });
+    }
+};
+
+CheckListBox.property.readOnlyValues = {
+    set: function (values) {
+        values = values || [];
+        this._readOnlyValues = values.slice();
+        this.updateReadOnlyItems();
+    },
+    get: function () {
+        var values = this._readOnlyValues ||[];
+        return values;
     }
 };
 
@@ -538,6 +566,7 @@ CLHolder.prototype.attachView = function (itemElt) {
     itemElt.data = this.data;
     itemElt.level = this.level;
     itemElt.selected = this.selected;
+    itemElt.readOnly = this.readOnly;
 };
 
 
@@ -559,6 +588,16 @@ CLHolder.prototype.getSearchItem = function () {
     return res;
 };
 
+Object.defineProperty(CLHolder.prototype, 'readOnly', {
+    set: function (value) {
+        this._readOnly = !!value;
+        if (this.itemElt)
+            this.itemElt.readOnly = this._readOnly;
+    },
+    get: function () {
+        return this._readOnly;
+    }
+})
 
 export function CLHolderRef(boxElt, origin, parent, result) {
     this.boxElt = boxElt;
