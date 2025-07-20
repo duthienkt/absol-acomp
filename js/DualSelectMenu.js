@@ -2,7 +2,8 @@ import ACore, { $, _ } from "../ACore";
 import DualSelectBox from "./DualSelectBox";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
+import { AbstractInput } from "./Abstraction";
 
 
 /***
@@ -29,6 +30,8 @@ function DualSelectMenu() {
     this.$item = $('.absol-selectlist-item', this);
     this.on('click', this.eventHandler.click);
     OOP.drillProperty(this, this.$box, 'enableSearch');
+    AbstractInput.call(this);
+//chevron-up-circle
     /***
      * @name strictValue
      * @type {boolean}
@@ -47,6 +50,7 @@ function DualSelectMenu() {
      */
 }
 
+mixClass(DualSelectMenu, AbstractInput);
 
 DualSelectMenu.tag = 'DualSelectMenu'.toLowerCase();
 
@@ -99,7 +103,6 @@ DualSelectMenu.prototype._updateViewValue = function () {
     }));
 };
 
-DualSelectMenu.property = {};
 
 DualSelectMenu.property.selectedItems = {
     get: function () {

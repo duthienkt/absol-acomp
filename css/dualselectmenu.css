@@ -95,6 +95,9 @@
     --dual-list-estimate-text-width: 20px;
 }
 
+.as-dual-select-menu.as-background-none {
+    background-color: transparent;
+}
 
 .am-dual-select-menu .absol-selectmenu-holder-item{
     position: relative;
