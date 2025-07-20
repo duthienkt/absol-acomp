@@ -53,7 +53,7 @@
     box-sizing: border-box;
     border-radius: var(--select-box-item-border-radius);
     overflow: hidden;
-    background-color: rgb(113, 148, 169);
+    background-color: var(--primary-color);
     border-color: rgb(121, 165, 192);
     vertical-align: top;
     white-space: normal;
@@ -126,7 +126,7 @@
 }
 
 .absol-selectbox-item-close span {
-    font-size: 1.25em;
+    font-size: 1em;
     display: inline-block;
     vertical-align: middle;
 }
