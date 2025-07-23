@@ -13,10 +13,12 @@ function TextMeasure() {
     // if the font is not in data, create it and copy console log to TextMeasureData.js
     // this._makeFontSize('Times New Roman');
     // this._makeFontSize('Arial');
+    // this._makeFontSize('Roboto');
 }
 
 TextMeasure.prototype.FONT_ARIAL = 'Arial';
 TextMeasure.prototype.FONT_TIMES_NEW_ROMAN = 'Times New Roman';
+TextMeasure.prototype.FONT_ROBOTO = 'Roboto';
 
 TextMeasure.prototype.exportCode = function () {
     var obj = 'self.absol.TextMeasure';
@@ -133,7 +135,7 @@ TextMeasure.prototype._makeFontSize = function (fontName) {
     };
 
     // copy from console and paste it to TextMeasureData
-    // console.log(fontName+":"+JSON.stringify(this.data.fonts[fontName]));
+    // console.log(fontName+":",JSON.stringify(TextMeasureData[fontName]) );
 };
 
 /***
