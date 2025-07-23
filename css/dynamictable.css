@@ -262,7 +262,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 
 .as-dynamic-table {
     font-size: 1rem;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     border-collapse: collapse;
     box-sizing: border-box;
     display: inline-table;
@@ -509,10 +509,18 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
     max-width: calc(90vw - 50px);
 }
 
-.as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-header-cell,
+
 .as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-body-cell {
     border-color: var(--table-new-border-color);
     border-top: none;
+    border-left: none;
+    border-right: none;
+    padding: var(--table-td-padding-top-bottom) var(--table-td-padding-left-right);
+}
+
+
+.as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-header-cell {
+    border-color: var(--table-new-border-color);
     border-left: none;
     border-right: none;
     padding: var(--table-td-padding-top-bottom) var(--table-td-padding-left-right);
@@ -533,6 +541,10 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
     position: relative;
     display: inline-block;
     vertical-align: middle;
+    top: unset;
+    left:  unset;
+    right: unset;
+    bottom:  unset;
 }
 
 .as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-sort-btn {
@@ -601,9 +613,12 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
 }
 
 .as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-body-row:hover,
-.as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-body-row.as-hover {
+.as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-body-row.as-hover,
+.absol-table-scroller .as-table-new > tbody > tr.as-hover
+{
     box-shadow: var(--table-new-row-hover);
     z-index: 1;
+    position: relative;
 }
 
 .as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-body-row.as-selected {
@@ -630,7 +645,7 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
 
 /*.as-dynamic-table-space .as-dt-body:empty::after,*/
 /*.as-table-new >tbody:empty::after {*/
-/*    font-family: Arial, Helvetica, sans-serif;*/
+/*    font-family: Roboto, sans-serif;*/
 /*    font-size: 14px;*/
 /*    text-align: center;*/
 /*    display: table-row;*/

@@ -7,7 +7,7 @@
     left: 10px;
     width: calc(var(--select-list-estimate-width) + 2px + 5px + 7px);
     font-size: 1rem;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     border: solid 1px rgb(100, 100, 255);
     box-sizing: border-box;
     background-color: white;

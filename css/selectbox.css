@@ -45,7 +45,7 @@
 }
 
 .absol-selectbox-item {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     display: inline-block;
     position: relative;
     font-size: var(--select-box-item-font-size);

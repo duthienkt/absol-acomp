@@ -6,7 +6,7 @@
     display: inline-block;
     width: 25em;
     height: 40em;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     font-size: 1rem;
     position: fixed;
     --x: 0;
@@ -137,7 +137,7 @@
     padding:0 3px ;
     background-color: rgba(255,  0, 0, 0.7);
     color: white;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     font-size: 14px;
     height: 30px;
     min-width: 30px;

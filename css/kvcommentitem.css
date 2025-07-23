@@ -1,6 +1,6 @@
 .kv-comment-item {
     font-size: 1rem;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     position: relative;
 
     padding: 0 calc(2em + 7px) 0 calc(2.85em + 20px);

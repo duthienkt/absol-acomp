@@ -1,7 +1,7 @@
 
 .as-tree-table {
     font-size: 1rem;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     border-collapse: collapse;
 }
 
@@ -126,5 +126,4 @@
 }
 
 .as-tree-table.as-table-new .as-tree-table-head-cell {
-    border-top: none;
 }

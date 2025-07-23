@@ -4,7 +4,7 @@
     --finder-header-height: 51px;
     --finder-nav-width: 250px;
     overflow: hidden;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
 }
 
 .as-finder.as-compact-mode {

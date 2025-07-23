@@ -8,7 +8,7 @@
     overflow-y: hidden;
     height: var(--height);
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     --underline-left: 0;
     --underline-width: 0;
     --height: 2em;
