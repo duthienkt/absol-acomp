@@ -53,9 +53,11 @@ label.as-checkbox-input[data-variant="v0"] {
     color: var(--dark-color);
 }
 
-
+/**/
 label.as-checkbox-input[data-variant="check-box"],
-label.as-checkbox-input[data-variant="check-circle"] {
+label.as-checkbox-input[data-variant="check-circle"],
+label.as-checkbox-input[data-variant="reject-circle"]
+{
     border: none;
     color: white;
 }
@@ -64,6 +66,11 @@ label.as-checkbox-input.as-checked[data-variant="check-box"],
 label.as-checkbox-input.as-checked[data-variant="check-circle"] {
     background-color: var(--primary-color);
 }
+
+label.as-checkbox-input.as-checked[data-variant="reject-circle"]{
+    background-color: #EF4444;
+}
+
 
 
 label.as-checkbox-input::after {
@@ -88,11 +95,14 @@ label.as-checkbox-input.as-checked::after {
 }
 
 
-label.as-checkbox-input[data-variant="check-circle"] {
+label.as-checkbox-input[data-variant="check-circle"],
+label.as-checkbox-input[data-variant="reject-circle"]
+{
     border-radius: 50%;
 }
 
-label.as-checkbox-input[data-variant="check-circle"]::after {
+label.as-checkbox-input[data-variant="check-circle"]::after,
+label.as-checkbox-input[data-variant="reject-circle"]::after {
     border-radius: 50%;
 }
 
@@ -101,7 +111,9 @@ label.as-checkbox-input.as-checked[data-variant="v0"]:not(.as-read-only):hover {
 }
 
 label.as-checkbox-input[data-variant="check-box"]:not(.as-read-only):hover,
-label.as-checkbox-input[data-variant="check-circle"]:not(.as-read-only):hover {
+label.as-checkbox-input[data-variant="check-circle"]:not(.as-read-only):hover,
+label.as-checkbox-input[data-variant="reject-circle"]:not(.as-read-only):hover
+{
     background-color: var(--candy-hover-background-color);
 }
 
@@ -111,6 +123,10 @@ label.as-checkbox-input.as-checked[data-variant="check-circle"]:not(.as-read-onl
     background-color: #1E7183;
 }
 
+label.as-checkbox-input.as-checked[data-variant="reject-circle"]:not(.as-read-only):hover {
+    background-color: #CD0606;
+}
+
 
 
 label.as-checkbox-input.as-checked[data-variant="check-box"]:not(.as-read-only):active,
@@ -118,10 +134,15 @@ label.as-checkbox-input.as-checked[data-variant="check-circle"]:not(.as-read-onl
     background-color: var(--active-primary-color);
 }
 
+label.as-checkbox-input.as-checked[data-variant="reject-circle"]:not(.as-read-only):active {
+    background-color: #880505;
+}
+
 label.as-checkbox-input[data-variant="check-box"].as-disabled,
 label.as-checkbox-input[data-variant="check-circle"].as-disabled,
 label.as-checkbox-input[data-variant="check-box"].as-checked.as-disabled,
-label.as-checkbox-input[data-variant="check-circle"].as-checked.as-disabled {
+label.as-checkbox-input[data-variant="check-circle"].as-checked.as-disabled,
+label.as-checkbox-input[data-variant="reject-circle"].as-checked.as-disabled {
     background-color: var(--border-color);
     color: white;
 }

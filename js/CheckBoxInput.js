@@ -42,6 +42,7 @@ function CheckboxInput() {
     this.checked = false;
     this.disabled = false;
     this.readOnly = false;
+    this.$tick = $('.tick', this);
     this.on('click', this.eventHandler.click);
     this.onchange = null;
     AbstractStyleExtended.call(this);
@@ -98,6 +99,13 @@ CheckboxInput.prototype.styleHandlers.variant = {
             this.extendStyle.size = 'regular';//auto set new style
         }
         this.attr('data-variant', value);
+        if (value === 'reject-circle') {
+            this.$tick.addClass('mdi-close').removeClass('mdi-check');
+
+        }
+        else {
+            this.$tick.removeClass('mdi-close').addClass('mdi-check');
+        }
         return value;
     }
 };
