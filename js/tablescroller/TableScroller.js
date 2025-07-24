@@ -197,10 +197,31 @@ TableScroller.prototype.addChild = function (elt) {
     }
     this.$originContent = elt;
     this.$originTable = $('table', this.$originContent);
+    this._hookHover();
     this.$originCtn.addChild(this.$originTable);
     this.requestUpdateContent();
 };
 
+
+TableScroller.prototype._hookHover = function () {
+   if (!this.$originTable) return;
+    var tbody = this.$originTableBody = $('tbody', this.$originTable);
+    var rows = Array.prototype.filter.call(tbody.childNodes, elt => elt.tagName === 'TR');
+    rows.forEach(row=>{
+       row.addEventListener('mouseover', (event) => {
+           row.classList.add('as-hover');
+           if (row.$clonedRow) {
+                row.$clonedRow.classList.add('as-hover');
+           }
+        });
+        row.addEventListener('mouseleave', (event) => {
+            if (row.$clonedRow) {
+                row.$clonedRow.classList.remove('as-hover');
+            }
+            row.classList.remove('as-hover');
+        });
+    });
+}
 
 TableScroller.prototype._revertWrapped = function () {
     var pair;
@@ -279,7 +300,7 @@ TableScroller.prototype._updateFixedXCol = function () {
     var headRows = Array.prototype.filter.call(this.$originTableThead.childNodes, elt => elt.tagName === 'TR')
         .map(tr => {
             var copyTr = $(tr.cloneNode(false));
-
+            tr.$clonedRow = copyTr;
             copyTr.$origin = tr;
             var cells = Array.prototype.filter.call(tr.childNodes, elt => elt.tagName === 'TH' || elt.tagName === 'TD');
             cells = sliceCellArray(cells, 0, this.fixedCol)
@@ -296,6 +317,19 @@ TableScroller.prototype._updateFixedXCol = function () {
         .map(tr => {
             var copyTr = $(tr.cloneNode(false));
             copyTr.$origin = tr;
+            tr.$clonedRow = copyTr;
+            copyTr.addEventListener('mouseover', (event) => {
+                copyTr.classList.add('as-hover');
+                if (copyTr.$origin) {
+                    copyTr.$origin.classList.add('as-hover');
+                }
+            });
+            copyTr.addEventListener('mouseleave', (event) => {
+                if (copyTr.$origin) {
+                    copyTr.$origin.classList.remove('as-hover');
+                }
+                copyTr.classList.remove('as-hover');
+            });
             var id = copyTr.attr('data-id');
             this.leftCopyRows[id] = copyTr;
             var cells = Array.prototype.filter.call(tr.childNodes, elt => elt.tagName === 'TH' || elt.tagName === 'TD');
