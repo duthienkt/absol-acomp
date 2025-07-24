@@ -2,7 +2,7 @@
     border: 1px solid #ddd;
     box-sizing: border-box;
     font-size: 14px;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
 
     --item-min-width: 10px;
     min-width: calc(var(--item-min-width) + var(--item-min-width) + 122px + 44px);

@@ -9,7 +9,7 @@ import StaticTabbar from "./StaticTabbar";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import OOP from "absol/src/HTML5/OOP";
-import ACore, {$, _} from "../ACore";
+import ACore, { $, _ } from "../ACore";
 
 /**
  * @typedef {Object} CMDTabListNodeDeclaration
@@ -71,7 +71,7 @@ CMDTool.prototype.updateVisibility = function (...args) {
     if (!delegate) return;
     var keys = [];
     if (args.length === 0) {
-        keys = Object.keys(this.$nodes).filter(k=>k !== 'undefined');//remove apt nodes
+        keys = Object.keys(this.$nodes).filter(k => k !== 'undefined');//remove apt nodes
     }
     else {
         keys = args.reduce((ac, cr) => {
@@ -139,7 +139,7 @@ CMDTool.prototype.createNode = function (nd, par) {
 
 CMDTool.prototype.updateNode = function (nodeElt, nd) {
     if (!nodeElt) return;
-    nd = Object.assign({}, nodeElt.descriptor,{disabled: false}, nd);//default disabled = false
+    nd = Object.assign({}, nodeElt.descriptor, { disabled: false }, nd);//default disabled = false
     if (typeof nd.desc === "function") {
         nd.desc = nd.desc.call(this.delegate);
     }
@@ -179,7 +179,7 @@ CMDTool.prototype.cmdNodeHandlers = {
          * @param par
          */
         create: function (nd, par) {
-            var items = nd.children.map((ch, idx) => {
+            var items = nd.children.filter(c => c.type === 'tab').map((ch, idx) => {
                 return {
                     text: ch.name,
                     value: idx + ''
@@ -189,8 +189,8 @@ CMDTool.prototype.cmdNodeHandlers = {
                 this.$tabBar = _({
                     tag: StaticTabbar,
                     style: {
+                        size: 'small',
                         display: 'inline-block',
-                        fontSize: 12 / 0.7 + 'px',
                         marginBottom: '5px'
                     },
                     props: {
@@ -214,20 +214,40 @@ CMDTool.prototype.cmdNodeHandlers = {
                     },
                     child: [this.$tabBar]
                 });
+
+            }
+
+            if (!this.$leftCtn) {
+                this.$leftCtn = _({
+                    class: 'as-cmd-tool-left-ctn'
+                });
             }
 
             this.$tabBar.items = items;
             if (!items[this.$tabBar.value]) this.$tabBar.value = '0';
             if (!this.$tabList) {
-                this.$tabList = _({});
+                this.$tabList = _({
+                    class:'as-cmd-tool-tab-list',
+
+                });
             }
+            this.$leftCtn.clearChild();
             this.$tabList.clearChild();
+            this.$tabList.addChild(this.$leftCtn);
             this.$tabList.addChild(this.$tabBarCtn);
 
-            this.$frames = nd.children.map((ch, idx) => {
-                return this.createNode(ch, nd).addStyle('display', idx + '' === this.$tabBar.value ? '' : 'none').addStyle('textAlign', 'left');
+
+            this.$frames = nd.children.filter(c => c.type === 'tab').map((ch, idx) => {
+                return this.createNode(ch, nd).addStyle('display', idx + '' === this.$tabBar.value ? '' : 'none').addStyle({
+                    'textAlign': 'left',
+                    gridColumn: '1 / span 2'
+                });
             });
             this.$tabList.addChild(this.$frames);
+            this.$leftGroups = nd.children.filter(c => c.type === 'left_group').map((ch) => {
+                return this.createNode(ch, nd);
+            });
+            this.$leftCtn.addChild(this.$leftGroups);
             return this.$tabList;
         },
         /**
@@ -560,6 +580,19 @@ CMDTool.prototype.cmdNodeHandlers = {
         update: function (nd, par, nodeElt) {
 
         }
+    },
+    left_group: {
+        create: function (nd, par) {
+            var groupElt = _({
+                class: 'as-cmd-tool-left-group',
+                child: nd.children.map((ch) => {
+                    return this.createNode(ch, nd);
+                }),
+            });
+
+
+            return groupElt;
+        }
     }
 };
 
@@ -568,8 +601,6 @@ CMDTool.prototype.execCmd = function () {
     if (this._delegate)
         this._delegate.execCmd.apply(this._delegate, arguments);
 };
-
-
 
 
 Object.defineProperty(CMDTool.prototype, 'delegate', {

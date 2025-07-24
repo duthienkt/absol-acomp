@@ -10,7 +10,7 @@
     box-sizing: border-box;
     width: 4em;
     --text-width: 0.5em;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     overflow: hidden;
     background-color: white;
 }

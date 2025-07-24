@@ -111,3 +111,25 @@
 .as-cmd-tool-tab {
     overflow: hidden;
 }
+
+.as-cmd-tool-tab-list {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+}
+
+.as-cmd-tool-left-ctn {
+    background-color: rgba(169, 169, 169, 0.15);
+    align-self: stretch;
+    align-content: center;
+}
+
+.as-cmd-tool-left-group {
+    height: 100%;
+}
+
+.as-cmd-tool-left-group > button.as-ribbon-button {
+    height: 100%;
+    width:  auto;
+    font-size: 14px;
+}
