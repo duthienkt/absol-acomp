@@ -10,7 +10,7 @@ import {
 import ChromeTimePicker from "./ChromeTimePicker";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import DateTimeInput from "./DateTimeInput";
-import { isRealNumber, zeroPadding } from "./utils";
+import { getDateTimeFormatTextWidth, isRealNumber, zeroPadding } from "./utils";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
@@ -37,6 +37,8 @@ function TimeInput() {
     this._hour = null;
     this._minute = null;
     this._format = 'HH:mm';
+    this.addStyle('--format-width', getDateTimeFormatTextWidth(this._format) + 'px');
+
     this.$clockBtn = $('.as-time-input-icon-btn', this)
         .on('click', this.eventHandler.clickClockBtn);
     this.$text = $('input', this)
@@ -272,7 +274,6 @@ TimeInput.prototype._notifyIfChange = function (event) {
 };
 
 
-
 TimeInput.property.hour = {
     set: function (value) {
         if (typeof value == "number") {
@@ -352,6 +353,7 @@ TimeInput.property.format = {
         value = value || 'HH:mm';
         this._format = value;
         this.dayOffset = this['dayOffset'];
+        this.addStyle('--format-width', getDateTimeFormatTextWidth(value) + 'px');
     },
     get: function () {
         return this._format;

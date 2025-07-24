@@ -1,18 +1,23 @@
 .ac-time-input {
     box-sizing: border-box;
     --base-size: calc(2em + 2px);
+    --format-width: 48px;
     height: var(--base-size);
-    width: 9em;
+    width: calc(var(--format-width) + var(--base-size) * 1.6 + var(--as-input-horizontal-padding) * 2 + 2px);
     border: solid 1px #d6d6d6;
     border-radius: 2px;
     font-size: 1rem;
     outline: none;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     display: inline-block;
     vertical-align: middle;
     background-color: white;
     position: relative;
     overflow: hidden;
+}
+
+.ac-time-input.as-read-only {
+    width:  calc(var(--format-width) + var(--as-input-horizontal-padding) * 2 + 2px);
 }
 
 .ac-time-input[data-size="large"] {
@@ -72,6 +77,10 @@
     color: inherit;
     box-sizing: border-box;
     background-color: transparent;
+}
+
+.ac-time-input.as-read-only input {
+    width: 100%;
 }
 
 .ac-time-input.as-disabled {
