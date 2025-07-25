@@ -763,12 +763,14 @@ TEIFormatTool.prototype.commands = {
          * @this TEIFormatTool
          */
         available: function () {
+            if (!this.focusCell) return false;
             return this.focusCell.row.cells.length < this.table.maxCol;
         },
         /**
          * @this TEIFormatTool
          */
         exec: function () {
+            if (!this.focusCell) return false;
             var idx = this.focusCell.row.cells.indexOf(this.focusCell);
             this.table.rows.forEach(row => {
                 var newCell = new TEICell(row, { value: '' });
@@ -785,6 +787,7 @@ TEIFormatTool.prototype.commands = {
          * @this TEIFormatTool
          */
         exec: function () {
+            if (!this.focusCell) return false;
             var idx = this.focusCell.row.cells.indexOf(this.focusCell);
             this.table.rows.forEach(row => {
                 var newCell = new TEICell(row, { value: '' });
