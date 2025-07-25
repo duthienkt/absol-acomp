@@ -28,7 +28,6 @@ function StaticTabbar() {
 
 mixClass(StaticTabbar, AbstractStyleExtended);
 
-StaticTabbar.prototype.extendStyle = {};
 StaticTabbar.prototype.extendStyle.variant = 'secondary';
 
 StaticTabbar.tag = 'StaticTabbar'.toLowerCase();
