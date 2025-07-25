@@ -72,7 +72,7 @@ SelectRibbonMenu.property.items = {
 SelectRibbonMenu.property.value = {
     set: function (value) {
         var selectedItem = this.selectedItem;
-        console.log('clear', selectedItem)
+        // console.log('clear', selectedItem)
         removeSelectedClass(selectedItem);
 
         this._value = value;
