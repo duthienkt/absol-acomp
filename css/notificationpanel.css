@@ -13,7 +13,7 @@
     display: inline-block;
     vertical-align: top;
     font-size: 14px;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
 }
 
 
@@ -34,7 +34,7 @@
     background-color: rgba(169, 169, 171, 0.2);
     border-radius: 50%;
     position: relative;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     white-space: nowrap;
 }
 

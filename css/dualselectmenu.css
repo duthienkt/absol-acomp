@@ -8,7 +8,7 @@
     width: var(--dual-list-estimate-width);
     z-index: 10000000;
     background-color: white;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     font-size: 1rem;
 
 }

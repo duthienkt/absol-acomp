@@ -4,7 +4,7 @@
 
 .as-date-in-year-picker {
     font-size: 1rem;
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     /*width: 20em;*/
     box-sizing: border-box;
     border: 1px solid #dddddd;
@@ -157,7 +157,8 @@ button.as-date-in-year-picker-month > span {
 
 
 .as-date-time-input.as-date-in-year-input {
-    width: calc(8em + 2px);
+    --format-width: 4.5em;
+    width: calc(var(--format-width) + 2em);
 }
 
 .as-date-in-year-input.as-must-not-null .as-time-input-clear-btn,
