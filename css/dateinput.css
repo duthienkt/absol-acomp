@@ -64,10 +64,13 @@
 .as-date-input[data-format] {
     --format-width: 8.5em;
     width: calc(var(--format-width) + 2em + 1em);
+    min-width: calc(var(--format-width) + 2em + 1em);
 }
+
 
 .as-date-input[data-format].as-read-only {
     width: calc(var(--format-width) + 1em);
+    min-width: calc(var(--format-width) + 1em);
 }
 
 .as-date-input-text {
@@ -98,7 +101,7 @@
     height: 100%;
     background-color: rgba(169, 169, 169, 0.1);
     cursor: pointer;
-    color: black;
+    color: inherit;
     padding: 0;
 }
 
