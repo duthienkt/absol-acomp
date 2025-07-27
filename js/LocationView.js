@@ -671,7 +671,7 @@ LocationView.property.points = {
 
 
             this.pointsCluster = new LVCluster(this, this.$points);
-            console.log('set points', Date.now() - now);
+            // console.log('set points', Date.now() - now);
 
             this.domSignal.once('update_view', function () {
                 if (points.length > 1) {
