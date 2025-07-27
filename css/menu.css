@@ -93,8 +93,7 @@
 
 .absol-hmenu-button:hover,
 .absol-hmenu .absol-hmenu-button-hover {
-
-    background-color: rgb(175, 175, 175);
+    background-color: var(--space-backgroudcolor);
 }
 
 .absol-hmenu-button {
@@ -133,16 +132,16 @@
     padding-top: 0.4em;
     padding-bottom: 0.4em;
     background-color: rgb(252, 252, 255);
-    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
 }
 
 .absol-vmenu-button {
     text-align: left;
-    padding-left: 0.5em;
-    padding-right: 2em;
-    height: 1.8em;
+    padding-left: 8px;
+    padding-right: 8px;
+    height: 32px;
     white-space: nowrap;
     position: relative;
     display: block;
@@ -159,15 +158,15 @@ img.absol-vmenu-button-icon[src] {
 
 .absol-vmenu-button-ext-icon-container {
     display: inline-block;
-    width: 1.2em;
-    height: 1.2em;
+    width: 16px;
+    height: 16px;
     vertical-align: middle;
-    margin-right: 0.5em;
+    margin-right: 12px;
 }
 
 .absol-vmenu-button-ext-icon-container > span,
 .absol-vmenu-button-ext-icon-container > i {
-    font-size: 1.2em;
+    font-size: 16px;
     line-height: 1;
     display: block;
 }
@@ -175,8 +174,8 @@ img.absol-vmenu-button-icon[src] {
 
 .absol-vmenu-button-ext-icon-container > svg,
 .absol-vmenu-button-ext-icon-container > img {
-    height: 1.2em;
-    width: 1.2em;
+    height: 16px;
+    width: 16px;
     display: block;
 }
 
@@ -221,7 +220,7 @@ img.absol-vmenu-button-icon[src] {
 
 .absol-vmenu-button:hover,
 .absol-vmenu .absol-vmenu-button-hover {
-    background-color: rgb(214, 214, 217);
+    background-color: var(--space-backgroud-color);
 }
 
 .absol-menu-item-disabled .absol-vmenu-button:hover,
@@ -283,6 +282,10 @@ img.absol-vmenu-button-icon[src] {
 
 .dark .absol-hmenu {
     background-color: rgb(33, 33, 33);
+}
+
+.absol-vmenu-button.bsc-quickmenu.red:hover {
+    color: var(--variant-color-danger);
 }
 
 /*standard-alone*/
