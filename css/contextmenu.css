@@ -40,10 +40,10 @@
     -moz-box-shadow: 2px 2px 9px 0px rgb(7, 7, 7, 1);
     box-shadow: 2px 2px 9px 0px rgba(7, 7, 7, 1); */
     color: black;
-    background-color: rgb(252, 252, 255);
-    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    background-color: white;
+    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
 }
 
 .absol-context-menu-anchor.dark .absol-hmenu,
@@ -87,20 +87,28 @@
 
 .absol-context-menu-anchor .absol-vmenu,
 .absol-context-menu-anchor .absol-hmenu {
-    padding-top: 0.4em;
-    padding-bottom: 0.4em;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 4px;
+    padding-right: 4px;
     color: black;
-    background-color: rgb(252, 252, 255);
-    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    background-color: white;
+    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    border-radius: 5px;
+    overflow: hidden;
+}
+.absol-context-menu-anchor .absol-vmenu:empty,
+.absol-context-menu-anchor .absol-hmenu:empty {
+    display:  none;
 }
 
 
 .absol-context-menu-anchor .absol-dropright > .absol-dropright-content {
-    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow:  0 0 10px 0 rgba(0, 0, 0, 0.15);
 }
 
 
