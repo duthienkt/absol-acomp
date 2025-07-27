@@ -159,6 +159,7 @@ button.as-date-in-year-picker-month > span {
 .as-date-time-input.as-date-in-year-input {
     --format-width: 4.5em;
     width: calc(var(--format-width) + 2em);
+    min-width: calc(var(--format-width) + 2em);
 }
 
 .as-date-in-year-input.as-must-not-null .as-time-input-clear-btn,

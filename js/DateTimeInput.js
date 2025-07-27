@@ -1,14 +1,14 @@
 import ACore, { _, $ } from "../ACore";
 import '../css/datetimeinput.css';
 import DomSignal from "absol/src/HTML5/DomSignal";
-import { isDateTimeFormatToken, isRealNumber, zeroPadding } from "./utils";
+import { getDateTimeFormatTextWidth, isDateTimeFormatToken, isRealNumber, zeroPadding } from "./utils";
 import { daysInMonth, formatDateTime } from "absol/src/Time/datetime";
 import ChromeTimePicker from "./ChromeTimePicker";
 import ChromeCalendar from "./ChromeCalendar";
 import Follower from "./Follower";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
 
 
@@ -16,8 +16,9 @@ var STATE_NEW = 1;
 var STATE_EDITED = 2;
 var STATE_NONE = 0;
 
+
 /***
- * @augments AbstractStyleExtended
+ * @augments AbstractInput
  * @extends AElement
  * @constructor
  */
@@ -27,6 +28,7 @@ function DateTimeInput() {
     this._min = new Date(1890, 0, 1);
     this._max = new Date(new Date(2090, 0, 1).getTime() - 1);
     this._format = 'dd/MM/yyyy HH:mm';
+    this.addStyle('--format-width', getDateTimeFormatTextWidth(this._format) +'px');
     this.$attachhook = _('attachhook').addTo(this);
     this.domSignal = new DomSignal(this.$attachhook);
     this.domSignal.on('request_auto_select', this._autoSelect.bind(this));
@@ -50,10 +52,10 @@ function DateTimeInput() {
     this.notNull = false;
     this.min = this._min;
     this.max = this._max;
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
 }
 
-mixClass(DateTimeInput, AbstractStyleExtended);
+mixClass(DateTimeInput, AbstractInput);
 
 DateTimeInput.tag = 'DateTimeInput'.toLowerCase();
 
@@ -67,7 +69,8 @@ DateTimeInput.render = function () {
                 tag: 'input',
                 class: 'as-date-time-input-text',
                 attr: {
-                    ondrop: "return false;"
+                    ondrop: "return false;",
+                    type:'text'
                 },
                 props: {
                     value: 'dd/MM/yyyy HH:mm'
@@ -542,7 +545,7 @@ DateTimeInput.property.format = {
         this._format = value;
         this.$text.value = this._applyTokenDict(value, dict);
         this.attr('data-text', this.$text.value);
-
+        this.addStyle('--format-width', getDateTimeFormatTextWidth(value) +'px');
     },
     get: function () {
         return this._format;

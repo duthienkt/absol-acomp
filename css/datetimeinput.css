@@ -2,7 +2,9 @@
     border: 1px solid #ddd;
     border-radius: 3px;
     height: calc(2em + 2px);
-    width: calc(14em + 2px);
+    --format-width: 138px;
+    width: calc(var(--format-width) + 60px + 2px);
+    min-width: calc(var(--format-width) + 60px + 2px);
     box-sizing: border-box;
     display: inline-block;
     vertical-align: middle;
@@ -11,10 +13,21 @@
     overflow: hidden;
 }
 
+.as-date-time-input.as-background-none {
+    background-color: transparent;
+}
+
+.as-date-time-input[data-size].as-read-only {
+    width:  calc(var(--format-width) + var(--as-input-horizontal-padding) * 2 + 2px);
+    min-width:  calc(var(--format-width) + var(--as-input-horizontal-padding) * 2 + 2px);
+}
+
 .as-date-time-input[data-size] {
     --base-size: 30px;
     height: var(--base-size);
     border-radius: 3px;
+    width: calc(var(--format-width) + var(--base-size) * 2 + var(--as-input-horizontal-padding) * 1.6 + 2px);
+    min-width: calc(var(--format-width) + var(--base-size) * 2 + var(--as-input-horizontal-padding) * 1.6 + 2px);
 }
 
 .as-date-time-input[data-size="large"] {
@@ -35,6 +48,10 @@
 
 .as-date-time-input[data-size] input {
     width: calc(100% - var(--base-size));
+}
+
+.as-date-time-input[data-size].as-read-only input {
+    width: 100%;
 }
 
 .as-date-time-input[data-size] .as-date-time-input-icon-btn {
@@ -64,6 +81,7 @@
     -webkit-user-drag: none;
     color: inherit;
     box-sizing: border-box;
+    background-color: transparent;
 }
 
 .as-date-time-input.as-disabled input {
@@ -173,7 +191,7 @@
 
 
 .as-date-time-input.as-read-only .as-date-time-input-icon-btn {
-    pointer-events: none;
+    display: none;
 }
 
 
