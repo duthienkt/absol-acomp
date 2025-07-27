@@ -204,15 +204,15 @@ TableScroller.prototype.addChild = function (elt) {
 
 
 TableScroller.prototype._hookHover = function () {
-   if (!this.$originTable) return;
+    if (!this.$originTable) return;
     var tbody = this.$originTableBody = $('tbody', this.$originTable);
     var rows = Array.prototype.filter.call(tbody.childNodes, elt => elt.tagName === 'TR');
-    rows.forEach(row=>{
-       row.addEventListener('mouseover', (event) => {
-           row.classList.add('as-hover');
-           if (row.$clonedRow) {
+    rows.forEach(row => {
+        row.addEventListener('mouseover', (event) => {
+            row.classList.add('as-hover');
+            if (row.$clonedRow) {
                 row.$clonedRow.classList.add('as-hover');
-           }
+            }
         });
         row.addEventListener('mouseleave', (event) => {
             if (row.$clonedRow) {
@@ -258,6 +258,14 @@ TableScroller.prototype._updateFixedYHeader = function () {
                 .map(td => $(Object.assign(td.cloneNode(true), { $origin: td })));
             copyTr.addChild(cells);
             sliceCellArray(cells, this.fixedCol).forEach(elt => {
+                elt.addEventListener('click', (event) => {
+                    if (elt.$origin && elt.$origin.isSupportedEvent('click')) {
+                        elt.$origin.emit('click', event);
+                    }
+                    else {
+                        elt.$origin.emit('click');
+                    }
+                });
                 swapChildrenInElt(elt, elt.$origin);
                 this._swappedPairs.push([elt, elt.$origin]);
             });
@@ -288,7 +296,7 @@ TableScroller.prototype._updateFixedYHeaderSize = function () {
     this.$fixedYHeader.addStyle('height', headBound.height + 'px');
     // this.$fixedYHeader
 
-    this.$headLine.addStyle('top',headBound.height - 1 + 'px')
+    this.$headLine.addStyle('top', headBound.height - 1 + 'px')
         .addStyle('max-width', bound.width + 'px');
 
 };
@@ -305,7 +313,6 @@ TableScroller.prototype._updateFixedXCol = function () {
             var cells = Array.prototype.filter.call(tr.childNodes, elt => elt.tagName === 'TH' || elt.tagName === 'TD');
             cells = sliceCellArray(cells, 0, this.fixedCol)
                 .map(td => $(Object.assign(td.cloneNode(true), { $origin: td })));
-
             copyTr.addChild(cells);
             return copyTr;
 
@@ -336,6 +343,14 @@ TableScroller.prototype._updateFixedXCol = function () {
             cells = sliceCellArray(cells, 0, this.fixedCol)
                 .map(td => $(Object.assign(td.cloneNode(true), { $origin: td })));
             cells.forEach(elt => {
+                elt.addEventListener('click', (event) => {
+                    if (elt.$origin && elt.$origin.isSupportedEvent('click')) {
+                        elt.$origin.emit('click', event);
+                    }
+                    else {
+                        elt.$origin.emit('click');
+                    }
+                });
                 swapChildrenInElt(elt, elt.$origin);
                 this._swappedPairs.push([elt, elt.$origin]);
             });
@@ -381,6 +396,14 @@ TableScroller.prototype._updateFixedXYHeader = function () {
                 .map(td => $(Object.assign(td.cloneNode(true), { $origin: td })));
             copyTr.addChild(cells);
             cells.forEach(cell => {
+                cell.addEventListener('click', (event) => {
+                    if (cell.$origin && cell.$origin.isSupportedEvent('click')) {
+                        cell.$origin.emit('click', event);
+                    }
+                    else {
+                        cell.$origin.emit('click');
+                    }
+                })
                 swapChildrenInElt(cell, cell.$origin);
                 this._swappedPairs.push([cell, cell.$origin]);
             })

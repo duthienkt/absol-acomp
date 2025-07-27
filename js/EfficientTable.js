@@ -11,7 +11,8 @@ import safeThrow from "absol/src/Code/safeThrow";
 import { isNaturalNumber, isRealNumber, revokeResource } from "./utils";
 import noop from "absol/src/Code/noop";
 import Attributes from "absol/src/AppPattern/Attributes";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
+import { AbstractStyleExtended } from "./Abstraction";
 
 var execAsync = (commands, whileFunc) => {
     return commands.reduce((ac, act) => {
@@ -57,17 +58,36 @@ function EfficientTable() {
     this.fixHeaderCtrl = new ETFixHeaderController(this);
     this._adapter = null;
     this.table = null;
-    this.extendStyle = this.extendStyle || {};
     this.$attachhook = _('attachhook').addTo(this);
     this.$attachhook.requestUpdateSize = this.layoutCtrl.requestUpdateSize.bind(this);
     this.colWidth = new ETColWidthDeclaration(this);
+    AbstractStyleExtended.call(this);
     /**
      * @name adapter
      * @type {ETAdapter}
      * @memberof EfficientTable#
      */
+
+    //if available width bigger than sum of width, use min-width ins  width
 }
 
+mixClass(EfficientTable, AbstractStyleExtended);
+
+EfficientTable.prototype.styleHandlers.tableLayout = {
+    set: function (value) {
+
+    },
+};
+
+EfficientTable.prototype.styleHandlers.width = {
+    set: function (value, ref) {
+        ref.set(value);
+        if (this.table) {
+            this.table.handleStyle();
+        }
+        return value;
+    },
+};
 
 EfficientTable.tag = 'EfficientTable'.toLowerCase();
 
@@ -94,15 +114,6 @@ EfficientTable.render = function (data, domDesc) {
     });
 };
 
-EfficientTable.prototype.addStyle = function (name, value) {
-    if (name === 'width') {
-        this.extendStyle[name] = value;
-    }
-    else {
-        AElement.prototype.addStyle.apply(this, arguments);
-    }
-    return this;
-};
 
 EfficientTable.prototype.getColWidth = function () {
     var table = this.table;
@@ -245,7 +256,6 @@ function ETLayoutController(elt) {
     //controller
     this.$fixedYCtn = $('.as-dynamic-table-fixed-y-ctn', elt);
 
-    this.extendStyle = {};
 
     // this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
     this.$attachhook.requestUpdateSize = this.requestUpdateSize.bind(this);
@@ -263,6 +273,16 @@ function ETLayoutController(elt) {
     this.ev_scroll = this.ev_scroll.bind(this);
     this.$BindedScrollers = [];
     this.stopScrollTO = -1;
+    this.obs = new IntersectionObserver(()=>{
+        if (this.elt.isDescendantOf(document.body)) {
+            this.requestUpdateSize();
+        }
+        else if (this.obs) {
+            this.obs.disconnect();
+            this.obs = null;
+        }
+    }, {root: document.body});
+    this.obs.observe(this.elt);
 
 }
 
@@ -271,6 +291,14 @@ ETLayoutController.prototype.onAttached = function () {
 };
 
 ETLayoutController.prototype.requestUpdateSize = function () {
+    var bound = this.elt.table.elt.getBoundingClientRect();
+    var tcs = this.elt.table.head.templateColumSum;
+   if (tcs < bound.width - this.elt.table.head.templateColums.length) {
+       this.elt.addClass('as-up-size-columns');
+   }
+   else {
+       this.elt.removeClass('as-up-size-columns');
+   }
     this.elt.table.body.updateYOffset(true);
     var beforeRect = this.elt.table.body.size;
     this.viewSize();
@@ -536,6 +564,7 @@ ETAdapter.prototype.getRowLength = function () {
  * @constructor
  */
 function ETTable(wrapper, data) {
+    this.trace = new Error();
     this.wrapper = wrapper;
     this.adapter = this.wrapper.adapter;
     this.data = data;
@@ -597,11 +626,60 @@ function ETHead(table, data) {
         child: this.rows.map(it => it.elt)
     });
     this.size = new Rectangle(0, 0, 0, 0);
+    this.calcTemplateColumns();
 }
+
 
 ETHead.prototype.calcSize = function () {
     var bound = this.elt.getBoundingClientRect();
     this.size = Rectangle.fromClientRect(bound);
+};
+
+ETHead.prototype.calcTemplateColumns = function () {
+    var row;
+    var rows = this.rows;
+    var cell, i, j, l;
+    var k = 0;
+    var template = [];
+    var value;
+    var cHeights = Array(20).fill(0);
+    for (i = 0; i < rows.length; ++i) {
+        row = rows[i];
+        k = 0;
+        for (j = 0; j < row.cells.length; ++j) {
+            cell = row.cells[j];
+            while (cHeights[k] > i) k++;
+            while (template < k) template.push(undefined);
+            value = undefined;
+            if (cell.colspan === 1 && cell.data && cell.data.style) {
+                if (cell.data.style.width) {
+                    value = { width: cell.data.style.width };
+                }
+                else if (cell.data.style.maxWidth) {
+                    value = {
+                        maxWidth: cell.data.style.maxWidth,
+                        width: cell.data.style.maxWidth,
+                        applyBodyCell: true
+                    };
+                }
+                if (value)
+                    template[k] = value;
+            }
+            for (l = 0; l < cell.colspan; l++) {
+                cHeights[k] = Math.max(cHeights[k], i + cell.rowspan);
+                k++;
+            }
+        }
+    }
+    this.templateColums = template;
+    this.templateColumSum = template.reduce((ac, it) => {
+        if (!it) return Infinity;
+        var width = it.width;
+        var psWidth = parseMeasureValue(width);
+        if (!psWidth) return Infinity;
+        if (psWidth.unit !== 'px') return Infinity;
+        return  ac+ psWidth.value;
+    }, 0);
 };
 
 /**
@@ -622,26 +700,39 @@ function ETHeadRow(head, data) {
     });
 }
 
-// (ETHeadRow)
-
 
 function ETHeadCell(row, data) {
     this.row = row;
     this.data = data || {};
+    this.colspan = 1;
+    this.rowspan = 1;
     this.elt = _({
         tag: 'th',
         class: 'as-dt-header-cell'
     });
     if (data.attr && isNaturalNumber(data.attr.colspan)) {
         this.elt.attr('colspan', data.attr.colspan);
+        this.colspan = data.attr.colspan;
     }
     if (data.attr && isNaturalNumber(data.attr.rowspan)) {
-        this.elt.attr('colspan', data.attr.rowspan);
+        this.elt.attr('rowspan', data.attr.rowspan);
+        this.rowspan = data.attr.rowspan;
     }
-    if (data.style) this.elt.addStyle(data.style);
-
+    var style = Object.assign({}, data.style || {});
+    if (style.maxWidth) {
+        this.elt.addClass('as-has-width').addClass('as-exact-width');
+        style['--width'] = style.maxWidth;
+        delete style.maxWidth;
+    }
+    if (style.width) {
+        this.elt.addClass('as-has-width');
+        style['--width'] = style.width;
+        delete style.width;
+    }
+    this.elt.addStyle(style);
     this.row.head.table.adapter.renderHeadCell(this.elt, this.data, this);
 }
+
 
 /**
  *
@@ -909,7 +1000,10 @@ function ETBodyCell(row, idx) {
     this.row = row;
     var adapter = this.row.body.table.wrapper.adapter;
     adapter.renderBodyCell(this.elt, row.data, idx, this);
-
+    var tc = this.row.body.table.head && this.row.body.table.head.templateColums[idx];
+    if (tc && tc.applyBodyCell) {
+        this.elt.addStyle(tc);
+    }
 }
 
 
@@ -953,7 +1047,10 @@ function ETColWidthDeclaration(elt) {
                 var headWith;
                 var originValue = this.getProperty('' + i);
                 var pOValue = parseMeasureValue(originValue);
-                if (!isRealNumber(value) || value < 0) {
+                if (isRealNumber(value) && value >0) {
+                    value = value+'px';
+                }
+                else if (!isRealNumber(value) || value < 0) {
                     value = 'auto';
                 }
                 else if (unit === 'px') {
@@ -989,7 +1086,6 @@ function ETColWidthDeclaration(elt) {
                         cell.data.style.width = value;
                         cell.elt.addStyle('width', value);
                     }
-
                 });
 
             },
@@ -1026,10 +1122,10 @@ function ETColWidthDeclaration(elt) {
         var idx = temp.id2idx[id];
         this.defineProperty(id, {
             set: function (...args) {
-                return this.setProperty(idx, ...args.slice(1));
+                return this.setProperty(idx, ...args);
             },
             get: function (...args) {
-                return this.getProperty(idx, ...args.slice(1));
+                return this.getProperty(idx, ...args);
             }
         });
     });
