@@ -32,7 +32,7 @@
 
 .as-dynamic-table-wrapper {
     --dt-content-height: 0px;
-    --dt-scroll-bar-width: 17px;
+    --dt-scroll-bar-width: 15px;
     --dt-content-width: 0;
     --dt-header-height: 0;
     --dt-fixed-x-width: 0;
@@ -44,6 +44,20 @@
     box-sizing: border-box;
     height: calc(var(--dt-content-height) + 1px);
     overflow: hidden;
+}
+
+.as-dynamic-table-wrapper .absol-vscrollbar .absol-scrollbar-button {
+    left: 2px;
+    right: 2px;
+    width: unset;
+    border-radius: 5px;
+}
+
+.as-dynamic-table-wrapper .absol-hscrollbar .absol-scrollbar-button {
+    top: 2px;
+    bottom: 2px;
+    height: unset;
+    border-radius: 5px;
 }
 
 .as-dynamic-table-wrapper.as-width-match-parent {
@@ -414,9 +428,9 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     position: fixed;
     cursor: move;
     opacity: 0.7;
-    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
 
 }
 
@@ -629,6 +643,24 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
 .hr-modal-body-ctn .as-dynamic-table-wrapper{
     width:var(--dt-content-width);
     max-width: calc(var(--modal-content-max-width) - var(--distance-6) * 2 - 2px);/*border*/
+}
+
+.as-efficient-table-wrapper .as-dt-header-cell.as-has-width
+{
+    --width: auto;
+    width: var(--width);
+}
+
+.as-efficient-table-wrapper .as-dt-header-cell.as-has-width.as-exact-width
+{
+    width: var(--width);
+    max-width: var(--width);
+    min-width: var(--width);
+}
+
+.as-efficient-table-wrapper.as-up-size-columns  .as-dt-header-cell.as-has-width:not(.as-exact-width){
+    width: unset;
+    min-width: var(--width);
 }
 
 /*.as-dynamic-table-space .as-dt-body:empty::before,*/

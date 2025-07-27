@@ -13,7 +13,7 @@ import {
 } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DomSignal from "absol/src/HTML5/DomSignal";
-import { getScreenSize } from "absol/src/HTML5/Dom";
+import { getScreenSize, getScrollSize } from "absol/src/HTML5/Dom";
 import { HScrollbar, VScrollbar } from "../Scroller";
 import Vec2 from "absol/src/Math/Vec2";
 import DTTable from "./DTTable";
@@ -38,6 +38,7 @@ var loadStyleSheet = function () {
     loadStyleSheet = noop;
 }
 
+var DT_SCROLL_BAR_WIDTH = 15;
 
 function DynamicTableManager() {
     this.tables = [];
@@ -184,7 +185,18 @@ function DynamicTable() {
     this.readySync = new Promise(rs => {
         this.onReady = rs;
     });
-    this.$attachhook.once('attached', () => {
+
+    var attached = false;
+    var fistView = () => {
+        var bound = this.getBoundingClientRect();
+        if (bound.width <= 0 || bound.height <= 0) return;
+        if (attached) {
+            this.requestUpdateSize();
+            return;
+        }
+
+
+        attached = true;
         delete pendingTables[this._pendingId];
 
         ResizeSystem.add(this.$attachhook);
@@ -199,26 +211,21 @@ function DynamicTable() {
             }
         }, 10);
 
-        clearTimeout(trashTO);
 
-        var checkAlive = () => {
-            if (this.isDescendantOf(document.body)) {
-                setTimeout(checkAlive, 2000);
-            }
-            else {
-                this.revokeResource();
-            }
-        };
-        setTimeout(checkAlive, 500);
+    };
+
+    this.$attachhook.once('attached', () => {
+        fistView();
     });
     var obs = new IntersectionObserver(entries => {
         if (this.isDescendantOf(document.body)) {
-            this.$attachhook.emit('attached');
+            fistView();
         }
-        else {
+        else if (attached) {
             if (obs) {
                 obs.disconnect();
                 obs = null;
+                this.revokeResource();
             }
         }
     }, { root: document.body });
@@ -234,6 +241,11 @@ function DynamicTable() {
     this.pointerCtrl = new PointerController(this);
     this.colSizeCtrl = new ColSizeController(this);
     this.rowDragCtrl = new RowDragController(this);
+
+
+    this.$space.addStyle = function () {
+        return AElement.prototype.addStyle.apply(this, arguments);
+    }
 }
 
 
@@ -971,15 +983,15 @@ LayoutController.prototype.handleDisplay = function () {
     }
     var tableWidth = this.elt.table.elt.getBoundingClientRect().width;
     var viewportWidth = this.elt.$viewport.getBoundingClientRect().width;
-    if (tableWidth < viewportWidth - 17 && !this.elt.hasClass('as-table-layout-fixed')) {
-        this.elt.table.elt.addStyle('width', viewportWidth - 17 + 'px');
+    if (tableWidth < viewportWidth - DT_SCROLL_BAR_WIDTH && !this.elt.hasClass('as-table-layout-fixed')) {
+        this.elt.table.elt.addStyle('width', viewportWidth - DT_SCROLL_BAR_WIDTH + 'px');
     }
     if (!this.elt.hasClass('as-table-layout-fixed')) {
         if (this.elt.hasClass('as-adapt-infinity-grow')) {
             this.elt.table.elt.addStyle('min-width', viewportWidth + 'px');
         }
         else {
-            this.elt.table.elt.addStyle('min-width', viewportWidth - 17 + 'px');
+            this.elt.table.elt.addStyle('min-width', viewportWidth - DT_SCROLL_BAR_WIDTH + 'px');
         }
     }
 };
@@ -1118,11 +1130,11 @@ LayoutController.prototype.update = function () {
     var maxHeight;
     if (!this.elt.table) return;
     if (stWidth === 'auto') {//table max-width is 100% of parentWidth
-        this.elt.table.elt.addStyle('min-width', Math.max(getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow') ? 0 : 17), 0) + 'px');
+        this.elt.table.elt.addStyle('min-width', Math.max(getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow') ? 0 : DT_SCROLL_BAR_WIDTH), 0) + 'px');
 
     }
     else if (psWidth.unit === 'px' || psWidth.unit === 'vw' || psWidth.unit === '%') {
-        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow') ? 0 : 17) + 'px');
+        this.elt.table.elt.addStyle('min-width', getMinInnerWidth() - (this.elt.hasClass('as-adapt-infinity-grow') ? 0 : DT_SCROLL_BAR_WIDTH) + 'px');
         bound = this.elt.getBoundingClientRect();
         if (bound.width > 0 && !this.elt.table.body.offset) {//if overflowY this.elt.table.body.offset >0
             tbBound = this.elt.table.elt.getBoundingClientRect();
@@ -1171,7 +1183,7 @@ LayoutController.prototype.updateOverflowStatus = function () {
         this.elt.removeClass('as-overflow-y');
         this.elt.$space.removeStyle('top');
     }
-    else if (bound.height < contentBound.height || (psMaxHeight && psMaxHeight.unit === 'px' && bound.width < contentBound.width + 17 && psMaxHeight.value < contentBound.height + 18)) {
+    else if (bound.height < contentBound.height || (psMaxHeight && psMaxHeight.unit === 'px' && bound.width < contentBound.width + DT_SCROLL_BAR_WIDTH && psMaxHeight.value < contentBound.height + 18)) {
         this.elt.addClass('as-overflow-y');
     }
     else {
@@ -1735,9 +1747,15 @@ RowDragController.prototype.ev_drag = function (event) {
         dy /= 1000 / 60 / 4 * this.rowRect.height;
         dy = Math.min(dy, this.elt.$vscrollbar.innerHeight - this.elt.$vscrollbar.outerHeight - this.elt.$vscrollbar.innerOffset);
 
+
         if (dy > 0.5) {//dy may be very small
-            this.elt.$vscrollbar.innerOffset += dy;
-            this.elt.$vscrollbar.emit('scroll');
+            if (this.elt.hasClass('as-overflow-y')) {
+                this.elt.$vscrollbar.innerOffset += dy;
+                this.elt.$vscrollbar.emit('scroll');
+            }
+            else {
+                //todo: find overflow element
+            }
         }
         this._computeNewIdx();
         this._updateClass();
@@ -1750,8 +1768,14 @@ RowDragController.prototype.ev_drag = function (event) {
         dy /= 1000 / 60 / 4 * this.rowRect.height;
         dy = Math.max(dy, -this.elt.$vscrollbar.innerOffset);
         if (dy < -0.5) {//dy may be very small
-            this.elt.$vscrollbar.innerOffset += dy;
-            this.elt.$vscrollbar.emit('scroll');
+            if (this.elt.hasClass('as-overflow-y')) {
+                this.elt.$vscrollbar.innerOffset += dy;
+                this.elt.$vscrollbar.emit('scroll');
+            }
+            else {
+                //todo: find overflow element
+
+            }
         }
         this._computeNewIdx();
         this._updateClass();
