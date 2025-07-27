@@ -38,7 +38,7 @@ function SelectMenu() {
     this.$selectlistBox = _({
         tag: 'selectlistbox',
         props: {
-            anchor: [1, 6, 2, 5],
+            anchor: [1, 6, 2, 5, 9, 11],
             strictValue: true
         },
         on: {
@@ -66,8 +66,9 @@ function SelectMenu() {
     }
     setTimeout(checkView, 3000);
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
-    this.$selectlistBox.followTarget = this;
     this.$selectlistBox.sponsorElement = this;
+    this.$selectlistBox.followTarget = this;
+    this.$selectlistBox.unfollow();
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
     OOP.drillProperty(this, this, 'selectedvalue', 'value');
     this.strictValue = true;
@@ -137,7 +138,23 @@ SelectMenu.prototype.styleHandlers.variant = {
         }
         return value;
     },
-}
+};
+
+// set min-width: unset;
+// SelectMenu.prototype.styleHandlers.width = {
+//     set: function (value){
+//         if (value === 'auto' || !value) {
+//             value = 'auto';
+//             this.style.width = '';
+//             this.style.minWidth = '';
+//         }
+//         else {
+//             this.style.width = value;
+//             this.style.minWidth = 'unset';//ignore require of width
+//         }
+//         return value;
+//     }
+// };
 
 SelectMenu.prototype.init = function (props) {
     props = props || {};
@@ -391,7 +408,10 @@ SelectMenu.eventHandler.preUpdateListPosition = function () {
     var availableTop = bound.top - 5;
     var availableBot = screenSize.height - 5 - bound.bottom;
     this.$selectlistBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
-    var outBound = traceOutBoundingClientRect(this);
+    // console.log(this);
+    var outBound = traceOutBoundingClientRect(this.parentElement);
+    // console.log(outBound,bound,
+    //     bound.bottom < outBound.top , bound.top > outBound.bottom , bound.right < outBound.left, bound.left > outBound.right);
     if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
         if (!BrowserDetector.isMobile)
             this.isFocus = false;
