@@ -1214,7 +1214,7 @@ CCYearViewer.prototype.getTitle = function () {
 
 
 CCYearViewer.prototype.onSelectedDatesChange = function () {
-    console.log(this.elt.selectedDates);
+    // console.log(this.elt.selectedDates);
 
 };
 
