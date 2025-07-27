@@ -59,7 +59,6 @@ FlexiconButton.prototype.styleHandlers.fontSize = {
             }
             this.style.fontSize = value;
             this.extendStyle.size = 'text';
-            console.log('set font size', value);
         }
         else {
             this.style.fontSize = '';

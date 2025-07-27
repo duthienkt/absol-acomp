@@ -235,22 +235,22 @@
 
 
 .as-flexicon-button[data-variant="danger"] {
-    background-color: rgb(239, 68, 68);
+    background-color: var(--danger-color);
     color: white;
 }
 
 
 .as-flexicon-button[data-variant="danger"]:hover {
-    background-color: rgb(216, 61, 61);
+    background-color: var(--hover-danger-color);
 }
 
 
 .as-flexicon-button[data-variant="danger"]:disabled {
-    background-color: #f7a2a2;
+    background-color: var(--disabled-danger-color);
 }
 
 .as-flexicon-button[data-variant="danger"]:active {
-    background-color: #b02020;
+    background-color: var(--active-danger-color);
 }
 
 
