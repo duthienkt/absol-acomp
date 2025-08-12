@@ -2,7 +2,7 @@
     border-style: solid;
     border-width: 1px;
     border-radius: var(--as-input-border-radius);
-    border-color: var(--as-input-border-color);
+    border-color: var(--border-color);
     outline: none;
     height: var(--as-input-height);
     padding-left: var(--as-input-vertical-padding);
