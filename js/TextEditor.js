@@ -4,6 +4,7 @@ import ACore from "../ACore";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import { getTextNodesIn, getTextIn, measureText } from "absol/src/HTML5/Text";
 import { AbstractInput } from "./Abstraction";
+import { notifyPreFocusEvent } from "./utils";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -15,6 +16,11 @@ var $ = ACore.$;
  */
 export function TextInput() {
     AbstractInput.call(this);
+    var originFocus = this.focus;
+    this.focus = function () {
+        notifyPreFocusEvent(this);
+        originFocus.apply(this, arguments);
+    }
 }
 
 mixClass(TextInput, AbstractInput);
@@ -56,7 +62,7 @@ function TextEditor() {
     });
 
     res.eventHandler = OOP.bindFunctions(res, TextEditor.eventHandler);
-    res._textFont = '14px Helvetica, Arial, sans-serif';
+    res._textFont = '14px Roboto, sans-serif';
     res.$textLayter = $('.absol-text-editor-text-layer', res)
         .on('keydown', res.eventHandler.keydown);
 
