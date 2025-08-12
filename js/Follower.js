@@ -16,7 +16,7 @@ var $ = ACore.$;
  * @constructor
  */
 function Follower() {
-    this.$attachhook = _('attachhook', this)
+    this.$attachhook = _('attachhook')
         .addTo(this)
         .on('attached', function () {
             this.requestUpdateSize();
@@ -38,7 +38,7 @@ function Follower() {
 
 Follower.prototype.cancelWaiting = function () {
     Array.prototype.forEach.call(this.childNodes, function (elt) {
-        if (elt.emit && elt.isSupportedEvent('attached') && elt.cancelWaiting()) {
+        if (elt.emit && elt.isSupportedEvent('attached') && elt.cancelWaiting) {
             elt.cancelWaiting();
         }
     });
@@ -113,9 +113,9 @@ Follower.ANCHOR_FACTORS = [
     [1, 0, 1, -1],//7
 
     [1, 0, 0.5, -0.5],//8
-    [0.5, -0.5, 1, 0],//9
+    [0.5, -0.5, 1, 0],//9 - center x
     [0, -1, 0.5, -0.5],//10
-    [0.5, -0.5, 0, -1],//11
+    [0.5, -0.5, 0, -1],//11 - center x
 
     [1, 0, 1, 0],//12
     [0, -1, 1, 0],//13
@@ -146,6 +146,14 @@ Follower.prototype.updatePosition = function () {
         factor = Follower.ANCHOR_FACTORS[anchors[i]];
         x = targetBound.left + factor[0] * targetBound.width + factor[1] * bound.width;
         y = targetBound.top + factor[2] * targetBound.height + factor[3] * bound.height;
+        if (factor[2] === 0 || factor[2] === 1) {
+            if (bound.width <= outRect.width) {
+                if (x + bound.width > outRect.width) {
+                    x = outRect.width - bound.width;
+                }
+            }
+            else if (x < 0) x = 0;
+        }
         newContentRect = new Rectangle(x, y, bound.width, bound.height);
         score = newContentRect.collapsedSquare(outRect);
         if (score - 10 > bestScore) {
