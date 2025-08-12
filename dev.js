@@ -35,7 +35,8 @@ import MActivity from "./js/mobile/MActivity";
 import ListSearchMaster from "./js/list/ListSearchMaster";
 import { ExpSearcher } from "./js/ExpTree";
 import { openDebugDeviceInfo } from "./js/DebugDeviceInfo";
-
+import './js/ExtendComputedStyle'
+import CMDTool, { CMDToolDelegate } from "./js/CMDTool";
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
 absol.vScrollIntoView = vScrollIntoView;
@@ -88,6 +89,19 @@ Dom.documentReady.then(function () {
             }
         }).addTo(document.head);
     }
+    //<link  href="https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Roboto+Mono|Roboto+Slab&display=swap" rel="stylesheet">
+    var rbtLink = absol.$('link', document.head, function (e) {
+        if (e.href && e.href.toLowerCase().indexOf('Roboto') >= 0) return true;
+    });
+    if (!rbtLink) {
+        rbtLink = absol._({
+            tag: 'link',
+            attr: {
+                rel: 'stylesheet',
+                href: 'https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Roboto+Mono|Roboto+Slab&display=swap'
+            }
+        }).addTo(document.head);
+    }
 });
 
 Object.assign(absol.$, utils);
@@ -102,6 +116,8 @@ absol.OverviewPage = OverviewPage;
 
 absol.MApplication = MApplication;
 absol.MActivity = MActivity;
+absol.CMDTool = CMDTool;
+absol.CMDToolDelegate = CMDToolDelegate;
 
 
 Dom.documentReady.then(function () {
