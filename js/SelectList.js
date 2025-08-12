@@ -95,7 +95,7 @@ export function measureMaxTextWidth(items) {
         }
     }
     if (maxText)
-        maxTextWidth = 14 * 0.9 * maxLv + measureText(maxText, '14px Arial, Helvetica, sans-serif').width + 14;//padding left, right 7px
+        maxTextWidth = 14 * 0.9 * maxLv + measureText(maxText, '14px Roboto, sans-serif').width + 14;//padding left, right 7px
     return maxTextWidth;
 }
 
