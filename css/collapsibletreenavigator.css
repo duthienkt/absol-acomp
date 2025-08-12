@@ -302,7 +302,7 @@
 
 .as-ctn-collapse-node.as-selected > .as-ctn-collapse-node-content .as-ctn-text,
 .as-ctn-node.as-selected > .as-ctn-node-content .as-ctn-text {
-    text-shadow: 1px 0 0 currentColor;
+    /*text-shadow: 1px 0 0 currentColor;*/
 }
 
 .as-collapsible-tree-navigator:not([data-size="v0"]) .as-ctn-collapse-node.as-selected > .as-ctn-collapse-node-content,
