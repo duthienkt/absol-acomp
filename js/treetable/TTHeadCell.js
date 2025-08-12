@@ -14,6 +14,15 @@ function TTHeadCell(row, data){
         tag:'th',
         class: 'as-tree-table-head-cell'
     });
+
+    this.elt.defineEvent('click');
+    this.elt.addEventListener('click', function (event) {
+       this.emit('click', event, this);
+    });
+
+    if (data.on) {
+        this.elt.on(data.on);
+    }
     if (data.attr) this.elt.attr(data.attr);
     if (data.style) this.elt.addStyle(data.style);
     if (this.data.class) {
