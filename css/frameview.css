@@ -32,4 +32,5 @@
     width: 100%;
     height: 100%;
     display: block;/* avoid overflow if this div is inline-block*/
+    overflow-y: auto;
 }
