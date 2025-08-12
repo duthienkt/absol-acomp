@@ -49,10 +49,16 @@ AbstractStyleExtended.prototype.addStyle = function (name, value) {
 };
 
 AbstractStyleExtended.prototype.removeStyle = function (name) {
+    var kbName;
+    if (typeof name === 'string') {
+        kbName = kebabCaseToCamelCase(name);
+        if (this.styleHandlers[kbName])
+            name = kbName;
+    }
     if (this.styleHandlers[name]) {
         this.extendStyle[name] = null;
     }
-    else AElement.prototype.addStyle.apply(this, arguments);
+    else AElement.prototype.removeStyle.apply(this, arguments);
     return this;
 };
 
