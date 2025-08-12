@@ -4,7 +4,7 @@ import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import SelectMenu from "./SelectMenu2";
-import { copySelectionItemArray, keyStringOf } from "./utils";
+import { copySelectionItemArray, isNaturalNumber, keyStringOf } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MSelectTreeLeafBox from "./selecttreeleafbox/MSelectTreeLeafBox";
 import { AbstractInput } from "./Abstraction";
@@ -110,9 +110,12 @@ SelectTreeLeafMenu.prototype.init = function (props) {
         if (props[key] === undefined) delete props[key];
     });
 
-    if (props.initOpened) {
+    if (isNaturalNumber(props.initOpened)) {
         this.initOpened = props.initOpened;
         delete props.initOpened;
+    }
+    else {
+        this.initOpened = 3;
     }
 
     if (props.strictValue) {

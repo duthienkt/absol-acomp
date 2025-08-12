@@ -40,7 +40,7 @@ function MultiCheckTreeMenu() {
             close: this.eventHandler.boxClose
         },
         props: {
-            initOpened: this.renderProps.initOpened,
+            initOpened: isNaturalNumber(this.renderProps.initOpened)?this.renderProps.initOpened: 3,
             enableSearch: this.renderProps.enableSearch
         }
     });
