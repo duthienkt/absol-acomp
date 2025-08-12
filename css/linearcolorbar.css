@@ -99,3 +99,27 @@
     overflow: hidden;
 
 }
+
+.as-linear-background {
+    position: relative;
+    --value: 0;
+    --background-color: red;
+}
+
+.as-linear-background:before {
+    position: absolute;
+    z-index: 0;
+    content: "";
+    display: block;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: calc(100% * var(--value));
+    background-color: var(--background-color);
+    opacity: 0.2;
+}
+
+.as-linear-background > * {
+    position: relative;
+    z-index: 1;
+}
