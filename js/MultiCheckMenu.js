@@ -541,7 +541,6 @@ MSMItemsViewController.prototype.updateReadOnlyItems = function () {
         ac[keyStringOf(cr)] = true;
         return ac;
     }, {});
-    console.log('readOnlyValueDict', readOnlyValueDict);
 
     for (var i = 0; i < this.$items.length ; ++i) {
         itemElt = this.$items[i];
