@@ -26,6 +26,8 @@
     -webkit-transition: .4s;
     transition: .4s;
     border-radius: 0.6em;
+    border: 1px solid var(--sharp-border-color);
+    box-sizing: border-box;
 }
 
 .absol-switch-slider:before {
@@ -33,8 +35,8 @@
     content: "";
     height: 1em;
     width: 1em;
-    left: 0.1em;
-    bottom: 0.1em;
+    left: calc(0.1em - 1px);
+    bottom: calc(0.1em - 1px);
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
@@ -81,14 +83,14 @@ input:checked + .absol-switch-slider:before {
 }
 
 .absol-switch[data-size="large"] {
-    font-size: calc(24px / 1.2);
+    font-size: calc(22px / 1.2);
 }
 
 
 .absol-switch[data-size="regular"] {
-    font-size: calc(22px / 1.2);
+    font-size: calc(20px / 1.2);
 }
 
 .absol-switch[data-size="small"] {
-    font-size: calc(20px / 1.2);
+    font-size: calc(18px / 1.2);
 }
