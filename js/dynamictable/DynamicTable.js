@@ -25,7 +25,6 @@ import AElement from "absol/src/HTML5/AElement";
 import { computeMeasureExpression, parseMeasureValue } from "absol/src/JSX/attribute";
 import Attributes from "absol/src/AppPattern/Attributes";
 import { kebabCaseToCamelCase } from "absol/src/String/stringFormat";
-import { AbstractStyleExtended } from "../Abstraction";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -181,6 +180,7 @@ function DynamicTable() {
 
     // this.$attachhook.requestUpdateSize = this.fixedContentCtrl.updateSize.bind(this.fixedContentCtrl);
     this.$attachhook.requestUpdateSize = this.requestUpdateSize.bind(this);
+    this.$sizeDetector = $('.as-dynamic-table-size-detector', this);
     var trashTO = -1;
     this.readySync = new Promise(rs => {
         this.onReady = rs;
@@ -188,8 +188,9 @@ function DynamicTable() {
 
     var attached = false;
     var fistView = () => {
-        var bound = this.getBoundingClientRect();
-        if (bound.width <= 0 || bound.height <= 0) return;
+        var bound = this.$sizeDetector.getBoundingClientRect();
+        if (bound.width <= 0 && bound.height <= 0 && !bound.top && !bound.left) return;
+
         if (attached) {
             this.requestUpdateSize();
             return;
@@ -216,20 +217,48 @@ function DynamicTable() {
 
     this.$attachhook.once('attached', () => {
         fistView();
-    });
-    var obs = new IntersectionObserver(entries => {
-        if (this.isDescendantOf(document.body)) {
-            fistView();
-        }
-        else if (attached) {
-            if (obs) {
-                obs.disconnect();
-                obs = null;
-                this.revokeResource();
+        ResizeSystem.add(this.$attachhook);
+        this.displayObs = null;
+        var t = this.parentElement;
+
+        while (t && t !== document.body) {
+            if (t.style.display === 'none') {
+                break;
             }
+            t = t.parentElement;
         }
-    }, { root: document.body });
-    obs.observe(this);
+        if (t && t !== document.body) {
+            this.displayObs = new MutationObserver(() => {
+                fistView();
+            });
+            this.displayObs.observe(t, { attributes: true, attributeFilter: ['style'] });
+        }
+
+
+        var obs = new IntersectionObserver(entries => {
+            if (this.isDescendantOf(document.body)) {
+                fistView();
+
+            }
+            else if (attached) {
+                if (obs) {
+                    obs.disconnect();
+                    obs = null;
+                    this.obs = null;
+                    this.revokeResource();
+                }
+                if (this.displayObs) {
+                    this.displayObs.disconnect();
+                    this.displayObs = null;
+                }
+            }
+        }, { root: document.body, trackVisibility: true, delay: 100 });
+        obs.observe(this.$sizeDetector);
+        this.obs = obs;
+
+
+    });
+
     /***
      *
      * @type {{data: DTDataTable}||null}
@@ -241,6 +270,7 @@ function DynamicTable() {
     this.pointerCtrl = new PointerController(this);
     this.colSizeCtrl = new ColSizeController(this);
     this.rowDragCtrl = new RowDragController(this);
+    this.afs = new AutoFocusScroller(this);
 
 
     this.$space.addStyle = function () {
@@ -259,7 +289,7 @@ DynamicTable.render = function (data, domDesc) {
     }
     return _({
         id: 'no-id-' + randomIdent(10),
-        extendEvent: ['orderchange', 'colresize'],
+        extendEvent: ['orderchange', 'colresize', 'prefocus'],
         class: classList,
         child: [
             {
@@ -288,6 +318,9 @@ DynamicTable.render = function (data, domDesc) {
                 tag: HScrollbar,
                 class: 'as-dynamic-table-hb'
             },
+            {
+                class: 'as-dynamic-table-size-detector',
+            }
         ]
     });
 };
@@ -429,6 +462,9 @@ DynamicTable.prototype.addClass = function (className) {
 
 
 DynamicTable.prototype.requestUpdateSize = function () {
+    if (!this.isDescendantOf(document.body)) return;
+    var bound = this.$sizeDetector.getBoundingClientRect();
+    if (bound.width <= 0 && bound.height <= 0 && !bound.top && !bound.left) return;
     this.layoutCtrl.onResize();
 };
 
@@ -1190,9 +1226,15 @@ LayoutController.prototype.updateOverflowStatus = function () {
         this.elt.removeClass('as-overflow-y');
         this.elt.$space.removeStyle('top');
     }
+    if (contentBound.height && contentBound.width) {
+        this.elt.addStyle('--dt-content-height', contentBound.height + 'px');
+        this.elt.addStyle('--dt-content-width', contentBound.width + 'px');
+    }
+    else {
+        this.elt.removeStyle('--dt-content-height');
+        this.elt.removeStyle('--dt-content-width');
+    }
 
-    this.elt.addStyle('--dt-content-height', contentBound.height + 'px');
-    this.elt.addStyle('--dt-content-width', contentBound.width + 'px');
 };
 
 LayoutController.prototype.updateScrollbarStatus = function () {
@@ -1323,7 +1365,7 @@ LayoutController.prototype.ev_viewportScroll = function (event) {
     }
 
     if (this.elt.$viewport.scrollTop !== 0) {
-        this.elt.$vscrollbar.innerOffset += this.elt.$viewport.scrollTop / 30;//todo: better solution
+        this.elt.$vscrollbar.innerOffset += this.elt.$viewport.scrollTop / 42;//todo: better solution
         this.elt.$viewport.scrollTop = 0;
         this.elt.$vscrollbar.emit('scroll');
     }
@@ -1490,8 +1532,15 @@ ColSizeController.prototype.ev_drag = function (event) {
     else {
         this.elt.$vscrollbar.removeStyle('right');
     }
-    this.elt.addStyle('--dt-content-height', tableBound.height + 'px');
-    this.elt.addStyle('--dt-content-width', tableBound.width + 'px');
+    if (tableBound.height && tableBound.height) {
+        this.elt.addStyle('--dt-content-height', tableBound.height + 'px');
+        this.elt.addStyle('--dt-content-width', tableBound.width + 'px');
+    }
+    else {
+        this.elt.removeStyle('--dt-content-height');
+        this.elt.removeStyle('--dt-content-width');
+    }
+
 };
 
 
@@ -1877,6 +1926,59 @@ VirtualPageSelector.prototype.selectPage = function (value) {
     this.elt.$vscrollbar.emit('scroll');
 };
 
+
+/**
+ *
+ * @param {DynamicTable} elt
+ * @constructor
+ */
+function AutoFocusScroller(elt) {
+    this.elt = elt;
+    this.elt.on('prefocus', this.ev_focus.bind(this), true);
+}
+
+
+AutoFocusScroller.prototype.rowIndexOfElt = function (elt) {
+    var res = -1;
+    while (elt) {
+        if (elt === this.elt) break;
+        if (elt.classList.contains('as-dt-body-row')) {
+            res = Array.prototype.indexOf.call(elt.parentElement.childNodes, elt);
+        }
+        elt = elt.parentElement;
+    }
+    return res;
+}
+
+/**
+ *
+ * @param {Event} event
+ */
+AutoFocusScroller.prototype.ev_focus = function (event) {
+    var elt = event.target;
+    if (!elt || !elt.getBoundingClientRect) return;
+    var eltBound = elt.getBoundingClientRect();
+    var outBound = this.elt.getBoundingClientRect();
+    if (eltBound.top >= outBound.top && eltBound.bottom <= outBound.bottom) {
+        return;
+    }
+
+    setTimeout(() => {
+        var rowIdx = this.rowIndexOfElt(elt);
+        if (rowIdx > this.elt.$vscrollbar.innerOffset + this.elt.$vscrollbar.outerHeight) {
+            this.elt.$vscrollbar.innerOffset = (rowIdx - this.elt.$vscrollbar.outerHeight) / (1 + 100 / 40 / this.elt.$vscrollbar.innerHeight);
+            this.elt.$vscrollbar.emit('scroll');
+        }
+        else if (rowIdx < this.elt.$vscrollbar.innerOffset) {
+            this.elt.$vscrollbar.innerOffset = (rowIdx) / (1 + 100 / 40 / this.elt.$vscrollbar.innerHeight);
+            this.elt.$vscrollbar.emit('scroll');
+        }
+    }, 10);
+
+
+    console.log(event.isTrusted)
+    console.log('us focus', event.target)
+};
 
 
 
