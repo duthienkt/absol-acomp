@@ -1,14 +1,15 @@
 :root {
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     --as-input-height: calc(2rem + 2px);
     --as-input-font-size: 1rem;
-    --as-input-font-family: Arial, Helvetica, sans-serif;
-    --as-input-vertical-padding: 0.3571em;
-    --as-input-horizontal-padding: 0.5em;
-    --as-input-border-color: #ddd;
+    --as-input-font-family: Roboto, sans-serif;
+    --as-input-vertical-padding: 5px;
+    --as-input-horizontal-padding: 6px;
     --as-input-border-radius: 3px;
     --as-context-menu-font-size: 1rem;
-    --as-context-font-family: Arial, Helvetica, sans-serif;
+    --as-context-font-family: Roboto, sans-serif;
     --as-disabled-background-color: #D5D7DA;/*#EDEDED;/**/
+    --as-light-disabled-background-color: #F6F4F4;
     --as-disabled-text-color: #ACACAC;
     --icon-background-cover-hover: #91e4fb;
     --as-transparent-button-hover-color: rgba(169, 169, 172, 0.25);
@@ -28,8 +29,6 @@
     --dropdown-icon-font-size: 24px;
     --dropdown-icon-color:  #525866;
 
-    --dark-color: #313030;
-    --gray-clor: #D5D7DA;
 
     /******* KEVIEW OLD FORMAT **************/
     --button-min-width: 110px;
@@ -73,17 +72,30 @@
     --default-icon-size: 20px;
     --small-icon-size: 18px;
 
+    --icon-color: #525866;
+    --quickmenu-icon-color: #525866;
 
-    --space-backgroudcolor: #F6F4F4;
-    --control-border-new: 1px solid #D5D7DA;
 
-    --border-color: #d5d7da;
-    --disabled-border-color: #eaebed;
+    --space-background-color: #F6F4F4;
+    --space-background-color-2: #E6E5E5;
+    --cover-background-color: #00000033;
+
+    --control-border-new: 1px solid #DCDEE0;
+
+    --sharp-border-color: #52586633;
+    --border-color: #DCDEE0;
+    --disabled-border-color: #DCDEE0;
+
 
     --primary-color: #2E9DB5;
     --hover-primary-color: #1294B1FF;
     --disabled-primary-color: #97CEDAFF;
-    --active-primary-color: #1d6677;/*#07A9CD*/
+    --active-primary-color: #1d6677;
+
+    --danger-color: #EF4444FF;
+    --hover-danger-color:  #D83D3DFF;
+    --disabled-danger-color:  #F7A2A2FF;
+    --active-danger-color:  #B02020FF;
 
     --secondary-color: #EEF5FB;
     --hover-secondary-color: white;
@@ -95,8 +107,6 @@
     --disabled-tertiary-color: #9AACDC;
     --active-tertiary-color: #05225e;
 
-
-
     --table-new-header-background-color: #EEF5FB;
     --table-new-odd-row-background-color: white;
     --table-new-even-row-background-color: #FAFCFF;
@@ -106,33 +116,31 @@
     --table-td-padding-left-right: 16px;
     --table-new-border-color: #D5D7DA;
     --table-new-border: 1px solid var(--table-new-border-color);
-    --table-new-row-hover:0 0 4px 2px rgba(0, 0, 0, 0.15);
+    --table-new-row-hover: 0 0 4px 2px rgba(0, 0, 0, 0.15);
+    --table-new-row-selected: #C5E5EC;
+
+    --icon-background-hover: #F4F4F4;
 
     --table-new-header-height: 48px;
     --table-new-row-height: 44px;
-    --table-new-row-selected: #C5E5EC;
-
-
-
-
-
-    --icon-color: #525866;
-    --quickmenu-icon-color: #525866;
-
-
-    --space-backgroud-color: #F6F4F4;
-    --cover-backgroud-color: #00000033;
-
 
     --table-icon-size: 24px;
-    --table-icon-backgroud-hover: #F4F4F4;
+    --table-icon-background-hover: #F4F4F4;
 
     --modal-content-max-width: 75vw;
     --modal-content-max-height: calc(100vh - 300px);
 
     --hr-sunday-bgcolor: #FBF4EE;
 
-    --require-color: #FF1300;
+    --dark-color: #313030;
+    --grey-color: #525866;
 
+    --require-color: #FF1300;
+    --h3-size: 24px;
+    --h4-size: 20px;
+    --h5-size: 18px;
+
+    --grid-3-label-width: 150px;
+    --grid-2-label-width: 200px;
 }
 
