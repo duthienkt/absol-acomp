@@ -1,6 +1,7 @@
 .absol-single-page {
     position: relative;
     overflow: hidden;
+    --single-page-scroller-height: 0;
 }
 
 

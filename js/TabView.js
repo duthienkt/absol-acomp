@@ -1,15 +1,17 @@
 import '../css/tabview.css';
 import ACore from "../ACore";
-import OOP, { drillProperty } from "absol/src/HTML5/OOP";
+import OOP, { drillProperty, mixClass } from "absol/src/HTML5/OOP";
 import TabBar from "./TabBar";
 import { forwardEvent } from "./utils";
 import TextMeasure from "./TextMeasure";
 import NotificationPanel from "./NotificationPanel";
+import { AbstractStyleExtended } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 /**
+ * @augments AbstractStyleExtended
  * @extends AElement
  * @constructor
  */
@@ -31,8 +33,11 @@ function TabView() {
     forwardEvent(this, 'inactivetab', 'deactivetab');
     this.rightCtnPlugin = new TabviewRightCtnPlugin(this);
     drillProperty(this, this.rightCtnPlugin, ['tvTitle', 'notificationPanel']);
+    AbstractStyleExtended.call(this);
 
 }
+
+mixClass(TabView, AbstractStyleExtended);
 
 TabView.tag = 'TabView'.toLowerCase();
 

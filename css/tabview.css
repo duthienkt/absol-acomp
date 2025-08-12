@@ -167,17 +167,17 @@
 }
 
 .as-tabview-title {
-    padding: 10px 10px;
+    padding: 10px var(--distance-6) 10px 10px;
     font-weight: bold;
     font-size: 14px;
     color: rgb(230, 230, 205);
-    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    font-family: Roboto, sans-serif;
     display: inline-block;
     vertical-align: middle;
 }
 
 .bsc-white .as-tabview-title,
-.bsc-white .as-np-db-btn{
+.bsc-white .as-np-db-btn {
     color: var(--tab-button-font-color-hover);
 }
 
@@ -472,12 +472,11 @@
 }
 
 
-
 .bsc-white .as-tabview-right-ctn {
     top: -10px;
 }
 
-.as-tabview-right-ctn> div{
+.as-tabview-right-ctn > div {
     display: inline-block;
     vertical-align: middle;
 }
@@ -487,4 +486,34 @@
     height: 50px;
     display: inline-block;
     vertical-align: middle;
+}
+
+.as-folder-like-tab-bar {
+    position: relative;
+    height: 41px;
+    background-color: #f6f4f4;
+    box-sizing: border-box;
+    overflow-y: visible;
+
+}
+
+.as-folder-like-tab-bar-canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 45px;
+    width: 100%;
+    z-index: 2;
+}
+
+.as-folder-like-tab-bar-path {
+    stroke-width: 1;
+    stroke: #dadada;
+    fill: white;
+    filter: drop-shadow(0px 0px 2px rgb(0 0 0 / 0.03))
+}
+
+.as-folder-like-tab-button-list-ctn {
+    position: absolute;
+    z-index: 5;
 }
