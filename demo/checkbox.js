@@ -1,6 +1,9 @@
 var _ = absol._;
 var __ = (o) => _(o).addTo(document.body);
 
+
+// document.body.style.backgroundColor = '#F6F4F4';
+// document.body.style.backgroundColor = 'rgb(88, 80, 88)';
 __(`<h2>CheckBoxInput</h2>`);
 
 var grid = __({
@@ -11,7 +14,7 @@ var grid = __({
     },
 });
 
-['v0', 'check-box', 'check-circle'].forEach(variant => {
+['v0', 'check-box', 'check-circle', 'reject-circle'].forEach(variant => {
     _({
         child: { text: variant },
     }).addTo(grid);
@@ -78,7 +81,7 @@ grid = __({
     },
 });
 
-['v0', 'check-box', 'check-circle'].forEach(variant => {
+['v0', 'check-box', 'check-circle', 'reject-circle'].forEach(variant => {
     _({
         child: { text: variant },
     }).addTo(grid);

@@ -10,20 +10,25 @@ var adapter = {
                 {
                     cells: [
                         {
+                            style:{maxWidth: '40px'},
                             child: { text: 'STT' }, id: 'STT'
                         },
                         {
+                            style: {width: '50px'},
                             child: { text: 'Hoàn thành' }, id: 'done'
                         },
                         {
+                            style: {width: '50px'},
+
                             child: { text: 'Tên' }, id: 'name'
                         },
                         {
+                            style: {width: '50px'},
                             child: { text: 'Kết thúc' }, id: 'finish'
                         },
                         {
                             style: {
-                                width: '40px'
+                                maxWidth: '40px'
                             },
                             id: 'setting',
                             child: 'span.bsc-icon-hover-black.mdi.mdi-table-settings'

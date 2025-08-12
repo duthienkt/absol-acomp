@@ -162,12 +162,27 @@ var table = render({
                         {
                             cells: [
                                 {
+                                    on:{
+                                        click:function (event) {
+                                            console.log('click',event);
+                                        }
+                                    },
                                     child: { text: 'Bộ phận/Nhân viên' }
                                 },
                                 {
+                                    on:{
+                                        click:function (event) {
+                                            console.log('click 1',event);
+                                        }
+                                    },
                                     child: { text: "Giá trị" }
                                 },
                                 {
+                                    on:{
+                                        click:function (event) {
+                                            console.log('click 2',event);
+                                        }
+                                    },
                                     child: { text: 'Hành động' }
                                 }
                             ]

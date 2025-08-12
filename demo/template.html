@@ -3,8 +3,7 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>SelectMenu</title>
+    <title>CMDTool</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://absol.cf/hightlight/styles/default.css">
     <script src="https://absol.cf/hightlight/highlight.pack.js"></script>
@@ -12,12 +11,12 @@
 </head>
 
 <body>
-<h1>Select List</h1>
 <style class="viewable">
     html, body{
         width: 100%;
         height: 100%;
         box-sizing: border-box;
+        margin: 0;
     }
     html {
         padding: 0;
@@ -27,31 +26,14 @@
     body {
         padding: 10px;
         overflow: auto;
+        box-sizing: border-box;
     }
 
     :root {
         font-size: 14px;
     }
 
-    .hover-red:hover {
-        color: red;
-    }
-
-    .hover-red:hover * {
-        color: rebeccapurple;
-    }
-
-    .hover-blue:hover {
-        color: blue;
-    }
-
-    .hover-blue:hover * {
-        color: blueviolet;
-    }
-
-    .select-menu-color-moved {
-        color: red;
-    }
+   
 </style>
 <script>
     absol.remoteNodeRequireAsync(location.href.replace('.html', '.js'));

@@ -21,6 +21,61 @@
         return factor(module, module.exports);
     });
 
+    var item3 = [
+    {
+        value: 0,
+        text: "Ngầm định",
+        items: [
+            {
+                value: 30189,
+                text: "Tài chính",
+                items: []
+            }
+        ]
+    },
+    {
+        value: 1,
+        text: "Điểm cộng, điểm trừ",
+        items: [
+            {
+                value: 30192,
+                text: "Quy trình",
+                items: []
+            }
+        ]
+    },
+    {
+        value: 2,
+        text: "Nghiên cứu khoa học",
+        items: [
+            {
+                value: 30190,
+                text: "Khách hàng",
+                items: [
+                    {
+                        value: 40629,
+                        text: "s",
+                        items: [
+                            {
+                                value: 40630,
+                                text: "ss",
+                                items: [],
+                                isLeaf: true
+                            }
+                        ],
+                        isLeaf: false
+                    }
+                ]
+            },
+            {
+                value: 30193,
+                text: "ffff",
+                items: []
+            }
+        ]
+    }
+];
+
     listDataAsync.then(function (items) {
         var _ = absol._;
         var $ = absol.$;
@@ -59,7 +114,7 @@
         var menu = {
             tag: 'selecttreeleafmenu',
             props: {
-                items: items2,
+                items: item3,
                 enableSearch: true,
                 nullValue: null,
                 openValue: 19

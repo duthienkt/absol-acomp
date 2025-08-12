@@ -47,9 +47,27 @@ absol.remoteNodeRequireAsync('./table_sample_data.js').then((items) => {
     })
     table.attachSearchInput(searchInput);
 
-    var div = render({
-        style: {paddingLeft: '30px', paddingRight: '30px', width: '80%'},
+    var div = absol._({
+        style: {paddingLeft: '30px', paddingRight: '30px', width: '80%', display:'none'},
         child: table
     });
+
+    setTimeout(()=>{
+        div.addTo(document.body);
+        var btn = render({
+            tag:'flexiconbutton',
+            props:{
+                text:'Hiển thị bảng',
+            },
+            on:{
+                click: function () {
+                    div.style.display= 'block';
+                }
+            }
+        });
+        document.body.insertBefore(btn, div);
+    }, 1000);
+
+
 
 });

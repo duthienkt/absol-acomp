@@ -23,7 +23,6 @@ var grid = __({
                 style: {
                     'font-size': size,
                     variant: variant,
-                    iconPosition: 'right',
                 },
                 props: {
                     text: 'Quay lại(' + variant + ')',
@@ -74,7 +73,6 @@ var grid = __({
                 style: {
                     size: size,
                     variant: variant,
-                    iconPosition: 'right',
                 },
                 props: {
                     text: 'Quay lại(' + variant + ')',
