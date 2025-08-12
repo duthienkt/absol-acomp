@@ -37,7 +37,7 @@ function MultiCheckTreeLeafBox() {
 
     this.$content = $('.as-select-tree-leaf-box-content', this);
     this._savedStatus = {};
-    this.estimateSize = { width: 0, height: 0 };
+    this.estimateSize = { width: 0, height: 0, lv0Width: 0 };
 }
 
 
@@ -227,6 +227,14 @@ MultiCheckTreeLeafBox.prototype._estimateItemWidth = function (item, level) {
     return width;
 };
 
+MultiCheckTreeLeafBox.prototype._estimateRawItemWidth = function (item) {
+    var width = 6;//padding
+    if (item.icon) width += 21;//icon
+    width += 7 + estimateWidth14(item.text) + 5 + 7;//margin-text
+    if (item.desc) width += 6 + estimateWidth14(item.desc) * 0.85;
+    return width;
+};
+
 MultiCheckTreeLeafBox.prototype.viewToSelected = function () {
     var selectedNode = this.$selectedItem;
     if (!selectedNode) return;
@@ -245,11 +253,15 @@ MultiCheckTreeLeafBox.prototype._calcEstimateSize = function (items) {
     var self = this;
     var width = 0;
     var height = 0;
+    var lv0Width = 0;
 
     function visit(item, level) {
         var itemWidth = self._estimateItemWidth(item, level);
         width = Math.max(width, itemWidth);
         height += 28;
+        if (item.isLeaf) {
+            lv0Width = Math.max(lv0Width, self._estimateRawItemWidth(item));
+        }
         if (item.items && item.items.length) {
             item.items.forEach(function (item) {
                 visit(item, level + 1);
@@ -263,7 +275,8 @@ MultiCheckTreeLeafBox.prototype._calcEstimateSize = function (items) {
 
     return {
         width: width,
-        height: height
+        height: height,
+        lv0Width: lv0Width
     };
 };
 

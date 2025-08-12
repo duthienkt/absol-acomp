@@ -119,7 +119,7 @@ MultiCheckTreeLeafMenu.prototype.init = function (props) {
 MultiCheckTreeLeafMenu.property.items = {
     set: function (items) {
         this.$selectBox.items = items;
-        this.addStyle('--select-list-estimate-width', Math.max(145 + 20, this.$selectBox.estimateSize.width) + 'px');
+        this.addStyle('--select-list-estimate-width', Math.max(145 + 20, this.$selectBox.estimateSize.lv0Width || this.$selectBox.estimateSize.width) + 'px');
         this._updateSelectedItems();
     },
     get: function () {
