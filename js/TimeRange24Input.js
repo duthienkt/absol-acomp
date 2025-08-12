@@ -94,6 +94,23 @@ TimeRange24Input.prototype.styleHandlers.size.set = function (value) {
     return value;
 };
 
+TimeRange24Input.prototype.styleHandlers.width = {
+    set: function (value) {
+        if (!value) value = '';
+        this.style.width = value;
+        if (value) {
+                this.$offset.style.width = `calc(50% - 10px)`;
+                this.$duration.style.width = `50%`;
+
+        }
+        else {
+            this.$offset.style.width = '';
+            this.$duration.style.width = '';
+        }
+        return value;
+    }
+}
+
 TimeRange24Input.prototype.nextDateText = '(Next day)'
 
 
