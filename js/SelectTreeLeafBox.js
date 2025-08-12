@@ -5,6 +5,7 @@ import '../css/selecttreeleafmenu.css';
 import SelectListBox from "./SelectListBox";
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
 import { estimateWidth14, keyStringOf } from "./utils";
+import TextMeasure from "./TextMeasure";
 
 function isBranchStatus(status) {
     return status === 'open' || status === 'close';
@@ -34,7 +35,7 @@ function SelectTreeLeafBox() {
 
     this.$content = $('.as-select-tree-leaf-box-content', this);
     this._savedStatus = {};
-    this.estimateSize = { width: 0, height: 0 };
+    this.estimateSize = { width: 0, height: 0, lv0Width: 0 };
     if (this.cancelWaiting) this.cancelWaiting();
 
     /**
@@ -189,11 +190,19 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus, level
 
 SelectTreeLeafBox.prototype._estimateItemWidth = function (item, level) {
     var width = 12;//padding
-    width += 12 * level;
+    width += 17 * level;
     width += 14.7 + 5;//toggle icon
     if (item.icon) width += 21;//icon
-    width += 7 + estimateWidth14(item.text) + 5 + 7;//margin-text
-    if (item.desc) width += 6 + estimateWidth14(item.desc) * 0.85;
+    width += 7 + TextMeasure.measureWidth(item.text, TextMeasure.FONT_ROBOTO, 14) + 5 + 7;//margin-text
+    if (item.desc) width += 6 + TextMeasure.measureWidth(item.desc,TextMeasure.FONT_ROBOTO, 14) * 0.85;
+    return width;
+};
+
+SelectTreeLeafBox.prototype._estimateRawItemWidth = function (item) {
+    var width = 6;//padding
+    width += 21;//icon
+    width += 7 + TextMeasure.measureWidth(item.text, TextMeasure.FONT_ROBOTO, 14) + 7;//margin-text
+    if (item.desc) width += 6 + TextMeasure.measureWidth(item.desc,TextMeasure.FONT_ROBOTO, 14) * 0.85;
     return width;
 };
 
@@ -228,10 +237,15 @@ SelectTreeLeafBox.prototype._calcEstimateSize = function (items) {
     var self = this;
     var width = 0;
     var height = 0;
+    var lv0Width = 0;
 
     function visit(item, level) {
-        var itemWidth = self._estimateItemWidth(item, level);
+        var itemWidth ;
+        itemWidth = self._estimateItemWidth(item, level);
         width = Math.max(width, itemWidth);
+        if (item.isLeaf) {
+            lv0Width = Math.max(lv0Width, self._estimateRawItemWidth(item));
+        }
         height += 28;
         if (item.items && item.items.length) {
             item.items.forEach(function (item) {
@@ -246,7 +260,8 @@ SelectTreeLeafBox.prototype._calcEstimateSize = function (items) {
 
     return {
         width: width,
-        height: height
+        height: height,
+        lv0Width: lv0Width
     };
 };
 
@@ -421,7 +436,7 @@ SelectTreeLeafBox.eventHandler.searchModify = function () {
     }
     var searchData = this._searchCache[query];
     searchData.savedStatus = Object.assign(searchData.savedStatus, searchData.originSavedStatus);
-    console.log(searchData)
+    // console.log(searchData)
     for (var val in searchData.dict) {
         if (isBranchStatus(searchData.dict[val].status)) {
             if (searchData.savedStatus[val]) {

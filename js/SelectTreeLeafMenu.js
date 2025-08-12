@@ -135,7 +135,7 @@ SelectTreeLeafMenu.property.items = {
         items = copySelectionItemArray(items || [], { removeNoView: true });
         this.$selectBox.items = items;
         if (!this.mobile)
-            this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.width + 'px');
+            this.addStyle('--select-list-estimate-width', this.$selectBox.estimateSize.lv0Width + 'px');
         var selectedItem = this.$selectBox.selectedItem;
 
         if (selectedItem) {
@@ -184,6 +184,7 @@ SelectTreeLeafMenu.property.strictValue = {
 };
 
 SelectTreeLeafMenu.property.disabled = SelectMenu.property.disabled;
+SelectTreeLeafMenu.property.readOnly = SelectMenu.property.readOnly;
 
 
 SelectTreeLeafMenu.eventHandler = {};
