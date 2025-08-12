@@ -99,7 +99,7 @@ CheckUnsafeTreeItem.eventHandler.click = function (event) {
 };
 
 CheckUnsafeTreeItem.eventHandler.clickAction = function (action, event) {
-    console.log(action);
+    // console.log(action);
 };
 
 /***
@@ -255,7 +255,6 @@ export default CheckUnsafeTreeLeafOnlyBox;
  */
 function CSTBItemListController() {
     CTBItemListController.apply(this, arguments);
-    console.log(this._requestItem)
 }
 
 mixClass(CSTBItemListController, CTBItemListController);
