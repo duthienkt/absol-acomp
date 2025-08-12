@@ -1,6 +1,6 @@
 /*.as-expression-input {*/
 /*    box-sizing: border-box;*/
-/*    border: 1px solid var(--as-input-border-color);*/
+/*    border: 1px solid var(--border-color);*/
 /*    min-height: var(--as-input-height);*/
 
 /*}*/
@@ -27,7 +27,7 @@
 
 .as-expression-input {
     font-family: Consolas, monospace;
-    border-color: var(--as-input-border-color);
+    border-color: var(--border-color);
     border-style: solid;
     box-sizing: border-box;
     border-width: 1px;
