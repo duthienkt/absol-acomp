@@ -14,6 +14,11 @@ label.as-checkbox-input {
     padding: 0;
     margin: 0; /*fix boostrap override*/
     overflow: hidden;
+    background-color: white;
+}
+
+label.as-checkbox-input .mdi::before {
+    display: block;/*fix icon not center*/
 }
 
 label.as-checkbox-input.as-disabled {
@@ -88,8 +93,9 @@ label.as-checkbox-input[data-variant="v0"]::after {
 }
 
 
-label.as-checkbox-input.as-checked::after {
-    border: 1px solid #52586633;
+label.as-checkbox-input.as-checked::after,
+label.as-checkbox-input.as-disabled::after{
+    border: 1px solid var(--sharp-border-color);
 }
 
 
@@ -138,7 +144,7 @@ label.as-checkbox-input[data-variant="check-circle"].as-disabled,
 label.as-checkbox-input[data-variant="check-box"].as-checked.as-disabled,
 label.as-checkbox-input[data-variant="check-circle"].as-checked.as-disabled,
 label.as-checkbox-input[data-variant="reject-circle"].as-checked.as-disabled {
-    background-color: var(--border-color);
+    background-color: var(--as-disabled-background-color);
     color: white;
 }
 
