@@ -457,6 +457,8 @@ TableScroller.prototype.updateContent = function () {
 TableScroller.prototype._updateScrollStatus = function () {
     var bound = this.getBoundingClientRect();
     var tableBound = this.$originTable.getBoundingClientRect();
+    this.addStyle('--content-width', tableBound.width + 'px');
+    this.addStyle('--content-height', tableBound.height+ 'px');
     if (bound.width < tableBound.width) {
         this.addClass('as-scroll-horizontal');
         this.$vscrollbar.outerHeight = bound.height - 17;

@@ -6,6 +6,10 @@ import { getAncestorElementOf, swapChildrenInElt } from "./utils";
 var _ = ACore._;
 var $ = ACore.$;
 
+/**
+ * @extends AElement
+ * @constructor
+ */
 function TableVScroller() {
     var thisTS = this;
     this.$attachHook = $('attachhook', this);
@@ -25,6 +29,19 @@ function TableVScroller() {
     this.$topTable = $('.absol-table-vscroller-head', this);
     this.$headLine = $('.absol-table-vscroller-head-line', this);
     this.swappedContentPairs = [];
+    this.obs = new IntersectionObserver(()=>{
+        if (this.isDescendantOf(document.body)) {
+            if (this.getBoundingClientRect().width) {
+                this.updateSize();
+            }
+        }
+        else {
+            if (this.obs) {
+                this.obs.disconnect();
+                this.obs = null;
+            }
+        }
+    }, {root: document.body});
 }
 
 TableVScroller.tag = 'TableVScroller'.toLowerCase();
