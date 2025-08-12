@@ -195,12 +195,19 @@ MultiCheckTreeMenu.prototype.styleHandlers.flexGrow = {
 }
 
 MultiCheckTreeMenu.prototype.styleHandlers.overflow = {
+    /**
+     * @this MultiCheckTreeMenu
+     * @param value
+     * @returns {*}
+     */
     set: function (value) {
         if (value === 'hidden') {
             this.style.overflow = 'hidden';
+            this.$itemCtn.style.overflow = 'hidden';
         }
         else {
             this.style.overflow = '';
+            this.$itemCtn.style.overflow = '';
         }
         return value;
     }
@@ -379,7 +386,7 @@ MultiCheckTreeMenu.property.items = {
     set: function (items) {
         this._items = copySelectionItemArray(items || [], { removeNoView: true });
         this.$checkTreeBox.items = this._items;
-        this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.width) + 'px');
+        this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.lv0Width ||this.$checkTreeBox.estimateSize.width) + 'px');
         this.viewValues(this.$checkTreeBox.viewValues);
         this._values = this.$checkTreeBox.values.slice();
         this.eventHandler.viewChange();
