@@ -90,7 +90,7 @@ SelectListBox.render = function () {
             'attachhook.as-dom-signal'
         ],
         props: {
-            anchor: [1, 6, 2, 5]
+            anchor: [1, 6, 2, 5, 9, 11]
         }
     });
 };
