@@ -91,6 +91,7 @@ MSelectTreeLeafBox.render = function () {
 };
 
 MSelectTreeLeafBox.prototype._calcEstimateSize = SelectTreeLeafBox.prototype._calcEstimateSize;
+MSelectTreeLeafBox.prototype._estimateRawItemWidth = SelectTreeLeafBox.prototype._estimateRawItemWidth;
 
 
 MSelectTreeLeafBox.prototype._estimateItemWidth = function (item, level) {
