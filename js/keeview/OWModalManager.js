@@ -40,7 +40,7 @@ OWModalManager.prototype.createView = function () {
 
 
 OWModalManager.prototype.createModal = function (opt, caller) {
-    console.trace(1);
+    // console.trace(1);
     opt = opt || {};
     var modal = _({
         class: 'kv-ow-modal',
