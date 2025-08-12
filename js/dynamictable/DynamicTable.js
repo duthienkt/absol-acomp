@@ -1974,10 +1974,6 @@ AutoFocusScroller.prototype.ev_focus = function (event) {
             this.elt.$vscrollbar.emit('scroll');
         }
     }, 10);
-
-
-    console.log(event.isTrusted)
-    console.log('us focus', event.target)
 };
 
 
