@@ -445,27 +445,26 @@ TreeRootHolder.prototype.setValues = function (values) {
 };
 
 TreeRootHolder.prototype.calcEstimateSize = function () {
-    var res = { width: 0, height: this.boxElt.itemHeight + (this.tailIdx + 1) };
+    var res = { lv0Width: 0, width: 0, height: this.boxElt.itemHeight + (this.tailIdx + 1) };
     var holders = this.child;
     var n = holders.length;
     var holder;
-    var longestHolder = null;
     var longest = 0;
     var w;
+    var lv0Width = 0;
     for (var i = 0; i < n; ++i) {
         holder = holders[i];
         holder.traverse((hd) => {
-            w = hd.calcEstimateWidth();
+            w = hd.calcWidth();
+            lv0Width = Math.max(lv0Width, hd.calcRawWidth());
             if (w > longest) {
                 longest = w;
-                longestHolder = hd;
             }
         })
     }
 
-    if (longestHolder) {
-        res.width = longestHolder.calcWidth() * this.boxElt.scale14;
-    }
+    res.width = longest * this.boxElt.scale14;
+    res.lv0Width  = lv0Width * this.boxElt.scale14;
     return res;
 };
 
@@ -747,13 +746,21 @@ TreeNodeHolder.prototype.calcEstimateWidth = function () {
 TreeNodeHolder.prototype.calcWidth = function () {
     var width = 12;//padding
     width += 43; //cheat for some size with checklistbox
-    width += 1.75 * 14 * this.level;
     width += 14.7 + 5;//toggle icon
     width += 16;//checkbox
     if (this.item.icon) width += 21;//icon
-    width += 7 + TextMeasure.measureWidth(this.item.text||'', TextMeasure.FONT_ARIAL, 14);//margin-text
+    width += 7 + TextMeasure.measureWidth(this.item.text || '', TextMeasure.FONT_ARIAL, 14);//margin-text
 
-    if (this.item.desc) width += 6 + TextMeasure.measureWidth(this.item.desc||'',TextMeasure.FONT_ARIAL, 11.9);
+    if (this.item.desc) width += 6 + TextMeasure.measureWidth(this.item.desc || '', TextMeasure.FONT_ARIAL, 11.9);
+    return width;
+};
+
+TreeNodeHolder.prototype.calcRawWidth = function () {
+    var width = 6;//padding
+    width += 16;//checkbox
+    if (this.item.icon) width += 21;//icon
+    width += 7 + TextMeasure.measureWidth(this.item.text || '', TextMeasure.FONT_ARIAL, 14);//margin-text
+    if (this.item.desc) width += 6 + TextMeasure.measureWidth(this.item.desc || '', TextMeasure.FONT_ARIAL, 11.9);
     return width;
 };
 
