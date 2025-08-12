@@ -62,16 +62,22 @@ RibbonSplitButton.property.items = {
     set: function (items) {
         var thisB = this;
         this._items = items || [];
-        if (this._items && this._items.length > 0) {
+        if ((this._items && this._items.length > 0) ||(typeof  this._items === "function")) {
             if (!this._menuHolder) {
                 this.removeClass('as-no-dropdown');
                 this._menuHolder = QuickMenu.toggleWhenClick(this.$extendBtn || this, {
                     getMenuProps: function () {
+                        var items;
+                        if (typeof thisB._items === "function") {
+                            items = thisB._items();
+                        } else {
+                            items = thisB._items;
+                        }
                         return {
                             extendStyle: {
                                 'min-width': thisB.getBoundingClientRect().width + 'px'
                             },
-                            items: thisB._items
+                            items: items
                         }
                     },
                     getFlowedElement: function () {
