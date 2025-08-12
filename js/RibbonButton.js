@@ -76,7 +76,7 @@ RibbonButton.property.icon = {
     set: function (icon) {
         icon = icon || null;
         this._icon = icon;
-        if (this.$icon) this.removeChild(this.$icon);
+        if (this.$icon) this.$icon.remove();
         if (icon) {
             this.$icon = _(icon);
             this.$content.addChildBefore(this.$icon, this.$textCtn);
