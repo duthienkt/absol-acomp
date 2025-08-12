@@ -33,9 +33,13 @@ function SelectTreeMenu() {
             preupdateposition: this.eventHandler.preUpdateListPosition
         }
     });
+    if (!this.$selectlistBox.cancelWaiting) {
+        this.$selectlistBox.cancelWaiting();
+    }
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.followTarget = this;
     this.$selectlistBox.sponsorElement = this;
+    this.$selectlistBox.unfollow();
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
 
     this._lastValue = "NOTHING_VALUE";
@@ -62,6 +66,7 @@ SelectTreeMenu.property = Object.assign(SelectTreeMenu.property || {}, SelectMen
 
 
 Object.assign(SelectTreeMenu.prototype, SelectMenu.prototype);
+// console.log(SelectTreeMenu.property.isFocus);
 
 
 ACore.install(SelectTreeMenu);
