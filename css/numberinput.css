@@ -128,6 +128,7 @@
     padding: 0 0.35em;
     box-sizing: border-box;
     font: inherit;
+    color: inherit;
 }
 
 .absol-number-input.as-has-stepper .absol-number-input-text-container > input[type="text"] {
