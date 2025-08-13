@@ -52,9 +52,9 @@
     background-color: white;
     border-radius: 4px;
     padding: 10px;
-    -webkit-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    -moz-box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
-    box-shadow: 2px 2px 9px 0px rgba(20, 20, 20, 1);
+    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
     display: inline-block;
 }
 
