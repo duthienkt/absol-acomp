@@ -22,6 +22,10 @@
     flex-grow: 1;
 }
 
+.as-window-box-body {
+    position: relative;
+}
+
 .as-window-box {
     position: relative;
 
