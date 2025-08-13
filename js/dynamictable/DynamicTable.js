@@ -1797,7 +1797,7 @@ RowDragController.prototype.ev_drag = function (event) {
         dy = Math.min(dy, this.elt.$vscrollbar.innerHeight - this.elt.$vscrollbar.outerHeight - this.elt.$vscrollbar.innerOffset);
 
 
-        if (dy > 0.5) {//dy may be very small
+        if (dy > 0.15) {//dy may be very small
             if (this.elt.hasClass('as-overflow-y')) {
                 this.elt.$vscrollbar.innerOffset += dy;
                 this.elt.$vscrollbar.emit('scroll');
@@ -1816,7 +1816,7 @@ RowDragController.prototype.ev_drag = function (event) {
         var dy = ctnBound.y - this.headerRect.D().y;
         dy /= 1000 / 60 / 4 * this.rowRect.height;
         dy = Math.max(dy, -this.elt.$vscrollbar.innerOffset);
-        if (dy < -0.5) {//dy may be very small
+        if (dy < -0.15) {//dy may be very small
             if (this.elt.hasClass('as-overflow-y')) {
                 this.elt.$vscrollbar.innerOffset += dy;
                 this.elt.$vscrollbar.emit('scroll');
