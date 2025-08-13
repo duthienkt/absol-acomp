@@ -194,6 +194,8 @@ import StackedHorizontalBar from "../StackedHorizontalBar";
 import FolderLikeTabBar from "../FolderLikeTabBar";
 import { TextInput } from "../TextEditor";
 import PositionTracker from "../PositionTracker";
+import CheckboxStepper from "../CheckboxStepper";
+import LinearBackground from "../LinearBackground";
 
 
 export var publicCreators = [
@@ -212,6 +214,7 @@ export var publicCreators = [
     CheckListItem,
     CheckListBox,
     CheckTreeLeafOnlyBox,
+    CheckboxStepper,
     ChromeCalendar,
     ChromeTimePicker,
     ChromeTime24Picker,
@@ -281,6 +284,7 @@ export var publicCreators = [
     HRuler,
     IconSprite,
     LinearColorBar,
+    LinearBackground,
     LinearColorTinyBar,
     MediaInput,
     MessageInput,
