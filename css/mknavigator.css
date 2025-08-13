@@ -57,7 +57,7 @@
 }
 
 .mk-nav-item:hover {
-    background-color: var(--space-backgroudcolor);
+    background-color: var(--space-background-color);
 }
 
 .mk-nav-item.mk-current:hover {
@@ -69,7 +69,7 @@
 }
 
 .mk-nav-item-icon-ctn {
-    color: var(--gray-clor)
+    color: var(--grey-color)
 }
 
 .mk-nav-item-text-ctn {
