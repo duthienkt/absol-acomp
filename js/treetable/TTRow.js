@@ -1,7 +1,7 @@
 import {$, _} from "../../ACore";
 import TTCell from "./TTCell";
 import DTBodyRow from "../dynamictable/DTBodyRow";
-import {isNone} from "../utils";
+import { addElementClassName, isNone } from "../utils";
 import {randomIdent} from "absol/src/String/stringGenerate";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
@@ -31,8 +31,8 @@ function TTRow(body, data, parentRow) {
     } else if (typeof body.table.elt.initOpened === 'boolean') {
         this.isOpened = body.table.elt.initOpened;
     }
-    else if ((typeof body.table.data.initOpened  === 'number')) {
-        this.isOpened = this.level < body.table.data.initOpened ;
+    else if ((typeof body.table.data.initOpened === 'number')) {
+        this.isOpened = this.level < body.table.data.initOpened;
     }
 }
 
@@ -74,7 +74,8 @@ TTRow.prototype.open = function () {
         bodyElt.addChild(rowElements);
     }
     this.updateSizeUp();
-    this.requestParentUpdateContent();
+    if (this.requestParentUpdateContent) /*why?*/
+        this.requestParentUpdateContent();
 };
 
 
@@ -88,7 +89,8 @@ TTRow.prototype.close = function () {
         this.body.table.elt.savedState[this.data.id] = this.isOpened;
     this._elt.removeClass('as-is-opened');
     this.updateSizeUp();
-    this.requestParentUpdateContent();
+    if (this.requestParentUpdateContent)
+        this.requestParentUpdateContent();
 };
 
 TTRow.prototype.updateSizeUp = function () {
@@ -104,7 +106,7 @@ TTRow.prototype.requestParentUpdateContent = function () {
             break;
         }
         else
-        c = c.parentElement;
+            c = c.parentElement;
     }
 };
 
@@ -319,12 +321,13 @@ Object.defineProperty(TTRow.prototype, 'elt', {
                     ttRow: this
                 }
             });
+            addElementClassName(this._elt, this.data.class || []);
             if (this.data.id) this._elt.attr('data-id', this.data.id);
             if (this.isOpened) this._elt.addClass('as-is-opened');
             if (this.subRows.length > 0) this._elt.addClass('as-has-sub-row');
             this._elt.addChild(this.cells.map((cell, i) => (cell.elt).attr('data-col-idx', i + '')));
-            if (this.data.on && (typeof this.data.on.click  === "function")) {
-                this._elt.on('click', (event)=>{
+            if (this.data.on && (typeof this.data.on.click === "function")) {
+                this._elt.on('click', (event) => {
                     this.data.on.click.call(this._elt, event, this);
                 });
             }
