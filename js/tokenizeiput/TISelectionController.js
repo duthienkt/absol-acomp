@@ -170,6 +170,7 @@ TISelectionController.prototype.getPrevTextNode = function (current) {
 };
 
 TISelectionController.prototype.setRangeByOffset = function (offset) {
+    //todo: fix offset length
     var start, end, direction;
 
     if (typeof offset === "number") {
@@ -257,6 +258,23 @@ TISelectionController.prototype.setRangeByOffset = function (offset) {
     if (!endCtn) {
         endCtn = startCtn;
         endOffset = startOffset;
+    }
+    if (startCtn) {
+        if (isText(startCtn)) {
+            startOffset = Math.min(startOffset, startCtn.data.length);
+        }
+        else {
+            startOffset = Math.min(startOffset, startCtn.childNodes.length);
+        }
+    }
+
+    if (endCtn) {
+        if (isText(endCtn)) {
+            endOffset = Math.min(endOffset, endCtn.data.length);
+        }
+        else {
+            endOffset = Math.min(endOffset, endCtn.childNodes.length);
+        }
     }
 
 
