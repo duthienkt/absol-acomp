@@ -1,7 +1,7 @@
 import '../../css/numberinput.css';
 import ACore from "../../ACore";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { nearFloor, isRealNumber, isNaturalNumber, findMaxZIndex, isInteger } from "../utils";
+import { nearFloor, isRealNumber, isNaturalNumber, findMaxZIndex, isInteger, notifyPreFocusEvent } from "../utils";
 import NITextController from "./NITextController";
 import { numberAutoFixed } from "absol/src/Math/int";
 import AElement from "absol/src/HTML5/AElement";
@@ -39,8 +39,8 @@ function NumberInput() {
     // .on('change', this.eventHandler.change);
     this.$input.value = '0';
 
-    this.$input.on('blur', ()=>{
-        this.emit('blur', {target: this, type: 'blur'}, this);//todo: check
+    this.$input.on('blur', () => {
+        this.emit('blur', { target: this, type: 'blur' }, this);//todo: check
     });
 
     this._prevValue = 0;//to know whenever the value changed
@@ -188,15 +188,15 @@ NumberInput.prototype.styleHandlers.textAlign = {
 
 NumberInput.prototype._makeDefaultFormat = function () {
     var res = {
-        locales: 'vi-VN',
+        locales: 'en-US',
         maximumFractionDigits: 20,
         minimumFractionDigits: 0,
         pow10: null//only apply if maximumFractionDigits === 0
     };
 
-    if (window['systemconfig'] && window['systemconfig']['numberFormatLocales']) {
-        res.locales = window['systemconfig']['numberFormatLocales'];
-    }
+    // if (window['systemconfig'] && window['systemconfig']['numberFormatLocales']) {
+    //     res.locales = window['systemconfig']['numberFormatLocales'];
+    // }
     return res;
 };
 
@@ -281,6 +281,7 @@ NumberInput.eventHandler.mouseDownBtn = function (dir, event) {
 };
 
 NumberInput.prototype.focus = function () {
+    notifyPreFocusEvent(this);
     this.$input.focus();
 }
 
@@ -298,7 +299,6 @@ NumberInput.prototype.notifyChanged = function (option) {
         // this._prevBy = option.by;
     }
 };
-
 
 
 NumberInput.property.rawValue = {
@@ -485,7 +485,6 @@ NumberInput.property.format = {
 
 NumberInput.property.floatFixed = {
     set: function (value) {
-
         if (isRealNumber(value)) {
             value = Math.round(value);
             if (value >= 0) {
