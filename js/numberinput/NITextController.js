@@ -41,8 +41,19 @@ NITextController.prototype.flushTextToValue = function () {
     var thousandsSeparator = this.elt.thousandsSeparator || '';
     var decimalSeparator = this.elt.decimalSeparator;
     var text = this.$input.value;
-    var floatText = text.split(thousandsSeparator).join('').split(decimalSeparator).join('.');
-    this.elt._value = parseFloat(floatText);
+    text =  text.replace(/[^0-9\-+.,]/g, '');
+    var parts = text.split(decimalSeparator);
+    var thousands = parts[0].split(thousandsSeparator).join('').trim();
+    var decimal = (parts[1] || '').split(thousandsSeparator).join('').trim();
+    var value;
+    if (decimal) {
+        value = parseFloat(thousands+'.' +decimal);
+    }
+    else {
+        value = parseInt(thousands, 10);
+    }
+
+    this.elt._value = parseFloat(value);
     if (!isRealNumber(this.elt._value)) this.elt._value = null;
     this.elt._value = this.elt.value;//normalize value
 };
@@ -120,6 +131,7 @@ NITextController.prototype.onBlur = function () {
 }
 
 /***
+ * @deprecated
  * @param {KeyboardEvent|ClipboardEvent|{}} event
  * @param {boolean=} event
  */
@@ -400,5 +412,32 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
     }
 };
 
+
+
+/***
+ * @param {KeyboardEvent|ClipboardEvent|{}} event
+ * @param {boolean=} event
+ */
+NITextController.prototype.onKeyDown = function (event) {
+    var key = event.type === 'keydown' ? keyboardEventToKeyBindingIdent(event) : '';
+    var onKeys = {};
+    onKeys.enter = () => {
+        if (this.elt.readOnly) return;
+        this.flushValueToText();
+        this.$input.setSelectionRange(this.$input.value.length, this.$input.value.length);
+        this.elt.notifyChanged({ by: 'enter' });
+    };
+    console.log('key', key)
+
+    if (onKeys[key]) {
+        event.preventDefault();
+        onKeys[key]();
+    }
+    else {
+        setTimeout(()=>{
+            this.flushTextToValue();
+        },10);
+    }
+};
 
 export default NITextController;
