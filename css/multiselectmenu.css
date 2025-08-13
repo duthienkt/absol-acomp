@@ -14,7 +14,7 @@
     box-sizing: border-box;
     outline: none;
     background-color: white;
-    padding-right: 45px;
+    padding-right: 30px;
     white-space: normal;
     --as-width-limit: 100vw;
     max-width: var(--as-width-limit);
@@ -28,15 +28,18 @@
 .as-multi-select-menu[data-size="large"] {
     min-height: var(--large-size);
     border-radius: var(--large-radius);
+    --select-box-min-height: var(--large-size);
 }
 
 .as-multi-select-menu[data-size="regular"] {
     min-height: var(--default-size);
     border-radius: var(--default-radius);
+    --select-box-min-height: var(--default-size);
 }
 .as-multi-select-menu[data-size="small"] {
     min-height: var(--small-size);
     border-radius: var(--small-radius);
+    --select-box-min-height: var(--small-size);
 }
 
 
@@ -54,6 +57,7 @@
     display: block;
     max-height: var(--multi-select-menu-max-height);
     overflow-y: auto;
+    padding-left: var(--as-input-horizontal-padding);
 }
 
 .as-multi-select-menu-item-ctn.as-has-more {
@@ -119,7 +123,7 @@
 
 
 .as-multi-select-menu.as-multi-check-tree-leaf-menu {
-    min-width: calc(var(--select-list-estimate-width) + 14px);
+    min-width: calc(var(--select-list-estimate-width) + 2em + 14px);
 }
 
 
