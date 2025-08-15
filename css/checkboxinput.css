@@ -17,6 +17,11 @@ label.as-checkbox-input {
     background-color: white;
 }
 
+label.as-checkbox-input *,
+label.as-checkbox-input {
+    line-height: 1em;
+}
+
 label.as-checkbox-input .mdi::before {
     display: block;/*fix icon not center*/
 }
