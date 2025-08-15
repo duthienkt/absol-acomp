@@ -1012,6 +1012,13 @@ DateTimeInput.eventHandler.calendarPick = function (event) {
     }
 
     this.share.pickedValeText = this._applyTokenDict(this._format, tkDict);
+    if (this.share.$timePicker.hour === null) {
+        this.share.$timePicker.hour = 0;
+    }
+
+    if (this.share.$timePicker.minute === null) {
+        this.share.$timePicker.minute = 0;
+    }
     if (this.share.dateOnly) this.eventHandler.clickOKBtn({});
 };
 
