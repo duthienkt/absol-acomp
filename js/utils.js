@@ -4,10 +4,13 @@ import YesNoQuestionDialog from "./YesNoQuestionDialog";
 import Modal from "./Modal";
 import ext2MineType from "absol/src/Converter/ext2MineType";
 import TextMeasurement from "./tool/TextMeasurement";
-import { MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
+import { formatDateTime, MILLIS_PER_DAY, MILLIS_PER_HOUR, MILLIS_PER_MINUTE } from "absol/src/Time/datetime";
 import Rectangle from "absol/src/Math/Rectangle";
 import AElement from "absol/src/HTML5/AElement";
 import { nonAccentVietnamese, normalizeFileName, normalizeIdent } from "absol/src/String/stringFormat";
+import TextMeasure from "./TextMeasure";
+
+export { normalizeFileName };
 
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
@@ -574,12 +577,7 @@ export var charWidth = {
 
 
 export function estimateWidth14(text) {
-    // return absol.text.measureText(text, '14px arial').width
-    var l = 0;
-    for (var j = 0; j < text.length; ++j) {
-        l += (charWidth[text.charAt(j)]) || 9.337890625;
-    }
-    return l;
+    return TextMeasure.measureWidth(text, TextMeasure.FONT_ROBOTO, 14);
 }
 
 
@@ -830,6 +828,25 @@ export function fileSize2Text(s) {
 export function isDateTimeFormatToken(text) {
     //ND: like (Next day)
     return ['d', 'dd', 'M', 'MM', 'y', 'yyyy', 'h', 'hh', 'H', 'HH', 'm', 'mm', 'a', 'w', 'ww', 'Q', 'QQ', 'ND'].indexOf(text) >= 0;
+}
+
+var dateTimeFormatTextWidthCache = {};
+
+export function getDateTimeFormatTextWidth(format) {
+    if (!dateTimeFormatTextWidthCache[format]) {
+        dateTimeFormatTextWidthCache[format] = ([
+            new Date(),
+            new Date(2022, 10, 20, 22, 30),
+            new Date(2022, 5, 20, 22, 30),
+            new Date(2022, 1, 20, 22, 30),
+        ].reduce((ac, cr) => {
+            var text = formatDateTime(cr, format);
+            var width = TextMeasure.measureWidth(text, TextMeasure.FONT_ROBOTO, 14);
+            return Math.max(ac, width);
+        }, TextMeasure.measureWidth(format, TextMeasure.FONT_ROBOTO, 14)));
+        dateTimeFormatTextWidthCache[format] = Math.ceil(dateTimeFormatTextWidthCache[format]);
+    }
+    return dateTimeFormatTextWidthCache[format];
 }
 
 export var normalizeMinuteOfMillis = mil => {
@@ -1664,6 +1681,19 @@ export function getMaterialDesignIconNames() {
     return mdiLoadSync;
 }
 
+/**
+ *
+ * @param {AElement| HTMLElement} elt
+ */
+export function notifyPreFocusEvent(elt) {
+    var e = elt.parentElement;
+    while (e && e.tagName !== 'BODY') {
+        if (e.isSupportedEvent && e.isSupportedEvent('prefocus')) {
+            e.emit('prefocus', { target: elt, type: 'prefocus' }, this);
+        }
+        e = e.parentElement;
+    }
+}
 
 
 /**
