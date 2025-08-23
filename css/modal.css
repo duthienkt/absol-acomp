@@ -12,10 +12,18 @@
     z-index: -1000;
     visibility: hidden;
     opacity: 0;
+    pointer-events: none;
 }
 
 .as-modal.as-center {
     text-align: center;
+}
+
+.as-modal.as-top::before {
+    content: "";
+    display: block;
+    height: 100px;
+    max-height: 10vh;
 }
 
 
