@@ -54,6 +54,9 @@ MessageDialog.prototype._makeActionBtn = function (action) {
     var button =  _({
         tag: FlexiconButton.tag,
         class: action.class || [],
+        style: {
+            variant: action.variant
+        },
         props: {
             text: action.text || action.name,
             icon: action.icon || null

@@ -3,32 +3,35 @@
     font-family: Roboto, sans-serif;
     box-sizing: border-box;
     background-color: white;
-    border-radius: 0.3em;
+    border-radius: 10px;
+    overflow: hidden;
     border: 1px solid #dddddd;
-    -webkit-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
-    -moz-box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
-    box-shadow: 2px 2px 6px 0px rgba(0, 0, 90, 0.55);
+    box-shadow: 0 4px 12px 0 rgba(15, 0, 97, 0.1);
 }
 
 .as-message-dialog-header {
-    padding: calc(5em / 14) 1em;
-    border-bottom: 1px solid #e9ecef;
+    padding: var(--distance-6) var(--distance-6) 0 var(--distance-6);
+    height: var(--default-size);
+    border-bottom: 1px solid rgba(82, 88, 102, 0.2);
+    background-color: #f5f5f5;
 }
 
 
 .as-message-dialog-title {
-    font-size: 1.25em;
-    font-weight: 500;
+    font-size: 18px;
+    font-weight: bold;
 }
 
 .as-message-dialog-body {
-    padding: 1em;
+    min-width: 30px;
+    padding: var(--distance-6);
 }
 
 .as-message-dialog-footer {
-    text-align: right;
-    padding: 10px 20px;
-    border-top: 1px solid #e9ecef;
+    text-align: center;
+    padding: var(--distance-6);
+    border-top:1px solid rgba(82, 88, 102, 0.2);
+    background-color: #f5f5f5;
 }
 
 .as-message-dialog-footer:empty,
@@ -37,8 +40,8 @@
 }
 
 
-.as-message-dialog-footer button {
-    margin-left: 1.5em;
+.as-message-dialog-footer button:not(:last-child) {
+    margin-right: var(--distance-5);
 }
 
 
