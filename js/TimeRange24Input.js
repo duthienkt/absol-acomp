@@ -338,7 +338,6 @@ TimeRange24Input.property.value = {
 TimeRange24Input.eventHandler = {};
 
 TimeRange24Input.eventHandler.offsetChange = function (event) {
-    console.log("offset change")
     var prevOffset = this.$duration.dayOffset;
     var preDuration = this.$duration.value;
     var prevEnd = prevOffset + preDuration;
@@ -368,8 +367,6 @@ TimeRange24Input.eventHandler.offsetChange = function (event) {
 };
 
 TimeRange24Input.eventHandler.durationChange = function (event) {
-    console.log("durationChange")
-
     if (!isRealNumber(this.$offset.dayOffset) && isRealNumber(this.$duration.value)) {
         this.$offset.dayOffset = this.$duration.dayOffset;
     }
