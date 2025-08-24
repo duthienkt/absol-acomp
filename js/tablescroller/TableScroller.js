@@ -280,11 +280,13 @@ TableScroller.prototype._updateFixedYHeader = function () {
 
 TableScroller.prototype._updateFixedYHeaderSize = function () {
     var bound = this.$originTable.getBoundingClientRect();
-    this.$fixedYHeader.addStyle('width', bound.width + 'px');
+    this.$fixedYHeader.removeStyle('width');
     if (this.$fixedYHeader.firstChild && this.$fixedYHeader.firstChild.firstChild)
         Array.prototype.forEach.call(this.$fixedYHeader.firstChild.firstChild.childNodes, elt => {
             var bound = elt.$origin.getBoundingClientRect();
             elt.addStyle('width', bound.width + 'px');
+            elt.addStyle('max-width', bound.width + 'px');
+            elt.addStyle('min-width', bound.width + 'px');
             if (bound.width + bound.height === 0) {
                 elt.addStyle('display', 'none');
             }
