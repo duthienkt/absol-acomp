@@ -73,6 +73,7 @@ var autocomplete = {
 };
 var input = absol._({
     tag: 'expressioninput',
+    class:'as-debug',
     on: {
         blur: function () {
             console.log('blur');
@@ -85,12 +86,11 @@ var input = absol._({
         }
     },
     props: {
-        value: ' a+b+ c + f <= 1 + 2 + 3 + 4 \n+ Math->max(0, 12)+ String->split("this is text", \' \')',
-        icon: 'span.mdi.mdi-equal',
+        valuex: ' a+b+ c + f <= 1 + 2 + 3 + 4 \n+ Math->max(0, 12)+ String->split("this is text", \' \')',
+        // icon: 'span.mdi.mdi-equal',
         autocomplete: autocomplete
     }
 }).addTo(document.body);
-
 var input2 = absol._({
     tag: 'expressioninput',
     props: {
