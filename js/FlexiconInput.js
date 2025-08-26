@@ -1,7 +1,8 @@
 import '../css/flexiconinput.css';
 import ACore from "../ACore";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
+import { AbstractInput } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -17,10 +18,14 @@ function FlexiconInput() {
     this.$unitCtn = $('.as-flexicon-input-unit-ctn', this);
     OOP.drillProperty(this, this.$input, ['value', 'readonly']);
     this.on('click', function (event) {
-        if (event.target != this.$input)
+        if (event.target !== this.$input)
             this.$input.focus();
     }.bind(this));
+    AbstractInput.call(this);
+    this.addStyle('size', 'regular');
 }
+
+mixClass(FlexiconInput, AbstractInput);
 
 FlexiconInput.prototype.on = function () {
     return this.$input.on.apply(this.$input, arguments);
@@ -56,7 +61,6 @@ FlexiconInput.render = function () {
 };
 
 
-FlexiconInput.property = {};
 
 FlexiconInput.property.icon = {
     set: function (value) {

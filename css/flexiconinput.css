@@ -20,6 +20,25 @@
     white-space: nowrap;
 }
 
+.as-flexicon-input[data-size="small"] {
+    height: var(--small-size);
+    font-size: var(--small-font-size);
+    border-radius: var(--small-radius);
+}
+
+.as-flexicon-input[data-size="regular"] {
+    height: var(--default-size);
+    font-size: var(--default-font-size);
+    border-radius: var(--default-radius);
+}
+
+.as-flexicon-input[data-size="large"] {
+    height: var(--large-size);
+    font-size: var(--large-font-size);
+    border-radius: var(--large-radius);
+}
+
+
 .as-flexicon-input.as-border-none {
     border: none;
 }
