@@ -5,7 +5,7 @@ import DelaySignal from "absol/src/HTML5/DelaySignal";
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
 import { phraseMatch, wordLike } from "absol/src/String/stringMatching";
 import PositionTracker from "./PositionTracker";
-import { findMaxZIndex, revokeResource, vScrollIntoView } from "./utils";
+import { findMaxZIndex, revokeResource, vScrollIntoView, getNonOverlappingBounds } from "./utils";
 import { getScreenSize, isDomNode } from "absol/src/HTML5/Dom";
 import SCGrammar from "absol/src/SCLang/SCGrammar";
 import DPParser from "absol/src/Pharse/DPParser";
@@ -15,6 +15,8 @@ import { hitElement } from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { arrayUnique } from "absol/src/DataStructure/Array";
+import { AbstractInput } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 
 /***
@@ -23,10 +25,10 @@ import { arrayUnique } from "absol/src/DataStructure/Array";
  */
 function ExpressionInput() {
     this.domSignal = new DelaySignal();
+    this.$textarea = $('.as-expression-input-textarea', this);
     this.$rangeCtn = $('.as-expression-input-range-ctn', this);
     this.$content = $('.as-expression-input-content', this);
     this.$iconCtn = $('.as-expression-input-icon-ctn', this);
-    // this.$forground = $('.as-expression-input-foreground', this);
 
     /**
      *
@@ -35,6 +37,7 @@ function ExpressionInput() {
     this.$icon = null;
     this.$alertIcon = $('.mdi.mdi-alert-circle', this.$iconCtn);
     this.engine = new EIEngine(this);
+    this.selection = new EISelection(this);
     this.userActionCtrl = new EIUserActionController(this);
     // this.selection = new EISelection(this);
 
@@ -43,7 +46,7 @@ function ExpressionInput() {
     this.cmdTool = new EICommandTool(this);
 
     this._icon = null;
-
+    AbstractInput.call(this);
 
     /****
      * @name value
@@ -63,6 +66,8 @@ function ExpressionInput() {
      */
 }
 
+mixClass(ExpressionInput, AbstractInput);
+
 
 ExpressionInput.tag = 'ExpressionInput'.toLowerCase();
 
@@ -81,9 +86,16 @@ ExpressionInput.render = function () {
                 attr: {
                     contenteditable: 'true',
                     spellcheck: 'false'
+                },
+                child:{
+                    class:'as-ei-line',
+                    child: 'br'
                 }
-            }//,
-            // { class: 'as-expression-input-range-ctn' },
+            },
+            {
+                tag: 'textarea',
+                class: 'as-expression-input-textarea'
+            }
 
         ]
     });
@@ -117,7 +129,6 @@ ExpressionInput.prototype.focus = function () {
     this.engine.setSelectedPosition(this.engine.value.length);
 };
 
-ExpressionInput.property = {};
 
 ExpressionInput.property.readOnly = {
     set: function (value) {
@@ -214,6 +225,60 @@ ACore.install(ExpressionInput);
 export default ExpressionInput;
 
 
+function EISelection(elt) {
+    this.elt = elt;
+    /**
+     *
+     * @type {EIEngine}
+     */
+    this.engine = elt.engine;
+    this.$rangeParts = [];
+    this.$cursor = _({ class: 'as-expression-input-cursor' });
+}
+
+EISelection.prototype.drawRange = function (domRange) {
+    var bounds;
+    bounds = getNonOverlappingBounds(domRange);
+    var bound = this.elt.getBoundingClientRect();
+
+    while (this.$rangeParts.length > bounds.length) {
+        this.$rangeParts.pop().remove();
+    }
+    var partElt
+    while (this.$rangeParts.length < bounds.length) {
+        partElt = _({ class: 'as-expression-input-selection-part' });
+        this.elt.addChild(partElt);
+        this.$rangeParts.push(partElt);
+    }
+    var b;
+    for (var i = 0; i < bounds.length; ++i) {
+        b = bounds[i];
+        this.$rangeParts[i].addStyle({
+            left: (b.left - bound.left) + 'px',
+            top: (b.top - bound.top - 6) + 'px',
+            width: b.width + 'px',
+            height: b.height + 12 + 'px',
+        });
+    }
+    if (this.$rangeParts.length === 1) {
+        if (bounds[0].width < 2) {
+            this.$rangeParts[0].addClass('as-cursor');
+        }
+        else {
+            this.$rangeParts[0].removeClass('as-cursor');
+        }
+    }
+}
+
+EISelection.prototype.redraw = function () {
+    var start = this.elt.$textarea.selectionStart;
+    var end = this.elt.$textarea.selectionEnd;
+    var direction = this.elt.$textarea.selectionDirection;
+    var domRange = this.engine.selectOffset2DomRange({ start: start, end: end });
+    this.drawRange(domRange);
+};
+
+
 /**
  *
  * @param {ExpressionInput} elt
@@ -240,13 +305,14 @@ function EIUserActionController(elt) {
         this.elt.engine.highlightError();
     });
 
-    this.$content.on({
-        cut: this.ev_cut,
-        blur: this.ev_blur,
-        focus: this.ev_focus,
-        paste: this.ev_paste,
-        keydown: this.ev_keydown
-    });
+    this.elt.$textarea.on('keydown', this.ev_keydown);
+    // this.$content.on({
+    //     cut: this.ev_cut,
+    //     blur: this.ev_blur,
+    //     focus: this.ev_focus,
+    //     paste: this.ev_paste,
+    //     keydown: this.ev_keydown
+    // });
 
 
 }
@@ -266,7 +332,6 @@ EIUserActionController.prototype.delayNotifyStopChange = function () {
 EIUserActionController.prototype.ev_keydown = function (event) {
     var key = keyboardEventToKeyBindingIdent(event);
     if (key.match(/^[a-zA-Z0-9]$/)) {
-        this.elt.engine.requestRedrawTokens();
         setTimeout(() => {
             this.elt.autoCompleteCtrl.openDropdownIfNeed();
             if (this.elt.autoCompleteCtrl.isOpen) {
@@ -275,12 +340,9 @@ EIUserActionController.prototype.ev_keydown = function (event) {
         }, 200);
     }
     else if (key === 'enter') {
-        event.preventDefault();
         if (this.elt.autoCompleteCtrl.isSelecting()) {
+            event.preventDefault();
             this.elt.autoCompleteCtrl.applySelectingSuggestion();
-        }
-        else {
-            this.engine.breakLine();
         }
     }
     else if (key === 'arrowleft' || key === 'arrowright' || key.match(/^[^a-zA-Z0-9]$/)) {
@@ -313,7 +375,6 @@ EIUserActionController.prototype.ev_keydown = function (event) {
     else if ((event.ctrlKey && event.key === 'X') || (!event.ctrlKey && event.key.length === 1)
         || event.key === 'Delete'
         || event.key === 'Backspace') {
-        this.elt.engine.requestRedrawTokens();
         setTimeout(() => {
             this.elt.autoCompleteCtrl.openDropdownIfNeed();
             if (this.elt.autoCompleteCtrl.isOpen) {
@@ -372,6 +433,7 @@ function EIEngine(elt) {
     this.elt = elt;
     this.lastSelectedPosition = { start: 0, end: 0, direction: 'forward' };
     this.$content = elt.$content;
+    this.$textarea = elt.$textarea;
     /**
      *
      * @type {null|Range}
@@ -384,15 +446,122 @@ function EIEngine(elt) {
         }
     }
     this._isListenSelectionChange = false;
-    this.$content.on('focus', this.ev_focus);
+
+
+    this.elt.on('focus', this.ev_focus, true);
+    this.elt.on('blur', this.ev_blur, true);
+    this.$content.on('mouseup', this.ev_mouseUp);
+    this.$textarea.on('keydown', this.ev_keydown);
+    this.$textarea.on('keydown', this.ev_keyup);
 }
 
 
+/**
+ *
+ * @param  {null|number|{start: number, end: number}=}pos
+ */
+EIEngine.prototype.selectOffset2DomRange = function (pos) {
+    var value = this.elt.value;
+    var start;
+    var end;
+    if (typeof pos === "number") {
+        start = pos;
+        end = pos;
+    }
+    else if (pos === null) {
+        return;
+    }
+    else {
+        start = pos.start;
+        end = pos.end;
+    }
+
+    var startCtn, startOfs, endCtn, endOfs;
+    var text;
+    text = '';
+    var visit = (nd) => {
+        var i;
+        var prevText = text;
+        var parent = nd.parentElement;
+
+        if (this.isTextNode(nd)) {
+            text += nd.data;
+            if ((text.length > start || (text.length >= start && !nd.nextSibling)) && prevText.length <= start) {
+
+                startCtn = nd;
+                startOfs = start - prevText.length;
+            }
+            if ((text.length > end || (text.length >= start && !nd.nextSibling)) && prevText.length <= end) {
+                endCtn = nd;
+                endOfs = end - prevText.length;
+            }
+        }
+        else if (nd.tagName === 'BR' && parent) {
+            if (parent.lastChild !== nd)
+            text += '\n';
+            if ((text.length > start || (text.length >= start && !nd.nextSibling)) && prevText.length <= start) {
+                startCtn = nd;
+                startOfs = 0;
+            }
+            if ((text.length > end || (text.length >= start && !nd.nextSibling)) && prevText.length <= end) {
+                endCtn = nd;
+                endOfs = 0;
+            }
+        }
+        else if (nd.tagName === 'BR'){
+
+        }
+        else if (nd.classList.contains('as-ei-line') && parent.firstChild !== nd) {
+            text += '\n';
+            for (i = 0; i < nd.childNodes.length; ++i) {
+                visit(nd.childNodes[i]);
+            }
+        }
+        else {
+            for (i = 0; i < nd.childNodes.length; ++i) {
+                visit(nd.childNodes[i]);
+            }
+        }
+    }
+
+    visit(this.$content);
+
+    if (!startCtn) {
+        startCtn = this.$content.firstChild;
+        startOfs = startCtn.childNodes.length;
+    }
+    if (startCtn === this.$content && startOfs === 0 && this.$content.firstChild) {
+        startCtn = this.$content.firstChild;
+        startOfs = 0;
+    }
+
+    if (!endCtn) {
+        endCtn = this.$content.lastChild;
+        endOfs = endCtn.childNodes.length;
+    }
+
+    if (endCtn === this.$content && endOfs === 0 && this.$content.firstChild) {
+        endCtn = this.$content.firstChild;
+        endOfs = 0;
+    }
+
+    var range = document.createRange();
+    range.setStart(startCtn, startOfs);
+    range.setEnd(endCtn, endOfs);
+
+    return range;
+};
+
 EIEngine.prototype.ev_focus = function () {
+    this.elt.addClass('as-focused');
     if (!this._isListenSelectionChange) {
         document.addEventListener('selectionchange', this.ev_range);
         this._isListenSelectionChange = true;
     }
+};
+
+EIEngine.prototype.ev_blur = function () {
+    this.elt.removeClass('as-focused');
 };
 
 
@@ -402,6 +571,43 @@ EIEngine.prototype.ev_range = function () {
         this._isListenSelectionChange = false;
     }
     this.updateRange();
+};
+
+EIEngine.prototype.ev_mouseUp = function (event) {
+    var sel = window.getSelection();
+    var range;
+    var validRange;
+    for (var i = 0; i < sel.rangeCount; ++i) {
+        range = sel.getRangeAt(i);
+        if (this.isValidRange(range)) {
+            validRange = range;
+            break;
+        }
+    }
+
+    var pos, value;
+    if (validRange) {
+        pos = this.domRange2SelectPosition(validRange);
+        this.$textarea.focus();
+        this.$textarea.setSelectionRange(pos.start, pos.end);
+        this.elt.selection.redraw();
+    }
+    else {
+        value = this.$textarea.value;
+        this.$textarea.focus();
+        this.$textarea.setSelectionRange(value.length, value.length);
+        this.elt.selection.redraw();
+    }
+
+};
+
+EIEngine.prototype.ev_keydown = function (event) {
+    this.requestRedrawTokens();
+    this.elt.addClass('as-changing');
+};
+
+EIEngine.prototype.ev_keyup = function (event) {
+    this.requestRedrawTokens();
 };
 
 
@@ -420,7 +626,7 @@ EIEngine.prototype.highlightError = function () {
     var elt = this.elt;
     var contentElt = this.$content;
     var value = elt.value.trim();
-    var it = EIParser.parse(value, 'exp');
+    var it = EIParser.parse(value, 'exp_excel');
     var i, notSkipCount = 0;
     var tokenErrorIdx = -1;
     if (value && it.error) {
@@ -433,7 +639,7 @@ EIEngine.prototype.highlightError = function () {
     }
 
     for (i = 0; i < contentElt.childNodes.length; ++i) {//todo: fix conflict (run before redraw)
-        if (contentElt.childNodes[i].getAttribute &&contentElt.childNodes[i].classList.contains('as-token') && contentElt.childNodes[i].getAttribute('data-type') !== 'skip') {
+        if (contentElt.childNodes[i].getAttribute && contentElt.childNodes[i].classList.contains('as-token') && contentElt.childNodes[i].getAttribute('data-type') !== 'skip') {
             if (notSkipCount === tokenErrorIdx) {
                 contentElt.childNodes[i].classList.add('as-unexpected-token');
             }
@@ -457,7 +663,14 @@ EIEngine.prototype.clearErrorHighlight = function () {
 
 
 EIEngine.prototype.drawTokensContent = function () {
-    var selectedPos = this.getSelectPosition();
+    // var selectedPos = this.getSelectPosition();
+    // if (this.$content.childNodes.length === 1 && (this.$content.firstChild.tagName === 'BR')) {
+    //     this.$content.firstChild.remove();
+    // }
+    //
+
+    this.$content.clearChild();
+
     var value = this.value;
     var tokens = EIParser.tokenizer.tokenize(value);
     var tokenEltChain = Array.prototype.slice.call(this.$content.childNodes);
@@ -498,16 +711,28 @@ EIEngine.prototype.drawTokensContent = function () {
         }.bind(this));
     }
 
-    if (selectedPos)
-        this.setSelectedPosition(selectedPos);
+
 };
 
 EIEngine.prototype.updateTokenExType = function () {
+    var tokenEltChain = Array.prototype.slice.call(this.$content.childNodes);
+    var visitTokenChain = (nd)=>{
+        if (nd.classList) {
+            if (nd.classList.contains('as-token')) {
+                tokenEltChain.push(nd);
+            }
+            else {
+                for (var i = 0; i < nd.childNodes.length; ++i) {
+                    visitTokenChain(nd.childNodes[i]);
+                }
+            }
+        }
+    }
+    visitTokenChain(this.$content);
     /**
      * @type {HTMLElement[]}
      */
 
-    var tokenEltChain = Array.prototype.slice.call(this.$content.childNodes);
     var token, nextToken;
     var i, j;
     for (i = 0; i < tokenEltChain.length; ++i) {
@@ -541,6 +766,7 @@ EIEngine.prototype.updateTokenExType = function () {
 EIEngine.prototype.redrawTokens = function () {
     this.drawTokensContent();
     this.updateTokenExType();
+    this.elt.selection.redraw();
     this.elt.notifySizeCanBeChanged();
 
 };
@@ -599,8 +825,9 @@ EIEngine.prototype.updateRange = function () {
     var range;
     for (var i = 0; i < sel.rangeCount; ++i) {
         range = sel.getRangeAt(i);
-        if (this.isValidRange(range))
-            this.range = range;
+        if (this.isValidRange(range)) {
+            this.elt.selection.drawRange(range);
+        }
     }
 };
 
@@ -629,20 +856,13 @@ EIEngine.prototype.isSkipToken = function (node) {
 }
 
 EIEngine.prototype.getRange = function () {
-    this.updateRange();
-    return this.range;
+    var start = this.$textarea.selectionStart;
+    var end = this.$textarea.selectionEnd;
+    var direction = this.$textarea.selectionDirection;
+    if (isNaN(start) || isNaN(end)) return null;
+    return this.selectOffset2DomRange({ start: start, end: end });
 };
 
-/**
- *
- * @param {Range} range
- */
-EIEngine.prototype.setRange = function (range) {
-    this.range = range;
-    var sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-};
 
 EIEngine.prototype.childIndexOf = function (node) {
     if (!node.parentElement) return 0;
@@ -714,99 +934,6 @@ EIEngine.prototype.breakElement = function (elt, offset) {
     return newElt;
 };
 
-EIEngine.prototype.breakNode = function (node, offset) {
-    if (this.isTextNode(node)) {
-        return this.breakTextNode(node, offset);
-    }
-    else {
-        return this.breakElement(node, offset);
-    }
-};
-
-
-EIEngine.prototype.breakLine = function () {
-    var range = this.getRange();
-    if (!range) return;
-    var startCtn = range.startContainer;
-    var endCtn = range.endContainer;
-    var startOfs = range.startOffset;
-    var endOfs = range.endOffset;
-    var newNd;
-    var lcaNd = this.lcaOf(startCtn, endCtn);
-    while (startCtn !== lcaNd) {
-        this.trimRight(startCtn, startOfs);
-        startOfs = this.childIndexOf(startCtn) + 1;
-        startCtn = startCtn.parentElement;
-    }
-
-    while (endCtn !== lcaNd) {
-        this.trimLeft(endCtn, endOfs);
-        endOfs = this.childIndexOf(endCtn);
-        endCtn = endCtn.parentElement;
-    }
-
-    if (this.isTextNode(startCtn)) {
-        newNd = startCtn.parentElement.cloneNode(false);
-        newNd.appendChild(_({ text: startCtn.data.substring(0, startOfs) }));
-        startCtn.parentElement.parentElement.insertBefore(newNd, startCtn.parentElement);
-        startCtn.data = startCtn.data.substring(endOfs);
-        newNd = _('br');
-        startCtn.parentElement.parentElement.insertBefore(newNd, startCtn.parentElement);
-        startCtn = newNd.parentElement;
-        startOfs = this.childIndexOf(newNd) + 1;
-        endCtn = startCtn;
-        endOfs = startOfs;
-
-    }
-    else if (startCtn === this.$content) {
-        Array.prototype.slice.call(startCtn.childNodes, startOfs, endOfs - 1).forEach(nd => nd.remove());
-        newNd = _('br');
-        startCtn.insertBefore(newNd, startCtn.childNodes[startOfs]);
-        endOfs = startOfs + 1;
-        startOfs = endOfs;
-    }
-    else {
-        endCtn = this.breakElement(startCtn, startOfs);
-        endOfs -= startCtn;
-        if (endOfs >= 0) {
-            newNd = this.breakElement(endCtn, endOfs);
-            endCtn.remove();
-            endCtn = newNd;
-            endOfs = 0;
-        }
-        newNd = _('br');
-        endCtn.parentElement.insertBefore(newNd, endCtn);
-        startCtn = newNd.parentElement;
-        startOfs = this.childIndexOf(newNd) + 1;
-        endCtn = startCtn;
-        endOfs = startOfs;
-    }
-
-    var childNodes = Array.prototype.slice.call(this.$content.childNodes);
-    var nd;
-    for (var i = 0; i < childNodes.length; ++i) {
-        nd = childNodes[i];
-        if (nd.tagName === 'BR') continue;
-        if (this.stringOf(nd).length === 0) {
-            if (AElement.prototype.isDescendantOf.call(startCtn, nd)) {
-                startCtn = this.$content;
-                startOfs = this.childIndexOf(nd);
-            }
-            if (AElement.prototype.isDescendantOf.call(endCtn, nd)) {
-                endCtn = this.$content;
-                endOfs = this.childIndexOf(nd);
-            }
-            nd.remove();
-        }
-    }
-
-
-    range = document.createRange();
-    range.setStart(startCtn, startOfs);
-    range.setEnd(endCtn, endOfs);
-    this.setRange(range);
-
-};
 
 EIEngine.prototype.domRange2SelectPosition = function (range) {
     var sel = window.getSelection();
@@ -834,86 +961,26 @@ EIEngine.prototype.domRange2SelectPosition = function (range) {
     };
 };
 
+
 EIEngine.prototype.getSelectPosition = function () {
-    var range = this.getRange();
-    this.lastSelectedPosition = this.domRange2SelectPosition(range) || this.lastSelectedPosition;
+    var start = this.$textarea.selectionStart;
+    var end = this.$textarea.selectionEnd;
+    var direction = this.$textarea.selectionDirection;
+    if (isNaN(start) || isNaN(end)) return this.lastSelectedPosition;
+    this.lastSelectedPosition = { start: start, end: end, direction: direction };
     return this.lastSelectedPosition;
 };
 
 
-/**
- *
- * @param  {null|number|{start: number, end: number}=}pos
- */
 EIEngine.prototype.setSelectedPosition = function (pos) {
-    var start;
-    var end;
-    if (typeof pos === "number") {
-        start = pos;
-        end = pos;
+    if (typeof pos === 'number') {
+        pos = { start: pos, end: pos, direction: 'forward' };
     }
-    else if (pos === null) {
-        return;
-    }
-    else {
-        start = pos.start;
-        end = pos.end;
-    }
-
-
-    var startCtn, startOfs, endCtn, endOfs;
-    var text;
-    text = '';
-    var visit = (nd) => {
-        var prevText = text;
-        var parent = nd.parentElement;
-        if (this.isTextNode(nd)) {
-            text += nd.data;
-            if (text.length > start && prevText.length <= start) {
-                startCtn = nd;
-                startOfs = start - prevText.length;
-            }
-            if (text.length > end && prevText.length <= end) {
-                endCtn = nd;
-                endOfs = end - prevText.length;
-            }
-        }
-        else if (nd.tagName === 'BR' && parent && parent.lastChild !== nd) {
-            text += '\n';
-            if (text.length > start && prevText.length <= start) {
-                startCtn = parent;
-                startOfs = this.childIndexOf(nd);
-            }
-            if (text.length > end && prevText.length <= end) {
-                endCtn = parent;
-                endOfs = this.childIndexOf(nd);
-            }
-        }
-        else {
-            for (var i = 0; i < nd.childNodes.length; ++i) {
-                visit(nd.childNodes[i]);
-            }
-        }
-    }
-
-    visit(this.$content);
-
-
-    if (!startCtn) {
-        startCtn = this.$content;
-        startOfs = this.$content.childNodes.length;
-    }
-
-    if (!endCtn) {
-        endCtn = startCtn;
-        endOfs = startOfs;
-    }
-
-
-    var range = document.createRange();
-    range.setStart(startCtn, startOfs);
-    range.setEnd(endCtn, endOfs);
-    this.setRange(range);
+    if (!pos || isNaN(pos.start) || isNaN(pos.end)) return;
+    this.elt.addClass('as-focused');
+    this.$textarea.focus();
+    this.$textarea.setSelectionRange(pos.start, pos.end, pos.direction || 'forward');
+    this.elt.selection.redraw();
 };
 
 EIEngine.prototype.getPosition = function (node, offset) {
@@ -938,15 +1005,20 @@ EIEngine.prototype.getPosition = function (node, offset) {
         if (nd.tagName === 'BR' && parent && parent.lastChild !== nd) {
             text += '\n';
         }
-        if (this.isTextNode(nd)) {
+        else if (this.isTextNode(nd)) {
             text += nd.data;
+        }
+        else if (nd.classList.contains('as-ei-line') && parent.firstChild !== nd) {
+            text += '\n';
+            for (i = 0; i < nd.childNodes.length && !found; ++i) {
+                visit(nd.childNodes[i]);
+            }
         }
         else {
             for (i = 0; i < nd.childNodes.length && !found; ++i) {
                 visit(nd.childNodes[i]);
             }
         }
-
     }
 
     visit(this.$content);
@@ -1033,6 +1105,28 @@ EIEngine.prototype.findPrefixWordTokenOf = function (token) {
     return prefixStartElt || null;
 };
 
+/**
+ *
+ * @param {string} value
+ */
+EIEngine.prototype.viewText = function (value) {
+    var tokens = EIParser.tokenizer.tokenize(value || '');
+    this.$content.clearChild();
+    var lineElt = _('.as-ei-line').addTo(this.$content);
+    var i, token;
+    for (i = 0; i < tokens.length; ++i) {
+        token = tokens[i];
+        this.makeTokenElt(token).addTo(lineElt);
+        if (token.content === '\n') {
+            lineElt = _('.as-ei-line').addTo(this.$content);
+        }
+
+    }
+
+    this.updateTokenExType();
+}
+
+
 //
 // EIEngine.prototype.selectCurrentMemberExpression = function () {
 //     var rage = this.getRange();
@@ -1045,16 +1139,22 @@ EIEngine.prototype.findPrefixWordTokenOf = function (token) {
 // };
 
 Object.defineProperty(EIEngine.prototype, 'value', {
+    /**
+     * @this EIEngine
+     * @returns {*}
+     */
     get: function () {
-        return Array.prototype.map.call(this.$content.childNodes, nd => this.stringOf(nd)).join('');
+        return this.$textarea.value;
+        // return Array.prototype.map.call(this.$content.childNodes, nd => this.stringOf(nd)).join('');
     },
+    /**
+     * @this EIEngine
+     * @param value
+     */
     set: function (value) {
-        var tokens = EIParser.tokenizer.tokenize(value || '');
-        this.$content.clearChild()
-            .addChild(tokens.map(function (token) {
-                return this.makeTokenElt(token);
-            }.bind(this)));
-        this.updateTokenExType();
+        value = value || '';
+        this.$textarea.value = value;
+        this.viewText(value);
         this.lastSelectedPosition = {
             start: value.length,
             end: value.length,
@@ -1313,8 +1413,6 @@ EIAutoCompleteController.prototype.getCurrentText = function () {
         res.value = tokenElt.innerText;
         res.tokenElt = tokenElt;
     }
-
-    console.log(res);
 
     return res;
 };
@@ -1603,40 +1701,32 @@ EIAutoCompleteController.prototype.applySuggestion = function (suggestion) {
     var oldValue, newValue;
     var selected;
 
-
+    var startPos;
+    var endPos;
     if (startToken && endToken && engine.isWordToken(startToken)
         && (engine.isWordToken(endToken) || engine.stringOf(endToken) === '->')) {
-        for (i = 0; i < words.length; ++i) {
-            if (i > 0) {
-                tokenElt = engine.makeTokenElt({ type: 'symbol', content: '->' });
-                this.elt.$content.insertBefore(tokenElt, startToken);
-            }
-            tokenElt = engine.makeTokenElt({ type: 'word', content: words[i] });
-            this.elt.$content.insertBefore(tokenElt, startToken);
-            if (i + 1 === words.length) {
-                rangeStartCtn = this.elt.$content;
-                rangeStartOffset = engine.childIndexOf(tokenElt) + 1;
-                rangeEndCtn = rangeStartCtn;
-                rangeEndOffset = rangeStartOffset;
-            }
-        }
-        while (startToken !== endToken) {
-            tokenElt = startToken.nextSibling;
-            startToken.remove();
-            startToken = tokenElt;
-        }
-        endToken.remove();
-        range = document.createRange();
-        range.setStart(rangeStartCtn, rangeStartOffset);
-        range.setEnd(rangeEndCtn, rangeEndOffset);
-        engine.setRange(range);
+        startPos = this.elt.engine.getPosition(startToken, 0);
+        endPos = this.elt.engine.getPosition(endToken, engine.stringOf(endToken).length);
+        oldValue = this.elt.value;
+        newValue = oldValue.substring(0, startPos) + key + oldValue.substring(endPos);
+        this.elt.$textarea.value = newValue;
+        this.elt.engine.redrawTokens();
+        this.elt.userActionCtrl.delayNotifyStopChange();
+        setTimeout(() => {
+            this.elt.engine.setSelectedPosition(startPos + key.length);
+            this.elt.selection.redraw();
+        }, 100);
     }
     else {
         oldValue = this.elt.value;
         selected = engine.getSelectPosition();
         newValue = oldValue.substring(0, selected.start) + key + oldValue.substring(selected.end);
         this.elt.engine.value = newValue;
-        this.elt.engine.setSelectedPosition(selected.start + key.length);
+        this.elt.userActionCtrl.delayNotifyStopChange();
+        setTimeout(() => {
+            this.elt.engine.setSelectedPosition(startPos + key.length);
+            this.elt.selection.redraw();
+        }, 100);
     }
     engine.updateTokenExType();
 };
@@ -2706,6 +2796,23 @@ rules.push({
     ident: 'array_item_list_rec',
     toASTChain: function (parsedNode) {
         return parsedNodeToASTChain(parsedNode.children[0]).concat([parsedNodeToAST(parsedNode.children[2])]);
+    }
+});
+
+rules.push({
+    target: 'exp_excel',
+    elements: ['exp'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[0]);
+    }
+});
+
+
+rules.push({
+    target: 'exp_excel',
+    elements: ['_=', 'exp'],
+    toAST: function (parsedNode) {
+        return parsedNodeToAST(parsedNode.children[1]);
     }
 });
 
