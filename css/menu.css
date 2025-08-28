@@ -220,7 +220,7 @@ img.absol-vmenu-button-icon[src] {
 
 .absol-vmenu-button:hover,
 .absol-vmenu .absol-vmenu-button-hover {
-    background-color: var(--space-backgroud-color);
+    background-color: var(--space-background-color);
 }
 
 .absol-menu-item-disabled .absol-vmenu-button:hover,
