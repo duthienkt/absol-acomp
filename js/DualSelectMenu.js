@@ -188,11 +188,16 @@ DualSelectMenu.property.items = {
 
 DualSelectMenu.property.value = {
     set: function (value) {
+        if (Array.isArray(value)) {
+            value = value.slice();
+        }
         this.$box.value = value;
         this._updateViewValue();
     },
     get: function () {
-        return this.$box.value;
+        var value = this.$box.value;
+        if (Array.isArray(value)) value= value.slice();
+        return value;
     }
 };
 
