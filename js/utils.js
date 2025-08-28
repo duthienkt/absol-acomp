@@ -66,6 +66,63 @@ export function insertTextAtCursor(text) {
     }
 }
 
+/**
+ * Get non-overlapping bounds of a range.
+ * @param {Range} range - The range to calculate bounds for.
+ * @returns {Array<DOMRect>} - Array of non-overlapping rectangles.
+ */
+export function getNonOverlappingBounds(range) {
+    var startContainer = range.startContainer;
+    var endContainer = range.endContainer;
+    var rects;
+    if (startContainer === endContainer && startContainer.tagName === 'BR') {
+        rects = [startContainer.getBoundingClientRect()];
+    }
+    else rects = Array.from(range.getClientRects());
+    const mergedRects = [];
+
+    rects.forEach((rect) => {
+        let isMerged = false;
+
+        for (let i = 0; i < mergedRects.length; i++) {
+            const mergedRect = mergedRects[i];
+
+            // Check if the rectangles overlap
+            if (
+                rect.top < mergedRect.bottom &&
+                rect.bottom > mergedRect.top &&
+                rect.left < mergedRect.right &&
+                rect.right > mergedRect.left
+            ) {
+                // Merge the rectangles
+                mergedRects[i] = {
+                    top: Math.min(mergedRect.top, rect.top),
+                    bottom: Math.max(mergedRect.bottom, rect.bottom),
+                    left: Math.min(mergedRect.left, rect.left),
+                    right: Math.max(mergedRect.right, rect.right),
+                    width: Math.max(mergedRect.right, rect.right) - Math.min(mergedRect.left, rect.left),
+                    height: Math.max(mergedRect.bottom, rect.bottom) - Math.min(mergedRect.top, rect.top),
+                };
+                isMerged = true;
+                break;
+            }
+        }
+
+        if (!isMerged) {
+            mergedRects.push({
+                top: rect.top,
+                bottom: rect.bottom,
+                left: rect.left,
+                right: rect.right,
+                width: rect.width,
+                height: rect.height,
+            });
+        }
+    });
+
+    return mergedRects;
+}
+
 
 export function contenteditableTextOnly(element, processText) {
     if (element.__contenteditableTextOnly__) return;
