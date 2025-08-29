@@ -37,6 +37,7 @@ import { ExpSearcher } from "./js/ExpTree";
 import { openDebugDeviceInfo } from "./js/DebugDeviceInfo";
 import './js/ExtendComputedStyle'
 import CMDTool, { CMDToolDelegate } from "./js/CMDTool";
+import { RawTableSearcher } from "./js/RawTable";
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
 absol.vScrollIntoView = vScrollIntoView;
@@ -118,6 +119,8 @@ absol.MApplication = MApplication;
 absol.MActivity = MActivity;
 absol.CMDTool = CMDTool;
 absol.CMDToolDelegate = CMDToolDelegate;
+
+absol.RawTableSearcher = RawTableSearcher;
 
 
 Dom.documentReady.then(function () {
