@@ -11,7 +11,7 @@ import SCGrammar from "absol/src/SCLang/SCGrammar";
 import DPParser from "absol/src/Pharse/DPParser";
 import { parsedNodeToAST, parsedNodeToASTChain } from "absol/src/Pharse/DPParseInstance";
 import Follower from "./Follower";
-import { hitElement } from "absol/src/HTML5/EventEmitter";
+import { hitElement, isMouseRight } from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { arrayUnique } from "absol/src/DataStructure/Array";
@@ -39,10 +39,8 @@ function ExpressionInput() {
     this.engine = new EIEngine(this);
     this.selection = new EISelection(this);
     this.userActionCtrl = new EIUserActionController(this);
-    // this.selection = new EISelection(this);
 
     this.autoCompleteCtrl = new EIAutoCompleteController(this);
-    this.undoMgn = new EIUndoManager(this);
     this.cmdTool = new EICommandTool(this);
 
     this._icon = null;
@@ -82,21 +80,27 @@ ExpressionInput.render = function () {
                 child: ['span.mdi.mdi-alert-circle']
             },
             {
-                class: 'as-expression-input-content',
-                attr: {
-                    contenteditable: 'true',
-                    spellcheck: 'false'
-                },
-                child:{
-                    class:'as-ei-line',
-                    child: 'br'
-                }
-            },
-            {
-                tag: 'textarea',
-                class: 'as-expression-input-textarea'
+                class: 'as-ei-content-ctn',
+                child: [
+                    {
+                        class: 'as-expression-input-content',
+                        attr: {
+                            spellcheck: 'false'
+                        },
+                        child: {
+                            class: 'as-ei-line',
+                            child: 'br'
+                        }
+                    },
+                    {
+                        tag: 'textarea',
+                        attr: {
+                            spellcheck: 'false'
+                        },
+                        class: 'as-expression-input-textarea'
+                    }
+                ]
             }
-
         ]
     });
 };
@@ -118,20 +122,21 @@ ExpressionInput.prototype.notifySizeCanBeChanged = function () {
 ExpressionInput.prototype.revokeResource = function () {
     revokeResource(this.engine);
     revokeResource(this.autoCompleteCtrl);
-    revokeResource(this.undoMgn);
+    // revokeResource(this.undoMgn);
     revokeResource(this.cmdTool);
     revokeResource(this.domSignal);
 };
 
 
 ExpressionInput.prototype.focus = function () {
-    this.$content.focus();
+    this.$textarea.focus();
     this.engine.setSelectedPosition(this.engine.value.length);
 };
 
 
 ExpressionInput.property.readOnly = {
     set: function (value) {
+        this.$textarea.readOnly = !!value;
         if (value) {
             this.addClass('as-read-only');
             this.$content.removeAttribute('contenteditable');
@@ -144,15 +149,15 @@ ExpressionInput.property.readOnly = {
         }
     },
     get: function () {
-        return this.hasClass('as-read-only');
+        return this.$textarea.readOnly;
     }
 };
 
 ExpressionInput.property.disabled = {
     set: function (value) {
+        this.$textarea.disabled = !!value;
         if (value) {
             this.addClass('as-disabled');
-            this.$content.removeAttribute('contenteditable');
         }
         else {
             this.removeClass('as-disabled');
@@ -162,7 +167,7 @@ ExpressionInput.property.disabled = {
         }
     },
     get: function () {
-        return this.hasClass('as-disabled');
+        return this.$textarea.disabled;
     }
 }
 
@@ -172,7 +177,7 @@ ExpressionInput.property.value = {
     },
     set: function (value) {
         this.engine.value = value;
-        this.undoMgn.reset();
+        // this.undoMgn.reset();
     }
 };
 
@@ -255,9 +260,9 @@ EISelection.prototype.drawRange = function (domRange) {
         b = bounds[i];
         this.$rangeParts[i].addStyle({
             left: (b.left - bound.left) + 'px',
-            top: (b.top - bound.top - 6) + 'px',
+            top: (b.top - bound.top) + 'px',
             width: b.width + 'px',
-            height: b.height + 12 + 'px',
+            height: b.height + 'px',
         });
     }
     if (this.$rangeParts.length === 1) {
@@ -268,7 +273,7 @@ EISelection.prototype.drawRange = function (domRange) {
             this.$rangeParts[0].removeClass('as-cursor');
         }
     }
-}
+};
 
 EISelection.prototype.redraw = function () {
     var start = this.elt.$textarea.selectionStart;
@@ -301,18 +306,10 @@ function EIUserActionController(elt) {
     }
 
     this.elt.on('stopchange', () => {
-        this.elt.undoMgn.commit();
         this.elt.engine.highlightError();
     });
 
     this.elt.$textarea.on('keydown', this.ev_keydown);
-    // this.$content.on({
-    //     cut: this.ev_cut,
-    //     blur: this.ev_blur,
-    //     focus: this.ev_focus,
-    //     paste: this.ev_paste,
-    //     keydown: this.ev_keydown
-    // });
 
 
 }
@@ -364,14 +361,7 @@ EIUserActionController.prototype.ev_keydown = function (event) {
             event.preventDefault();
         }
     }
-    else if (key === 'ctrl-z') {
-        event.preventDefault();
-        this.elt.undoMgn.undo();
-    }
-    else if (key === 'ctrl-y') {
-        event.preventDefault();
-        this.elt.undoMgn.redo();
-    }
+
     else if ((event.ctrlKey && event.key === 'X') || (!event.ctrlKey && event.key.length === 1)
         || event.key === 'Delete'
         || event.key === 'Backspace') {
@@ -386,41 +376,6 @@ EIUserActionController.prototype.ev_keydown = function (event) {
     setTimeout(() => {
         this.elt.notifySizeCanBeChanged();
     }, 1);
-};
-
-EIUserActionController.prototype.ev_paste = function (event) {
-    var paste = (event.clipboardData || window.clipboardData).getData('text');
-    paste = paste.replace(/[\r\n]+/g, ' ');
-    event.preventDefault();
-    var pos = this.elt.engine.getSelectPosition();
-    if (!pos || !paste) return;
-    var value = this.elt.value;
-    this.elt.engine.value = value.substring(0, pos.start) + paste + value.substring(pos.end);
-    this.elt.engine.setSelectedPosition(pos.start + paste.length);
-    this.elt.engine.highlightError();
-    this.elt.notifySizeCanBeChanged();
-};
-
-EIUserActionController.prototype.ev_cut = function (event) {
-    this.elt.domSignal.emit('redrawTokens');
-    this.delayNotifyStopChange();
-    this.elt.notifySizeCanBeChanged();
-};
-
-
-EIUserActionController.prototype.ev_focus = function (event) {
-    this.elt.engine.clearErrorHighlight();
-    setTimeout(function () {
-        //todo
-        this.elt.engine.getSelectPosition();
-    }.bind(this), 100);
-};
-
-EIUserActionController.prototype.ev_blur = function (event) {
-    this.elt.engine.highlightError();
-};
-
-EIUserActionController.prototype.ev_dragInit = function (event) {
 };
 
 
@@ -448,11 +403,14 @@ function EIEngine(elt) {
     this._isListenSelectionChange = false;
 
 
-    this.elt.on('focus', this.ev_focus, true);
-    this.elt.on('blur', this.ev_blur, true);
-    this.$content.on('mouseup', this.ev_mouseUp);
+    this.$textarea.on('focus', this.ev_focus, true);
+    this.$textarea.on('blur', this.ev_blur, true);
     this.$textarea.on('keydown', this.ev_keydown);
-    this.$textarea.on('keydown', this.ev_keyup);
+    this.$textarea.on('keyup', this.ev_keyup);
+    this.$textarea.on('select', this.ev_select);
+    this.$textarea.on('mousedown', this.ev_mousedown);
+    this.$textarea.on('input', this.ev_input);
+
 }
 
 
@@ -498,7 +456,7 @@ EIEngine.prototype.selectOffset2DomRange = function (pos) {
         }
         else if (nd.tagName === 'BR' && parent) {
             if (parent.lastChild !== nd)
-            text += '\n';
+                text += '\n';
             if ((text.length > start || (text.length >= start && !nd.nextSibling)) && prevText.length <= start) {
                 startCtn = nd;
                 startOfs = 0;
@@ -508,7 +466,7 @@ EIEngine.prototype.selectOffset2DomRange = function (pos) {
                 endOfs = 0;
             }
         }
-        else if (nd.tagName === 'BR'){
+        else if (nd.tagName === 'BR') {
 
         }
         else if (nd.classList.contains('as-ei-line') && parent.firstChild !== nd) {
@@ -554,10 +512,7 @@ EIEngine.prototype.selectOffset2DomRange = function (pos) {
 
 EIEngine.prototype.ev_focus = function () {
     this.elt.addClass('as-focused');
-    if (!this._isListenSelectionChange) {
-        document.addEventListener('selectionchange', this.ev_range);
-        this._isListenSelectionChange = true;
-    }
+
 };
 
 EIEngine.prototype.ev_blur = function () {
@@ -565,57 +520,46 @@ EIEngine.prototype.ev_blur = function () {
 };
 
 
-EIEngine.prototype.ev_range = function () {
-    if (!this.elt.isDescendantOf(document.body)) {
-        document.removeEventListener('selectionchange', this.ev_range);
-        this._isListenSelectionChange = false;
-    }
-    this.updateRange();
+EIEngine.prototype.ev_mousedown = function (event) {
+    this.elt.selection.redraw();
+    document.addEventListener('mousemove', this.ev_mousemove);
+    document.addEventListener('mouseup', this.ev_mouseUp);
 };
 
 EIEngine.prototype.ev_mouseUp = function (event) {
-    var sel = window.getSelection();
-    var range;
-    var validRange;
-    for (var i = 0; i < sel.rangeCount; ++i) {
-        range = sel.getRangeAt(i);
-        if (this.isValidRange(range)) {
-            validRange = range;
-            break;
-        }
-    }
+    this.elt.selection.redraw();
+    document.removeEventListener('mousemove', this.ev_mousemove);
+    document.removeEventListener('mouseup', this.ev_mouseUp);
 
-    var pos, value;
-    if (validRange) {
-        pos = this.domRange2SelectPosition(validRange);
-        this.$textarea.focus();
-        this.$textarea.setSelectionRange(pos.start, pos.end);
-        this.elt.selection.redraw();
-    }
-    else {
-        value = this.$textarea.value;
-        this.$textarea.focus();
-        this.$textarea.setSelectionRange(value.length, value.length);
-        this.elt.selection.redraw();
-    }
 
+};
+
+EIEngine.prototype.ev_mousemove = function (event) {
+    this.elt.selection.redraw();
+};
+
+EIEngine.prototype.ev_select = function (event) {
+    this.elt.selection.redraw();
 };
 
 EIEngine.prototype.ev_keydown = function (event) {
-    this.requestRedrawTokens();
-    this.elt.addClass('as-changing');
+    setTimeout(()=>{
+        this.elt.selection.redraw();
+    }, 30)
 };
 
 EIEngine.prototype.ev_keyup = function (event) {
-    this.requestRedrawTokens();
+    this.elt.selection.redraw();
 };
+
+EIEngine.prototype.ev_input = function () {
+    this.elt.engine.redrawTokens();
+    this.elt.userActionCtrl.delayNotifyStopChange();
+}
 
 
 EIEngine.prototype.revokeResource = function () {
-    if (this._isListenSelectionChange) {
-        document.removeEventListener('selectionchange', this.ev_range);
-        this._isListenSelectionChange = false;
-    }
+
 };
 
 EIEngine.prototype.requestRedrawTokens = function () {
@@ -638,13 +582,14 @@ EIEngine.prototype.highlightError = function () {
         elt.removeClass('as-error');
     }
 
-    for (i = 0; i < contentElt.childNodes.length; ++i) {//todo: fix conflict (run before redraw)
-        if (contentElt.childNodes[i].getAttribute && contentElt.childNodes[i].classList.contains('as-token') && contentElt.childNodes[i].getAttribute('data-type') !== 'skip') {
+    var tokenChain = this.getTokenChain();
+    for (i = 0; i < tokenChain.length; ++i) {//todo: fix conflict (run before redraw)
+        if (tokenChain[i].getAttribute && tokenChain[i].classList.contains('as-token') && tokenChain[i].getAttribute('data-type') !== 'skip') {
             if (notSkipCount === tokenErrorIdx) {
-                contentElt.childNodes[i].classList.add('as-unexpected-token');
+                tokenChain[i].classList.add('as-unexpected-token');
             }
             else {
-                contentElt.childNodes[i].classList.remove('as-unexpected-token');
+                tokenChain[i].classList.remove('as-unexpected-token');
             }
             notSkipCount++;
         }
@@ -654,69 +599,17 @@ EIEngine.prototype.highlightError = function () {
 
 EIEngine.prototype.clearErrorHighlight = function () {
     var contentElt = this.$content;
+    var tokenChain = this.getTokenChain();
     for (var i = 0; i < contentElt.length; ++i) {
-        if (contentElt.childNodes[i].classList.contains('as-token') && contentElt.childNodes[i].getAttribute('data-type') !== 'skip') {
-            contentElt.childNodes[i].classList.remove('as-unexpected-token');
+        if (tokenChain[i].classList.contains('as-token') && tokenChain[i].getAttribute('data-type') !== 'skip') {
+            tokenChain[i].classList.remove('as-unexpected-token');
         }
     }
 };
 
-
-EIEngine.prototype.drawTokensContent = function () {
-    // var selectedPos = this.getSelectPosition();
-    // if (this.$content.childNodes.length === 1 && (this.$content.firstChild.tagName === 'BR')) {
-    //     this.$content.firstChild.remove();
-    // }
-    //
-
-    this.$content.clearChild();
-
-    var value = this.value;
-    var tokens = EIParser.tokenizer.tokenize(value);
-    var tokenEltChain = Array.prototype.slice.call(this.$content.childNodes);
-    while (tokenEltChain[tokenEltChain.length - 1] && tokenEltChain[tokenEltChain.length - 1].tagName === 'BR') {
-        tokenEltChain.pop();
-    }
-    var leftPassed = 0;
-    while (leftPassed < tokenEltChain.length && leftPassed < tokens.length) {
-        if (!tokenEltChain[leftPassed].firstChild || !tokenEltChain[leftPassed].classList.contains('as-token') || tokens[leftPassed].content !== tokenEltChain[leftPassed].firstChild.data) break;
-        if (!tokenEltChain[leftPassed].token || tokenEltChain[leftPassed].getAttribute('data-type') !== tokens[leftPassed].type) {
-            tokenEltChain[leftPassed].setAttribute('data-type', tokens[leftPassed].type);
-        }
-        leftPassed++;
-    }
-    var rightPassed = 0;
-    while (rightPassed < tokenEltChain.length && rightPassed < tokens.length) {
-        if (!tokenEltChain[tokenEltChain.length - 1 - rightPassed].firstChild || !tokenEltChain[tokenEltChain.length - 1 - rightPassed].classList.contains('as-token') || tokens[tokens.length - 1 - rightPassed].content !== tokenEltChain[tokenEltChain.length - 1 - rightPassed].firstChild.data) break;
-        if (tokenEltChain[tokenEltChain.length - 1 - rightPassed].getAttribute('data-type') !== tokens[tokens.length - 1 - rightPassed].type) {
-            tokenEltChain[tokenEltChain.length - 1 - rightPassed].setAttribute('data-type', tokens[tokens.length - 1 - rightPassed].type);
-        }
-        rightPassed++;
-    }
-
-    var beforeToken;
-    if (leftPassed + rightPassed < Math.max(tokenEltChain.length, tokens.length)) {
-        beforeToken = tokenEltChain[tokenEltChain.length - rightPassed];
-        tokenEltChain.splice(leftPassed, tokenEltChain.length - leftPassed - rightPassed).forEach(function (elt) {
-            elt.remove();
-        });
-        tokens.slice(leftPassed, tokens.length - rightPassed).forEach(function (token) {
-            var tokenElt = this.makeTokenElt(token);
-            if (beforeToken) {
-                this.$content.addChildBefore(tokenElt, beforeToken);
-            }
-            else {
-                this.$content.addChild(tokenElt);
-            }
-        }.bind(this));
-    }
-
-
-};
-
-EIEngine.prototype.updateTokenExType = function () {
-    var tokenEltChain = Array.prototype.slice.call(this.$content.childNodes);
-    var visitTokenChain = (nd)=>{
+EIEngine.prototype.getTokenChain = function () {
+    var tokenEltChain = [];
+    var visitTokenChain = (nd) => {
         if (nd.classList) {
             if (nd.classList.contains('as-token')) {
                 tokenEltChain.push(nd);
@@ -729,6 +622,15 @@ EIEngine.prototype.updateTokenExType = function () {
         }
     }
     visitTokenChain(this.$content);
+    return tokenEltChain;
+};
+
+EIEngine.prototype.drawTokensContent = function () {
+    this.viewText(this.value);
+};
+
+EIEngine.prototype.updateTokenExType = function () {
+    var tokenEltChain = this.getTokenChain();
     /**
      * @type {HTMLElement[]}
      */
@@ -768,7 +670,6 @@ EIEngine.prototype.redrawTokens = function () {
     this.updateTokenExType();
     this.elt.selection.redraw();
     this.elt.notifySizeCanBeChanged();
-
 };
 
 /**
@@ -788,33 +689,6 @@ EIEngine.prototype.makeTokenElt = function (token) {
     });
 };
 
-EIEngine.prototype.insertText = function (text) {
-    var lastPos = this.getSelectPosition();
-    var value;
-    if (this.lastSelectedPosition) {
-        value = this.elt.value;
-        this.value = value.substring(0, lastPos.start) + text + value.substring(lastPos.end);
-        this.lastSelectedPosition = Object.assign({
-            direction: 'forward',
-            start: lastPos.start + text.length,
-            end: lastPos.start + text.length
-        });
-        if (document.activeElement === this.elt.$content) {
-            this.setSelectedPosition(this.lastSelectedPosition);
-        }
-    }
-    else this.appendText(text);
-    this.elt.userActionCtrl.delayNotifyStopChange();
-};
-
-EIEngine.prototype.appendText = function (text) {
-    var newValue = this.value + text;
-    this.value = newValue;
-    if (document.activeElement === this.$content) {
-        this.setSelectedPosition(newValue.length);
-    }
-    this.elt.userActionCtrl.delayNotifyStopChange();
-};
 
 EIEngine.prototype.isValidRange = function (range) {
     return AElement.prototype.isDescendantOf.call(range.startContainer, this.$content) && AElement.prototype.isDescendantOf.call(range.endContainer, this.$content);
@@ -1120,23 +994,13 @@ EIEngine.prototype.viewText = function (value) {
         if (token.content === '\n') {
             lineElt = _('.as-ei-line').addTo(this.$content);
         }
-
     }
+    _('br').addTo(lineElt);
 
     this.updateTokenExType();
 }
 
 
-//
-// EIEngine.prototype.selectCurrentMemberExpression = function () {
-//     var rage = this.getRange();
-//     if (!rage) return;
-//     var startCtn = rage.startContainer;
-//     var endCtn = rage.endContainer;
-//     var startOfs = rage.startOffset;
-//     var endOfs = rage.endOffset;
-//
-// };
 
 Object.defineProperty(EIEngine.prototype, 'value', {
     /**
@@ -1162,64 +1026,6 @@ Object.defineProperty(EIEngine.prototype, 'value', {
         };
     }
 });
-
-
-/**
- *
- * @param {ExpressionInput} elt
- * @constructor
- */
-function EIUndoManager(elt) {
-    this.elt = elt;
-    this.reset();
-}
-
-/**
- *
- * @returns {boolean} is changed value and commit success
- */
-EIUndoManager.prototype.commit = function () {
-    var text = this.elt.value;
-    var range = this.elt.engine.getSelectPosition() || { start: text.length, end: text.length };
-
-    var curValue = this.stack[this.idx].value;
-    if (curValue === text) return false;
-
-    var newItem = {
-        value: text,
-        range: { start: range.start, end: range.end, direction: range.direction || 'forward' }
-    };
-    while (this.stack.length > this.idx + 1) {
-        this.stack.pop();
-    }
-    this.idx = this.stack.length;
-    this.stack.push(newItem);
-    return true;
-};
-
-
-EIUndoManager.prototype.reset = function () {
-    var value = this.elt.value;
-    this.stack = [{ value: value, range: { start: value.length, end: value.length, direction: "forward" } }];
-    this.idx = 0;
-};
-
-
-EIUndoManager.prototype.undo = function () {
-    if (this.idx <= 0) return;
-    this.idx--;
-    var item = this.stack[this.idx];
-    this.elt.engine.value = item.value;
-    this.elt.engine.setSelectedPosition(item.range);
-};
-
-EIUndoManager.prototype.redo = function () {
-    if (this.idx + 1 >= this.stack.length) return;
-    this.idx++;
-    var item = this.stack[this.idx];
-    this.elt.engine.value = item.value;
-    this.elt.engine.setSelectedPosition(item.range);
-};
 
 
 /**
@@ -1810,14 +1616,6 @@ function EICommandTool(elt) {
             anchor: [6, 1]
         },
         child: [
-            // {
-            //     tag: 'button',
-            //     class: 'as-transparent-button',
-            //     child: 'span.mdi.mdi-function-variant',
-            //     attr: {
-            //         title: 'Insert [Ctrl + I]'
-            //     },
-            // },
             {
                 tag: 'button',
                 class: 'as-transparent-button',
@@ -1834,7 +1632,6 @@ function EICommandTool(elt) {
             }
         ]
     });
-    this.elt.$content.on('focus', this.ev_focus);
 }
 
 EICommandTool.prototype.open = function () {
@@ -2433,7 +2230,6 @@ rules.push({
     });
 });
 
-var x = Math.m
 
 rules.push({
     target: 'exp',
