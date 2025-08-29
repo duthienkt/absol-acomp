@@ -156,5 +156,14 @@ Object.defineProperty(DTBodyCell.prototype, 'colspan', {
     }
 });
 
+Object.defineProperty(DTBodyCell.prototype, 'rowspan', {
+    get: function () {
+        var value = this.data.attr && this.data.attr.rowspan;
+        if (typeof value === "string") value = parseInt(value);
+        if (typeof value === "number") return value;
+        else return 1;
+    }
+});
+
 
 export default DTBodyCell;

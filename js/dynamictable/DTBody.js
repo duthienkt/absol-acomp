@@ -313,7 +313,8 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
 
     var rows = this.body.rows;
     var nRows = [];
-    for (var i = start; i < end; ++i) {
+    var i;
+    for (i = start; i < end; ++i) {
         nRows.push(rows[this.resultItems[i]]);
     }
     var nChildren = nRows.map(r => r.elt);
@@ -325,7 +326,7 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
 
     var bounds = this.getBoundOfRows();
     if (bounds) {
-        for (var i = 0; i < nRows.length; ++i) {
+        for (i = 0; i < nRows.length; ++i) {
             nRows[i].updateCopyEltSize();
         }
         this.body.table.wrapper.layoutCtrl.onResize();
@@ -413,7 +414,29 @@ SearchingMode.prototype.onResult = function (response) {
         this.rowOffset = -1000;
 
     }
-    this.resultItems = response.result;
+
+    var addedRows = [];
+    var i;
+    this.resultItems = [];
+    var colCount = this.body.rows[0] ? this.body.rows[0].colCount : 0;
+    var rowIdx;
+    var result = response.result ||[];
+    var rows = this.body.rows;
+    var startRow;
+    var j;
+    for (i = 0; i < result.length; ++i) {
+        rowIdx = result[i];
+        startRow = rowIdx;
+        while (startRow>0 && rows[startRow -1] && rows[startRow].colCount < colCount) {
+            --startRow;
+        }
+        rowIdx = startRow + rows[startRow].rowCount - 1;
+        for (j = startRow; j <= rowIdx; ++j) {
+            if (addedRows[j]) continue;
+            addedRows[j] = true;
+            this.resultItems.push(j);
+        }
+    }
     this.viewedRows = this.resultItems.map(rIdx => this.body.rows[rIdx]);
 
     this.render();
@@ -557,6 +580,9 @@ function DTBody(table, data) {
         row.idx = i;
         return row;
     });
+
+
+
 
     this.modes = {
         normal: new NormalMode(this),

@@ -45,6 +45,8 @@ function DTBodyRow(body, data) {
         cell.idx = ac;
         return ac + cell.colspan;
     }, 0);
+    this.colCount = this.cells.reduce((ac, cell) => ac + cell.colspan, 0);
+    this.rowCount = this.cells.reduce((ac, cell) =>  Math.max(ac,cell.rowspan), 0);
 }
 
 DTBodyRow.prototype.revoke = function () {
