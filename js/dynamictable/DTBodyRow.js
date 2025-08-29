@@ -214,10 +214,38 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXElt', {
     get: function () {
         if (this._fixedXElt) return this._fixedXElt;
         var fixedCol = this.adapter.fixedCol || 0;
+        var tableColCount = this.body.rows[0].colCount;
+        var startRowIdx = this.idx;
+        var endRowIdx = this.idx;
+        var row = this;
+        while (startRowIdx >0 && row && row.colCount < tableColCount) {
+            --startRowIdx;
+            row = this.body.rows[startRowIdx];
+        }
+        var heights = Array(tableColCount).fill(startRowIdx);
+        var i, j, k, cell, colspan, rowspan, colIdx;
+        for (i = startRowIdx ; i <endRowIdx;++i) {
+            row = this.body.rows[i];
+            colIdx = 0;
+            for (j = 0; j < row.cells.length; j++) {
+                cell = row.cells[j];
+                colspan = cell.colspan;
+                for (k = 0; k < colspan; ++k) {
+                    heights[colIdx] = Math.max(heights[colIdx], i) + cell.rowspan;
+                    colIdx++;
+                }
+            }
+        }
+        var needCloneCell = 0;
+        for ( i = 0; i < fixedCol; i++) {
+            if (heights[i] <= endRowIdx) {
+                needCloneCell++;
+            }
+        }
         this._fixedXElt = _({
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-x',
-            child: this.cells.slice(0, fixedCol).map(cell => cell.elt),
+            child: this.cells.slice(0, needCloneCell).map(cell => cell.elt),
            on:{
                mouseenter: () => {
                    this._elt.classList.add('as-hover');

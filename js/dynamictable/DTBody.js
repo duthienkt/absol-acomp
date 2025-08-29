@@ -420,14 +420,14 @@ SearchingMode.prototype.onResult = function (response) {
     this.resultItems = [];
     var colCount = this.body.rows[0] ? this.body.rows[0].colCount : 0;
     var rowIdx;
-    var result = response.result ||[];
+    var result = response.result || [];
     var rows = this.body.rows;
     var startRow;
     var j;
     for (i = 0; i < result.length; ++i) {
         rowIdx = result[i];
         startRow = rowIdx;
-        while (startRow>0 && rows[startRow -1] && rows[startRow].colCount < colCount) {
+        while (startRow > 0 && rows[startRow - 1] && rows[startRow].colCount < colCount) {
             --startRow;
         }
         rowIdx = startRow + rows[startRow].rowCount - 1;
@@ -511,7 +511,7 @@ NormalMode.prototype.updateRowsIfNeed = function () {
 
     var counter = 1;
     var fx = () => {
-        if (counter> 20) return;
+        if (counter > 20) return;
         if (this.body.elt.isDescendantOf(document.body)) {
             var bounds = this.getBoundOfRows();
             if (bounds) {
@@ -582,8 +582,6 @@ function DTBody(table, data) {
     });
 
 
-
-
     this.modes = {
         normal: new NormalMode(this),
         searching: new SearchingMode(this)
@@ -632,9 +630,13 @@ DTBody.prototype.reindexRows = function (start, end) {
     if (typeof end !== "number") end = Infinity;
     end = Math.min(end, this.data.rows.length);
     for (var i = start; i < end; ++i) {
-        if (this.rows[i])
+        if (this.rows[i]) {
             this.rows[i].idx = i;
+            this.rows[i].prevRow = this.rows[i - 1] || null;
+            this.rows[i].nextRow = this.rows[i + 1] || null;
+        }
     }
+
 };
 
 DTBody.prototype.onRowSplice = function (idx) {
