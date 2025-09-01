@@ -76,6 +76,7 @@ function MultiCheckMenu() {
     this.disableClickToFocus = false;
     this.orderly = true;//always true
     this.itemFocusable = false;
+    this.defineEvent('blur');
 
     AbstractStyleExtended.call(this);
 
@@ -710,6 +711,8 @@ MSMBoxController.prototype.close = function () {
             target: this,
         }), this);
     }
+    this.elt.defineEvent('blur');
+    this.elt.emit('blur', {type:'blur'}, this.elt);
 };
 
 MSMBoxController.prototype.ev_click = function (event) {

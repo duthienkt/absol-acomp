@@ -111,7 +111,7 @@ MultiCheckTreeMenu.render = function (data, domDesc) {
      */
     var res = _({
         class: ['as-multi-select-menu', 'as-multi-check-tree-menu'],
-        extendEvent: ['change'],
+        extendEvent: ['change', 'blur'],
         attr: {
             tabindex: '1'
         },
@@ -623,6 +623,8 @@ MCTMDropController.prototype.close = function () {
     };
 
     setTimeout(waitMouseUp, 100);
+    this.elt.defineEvent('blur');
+    this.elt.emit('blur', {type:'blur'}, this.elt);
 };
 
 MCTMDropController.prototype.ev_clickOut = function (event) {
