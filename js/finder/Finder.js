@@ -808,7 +808,7 @@ FinderCommands.rename = {
         input.focus();
         var ext = value.match(/\.[a-zA-Z0-9]+$/);
         if (ext) {
-            ext = ext[0];
+            ext = ext[0].toLowerCase();
         }
         else {
             ext = '';
