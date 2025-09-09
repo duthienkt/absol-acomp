@@ -296,7 +296,7 @@ TimeRange24Input.property.outputMode = {
         this.$duration.outputMode = value;
     },
     get: function () {
-        return this.$offset;
+        return this.$offset.outputMode;
     }
 };
 

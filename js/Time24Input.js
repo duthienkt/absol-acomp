@@ -90,6 +90,16 @@ function Time24Input() {
      * @name nd
      * @memberof Time24Input#
      */
+    /**
+     * @type {boolean}
+     * @name readOnly
+     * @memberof Time24Input#
+     */
+    /**
+     * @type {boolean}
+     * @name disabled
+     * @memberof Time24Input#
+     */
 }
 
 mixClass(Time24Input, AbstractInput);
@@ -805,6 +815,7 @@ T24ITextController.prototype.correctingInput = function () {
 };
 
 T24ITextController.prototype.ev_keydown = function (event) {
+    if (this.elt.readOnly || this.elt.disabled) return;
     var token = this.tokenAt(this.$text.selectionStart);
     var endToken = this.tokenAt(this.$text.selectionEnd);
     // var tokenDict = this.makeTokenDict(this.$text.value);

@@ -22,6 +22,10 @@
     min-width:  calc(var(--format-width) + var(--as-input-horizontal-padding) * 2 + 2px);
 }
 
+.ac-time-input.as-read-only.as-value-null.as-background-none input {
+    color: transparent;
+}
+
 .ac-time-input[data-size="large"] {
     --base-size: var(--large-size);
     border-radius: var(--large-radius);

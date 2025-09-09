@@ -390,6 +390,7 @@ TimeInput.property.readOnly = {
         value = !!value;
         if (value) this.addClass('as-read-only');
         else this.removeClass('as-read-only');
+        this.$text.readOnly = value;
     },
     get: function () {
         return this.hasClass('as-read-only');
@@ -439,6 +440,7 @@ TimeInput.eventHandler.pickerChange = function (event) {
  * @param {KeyboardEvent} event
  */
 TimeInput.eventHandler.keydown = function (event) {
+    if (this.readOnly || this.disabled) return;
     var token = this._tokenAt(this.$text.selectionStart);
     var endToken = this._tokenAt(this.$text.selectionEnd);
     if (!token) {
