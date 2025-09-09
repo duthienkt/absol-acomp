@@ -126,9 +126,10 @@
 }
 
 .as-location-input {
-    height: var(--as-input-height);
+    --base-size: var(--as-input-height);
+    height: var(--base-size);
     border-radius: var(--as-input-border-radius);
-    border: 1px solid #dddddd;
+    border: 1px solid var(--border-color);
     box-sizing: border-box;
     width: calc(13em + 50px);
     display: inline-block;
@@ -144,10 +145,14 @@
     pointer-events: none;
 }
 
+.as-location-input[data-size="regular"] {
+    --base-size: var(--default-size);
+    border-radius: var(--default-radius);
+}
 
 .as-location-input-text {
     outline: none;
-    width: calc(100% - 2em - 1px);
+    width: calc(100% - var(--base-size));
     height: 100%;
     border: none;
     background-color: transparent;
@@ -166,7 +171,7 @@
     text-align: center;
     position: absolute;
     right: 0;
-    width: calc(2rem + 1px);
+    width: calc(var(--base-size) - 1px);
     box-sizing: border-box;
     top: 0;
     height: 100%;
