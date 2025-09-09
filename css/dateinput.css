@@ -140,6 +140,10 @@
     display: none;
 }
 
+.as-date-input.as-value-null.as-background-none.as-read-only input {
+    color: transparent;
+}
+
 .as-date-input-clear-btn {
     font-size: inherit;
     position: absolute;
@@ -205,6 +209,11 @@
     height: 100%;
 }
 
+.as-date-n-level-input.as-read-only.as-background-none .as-value-null input,
+.as-date-n-level-input.as-read-only.as-background-none .as-date-n-level-input-select-level {
+    color: transparent;
+}
+
 .as-date-n-level-input-select-level {
     position: absolute;
     left: 1px;
@@ -229,6 +238,15 @@
     padding-left: calc(var(--as-input-horizontal-padding) + 2em);
     width: calc(100% - 2em - 1px);
     box-sizing: border-box;
+}
+
+.as-date-n-level-input.as-read-only .as-date-input-text {
+    padding-left: calc(var(--as-input-horizontal-padding));
+    width: calc(100% - 1px);
+}
+
+.as-date-n-level-input.as-read-only .as-date-n-level-input-select-level{
+    display: none;
 }
 
 

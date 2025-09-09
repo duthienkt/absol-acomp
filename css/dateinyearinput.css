@@ -167,6 +167,9 @@ button.as-date-in-year-picker-month > span {
     display: none;
 }
 
+.as-date-in-year-input.as-empty.as-background-none.as-read-only input {
+    color: transparent;
+}
 
 .as-date-in-year-follower {
     z-index: 1000000;

@@ -4,6 +4,8 @@ import Follower from "./Follower";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { isRealNumber, zeroPadding } from "./utils";
 import { compareDate, DATE_TIME_TOKEN_RGX, nextMonth } from "absol/src/Time/datetime";
+import { AbstractInput } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 /***
  * @extends AElement
@@ -16,7 +18,10 @@ function DateInYearInput() {
         .on('click', this.clear.bind(this, true));
     this.$input = $('input', this);
     this.on('click', this.eventHandler.click);
+    AbstractInput.call(this);
 }
+
+mixClass(DateInYearInput, AbstractInput);
 
 DateInYearInput.tag = 'DateInYearInput'.toLowerCase();
 
@@ -162,7 +167,6 @@ DateInYearInput.prototype._updateValueText = function () {
     }
 };
 
-DateInYearInput.property = {};
 
 DateInYearInput.property.value = {
     set: function (value) {

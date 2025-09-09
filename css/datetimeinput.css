@@ -16,6 +16,9 @@
 .as-date-time-input.as-background-none {
     background-color: transparent;
 }
+.as-date-time-input.as-background-none.as-read-only.as-value-null input{
+    color: transparent;
+}
 
 .as-date-time-input[data-size].as-read-only {
     width:  calc(var(--format-width) + var(--as-input-horizontal-padding) * 2 + 2px);

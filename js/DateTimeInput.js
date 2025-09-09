@@ -343,6 +343,13 @@ DateTimeInput.prototype._loadValueFromInput = function () {
     else {
         this._value = date;
     }
+
+    if (this.value) {
+        this.removeClass('as-value-null');
+    }
+    else {
+        this.addClass('as-value-null');
+    }
 };
 
 DateTimeInput.prototype.clear = function () {
@@ -371,6 +378,12 @@ DateTimeInput.prototype._notifyIfChange = function (event) {
     }, this);
 
     this._lastEmitValue = this._value;
+    if (this.value) {
+        this.removeClass('as-value-null');
+    }
+    else {
+        this.addClass('as-value-null');
+    }
 };
 
 DateTimeInput.prototype._correctingInput = function () {
@@ -498,7 +511,6 @@ DateTimeInput.prototype._dateFrom = function (value) {
 }
 
 
-DateTimeInput.property = {};
 
 DateTimeInput.property.disabled = {
     set: function (value) {
@@ -571,6 +583,12 @@ DateTimeInput.property.value = {
             this.attr('data-text', this.$text.value);
         }
         this._lastEmitValue = this._value;
+        if (this.value) {
+            this.removeClass('as-value-null');
+        }
+        else {
+            this.addClass('as-value-null');
+        }
     },
     get: function () {
         return this._value;
