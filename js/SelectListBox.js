@@ -226,7 +226,7 @@ SelectListBox.prototype._assignItems = function (pageElt, offset) {
 
 
 SelectListBox.prototype._itemsToNodeList = function (items) {
-    return items;
+    return items || [];
 };
 
 
@@ -236,6 +236,7 @@ SelectListBox.prototype._itemsToNodeList = function (items) {
  * @return {Array<{value:String|Number}>}
  */
 SelectListBox.prototype._filterDisplayItems = function (items) {
+    items = items || [];
     if (this._displayValue === VALUE_NORMAL) return items;
     var dict = this._valueDict;
     return items.filter(function (item) {
@@ -404,15 +405,15 @@ SelectListBox.prototype._findLastPageIdx = function () {
 };
 
 SelectListBox.prototype._updateDisplayItemIndex = function () {
-    this._displayItemHolderByValue = indexingByValue(this._displayItems, {});
+    this._displayItemHolderByValue = indexingByValue(this._displayItems || [], {});
 };
 
 SelectListBox.prototype._updateItemNodeIndex = function () {
-    this._itemNodeHolderByValue = depthIndexingByValue(this._items);
+    this._itemNodeHolderByValue = depthIndexingByValue(this._items|| []);
 };
 
 SelectListBox.prototype._updateDisplayItem = function () {
-    this._displayItems = this._filterDisplayItems(this._preDisplayItems);
+    this._displayItems = this._filterDisplayItems(this._preDisplayItems|| []);
     this._updateDisplayItemIndex();
     this.$content.addStyle({
         'height': this._displayItems.length * this.itemHeight / 14 + 'em'
