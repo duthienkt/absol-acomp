@@ -675,6 +675,22 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
     min-width: var(--width);
 }
 
+.as-empty-image-row {
+    text-align: center;
+    color: var(--grey-color);
+    font-weight: bold;
+}
+
+.as-empty-image-row >td {
+    padding: var(--distance-4);
+}
+
+.as-empty-image-row:not(:first-child),
+.as-empty-image-row:not(:last-child){
+    display: none;
+}
+
+
 /*.as-dynamic-table-space .as-dt-body:empty::before,*/
 /*.as-table-new > tbody:empty::before {*/
 /*    content: " ";*/

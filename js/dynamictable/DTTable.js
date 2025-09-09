@@ -5,7 +5,7 @@
  * @constructor
  */
 import DTHead from "./DTHead";
-import DTBody from "./DTBody";
+import DTBody, { rawTableRemoveEmptyImage, rawTableViewEmptyImage } from "./DTBody";
 import { $$, _, $ } from "../../ACore";
 
 
@@ -53,6 +53,8 @@ Object.defineProperty(DTTable.prototype, 'elt', {
                 this.body.elt
             ]
         });
+        rawTableRemoveEmptyImage(this._elt);
+        rawTableViewEmptyImage(this._elt);
 
         return this._elt;
     }
