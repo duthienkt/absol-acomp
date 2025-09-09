@@ -5,6 +5,7 @@ import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import { getTextNodesIn, getTextIn, measureText } from "absol/src/HTML5/Text";
 import { AbstractInput } from "./Abstraction";
 import { notifyPreFocusEvent } from "./utils";
+import TextMeasure from "./TextMeasure";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -21,6 +22,28 @@ export function TextInput() {
         notifyPreFocusEvent(this);
         originFocus.apply(this, arguments);
     }
+
+    try {
+        var nativeValueDes = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+        Object.defineProperty(this, 'value', {
+            set: function (value) {
+                nativeValueDes.set.call(this, value);
+                this.updateContentWidthStyle();
+                return value;
+            },
+            get: function () {
+                return nativeValueDes.get.call(this);
+            },
+            configurable: true,
+            enumerable: true
+        });
+
+    } catch (e) {
+
+    }
+
+    this.addEventListener('input', this.updateContentWidthStyle.bind(this));
+
 }
 
 mixClass(TextInput, AbstractInput);
@@ -35,6 +58,23 @@ TextInput.render = function () {
         }
     });
 };
+
+TextInput.prototype.updateContentWidthStyle = function () {
+    var value = this.value || '';
+    var width = TextMeasure.measureTextByCanvas(value, '14px Roboto').width;
+    this.style.setProperty('--text-content-width', (width / 14) + 'em');
+
+};
+
+TextInput.prototype.styleHandlers.width = {
+    set: function (value) {
+        if (value === 'base-content') {
+            this.style.width = 'calc(var(--text-content-width) + var(--as-input-vertical-padding) * 2 + 2px)';
+        }
+        else this.style.width = value;
+        return value;
+    }
+}
 
 
 function TextEditor() {

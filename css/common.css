@@ -8,6 +8,8 @@
     padding-left: var(--as-input-vertical-padding);
     font-size: inherit;
     box-sizing: border-box;
+    --text-content-width: 0em;
+    font-family: Roboto, sans-serif;
 }
 
 .as-text-input[readonly].as-border-none {
