@@ -37,6 +37,7 @@
     line-height: 2;
     color: var(--dark-color);
     background-color: white;
+    overflow: hidden;
 }
 
 .as-expression-input-content {
