@@ -1,13 +1,14 @@
 
 .as-file-list-input {
-    padding: 5px;
-    border: 1px solid #dddddd;
+    padding: var(--distance-4);
+    border: 1px solid var(--border-color);
     box-sizing: border-box;
     overflow: auto;
     --item-width: 100%;
     --item-require-width: 300px;
     position: relative;
     min-height: 42px;
+    border-radius: var(--default-radius);
 }
 
 .as-file-list-input.as-border-none {

@@ -13,7 +13,7 @@ import { parseMeasureValue } from "absol/src/JSX/attribute";
 import CheckUnsafeTreeLeafOnlyBox from "./CheckUnsafeTreeLeafOnlyBox";
 import { arrayCompare, arrayUnique } from "absol/src/DataStructure/Array";
 import LangSys from "absol/src/HTML5/LanguageSystem";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput, AbstractStyleExtended } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
 
 
@@ -51,7 +51,7 @@ function MultiCheckTreeMenu() {
     this.on('mousedown', this.eventHandler.click);
     this.dropdownCtrl = new MCTMDropController(this);
     // this.placeholder = LangSys.getText('txt_select_value') || '-- Select values --';
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
     var options = {
         root: document.body,
     };
@@ -98,7 +98,7 @@ function MultiCheckTreeMenu() {
 
 }
 
-mixClass(MultiCheckTreeMenu, AbstractStyleExtended);
+mixClass(MultiCheckTreeMenu, AbstractInput);
 
 MultiCheckTreeMenu.tag = 'MultiCheckTreeMenu'.toLowerCase();
 
@@ -351,7 +351,6 @@ MultiCheckTreeMenu.prototype.init = function (props) {
 }
 
 
-MultiCheckTreeMenu.property = {};
 
 MultiCheckTreeMenu.property.initOpened = {
     set: function (value) {

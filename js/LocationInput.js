@@ -3,6 +3,8 @@ import LocationPicker from "./LocationPicker";
 import '../css/locationinput.css';
 import { isRealNumber, normalizeLatLngString, parseDMS, parseLatLng } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
+import { AbstractInput } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 function LocationInput() {
     this.$text = $('input', this)
@@ -10,7 +12,7 @@ function LocationInput() {
     this.$iconCtn = $('.as-location-input-icon-ctn', this)
         .on('click', this.eventHandler.clickIcon);
 
-
+    AbstractInput.call(this);
     /***
      * @type {{latitude: number, longitude: number}}
      * @name latLng
@@ -28,6 +30,8 @@ function LocationInput() {
      * @memberOf LocationInput#
      */
 }
+
+mixClass(LocationInput, AbstractInput);
 
 LocationInput.tag = 'LocationInput'.toLowerCase();
 
@@ -143,7 +147,6 @@ LocationInput.eventHandler.textChange = function (event) {
     this.emit('change', { type: 'change', originalEvent: event.originalEvent || event, target: this }, this);
 };
 
-LocationInput.property = {};
 
 LocationInput.property.value = {
     set: function (value) {

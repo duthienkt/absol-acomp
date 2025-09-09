@@ -12,7 +12,7 @@ import AElement from "absol/src/HTML5/AElement";
 import { loadLanguageModule } from "./MultiLanguageCSS";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import MCheckListModal from "./multicheckmenu/MCheckListModal";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput, AbstractStyleExtended } from "./Abstraction";
 import TIHistory from "./tokenizeiput/TIHistory";
 
 
@@ -34,7 +34,7 @@ var hitClose = event => {
 
 
 /***
- * @augments AbstractStyleExtended
+ * @augments AbstractInput
  * @extends AElement
  * @constructor
  */
@@ -78,8 +78,7 @@ function MultiCheckMenu() {
     this.itemFocusable = false;
     this.defineEvent('blur');
 
-    AbstractStyleExtended.call(this);
-
+    AbstractInput.call(this);
 
     /**
      * @type {boolean}
@@ -109,14 +108,14 @@ function MultiCheckMenu() {
 
 }
 
-mixClass(MultiCheckMenu, AbstractStyleExtended);
+mixClass(MultiCheckMenu, AbstractInput);
 
 MultiCheckMenu.tag = 'MultiCheckMenu'.toLowerCase();
 
 MultiCheckMenu.render = MultiSelectMenu.render;
 
 Object.assign(MultiCheckMenu.prototype, MultiSelectMenu.prototype);
-MultiCheckMenu.property = Object.assign({}, MultiSelectMenu.property);
+MultiCheckMenu.property = Object.assign({}, MultiCheckMenu.property, MultiSelectMenu.property);
 MultiCheckMenu.eventHandler = Object.assign({}, MultiSelectMenu.eventHandler);
 delete MultiCheckMenu.property.isFocus;
 delete MultiCheckMenu.property.orderly;

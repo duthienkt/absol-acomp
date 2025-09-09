@@ -8,6 +8,8 @@ import DropZone from "./DropZone";
 import { fileAccept, isNaturalNumber } from "./utils";
 import FileInputBox from "./FileInputBox";
 import { convertToSafeFile } from "absol/src/Converter/file";
+import { mixClass } from "absol/src/HTML5/OOP";
+import { AbstractInput } from "./Abstraction";
 
 
 /***
@@ -36,6 +38,7 @@ function FileListInput() {
     this.$fileItems = [];
     this.$activeItem = null;
     this._files = [];
+
     /***
      * @name files
      * @memberOf FileListInput#
@@ -64,6 +67,8 @@ function FileListInput() {
      * @type {boolean}
      */
 }
+
+mixClass(FileListInput, AbstractInput);
 
 FileListInput.tag = 'FileListInput'.toLowerCase();
 
@@ -230,7 +235,6 @@ FileListInput.prototype.getChildren = function () {
 };
 
 
-FileListInput.property = {};
 
 FileListInput.property.files = {
     /***
