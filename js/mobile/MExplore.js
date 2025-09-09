@@ -323,6 +323,7 @@ MSpringboardMenu.render = function () {
 
 MSpringboardMenu.prototype.updateSize = function () {
     if (!this.isDescendantOf(document.body)) return;
+    if (!BrowserDetector.isMobile) return;
     if (this.$groups.length === 0) return;
     var maxChildLength = 0;
     var longestGroupElt = this.$groups[0];
