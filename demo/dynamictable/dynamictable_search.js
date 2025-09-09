@@ -17,6 +17,7 @@ absol.remoteNodeRequireAsync('./table_sample_data.js').then((items) => {
         },
         props: {
             adapter: {
+                fixedCol: 2,
                 data: {
                     head: {
                         rows:[
@@ -27,6 +28,18 @@ absol.remoteNodeRequireAsync('./table_sample_data.js').then((items) => {
                                     },
                                     {
                                         child: { text: 'Địa chỉ' }
+                                    },
+                                    {
+                                        child: {text:'col 1'}
+                                    },
+                                    {
+                                        child: {text:'col 2'}
+                                    },
+                                    {
+                                        child: {text:'col 3'}
+                                    },
+                                    {
+                                        child: {text:'col 4'}
                                     }
                                 ]
                             }
@@ -34,12 +47,35 @@ absol.remoteNodeRequireAsync('./table_sample_data.js').then((items) => {
 
                     },
                     body:{
-                        rows: items.slice(0, 23).map(item=> ({
-                            cells: item.map(text=>({
-                                child:{text: text},
-                                innerText: text
-                            }))
-                        }))
+                        rows:[],
+                        rowsx: items.slice(0, 24).map((item, i)=> {
+                            var res = ({
+                                cells: item.map(text=>({
+                                    child:{text: text},
+                                    innerText: text
+                                }))
+                            });
+                            if (i%2 ==0) res.cells[0].attr = {rowspan: 2};
+                            else {
+                                res.cells.shift();
+                            }
+                            res.cells.push({
+                                child: {text: `R${i}C4`}
+                            });
+                            res.cells.push({
+                                child: {text: `R${i}C5`}
+                            });
+
+                            res.cells.push({
+                                child: {text: `R${i}C6`}
+                            });
+
+                            res.cells.push({
+                                child: {text: `R${i}C7`}
+                            });
+
+                            return res;
+                        })
                     }
                 }
             }

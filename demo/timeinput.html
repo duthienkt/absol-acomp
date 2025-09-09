@@ -235,8 +235,11 @@
             tag: 'TimeRange24Input'.toLowerCase(),
             
             props: {
-                dayOffset: new Date().getTime(),
-                duration: 3600 * 1000 * 2.5
+                // dayOffset: new Date().getTime(),
+                // duration: 3600 * 1000 * 2.5,
+                value: null,
+                gmt: true,
+                notNull: true
             },
             on: {
                 change: function () {

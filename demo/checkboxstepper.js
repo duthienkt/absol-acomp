@@ -9,9 +9,14 @@ var stepper = _({
             { checked: true, text: 'Nộp hồ sơ' },
             { checked: true, text: 'Phỏng vấn, thi tuyển' },
             { text: 'Mời nhận việc' },
-            { text: 'Không nhận việc' },
+            { text: 'Không nhận việc', color: 'red' },
             { text: 'Từ chối tuyển dụng', disabled: true }
         ]
+    },
+    on:{
+        clickitem: function (event) {
+            console.log(event.data)
+        }
     }
 });
 

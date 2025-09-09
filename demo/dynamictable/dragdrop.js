@@ -21,12 +21,12 @@ var adapter = {
             ]
         },
         body: {
-            rows: rawTableData.concat(rawTableData).concat(rawTableData).concat(rawTableData).slice(0, 1).map((rawRow, i) => {
+            rows: rawTableData.concat(rawTableData).concat(rawTableData).concat(rawTableData).map((rawRow, i) => {
                 return {
                     cells: [
                         {
-                            class: ((i < 5 || i > 15)&& false) ? 'as-no-drag' : 'as-drag-zone',
-                            child: (i < 5 || i > 15) && false ? {} : 'span.mdi.mdi-drag'
+                            class: ((i < 5 || i > 15)&& true) ? 'as-no-drag' : 'as-drag-zone',
+                            child: (i < 5 || i > 15) && true ? {} : 'span.mdi.mdi-drag'
                         },
                         {
                             child: { tag: 'span', child: { text: rawRow[0] } }

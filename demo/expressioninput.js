@@ -86,9 +86,10 @@ var input = absol._({
         }
     },
     props: {
-        valuex: ' a+b+ c + f <= 1 + 2 + 3 + 4 \n+ Math->max(0, 12)+ String->split("this is text", \' \')',
+        value: undefined
+        // value: ' a+b+ c + f <= 1 + 2 + 3 + 4 \n+ Math->max(0, 12)+ String->split("this is text", \' \')',
         // icon: 'span.mdi.mdi-equal',
-        autocomplete: autocomplete
+        // autocomplete: autocomplete
     }
 }).addTo(document.body);
 var input2 = absol._({
