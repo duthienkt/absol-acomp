@@ -12,9 +12,15 @@ import TextMeasure from "./TextMeasure";
 
 export { normalizeFileName };
 
+/**
+ *
+ * @param {Range} range
+ * @returns {string}
+ */
 export function getSelectionRangeDirection(range) {
     var sel = document.getSelection();
     var direction = 'forward';
+    if (!sel || sel.rangeCount === 0) return direction;
     var cmpPosition = sel.anchorNode.compareDocumentPosition(sel.focusNode);
     if (cmpPosition === 4) {
         direction = 'forward';
@@ -1097,6 +1103,7 @@ export function fileInfoOf(fi) {
             }
 
         }
+        if (typeof res.type === "string") res.type = res.type.toLowerCase();
     };
     handle(fi);
 
