@@ -2,6 +2,7 @@ import '../css/checkboxstepper.css';
 import { $, _ } from '../ACore';
 import Attributes from "absol/src/AppPattern/Attributes";
 import CheckboxInput from "./CheckBoxInput";
+import AElement from "absol/src/HTML5/AElement";
 
 /**
  * @extends {AElement}
@@ -16,6 +17,7 @@ CheckboxStepper.tag = 'checkboxstepper';
 
 CheckboxStepper.render = function () {
     return _({
+        extendEvent: ['clickitem'],
         class: 'as-checkbox-stepper',
         child: [
             {
@@ -25,6 +27,14 @@ CheckboxStepper.render = function () {
         ]
     });
 };
+
+CheckboxStepper.prototype.on = function (name, listener) {
+    console.log(name);
+    if ((name === 'clickitem') || (name && name.clickitem)){
+        this.addClass('as-clickable');
+    }
+    return AElement.prototype.on.apply(this, arguments);
+} ;
 
 
 CheckboxStepper.property = {};
@@ -65,7 +75,7 @@ CheckboxStepper.property.title = {
 /**
  *
  * @param {CheckboxStepper} elt
- * @param {{checked: boolean, text:string, disabled?: boolean}} data
+ * @param {{checked: boolean, text:string, disabled?: boolean, color}} data
  * @constructor
  */
 function CheckboxStepperItem(elt, data) {
@@ -94,14 +104,22 @@ function CheckboxStepperItem(elt, data) {
                 class: 'as-checkbox-stepper-label',
                 child: { text: '' }
             }
-        ]
+        ],
+        on:{
+            click: ()=>{
+                elt.emit('clickitem', { data: this.data, itemCtrl: this, target: elt, type: 'clickitem' }, elt);
+            }
+        }
     });
     this.$checkbox = $('.as-checkbox-stepper-checkbox', this.$item)
     this.$label = $('.as-checkbox-stepper-label', this.$item);
     this.data = new Attributes(this);
     this.data.loadAttributeHandlers(this.attributeHandlers);
     Object.assign(this.data, data);
-    console.log(this)
+    if (data.color) {
+        this.$item.addStyle('color' , data.color);
+        this.$item.addStyle('--primary-color' , data.color);
+    }
 }
 
 
@@ -119,7 +137,6 @@ CheckboxStepperItem.prototype.attributeHandlers.text = {
 
 CheckboxStepperItem.prototype.attributeHandlers.checked = {
     set: function (value) {
-        console.log(this)
         this.$checkbox.checked = value;
     },
     get: function () {

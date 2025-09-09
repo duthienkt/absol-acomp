@@ -9,6 +9,15 @@
     overflow: hidden;
 }
 
+.as-checkbox-stepper.as-clickable .as-checkbox-stepper-item,
+.as-checkbox-stepper.as-clickable .as-checkbox-stepper-item *{
+    cursor: pointer;
+}
+
+.as-checkbox-stepper.as-clickable .as-checkbox-stepper-item:hover {
+    background-color: #f6f6f6;
+}
+
 .as-checkbox-stepper-title {
     font-weight: 700;
     line-height: 1.45;
