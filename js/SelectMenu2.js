@@ -95,7 +95,7 @@ SelectMenu.tag = 'selectmenu';
 SelectMenu.render = function () {
     return _({
         class: ['absol-selectmenu', 'as-select-menu'],
-        extendEvent: ['change'],
+        extendEvent: ['change', 'blur'],
         attr: {
             tabindex: '1'
         },
@@ -284,6 +284,8 @@ SelectMenu.property.isFocus = {
             this.$selectlistBox.selfRemove();
             this.$selectlistBox.unfollow();
             this.$selectlistBox.resetSearchState();
+            this.defineEvent('blur');
+            this.emit('blur', {type:'blur'}, this.elt);
         }
     },
     get: function () {
@@ -395,7 +397,6 @@ SelectMenu.eventHandler.selectListBoxPressItem = function (event) {
             this.emit('change', event, this);
         }.bind(this), 1)
         this._lastValue = this.value;
-
     }
     setTimeout(function () {
         this.isFocus = false;
