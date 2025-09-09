@@ -4,7 +4,7 @@ import AElement from "absol/src/HTML5/AElement";
 import CheckboxInput from "./CheckBoxInput";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput, AbstractStyleExtended } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -28,7 +28,7 @@ function CheckBox() {
     this.on('click', this.eventHandler.click);
     OOP.drillProperty(this, this.$input, ['checked']);
     OOP.drillProperty(this, this.$input, ['minus']);
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
     /***
      * @type {boolean}
      * @name checked
@@ -42,7 +42,7 @@ function CheckBox() {
      */
 }
 
-mixClass(CheckBox, AbstractStyleExtended);
+mixClass(CheckBox, AbstractInput);
 
 CheckBox.tag = 'checkbox';
 
@@ -144,7 +144,6 @@ CheckBox.attribute = {
 };
 
 
-CheckBox.property = {};
 CheckBox.property.text = {
     get: function () {
         return this._text;

@@ -2,7 +2,7 @@ import '../css/checkboxinput.css';
 import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import AElement from "absol/src/HTML5/AElement";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput, AbstractStyleExtended } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
 
 
@@ -45,10 +45,10 @@ function CheckboxInput() {
     this.$tick = $('.tick', this);
     this.on('click', this.eventHandler.click);
     this.onchange = null;
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
 }
 
-mixClass(CheckboxInput,AbstractStyleExtended);
+mixClass(CheckboxInput, AbstractInput);
 
 CheckboxInput.tag = "CheckboxInput".toLowerCase();
 CheckboxInput.prototype.extendStyle.variant = 'v0'; // default variant
@@ -111,7 +111,6 @@ CheckboxInput.prototype.styleHandlers.variant = {
 };
 
 
-CheckboxInput.property = {};
 
 CheckboxInput.property.disabled = {
     set: function (value) {
