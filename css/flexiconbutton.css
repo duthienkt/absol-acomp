@@ -210,6 +210,13 @@
     min-width: var(--base-size);
 }
 
+.as-flexicon-button[data-variant="link"] .as-flexicon-button-icon-container {
+    width: calc(23em/20);
+    text-align: left;
+}
+
+
+
 .as-flexicon-button[data-variant="link"]:hover .as-flexicon-button-text-container {
     text-decoration: underline;
 }
