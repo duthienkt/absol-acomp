@@ -427,6 +427,15 @@ DynamicTable.prototype.styleHandlers.variant = {
     }
 };
 
+DynamicTable.prototype.init = function (props) {
+  props = Object.assign({}, props);
+  if (props.placeholder) {
+      this.placeholder = props.placeholder;
+      delete props.placeholder;
+  }
+    AElement.prototype.init.call(this, props);
+
+};
 
 DynamicTable.prototype.addStyle = function (arg0, arg1) {
     if ((typeof arg0 === "string") && (arg0 in this.extendStyle)) {

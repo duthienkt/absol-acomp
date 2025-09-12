@@ -38,6 +38,7 @@ import { openDebugDeviceInfo } from "./js/DebugDeviceInfo";
 import './js/ExtendComputedStyle'
 import CMDTool, { CMDToolDelegate } from "./js/CMDTool";
 import { RawTableSearcher } from "./js/RawTable";
+import { rawTableRemoveEmptyImage, rawTableViewEmptyImage } from "./js/dynamictable/DTBody";
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
 absol.vScrollIntoView = vScrollIntoView;
@@ -121,6 +122,8 @@ absol.CMDTool = CMDTool;
 absol.CMDToolDelegate = CMDToolDelegate;
 
 absol.RawTableSearcher = RawTableSearcher;
+absol['rawTable'+'ViewEmptyImage'] = rawTableViewEmptyImage;
+absol['rawTableRe'+'moveEmptyImage'] = rawTableRemoveEmptyImage;
 
 
 Dom.documentReady.then(function () {

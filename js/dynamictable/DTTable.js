@@ -53,9 +53,10 @@ Object.defineProperty(DTTable.prototype, 'elt', {
                 this.body.elt
             ]
         });
-        rawTableRemoveEmptyImage(this._elt);
-        rawTableViewEmptyImage(this._elt);
-
+        if (this.wrapper.placeholder) {
+            rawTableRemoveEmptyImage(this._elt);
+            rawTableViewEmptyImage(this._elt);
+        }
         return this._elt;
     }
 });

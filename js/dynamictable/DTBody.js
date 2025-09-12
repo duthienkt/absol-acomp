@@ -11,6 +11,35 @@ import { getScreenSize } from "absol/src/HTML5/Dom";
 import OOP from "absol/src/HTML5/OOP";
 import LangSys from "absol/src/HTML5/LanguageSystem";
 
+
+function viewEmptyImageIn(elt) {
+    var rid = randomIdent(8);
+    var img = `<svg width="100" height="100" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                <linearGradient id="${rid}" x1="42" y1="60" x2="42" y2="111" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#E8EAED"/>
+                <stop offset="1" stop-color="#E8EAED" stop-opacity="0"/>
+                </linearGradient>
+                <linearGradient id="paint1_linear_2154_9611" x1="91" y1="60" x2="91" y2="111" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#E8EAED"/>
+                <stop offset="1" stop-color="#E8EAED" stop-opacity="0"/>
+                </linearGradient>
+                </defs>
+                <circle cx="72" cy="72" r="72" fill="#F8F9FA"/>
+                <rect x="27" y="34" width="91" height="20" rx="5" fill="#E8EAED"/>
+                <rect x="27" y="60" width="30" height="51" rx="5" fill="url(#${rid})"/>
+                <rect x="64" y="60" width="54" height="51" rx="5" fill="url(#${rid})"/>
+                </svg>`;
+    _({
+        elt: elt,
+        child: [img,
+            'br',
+            {
+                text: LangSys.getText('txt_no_data_to_display') || "No data to display",
+            }]
+    });
+}
+
 export function rawTableViewEmptyImage(tableElt) {
     var bodyElt = $('tbody', tableElt);
     if (!bodyElt) return;
@@ -32,24 +61,7 @@ export function rawTableViewEmptyImage(tableElt) {
             return ac + cs;
         }, 0) || 1;
     }
-    var rid = randomIdent(8);
-    var img = `<svg width="144" height="144" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <defs>
-                <linearGradient id="${rid}" x1="42" y1="60" x2="42" y2="111" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#E8EAED"/>
-                <stop offset="1" stop-color="#E8EAED" stop-opacity="0"/>
-                </linearGradient>
-                <linearGradient id="paint1_linear_2154_9611" x1="91" y1="60" x2="91" y2="111" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#E8EAED"/>
-                <stop offset="1" stop-color="#E8EAED" stop-opacity="0"/>
-                </linearGradient>
-                </defs>
-                <circle cx="72" cy="72" r="72" fill="#F8F9FA"/>
-                <rect x="27" y="34" width="91" height="20" rx="5" fill="#E8EAED"/>
-                <rect x="27" y="60" width="30" height="51" rx="5" fill="url(#${rid})"/>
-                <rect x="64" y="60" width="54" height="51" rx="5" fill="url(#${rid})"/>
-              
-                </svg>`;
+
     var emptyImageRow = _({
         tag: 'tr',
         class: 'as-empty-image-row',
@@ -58,16 +70,29 @@ export function rawTableViewEmptyImage(tableElt) {
             attr: {
                 colspan: colspan,
             },
-            child: [
-
-                {
-                    text: LangSys.getText('txt_no_data_to_display') || "No data to display",
-                }
-            ]
+            child: []
         }
     });
+    var td = $('td', emptyImageRow);
+    viewEmptyImageIn(td);
     bodyElt.appendChild(emptyImageRow);
     bodyElt.classList.add('as-empty-body');
+}
+
+/**
+ * @extends AElement
+ * @constructor
+ */
+export function EmptyTablePlaceholder() {
+    this.addClass('as-empty-table-placeholder');
+    viewEmptyImageIn(this);
+}
+
+EmptyTablePlaceholder.tag = 'EmptyTablePlaceholder'.toLowerCase();
+
+
+EmptyTablePlaceholder.render = function () {
+    return _('div');
 }
 
 export function rawTableRemoveEmptyImage(tableElt) {
@@ -372,7 +397,7 @@ SearchingMode.prototype.end = function () {
 
 
 SearchingMode.prototype.updateRowsIfNeed = function () {
-    if (this.body.rows.length > 0) {
+    if (this.body.rows.length > 0 && this.body.table.wrapper.placeholder) {
         rawTableViewEmptyImage(this.body.elt);
     }
     var screenSize = getScreenSize();
@@ -436,7 +461,7 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
     if (!bounds) {
         setTimeout(updateFx, 1);
     }
-    if (this.body.rows.length === 0) {
+    if (this.body.rows.length === 0 && this.body.table.wrapper.placeholder) {
         rawTableViewEmptyImage(this.body.elt);
     }
 };
@@ -558,7 +583,7 @@ NormalMode.prototype.end = function () {
 
 
 NormalMode.prototype.updateRowsIfNeed = function () {
-    if (this.body.rows.length > 0) {
+    if (this.body.rows.length > 0 && this.body.table.wrapper.placeholder) {
         rawTableViewEmptyImage(this.body.elt);
     }
 
@@ -624,7 +649,7 @@ NormalMode.prototype.updateRowsIfNeed = function () {
     this.body.table.wrapper.rowDragCtrl.ev_rowRenderChange();
 
 
-    if (this.body.rows.length === 0) {
+    if (this.body.rows.length === 0 && this.body.table.wrapper.placeholder) {
         rawTableViewEmptyImage(this.body.elt);
     }
 
