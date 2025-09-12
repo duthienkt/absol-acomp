@@ -123,6 +123,7 @@ function TEITable(wrapper) {
      */
     this.rows = [];
     this.formatTool = new TEIFormatTool(this);
+    this.data = this.defaultData;
 }
 
 TEITable.prototype.defaultData = {
@@ -234,6 +235,11 @@ Object.defineProperties(TEITable.prototype, {
             value = copyJSVariable(value || this.defaultData);
 
             if (!(value.rows instanceof Array)) value.rows = copyJSVariable(this.defaultData.rows);
+            if (value.rows.length === 0) {
+                value.rows.push({
+                    cells: [{ value: '' }]
+                });
+            }
             value.rows.forEach(row => {
                 if (!(row.cells instanceof Array)) {
                     row.cells = []
