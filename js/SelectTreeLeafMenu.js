@@ -104,6 +104,13 @@ SelectTreeLeafMenu.prototype.findItemByValue = function (value) {
     return this.$selectBox.findItemByValue(value);
 };
 
+SelectTreeLeafMenu.prototype.findItemsByValue = function (value) {
+    return [{
+        idx: "not-supported",
+        item: this.findItemByValue(value)
+    }];
+};
+
 SelectTreeLeafMenu.prototype.init = function (props) {
     props = props || {};
     Object.keys(props).forEach(function (key) {
