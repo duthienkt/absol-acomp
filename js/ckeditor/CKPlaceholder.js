@@ -4,6 +4,8 @@ import { CKExtensionDict, CKExtensions, ckInit, ckMakeDefaultConfig } from "./pl
 import CKStickyToolbarController from "./CKStickyToolbarController";
 import Dom from "absol/src/HTML5/Dom";
 import { isRealNumber } from "../utils";
+import { AbstractInput } from "../Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 Dom.documentReady.then(function () {
     setTimeout(ckInit, 100);
@@ -41,7 +43,12 @@ function CKPlaceholder() {
      * @type {boolean}
      */
     this.stickyToolbar = true;
+    AbstractInput.call(this);
 }
+
+
+mixClass(CKPlaceholder, AbstractInput);
+
 
 CKPlaceholder.tag = 'CKPlaceholder'.toLowerCase();
 
@@ -127,6 +134,9 @@ CKPlaceholder.eventHandler.attached = function () {
     var height = this.style.height;
     if (height.endsWith('px')) config.height = height;
     config = ckMakeDefaultConfig(this.config, this.extensions, this);
+    if (this.readOnly) {
+        config.readOnly = true;
+    }
     this.editor = this.mode === 'replace' ? CKEDITOR.replace(this, config) : CKEDITOR.inline(this, config);
     this.editor.placeHolderElt = this;
     this.editor.on('instanceReady', this.eventHandler.instanceReady);
@@ -168,7 +178,23 @@ CKPlaceholder.eventHandler.change = function () {
 };
 
 
-CKPlaceholder.property = {};
+CKPlaceholder.property.readOnly = {
+    set: function (value) {
+        value = !!value;
+        if (value) {
+            this.addClass('as-raed-only');
+        }
+        else {
+
+        }
+        if (this.editor && this.editor.setReadOnly) {
+            this.editor.setReadOnly(value);
+        }
+    },
+    get: function () {
+        return this.hasClass('as-raed-only');
+    }
+};
 
 CKPlaceholder.property.data = {
     /***
@@ -204,7 +230,7 @@ CKPlaceholder.property.rawData = {
 CKPlaceholder.property.config = {
     set: function (value) {
         if (this.editor) {
-            throw  new Error("Can not set config after the CKEditor created");
+            throw new Error("Can not set config after the CKEditor created");
         }
         this._config = Object.assign(this._makeInitConfig(), value);
     },
@@ -216,7 +242,7 @@ CKPlaceholder.property.config = {
 CKPlaceholder.property.extensions = {
     set: function (value) {
         if (this.editor) {
-            throw  new Error("Can not set extensions after the CKEditor created");
+            throw new Error("Can not set extensions after the CKEditor created");
         }
         value = value || [];
         if (typeof value === "string") value = [value];
