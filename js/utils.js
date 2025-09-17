@@ -983,6 +983,11 @@ export function formatLocalFloat(value, opt) {
     if (typeof opt === "string") opt = { locales: opt };
     var formatOpt = Object.assign({}, opt);
     delete formatOpt.locales;
+    if (typeof formatOpt.fractionDigits === "number") {
+        formatOpt.maximumFractionDigits = formatOpt.fractionDigits;
+        formatOpt.minimumFractionDigits = formatOpt.fractionDigits;
+        delete formatOpt.fractionDigits;
+    }
 
     var locales = (opt && opt.locales) || (window.systemconfig && window.systemconfig.numberFormatLocales);
     var sample;
