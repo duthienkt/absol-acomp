@@ -218,6 +218,16 @@ SelectMenu.prototype.findItemByValue = function (value) {
 
 SelectMenu.prototype._explicit = function (value) {
     var items = this.$selectlistBox.findItemsByValue(value);
+    var items2, value2;
+    if ((!items || items.length === 0) && (typeof value === "string")) {
+        value2 = parseInt(value, 10);
+        if (value2 + '' === value) {
+            items2 = this.$selectlistBox.findItemsByValue(value2);
+            if (items2 && items2.length > 0) {
+                items = items2;
+            }
+        }
+    }
     if (items.length > 0 || !this.strictValue || this.items.length === 0) {
         return value;
     }
@@ -234,6 +244,7 @@ SelectMenu.property.items = {
         this.addStyle('--select-list-estimate-width', (this.$selectlistBox._estimateWidth) / 14 + 'em');
         this.addStyle('--select-list-desc-width', (this.$selectlistBox._estimateDescWidth) / 14 + 'em');
         this.updateItem();
+        this.$selectlistBox.values = [this.value];
     },
     get: function () {
         return this.$selectlistBox.items;
@@ -285,7 +296,7 @@ SelectMenu.property.isFocus = {
             this.$selectlistBox.unfollow();
             this.$selectlistBox.resetSearchState();
             this.defineEvent('blur');
-            this.emit('blur', {type:'blur'}, this.elt);
+            this.emit('blur', { type: 'blur' }, this.elt);
         }
     },
     get: function () {
