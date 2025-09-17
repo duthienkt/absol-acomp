@@ -266,21 +266,26 @@ Object.defineProperties(TEITable.prototype, {
             var placeHolderElt;
             var renderSpace;
             if (!cBound.width || !cBound.height) {
-                if (this.parentElement) {
+                if (this.wrapper.parentElement) {
                     placeHolderElt = _({
                         style: {
                             display: 'none'
                         }
                     });
-                    this.selfReplace(placeHolderElt);
+                    this.wrapper.selfReplace(placeHolderElt);
                 }
                 renderSpace = _({
                     style: {
                         position: 'fixed',
                         zIndex: -1000,
                         visibility: 'hidden',
-                        opacity: 0
-                    }
+                        opacity: 0,
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                    },
+                    child: this.wrapper
                 }).addTo(document.body);
             }
 
@@ -366,7 +371,7 @@ Object.defineProperties(TEITable.prototype, {
             }).richTextRows;
 
             if (placeHolderElt) {
-                placeHolderElt.selfReplace(this);
+                placeHolderElt.selfReplace(this.wrapper);
             }
             if (renderSpace) renderSpace.remove();
             return richTextRows;
