@@ -108,8 +108,11 @@ DynamicTableManager.prototype.setColWidth = function (tableId, colId, value, sto
         this.data.colWidth[tableId][colId] = value;
         this.storageChanged = true;
     }
-
-    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'width', value + 'px');
+    if (typeof value === "number") value = value + 'px';
+    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'width', value);
+    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'max-width', value);
+    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'min-width', value);
+    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"] *`, 'white-space', 'pre-wrap');
 };
 
 DynamicTableManager.prototype.commit = function () {
@@ -428,11 +431,11 @@ DynamicTable.prototype.styleHandlers.variant = {
 };
 
 DynamicTable.prototype.init = function (props) {
-  props = Object.assign({}, props);
-  if (props.placeholder) {
-      this.placeholder = props.placeholder;
-      delete props.placeholder;
-  }
+    props = Object.assign({}, props);
+    if (props.placeholder) {
+        this.placeholder = props.placeholder;
+        delete props.placeholder;
+    }
     AElement.prototype.init.call(this, props);
 
 };
@@ -1073,6 +1076,8 @@ LayoutController.prototype.onAttached = function () {
                             bound = cell.copyElt.getBoundingClientRect();
                             if (bound.width > 0) {
                                 this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'width', bound.width + 'px')
+                                this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'max-width', bound.width + 'px')
+                                this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'min-width', bound.width + 'px')
                                     .commit();
                             }
 
@@ -1593,14 +1598,35 @@ ColSizeController.prototype.getColWidth = function () {
 };
 
 ColSizeController.prototype.setColWidth = function (colId, value) {
-    var cell = this.elt.table.header.rows[0].cells.find(cell => cell.data.id === colId || cell.idx === colId);
-    cell.copyElt.removeStyle('width');
+    var cell = this.elt.table.header.rows[0].cells.find(cell => cell.data.id === colId || cell.idx === colId || (cell.data && cell.data.id === '' + colId));
+    var parsedValue;
+    if (typeof value === "number") value = value + 'px';
+    else if (typeof value === "string") {
+        value = value.trim();
+        if (value.match(/^[0-9.+\-]+$/)) {
+            value = value + 'px';
+        }
+        else {
+            parsedValue = parseMeasureValue(value);
+            if (!parsedValue) return;
+        }
+    }
+    if (cell) {
+        cell.copyElt.removeStyle('width');
+        cell.copyElt.removeStyle('max-width');
+        cell.copyElt.removeStyle('min-width');
+    }
+
     if (typeof colId === "string") {
-        if (cell.colspan !== 1)
+        if (cell && cell.colspan === 1)
             manager.commitColWidth(this.elt, this.elt.id, colId, value, true);
     }
     else {
-        this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${colId}"]:not([colspan])`, 'width', value + 'px').commit();
+        this.elt.css.setProperty(`#${this.elt.id} th[data-col-id="${colId}"]:not([colspan])`, 'width', value)
+            .setProperty(`#${this.elt.id} th[data-col-id="${colId}"]:not([colspan])`, 'max-width', value)
+            .setProperty(`#${this.elt.id} th[data-col-id="${colId}"]:not([colspan])`, 'min-width', value)
+            .setProperty(`#${this.elt.id} th[data-col-id="${colId}"] *`, 'white-space', 'pre-wrap')
+            .commit();
     }
     this.elt.requestUpdateSize();
 };

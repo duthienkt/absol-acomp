@@ -236,8 +236,14 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
         if (this.data.attr) {
             this._elt.attr(this.data.attr);
         }
+
         if (this.data.style) {
             this._elt.addStyle(this.data.style);
+            if (this.data.style.width) {
+                this._elt.addStyle('max-width', this.data.style.width);
+                this._elt.addStyle('min-width', this.data.style.width);
+                this._elt.addClass('as-wrap-text');
+            }
         }
 
         if (this.data.id !== null && this.data.id !== undefined) {

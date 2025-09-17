@@ -556,6 +556,9 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
     white-space: nowrap;
 }
 
+.as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-header-cell.as-wrap-text  * {
+    white-space: pre-wrap;
+}
 
 .as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-header-cell > span {
     display: inline-block;
