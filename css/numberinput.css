@@ -63,11 +63,13 @@
 
 .absol-number-input.as-read-only.as-border-none {
     border: none;
+    background-color: transparent;
 }
 
 .absol-number-input.as-read-only.as-border-none input {
     /*text-align: left;*/
     padding-left: 0;
+    background-color: transparent;
 }
 
 
