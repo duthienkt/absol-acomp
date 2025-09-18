@@ -190,7 +190,7 @@ SelectTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus, level
 
 SelectTreeLeafBox.prototype._estimateItemWidth = function (item, level) {
     var width = 12;//padding
-    width += 17 * level;
+    width += 24 * level;
     width += 14.7 + 5;//toggle icon
     if (item.icon) width += 21;//icon
     width += 7 + TextMeasure.measureWidth(item.text, TextMeasure.FONT_ROBOTO, 14) + 5 + 7;//margin-text

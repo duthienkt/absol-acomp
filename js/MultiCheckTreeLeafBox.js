@@ -218,12 +218,13 @@ MultiCheckTreeLeafBox.prototype._makeTree = function (item, dict, savedStatus) {
 
 MultiCheckTreeLeafBox.prototype._estimateItemWidth = function (item, level) {
     var width = 12;//padding
-    width += 12 * level;
+    width += 24 * level;
     width += 14.7 + 5;//toggle icon
     if (item.icon) width += 21;//icon
     width += 7 + estimateWidth14(item.text) + 5 + 7;//margin-text
     if (item.desc) width += 6 + estimateWidth14(item.desc) * 0.85;
     if (item.isLeaf) width += 16;
+    width = Math.ceil(width);
     return width;
 };
 
@@ -232,6 +233,7 @@ MultiCheckTreeLeafBox.prototype._estimateRawItemWidth = function (item) {
     if (item.icon) width += 21;//icon
     width += 7 + estimateWidth14(item.text) + 5 + 7;//margin-text
     if (item.desc) width += 6 + estimateWidth14(item.desc) * 0.85;
+    width = Math.ceil(width);
     return width;
 };
 

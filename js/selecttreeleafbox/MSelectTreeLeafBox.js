@@ -96,7 +96,7 @@ MSelectTreeLeafBox.prototype._estimateRawItemWidth = SelectTreeLeafBox.prototype
 
 MSelectTreeLeafBox.prototype._estimateItemWidth = function (item, level) {
     var width = 12;//padding
-    width += 12 * level;
+    width += 24 * level;
     width += 14.7 + 5;//toggle icon
     // if (item.icon) width += 21;//icon
     width += 7 + estimateWidth14(item.text) + 5 + 7;//margin-text
