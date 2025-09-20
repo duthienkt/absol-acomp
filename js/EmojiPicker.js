@@ -46,11 +46,11 @@ function EmojiPicker() {
     this.$attachook = _('attachhook').addTo(this).on('error', this.eventHandler.attach);
 }
 
-EmojiPicker.assetRoot = (function (){
-    if (location.hostname.match(/^.*(\.?absol\.cf|absol\.ddns\.net)$/) ||location.hostname.match(/^localhost$/) )
-        return  'https://absol.cf/emoji';
-
-    return  '/emoji';
+EmojiPicker.assetRoot = (function () {
+    var res = 'https://absol.cf/emoji';
+    if (['keeview.com', 'lab.daithangminh.vn', 'absol.cf'].includes(location.host))
+        res = '/emoji';
+    return res;
 })();
 
 
