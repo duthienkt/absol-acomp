@@ -907,6 +907,7 @@ LayoutController.prototype.ev_wheel = function (event) {
     var isOverflowY = this.elt.hasClass('as-overflow-y');
     var isOverflowX = this.elt.hasClass('as-overflow-x');
     var dy = event.deltaY;
+    var dx = event.deltaX;
     var prevOffset;
     if (isOverflowY && (!event.shiftKey || !isOverflowX)) {
         prevOffset = this.elt.$vscrollbar.innerOffset;
@@ -932,13 +933,16 @@ LayoutController.prototype.ev_wheel = function (event) {
         }
 
     }
-    else if (isOverflowX && (event.shiftKey || !isOverflowY)) {
+    else if (isOverflowX && event.shiftKey) {
+
         prevOffset = this.elt.$hscrollbar.innerOffset;
-        if (dy > 0) {
+
+        if (dy > 0 || dx > 0) {
             this.elt.$hscrollbar.innerOffset = Math.max(
                 Math.min(prevOffset + 100,
                     this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth),
                 0);
+
             if (prevOffset !== this.elt.$hscrollbar.innerOffset) {
                 event.preventDefault();
                 this.elt.$hscrollbar.emit('scroll');
