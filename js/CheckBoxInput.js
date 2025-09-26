@@ -21,14 +21,13 @@ var tickIcon = _(['<svg class="as-checkbox-input-check-icon" width="18px" height
 
 
 tickIcon = _({
-    class:'as-checkbox-input-check-icon',
-    child:[
+    class: 'as-checkbox-input-check-icon',
+    child: [
         'span.mdi.mdi-check.tick',
         'span.mdi.mdi-minus.minus'
 
     ]
 });
-
 
 
 /***
@@ -91,10 +90,11 @@ CheckboxInput.prototype._updateCheckedClass = function () {
 };
 
 CheckboxInput.prototype.styleHandlers.variant = {
-    set: function (value) {
+    set: function (value, ref) {
         if (['v0', 'check-box', 'check-circle', 'reject-circle'].indexOf(value) < 0) {
             value = 'v0';
         }
+        ref.set(value);
         if (value !== 'v0' && this.extendStyle.size === 'v0') {
             this.extendStyle.size = 'regular';//auto set new style
         }
@@ -110,6 +110,22 @@ CheckboxInput.prototype.styleHandlers.variant = {
     }
 };
 
+CheckboxInput.prototype.styleHandlers.size = {
+    set: function (value, ref) {
+        if (value === 'default') value = 'regular';
+        if (value !== 'v0') {
+            if (this.extendStyle.variant === 'v0') {
+                this.extendStyle.variant = 'check-box';
+            }
+        }
+        ref.set(value);
+        if (['v0', 'small', 'regular', 'large'].indexOf(value) < 0) {
+            value = 'regular';
+        }
+        this.attr('data-size', value);
+        return value;
+    },
+}
 
 
 CheckboxInput.property.disabled = {

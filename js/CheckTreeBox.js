@@ -526,7 +526,7 @@ export function TreeNodeHolder(boxElt, item, idx, parent) {
     this.status = (item.items && item.items.length > 0) ? 'close' : 'none';
     this.selected = 'none';
     this.level = parent ? parent.level + 1 : 0;
-    if (this.status === 'close' && this.level < this.boxElt.initOpened) {
+    if (this.status === 'close' && (this.level < this.boxElt.initOpened || this.boxElt.initOpened === true)) {
         this.status = 'open';
     }
     this._elt = null;

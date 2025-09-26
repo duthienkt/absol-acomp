@@ -241,7 +241,7 @@
 .absol-selectmenu-holder-item .absol-selectlist-item.as-has-icon .absol-selectlist-item-text {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: calc(100% - 31px - 30px);
+    max-width: calc(100% - 31px - 28px);
 }
 
 .absol-selectmenu .absol-selectlist-item-text {

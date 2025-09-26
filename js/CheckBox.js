@@ -79,6 +79,19 @@ CheckBox.prototype.styleHandlers.variant = {
     }
 };
 
+
+CheckBox.prototype.styleHandlers.size = {
+    set: function (value) {
+        this.$input.extendStyle.size = value;
+        this.attr('data-size', this.$input.extendStyle.size);
+    },
+    get: function () {
+        return this.$input.extendStyle.size;
+    }
+};
+
+
+
 CheckBox.prototype.styleHandlers.checkPosition = {
     set: function (value) {
         if (value === 'right' || value === 'end') {
