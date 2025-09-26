@@ -149,7 +149,7 @@ label.as-checkbox-input[data-variant="check-circle"].as-disabled,
 label.as-checkbox-input[data-variant="check-box"].as-checked.as-disabled,
 label.as-checkbox-input[data-variant="check-circle"].as-checked.as-disabled,
 label.as-checkbox-input[data-variant="reject-circle"].as-checked.as-disabled {
-    background-color: var(--as-disabled-background-color);
+    background-color: var(--as-disabled-natural-color);
     color: white;
 }
 

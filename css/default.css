@@ -9,6 +9,7 @@
     --as-context-menu-font-size: 1rem;
     --as-context-font-family: Roboto, sans-serif;
     --as-disabled-background-color: #D5D7DA;/*#EDEDED;/**/
+    --as-disabled-natural-color:#D5D7DA;
     --as-light-disabled-background-color: #F6F4F4;
     --as-disabled-text-color: #ACACAC;
     --icon-background-cover-hover: #91e4fb;
