@@ -25,12 +25,12 @@ TextMeasure.prototype.exportCode = function () {
     var code = [
         'if (!self.absol) self.absol = {};',
         obj + ' = {};',
-        obj+'.data = '+ JSON.stringify(this.data)+';'
+        obj + '.data = ' + JSON.stringify(this.data) + ';'
     ];
-    Object.keys(this.constructor.prototype).forEach(key=>{
+    Object.keys(this.constructor.prototype).forEach(key => {
         var val = this[key];
         if (typeof val === "function") {
-            code.push(obj+'.'+key+' = '+ val+';\n');
+            code.push(obj + '.' + key + ' = ' + val + ';\n');
         }
         else if (!isDomNode(val)) {
             //todo
@@ -171,7 +171,7 @@ TextMeasure.prototype.wrapText = function (text, fontName, fontSize, maxWidth) {
 
     for (var i = 0; i < text.length; i++) {
         c = text[i];
-        charWidth = (width[c] !== undefined?width[c] : width['a']) * fontSize / 20;
+        charWidth = (width[c] !== undefined ? width[c] : width['a']) * fontSize / 20;
         charSpacing = prevC ? (spacing[prevC + c] || 0) * fontSize / 20 : 0;
 
         if (currentWidth + charWidth + charSpacing > maxWidth) {
@@ -182,13 +182,15 @@ TextMeasure.prototype.wrapText = function (text, fontName, fontSize, maxWidth) {
                 lines.push(currentLine.slice(0, lastSpaceIndex).trim());
                 currentLine = currentLine.slice(lastSpaceIndex + 1) + c;
                 currentWidth = this.measureWidth(currentLine, fontName, fontSize);
-            } else {
+            }
+            else {
                 // No spaces, break the word
                 lines.push(currentLine.trim());
                 currentLine = c;
                 currentWidth = charWidth;
             }
-        } else {
+        }
+        else {
             currentLine += c;
             currentWidth += charWidth + charSpacing;
         }
@@ -220,5 +222,25 @@ TextMeasure.prototype.measureTextByCanvas = function (text, font) {
 };
 
 var instance = new TextMeasure();
+
+/**
+ *
+ * @param text
+ * @param {string=} fontName
+ * @param {number=} fontSize
+ * @returns {number}
+ */
+export function measureTextWidth(text, fontName, fontSize) {
+    if (typeof text !== "string") {
+        if (text === null || text === undefined) {
+            return 0;
+        }
+        text = text + '';
+    }
+    if (!fontName) fontName = instance.FONT_ROBOTO;
+    if (!fontSize) fontSize = 14;
+
+    return instance.measureWidth(text, fontName, fontSize);
+}
 
 export default instance;

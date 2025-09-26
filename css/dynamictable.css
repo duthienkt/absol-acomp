@@ -385,7 +385,9 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     background-color: rgb(245, 245, 245);
 }
 
-.as-dt-body-row:nth-child(even) {
+.as-dynamic-table-wrapper.as-single-color-row .as-dt-body-row:nth-child(odd),
+.as-dt-body-row:nth-child(even)
+{
     background-color: white;
 }
 
@@ -611,6 +613,11 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
 
 .as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-body-row:nth-child(even) {
     background-color: var(--table-new-even-row-background-color);
+}
+
+.as-dynamic-table-wrapper.as-single-color-row {
+    --table-new-odd-row-background-color: white;
+    --table-new-even-row-background-color: white;
 }
 
 .as-dynamic-table-wrapper[data-variant= "secondary"] .as-dt-body-row.total-row {
