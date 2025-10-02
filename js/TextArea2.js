@@ -61,8 +61,12 @@ TextArea2.prototype.updateSize = function () {
 
 TextArea2.eventHandler = {};
 
+/**
+ *
+ * @param event
+ */
 TextArea2.eventHandler.keydown = function (event) {
-    if (event.altKey || event.ctrlKey) return;
+    if (event.altKey || event.ctrlKey || event.defaultPrevented) return;
     var key = event.key || String.fromCharCode(event.which || event.keyCode);
     var selectPost = this.getInputSelection();
     var leftText = this.value.substring(0, selectPost.start);
