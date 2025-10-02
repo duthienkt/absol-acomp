@@ -2154,6 +2154,18 @@ rules.push({
     }
 });
 
+rules.push({
+    target: 'number',
+    elements: ['.number', '_%'],
+    toAST: function (parsedNode) {
+        return {
+            type: 'NumericLiteral',
+            value: parseFloat(parsedNode.children[0].content)/100
+        }
+    }
+});
+
+
 
 rules.push({
     target: 'string',
@@ -2217,7 +2229,7 @@ rules.push({
     }
 });
 
-['+', '-', '*', '/', '%', '&&', '||', 'XOR', "=", '==', '===', '!=', '<', '>', '>=', '<='].forEach(function (op) {
+['+', '-', '*', '/', /*'%',*/ '&&', '||', 'XOR', "=", '==', '===', '!=', '<', '>', '>=', '<='].forEach(function (op) {
     rules.push({
         target: 'bin_op',
         elements: ['_' + op],
