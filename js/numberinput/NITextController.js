@@ -22,7 +22,9 @@ function NITextController(elt) {
     });
     this.elt.$input.on('keydown', this.onKeyDown)
         .on('paste', this.onKeyDown)
-        .on('blur', this.onBlur);
+        .on('blur', this.onBlur)
+        .on('focus', this.onFocus);
+
 
 }
 
@@ -41,53 +43,24 @@ NITextController.prototype.flushTextToValue = function () {
     var thousandsSeparator = this.elt.thousandsSeparator || '';
     var decimalSeparator = this.elt.decimalSeparator;
     var text = this.$input.value;
-    text =  text.replace(/[^0-9\-+.,]/g, '');
+    text = text.replace(/[^0-9\-+.,]/g, '');
     var parts = text.split(decimalSeparator);
     var thousands = parts[0].split(thousandsSeparator).join('').trim();
     var decimal = (parts[1] || '').split(thousandsSeparator).join('').trim();
     var value;
     if (decimal) {
-        value = parseFloat(thousands+'.' +decimal);
+        value = parseFloat(thousands + '.' + decimal);
     }
     else {
         value = parseInt(thousands, 10);
     }
 
-    this.elt._value = parseFloat(value);
-    if (!isRealNumber(this.elt._value)) this.elt._value = null;
-    this.elt._value = this.elt.value;//normalize value
+    this.elt.valueCtrl.value = parseFloat(value);
 };
 
 
 NITextController.prototype.flushValueToText = function () {
-    var formatter;
-    var opt = Object.assign({}, this.elt._format);
-    var value = this.elt.value;
-    var text, parts;
-    if (value === null) {
-        text = '';
-    }
-    else if (opt.locales === 'none') {
-        if (opt.maximumFractionDigits === 20) {
-            text = value + '';
-        }
-        else if (opt.maximumFractionDigits === opt.minimumIntegerDigits) {
-            text = value.toFixed(opt.maximumFractionDigits);
-        }
-        else {
-            text = value + '';
-            parts = text.split('.');
-            parts[1] = parts[1] || '';
-            if (parts[1].length < opt.minimumIntegerDigits) {
-                text = value.toFixed(opt.minimumIntegerDigits);
-            }
-        }
-    }
-    else {
-        formatter = new Intl.NumberFormat(this.elt._format.locales, opt);
-        text = formatter.format(value);
-    }
-
+    var text = this.elt.valueCtrl.formatedValueText;
     this.$input.value = text;
     this.estimateWidthBy(text);
 };
@@ -135,7 +108,7 @@ NITextController.prototype.onBlur = function () {
  * @param {KeyboardEvent|ClipboardEvent|{}} event
  * @param {boolean=} event
  */
-NITextController.prototype.onKeyDown = function (event, dontInsert) {
+NITextController.prototype.onKeyDownOld = function (event, dontInsert) {
     var key = event.type === 'keydown' ? keyboardEventToKeyBindingIdent(event) : '';
     if ((key.length === 1 && !key.match(/[0-9.,\-]/)) || key.match(/^shift-.$/)) {
         event.preventDefault();
@@ -413,7 +386,6 @@ NITextController.prototype.onKeyDown = function (event, dontInsert) {
 };
 
 
-
 /***
  * @param {KeyboardEvent|ClipboardEvent|{}} event
  * @param {boolean=} event
@@ -427,17 +399,34 @@ NITextController.prototype.onKeyDown = function (event) {
         this.$input.setSelectionRange(this.$input.value.length, this.$input.value.length);
         this.elt.notifyChanged({ by: 'enter' });
     };
-    console.log('key', key)
 
     if (onKeys[key]) {
         event.preventDefault();
         onKeys[key]();
     }
     else {
-        setTimeout(()=>{
+        setTimeout(() => {
             this.flushTextToValue();
-        },10);
+        }, 10);
     }
+};
+
+
+/***
+ * @param {FocusEvent|{}} event
+ */
+NITextController.prototype.onFocus = function (event) {
+    setTimeout(()=>{
+        var fOVT = this.elt.valueCtrl.formatedOriginValueText;
+        var txt = this.$input.value;
+        var selectionStart = this.$input.selectionStart;
+        var selectionEnd = this.$input.selectionEnd;
+        var selectionDir = this.$input.selectionDirection;
+        if (fOVT !== txt) {
+            this.$input.value = fOVT;
+            this.$input.setSelectionRange(selectionStart, selectionEnd, selectionDir);
+        }
+    }, 30);
 };
 
 export default NITextController;

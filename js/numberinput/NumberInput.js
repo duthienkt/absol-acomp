@@ -44,11 +44,8 @@ function NumberInput() {
     });
 
     this._prevValue = 0;//to know whenever the value changed
-    this._value = 0;
-    this._max = Infinity;
-    this._min = -Infinity;
     this._step = 1;
-    this._format = this._makeDefaultFormat();
+
 
 
     this.$upBtn = $('.absol-number-input-button-up-container button', this)
@@ -63,6 +60,7 @@ function NumberInput() {
         this.textCtrl.estimateWidthBy(this.$input.value);
     });
 
+    this.valueCtrl = new NIValueController(this);
     this.dragCtrl = new NIDragController(this);
     AbstractInput.call(this);
 
@@ -202,29 +200,33 @@ NumberInput.prototype._makeDefaultFormat = function () {
 
 
 /*****17 number********/
-NumberInput.prototype.nextStep = function () {
+
+NumberInput.prototype.doStep = function (stepCount) {
+    if (!isRealNumber(stepCount)) stepCount = 0;
+    stepCount = Math.round(stepCount);
     var ofs = 0;
     if (isRealNumber(this.min)) {
         ofs = this.min;
     }
     var step = this.step;
-    var idx = nearFloor((this.value - ofs) / step, 0.01);
-    this._value = Math.min(step * (idx + 1) + ofs, this.max);
-    this._value = numberAutoFixed(this._value, (step + '').length);
+    var value = this.valueCtrl.value;
+    var max = this.valueCtrl.max;
+    if (value === null) {
+        value = ofs;
+    }
+    var idx = nearFloor((value - ofs) / step, 0.01);
+    var newValue = Math.min(step * (idx + stepCount) + ofs, max)
+    newValue = numberAutoFixed(newValue, (step + '').length);
+    this.valueCtrl.value = newValue;
     this.textCtrl.flushValueToText();
+}
+
+NumberInput.prototype.nextStep = function () {
+   this.doStep(1);
 };
 
 NumberInput.prototype.prevStep = function () {
-    var ofs = 0;
-    if (isRealNumber(this.min)) {
-        ofs = this.min;
-    }
-    var step = this.step;
-
-    var idx = nearFloor((this.value - ofs) / step, 0.01);
-    this._value = Math.max(step * (idx - 1) + ofs, this.min);
-    this._value = numberAutoFixed(this._value, (step + '').length);
-    this.textCtrl.flushValueToText();
+    this.doStep(-1);
 };
 
 
@@ -281,7 +283,7 @@ NumberInput.eventHandler.mouseDownBtn = function (dir, event) {
 };
 
 NumberInput.prototype.focus = function () {
-    notifyPreFocusEvent(this);
+    notifyPreFocusEvent(this);//use for dynamic table
     this.$input.focus();
 }
 
@@ -303,42 +305,18 @@ NumberInput.prototype.notifyChanged = function (option) {
 
 NumberInput.property.rawValue = {
     get: function () {
-        return this._prevValue;
+        return this.value;
     }
 };
 
 NumberInput.property.value = {
     set: function (value) {
-        if (typeof value === "string") value = parseFloat(value);
-        if (typeof (value) != 'number' || isNaN(value)) value = null;
-        this._value = value;
-
+        this.valueCtrl.value = value;
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
-        var value = this._value;
-        if (value === null) {
-            if (this.notNull) {
-                value = 0;
-            }
-            else {
-                return null;
-            }
-        }
-
-        if (this._format.maximumFractionDigits === 0) {
-            if (isNaturalNumber(this._format.pow10)) {
-                value = Math.round(value / Math.pow(10, this._format.pow10)) * Math.pow(10, this._format.pow10);
-            }
-            else {
-                value = Math.round(value);
-            }
-        }
-        else if (this._format.maximumFractionDigits < 20)
-            value = numberAutoFixed(value, this._format.maximumFractionDigits);
-        value = Math.min(this.max, Math.max(value, this.min));
-        return value;
+        return  this.valueCtrl.value;
     }
 };
 
@@ -350,8 +328,9 @@ NumberInput.property.step = {
         this._step = value;
     },
     get: function () {
-        if (this._format.maximumFractionDigits === 0 && isNaturalNumber(this._format.pow10)) {
-            return Math.max(this._step, Math.pow(10, this._format.pow10));
+        var format = this.valueCtrl.format;
+        if (format.maximumFractionDigits === 0 && isNaturalNumber(format.pow10)) {
+            return Math.max(this._step, Math.pow(10, format.pow10));
         }
         return this._step;
     }
@@ -360,66 +339,47 @@ NumberInput.property.step = {
 
 NumberInput.property.max = {
     set: function (value) {
-        if (!isRealNumber(value)) {
-            value = Infinity;
-        }
-        this._max = value;
+       this.valueCtrl.max = value;
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
-        return Math.max(this._max, this._min);
+        return this.valueCtrl.max;
     }
 };
 
 NumberInput.property.min = {
     set: function (value) {
-        if (!isRealNumber(value)) {
-            value = -Infinity;
-        }
-        this._min = value;
+        this.valueCtrl.min = value;
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
-        return Math.min(this._min, this._max);
+        return  this.valueCtrl.min;
     }
 };
 
-
-NumberInput.prototype.locales2Format = {
-    'vi-VN': {
-        decimalSeparator: ',',
-        thousandsSeparator: '.'
-    },
-    'en-US': {
-        decimalSeparator: '.',
-        thousandsSeparator: ','
-    },
-    'none': {
-        decimalSeparator: '.',
-        thousandsSeparator: ''
-    }
-};
 
 NumberInput.property.decimalSeparator = {
     get: function () {
-        var lF = this.locales2Format[this._format.locales];
+        var lF = this.valueCtrl.format;
         if (lF) return lF.decimalSeparator;
         return '.';
     },
     set: () => {
+        //not allow set
     }
 };
 
 
 NumberInput.property.thousandsSeparator = {
     get: function () {
-        var lF = this.locales2Format[this._format.locales];
+        var lF = this.valueCtrl.format;
         if (lF) return lF.thousandsSeparator;
         return null;
     },
     set: () => {
+        //not allow set
     }
 };
 
@@ -459,75 +419,36 @@ NumberInput.property.format = {
      * @this NumberInput
      */
     set: function (value) {
-        if (value in this.locales2Format) {
-            this._format = {
-                locales: value,
-                maximumFractionDigits: this._format.maximumFractionDigits,
-                minimumFractionDigits: this._format.minimumFractionDigits,
-
-            };
-        }
-        else if (!value) {
-            this._format = this._makeDefaultFormat();
-        }
-        else {
-            this._format = Object.assign(this._makeDefaultFormat(), value);
-        }
-        // console.log(this._format)
+        this.valueCtrl.format = value;
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
-        return this._format;
+        return this.valueCtrl.format;
     }
 };
 
 
 NumberInput.property.floatFixed = {
     set: function (value) {
-        if (isRealNumber(value)) {
-            value = Math.round(value);
-            if (value >= 0) {
-                value = Math.min(value, 20);
-                this._format.maximumFractionDigits = value;
-                this._format.minimumFractionDigits = value;
-                delete this._format.pow10;
-            }
-            else {
-                this._format.maximumFractionDigits = 0;
-                this._format.minimumFractionDigits = 0;
-                this._format.pow10 = -value;
-            }
-        }
-        else {
-            this._format.maximumFractionDigits = 20;
-            delete this._format.minimumFractionDigits;
-            delete this._format.pow10;
-        }
+        this.valueCtrl.floatFixed = value;
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
-        if (this._format.maximumFractionDigits === 20) return null;
-        if (this._format.maximumFractionDigits === 0 && this._format.pow10 > 0) return -this._format.pow10;
-        return this._format.maximumFractionDigits;
+        return this.valueCtrl.floatFixed;
     }
 };
 
 
 NumberInput.property.notNull = {
     set: function (value) {
-        if (value) {
-            this.addClass('as-must-not-null');
-        }
-        else {
-            this.removeClass('as-must-not-null');
-        }
+        this.valueCtrl.notNull = !!value;
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
     get: function () {
-        return this.hasClass('as-must-not-null');
+       return  this.valueCtrl.notNull;
     }
 };
 
@@ -549,6 +470,226 @@ NumberInput.property.stepper = {
 ACore.install('NumberInput'.toLowerCase(), NumberInput);
 
 export default NumberInput;
+
+/**
+ *
+ * @param {NumberInput} elt
+ * @constructor
+ */
+function NIValueController(elt) {
+    this.elt = elt;
+    this._min = -Infinity;
+    this._max = Infinity;
+    this._format = this.makeDefaultFormat();
+}
+
+
+NIValueController.prototype.locales2Format = {
+    'vi-VN': {
+        decimalSeparator: ',',
+        thousandsSeparator: '.'
+    },
+    'en-US': {
+        decimalSeparator: '.',
+        thousandsSeparator: ','
+    },
+    'none': {
+        decimalSeparator: '.',
+        thousandsSeparator: ''
+    }
+};
+
+NIValueController.prototype.makeDefaultFormat = function () {
+    return Object.assign({
+        locales: 'en-US',
+        maximumFractionDigits: 20,
+        minimumFractionDigits: 0,
+        pow10: null//only apply if maximumFractionDigits === 0
+    }, this.locales2Format['en-US']);
+};
+
+NIValueController.prototype.formatNumber = function (value, format) {
+    var formatter;
+    var opt = Object.assign({}, format);
+    if (opt.maximumFractionDigits === 0) {
+        if (isNaturalNumber(opt.pow10)) {
+            value = Math.round(value / Math.pow(10, opt.pow10)) * Math.pow(10, opt.pow10);
+        }
+        else {
+            value = Math.round(value);
+        }
+    }
+    var text, parts;
+    if (value === null) {
+        text = '';
+    }
+    else if (opt.locales === 'none') {
+        if (!isNaturalNumber(opt.maximumFractionDigits) ||opt.maximumFractionDigits === 20) {
+            text = value + '';
+        }
+        else if (opt.maximumFractionDigits === opt.minimumIntegerDigits) {
+            text = value.toFixed(opt.maximumFractionDigits);
+        }
+        else {
+            text = value + '';
+            parts = text.split('.');
+            parts[1] = parts[1] || '';
+            if (parts[1].length < opt.minimumIntegerDigits) {
+                text = value.toFixed(opt.minimumIntegerDigits);
+            }
+        }
+    }
+    else {
+        formatter = new Intl.NumberFormat(this._format.locales || 'en-US', opt);
+        text = formatter.format(value);
+    }
+    return text;
+};
+
+
+
+NIValueController.prototype.viewDataAttr = function () {
+    this.elt.attr({
+        'data-min': this.min + '',
+        'data-max': this.max + '',
+        'data-value': this.value + ''
+    });
+};
+
+Object.defineProperty(NIValueController.prototype, 'value', {
+    set: function (value) {
+        if (typeof value === "string") value = parseFloat(value);
+        if (typeof (value) != 'number' || isNaN(value)) value = null;
+        this._value = value;
+    },
+    get: function () {
+        var value = this._value;
+        if (!isRealNumber(value)) {
+            if (this.notNull) {
+                value = 0;
+            }
+            else {
+                return null;
+            }
+        }
+        value = Math.min(this.max, Math.max(value, this.min));
+        return value;
+    }
+});
+
+
+Object.defineProperty(NIValueController.prototype, 'min', {
+    set: function (value) {
+        if (isRealNumber(value)) {
+            this._min = value;
+        }
+        else {
+            this._min = -Infinity;
+        }
+        this.viewDataAttr();
+    },
+    get: function () {
+        return this._min;
+    }
+});
+
+Object.defineProperty(NIValueController.prototype, 'max', {
+    set: function (value) {
+        if (isRealNumber(value)) {
+            this._max = value;
+        }
+        else {
+            this._max = Infinity;
+        }
+        this.viewDataAttr();
+    },
+    get: function () {
+        return Math.max(this._max, this._min);
+    }
+});
+
+
+Object.defineProperty(NIValueController.prototype, 'notNull', {
+    set: function (value) {
+        if (value) {
+            this.elt.addClass('as-must-not-null')
+        }
+        else {
+            this.elt.removeClass('as-must-not-null')
+        }
+    },
+    get: function () {
+        return this.elt.hasClass('as-must-not-null');
+    }
+});
+
+
+Object.defineProperty(NIValueController.prototype, 'format', {
+    set: function (value) {
+        if (value in this.locales2Format) {
+            Object.assign(this._format, { locales: value }, this.locales2Format[value]);
+        }
+        else if (!value) {
+            Object.assign(this._format, this.makeDefaultFormat());
+        }
+        else {
+            Object.assign(this._format, value);
+        }
+    },
+    get: function () {
+        return this._format;
+    }
+});
+
+
+Object.defineProperty(NIValueController.prototype, 'floatFixed', {
+    set: function (value) {
+        if (isRealNumber(value)) {
+            value = Math.round(value);
+            if (value >= 0) {
+                value = Math.min(value, 20);
+                this._format.maximumFractionDigits = value;
+                this._format.minimumFractionDigits = value;
+                delete this._format.pow10;
+            }
+            else {
+                this._format.maximumFractionDigits = 0;
+                this._format.minimumFractionDigits = 0;
+                this._format.pow10 = -value;
+            }
+        }
+        else {
+            this._format.maximumFractionDigits = 20;
+            delete this._format.minimumFractionDigits;
+            delete this._format.pow10;
+        }
+    },
+    get: function () {
+        if (this._format.maximumFractionDigits === 20) return null;
+        if (this._format.maximumFractionDigits === 0 && this._format.pow10 > 0) return -this._format.pow10;
+        return this._format.maximumFractionDigits;
+    }
+});
+
+
+Object.defineProperty(NIValueController.prototype, 'formatedValueText', {
+    get: function () {
+        return this.formatNumber(this.value, this.format);
+    }
+});
+
+
+Object.defineProperty(NIValueController.prototype, 'formatedOriginValueText', {
+    get: function () {
+        var originFormat = Object.assign({}, this.format);
+        delete  originFormat.maximumFractionDigits;
+        delete  originFormat.minimumFractionDigits;
+        delete  originFormat.pow10;
+        return this.formatNumber(this.value, originFormat);
+    }
+});
+
+
 
 /**
  *
