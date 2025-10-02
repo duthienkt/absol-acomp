@@ -6,6 +6,7 @@ import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
 
 /**
+ * @augments HTMLElement
  * @exatends AElement
  * @constructor
  */
@@ -22,9 +23,9 @@ function MHeaderBar() {
     this.$titleCtn = null;
     this.$title = null;
     this.$titleDesc = null;
-    this.$notificationActionBtn = $(".as-header-bar-notification-action", this).on('click', (event) => {
-        MHeaderBar.emit('clicknotification', { type: 'clicknotification', target: this }, this);
-    });
+    // this.$notificationActionBtn = $(".as-header-bar-notification-action", this).on('click', (event) => {
+    //     MHeaderBar.emit('clicknotification', { type: 'clicknotification', target: this }, this);
+    // });
     this.$commands = [];
 }
 
@@ -37,14 +38,14 @@ MHeaderBar.render = function () {
             {
                 class: 'am-header-bar-right',
                 child: [
-                    {
-                        tag: 'button',
-                        class: ['am-header-bar-command', 'as-header-bar-notification-action'],
-                        child: [
-                            'span.mdi.mdi-bell',
-                            '.as-header-bar-notification-action-count',
-                        ]
-                    }
+                    // {
+                    //     tag: 'button',
+                    //     class: ['am-header-bar-command', 'as-header-bar-notification-action'],
+                    //     child: [
+                    //         'span.mdi.mdi-bell',
+                    //         '.as-header-bar-notification-action-count',
+                    //     ]
+                    // }
                 ]
             }
         ]
@@ -124,12 +125,13 @@ MHeaderBar.prototype.showQuickMenu = function (flag) {
             child: {
                 class: 'am-header-bar-quickmenu-btn-circle',
                 child: ['span.mdi.mdi-dots-horizontal-circle-outline', 'span.mdi.mdi-dots-horizontal-circle']
-            },
+            }
         });
     }
 
     if (flag) {
-        this.$right.addChildBefore(this.$quickmenuBtn, this.$notificationActionBtn);
+        // this.$right.addChildBefore(this.$quickmenuBtn, this.$notificationActionBtn);
+        this.$right.addChild(this.$quickmenuBtn);
     }
     else {
         if (this.$quickmenuBtn) this.$quickmenuBtn.remove();
@@ -328,7 +330,6 @@ var ncCSS = null;
 
 function updateNotificationCountText() {
     if (!ncCSS) ncCSS = new DynamicCSS();
-    console.log("notificationCount", notificationCount);
     ncCSS.setRule("button .as-header-bar-notification-action-count::before", {
         display: notificationCount > 0 ? 'block' : 'none',
         content: `"${notificationCount > 9 ? "+9" : notificationCount}"`,
