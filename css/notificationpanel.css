@@ -24,7 +24,7 @@
 
 .as-np-dropdown-button {
     display: inline-block;
-    vertical-align: center;
+    vertical-align: middle;
 }
 
 .as-np-db-btn {
@@ -47,12 +47,14 @@
     vertical-align: middle;
 }
 
-.as-np-dropdown-button.as-active > .as-np-db-btn {
+.as-np-dropdown-button.as-active > .as-np-db-btn,
+.as-np-db-btn.as-active {
     background-color: rgba(169, 169, 220, 0.4);
 }
 
 
-.as-np-dropdown-button.as-active .as-np-db-icon-ctn {
+.as-np-dropdown-button.as-active .as-np-db-icon-ctn,
+.as-np-db-btn.as-active .as-np-db-icon-ctn {
     color: #0866ff;
 }
 
@@ -227,6 +229,11 @@
     width: var(--np-item-width);
 }
 
+.am-mobile-theme .as-np-item{
+    width: auto;
+}
+
+
 .as-np-item-body {
     padding-right: 26px;
     min-height: 52px;
@@ -378,4 +385,119 @@
 
 .as-mb-vd-body .as-np-item-quick-menu-btn:active {
     background-color: var(--as-transparent-button-active-color);
+}
+
+.as-chat-gpt-dropdown {
+    font-size: 14px;
+    top: 50px;
+    right: 0;
+    bottom: 0;
+    z-index: 600000;
+    width: 500px;
+    max-width: 50vw;
+    position: fixed;
+    background-color: red;
+    display: grid;
+    grid-template-rows: 1fr auto auto;
+    align-content: stretch;
+    height: unset;
+    max-height: unset;
+    opacity: 1;
+    visibility: visible;
+}
+
+.as-chat-gpt-input-ctn {
+    position: relative;
+    padding: var(--distance-2) calc(var(--distance-2) * 2 + 30px) var(--distance-2) var(--distance-2);
+    box-sizing: border-box;
+    border-top: 1px solid var(--border-color);
+
+}
+
+.as-chat-gpt-pending {
+    font-size: 13px;
+    color: var(--grey-color);
+    height: 1px;
+    position: relative;
+    overflow: visible;
+}
+
+.as-chat-gpt-pending > div {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    padding-left: var(--distance-2);
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.as-chat-gpt-pending span {
+    vertical-align: middle;
+    display: inline-block;
+    line-height: 1.5;
+}
+
+.as-chat-gpt-dropdown.as-loading .as-chat-gpt-pending > div {
+    display: block;
+}
+
+.as-chat-gpt-dropdown.as-loading .as-chat-gpt-send-btn{
+    opacity: 0.5;
+}
+
+.as-chat-gpt-pending svg {
+    display: inline-block;
+    vertical-align: middle;
+    height: 20px;
+}
+
+.as-chat-gpt-input-ctn > textarea {
+    background-color: rgb(241, 241, 244);
+    border-radius: 1.8em;
+    border: none;
+    width: 100%;
+    max-height: 300px;
+}
+
+.as-chat-gpt-send-btn {
+    position: absolute;
+    right: var(--distance-2);
+    width: 30px;
+    height: 30px;
+    top: calc(50% - 15px);
+}
+
+button.as-chat-gpt-send-btn:hover {
+    color: var(--primary-color)
+}
+
+.as-chat-gpt-content-ctn {
+    overflow-y: auto;
+    padding-right: var(--distance-2);
+    box-sizing: border-box;
+}
+
+
+.as-chat-gpt-message-content {
+    line-height: 1.5;
+    white-space: pre-wrap;
+    text-align: left;
+}
+
+.as-chat-gpt-message-wrapper {
+    padding: var(--distance-2);
+}
+
+.as-chat-gpt-message-wrapper[data-role="user"] {
+    text-align: right;
+}
+
+.as-chat-gpt-message-wrapper[data-role="user"] .as-chat-gpt-message-content{
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 1em;
+    padding: var(--distance-1) var(--distance-3) ;
+    display: inline-block;
+    max-width: 80%;
+
 }
