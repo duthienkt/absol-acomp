@@ -195,7 +195,7 @@ SelectTreeLeafBox.prototype._estimateItemWidth = function (item, level) {
     if (item.icon) width += 21;//icon
     width += 7 + TextMeasure.measureWidth(item.text, TextMeasure.FONT_ROBOTO, 14) + 5 + 7;//margin-text
     if (item.desc) width += 6 + TextMeasure.measureWidth(item.desc,TextMeasure.FONT_ROBOTO, 14) * 0.85;
-    return width;
+    return Math.ceil(width);
 };
 
 SelectTreeLeafBox.prototype._estimateRawItemWidth = function (item) {
@@ -203,7 +203,7 @@ SelectTreeLeafBox.prototype._estimateRawItemWidth = function (item) {
     width += 21;//icon
     width += 7 + TextMeasure.measureWidth(item.text, TextMeasure.FONT_ROBOTO, 14) + 7;//margin-text
     if (item.desc) width += 6 + TextMeasure.measureWidth(item.desc,TextMeasure.FONT_ROBOTO, 14) * 0.85;
-    return width;
+    return Math.ceil(width);
 };
 
 SelectTreeLeafBox.prototype.viewToSelected = function () {
