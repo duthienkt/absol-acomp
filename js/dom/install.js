@@ -197,10 +197,12 @@ import PositionTracker from "../PositionTracker";
 import CheckboxStepper from "../CheckboxStepper";
 import LinearBackground from "../LinearBackground";
 import { EmptyTablePlaceholder } from "../dynamictable/DTBody";
+import ChatGPTButton from "../ChatGPTButton";
 
 
 export var publicCreators = [
     MdiStoreMarkerOutline,
+    ChatGPTButton,
     AutoCompleteInput,
     BoardTable,
     Board,
