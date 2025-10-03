@@ -222,6 +222,9 @@ SolidColorPicker.render = function () {
                     {
                         tag: 'flexiconinput',
                         class: 'as-solid-color-picker-color-hex',
+                        style:{
+                            size: 'small'
+                        },
                         props: {
                             value: 'ffffff',
                             icon: '<svg viewBox="0 0 64 64" id="mq-icon-hex"><path d="M60 24v-6H46V4h-6v14H24V4h-6v14H4v6h14v16H4v6h14v14h6V46h16v14h6V46h14v-6H46V24h14zM40 40H24V24h16v16z"></path></svg>'
@@ -230,6 +233,9 @@ SolidColorPicker.render = function () {
                     {
                         tag: 'flexiconinput',
                         class: 'as-solid-color-picker-color-opacity',
+                        style:{
+                            size: 'small'
+                        },
                         props: {
                             icon: 'span.mdi.mdi-opacity',
                             unit: '%',

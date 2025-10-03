@@ -114,10 +114,17 @@
     box-sizing: border-box;
 }
 
-.as-solid-color-picker-color-hex,
-.as-solid-color-picker-color-opacity {
+.as-flexicon-input.as-solid-color-picker-color-hex,
+.as-flexicon-input.as-solid-color-picker-color-opacity {
     font-size: inherit;
     width: 6em;
+    height: 26px;
+}
+
+.as-solid-color-picker-color-hex .as-flexicon-input-icon-ctn svg,
+.as-solid-color-picker-color-opacity .as-flexicon-input-icon-ctn svg{
+    width: 1em;
+    height: 1em;
 }
 
 .as-solid-color-picker-color-hex input {
@@ -126,6 +133,21 @@
 
 .as-flexicon-input.as-solid-color-picker-color-opacity.as-flexicon-input-has-icon.as-flexicon-input-has-unit input {
     width: calc(100% - 4em);
+}
+
+.as-flexicon-button.as-solid-color-picker-submit-btn {
+    width: 28px;
+    height: 28px;
+    min-width: unset;
+}
+
+.as-flexicon-button.as-solid-color-picker-submit-btn .as-flexicon-button-icon-container{
+    font-size: 18px;
+    color: var(--gray-color);
+}
+
+.as-flexicon-button.as-solid-color-picker-submit-btn  .as-flexicon-button-content {
+    padding: 0;
 }
 
 .as-solid-color-picker.as-nullable .as-solid-color-picker-none-ctn{
