@@ -8,11 +8,14 @@ import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import { base64EncodeUnicode } from "absol/src/Converter/base64";
 import red_cross_tpl from "../../assets/icon/red_cross.tpl";
 import Color from "absol/src/Color/Color";
+import { AbstractInput } from "../Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 var isMobile = BrowserDetector.isMobile;
 
 
 /***
+ * @augments AbstractInput
  * @extends AElement
  * @constructor
  */
@@ -28,6 +31,7 @@ function ColorPickerButton() {
     this.$innerValue = $('.as-color-picker-button-inner', this);
     this.prepare();
     this.on('click', this.eventHandler.click);
+    AbstractInput.call(this);
     /***
      * @name value
      * @type {string|Color}
@@ -51,6 +55,8 @@ function ColorPickerButton() {
      * @memberOf ColorPickerButton#
      */
 }
+
+mixClass(ColorPickerButton, AbstractInput);
 
 ColorPickerButton.tag = 'ColorPickerButton'.toLowerCase();
 

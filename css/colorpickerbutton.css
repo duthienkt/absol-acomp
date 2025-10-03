@@ -6,7 +6,24 @@
     background-color: transparent;
     padding: 5px;
     outline: none;
+    box-sizing: border-box;
 }
+
+.as-color-picker-button[data-size="small"] {
+    height: var(--small-size);
+    border-radius: var(--small-radius);
+}
+
+.as-color-picker-button[data-size="regular"] {
+    height: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
+.as-color-picker-button[data-size="large"] {
+    height: var(--large-size);
+    border-radius: var(--large-radius);
+}
+
 
 .as-color-picker-button-inner {
     height: 100%;
@@ -42,7 +59,7 @@
     display: none;
 }
 
-.as-color-picker-button.as-border-none{
+.as-color-picker-button.as-border-none {
     border: none;
 }
 
