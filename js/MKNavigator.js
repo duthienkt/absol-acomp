@@ -223,6 +223,7 @@ MKNavigator.property.items = {
             this.removeClass('mk-has-draggable');
         }
         this._updateHiddenValues();
+        this.updateValue();
     },
     get: function () {
         return this.rawItems || [];
