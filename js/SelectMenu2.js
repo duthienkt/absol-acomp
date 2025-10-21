@@ -241,8 +241,18 @@ SelectMenu.property.items = {
     set: function (items) {
         items = items || [];
         this.$selectlistBox.items = items;
-        this.addStyle('--select-list-estimate-width', (this.$selectlistBox._estimateWidth) / 14 + 'em');
-        this.addStyle('--select-list-desc-width', (this.$selectlistBox._estimateDescWidth) / 14 + 'em');
+        var estimateWidth = 0;
+        var estimateDescWidth = 0;
+        if (this.$selectlistBox._estimateSize) {
+            estimateWidth = this.$selectlistBox._estimateSize.width;
+            estimateDescWidth = this.$selectlistBox._estimateSize.descWidth;
+        }
+        else {
+            estimateWidth = this.$selectlistBox._estimateWidth|| 0;
+            estimateDescWidth = this.$selectlistBox._estimateDescWidth || 0;
+        }
+        this.addStyle('--select-list-estimate-width', estimateWidth / 14 + 'em');
+        this.addStyle('--select-list-desc-width', estimateDescWidth / 14 + 'em');
         this.updateItem();
         this.$selectlistBox.values = [this.value];
     },
