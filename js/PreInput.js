@@ -62,9 +62,13 @@ PreInput.prototype.applyData = function (text, offset) {
             if (typeof offset == 'number') {
                 range.setStart(textNode, Math.min(text.length, offset));
             }
-            else {
+            else if (offset && typeof offset.start == 'number' && typeof offset.end == 'number') {
                 range.setStart(textNode, Math.min(text.length, offset.start));
                 range.setEnd(textNode, Math.min(text.length, offset.end));
+            }
+            else {
+                range.setStart(textNode, text.length);
+                range.setEnd(textNode, text.length);
             }
             sel.addRange(range);
             this.scrollIntoRange(range);
@@ -202,6 +206,8 @@ PreInput.prototype.getSelectPosition = function () {
         var sel = window.getSelection();
         if (sel.getRangeAt && sel.rangeCount) {
             var range = sel.getRangeAt(0);
+            if (!range) return null;
+            if (!this.contains(range.startContainer) || !this.contains(range.endContainer)) return null;
             var direction = 'forward';
             var cmpPosition = sel.anchorNode.compareDocumentPosition(sel.focusNode);
             if (cmpPosition === 4) {
