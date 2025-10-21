@@ -275,6 +275,7 @@ TimeRange24Input.property.outputMode = {
     set: function (value) {
         this.$offset.outputMode = value;
         this.$duration.outputMode = value;
+        value = this.$offset.outputMode;
         if (value === 'borderless') {
             this.addClass('as-border-none');
             this.removeClass('as-background-none');
@@ -284,13 +285,11 @@ TimeRange24Input.property.outputMode = {
             this.removeClass('as-border-none');
             this.addClass('as-background-none');
         }
-        else if (value === 'default') {
+        else {
             this.removeClass('as-background-none');
             this.removeClass('as-border-none');
         }
-        else {
-            value = false;
-        }
+
         this.readOnly = !!value;
         this.$offset.outputMode = value;
         this.$duration.outputMode = value;
