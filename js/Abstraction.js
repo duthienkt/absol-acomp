@@ -12,6 +12,13 @@ export function AbstractStyleExtended() {
         this.extendStyle = Object.assign(new Attributes(this), this.extendStyle || {});
         this.extendStyle.loadAttributeHandlers(this.styleHandlers || {});
     }
+
+    /**
+     * undefined mean unset=> remove class, true = ""
+     * @type {"borderless"|boolean|undefined}
+     * @name outputMode
+     * @memberOf AbstractStyleExtended#
+     */
 }
 
 AbstractStyleExtended.prototype.extendStyle = {
@@ -69,7 +76,7 @@ AbstractStyleExtended.prototype.removeStyle = function (name) {
 export function AbstractInput() {
     AbstractStyleExtended.call(this);
     /**
-     * true: default; borderless: no border, no padding, false: normal
+     * true: default; borderless: no border, true: transparent
      * @type {"borderless"|boolean}
      * @name outputMode
      * @memberOf AbstractInput#
@@ -80,32 +87,40 @@ AbstractInput.property = {};
 
 AbstractInput.property.outputMode = {
     set: function (value) {
+        var readOnly = null;
         if (value === 'borderless') {
+            readOnly = true;
             this.addClass('as-border-none');
             this.removeClass('as-background-none');
 
         }
         else if (value === "true" || value === true) {
+            value = true;
+            readOnly = true;
             this.removeClass('as-border-none');
             this.addClass('as-background-none');
         }
-        else if (value === 'default') {
+        else if (value === "false" || value === false) {
+            value = false;
+            readOnly = false;
+        }
+        else  {
+            value = null;
+            readOnly = null;
             this.removeClass('as-background-none');
             this.removeClass('as-border-none');
         }
-        else {
-            value = false;
+        if (readOnly !== null) {//if null, do not set readOnly, just clear style
+            this.readOnly = !!value;
         }
-        this.readOnly = !!value;
         this._outputMode = value;
     },
     get: function () {
-        if (this.readOnly) {
-            return this._outputMode || 'default';
+        var value = this._outputMode;
+        if ([true, false, 'borderless'].indexOf(value) < 0) {
+            value = null;
         }
-        else {
-            return false;
-        }
+        return value;
     }
 };
 
