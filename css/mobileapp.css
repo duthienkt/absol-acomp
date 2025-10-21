@@ -1,4 +1,8 @@
 /**** APP ***************/
+:root {
+    ---as-bottom-tabbar-height : 56px;
+}
+
 
 .am-application {
     width: 100%;
@@ -23,7 +27,7 @@
 }
 
 .am-application.am-show-tabbar .am-application-frameview {
-    height: calc(100% - 59px);
+    height: calc(100% - var(---as-bottom-tabbar-height));
 }
 
 
@@ -503,25 +507,34 @@ button.am-header-bar-action {
 
 }
 
-.am-bottom-tabbar-item > img {
-    width: 35px;
-    height: 35px;
-    display: inline-block;
-}
-
-div.am-bottom-tabbar-item > span{
-    font-size: 35px;
+.am-bottom-tabbar-item > img,
+.am-bottom-tabbar-item > span
+{
+    font-size: 36px;
     display: inline-block;
     vertical-align: middle;
     line-height: 1;
 }
 
+.am-bottom-tabbar-item > img {
+    width: 1em;
+    height: 1em;
+}
+
+
 
 .am-bottom-tabbar-item {
     vertical-align: middle;
-    height: 59px;
+    height: 100%;
 }
 
 div.am-bottom-tabbar {
-    height: 59px;
+    height: var(---as-bottom-tabbar-height);
+    box-shadow: 0 0 10px 1px rgb(39,35,97, 0.12);
 }
+
+.am-bottom-tabbar-content {
+    height: 100%;
+}
+
+/*0px 0px 10px 1px rgb(39,35,97, 0.12)*/
