@@ -523,6 +523,16 @@ LocationView.prototype.getPolylines = function () {
     return this.$polylines.slice();
 };
 
+LocationView.prototype.getPolylinesAsync  = function () {
+    if (this.polylineSync) {
+        return this.polylineSync.then(()=>{
+            return this.$polylines.slice()
+        });
+    }
+    else return  Promise.resolve([]);
+};
+
+
 
 LocationView.property = {};
 
@@ -573,7 +583,7 @@ LocationView.property.polylines = {
             pll.remove();
         });
 
-        getGoogleMarkerLib().then(() => {
+        this.polylineSync = getGoogleMarkerLib().then(() => {
             this.$polylines = polylines.map(function (pll) {
                 return new LVPolyline(this, pll);
             }.bind(this));
