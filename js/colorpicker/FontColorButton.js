@@ -5,8 +5,11 @@ import Follower from "../Follower";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { findMaxZIndex } from "../utils";
 import SolidColorPicker from "./SolidColorPicker";
+import { AbstractInput } from "../Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 /**
+ * @augments AbstractInput
  * @extends AElement
  * @constructor
  */
@@ -20,6 +23,7 @@ function FontColorButton() {
     });
     this.$extend = $('.as-ribbon-split-button-extend', this);
     new FCBPickerController(this);
+    AbstractInput.call(this);
 
     /**
      * @type {string}
@@ -28,7 +32,11 @@ function FontColorButton() {
      */
 }
 
+mixClass(FontColorButton, AbstractInput);
+
 FontColorButton.tag = 'FontColorButton'.toLowerCase();
+
+FontColorButton.prototype.extendStyle.size = 'v0';
 
 FontColorButton.render = function () {
     return _({
@@ -68,7 +76,6 @@ FontColorButton.render = function () {
     });
 };
 
-FontColorButton.property = {};
 FontColorButton.property.value = {
     set: function (value) {
         this.$value.value = value;
