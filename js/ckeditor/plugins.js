@@ -104,7 +104,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
             {
                 name: 'basicstyles',
                 items: ['Bold', 'Italic', 'Underline', 'TextColor', 'BGColor', 'NumberedList', 'BulletedList',
-                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'RemoveFormat',
                     userImageFileDialog ? 'image_mgn_dialog' : 'Image']
             },
             // { name: 'styles', items: ['Styles', 'Format', 'Font', 'FontSize'] },
@@ -127,7 +127,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
             {
                 name: 'basicstyles',
                 items: ['Bold', 'Italic', 'Underline', 'TextColor', 'BGColor', 'NumberedList', 'BulletedList',
-                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+                    'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', 'RemoveFormat',
                     userImageFileDialog ? 'image_mgn_dialog' : 'Image']
             },
             { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
