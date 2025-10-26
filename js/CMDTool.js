@@ -10,6 +10,7 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import OOP from "absol/src/HTML5/OOP";
 import ACore, { $, _ } from "../ACore";
+import { stringHashCode } from "absol/src/String/stringUtils";
 
 /**
  * @typedef {Object} CMDTabListNodeDeclaration
@@ -160,14 +161,45 @@ CMDTool.prototype.refresh = function () {
     var delegate = this.delegate;
     if (!delegate) return;
     this.getView();
+    var groupTree = delegate.getCmdGroupTree();
+    var hash = this.hashOf(groupTree);
+    if (hash === this._lastGroupTreeHash) {
+        this.updateVisibility();
+        return;
+    }
+    else {
+        this._lastGroupTreeHash = hash;
+    }
     this.$view.clearChild();
     this.$nodes = {};
-    var groupTree = delegate.getCmdGroupTree();
-
     var visit = (node) => {
         return this.createNode(node, null);
     }
     this.$view.addChild(visit(groupTree));
+};
+
+CMDTool.prototype.hashOf = function (nd) {
+    if (nd === null) return 0;
+
+    if (nd === undefined) return 0;
+    var s = '';
+    var keys;
+    if (typeof nd === "object") {
+        s += '{';
+        keys = Object.keys(nd);
+        keys.sort();
+        s += keys.map(k => k + ':' + this.hashOf(nd[k])).join(',');
+        s += '}'
+    }
+    else if (Array.isArray(nd)) {
+        s += '[';
+        s += nd.map(item => this.hashOf(item)).join(',');
+        s += ']';
+    }
+    else {
+        s += nd + '';
+    }
+    return stringHashCode(s);
 };
 
 
@@ -227,7 +259,7 @@ CMDTool.prototype.cmdNodeHandlers = {
             if (!items[this.$tabBar.value]) this.$tabBar.value = '0';
             if (!this.$tabList) {
                 this.$tabList = _({
-                    class:'as-cmd-tool-tab-list',
+                    class: 'as-cmd-tool-tab-list',
 
                 });
             }
