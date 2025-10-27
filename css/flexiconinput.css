@@ -116,3 +116,136 @@
 .as-flexicon-input.as-flexicon-input-has-icon.as-flexicon-input-has-unit input {
     width: calc(100% - 3em);
 }
+
+.as-ribbon-text-input {
+    border: 1px solid #dddddd;
+    display: inline-block;
+    vertical-align: middle;
+    height: var(--base-size);
+    box-sizing: border-box;
+    --base-size: var(--default-size);
+    width: 100px;
+    overflow: hidden;
+    --label-width: 0px;
+    --unit-width: 0px;
+    font-family: Roboto, sans-serif;
+    position: relative;
+    color: var(--dark-color);
+    background-color: white;
+}
+
+.as-ribbon-text-input[data-size="large"] {
+    --base-size: var(--large-size);
+    font-size: var(--large-font-size);
+    border-radius: var(--large-radius);
+}
+
+.as-ribbon-text-input[data-size="regular"] {
+    --base-size: var(--default-size);
+    font-size: var(--default-font-size);
+    border-radius: var(--default-radius);
+}
+
+
+.as-ribbon-text-input[data-size="small"] {
+    --base-size: var(--small-size);
+    font-size: var(--small-font-size);
+    border-radius: var(--small-radius);
+}
+
+
+.as-ribbon-text-input[data-size="tiny"] {
+    --base-size: var(--tiny-size);
+    font-size: var(--tiny-font-size);
+    border-radius: var(--tiny-radius);
+}
+
+.as-ribbon-text-input input {
+    font-size: inherit;
+    font-family: inherit;
+    height: 100%;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: inherit;
+    color: currentColor;
+}
+
+.as-ribbon-text-input.as-disabled{
+    pointer-events: none;
+    background-color: var(--as-disabled-background-color);
+    user-select: none;
+    color: var(--as-disabled-text-color);
+}
+
+
+.as-ribbon-text-input.as-has-label input {
+    padding-left: calc(var(--label-width) + 6px);
+}
+
+.as-ribbon-text-input-label-ctn:empty,
+.as-ribbon-text-input-unit-ctn:empty {
+    display: none;
+}
+
+.as-ribbon-text-input-label-ctn {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding-left: 3px;
+    text-align: center;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.as-ribbon-text-input-unit-ctn {
+    text-align: left;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.as-ribbon-text-input-dropdown-btn {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: var(--base-size);
+    border: none;
+    background-color: transparent;
+    outline: none;
+    font-size: inherit;
+    padding: 0;
+}
+
+.as-ribbon-text-input-dropdown-btn > * {
+    font-size: 1.25em;
+}
+
+
+.as-ribbon-text-input.as-has-dropdown {
+    padding-right: var(--base-size) ;
+}
+
+.as-ribbon-text-input.as-has-unit input {
+    padding-right:  calc(var(--unit-width) + 3px);
+}
+
+
+.as-ribbon-text-input.as-has-dropdown  .as-ribbon-text-input-unit-ctn {
+    right: var(--base-size);
+}
+
+.as-ribbon-text-input.as-has-dropdown .as-ribbon-text-input-dropdown-btn {
+    display: initial;
+}
