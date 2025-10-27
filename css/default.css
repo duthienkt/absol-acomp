@@ -31,6 +31,10 @@
     --dropdown-icon-color:  #525866;
 
 
+    --tiny-size: 24px;
+    --tiny-font-size: 12px;
+    --tiny-radius: 4px;
+
     /******* KEVIEW OLD FORMAT **************/
     --button-min-width: 110px;
     --button-round-coner: 3px;

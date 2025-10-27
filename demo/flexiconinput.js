@@ -56,5 +56,29 @@ $('#ip2').selfReplace(input2);
         }
     }).addTo(ctn);
 
-})
+});
+
+_('br').addTo(document.body);
+
+
+['tiny', 'small', 'regular', 'large'].forEach(function (size) {
+    var input0 = _({
+        tag: 'ribbontextinput',
+        style: {
+            margin: '0.2em',
+            size: size
+        },
+        props: {
+            label: 'W',
+            value: '20',
+            unit: 'px',
+            items:[
+                {
+                    text:"px"
+                }
+            ]
+        }
+    }).addTo(ctn);
+
+});
 
