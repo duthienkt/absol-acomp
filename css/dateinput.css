@@ -73,6 +73,12 @@
     min-width: calc(var(--format-width) + 1em);
 }
 
+.as-date-input.as-value-null.as-read-only.as-border-none .as-date-input-text,
+.as-date-input.as-value-null.as-read-only.as-background-none .as-date-input-text
+{
+    visibility: hidden;
+}
+
 .as-date-input-text {
     outline: none;
     width: calc(100% - 29px);
