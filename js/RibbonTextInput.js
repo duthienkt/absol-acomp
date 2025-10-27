@@ -5,12 +5,19 @@ import { isRealNumber } from "absol/src/Converter/DataTypes";
 import '../css/flexiconinput.css'
 import TextMeasure from "./TextMeasure";
 import { QuickMenuInstance } from "./QuickMenu";
+import { copyEvent } from "absol/src/HTML5/EventEmitter";
 
 function RibbonTextInput() {
     this.$input = $('input', this);
     this.$labelCtn = $('.as-ribbon-text-input-label-ctn', this);
     this.$unitCtn = $('.as-ribbon-text-input-unit-ctn', this);
     this.$dropdownBtn = $('.as-ribbon-text-input-dropdown-btn', this);
+    ['change', 'focus', 'blur', 'input'].forEach(key => {
+        this.$input.on(key, event => {
+            var ev = copyEvent(event, { target: this, type: event.type, originalEvent: event });
+            this.emit(event.type, ev, this);
+        });
+    })
     /**
      * @type {HTMLElement|string|object}
      * @name label
@@ -39,8 +46,10 @@ function RibbonTextInput() {
             }
             return {
                 items: items,
-
             }
+        },
+        onSelect: item => {
+            this.emit('select', { target: this, type: 'select', item: item }, this);
         },
         anchor: [2, 3, 4, 5]
     });
@@ -53,6 +62,7 @@ RibbonTextInput.tag = 'RibbonTextInput'.toLowerCase();
 RibbonTextInput.render = function () {
     return _({
         tag: 'div',
+        extendEvent: ['select', 'change', 'focus', 'blur', 'input'],
         class: 'as-ribbon-text-input',
         child: [
             {
@@ -120,7 +130,7 @@ RibbonTextInput.property.unit = {
             this.addClass('as-has-unit');
             this.$unitCtn.addChild(_({ text: value }));
             console.log(TextMeasure.measureWidth(value, TextMeasure.FONT_ROBOTO, 14));
-            this.addStyle('--unit-width', Math.ceil(TextMeasure.measureWidth(value, TextMeasure.FONT_ROBOTO, 14) )/ 14 + 'em');
+            this.addStyle('--unit-width', Math.ceil(TextMeasure.measureWidth(value, TextMeasure.FONT_ROBOTO, 14)) / 14 + 'em');
         }
         else {
             this.removeClass('as-has-unit');
