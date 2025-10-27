@@ -106,13 +106,11 @@ QuickMenuInstance.prototype._deinit = function () {
 };
 
 QuickMenuInstance.prototype.getMenuProps = function () {
-    var props;
-    if (this.opt.getMenuProps) {
-        props = this.opt.getMenuProps();
+    var props = this.opt.getMenuProps || this.opt.menuProps;
+    if (typeof props === "function") {
+        props = props.call(props.opt);
     }
-    else {
-        props = this.opt.menuProps;
-    }
+
     props = props || {};
     return Object.assign({ extendClasses: [], extendStyle: {} }, props);
 };
