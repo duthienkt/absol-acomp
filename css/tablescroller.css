@@ -109,7 +109,11 @@
     width: 100%;
     height: 100%;
     max-height: var(--content-height);
-    max-width: var(--content-width);
+    max-width: calc(max(var(--content-width), var(--outer-width) - 15px));
+}
+
+.absol-table-scroller:not(.as-scroll-vertical) .absol-table-scroller-content {
+    max-width: calc(max(var(--content-width), var(--outer-width)));
 }
 
 .absol-table-scroller-render-space {
