@@ -136,6 +136,9 @@ TimeRange24Input.prototype._updateTextData = function () {
     var dayOffset = this.dayOffset;
     var duration = this.duration;
     var text = formatTimeRange24({dayOffset: dayOffset, duration: duration}, {gmt: this.gmt});
+    if (!isRealNumber(dayOffset) && !isRealNumber(duration)) {
+        text = '';
+    }
     this.attr('data-text', text);
 };
 
