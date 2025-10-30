@@ -979,33 +979,122 @@ export function parseLocalFloat(text, opt) {
     return parseFloat(text);
 }
 
+/**
+ *
+ * @param value
+ * @param opt
+ */
 export function formatLocalFloat(value, opt) {
-    if (typeof opt === "string") opt = { locales: opt };
-    var formatOpt = Object.assign({}, opt);
-    delete formatOpt.locales;
-    if (typeof formatOpt.fractionDigits === "number") {
-        formatOpt.maximumFractionDigits = formatOpt.fractionDigits;
-        formatOpt.minimumFractionDigits = formatOpt.fractionDigits;
-        delete formatOpt.fractionDigits;
+    //todo: get option from systemconfig
+    if (typeof opt === "string") {
+        opt = { locales: opt };
+    }
+    else if (isInteger(opt)) {
+        opt = {
+            fractionDigits: opt
+        }
+    }
+    else if (opt && (typeof opt === "object")) {
+        opt = Object.assign({}, opt);
+    }
+    else {
+        opt = {};
     }
 
-    var locales = (opt && opt.locales) || (window.systemconfig && window.systemconfig.numberFormatLocales);
-    var sample;
-    var thousandSeparator;
-    var decimalSeparator;
-    if (!locales) {
-        sample = (123456.78.toLocaleString());
-        thousandSeparator = sample.match(/3(.?)4/)[1] || '';
-        decimalSeparator = sample.match(/6(.?)7/)[1];
-        if (decimalSeparator === '.') locales = 'en-US';
-        else if (decimalSeparator === ',') {
-            locales = 'vi-VN';
+    if (!opt.locales) {
+        opt.locales = new Intl.NumberFormat().resolvedOptions().locale;
+    }
+
+    if (window.systemconfig) {
+        if (typeof window.systemconfig.commaSign === "string") {//is decimal separator
+            if (!('decimalSeparator' in opt)) {
+                opt.decimalSeparator = window.systemconfig.commaSign;
+            }
+        }
+
+        if (typeof window.systemconfig.separateSign === "string") {//is thousand separator
+            if (!('thousandSeparator' in opt)) {
+                opt.thousandSeparator = window.systemconfig.separateSign;
+            }
         }
     }
 
-    return new Intl.NumberFormat(locales, formatOpt).format(value);
-}
 
+    var formatOpt = Object.assign({});//for intl
+
+    if (isInteger(opt.fractionDigits)) {
+        opt.fractionDigits = Math.max(-20, Math.min(20, opt.fractionDigits));
+        if (opt.fractionDigits < 0) {
+            opt.fractionDigits = 0;
+            opt.pow10 = -opt.fractionDigits;
+        }
+
+        formatOpt.maximumFractionDigits = opt.fractionDigits;
+        formatOpt.minimumFractionDigits = opt.fractionDigits;
+    }
+    else {
+        if (isNaturalNumber(opt.maximumFractionDigits)) {
+            formatOpt.maximumFractionDigits = Math.min(20, opt.maximumFractionDigits);
+        }
+        else {
+            formatOpt.maximumFractionDigits = 20;
+        }
+
+        if (isNaturalNumber(opt.minimumFractionDigits)) {
+            formatOpt.minimumFractionDigits = Math.max(0, Math.min(20, opt.minimumFractionDigits));
+        }
+        else {
+            formatOpt.minimumFractionDigits = 0;
+        }
+    }
+
+    if (isNaturalNumber(opt.pow10)) {
+        if (opt.pow10 > 0) {
+            value = Math.round(value / Math.pow(10, opt.pow10)) * Math.pow(10, opt.pow10);
+        }
+        else {
+            value = Math.round(value);
+        }
+    }
+
+    if (typeof opt.decimalSeparator === "string") {
+        if (opt.thousandSeparator === opt.decimalSeparator) {
+            if (opt.decimalSeparator === '.') {
+                opt.thousandSeparator = ',';
+            }
+            else if (opt.decimalSeparator === ',') {
+                opt.thousandSeparator = '.';
+            }
+            else {
+                opt.thousandSeparator = '';
+            }
+        }
+    }
+    else if (typeof opt.thousandSeparator === "string") {
+        if (opt.thousandSeparator === ',') {
+            if (opt.decimalSeparator === opt.thousandSeparator || !opt.decimalSeparator) {
+                opt.decimalSeparator = '.';
+            }
+        }
+        else if (opt.thousandSeparator === '.') {
+            if (opt.decimalSeparator === opt.thousandSeparator || !opt.decimalSeparator) {
+                opt.decimalSeparator = ',';
+            }
+        }
+        else if (!opt.decimalSeparator) {
+            opt.decimalSeparator = '.';
+        }
+    }
+
+
+    var parts = new Intl.NumberFormat(opt.locales, formatOpt).formatToParts(value);
+
+    return parts.map(pt => {
+        if ((pt.type === 'group') && (typeof opt.thousandSeparator === "string")) return opt.thousandSeparator;
+        else if ((pt.type === 'decimal') && (typeof opt.decimalSeparator === "string")) return opt.decimalSeparator;
+        return pt.value;
+    }).join('');
+}
 
 /***
  *
@@ -1774,3 +1863,4 @@ export function autoNormalizeFileName(file) {
         file.converted_name = normalizeFileName(file.name);
     }
 }
+
