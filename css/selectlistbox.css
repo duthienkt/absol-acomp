@@ -66,8 +66,8 @@ div.absol-follower.as-select-list-box {
     right: 0;
 }
 
-.as-select-list-box-search-ctn .absol-search-text-input{
-    height: 30px;/*avoid breaking layout*/
+.as-select-list-box-search-ctn .absol-search-text-input {
+    height: 30px; /*avoid breaking layout*/
 }
 
 .as-select-list-box.as-enable-search.as-anchor-6 .as-select-list-box-search-ctn,
@@ -163,3 +163,21 @@ div.absol-follower.as-select-list-box {
 
 
 /**********************************************************************************************************************/
+
+
+.as-single-select-list {
+    border: 1px solid var(--border-color);
+    border-radius: var(--default-radius);
+    padding: var(--distance-1);
+    line-height: 1.5;
+    overflow-y: auto;
+}
+
+.as-single-select-list-item:hover {
+    background-color: #efefef;
+}
+
+.as-single-select-list-item.as-selected,
+.as-single-select-list-item.as-selected:hover {
+    background-color: var(--table-new-row-selected);
+}
