@@ -198,6 +198,8 @@ import CheckboxStepper from "../CheckboxStepper";
 import LinearBackground from "../LinearBackground";
 import { EmptyTablePlaceholder } from "../dynamictable/DTBody";
 import ChatGPTButton from "../ChatGPTButton";
+import RibbonTextInput from "../RibbonTextInput";
+import SingleSelectList from "../SingleSelectList";
 
 
 export var publicCreators = [
@@ -313,6 +315,7 @@ export var publicCreators = [
     RadioInput,
     RibbonSplitButton,
     RibbonButton,
+    RibbonTextInput,
     SelectRibbonMenu,
     RotatedText,
     SelectList,
@@ -322,6 +325,7 @@ export var publicCreators = [
     SelectListBox,
     SelectTreeBox,
     SelectMenu2,
+    SingleSelectList,
     SelectBox,
     MultiSelectMenu,
     MultiCheckTreeLeafBox,

@@ -12,7 +12,7 @@ function RibbonTextInput() {
     this.$labelCtn = $('.as-ribbon-text-input-label-ctn', this);
     this.$unitCtn = $('.as-ribbon-text-input-unit-ctn', this);
     this.$dropdownBtn = $('.as-ribbon-text-input-dropdown-btn', this);
-    ['change', 'focus', 'blur', 'input'].forEach(key => {
+    ['change', 'focus', 'blur', 'input', 'keydown', 'keyup'].forEach(key => {
         this.$input.on(key, event => {
             var ev = copyEvent(event, { target: this, type: event.type, originalEvent: event });
             this.emit(event.type, ev, this);
@@ -62,7 +62,7 @@ RibbonTextInput.tag = 'RibbonTextInput'.toLowerCase();
 RibbonTextInput.render = function () {
     return _({
         tag: 'div',
-        extendEvent: ['select', 'change', 'focus', 'blur', 'input'],
+        extendEvent: ['select', 'change', 'focus', 'blur', 'input', 'keydown', 'keyup'],
         class: 'as-ribbon-text-input',
         child: [
             {
