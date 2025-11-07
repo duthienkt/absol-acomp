@@ -179,8 +179,10 @@ BContextCapture.prototype.ev_clickOut = function (event) {
 };
 
 var instance = new BContextCapture();
-BrowserDetector.nativeContextMenuSupport = true;
-ContextCaptor.auto = instance.auto.bind(instance);//override old version
 
+if ((!BrowserDetector.isMobile || !BrowserDetector.isSafari) && (BrowserDetector.os.type !== 'ios')) {
+    BrowserDetector.nativeContextMenuSupport = true;
+    ContextCaptor.auto = instance.auto.bind(instance);//override old version
+}
 
 export default instance;
