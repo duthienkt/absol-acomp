@@ -173,6 +173,11 @@ div.absol-follower.as-select-list-box {
     overflow-y: auto;
 }
 
+.as-single-select-list-item,
+.as-single-select-list-item * {
+    cursor: default;
+}
+
 .as-single-select-list-item:hover {
     background-color: #efefef;
 }
