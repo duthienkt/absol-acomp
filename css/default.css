@@ -148,5 +148,7 @@
 
     --grid-3-label-width: 150px;
     --grid-2-label-width: 200px;
+    font-size: 14px;
+    font-family: Roboto, sans-serif;
 }
 

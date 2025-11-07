@@ -15,6 +15,7 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
 import { arrayUnique } from "absol/src/DataStructure/Array";
 import { stringHashCode } from "absol/src/String/stringUtils";
+import TextMeasure from "./TextMeasure";
 
 
 var itemPool = [];
@@ -60,15 +61,17 @@ function fillItemToPage($parent, $page, n) {
     }
 }
 
-var mTextMeasurement = null;
-
 export var measureArial14TextWidth = text => {
-    if (!mTextMeasurement) {
-        mTextMeasurement = new TextMeasurement();
-        mTextMeasurement.compute('14px arial');
-    }
-    return mTextMeasurement.measureTextWidth(text, '14px arial');
+    return TextMeasure.measureWidth(text, TextMeasure.FONT_ARIAL, 14);
+
 }
+
+
+export var measureRoboto14TextWidth = text => {
+    return TextMeasure.measureWidth(text, TextMeasure.FONT_ROBOTO, 14);
+}
+
+
 
 export var keyStringOfItem = item => {
     return keyStringOf(item.value) + stringHashCode(item.text + '');
@@ -360,11 +363,11 @@ CheckListBox.property.items = {
         this.itemHolders = items.map(it => new CLHolder(this, it));
 
         var res = this.itemHolders.reduce(function visit(ac, cr) {
-            var textWidth = 3.5 * 14 + 1.75 * 14 * cr.level + 14 + measureArial14TextWidth(cr.data.text + '') + 7 + 17
+            var textWidth = 3.5 * 14 + 1.75 * 14 * cr.level + 14 + TextMeasure.measureWidth(cr.data.text + '', TextMeasure.FONT_ROBOTO, 14) + 7 + 17
             if (cr.data.icon) textWidth += 32;
             ac.textWidth = Math.max(ac.textWidth, textWidth);
             if (cr.data.desc) {
-                ac.descWidth = Math.max(ac.descWidth, measureArial14TextWidth(cr.data.desc + ''));
+                ac.descWidth = Math.max(ac.descWidth, measureRoboto14TextWidth(cr.data.desc + ''));
 
             }
             ac.dict[cr.valueKey] = ac.dict[cr.valueKey] || [];

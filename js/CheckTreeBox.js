@@ -7,7 +7,6 @@ import { prepareSearchForList, searchTreeListByText } from "./list/search";
 import SelectListBox from "./SelectListBox";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { arrayCompare, arrayUnique } from "absol/src/DataStructure/Array";
-import { measureArial14TextWidth } from "./CheckListBox";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import SearchTextInput from "./Searcher";
 import OOP from "absol/src/HTML5/OOP";
@@ -749,9 +748,9 @@ TreeNodeHolder.prototype.calcWidth = function () {
     width += 14.7 + 5;//toggle icon
     width += 16;//checkbox
     if (this.item.icon) width += 21;//icon
-    width += 7 + TextMeasure.measureWidth(this.item.text || '', TextMeasure.FONT_ARIAL, 14);//margin-text
+    width += 7 + TextMeasure.measureWidth(this.item.text || '', TextMeasure.FONT_ROBOTO, 14);//margin-text
 
-    if (this.item.desc) width += 6 + TextMeasure.measureWidth(this.item.desc || '', TextMeasure.FONT_ARIAL, 11.9);
+    if (this.item.desc) width += 6 + TextMeasure.measureWidth(this.item.desc || '', TextMeasure.FONT_ROBOTO, 11.9);
     return width;
 };
 
@@ -759,8 +758,8 @@ TreeNodeHolder.prototype.calcRawWidth = function () {
     var width = 6;//padding
     width += 16;//checkbox
     if (this.item.icon) width += 21;//icon
-    width += 7 + TextMeasure.measureWidth(this.item.text || '', TextMeasure.FONT_ARIAL, 14);//margin-text
-    if (this.item.desc) width += 6 + TextMeasure.measureWidth(this.item.desc || '', TextMeasure.FONT_ARIAL, 11.9);
+    width += 7 + TextMeasure.measureWidth(this.item.text || '', TextMeasure.FONT_ROBOTO, 14);//margin-text
+    if (this.item.desc) width += 6 + TextMeasure.measureWidth(this.item.desc || '', TextMeasure.FONT_ROBOTO, 11.9);
     return width;
 };
 
