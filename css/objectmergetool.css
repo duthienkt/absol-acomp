@@ -122,7 +122,7 @@ img.as-omt-field-value {
 }
 
 .as-omt-dialog .as-message-dialog-body {
-    max-height: calc(90vh - 5em);
+    max-height: calc(90vh - 10em);
     max-width: calc(90vw - 5em);
     overflow: auto;
 }
