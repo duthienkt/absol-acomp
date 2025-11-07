@@ -9,6 +9,8 @@ import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import SearchTextInput from "../Searcher";
 import { phraseMatch, wordLike, wordsMatch } from "absol/src/String/stringMatching";
 import { harmonicMean } from "absol/src/Math/int";
+import { isNaturalNumber } from "../utils";
+import { implicitNaturalNumber } from "absol/src/Converter/DataTypes";
 
 
 var makeTextToNode = (data, pElt) => {
@@ -140,7 +142,44 @@ MExploreItemBlock.property.hidden = {
     get: function () {
         return this.hasClass('as-hidden');
     }
-}
+};
+
+MExploreItemBlock.property.count = {
+    set: function (value) {
+        value = implicitNaturalNumber(value);
+        if (!isNaturalNumber(value)) value = 0;
+        if (value) {
+            this.$icon.attr('data-count', value);
+        }
+        else {
+            this.$icon.attr('data-count', null);
+        }
+        this._count = value;
+    },
+    get: function () {
+        var value = this._count;
+        if (!isNaturalNumber(value)) value = 0;
+        return value;
+    }
+};
+
+MExploreItemBlock.property.value = {
+    set: function (value) {
+        if (value === null || value === undefined) value = null;
+        this._value = value;
+        if (value === null){
+            this.attr('data-value', null);
+        }
+        else {
+            this.attr('data-value', value + '');
+        }
+    },
+    get: function () {
+        var value = this._value;
+        if (value === null || value === undefined) value = null;
+        return value;
+    }
+};
 
 
 export function MExploreItemList() {
@@ -231,7 +270,8 @@ MExploreGroup.property.items = {
                     data: it,
                     name: it.name,
                     icon: it.icon,
-                    hidden: !!it.hidden
+                    hidden: !!it.hidden,
+                    count: it.count
                 },
                 on: {
                     click: event => {
@@ -245,9 +285,6 @@ MExploreGroup.property.items = {
                     }
                 }
             });
-            if (window.ABSOL_DEBUG) {
-                elt.attr('title', 'score: ' + it.score);
-            }
             return elt;
         });
         this.$itemCtn.addChild(this.$items);
@@ -344,8 +381,10 @@ MSpringboardMenu.prototype.updateSize = function () {
     if (width < 10) return;
     var paddingLeft = parseFloat(style.paddingLeft.replace('px', ''));
     var paddingRight = parseFloat(style.paddingRight.replace('px', ''));
-    var rowLength = Math.max(1, Math.floor((width - paddingLeft - paddingRight) / 150));
-    var itemWidth = Math.floor((width - paddingLeft - paddingRight) / rowLength) - 1;
+    var availableWidth = width - paddingLeft - paddingRight;
+    var itemWidth = this.hasClass('as-mobile') ? (90 * Math.max(1, Math.sqrt(width/400))) : 150;
+    var rowLength = Math.max(1, Math.floor( availableWidth/ itemWidth));
+    itemWidth = Math.floor(availableWidth / rowLength) - 1;
     this.addStyle('--item-width', itemWidth + 'px');
 };
 
@@ -672,7 +711,7 @@ MSMSearchingPlugin.prototype.onPause = function () {
 };
 
 MSMSearchingPlugin.prototype.onStop = function () {
-    this.$input.on('stopchange', this.ev_inputStopTyping);
+    this.$input.off('stopchange', this.ev_inputStopTyping);
     if (this.$input.isDescendantOf(this.elt)) {
         this.$input.remove();
     }

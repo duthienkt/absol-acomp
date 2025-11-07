@@ -314,6 +314,7 @@ button.am-header-bar-action {
     white-space: nowrap;
     color: var(--variant-color-secondary);
     padding: 0 5px;
+    position: relative;
 }
 
 .am-explore-item-block *{
@@ -325,6 +326,21 @@ button.am-header-bar-action {
     display: inline-block;
     vertical-align: middle;
     height: 100%;
+}
+
+.am-explore-item-block-icon[data-count]::after {
+    content: attr(data-count);
+    position: absolute;
+    right: calc(50% - 24px - 10px);
+    top: -10px;
+    height: 20px;
+    min-width: 20px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: var(--variant-color-danger);
+    color: white;
+    line-height: 20px;
+    font-size: 14px;
 }
 
 .am-explore-item-block-icon > span:first-child,
