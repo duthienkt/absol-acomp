@@ -19,7 +19,11 @@ function RibbonTextInput() {
         });
     })
     /**
-     * @type {HTMLElement|string|object}
+     * The label element displayed before the input field.
+     * If string of length 1 is provided, it will be rendered as text.
+     * Otherwise, the value will be rendered as an HTML element.
+     * @type {HTMLElement|string|object|AElement}
+
      * @name label
      * @memberOf RibbonTextInput#
      */
@@ -35,6 +39,10 @@ function RibbonTextInput() {
      * @name items
      * @memberOf RibbonTextInput#
      */
+    
+    
+    
+    
 
     AbstractInput.call(this);
 
@@ -102,11 +110,21 @@ RibbonTextInput.property.label = {
         }
         else value = (value || '') + '';
         this._label = value;
-        this.$labelCtn.clearChild()
+        this.$labelCtn.clearChild();
+        var labelElt;
+        var labelWidth;
         if (value) {
             this.addClass('as-has-label');
-            this.$labelCtn.addChild(_({ text: value }));
-            this.addStyle('--label-width', Math.ceil(TextMeasure.measureWidth(value, TextMeasure.FONT_ROBOTO, 14)) / 14 + 'em');
+            if ((typeof value === 'string') && value.length === 1) {
+                labelElt = _({ text: value });
+                labelWidth = TextMeasure.measureWidth(value, TextMeasure.FONT_ROBOTO, 14);
+            }
+            else {
+                labelElt = _(value);
+                labelWidth = 14 * 1.2
+            }
+            this.$labelCtn.addChild(labelElt);
+            this.addStyle('--label-width', Math.ceil(labelWidth) / 14 + 'em');
         }
         else {
             this.removeStyle('--label-width');
@@ -129,7 +147,6 @@ RibbonTextInput.property.unit = {
         if (value) {
             this.addClass('as-has-unit');
             this.$unitCtn.addChild(_({ text: value }));
-            console.log(TextMeasure.measureWidth(value, TextMeasure.FONT_ROBOTO, 14));
             this.addStyle('--unit-width', Math.ceil(TextMeasure.measureWidth(value, TextMeasure.FONT_ROBOTO, 14)) / 14 + 'em');
         }
         else {

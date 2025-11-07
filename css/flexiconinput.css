@@ -173,7 +173,7 @@
     color: currentColor;
 }
 
-.as-ribbon-text-input.as-disabled{
+.as-ribbon-text-input.as-disabled {
     pointer-events: none;
     background-color: var(--as-disabled-background-color);
     user-select: none;
@@ -201,6 +201,23 @@
     text-align: center;
     font-weight: bold;
     pointer-events: none;
+}
+
+.as-ribbon-text-input-label-ctn > span {
+    font-size: 1.2em;
+    display: block;
+}
+
+.as-ribbon-text-input-label-ctn > svg,
+.as-ribbon-text-input-label-ctn > img,
+.as-ribbon-text-input-label-ctn > div {
+    display: block;
+    height: 1.2em;
+    width: 1.2em;
+}
+
+.as-ribbon-text-input-label-ctn > span::before {
+    display: block;
 }
 
 .as-ribbon-text-input-unit-ctn {
@@ -234,15 +251,15 @@
 
 
 .as-ribbon-text-input.as-has-dropdown {
-    padding-right: var(--base-size) ;
+    padding-right: var(--base-size);
 }
 
 .as-ribbon-text-input.as-has-unit input {
-    padding-right:  calc(var(--unit-width) + 3px);
+    padding-right: calc(var(--unit-width) + 3px);
 }
 
 
-.as-ribbon-text-input.as-has-dropdown  .as-ribbon-text-input-unit-ctn {
+.as-ribbon-text-input.as-has-dropdown .as-ribbon-text-input-unit-ctn {
     right: var(--base-size);
 }
 
