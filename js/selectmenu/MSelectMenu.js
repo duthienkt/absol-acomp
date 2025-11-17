@@ -1,8 +1,11 @@
 import SelectMenu from '../SelectMenu';
+import SelectMenu2 from '../SelectMenu2';
 import  { MListModalV2 } from "../selectlistbox/MListModal";
 import ACore, { _, $ } from "../../ACore";
 import '../../css/selectmenu.css';
 import MSelectListItem from "../selectlistbox/MSelectListItem";
+import { mixClass } from "absol/src/HTML5/OOP";
+import { AbstractInput } from "../Abstraction";
 
 /***
  * @extends AElement
@@ -48,7 +51,10 @@ function MSelectMenu() {
      * @name items
      * @memberof MSelectMenu#
      */
+    AbstractInput.call(this);
 }
+
+mixClass(MSelectMenu, AbstractInput);
 
 MSelectMenu.tag = 'mselectmenu';
 MSelectMenu.render = function () {
@@ -69,6 +75,11 @@ MSelectMenu.render = function () {
         ]
     });
 };
+
+MSelectMenu.prototype.styleHandlers.variant = SelectMenu2.prototype.styleHandlers.variant;
+MSelectMenu.prototype.styleHandlers.textAlign = SelectMenu2.prototype.styleHandlers.textAlign;
+
+
 
 
 MSelectMenu.prototype.findItemsByValue = function (value) {
@@ -96,7 +107,15 @@ MSelectMenu.prototype.notifyChange = function (data) {
         this.emit('change', Object.assign({}, data, { type: 'change', target: this }), this);
 };
 
-MSelectMenu.prototype._dictByValue = SelectMenu.prototype._dictByValue;
+MSelectMenu.prototype._dictByValue = function (items) {
+    var dict = {};
+    var item;
+    for (var i = 0; i < items.length; ++i) {
+        item = items[i];
+        dict[item.value + ''] = item;
+    }
+    return dict;
+};
 
 MSelectMenu.prototype.getRecommendWith = function () {
     var res = 12 + this.$selectlist.estimateSize.textWidth + 30;
