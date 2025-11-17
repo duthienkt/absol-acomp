@@ -1,7 +1,7 @@
 import ACore, { $, _ } from "../ACore";
 import LocationPicker from "./LocationPicker";
 import '../css/locationinput.css';
-import { isRealNumber, normalizeLatLngString, parseDMS, parseLatLng } from "./utils";
+import { findMaxZIndex, isRealNumber, normalizeLatLngString, parseDMS, parseLatLng } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import { AbstractInput } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
@@ -89,6 +89,8 @@ LocationInput.prototype._attachPicker = function () {
     this.share.$picker.on('action', this.eventHandler.pickerAction);
     this.share.$picker.$searchInput.value = '';
     this.share.$picker.readOnly = this.readOnly;
+    var zIndex = findMaxZIndex(this);
+    this.share.$modal.addStyle('z-index', zIndex + 10);
     setTimeout(function () {
         document.addEventListener('click', this.eventHandler.clickOut);
     }.bind(this), 100);
