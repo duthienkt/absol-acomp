@@ -109,6 +109,13 @@
     border-radius: var(--small-radius);
 }
 
+.absol-selectmenu[data-size="tiny"] {
+    font-size: var(--tiny-font-size);
+    border-radius: var(--tiny-radius);
+    height: var(--tiny-size);
+}
+
+
 .absol-selectmenu:not[data-size="v0"] {
     border-color: var(--border-color);
 }
@@ -432,7 +439,6 @@
 }
 
 .am-selectmenu .absol-selectmenu-btn{
-    background: white;
 }
 
 .am-selectmenu::before{
