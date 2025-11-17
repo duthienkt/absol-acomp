@@ -22,7 +22,9 @@
 
 
 .absol-selectlist-item.as-disabled,
-.absol-selectlist-item.as-disabled * {
+.absol-selectlist-item.as-disabled *,
+.am-selectlist-item.as-disabled,
+.am-selectlist-item.as-disabled * {
     color: var(--as-disabled-text-color);
     pointer-events: none;
 }
