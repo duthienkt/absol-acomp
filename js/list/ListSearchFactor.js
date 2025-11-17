@@ -451,7 +451,7 @@ export default function ListSearchFactor(global) {
     };
 
     global.destroySlave = function (id) {
-        revokeResource(slaves);
+        revokeResource(slaves[id]);
         delete slaves[id];
     };
 
