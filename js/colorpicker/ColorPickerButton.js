@@ -206,7 +206,7 @@ ColorPickerButton.property.value = {
             value = new Color([0, 0, 0, 1]);
         }
         if (this.mode.match(/HEX4|HEX6|HEX8|RGB|RGBA/) && value && value.toHex3) {
-            value = this._value.toString(this.mode);
+            value = value.toString(this.mode);
         }
         return value;
     }
