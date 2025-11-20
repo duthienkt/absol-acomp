@@ -1,0 +1,305 @@
+import { AbstractInput } from "./Abstraction";
+import { drillProperty, mixClass } from "absol/src/HTML5/OOP";
+import { _, $ } from '../ACore';
+import { beginOfDay, compareDate, formatDateTime, implicitDate } from "absol/src/Time/datetime";
+import SelectBoxItem from "./SelectBoxItem";
+import MultiCheckTreeMenu from "./MultiCheckTreeMenu";
+import Follower from "./Follower";
+import ChromeCalendar from "./ChromeCalendar";
+import { hitElement } from "absol/src/HTML5/EventEmitter";
+import Rectangle from "absol/src/Math/Rectangle";
+
+/**
+ * @augments {AElement}
+ * @augments {AbstractInput}
+ * @constructor
+ */
+function MultiDateInput() {
+    /**
+     *
+     * @type {Date[]}
+     */
+    this.rawValue = [];
+    this.$body = $('.as-multi-date-input-body', this);
+    this.$itemCtn = this.$body;//adapt style
+    this.listCtrl = new MDIItemList(this);
+    this.dropdownCtrl = new MDIDropdownController(this);
+    drillProperty(this, this, 'values', 'value');
+    AbstractInput.call(this);
+
+
+
+    this.observer = new IntersectionObserver((entries, observer) => {
+        if (this.isDescendantOf(document.body)){
+            if (entries.length > 0) {
+                this.listCtrl.viewChange();
+            }
+        }
+    }, { root: document.body });
+
+    this.observer.observe(this.$itemCtn);
+
+    /**
+     * @name value
+     * @type {Date[]}
+     * @memberOf MultiDateInput#
+     *
+     */
+}
+
+mixClass(MultiDateInput, AbstractInput);
+
+MultiDateInput.tag = 'MultiDateInput'.toLowerCase();
+
+['maxWidth', 'width', 'flexGrow', 'overflow'].forEach(key => {
+    MultiDateInput.prototype.styleHandlers[key] = MultiCheckTreeMenu.prototype.styleHandlers[key];
+});
+
+MultiDateInput.render = function () {
+    return _({
+        class: 'as-multi-date-input',
+        extendEvent: ['change'],
+        child: [
+            {
+                tag: 'button',
+                class: 'as-date-input-icon-ctn',
+                child: 'span.mdi.mdi-calendar-multiselect-outline'
+            },
+            {
+                attr: {
+                    'data-ml-key': 'txt_select_value'
+                },
+                class: 'as-multi-date-input-body'
+            }
+        ]
+    });
+};
+
+MultiDateInput.property.value = {
+    set: function (value) {
+        value = value || [];
+        value = value.map(it => implicitDate(it)).filter(it => !!value).map(x => beginOfDay(x));
+        value.sort((a, b) => {
+            return compareDate(a, b);
+        });
+        var t = -1;
+        var value2 = [];
+        var d;
+        for (var i = 0; i < value.length; i++) {
+            d = value[i];
+            if (d.getTime() !== t) {
+                value2.push(d);
+                t = d.getTime();
+            }
+        }
+
+        this.rawValue = value2;
+        this.listCtrl.viewItems(this.rawValue);
+        this.emittedValue = this.value;
+    },
+    get: function () {
+        //todo: apply min-max
+        return (this.rawValue || []).slice();
+    }
+};
+
+MultiDateInput.prototype.revokeResource = function () {
+    if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;
+    }
+};
+
+MultiDateInput.prototype.notifyIfChange = function () {
+    var emittedValue = this.emittedValue || [];
+    var value = this.value;
+    var changed = false;
+    if (value.length !== emittedValue.length) {
+        changed = true;
+    }
+    if (!changed) {
+        return value.some((x, i) => compareDate(x, emittedValue[i]) !== 0);
+    }
+    if (changed) {
+        this.emit('change', { type: 'change', value: value });
+        this.emittedValue = value;
+    }
+
+};
+
+export default MultiDateInput;
+
+
+/**
+ *
+ * @param {MultiDateInput} elt
+ * @constructor
+ */
+function MDIItemList(elt) {
+    this.elt = elt;
+    this.$items = [];
+}
+
+
+MDIItemList.prototype.viewChange = function () {
+    var t, d;
+    /**
+     *
+     * @type {Rectangle[]}
+     */
+    var rects = Array.prototype.map.call(this.elt.$body.childNodes, e => {
+        var rect = Rectangle.fromClientRect(e.getBoundingClientRect());
+        if (!t) {
+            t = t || e.getComputedStyleValue('margin-top') || '4px';
+            d = (t.replace('px', ''))
+        }
+
+        rect.y -= d;
+        rect.height += d * 2;
+        return rect;
+    });
+    var height;
+    if (rects.length === 0) height = 27;
+    else height = rects.reduce((ac, cr) => {
+        return ac.merge(cr);
+    }, rects[0]).height;
+
+    if (!height) return;
+    this.elt.addStyle('--content-height', Math.min(height, 90) + 'px');
+};
+
+/**
+ *
+ * @param {Date[]} items
+ */
+MDIItemList.prototype.viewItems = function (items) {
+    this.$items.forEach(it => {
+        it.remove();
+    })
+    this.$items = items.map(item => {
+        var itemElt = _({
+            tag: SelectBoxItem,
+            props: {
+                data: {
+                    text: formatDateTime(item, 'dd/MM/yyyy'),
+                    value: item.getTime()
+                }
+            },
+            on: {
+                close: () => {
+                    var value = this.elt.rawValue.filter(it => compareDate(it, item));
+                    itemElt.remove();
+                    this.elt.rawValue = value;
+                    this.elt.dropdownCtrl.viewItems(value);
+                    this.elt.notifyIfChange();
+                },
+                press: () => {
+
+                }
+            }
+        });
+        return itemElt;
+    });
+    this.elt.$body.addChild(this.$items);
+    this.viewChange();
+};
+
+
+/**
+ *
+ * @param {MultiDateInput} elt
+ * @constructor
+ */
+function MDIDropdownController(elt) {
+    this.elt = elt;
+    this.$btn = $('.as-date-input-icon-ctn', elt);
+    for (var key in this) {
+        if (key.startsWith('ev_')) {
+            this [key] = this[key].bind(this);
+        }
+    }
+    this.$btn.on('click', this.ev_click);
+}
+
+MDIDropdownController.prototype.prepare = function () {
+    //only create a modal for the first time
+    if (this.$follower) return;
+    this.$calendar = _({
+        tag: ChromeCalendar,
+        class: ['as-dropdown-box-common-style'],
+        props: {
+            multiSelect: true
+        },
+        on: {
+            pick: this.ev_pick
+        }
+    });
+    this.$follower = _({
+        tag: Follower,
+        style: {
+            backgroundColor: 'red'
+        },
+        props: {
+            followTarget: this.$btn,
+            anchor: [2, 5, 9, 11]
+        },
+        child: [
+            this.$calendar
+        ]
+    });
+    this.$follower.cancelWaiting();
+
+};
+
+MDIDropdownController.prototype.destroy = function () {
+    if (this.$follower) {
+        this.$follower.remove();
+        this.$follower = null;
+        this.$calendar.off('pick', this.ev_pick);
+    }
+};
+
+MDIDropdownController.prototype.open = function () {
+    this.prepare();
+    this.$btn.off('click', this.ev_click);
+    this.$calendar.selectedDates = this.elt.value;
+    this.$follower.followTarget = this.$btn;
+    setTimeout(() => {
+        document.addEventListener('click', this.ev_clickOut);
+    }, 5);
+    this.$follower.addTo(document.body);
+};
+
+
+MDIDropdownController.prototype.close = function () {
+    document.removeEventListener('click', this.ev_clickOut);
+    setTimeout(() => {
+        this.$btn.on('click', this.ev_click);
+    }, 50);
+    this.$follower.followTarget = null;
+    this.$follower.selfRemove();
+};
+
+MDIDropdownController.prototype.viewItems = function (items) {
+    if (this.$follower && this.$follower.parentElement) {
+        this.$calendar.selectedDates = items.slice();
+    }
+}
+
+MDIDropdownController.prototype.ev_click = function () {
+    this.open();
+};
+
+MDIDropdownController.prototype.ev_clickOut = function (event) {
+    if (hitElement(this.$follower, event)) return;
+    this.close();
+    this.elt.notifyIfChange();
+};
+
+
+MDIDropdownController.prototype.ev_pick = function () {
+    var selectedDates = this.$calendar.selectedDates;
+    selectedDates.sort((a, b) => compareDate(a, b));
+    this.elt.rawValue = selectedDates.slice();
+    this.elt.listCtrl.viewItems(selectedDates);
+};

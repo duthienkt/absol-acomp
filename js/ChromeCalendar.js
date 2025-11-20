@@ -65,6 +65,20 @@ var getCMLText = key => {
     return calendarLangMap[getCalendarSupportedLanguage()][key];
 };
 
+var toggleDateInArray = (arr, date) => {
+    var newArr;
+    var included = arr.find(it => compareDate(it, date) === 0);
+    if (included) {
+        newArr = arr.filter(it => compareDate(it, date) !== 0);
+    }
+    else {
+        newArr = arr.slice();
+        newArr.push(date);
+        newArr.sort((a, b) => compareDate(a, b));
+    }
+    return newArr;
+}
+
 var EV_CONTENT_CHANGE = 'ev_content_change';
 
 /**
@@ -179,6 +193,13 @@ function ChromeCalendar() {
      * @name viewDate
      * @memberOf ChromeCalendar#
      */
+
+    /**
+     * @type {boolean}
+     * @name multiSelect
+     * @memberOf ChromeCalendar#
+     */
+
 }
 
 
@@ -379,6 +400,7 @@ ChromeCalendar.prototype.startViewer = function (key) {
 
 ChromeCalendar.property = {};
 
+
 ChromeCalendar.property.selectedDates = {
     set: function (value) {
         value = value || [];
@@ -464,8 +486,6 @@ ChromeCalendar.property.max = {
 
 ChromeCalendar.property.multiSelect = {
     set: function (value) {
-        value = false;
-        // throw new Error('Not support yet!')
         var lastValue = this.multiSelect;
         value = !!value;
         if (lastValue !== value) {
@@ -868,7 +888,14 @@ CCMonthViewer.prototype.ev_click = function (event) {
         if (dateBtn.attr && dateBtn.attr('data-time')) {
             date = new Date(parseInt(dateBtn.attr('data-time')));
             date = beginOfDay(date);
-            this.elt._selectedDates = [date];
+
+            if (this.elt.multiSelect) {
+                this.elt._selectedDates = toggleDateInArray(this.elt._selectedDates || [], date);
+            }
+            else {
+                this.elt._selectedDates = [date];
+            }
+
             this.onSelectedDatesChange();
             this.elt.emit('pick', {
                 type: 'pick', value: date,
@@ -1718,7 +1745,7 @@ CCShareDropDownInstance.prototype.show = function () {
     share.$follower.anchor = this.opt.anchor;
     share.$follower.followTarget = this.elt;
     share.$follower.updatePosition();
-    share.onPick = ()=>{
+    share.onPick = () => {
         var value = share.$picker.selectedDates[0];
         if (value && this.opt.onPick) {
             this.opt.onPick(value);
