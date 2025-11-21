@@ -450,7 +450,6 @@ CTPInfinityVerticalScroller.prototype.ev_touchStart = function (event) {
     this.touchInfo.identifier = touch.identifier;
     this.touchInfo.state = 0;//init
     this.touchInfo.checkPoints = [{ time: now, y: touch.clientY }];
-    event.preventDefault();
 };
 
 CTPInfinityVerticalScroller.prototype.ev_touchMove = function (event) {
