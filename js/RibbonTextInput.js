@@ -92,6 +92,10 @@ RibbonTextInput.render = function () {
     });
 };
 
+RibbonTextInput.prototype.focus = function () {
+    this.$input.focus();
+};
+
 RibbonTextInput.property = {};
 
 RibbonTextInput.property.value = {
