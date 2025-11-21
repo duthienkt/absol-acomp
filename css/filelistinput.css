@@ -9,11 +9,16 @@
     position: relative;
     min-height: 42px;
     border-radius: var(--default-radius);
+    background-color: white;
 }
 
 .as-file-list-input.as-border-none {
     border: none;
     padding: 0;
+}
+
+.as-file-list-input.as-background-none {
+    background-color: transparent;
 }
 
 .as-file-list-input.as-disabled {
