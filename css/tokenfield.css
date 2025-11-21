@@ -1,6 +1,12 @@
 .as-token-field {
     font-size: 1rem;
     border: 1px solid #dddddd;
+    box-sizing: border-box;
+}
+
+.as-token-field[data-size="tiny"] {
+    min-height: var(--tiny-size);
+    border-radius: var(--tiny-radius);
 }
 
 .as-token-field-input-text {

@@ -7,6 +7,8 @@ import Vec2 from "absol/src/Math/Vec2";
 import {setCaretPosition} from "absol/src/HTML5/Text";
 import {getScreenSize, traceOutBoundingClientRect} from "absol/src/HTML5/Dom";
 import {hitElement} from "absol/src/HTML5/EventEmitter";
+import { AbstractInput } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 /***
  * @extends AElement
@@ -46,7 +48,10 @@ function TokenField() {
     this.autocomplete = null;
     this.separator = ' ';
     this.placeHolder = '';
+    AbstractInput.call(this);
 }
+
+mixClass(TokenField, AbstractInput);
 
 TokenField.tag = 'TokenField'.toLowerCase();
 
