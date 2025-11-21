@@ -293,6 +293,18 @@
     border-radius: var(--default-radius);
 }
 
+.as-multi-date-input[data-size='large'] {
+    --base-size: var(--large-size);
+    font-size: var(--large-font-size);
+    border-radius: var(--large-radius);
+}
+
+.as-multi-date-input[data-size='small'] {
+    --base-size: var(--small-size);
+    font-size: var(--small-font-size);
+    border-radius: var(--small-radius);
+}
+
 
 .as-multi-date-input .absol-selectbox-item{
     margin: calc((var(--base-size) - 2px - var(--select-box-item-height)) / 2) 2px;
