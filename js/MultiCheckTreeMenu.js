@@ -15,6 +15,7 @@ import { arrayCompare, arrayUnique } from "absol/src/DataStructure/Array";
 import LangSys from "absol/src/HTML5/LanguageSystem";
 import { AbstractInput, AbstractStyleExtended } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
+import Rectangle from "absol/src/Math/Rectangle";
 
 
 /***
@@ -40,7 +41,7 @@ function MultiCheckTreeMenu() {
             close: this.eventHandler.boxClose
         },
         props: {
-            initOpened: isNaturalNumber(this.renderProps.initOpened)?this.renderProps.initOpened: 3,
+            initOpened: isNaturalNumber(this.renderProps.initOpened) ? this.renderProps.initOpened : 3,
             enableSearch: this.renderProps.enableSearch
         }
     });
@@ -57,7 +58,7 @@ function MultiCheckTreeMenu() {
     };
 
     this.observer = new IntersectionObserver((entries, observer) => {
-        if (entries.length >0) {
+        if (entries.length > 0) {
             this.eventHandler.viewChange();
         }
     }, options);
@@ -163,7 +164,7 @@ MultiCheckTreeMenu.prototype.styleHandlers.maxWidth = {
 MultiCheckTreeMenu.prototype.styleHandlers.width = {
     set: function (value) {
         var parsedValue = parseMeasureValue(value);
-        if (parsedValue &&parsedValue.unit === 'px') {
+        if (parsedValue && parsedValue.unit === 'px') {
             this.addClass('as-has-max-width');
             this.addStyle('--max-width', value);
             this.style.width = value;
@@ -351,7 +352,6 @@ MultiCheckTreeMenu.prototype.init = function (props) {
 }
 
 
-
 MultiCheckTreeMenu.property.initOpened = {
     set: function (value) {
         if (value === true) value = 100;
@@ -385,7 +385,7 @@ MultiCheckTreeMenu.property.items = {
     set: function (items) {
         this._items = copySelectionItemArray(items || [], { removeNoView: true });
         this.$checkTreeBox.items = this._items;
-        this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.lv0Width ||this.$checkTreeBox.estimateSize.width) + 'px');
+        this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.lv0Width || this.$checkTreeBox.estimateSize.width) + 'px');
         this.viewValues(this.$checkTreeBox.viewValues);
         this._values = this.$checkTreeBox.values.slice();
         this.eventHandler.viewChange();
@@ -552,7 +552,28 @@ MultiCheckTreeMenu.eventHandler.boxToggleItem = function (event) {
  * @this MultiCheckTreeMenu
  */
 MultiCheckTreeMenu.eventHandler.viewChange = function () {
-    var height = this.$itemCtn.scrollHeight;
+    var t, d;
+    /**
+     *
+     * @type {Rectangle[]}
+     */
+    var rects = Array.prototype.map.call(this.$itemCtn.childNodes, e => {
+        var rect = Rectangle.fromClientRect(e.getBoundingClientRect());
+        if (!t) {
+            t = t || e.getComputedStyleValue('margin-top') || '4px';
+            d = (t.replace('px', ''))
+        }
+
+        rect.y -= d;
+        rect.height += d * 2;
+        return rect;
+    });
+    var height;
+    if (rects.length === 0) height = 27;
+    else height = rects.reduce((ac, cr) => {
+        return ac.merge(cr);
+    }, rects[0]).height;
+
     if (!height) return;
     this.addStyle('--content-height', Math.min(height, 90) + 'px');
 };
@@ -623,7 +644,7 @@ MCTMDropController.prototype.close = function () {
 
     setTimeout(waitMouseUp, 100);
     this.elt.defineEvent('blur');
-    this.elt.emit('blur', {type:'blur'}, this.elt);
+    this.elt.emit('blur', { type: 'blur' }, this.elt);
 };
 
 MCTMDropController.prototype.ev_clickOut = function (event) {
