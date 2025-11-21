@@ -19,7 +19,7 @@ import * as utils from "./js/utils";
 import materializeIconTrigger from "./js/materializeIconTrigger";
 import VariantColors from "./js/VariantColors";
 import ToolTip from "./js/Tooltip";
-import TextMeasure from "./js/TextMeasure";
+import TextMeasure, { measureTextWidth } from "./js/TextMeasure";
 import BContextCapture from "./js/BContextCapture";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import Dom from "absol/src/HTML5/Dom";
@@ -100,7 +100,7 @@ Dom.documentReady.then(function () {
             tag: 'link',
             attr: {
                 rel: 'stylesheet',
-                href: 'https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Roboto+Mono|Roboto+Slab&display=swap'
+                href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;600;700;800;900&display=swap'
             }
         }).addTo(document.head);
     }
@@ -124,6 +124,8 @@ absol.CMDToolDelegate = CMDToolDelegate;
 absol.RawTableSearcher = RawTableSearcher;
 absol['rawTable'+'ViewEmptyImage'] = rawTableViewEmptyImage;
 absol['rawTableRe'+'moveEmptyImage'] = rawTableRemoveEmptyImage;
+
+absol['measur'+'eTextWidth'] = measureTextWidth;
 
 
 Dom.documentReady.then(function () {
