@@ -10,6 +10,7 @@
     box-sizing: border-box;
     --text-content-width: 0em;
     font-family: Roboto, sans-serif;
+    color: inherit;
 }
 
 .as-text-input[readonly].as-border-none {
