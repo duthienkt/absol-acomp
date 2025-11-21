@@ -89,7 +89,6 @@ function SelectMenu() {
 
 mixClass(SelectMenu, AbstractInput);
 SelectMenu.prototype.extendStyle.variant = 'v0';
-SelectMenu.prototype.extendStyle.variant = 'v0';
 
 SelectMenu.tag = 'selectmenu';
 SelectMenu.render = function () {
@@ -137,7 +136,7 @@ SelectMenu.prototype.styleHandlers.variant = {
             this.extendStyle.size = 'regular';
         }
         return value;
-    },
+    }
 };
 
 // set min-width: unset;
