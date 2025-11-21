@@ -46,6 +46,17 @@
     color: white;
     height: 3em;
     font-size: 1rem;
+    --header-bar-color: var(--dark-color);
+}
+
+.am-header-bar button.am-header-bar-action,
+.am-header-bar button.am-header-bar-command{
+    color:var(--dark-color);/*quick fix*/
+}
+
+.am-header-bar button.am-header-bar-action:active,
+.am-header-bar button.am-header-bar-command:active{
+    color:var(--gray-color);/*quick fix*/
 }
 
 

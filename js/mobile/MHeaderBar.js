@@ -164,6 +164,9 @@ MHeaderBar.property.quickmenu = {
         if (value) {
             this.showQuickMenu(true);
             var button = this.$quickmenuBtn;
+            if (value.icon) {
+                button.clearChild().addChild(_(value.icon));//custom icon
+            }
             var onClose = value.onClose;
             var onOpen = value.onOpen;
             value.onOpen = function () {
