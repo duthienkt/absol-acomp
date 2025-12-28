@@ -22,6 +22,7 @@
 input[type="text"].as-text-input:disabled,
 textarea.as-text-input:disabled {
     background-color: var(--as-disabled-background-color);
+    color: var(--as-disabled-text-color);
 }
 
 input[type="text"].as-text-input.as-background-none {
@@ -123,13 +124,15 @@ input[type="text"].as-text-input.as-background-none {
 }
 
 
-.as-transparent-button {
+.as-transparent-button,
+.as-simple-icon-button {
     background-color: transparent;
     border: none;
     padding: 0;
     margin: 0;
     font-size: inherit;
     color: var(--as-transparent-button-text-color);
+    border-radius: 0.3125em;
 }
 
 .as-transparent-button:hover {
@@ -140,6 +143,17 @@ input[type="text"].as-text-input.as-background-none {
 .as-transparent-button:active {
     color: var(--as-transparent-button-text-active-color);
 }
+
+
+
+.as-simple-icon-button:hover {
+    background-color: var(--as-sp-icon-button-hover-background-color);
+}
+
+.as-simple-icon-button:active {
+    background-color: var(--as-sp-icon-button-active-background-color);
+}
+
 
 .as-transparent-button .mdi {
     font-size: 1.5em;
