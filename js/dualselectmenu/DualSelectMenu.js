@@ -2,7 +2,8 @@ import { $, _ } from "../../ACore";
 import MDualSelectBox from "../dualselectbox/MDualSelectBox";
 import MDSMBoxController from "./MDSMBoxController";
 import DSMPropsHandlers from "./DSMPropsHandlers";
-import OOP from "absol/src/HTML5/OOP";
+import OOP, { mixClass } from "absol/src/HTML5/OOP";
+import { AbstractInput } from "../Abstraction";
 
 function DualSelectMenu() {
     this.$box = _({
@@ -12,8 +13,10 @@ function DualSelectMenu() {
     OOP.drillProperty(this, this.$box, 'enableSearch');
     this.boxCtrl = new MDSMBoxController(this);
     this.strictValue = true;
+    AbstractInput.call(this);
 }
 
+mixClass(DualSelectMenu, AbstractInput);
 
 DualSelectMenu.tag = 'DualSelectMenu'.toLowerCase();
 
@@ -68,8 +71,7 @@ DualSelectMenu.prototype.updateText = function () {
     }));
 };
 
-
-DualSelectMenu.property = DSMPropsHandlers;
+Object.assign(DualSelectMenu.property, DSMPropsHandlers);
 
 DualSelectMenu.eventHandler = {};
 
