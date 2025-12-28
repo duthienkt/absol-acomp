@@ -89,6 +89,7 @@
     padding: 0 0 0 var(--as-input-horizontal-padding);
     font: inherit;
     box-sizing: border-box;
+    color: currentColor;
 
 }
 
@@ -337,9 +338,6 @@
 }
 
 .as-multi-date-input-body:not(:empty)::before {
-    display: none;
-}
-.as-multi-date-input-body::after {
     content: "";
     display: inline-block;
     vertical-align: middle;
@@ -351,4 +349,9 @@
     padding-right: 6px;
     max-height: var(--multi-select-menu-max-height);
     overflow: auto;
+}
+
+.as-multi-date-input-body::before,
+.as-multi-date-input-body::after {
+    line-height: calc(var(--base-size) - 2px);
 }
