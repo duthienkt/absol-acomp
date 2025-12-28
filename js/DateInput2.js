@@ -13,7 +13,7 @@ import {
     prevDate,
     getDefaultFirstDayOfWeek,
     weekInYear,
-    beginOfWeek, beginOfMonth, beginOfQuarter, beginOfYear
+    beginOfWeek, beginOfMonth, beginOfQuarter, beginOfYear, getFormatDateFromLevel
 } from "absol/src/Time/datetime";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import DateTimeInput from "./DateTimeInput";
@@ -801,6 +801,7 @@ DateInput2.property.value = {
  */
 DateInput2.property.format = {
     set: function (value) {
+        this.attr('data-calendar-level', null);
         value = value || 'dd/MM/yyyy';
         value = value.replace(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g'), function (full) {
             if (full === 'mm' || full === 'MMM' || full === 'MMMM' || full === 'mmm' || full === 'mmmm') return 'MM';
@@ -875,6 +876,16 @@ DateInput2.property.calendarLevel = {
         if (this._formatTokens.indexOf('M') >= 0 || this._formatTokens.indexOf('MM') >= 0) return 'month';
         if (this._formatTokens.indexOf('Q') >= 0 || this._formatTokens.indexOf('QQ') >= 0) return 'quarter';
         return 'year';
+    },
+    set: function (value) {
+        var format = getFormatDateFromLevel(value);
+        if (format) {
+            this.format = format;
+            this.attr('data-calendar-level', value);
+        }
+        else {
+            this.attr('data-calendar-level', null);
+        }
     }
 };
 
