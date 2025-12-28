@@ -1,5 +1,5 @@
 import ACore, { _, $ } from "../ACore";
-import { compareDate } from "absol/src/Time/datetime";
+import { compareDate, getFormatDateFromLevel } from "absol/src/Time/datetime";
 import QuickMenu from "./QuickMenu";
 import { drillProperty, mixClass } from "absol/src/HTML5/OOP";
 import { AbstractInput } from "./Abstraction";
@@ -50,7 +50,7 @@ mixClass(DateNLevelInput, AbstractInput);
 
 DateNLevelInput.tag = 'DateNLevelInput'.toLowerCase();
 
-DateNLevelInput.prototype.leve2format = {
+DateNLevelInput.prototype.level2format = {
     date: 'dd/MM/yyyy',
     week: 'Tuần ww, yyyy',
     month: 'MM/yyyy',
@@ -58,13 +58,13 @@ DateNLevelInput.prototype.leve2format = {
     year: 'yyyy'
 };
 
-DateNLevelInput.prototype.leve2Name = {
+DateNLevelInput.prototype.level2Name = {
     date: 'Ngày',
     week: 'Tuần',
     month: 'Tháng',
     quarter: 'Quý',
     year: 'Năm'
-}
+};
 
 DateNLevelInput.prototype.defaultAllowLevels = ['date', 'month', 'year'];
 
@@ -98,7 +98,7 @@ DateNLevelInput.property.allowLevels = {
         if (!(value instanceof Array)) {
             value = this.defaultAllowLevels.slice();
         }
-        value = value.filter(x => !!this.leve2format[x]);
+        value = value.filter(x => !! getFormatDateFromLevel(x));
         if (!value || value.length === 0) value = this.defaultAllowLevels.slice();
         var prevLevel = this.level;
         this._allowLevels = value;
@@ -115,9 +115,9 @@ DateNLevelInput.property.allowLevels = {
 
 DateNLevelInput.property.level = {
     set: function (value) {
-        if (!this.leve2format[value]) value = 'date';
+        if (!getFormatDateFromLevel(value)) value = 'date';
         this.attr('data-level', value);
-        this.$date.format = this.leve2format[value];
+        this.$date.format = getFormatDateFromLevel(value);
         this.ctrl.prevVal = this.$date.value;
         this.ctrl.level = value;
     },
@@ -187,7 +187,7 @@ function DateNLevelInputCtrl(elt) {
             var props = {};
             props.items = this.elt._allowLevels.map(name => {
                 return {
-                    text: `${this.elt.leve2Name[name]} (${this.elt.leve2format[name]})`,
+                    text: `${this.elt.level2Name[name]} (${getFormatDateFromLevel(name)})`,
                     level: name,
                     icon: name === this.level ? 'span.mdi.mdi-check' : null
                 }
@@ -211,7 +211,7 @@ DateNLevelInputCtrl.prototype.ev_dateChange = function (event) {
 DateNLevelInputCtrl.prototype.ev_levelChange = function (event) {
     var value = this.level;
     this.elt.attr('data-level', value);
-    this.elt.$date.format = this.elt.leve2format[value];
+    this.elt.$date.format = this.elt.level2format[value];
     this.elt.$date.value = null;
     this.notifyCanBeChanged();
 };
