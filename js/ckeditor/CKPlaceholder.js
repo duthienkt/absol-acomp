@@ -104,6 +104,17 @@ CKPlaceholder.prototype._makeInitConfig = function () {
     return {};
 };
 
+CKPlaceholder.prototype.focus = function () {
+  if (this.editor) {
+      this.editor.focus();
+  }
+  else {
+     this.once('editorready',()=>{
+         this.editor.focus();
+     })
+  }
+};
+
 
 CKPlaceholder.prototype.selectNext = function () {
     var editor = this.editor;
