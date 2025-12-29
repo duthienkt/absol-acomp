@@ -51,6 +51,21 @@ STLIPropHandlers.selected = {
 };
 
 
+
+STLIPropHandlers.noSelect = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-no-select');
+        }
+        else {
+            this.removeClass('as-no-select');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-no-select');
+    }
+};
+
 /****
  * @name text
  * @type {string}
