@@ -33,6 +33,10 @@ css.setRule('.as-collapsible-tree-navigator[data-size="v0"]', {
  * @constructor
  */
 function CollapsibleTreeNavigator() {
+    this.isMobile = BrowserDetector.isMobile;
+    if (this.isMobile) {
+        this.addClass('as-mobile');
+    }
     this.nodeContentHeight = 30;
     this.nodeBorder = 1;
     /**
@@ -76,6 +80,11 @@ CollapsibleTreeNavigator.prototype.styleHandlers.size = {
         if (value === 'v0') {
             this.nodeContentHeight = BrowserDetector.isMobile ? 45 : 30;
             this.nodeBorder = 1;
+        }
+        else if (value === 'regular') {
+            this.nodeContentHeight = 40;
+            this.nodeBorder = 1;
+            this.addStyle('--node-content-height', 40 + 'px');
         }
         else {
             this.nodeBorder = 0;
@@ -184,30 +193,8 @@ function CTRoot(elt) {
 
 CTRoot.prototype.nodeOf = function (nodeValue) {
     return this.nodeByValue[keyStringOf(nodeValue)];
-}
-
-CTRoot.prototype.updateSelectedLine = function () {
-    if (this.looked) return;
-    var selectedNode = this.nodeOf(this.value);
-    if (!selectedNode) return;
-    var path = [];
-    var c = selectedNode;
-    while (c && c !== this) {
-        path.unshift(c);
-        c = c.parent;
-    }
-    var viewingNode = null;
-    while (path.length) {
-        c = path.shift();
-        viewingNode = c;
-        if (c.status !== 'open') {
-            break;
-        }
-    }
-
-    if (!viewingNode) return;
-    this.elt.addStyle('--selected-y', viewingNode.offsetY + 'px');
 };
+
 
 CTRoot.prototype.updateSize = function () {
     if (this.looked) return;
@@ -276,7 +263,6 @@ Object.defineProperty(CTRoot.prototype, 'items', {
         });
         this.looked--;
         this.updateSize();
-        this.updateSelectedLine();
     },
     get: function () {
         return this.children.map((chd) => {
@@ -292,7 +278,6 @@ Object.defineProperty(CTRoot.prototype, 'value', {
         this.looked++;
         this.select(value);
         this.looked--;
-        this.updateSelectedLine();
     },
     get: function () {
         return this._value;
@@ -487,7 +472,6 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'status', {
                 this.domElt.removeClass('as-open').removeClass('as-close');
                 break;
         }
-        this.root.updateSelectedLine();
     },
     get: function () {
         return this._status || 'none';
@@ -637,7 +621,7 @@ Object.defineProperty(CTCollapsibleNode.prototype, 'items', {
         else {
             this.status = 'none';
         }
-        this.root.updateSelectedLine();
+        // this.root.updateSelectedLine();
     },
     get: function () {
         return this.children.map(ch => ch.data);
