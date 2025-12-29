@@ -425,14 +425,14 @@ SelectMenu.property.isFocus = {
 SelectMenu.property.disabled = {
     set: function (value) {
         if (value) {
-            this.addClass('disabled');
+            this.addClass('as-disabled');
         }
         else {
-            this.removeClass('disabled');
+            this.removeClass('-disabled');
         }
     },
     get: function () {
-        return this.hasClass('disabled');
+        return this.hasClass('as-disabled');
     }
 };
 
