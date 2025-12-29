@@ -6,6 +6,7 @@ import '../css/flexiconinput.css'
 import TextMeasure from "./TextMeasure";
 import { QuickMenuInstance } from "./QuickMenu";
 import { copyEvent } from "absol/src/HTML5/EventEmitter";
+import { isDomNode } from "absol/src/HTML5/Dom";
 
 function RibbonTextInput() {
     this.$input = $('input', this);
@@ -109,17 +110,26 @@ RibbonTextInput.property.value = {
 
 RibbonTextInput.property.label = {
     set: function (value) {
-        if (isRealNumber(value)) {
+        if (isDomNode(value)) {
+            value = $(value);
+        }
+        else if (isRealNumber(value)) {
             value = '' + value;
         }
-        else value = (value || '') + '';
+        else if (typeof value === "string") {
+            value = (value || '') + '';
+        }
         this._label = value;
         this.$labelCtn.clearChild();
         var labelElt;
         var labelWidth;
         if (value) {
             this.addClass('as-has-label');
-            if ((typeof value === 'string') && value.length === 1) {
+            if (isDomNode(value)) {
+                labelElt = value;
+                labelWidth = 14 * 1.2;
+            }
+            else if ((typeof value === 'string') && value.length === 1) {
                 labelElt = _({ text: value });
                 labelWidth = TextMeasure.measureWidth(value, TextMeasure.FONT_ROBOTO, 14);
             }
