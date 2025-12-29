@@ -72,7 +72,7 @@
 }
 
 .absol-checkbox.as-wrap-text > * {
-    vertical-align: top;
+    /*vertical-align: top;*/
 }
 
 .absol-checkbox.as-wrap-text .absol-checkbox-label {
