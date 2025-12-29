@@ -248,7 +248,7 @@
 .absol-selectmenu-holder-item .absol-selectlist-item.as-has-icon .absol-selectlist-item-text {
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: calc(100% - 30px - 28px);
+    max-width: calc(100% - 30px - 26px);
 }
 
 
@@ -310,11 +310,13 @@
 .as-select-menu {
     --select-list-estimate-width: 0px;
     --select-list-desc-width: 0px;
-    width: calc(var(--select-list-estimate-width) + 32px);
-    min-width: calc(var(--select-list-estimate-width) + 32px);
+    width: calc(var(--select-list-estimate-width) + 34px);
+    min-width: calc(var(--select-list-estimate-width) + 34px);
 }
 
-.as-select-menu.as-background-none {
+.as-select-menu.as-background-none,
+.absol-selectmenu.as-background-none
+{
     background-color: transparent;
 }
 
