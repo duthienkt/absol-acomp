@@ -36,6 +36,11 @@
 }
 
 
+.am-select-tree-leaf-item.as-no-select {
+    pointer-events: none;
+    color: #ACACAC;
+}
+
 .am-select-tree-leaf-item-toggle-ctn,
 .am-select-tree-leaf-item-icon-ctn,
 .am-select-tree-leaf-item-checkbox-ctn {
