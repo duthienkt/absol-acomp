@@ -502,6 +502,7 @@ input[type="number"].am-list-popup-paging-offset {
 
 .am-list-modal-v2 .am-list-popup-content {
     width: calc(var(--col1-width) + var(--col2-width));
+    min-width: calc(80vw - 20px);
 }
 
 .am-list-modal-v2 .am-selectlist-item-text-ctn {
