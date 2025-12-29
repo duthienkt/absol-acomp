@@ -8,6 +8,8 @@ import Follower from "./Follower";
 import ChromeCalendar from "./ChromeCalendar";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import Rectangle from "absol/src/Math/Rectangle";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import { parseMeasureValue } from "absol/src/JSX/attribute";
 
 /**
  * @augments {AElement}
@@ -22,15 +24,16 @@ function MultiDateInput() {
     this.rawValue = [];
     this.$body = $('.as-multi-date-input-body', this);
     this.$itemCtn = this.$body;//adapt style
+    this.$icon = $('.as-date-input-icon-ctn span', this);
+
     this.listCtrl = new MDIItemList(this);
     this.dropdownCtrl = new MDIDropdownController(this);
     drillProperty(this, this, 'values', 'value');
     AbstractInput.call(this);
 
-
-
     this.observer = new IntersectionObserver((entries, observer) => {
-        if (this.isDescendantOf(document.body)){
+        if (this.isDescendantOf(document.body)) {
+            ResizeSystem.add(this.$icon);
             if (entries.length > 0) {
                 this.listCtrl.viewChange();
             }
@@ -38,9 +41,22 @@ function MultiDateInput() {
     }, { root: document.body });
 
     this.observer.observe(this.$itemCtn);
+    this.$icon.requestUpdateSize = this.listCtrl.viewChange.bind(this.listCtrl);
 
     /**
      * @name value
+     * @type {Date[]}
+     * @memberOf MultiDateInput#
+     *
+     */
+    /**
+     * @name min
+     * @type {Date[]}
+     * @memberOf MultiDateInput#
+     *
+     */
+    /**
+     * @name max
      * @type {Date[]}
      * @memberOf MultiDateInput#
      *
@@ -94,12 +110,57 @@ MultiDateInput.property.value = {
         }
 
         this.rawValue = value2;
-        this.listCtrl.viewItems(this.rawValue);
-        this.emittedValue = this.value;
+
+        var computedValue = this.value;//apply minmax
+        this.listCtrl.viewItems(computedValue);
+        this.emittedValue = computedValue;
     },
     get: function () {
-        //todo: apply min-max
-        return (this.rawValue || []).slice();
+        var value = (this.rawValue || []).slice();
+        var minD = this.min;
+        var maxD = this.max;
+        return value.filter(it => {
+            if (minD && compareDate(it, minD) < 0) return false;
+            if (maxD && compareDate(it, maxD) > 0) return false;
+            return true;
+        });
+    }
+};
+
+MultiDateInput.property.min = {
+    set: function (value) {
+        this.rawMin = implicitDate(value);
+        if (this.rawMin) {
+            this.rawMin = beginOfDay(this.rawMin);
+        }
+        var computedValue = this.value;//apply minmax
+        this.listCtrl.viewItems(computedValue);
+        this.emittedValue = computedValue;
+    },
+    get: function () {
+        return this.rawMin || null;
+    }
+};
+MultiDateInput.property.max = {
+    set: function (value) {
+        this.rawMax = implicitDate(value);
+        if (this.rawMax) {
+            this.rawMax = beginOfDay(this.rawMax);
+        }
+
+        var computedValue = this.value;//apply minmax
+        this.listCtrl.viewItems(computedValue);
+        this.emittedValue = computedValue;
+    },
+    get: function () {
+        var rawMin = this.rawMin;
+        var rawMax = this.rawMax;
+        if (rawMin && rawMax) {
+            if (compareDate(rawMin, rawMax) > 0) {
+                rawMax = rawMin;
+            }
+        }
+        return rawMax || null;
     }
 };
 
@@ -140,9 +201,33 @@ function MDIItemList(elt) {
     this.$items = [];
 }
 
+MDIItemList.prototype.isFixedHeight = function () {
+    if (this.elt.hasClass('as-height-auto')) return false;
+    var height = this.elt.style.height;
+    var parsed = parseMeasureValue(height);
+    if (parsed && (parsed.unit === 'px' || parsed.unit === '%')) return true;
+    if (height && height !== 'auto') return true;
+    height = parseMeasureValue(this.elt.style.getPropertyValue('--as-height'));
+    parsed = parseMeasureValue(height);
+    if (parsed && (parsed.unit === 'px' || parsed.unit === '%')) return true;
+    return false;
+
+};
+
 
 MDIItemList.prototype.viewChange = function () {
     var t, d;
+    var isFixedHeight = this.isFixedHeight();
+    var bound = Rectangle.fromClientRect(this.elt.getBoundingClientRect());
+    var prevHeightStyle = this.elt.style.height;//
+    var prevWidthStyle = this.elt.style.width;//
+    this.elt.style.height = bound.height + 'px';
+    this.elt.style.width = bound.width + 'px';
+    //prevent flick size
+
+    Array.prototype.map.call(this.elt.$body.childNodes, e => {
+        e.removeStyle('display');
+    });
     /**
      *
      * @type {Rectangle[]}
@@ -151,7 +236,7 @@ MDIItemList.prototype.viewChange = function () {
         var rect = Rectangle.fromClientRect(e.getBoundingClientRect());
         if (!t) {
             t = t || e.getComputedStyleValue('margin-top') || '4px';
-            d = (t.replace('px', ''))
+            d = parseFloat(t.replace('px', ''))
         }
 
         rect.y -= d;
@@ -166,6 +251,41 @@ MDIItemList.prototype.viewChange = function () {
 
     if (!height) return;
     this.elt.addStyle('--content-height', Math.min(height, 90) + 'px');
+    var k = 0;
+    var i;
+    if (isFixedHeight) {
+        rects.forEach(rect => {//origin bound
+            rect.y += d;
+            rect.height -= d * 2;
+        });
+        for (k = 0; k < rects.length; k++) {
+            if (!bound.contains(rects[k])) {
+                break;
+            }
+        }
+        if (k > 1 && k < rects.length) {
+            k--;
+            if (rects[k].B().x + 24 + 38 > bound.B().x) {
+                k--;
+            }
+            this.elt.$body.addClass('as-has-more');
+            for (i = k+1; i < this.elt.$body.childNodes.length; i++) {
+                this.elt.$body.childNodes[i].addStyle('display', 'none');
+            }
+        }
+        else {
+            this.elt.$body.removeClass('as-has-more')
+        }
+
+    }
+    else {
+        this.elt.$body.removeClass('as-has-more');
+    }
+
+
+    this.elt.style.height = prevHeightStyle;
+    this.elt.style.width = prevWidthStyle;
+
 };
 
 /**
@@ -191,6 +311,7 @@ MDIItemList.prototype.viewItems = function (items) {
                     itemElt.remove();
                     this.elt.rawValue = value;
                     this.elt.dropdownCtrl.viewItems(value);
+                    this.viewChange();
                     this.elt.notifyIfChange();
                 },
                 press: () => {
@@ -218,7 +339,7 @@ function MDIDropdownController(elt) {
             this [key] = this[key].bind(this);
         }
     }
-    this.$btn.on('click', this.ev_click);
+    this.elt.on('click', this.ev_click);
 }
 
 MDIDropdownController.prototype.prepare = function () {
@@ -261,7 +382,9 @@ MDIDropdownController.prototype.destroy = function () {
 
 MDIDropdownController.prototype.open = function () {
     this.prepare();
-    this.$btn.off('click', this.ev_click);
+    this.elt.off('click', this.ev_click);
+    this.$calendar.min = this.elt.min;
+    this.$calendar.max = this.elt.max;
     this.$calendar.selectedDates = this.elt.value;
     this.$follower.followTarget = this.$btn;
     setTimeout(() => {
@@ -274,7 +397,7 @@ MDIDropdownController.prototype.open = function () {
 MDIDropdownController.prototype.close = function () {
     document.removeEventListener('click', this.ev_clickOut);
     setTimeout(() => {
-        this.$btn.on('click', this.ev_click);
+        this.elt.on('click', this.ev_click);
     }, 50);
     this.$follower.followTarget = null;
     this.$follower.selfRemove();
@@ -286,8 +409,11 @@ MDIDropdownController.prototype.viewItems = function (items) {
     }
 }
 
-MDIDropdownController.prototype.ev_click = function () {
-    this.open();
+MDIDropdownController.prototype.ev_click = function (event) {
+    if (hitElement(this.$btn, event) || event.target === this.elt.$body || event.target === this.elt
+        || event.target === this.elt) {
+        this.open();
+    }
 };
 
 MDIDropdownController.prototype.ev_clickOut = function (event) {
