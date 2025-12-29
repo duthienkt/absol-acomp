@@ -113,6 +113,28 @@ CheckTreeItem.property.noSelect = {
     }
 };
 
+CheckTreeItem.property.readOnly = {
+    /**
+     * @this CheckTreeItem
+      * @param value
+     */
+  set: function (value) {
+      if (value) {
+          this.addClass('as-read-only');
+          this.$checkbox.readOnly = true;
+          this.$checkbox.addClass('as-border-none');
+      }
+      else {
+          this.removeClass('as-read-only');
+          this.$checkbox.readOnly = false;
+          this.$checkbox.removeClass('as-border-none');
+      }
+  },
+  get: function () {
+      return this.hasClass('as-read-only');
+  }
+};
+
 
 CheckTreeItem.eventHandler = {};
 
