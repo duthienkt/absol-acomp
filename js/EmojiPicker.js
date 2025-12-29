@@ -48,7 +48,7 @@ function EmojiPicker() {
 
 EmojiPicker.assetRoot = (function () {
     var res = 'https://absol.cf/emoji';
-    if (['keeview.com', 'lab.daithangminh.vn', 'absol.cf'].includes(location.host))
+    if (['keeview.com', 'lab.keeview.com', 'absol.cf'].includes(location.host))
         res = '/emoji';
     return res;
 })();
