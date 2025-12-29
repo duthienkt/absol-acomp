@@ -42,7 +42,7 @@ ListDictionary.prototype.update = function () {
 
     var dupKeyDict = {};
 
-    function scan(arr, parent) {
+    var scan = (arr, parent) =>{
         var item;
         var key;
         var holder;
