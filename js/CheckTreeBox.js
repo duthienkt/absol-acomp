@@ -238,6 +238,7 @@ CheckTreeBox.property.items = {
         items = items || [];
         this._items = items;
         this.listCtrl.setItems(items);
+        if (this.updateReadOnlyItems) this.updateReadOnlyItems();
     },
     get: function () {
         return this._items;
@@ -298,10 +299,10 @@ CheckTreeBox.eventHandler.selectItem = function (item, event) {
     var targetNode = ref || nodeHolder;
     var selected = item.selected;
     if (selected === 'all' && (targetNode.canSelectAll || targetNode.selected === 'none')) {
-        targetNode.selectAll();
+        targetNode.selectAll(false,!!event);
     }
     else {
-        targetNode.unselectAll();
+        targetNode.unselectAll(false, !!event);
     }
     if (ref) {
         nodeHolder.getRoot().updateSelectedFromRef();
@@ -469,12 +470,12 @@ TreeRootHolder.prototype.calcEstimateSize = function () {
 
 
 TreeRootHolder.prototype.selectAll = function () {
-    this.child.forEach(c => c.selectAll());
+    this.child.forEach(c => c.selectAll(false, true));
 };
 
 
 TreeRootHolder.prototype.unselectAll = function () {
-    this.child.forEach(c => c.unselectAll());
+    this.child.forEach(c => c.unselectAll(false, true));
 };
 
 TreeRootHolder.prototype.findReferenceNode = function () {
@@ -663,18 +664,21 @@ TreeNodeHolder.prototype.toggle = function () {
 /***
  *
  * @param {boolean=} isDownUpdate
+ * @param {boolean=} byUser
  */
-TreeNodeHolder.prototype.selectAll = function (isDownUpdate) {
+TreeNodeHolder.prototype.selectAll = function (isDownUpdate, byUser) {
     if (this.selected === 'all') return;
     if (!this.canSelect) return;
+    if (byUser && this.readOnly) return;
     if (this.canSelectAll)
         this.selected = 'all';
     else
         this.selected = 'child';
     if (this.itemElt) this.itemElt.selected = this.selected;
     this.child.forEach(function (child) {
-        child.selectAll(true);
+        child.selectAll(true, byUser);
     });
+    if (byUser) this.updateFromChild();//readOnlyValues effect
     if (!isDownUpdate) {
         if (this.parent) this.parent.updateUp();
     }
@@ -684,14 +688,17 @@ TreeNodeHolder.prototype.selectAll = function (isDownUpdate) {
 /***
  *
  * @param {boolean=} isDownUpdate
+ * @param {boolean=} byUser
  */
-TreeNodeHolder.prototype.unselectAll = function (isDownUpdate) {
+TreeNodeHolder.prototype.unselectAll = function (isDownUpdate, byUser) {
     if (this.selected === 'none') return;
+    if (byUser && this.readOnly) return;
     this.selected = 'none';
     if (this.itemElt) this.itemElt.selected = this.selected;
     this.child.forEach(function (child) {
-        child.unselectAll(true);
+        child.unselectAll(true, byUser);
     });
+    if (byUser) this.updateFromChild();//readOnlyValues effect
     if (!isDownUpdate) {
         if (this.parent) this.parent.updateUp();
     }
@@ -815,6 +822,7 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
             elt.level = this.level;
             elt.status = this.status;
             elt.selected = this.selected;
+            elt.readOnly = this.readOnly;
             if (this.item.noSelect || !this.canSelect) {
                 elt.noSelect = true;
             }
@@ -830,6 +838,19 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
         return this._elt;
     },
     configurable: true
+});
+
+Object.defineProperty(TreeNodeHolder.prototype, 'readOnly', {
+   set: function (value) {
+       value = !!value;
+       this._readOnly = value;
+       if (this.itemElt) this.itemElt.readOnly = value;
+   },
+    get: function () {
+       var ref = this.findReferenceNode();
+       if (ref) return ref.readOnly;
+       return !!this._readOnly;
+    }
 });
 
 

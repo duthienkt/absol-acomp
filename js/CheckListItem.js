@@ -165,6 +165,12 @@ CheckListItem.property.readOnly = {
     set: function (value) {
         this.$checkbox.readOnly = !!value;
         if (value) {
+            this.$checkbox.addClass('as-border-none');
+        }
+        else {
+            this.$checkbox.removeClass('as-border-none');
+        }
+        if (value) {
             this.addClass('as-read-only');
         }
         else {

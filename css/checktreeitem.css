@@ -22,6 +22,10 @@
     opacity: 0.3;
 }
 
+.as-check-tree-item.as-read-only {
+    pointer-events: none;
+}
+
 .as-check-tree-item.as-no-select .as-checkbox-input .bound,
 .absol-checkbox.as-no-select .bound {
     stroke: #929292;
