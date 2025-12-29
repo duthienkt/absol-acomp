@@ -3,7 +3,7 @@ import CheckTreeBox, { TreeNodeHolder, TreeRootHolder } from "./CheckTreeBox";
 import CheckTreeItem from "./CheckTreeItem";
 import OOP from "absol/src/HTML5/OOP";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
-import { keyStringOf } from "./utils";
+import { keyStringOf, legacyKeyStringOf } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import SearchTextInput from "./Searcher";
 
@@ -39,6 +39,11 @@ var verifyItems = items => {
  */
 function CheckTreeLeafOnlyBox() {
     CheckTreeBox.apply(this, arguments);
+    /***
+     * @name readOnlyValues
+     * @type {Array}
+        * @memberOf CheckTreeLeafOnlyBox#
+     */
 }
 
 
@@ -137,6 +142,43 @@ CheckTreeLeafOnlyBox.render = function () {
 Object.assign(CheckTreeLeafOnlyBox.prototype, CheckTreeBox.prototype);
 CheckTreeLeafOnlyBox.property = Object.assign({}, CheckTreeBox.property);
 CheckTreeLeafOnlyBox.eventHandler = Object.assign({}, CheckTreeBox.eventHandler);
+
+CheckTreeLeafOnlyBox.prototype.updateReadOnlyItems = function () {
+    var readOnlyValues = this.readOnlyValues;
+    var readOnlyValueDict = {};
+    readOnlyValues.forEach(v => {
+        readOnlyValueDict[legacyKeyStringOf(v)] = true;
+    });
+
+    var visit = (holder) => {
+        if (holder && holder.item) {
+            if (readOnlyValueDict[legacyKeyStringOf(holder.item.value)]) {
+                holder.readOnly= true;
+            }
+            else {
+                holder.readOnly = false;
+            }
+        }
+        if (holder.child) {
+            holder.child.forEach(visit);
+        }
+    }
+    if (this.listCtrl.rootHolder && this.listCtrl.rootHolder.child) {
+        this.listCtrl.rootHolder.child.forEach(visit);
+    }
+};
+
+CheckTreeLeafOnlyBox.property.readOnlyValues = {
+  set: function (value) {
+      value = value ||[];
+      value = value.slice();
+      this._readOnlyValues = value;
+      this.updateReadOnlyItems();
+  },
+  get: function () {
+      return this._readOnlyValues || [];
+  }
+};
 
 CheckTreeLeafOnlyBox.prototype._pool = [];
 
