@@ -30,6 +30,10 @@ label.as-checkbox-input.as-disabled {
     pointer-events: none;
 }
 
+label.as-checkbox-input.as-border-none[data-variant]::after {
+   border-color: transparent;
+}
+
 label.as-checkbox-input[data-size="v0"] {
     width: calc(18em / 14);
     height: calc(18em / 14);

@@ -199,7 +199,7 @@ CheckBox.property.readOnly = {
             this.$input.readOnly = true;
         }
         else {
-            this.addClass('as-read-only');
+            this.removeClass('as-read-only');
             this.$input.readOnly = false;
         }
     },
