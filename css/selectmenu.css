@@ -92,6 +92,7 @@
     font-family: Roboto, sans-serif;
     background-color: white;
     overflow: hidden;
+    user-select: none;
 }
 
 .absol-selectmenu[data-size="large"] {
@@ -207,7 +208,7 @@
 .absol-selectmenu .absol-selectlist-item-text {
     display: inline-block;
     overflow: hidden;
-    max-width: calc(var(--as-width-limit) - 30px);
+    max-width: calc(var(--as-combobox-width-limit) - 30px);
     text-overflow: ellipsis;
     vertical-align: middle;
 
@@ -312,6 +313,7 @@
     --select-list-desc-width: 0px;
     width: calc(var(--select-list-estimate-width) + 34px);
     min-width: calc(var(--select-list-estimate-width) + 34px);
+    max-width: var(--as-combobox-width-limit);
 }
 
 .as-select-menu.as-background-none,

@@ -1,7 +1,10 @@
+:root{
+    --as-combobox-width-limit: calc(100vw - 20px);
+}
+
 .as-select-list-box {
     --select-list-estimate-width: 0;
     --max-height: calc(100vh - 80px);
-    --as-width-limit: 100vw;
     position: fixed;
     top: 10px;
     left: 10px;
@@ -126,7 +129,7 @@ div.absol-follower.as-select-list-box {
 }
 
 .as-select-list-box .absol-selectlist-item-text {
-    max-width: calc(var(--as-width-limit) - var(--select-list-desc-width) - 10px);
+    max-width: calc(var(--as-combobox-width-limit) - var(--select-list-desc-width) - 10px);
     display: inline-block;
     vertical-align: middle;
     text-overflow: ellipsis;

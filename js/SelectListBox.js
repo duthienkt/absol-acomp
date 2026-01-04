@@ -7,6 +7,8 @@ import { copySelectionItemArray, keyStringOf, measureText, revokeResource } from
 import ListSearchMaster from "./list/ListSearchMaster";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -23,7 +25,7 @@ export var calcWidthLimit = () => {
     else {
         width = width * 0.9 - 250;
     }
-    return Math.min(width, 1280);
+    return Math.max(140, Math.min(width, 1280)) << 0;
 }
 
 var makeSearchItem = (it, idx2key) => {
@@ -39,6 +41,18 @@ var makeSearchItem = (it, idx2key) => {
     }
     return res;
 };
+
+export var ComboboxDynamicCSS = new DynamicCSS();
+
+ResizeSystem.on('resizing', ()=> {
+    ComboboxDynamicCSS.setProperty(':root', '--as-combobox-width-limit', calcWidthLimit() + 'px')
+        .commit();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    ComboboxDynamicCSS.setProperty(':root', '--as-combobox-width-limit', calcWidthLimit() + 'px')
+        .commit();
+});
 
 /***
  * @extends Follower
@@ -143,7 +157,7 @@ SelectListBox.prototype._initDomHook = function () {
      */
     this.searchMaster = null;
     this.widthLimit = calcWidthLimit();
-    this.addStyle('--as-width-limit', this.widthLimit + 'px');
+    // this.addStyle('--as-combobox-width-limit', this.widthLimit + 'px');
 
 };
 

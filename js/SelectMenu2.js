@@ -1,13 +1,14 @@
 import '../css/selectmenu.css';
 
 import ACore, { _, $ } from "../ACore";
-import EventEmitter from "absol/src/HTML5/EventEmitter";
+import EventEmitter, { hitElement } from "absol/src/HTML5/EventEmitter";
 import Dom, { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
-import { measureText } from "./utils";
+import { adaptiveSelectionItemHolder, adaptiveSelectionItemHolderAray, measureText } from "./utils";
 import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import { AbstractInput } from "./Abstraction";
+import { MListModalV2 } from "./selectlistbox/MListModal";
 
 
 ACore.creator['dropdown-ico'] = function () {
@@ -23,7 +24,7 @@ ACore.creator['dropdown-ico'] = function () {
 
 /***
  * @augments {AbstractInput}
- * @extends AElement
+ * @augments {AElement}
  * @constructor
  */
 function SelectMenu() {
@@ -31,23 +32,33 @@ function SelectMenu() {
     this._lastValue = null;
     this.$holderItem = $('.absol-selectmenu-holder-item', this);
     this.$viewItem = $('.absol-selectmenu-holder-item selectlistitem', this);
-    /***
-     *
-     * @type {SelectListBox}
-     */
-    this.$selectlistBox = _({
-        tag: 'selectlistbox',
-        props: {
-            anchor: [1, 6, 2, 5, 9, 11],
-            strictValue: true
-        },
-        on: {
-            preupdateposition: this.eventHandler.preUpdateListPosition
-        }
-    });
-    if (this.$selectlistBox.cancelWaiting) this.$selectlistBox.cancelWaiting();
+    this.isMobile = BrowserDetector.isMobile;
+    if (this.isMobile) {
+        this.$selectlistBox = _({
+            tag: MListModalV2
+        });
+    }
+    else {
+        /***
+         *
+         * @type {SelectListBox}
+         */
+        this.$selectlistBox = _({
+            tag: 'selectlistbox',
+            props: {
+                anchor: [1, 6, 2, 5, 9, 11],
+                strictValue: true
+            },
+            on: {
+                // preupdateposition: this.eventHandler.preUpdateListPosition
+            }
+        });
+    }
+
+    this.dropdownCtrl = this.isMobile ? new SMMobileDropdownController(this) : new SMDropdownController(this);
+    this.lifecycleCtrl = new SMLifecycleController(this);
+
     this.widthLimit = this.$selectlistBox.widthLimit;
-    this.addStyle('--as-width-limit', this.$selectlistBox.widthLimit + 'px');
 
     var firstCheckView = false;
     var this1 = this;
@@ -67,8 +78,8 @@ function SelectMenu() {
     setTimeout(checkView, 3000);
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.sponsorElement = this;
-    this.$selectlistBox.followTarget = this;
-    this.$selectlistBox.unfollow();
+
+
     OOP.drillProperty(this, this.$selectlistBox, 'enableSearch');
     OOP.drillProperty(this, this, 'selectedvalue', 'value');
     this.strictValue = true;
@@ -84,6 +95,25 @@ function SelectMenu() {
      * @memberOf SelectMenu#
      */
 
+    /***
+     * @name value
+     * * @type {*}
+     * @memberOf SelectMenu#
+     */
+
+    /**
+     * @name readOnly
+     * @type {boolean}
+     * @memberOf SelectMenu#
+     */
+
+    /**
+     * @name disabled
+     * @type {boolean}
+     * @memberOf SelectMenu#
+     */
+
+
     AbstractInput.call(this);
 }
 
@@ -94,7 +124,7 @@ SelectMenu.tag = 'selectmenu';
 SelectMenu.render = function () {
     return _({
         class: ['absol-selectmenu', 'as-select-menu'],
-        extendEvent: ['change', 'blur'],
+        extendEvent: ['change', 'blur', 'focus'],
         attr: {
             tabindex: '1'
         },
@@ -134,6 +164,19 @@ SelectMenu.prototype.styleHandlers.variant = {
         this.attr('data-variant', value);
         if (value !== 'v0' && this.extendStyle.size === 'v0') {
             this.extendStyle.size = 'regular';
+        }
+        return value;
+    }
+};
+
+SelectMenu.prototype.styleHandlers.minWidth = {
+    set: function (value) {
+        if (typeof value === 'string') value = value.trim();
+        if (value && value !== 'unset' && value !== 'auto') {
+            this.style.setProperty('min-width', `min(${value}, var(--as-combobox-width-limit))`);
+        }
+        else {
+            this.style.setProperty('min-width', null);
         }
         return value;
     }
@@ -187,10 +230,10 @@ SelectMenu.prototype.selfRemove = function () {
 
 SelectMenu.prototype.updateItem = function () {
     var value = this._explicit(this._value);
-    var selectedItems = this.$selectlistBox.findDisplayItemsByValue(value);
+    var selectedItems = this.$selectlistBox.findItemsByValue(value) || [];
     var data;
     if (selectedItems.length >= 1) {
-        data = selectedItems[0].item;
+        data = selectedItems[0].item || selectedItems[0];//mobile return item, not holder
         this.$viewItem.data = data;
         if (data.text && measureText(data.text + '', '14px arial').width - 30 > this.widthLimit) {
             this.$viewItem.attr('title', data.text);
@@ -206,17 +249,17 @@ SelectMenu.prototype.updateItem = function () {
 
 
 SelectMenu.prototype.findItemsByValue = function (value) {
-    return this.$selectlistBox.findItemsByValue(value);
+    return adaptiveSelectionItemHolderAray(this.$selectlistBox.findItemsByValue(value));
 };
 
 
 SelectMenu.prototype.findItemByValue = function (value) {
-    return this.$selectlistBox.findItemByValue(value);
+    return adaptiveSelectionItemHolder(this.$selectlistBox.findItemByValue(value));
 }
 
 
 SelectMenu.prototype._explicit = function (value) {
-    var items = this.$selectlistBox.findItemsByValue(value);
+    var items = this.$selectlistBox.findItemsByValue(value) || [];
     var items2, value2;
     if ((!items || items.length === 0) && (typeof value === "string")) {
         value2 = parseInt(value, 10);
@@ -239,15 +282,27 @@ SelectMenu.prototype._explicit = function (value) {
 SelectMenu.property.items = {
     set: function (items) {
         items = items || [];
+        if (items.length > 0) {
+            this.removeClass('as-empty');
+        }
+        else {
+            this.addClass('as-empty');
+        }
         this.$selectlistBox.items = items;
         var estimateWidth = 0;
         var estimateDescWidth = 0;
+        console.log(this.$selectlistBox)
+        //todo: better estimate size
         if (this.$selectlistBox._estimateSize) {
             estimateWidth = this.$selectlistBox._estimateSize.width;
             estimateDescWidth = this.$selectlistBox._estimateSize.descWidth;
         }
+        else if (this.$selectlistBox.estimateSize){
+            estimateWidth = this.$selectlistBox.estimateSize.textWidth + this.$selectlistBox.estimateSize.descWidth + 20;
+            estimateDescWidth = this.$selectlistBox.estimateSize.descWidth;
+        }
         else {
-            estimateWidth = this.$selectlistBox._estimateWidth|| 0;
+            estimateWidth = this.$selectlistBox._estimateWidth || 0;
             estimateDescWidth = this.$selectlistBox._estimateDescWidth || 0;
         }
         this.addStyle('--select-list-estimate-width', estimateWidth / 14 + 'em');
@@ -272,44 +327,21 @@ SelectMenu.property.value = {
     }
 };
 
-/***
- *
- * @type {SelectMenu|{}}
- */
+
 SelectMenu.property.isFocus = {
+    /**
+     * @this {SelectMenu}
+     * @param value
+     */
     set: function (value) {
-        if (value && (this.disabled || this.readOnly)) return;
-        var thisSM = this;
-        if (!this.items || this.items.length === 0) value = false;//prevent focus
-        if (this._isFocus === value) return;
-        this._isFocus = !!value;
-        if (this._isFocus) {
-            this.addClass('as-focus');
-            this.$selectlistBox.addTo(document.body);
-            // this.$selectlistBox.domSignal.$attachhook.emit('attached');
-            var bound = this.getBoundingClientRect();
-            this.$selectlistBox.addStyle('min-width', bound.width + 'px');
-            this.$selectlistBox.refollow();
-            this.$selectlistBox.updatePosition();
-            setTimeout(function () {
-                if (!BrowserDetector.isMobile)
-                    thisSM.$selectlistBox.focus();
-                document.addEventListener('click', thisSM.eventHandler.bodyClick);
-            }, 100);
-            this.$selectlistBox.viewListAtFirstSelected();
-        }
-        else {
-            this.removeClass('as-focus');
-            document.removeEventListener('click', thisSM.eventHandler.bodyClick);
-            this.$selectlistBox.selfRemove();
-            this.$selectlistBox.unfollow();
-            this.$selectlistBox.resetSearchState();
-            this.defineEvent('blur');
-            this.emit('blur', { type: 'blur' }, this.elt);
-        }
+        this.dropdownCtrl.isFocus = !!value;
     },
+    /**
+     * @this {SelectMenu}
+     * @return {*|boolean}
+     */
     get: function () {
-        return this._isFocus;
+        return this.dropdownCtrl.isFocus;
     }
 };
 
@@ -345,11 +377,26 @@ SelectMenu.property.hidden = {
 
 SelectMenu.property.selectedIndex = {
     get: function () {
+        var value = this.value;
+        if (this.$selectlistBox.indexOfValue) {
+            return  this.$selectlistBox.indexOfValue(value);
+        }
         var selectedItems = this.$selectlistBox.findItemsByValue(this._value);
         if (selectedItems.length > 0) {
             return selectedItems[0].idx;
         }
         return -1;
+    }
+};
+
+SelectMenu.property.selectedItem = {
+    get:function () {
+        var value = this.value;
+        var holder = this.$selectlistBox.findItemByValue(value);
+        if (holder) {
+            return holder.item || holder.data || holder;
+        }
+        return null;
     }
 };
 
@@ -390,22 +437,6 @@ SelectMenu.property.readOnly = {
 SelectMenu.eventHandler = {};
 
 
-SelectMenu.eventHandler.click = function (event) {
-    if (this.readOnly) return;
-    if (EventEmitter.isMouseRight(event)) return;
-    if (EventEmitter.hitElement(this.$selectlistBox, event)) return;
-    this.isFocus = !this.isFocus;
-};
-
-
-SelectMenu.eventHandler.bodyClick = function (event) {
-    if (!EventEmitter.hitElement(this, event) && !EventEmitter.hitElement(this.$selectlistBox, event)) {
-        setTimeout(function () {
-            this.isFocus = false;
-        }.bind(this), 5)
-    }
-};
-
 SelectMenu.eventHandler.selectListBoxPressItem = function (event) {
     this._value = event.data.value;
     this.$selectlistBox.values = [this._value];
@@ -423,23 +454,215 @@ SelectMenu.eventHandler.selectListBoxPressItem = function (event) {
     }.bind(this), 50)
 };
 
-SelectMenu.eventHandler.preUpdateListPosition = function () {
-    var bound = this.getBoundingClientRect();
-    var screenSize = getScreenSize();
-    var availableTop = bound.top - 5;
-    var availableBot = screenSize.height - 5 - bound.bottom;
-    this.$selectlistBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
-    // console.log(this);
-    var outBound = traceOutBoundingClientRect(this.parentElement);
-    // console.log(outBound,bound,
-    //     bound.bottom < outBound.top , bound.top > outBound.bottom , bound.right < outBound.left, bound.left > outBound.right);
-    if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
-        if (!BrowserDetector.isMobile)
-            this.isFocus = false;
-    }
-};
-
 
 ACore.install(SelectMenu);
 
 export default SelectMenu;
+
+/**
+ *
+ * @param {SelectMenu} elt
+ * @constructor
+ */
+function SMDropdownController(elt) {
+    this.elt = elt;
+    for (var key in this) {
+        if (key.startsWith('ev_')) {
+            this[key] = this[key].bind(this);
+        }
+    }
+    this.elt.on('mousedown', this.ev_click);
+    this._isFocus = false;
+    this.initDropdown();
+}
+
+SMDropdownController.prototype.initDropdown = function () {
+    this.elt.$selectlistBox.on('preupdateposition', this.ev_preUpdateListPosition);
+    if (this.elt.$selectlistBox.cancelWaiting) this.elt.$selectlistBox.cancelWaiting();
+    this.elt.$selectlistBox.followTarget = this.elt;
+    this.elt.$selectlistBox.unfollow();
+}
+
+SMDropdownController.prototype.viewDropdown = function () {
+    this.elt.$selectlistBox.addTo(document.body);
+    var bound = this.elt.getBoundingClientRect();
+    this.elt.$selectlistBox.addStyle('min-width', bound.width + 'px');
+    this.elt.$selectlistBox.refollow();
+    this.elt.$selectlistBox.updatePosition();
+    this.elt.$selectlistBox.viewListAtFirstSelected();
+};
+
+SMDropdownController.prototype.hideDropdown = function () {
+    this.elt.$selectlistBox.selfRemove();
+    this.elt.$selectlistBox.unfollow();
+};
+
+
+SMDropdownController.prototype.focus = function () {
+    if (this._isFocus) return;
+    if (this.elt.readOnly || this.elt.disabled) return;
+    if (this.elt.hasClass('as-empty')) return;
+
+    this._isFocus = true;
+    this.elt.addClass('as-focus');
+    this.viewDropdown();
+    this.elt.off('mousedown', this.ev_click);
+    document.addEventListener('mouseup', this.ev_mouseUp)
+
+    this.elt.defineEvent('focus');//prevent bug
+    this.elt.emit('focus', { type: 'focus' }, this.elt);//Yen request
+
+};
+
+
+SMDropdownController.prototype.blur = function () {
+    if (!this._isFocus) return;
+    this._isFocus = false;
+    this.elt.removeClass('as-focus');
+    document.removeEventListener('click', this.ev_clickOut);
+    this.hideDropdown();
+    this.elt.$selectlistBox.resetSearchState();
+    this.elt.defineEvent('blur');//prevent bug
+    this.elt.emit('blur', { type: 'blur' }, this.elt);//Yen request
+    setTimeout(() => {
+        this.elt.on('mousedown', this.ev_click);
+    }, 10)
+};
+
+SMDropdownController.prototype.ev_click = function (event) {
+    if (EventEmitter.isMouseRight(event)) return;
+    if (EventEmitter.hitElement(this.elt.$selectlistBox, event)) return;
+    if (this.isFocus) return;
+    this.focus();
+};
+
+SMDropdownController.prototype.ev_mouseUp = function () {
+    document.removeEventListener('mouseup', this.ev_mouseUp);
+    setTimeout(() => {
+        document.addEventListener('click', this.ev_clickOut);
+    }, 10);
+};
+
+SMDropdownController.prototype.isClickOutEvent = function (event) {
+    if (hitElement(this.elt.$selectlistBox, event)) return false;
+}
+
+SMDropdownController.prototype.ev_clickOut = function (event) {
+    if (this.isClickOutEvent(event))
+        setTimeout(() => {
+            this.blur();
+        }, 5);
+}
+
+
+SMDropdownController.prototype.ev_preUpdateListPosition = function () {
+    var bound = this.elt.getBoundingClientRect();
+    var screenSize = getScreenSize();
+    var availableTop = bound.top - 5;
+    var availableBot = screenSize.height - 5 - bound.bottom;
+    this.elt.$selectlistBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
+    var outBound = traceOutBoundingClientRect(this.elt.parentElement);
+    if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
+        this.isFocus = false;
+    }
+};
+
+
+Object.defineProperty(SMDropdownController.prototype, 'isFocus', {
+    set: function (value) {
+        if (value) {
+            this.focus();
+        }
+        else {
+            this.blur();
+        }
+    },
+    get: function () {
+        return this._isFocus;
+    }
+});
+
+/**
+ * @augments SMDropdownController
+ * @param elt
+ * @constructor
+ */
+function SMMobileDropdownController(elt) {
+    SMDropdownController.apply(this, arguments);
+
+}
+
+mixClass(SMMobileDropdownController, SMDropdownController);
+
+SMMobileDropdownController.prototype.initDropdown = function () {
+    this.elt.$selectlistBox.on('pressclose', ()=>{
+        this.isFocus = false;
+    });
+}
+
+SMMobileDropdownController.prototype.viewDropdown = function () {
+    this.elt.$selectlistBox.addTo(document.body);
+    if (this.elt.$selectlistBox.$attachhook) {
+        this.elt.$selectlistBox.$attachhook.emit('attached');
+    }
+    this.elt.$selectlistBox.viewListAt(0);
+    this.elt.$selectlistBox.viewListAtFirstSelected();
+};
+
+SMMobileDropdownController.prototype.hideDropdown = function () {
+    this.elt.$selectlistBox.selfRemove();
+};
+
+SMMobileDropdownController.prototype.isClickOutEvent = function (event) {
+    if (event.target === this.elt.$selectlistBox) return true;
+    return !hitElement(this.elt.$selectlistBox, event);
+};
+
+export function SMLifecycleController(elt) {
+    this.elt = elt;
+    this.state = 'init';
+    this.createObserver();
+}
+
+
+SMLifecycleController.prototype.createObserver = function () {
+    if (this.obs) return;
+    this.obs = new IntersectionObserver(this.check.bind(this));
+    this.obs.observe(this.elt);
+};
+
+
+SMLifecycleController.prototype.destroyObserver = function () {
+    if (!this.obs) return;
+    this.obs.disconnect();
+    this.obs = null;
+};
+
+SMLifecycleController.prototype.check = function () {
+    var viewed = this.elt.isDescendantOf(document.body);
+    if (viewed) {
+        if (this.state === 'init' || this.state === 'detached') {
+            this.state = 'attached';
+            this.onAttached();
+        }
+    }
+    else {
+        if (this.state === 'attached') {
+            this.state = 'detached';
+            this.onDetached();
+        }
+    }
+
+};
+
+SMLifecycleController.prototype.onAttached = function () {
+
+
+};
+
+
+SMLifecycleController.prototype.onDetached = function () {
+    if (this.elt.$selectlistBox.searchMaster)
+        this.elt.$selectlistBox.searchMaster.destroy();
+};
+
