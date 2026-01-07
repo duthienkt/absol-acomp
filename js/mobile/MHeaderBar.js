@@ -280,7 +280,7 @@ MHeaderBar.property.actionIcon = {
 MHeaderBar.property.commands = {
     set: function (value) {
         this.$commands.forEach(function (e) {
-            e.selftRemove();
+            e.selfRemove();
         });
         this.$commands = [];
         var commandBtn;
@@ -290,12 +290,14 @@ MHeaderBar.property.commands = {
             if (firstChild) {
                 for (i = 0; i < value.length; ++i) {
                     commandBtn = this._makeCommandBtn(value[i]);
+                    this.$commands.push(commandBtn);
                     this.$right.addChildBefore(commandBtn, firstChild)
                 }
             }
             else {
                 for (i = 0; i < value.length; ++i) {
                     commandBtn = this._makeCommandBtn(value[i]);
+                    this.$commands.push(commandBtn);
                     this.$right.addChild(commandBtn);
                 }
             }
