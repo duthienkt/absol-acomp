@@ -702,6 +702,181 @@ export function getTextNodeBounds(text, startOffset, endOffset) {
     return parts;
 }
 
+export function htmlToText(html) {
+    if (!html) html = '';
+    html = html + '';
+    html = html.trim().replace(/>\s+</gm, '><');
+    var div = _({
+        tag: 'div',
+        style: {
+            position: 'fixed',
+            left: '-10000px',
+            top: '-10000px',
+            width: '1000px',
+            height: 'auto'
+        },
+        props: {
+            innerHTML: html
+        }
+    }).addTo(document.body);
+
+    function visit(elt, ctx) {
+        if (!elt) return '';
+        if (elt.nodeType === 3) {
+            return elt.data;
+        }
+        var style = getComputedStyle(elt);
+        var res = '';
+        var parent = ctx.parent;
+        var parentStyle = ctx.style;
+        if ((elt.tagName === 'BR' || elt.tagName === 'br')
+            && parent && (parent.lastChild !== elt || parent.style.display.indexOf('inline') >= 0)) {
+            return '\n';
+        }
+        else if ((style.display||'block').indexOf('inline')<0
+            && parent && parent.firstChild !== elt) {
+            res += '\n';
+        }
+
+        return res + Array.prototype.map.call(elt.childNodes, (cNode, index, arr) => {
+            return visit(cNode, { parent: parent, style: style });
+        }).join('');
+    }
+
+    var text =  Array.prototype.map.call(div.childNodes, (cNode, index, arr) => {
+        return visit(cNode, {parent: div, style:{display:'block'}});
+    }).join('');
+    div.remove();
+    return text;
+}
+
+
+/**
+ * @param {string} html
+ * @return  {object[] | null} null if type error
+ */
+export function htmlToRichText(html) {
+    if (typeof html !== "string") return null;//type error
+    if (!html) html = '';
+    html = html + '';
+    html = html.trim().replace(/>\s+</gm, '><');
+    var richText = [];
+    if (!html) return richText;
+    var div = _({
+        tag: 'div',
+        style: {
+            position: 'fixed',
+            left: '-10000px',
+            top: '-10000px',
+            width: '1000px',
+            height: 'auto'
+        },
+        props: {
+            innerHTML: html
+        }
+    }).addTo(document.body);
+
+
+    function visit(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            var text = node.textContent;
+            var parent, computed;
+            if (text.trim()) {
+                var style = {};
+                parent = node.parentElement;
+                while (parent && parent !== div) {
+                    computed = getComputedStyle(parent);
+                    if (computed.fontWeight === 'bold' || computed.fontWeight >= 700 || parent.tagName === 'B' || parent.tagName === 'STRONG') {
+                        style.bold = true;
+                    }
+                    if (computed.fontStyle === 'italic' || parent.tagName === 'I' || parent.tagName === 'EM') {
+                        style.italic = true;
+                    }
+                    if (computed.textDecorationLine === 'underline' || parent.tagName === 'U') {
+                        style.underline = true;
+                    }
+                    if (computed.textDecorationLine === 'line-through' || parent.tagName === 'STRIKE' || parent.tagName === 'S') {
+                        style.strike = true;
+                    }
+                    parent = parent.parentElement;
+                }
+                richText.push({
+                    text: text,
+                    font: style
+                });
+            }
+        }
+        else if (node.nodeType === Node.ELEMENT_NODE) {
+            parent = node.parentElement;
+            if (node.tagName === 'BR' && parent && parent.lastChild !== node) {
+                richText.push({ text: '\r\n' });
+            }
+            else {
+                computed = getComputedStyle(node);
+                if ((computed.display || 'block').indexOf('inline')<0
+                    && parent && parent.firstChild !== node && node !== div) {
+                    richText.push({ text: '\r\n' });
+                }
+                Array.from(node.childNodes).forEach(child => visit(child));
+            }
+        }
+    }
+
+    visit(div);
+    div.remove();
+    return richText;
+}
+
+
+/**
+ * Convert rich text format to HTML string
+ * @param {Array<{text: string, font?: {bold?: boolean, italic?: boolean, underline?: boolean, strike?: boolean}}>} richText
+ * @returns {string||null} null if error
+ */
+export function richTextToHtml(richText) {
+    if (!richText) return null;
+    if (!Array.isArray(richText)) return null;
+
+    return richText.map(part => {
+        var gText = part.text.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        var subParts = gText.split(/\r?\n/);
+        return subParts.map(text => {
+            if (!text) return '';
+            if (part.font) {
+                if (part.font.bold) text = '<b>' + text + '</b>';
+                if (part.font.italic) text = '<i>' + text + '</i>';
+                if (part.font.underline) text = '<u>' + text + '</u>';
+                if (part.font.strike) text = '<s>' + text + '</s>';
+            }
+            return text;
+        }).join('<br/>');
+    }).join('');
+}
+
+/**
+ *
+ * @param {string} html
+ * @return {{value: {richText: Object[]|[]}}|null}
+ */
+export function htmlToExcelRichTextCell(html) {
+    var richText = htmlToRichText(html);
+    if (!richText ) return null;
+    return {
+        value: {
+            richText: richText
+        }
+    }
+}
+
+export function excelRichTextCellToHtml(cell) {
+    var richText = cell && cell.value && cell.value.richText;
+    if (!richText) return null;
+    return richTextToHtml(richText);
+}
 /***
  *
  * @param {number} v
