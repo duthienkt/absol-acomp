@@ -205,6 +205,63 @@ TextMeasure.prototype.wrapText = function (text, fontName, fontSize, maxWidth) {
     return lines;
 };
 
+TextMeasure.prototype.getFontKey = function (fontName) {
+    fontName = fontName || "Calibri";
+    if (fontName.toLowerCase().indexOf('arial') >= 0)
+        fontName = "Arial";
+    else if (fontName.toLowerCase().indexOf('times') >= 0)
+        fontName = "Times New Roman";
+
+
+    if (this.data.fonts[fontName])
+        return fontName;
+    return "Calibri";
+}
+
+TextMeasure.prototype.measureWrappedText = function (text, limitWidth, fontSize, fontName) {
+    if (text === undefined || text === null)
+        return 0;
+    fontName = this.getFontKey(fontName);
+    if (typeof fontSize !== "number" || isNaN(fontSize)) fontSize = 11;
+    var width = this.data.fonts[fontName].width;
+    var spacing = this.data.fonts[fontName].spacing;
+    var lines = (text + '').split(/\r?\n/);
+    var lineCount = 0;
+    var maxWidth = 0;
+    var lineWidth, line;
+    var prevC, c, i;
+
+
+    for (var l = 0; l < lines.length; l++) {
+        line = lines[l];
+        lineWidth = 0;
+        prevC = line[0];
+        c = line[0];
+        lineWidth += width[c] || 0;
+        for (i = 1; i < line.length; ++i) {
+            c = line[i];
+            lineWidth += spacing[prevC + c] || 0;
+            lineWidth += width[c] || 0;
+            prevC = c;
+            if (lineWidth * fontSize / 20 > limitWidth) {
+                lineWidth -= spacing[prevC + c] || 0;
+                lineWidth -= width[c] || 0;
+                maxWidth = Math.max(maxWidth, lineWidth);
+
+
+                prevC = '';
+                lineCount++;
+                lineWidth = width[c] || 0;
+            }
+
+        }
+        maxWidth = Math.max(maxWidth, lineWidth);
+        lineCount++;
+    }
+    return { width: maxWidth * fontSize / 20, lineCount: lineCount };
+};
+
+
 /***
  *
  * @param {string}text
