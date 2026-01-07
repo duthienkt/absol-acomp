@@ -11,7 +11,7 @@
 
 .as-message-dialog-header {
     padding: var(--distance-6) var(--distance-6) 0 var(--distance-6);
-    height: var(--default-size);
+    min-height: var(--default-size);
     border-bottom: 1px solid rgba(82, 88, 102, 0.2);
     background-color: #f5f5f5;
 }
