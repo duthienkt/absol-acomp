@@ -1559,6 +1559,29 @@ function compareSelectionItemArray(a, b) {
     return true;
 }
 
+export function adaptiveSelectionItemHolder(obj) {
+    var res = {};
+    var item = obj.item|| obj.data || obj;
+    if (typeof obj.idx === "number") {
+        res.idx = obj.idx;
+    }
+    Object.assign(res,obj, item);
+    if (item.items && item.items.length > 0) {
+        res.items = item.items;
+    }
+    else if (obj.items && obj.items.length > 0) {
+        res.items = obj.items;
+    }
+    res.data = item;
+    res.items = item;
+    return res;
+}
+
+
+export function adaptiveSelectionItemHolderAray(arr){
+    if (!arr) return [];
+    return arr.map(adaptiveSelectionItemHolder);
+}
 
 /***
  *
@@ -1718,6 +1741,35 @@ export function latLngDistance(p0, p1) {
     return d;
 }
 
+/**
+ * string and number will be same the same
+ * @param o
+ * @return {string}
+ */
+export function legacyKeyStringOf(o) {
+    var type = typeof o;
+    var keys;
+    if (type === 'number') {
+        type = 'string';
+        o = o + '';
+    }
+    if (o && type === "object") {
+        if (typeof o.getTime === "function") {
+            return 'd(' + o.getTime() + ')';
+        }
+        else if (typeof o.map === "function") {
+            return 'a(' + o.map(val => legacyKeyStringOf(val)).join(',') + ')';
+        }
+        else {
+            keys = Object.keys(o);
+            keys.sort();
+            return 'o(' + keys.map(key => key + ':' + legacyKeyStringOf(o[key])).join(',') + ')';
+        }
+    }
+    else {
+        return type[0] + '(' + o + ')';
+    }
+}
 
 export function keyStringOf(o) {
     var type = typeof o;
