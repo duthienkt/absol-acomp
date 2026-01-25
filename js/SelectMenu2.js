@@ -291,7 +291,6 @@ SelectMenu.property.items = {
         this.$selectlistBox.items = items;
         var estimateWidth = 0;
         var estimateDescWidth = 0;
-        console.log(this.$selectlistBox)
         //todo: better estimate size
         if (this.$selectlistBox._estimateSize) {
             estimateWidth = this.$selectlistBox._estimateSize.width;
@@ -464,7 +463,7 @@ export default SelectMenu;
  * @param {SelectMenu} elt
  * @constructor
  */
-function SMDropdownController(elt) {
+export function SMDropdownController(elt) {
     this.elt = elt;
     for (var key in this) {
         if (key.startsWith('ev_')) {
@@ -544,7 +543,7 @@ SMDropdownController.prototype.ev_mouseUp = function () {
 };
 
 SMDropdownController.prototype.isClickOutEvent = function (event) {
-    if (hitElement(this.elt.$selectlistBox, event)) return false;
+    return !hitElement(this.elt.$selectlistBox, event) ;
 }
 
 SMDropdownController.prototype.ev_clickOut = function (event) {
@@ -587,7 +586,7 @@ Object.defineProperty(SMDropdownController.prototype, 'isFocus', {
  * @param elt
  * @constructor
  */
-function SMMobileDropdownController(elt) {
+export function SMMobileDropdownController(elt) {
     SMDropdownController.apply(this, arguments);
 
 }
