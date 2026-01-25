@@ -1639,7 +1639,7 @@ export function normalizeLatLngString(text) {
         lat = Math.max(-90, Math.min(90, lat));
         if (lng < 180 && lng > 180)
             lng = (lng + 180 + 360 * Math.ceil(Math.abs(lng) / 360 + 2)) % 360 - 180;
-        return [lat, lng].join(', ');
+        return [lat, lng].join(',');
     }
     else return '';
 }
