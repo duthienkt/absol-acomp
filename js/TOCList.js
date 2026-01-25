@@ -252,7 +252,7 @@ TOCList.property.nodes = {
         nodes = nodes || [];
         this.rootController = new TOCVirtualRootController(this, nodes);
         this.rootController.view = this.$body;
-
+        this.addStyle('--toc-estimate-width', Math.ceil(this.rootController.estimateWidth) + 'px');
         this.applySavedState();
     },
     get: function () {
@@ -552,6 +552,17 @@ Object.defineProperties(TOCVirtualRootController.prototype, {
         },
         get: function () {
             return this._view;
+        }
+    },
+    estimateWidth: {
+        get: function () {
+            var res = 0;
+            if (this.children && this.children.length > 0) {
+                res = this.children.reduce(function (acc, cur) {
+                    return Math.max(acc, cur.estimateWidth);
+                }, res);
+            }
+            return res;
         }
     }
 });
@@ -906,6 +917,17 @@ Object.defineProperties(TOCNodeController.prototype, {
     activated: {
         get: function () {
             return this.nodeElt.hasClass('as-active');
+        }
+    },
+    estimateWidth: {
+        get: function () {
+            var res = this.nodeElt.estimateWidth;
+            if (this.children && this.children.length > 0) {
+                res = this.children.reduce(function (acc, cur) {
+                    return Math.max(acc, cur.estimateWidth);
+                }, res);
+            }
+            return res;
         }
     }
 });
