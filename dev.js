@@ -39,6 +39,8 @@ import './js/ExtendComputedStyle'
 import CMDTool, { CMDToolDelegate } from "./js/CMDTool";
 import { RawTableSearcher } from "./js/RawTable";
 import { rawTableRemoveEmptyImage, rawTableViewEmptyImage } from "./js/dynamictable/DTBody";
+import { openFaceIdEnrollmentDialog } from "./js/FaceIdEnrollment";
+import { openFaceIdAuthenticationDialog } from "./js/FaceAuthentication";
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
 absol.vScrollIntoView = vScrollIntoView;
@@ -104,6 +106,21 @@ Dom.documentReady.then(function () {
             }
         }).addTo(document.head);
     }
+
+    var gmiLink = absol.$('link', document.head, function (e) {
+        if (e.href && e.href.toLowerCase().indexOf('Material+Icons') >= 0) return true;
+    });
+    if (!gmiLink) {
+        gmiLink = absol._({
+            tag: 'link',
+            attr: {
+                rel: 'stylesheet',
+                href: 'https://fonts.googleapis.com/icon?family=Material+Icons'
+            }
+        }).addTo(document.head);
+    }
+
+
 });
 
 Object.assign(absol.$, utils);
@@ -172,3 +189,7 @@ if (location.href.indexOf('localhost') >= 0) {
     // Dom.documentReady.then(testFont);
 }
 
+absol.faceid = {
+    openFaceIdEnrollmentDialog,
+    openFaceIdAuthenticationDialog
+};
