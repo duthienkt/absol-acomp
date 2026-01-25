@@ -1,0 +1,234 @@
+.as-face-id-input {
+    /*width: 500px;*/
+    /*height: 500px;*/
+    position: relative;
+}
+
+.as-face-id-input,
+.as-face-id-input * {
+    pointer-events: none !important;
+    user-select: none !important;
+}
+
+
+.as-face-id-input-video-ctn {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    padding: 10px;
+}
+
+
+.as-face-id-input-video-viewport {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    overflow: hidden;
+    border-radius: 50%;
+    border: 1px solid gray;
+    box-sizing: content-box;
+    transform: scaleX(-1);
+}
+
+.as-face-id-face-pos {
+    position: absolute;
+    z-index: 10;
+    transition: width 0.1s, height 0.1s, left 0.1s, top 0.1s;
+    border: 2px solid red;
+}
+
+.as-face-id-face-pitch,
+.as-face-id-face-yaw,
+.as-face-id-face-roll {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(50% - 10px);
+    height: 20px;
+    background: red;
+    opacity: 0.5;
+}
+
+.as-face-id-face-yaw {
+    background: blue;
+
+}
+
+
+.as-face-id-face-roll {
+    background: green;
+
+}
+
+.as-face-id-input-video {
+    position: absolute;
+    transition: width 0.5s, height 0.5s, left 0.5s, top 0.5s;
+    left: 0;
+    top: 0;
+}
+
+.as-face-id-enrollment .as-face-id-input {
+    display: inline-block;
+}
+
+.as-face-id-enrollment {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    font-size: 14px;
+    font-family: Roboto, sans-serif;
+    grid-template-rows:  auto auto 1fr auto;
+    background-color: white;
+    overflow-y: auto;
+    padding-top: 30px;
+    color: var(--dark-color);
+}
+
+.as-face-id-enrollment-step-indicator-ctn{
+    min-width: 75%;
+    padding: var(--distance-4) 0;
+}
+
+.as-face-id-enrollment-command-ctn {
+    position: absolute;
+    z-index: 10;
+    left: 10%;
+    right: 10%;
+    top: var(--distance-1);
+    text-align: center;
+}
+
+.as-face-id-enrollment-command {
+    padding: var(--distance-1) var(--distance-2);
+    max-width: calc(80vw - 40px);
+    font-size: 1.75em;
+    text-align: center;
+    line-height: 1.2;
+    display: inline-block;
+    border-radius: var(--large-radius);
+    background-color:white ;
+    border: 1px solid var(--variant-color-info);
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.2);
+}
+
+.as-face-id-enrollment-canvas-ctn {
+    display: none;
+    padding: 10px;
+}
+
+.as-face-id-enrollment.as-completed .as-face-id-enrollment-canvas-ctn {
+    display: inline-block;
+}
+
+.as-face-id-enrollment.as-completed .as-face-id-input {
+    display: none;
+}
+
+.as-face-id-enrollment-canvas {
+    width: 320px;
+    height: 320px;
+    border: 1px solid gray;
+    box-sizing: content-box;
+    border-radius: 50%;
+}
+
+.as-face-id-enrollment-canvas.as-hidden {
+    visibility: hidden;
+    position: fixed;
+    z-index: -1000;
+    left: 0;
+    top: 0;
+}
+
+.as-face-id-enrollment-modal.as-mobile {
+    position: fixed;
+    z-index: 1000000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    justify-items: stretch;
+}
+
+.as-face-id-enrollment-check-list {
+    color: var(--dark-color);
+    display: grid;
+    gap: 10px;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    padding: 16px;
+    align-content: start;
+}
+
+.as-face-id-enrollment-footer {
+    padding: var(--distance-6) 10px;
+    justify-self: stretch;
+    text-align: center;
+}
+
+.as-face-id-enrollment-footer>button {
+    width: calc(100% - 80px);
+}
+
+.as-face-id-enrollment-footer>button:not(:last-child) {
+    margin-bottom:var(--distance-6) ;
+}
+
+.as-face-id-enrollment-submit {
+    width: calc(100% - 80px);
+
+}
+
+.as-face-id-verification-image {
+    --size: 256px;
+    --aspect-ratio: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.as-face-id-verification-image.as-landscape {
+    width: var(--size);
+    height: calc(var(--size) / var(--aspect-ratio));
+}
+
+.as-face-id-verification-image.as-portrait {
+    width: calc(var(--size) * var(--aspect-ratio));
+    height: var(--size);
+}
+
+.as-face-id-verification-image img {
+    width: 300%;
+    height: 300%;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.as-face-id-verification-image button {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    color: white;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    font-size: 2em;
+}
+
+.as-face-id-verification-image button.as-left {
+    left: 0;
+}
+
+.as-face-id-verification-image button.as-right {
+    right: 0;
+}
+
+.as-face-id-verification-image-index {
+    font-size: 14px;
+    pointer-events: none;
+    color: var(--variant-color-info);
+    text-shadow: 1px 1px 3px white;
+    position: absolute;
+    left: 8px;
+    top: 8px;
+}
