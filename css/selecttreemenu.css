@@ -8,5 +8,5 @@
 }
 
 .am-select-tree-menu {
-    max-width: var(--as-width-limit);
+    max-width: var(--as-combobox-width-limit);
 }

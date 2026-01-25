@@ -285,6 +285,7 @@ input[type="number"].am-list-popup-paging-offset {
 .am-list-popup-content {
     display: block;
     position: relative;
+    min-width: calc(80vw - 20px);
 }
 
 .am-list-popup-list-page {
