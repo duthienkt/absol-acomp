@@ -179,7 +179,7 @@ div.kv-document-page.absol-frame {
     font-size: var(--font-size-right-mouse-menu);
 }
 
-.card-mobile-content > div:not([class]):first-child:last-child .as-dynamic-table-wrapper.as-overflow-y {
+.card-mobile-content > div:not([class]):first-child:last-child > .as-dynamic-table-wrapper.as-overflow-y:first-child:last-child  {
     height: 100%;
 }
 
