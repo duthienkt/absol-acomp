@@ -254,7 +254,16 @@
     padding-right: var(--base-size);
 }
 
+
 .as-ribbon-text-input.as-has-unit input {
+    padding-right: calc(var(--unit-width) + 6px);
+}
+
+.as-ribbon-text-input.as-has-unit:not(.as-has-dropdown) .as-ribbon-text-input-unit-ctn {
+    padding-right: 3px;
+}
+
+.as-ribbon-text-input.as-has-unit.as-has-dropdown input {
     padding-right: calc(var(--unit-width) + 3px);
 }
 
