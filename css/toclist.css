@@ -1,4 +1,6 @@
 .as-toc-list {
+    --toc-estimate-width: 450px;
+    width: var(--toc-estimate-width);
 
 }
 
@@ -52,7 +54,7 @@
 
 .as-toc-item-name-ctn {
     flex-grow: 1;
-
+    width: auto;
 }
 
 .as-toc-item-name {

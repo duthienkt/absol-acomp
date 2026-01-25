@@ -113,6 +113,20 @@ TOCItem.render = function () {
 TOCItem.property = {};
 
 
+TOCItem.property.estimateWidth = {
+    get: function () {
+        var res = 0;
+        res += 20 * this.level;
+        res += 30;//icon toggler
+        res += 30;//icon
+        res += 30;//quickmeu
+        res +=30;//checkbox
+        res += measureText(this.name, '14px Roboto').width;
+        return res;
+    }
+};
+
+
 TOCItem.property.icon = {
     set: function (value) {
         if (this.$iconP) {
