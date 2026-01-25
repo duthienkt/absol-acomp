@@ -192,7 +192,6 @@ ColorPickerButton.render = function () {
     });
 };
 
-ColorPickerButton.property = {};
 ColorPickerButton.property.value = {
     set: function (value) {
         this._value = value;
