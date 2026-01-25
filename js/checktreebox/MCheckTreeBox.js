@@ -10,7 +10,6 @@ import CTIPropHandlers from "./CTIPropHandlers";
 import OOP from "absol/src/HTML5/OOP";
 import ListDictionary from "../list/ListDictionary";
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "../list/search";
-import ItemDictionary from "../list/ListDictionary";
 
 
 /***
@@ -37,7 +36,7 @@ MCTBItemListController.prototype.setItems = function (items) {
 };
 
 MCTBItemListController.prototype.update = function () {
-    ItemDictionary.prototype.update.call(this);
+    ListDictionary.prototype.update.call(this);
     var mode = new this.elt.classes.ModeNormal(this.elt, this.items);
     this.elt.modes.normal = mode;
     if (mode.hasDesc) {

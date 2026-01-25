@@ -58,7 +58,8 @@ Object.defineProperty(MSTBItemHolder.prototype, 'elt', {
                     data: this.data,
                     level: this.level,
                     status: this.status,
-                    selected: this.selected
+                    selected: this.selected,
+                    noSelect: this.data && this.data.noSelect
                 },
                 on: {
                     statuschange: this.ev_statusChange.bind(this),

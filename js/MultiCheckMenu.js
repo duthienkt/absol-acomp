@@ -54,8 +54,6 @@ function MultiCheckMenu() {
     });
     drillProperty(this, this.$selectlistBox, 'debug')
 
-    this.addStyle('--as-width-limit', Math.max(140, (this.$selectlistBox.widthLimit || 0)) + 'px');
-
     this.$itemCtn = $('.as-multi-select-menu-item-ctn', this);
     this.$attachhook = $('attachhook', this)
         .on('attached', this.eventHandler.attached);

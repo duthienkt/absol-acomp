@@ -1,6 +1,7 @@
 import { copySelectionItemArray } from "../utils";
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "../list/search";
 import { DSBModeNormal, DSBModeSearch } from "./DSBModes";
+import TextMeasure from "../TextMeasure";
 
 function MDSBItemListController(elt) {
     this.elt = elt;
@@ -11,12 +12,35 @@ function MDSBItemListController(elt) {
 
 MDSBItemListController.prototype.setItems = function (items) {
     this.items = copySelectionItemArray(items);
+    this.updateItemsMeasurement();
     this._searchItems = prepareSearchForList(copySelectionItemArray(this.items));
     this._searchCache = {};
     var mode = new DSBModeNormal(this.elt, this.items);
     this.elt.modes.normal = mode;
     this.elt.mode = mode;
     mode.onStart();
+};
+
+MDSBItemListController.prototype.updateItemsMeasurement = function () {
+    var leftWidth = 0;
+    var rightWidth = 0;
+    var calcLeftItem = item => {
+        var textWidth = TextMeasure.measureWidth(item.text + '', TextMeasure.FONT_ROBOTO, 14);
+        leftWidth = Math.max(leftWidth, textWidth);
+        if (item.items && item.items.length) {
+            item.items.forEach(calcRightItem);
+        }
+    }
+
+    var calcRightItem = item => {
+        var textWidth = TextMeasure.measureWidth(item.text + '', TextMeasure.FONT_ROBOTO, 14);
+        rightWidth = Math.max(rightWidth, textWidth);
+    }
+    this.items.forEach(calcLeftItem);
+    var fullWidth = leftWidth + rightWidth+ 6* 4 + 14 + 4;
+    this.elt.addStyle('--estimate-full-width', (fullWidth / 14) + 'em');
+
+    console.log(leftWidth, rightWidth);
 };
 
 
@@ -64,7 +88,7 @@ MDSBItemListController.prototype.makeSearch = function (query) {
         return Math.max(holder.itemScore, holder.childScore) >= midScore;
     });
 
-    var searchingResultItems =  holders.map(function (holder) {
+    var searchingResultItems = holders.map(function (holder) {
         var oldItem = holder.item;
         var item = { text: oldItem.text, value: oldItem.value };
         var childHolders;
@@ -84,12 +108,12 @@ MDSBItemListController.prototype.makeSearch = function (query) {
     var mode = new DSBModeSearch(this.elt, searchingResultItems);
     this._searchCache[query] = {
         mode: mode,
-        resetAndGet: function (){
+        resetAndGet: function () {
             return this.mode
         }
     };
 
-    return  mode;
+    return mode;
 };
 
 export default MDSBItemListController;

@@ -59,7 +59,6 @@ function MSelectTreeMenu() {
     this.on('click', this.eventHandler.click, true);
     this.$attachhook = $('attachhook', this).on('error', this.eventHandler.attached);
 
-    this.addStyle('--as-width-limit', calcWidthLimit() + 'px');
 }
 
 MSelectTreeMenu.tag = 'MSelectTreeMenu'.toLowerCase();

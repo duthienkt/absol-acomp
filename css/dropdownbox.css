@@ -134,3 +134,11 @@ div.as-dropdown-box-common-style {
 .am-dropdown-box-item {
     border-bottom: 1px solid #efefef;
 }
+
+.am-dual-select-modal {
+    --estimate-full-width: 100px;
+}
+
+.am-dual-select-modal .am-dropdown-box-body {
+    width: min(var(--estimate-full-width), 95vw - 20px);
+}

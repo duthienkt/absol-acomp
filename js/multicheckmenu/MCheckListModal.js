@@ -226,6 +226,8 @@ MCheckListModal.prototype.viewListAtFirstSelected = function () {
     this.pagingCtrl.viewListAt(idx);
 };
 
+MCheckListModal.prototype.updateReadOnlyItems = CheckListBox.prototype.updateReadOnlyItems;
+
 
 MCheckListModal.property.values = {
     set: function (values) {
@@ -314,6 +316,23 @@ MCheckListModal.property.selectedAll = {
             }
             return res;
         });
+    }
+};
+
+
+MCheckListModal.property.readOnlyValues = {
+    set: function (values) {
+        if (!Array.isArray(values)) {
+            values = [];
+        }
+        else {
+            values = values.slice();
+        }
+        this._readOnlyValues = values;
+        this.updateReadOnlyItems();
+    },
+    get: function () {
+        return (this._readOnlyValues || []).slice();
     }
 };
 

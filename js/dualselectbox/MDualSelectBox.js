@@ -22,7 +22,7 @@ function MDualSelectBox() {
         normal: new DSBModeNormal(this, [])
     }
     this.mode = this.modes.normal;
-    this.strictValue = true;
+    this.strictValue = false;
     this.on('click', this.eventHandler.click);
 }
 
@@ -32,7 +32,7 @@ MDualSelectBox.tag = 'MDualSelectBox'.toLowerCase();
 MDualSelectBox.render = function () {
     return _({
         extendEvent: ['change', 'close'],
-        class: ['am-modal', 'am-dropdown-box-modal'],
+        class: ['am-modal', 'am-dropdown-box-modal', 'am-dual-select-modal'],
         child: {
             class: ['am-dual-select-box', 'am-dropdown-box', 'as-dropdown-box-common-style'],
             child: [

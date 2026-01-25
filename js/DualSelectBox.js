@@ -98,7 +98,7 @@ DualSelectBox.render = function () {
                             {
                                 tag: 'a',
                                 class: 'as-select-list-box-close-btn',
-                                child: { text: LangSys.getText('txt_close') }
+                                attr: { 'data-ml-key': "txt_close" },
                             }
                         ]
                     }
@@ -163,7 +163,7 @@ DualSelectBox.prototype._makeLeftItem = function (item) {
         class: 'absol-selectlist-item',
         child: {
             tag: 'span',
-            class:'absol-selectlist-item-text',
+            class: 'absol-selectlist-item-text',
             child: { text: item.text }
         }
     });
@@ -179,7 +179,7 @@ DualSelectBox.prototype.makeRightItem = function (item) {
         class: 'absol-selectlist-item',
         child: {
             tag: 'span',
-            class:'absol-selectlist-item-text',
+            class: 'absol-selectlist-item-text',
             child: { text: item.text }
         }
     });
@@ -258,7 +258,6 @@ DualSelectBox.property.items = {
         prepareSearchForList(items);
         this._items = items;
 
-
         this.holderByValue = items.reduce(function (ac, cr) {
             ac[cr.value] = {
                 item: cr,
@@ -277,6 +276,10 @@ DualSelectBox.property.items = {
         this.cView = new DualSelectView(this, items);
         this.searchedView['*'] = this.cView;
         this.cView.toView();
+        this.cView.updateViewByValue();
+        this.cView.toRightList();
+        console.log(this.cView)
+
     },
     get: function () {
         return this._items;
@@ -307,8 +310,11 @@ DualSelectBox.property.strictValue = {
         else {
             this.removeClass('as-strict-value');
         }
-        if (this.cView)
+        if (this.cView) {
             this.cView.updateViewByValue();
+            this.cView.toRightList();
+        }
+        this.scrollIntoSelected();
     },
     get: function () {
         return this.hasClass('as-strict-value');
@@ -333,6 +339,20 @@ DualSelectBox.property.value = {
     }
 };
 
+DualSelectBox.property.selectedItem = {
+    /***
+     * @this DualSelectBox
+     */
+    get: function () {
+        var value = this.value || [null, null];
+        var leftValue = value[0];
+        var rightValue = value[1];
+        var leftItemHolder = this.holderByValue[leftValue];
+        var rightItemHolder = leftItemHolder ? leftItemHolder.child[rightValue] : null;
+        return [leftItemHolder ? leftItemHolder.item : null, rightItemHolder ? rightItemHolder.item : null];
+    }
+};
+
 /***
  * @memberOf DualSelectBox#
  * @type {{}}
@@ -347,15 +367,16 @@ DualSelectBox.eventHandler = {};
 DualSelectBox.eventHandler.clickLeftItem = function (itemElt, event) {
     var item = itemElt.itemData;
     this._value[0] = item.value;
+    var rightValue = this._value[1];//auto select right value
+    if (this.holderByValue[item.value] && !this.holderByValue[item.value].child[rightValue]) {
+        this._value[1] = (item.items && item.items[0] && item.items[0].value) || null;
+    }
+
     this.cView.updateLeftSelectedItem();
     this.cView.updateRightList();
     this.cView.toRightList();
+    this.cView.updateRightSelectedItem();
 
-    if (this.cView.$leftItemByValue[item.value] && this.cView.$leftItemByValue[item.value].itemData
-        && this.cView.$leftItemByValue[item.value].itemData.items && this.cView.$leftItemByValue[item.value].itemData.items.length > 0) {
-        this._value[1] = this.cView.$leftItemByValue[item.value].itemData.items[0].value;
-        this.cView.updateRightSelectedItem();
-    }
     if (this.cView.$rightSelectedItem) {
         this.cView.$rightSelectedItem.scrollIntoView();
     }
@@ -519,7 +540,8 @@ DualSelectView.prototype.updateViewByValue = function () {
 
 DualSelectView.prototype.updateRightList = function () {
     var self = this;
-    var leftValue = this.box._value[0];
+    var value = this.box.value || [null, null];
+    var leftValue = value[0];
     var items = this.$leftItemByValue[leftValue] && this.$leftItemByValue[leftValue].itemData.items;
     if (items && items.length > 0) {
         this.$rightItems = items.map(function (item) {
@@ -540,7 +562,8 @@ DualSelectView.prototype.updateLeftSelectedItem = function () {
     if (this.$leftSelectedItem) {
         this.$leftSelectedItem.removeClass('as-selected');
     }
-    this.$leftSelectedItem = this.$leftItemByValue[this.box._value[0]] || null;
+    var value = this.box.value ||[null, null];
+    this.$leftSelectedItem = this.$leftItemByValue[value[0]] || null;
     if (this.$leftSelectedItem) {
         this.$leftSelectedItem.addClass('as-selected');
     }
@@ -551,7 +574,8 @@ DualSelectView.prototype.updateRightSelectedItem = function () {
     if (this.$rightSelectedItem) {
         this.$rightSelectedItem.removeClass('as-selected');
     }
-    this.$rightSelectedItem = this.$rightItemByValue[this.box._value[1]] || null;
+    var value = this.box.value ||[null, null];
+    this.$rightSelectedItem = this.$rightItemByValue[value[1]] || null;
     if (this.$rightSelectedItem) {
         this.$rightSelectedItem.addClass('as-selected');
     }

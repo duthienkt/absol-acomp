@@ -1,9 +1,9 @@
 import Dom, { getScreenSize } from "absol/src/HTML5/Dom";
 import { measureListSize, releaseItem, requireItem } from "./MSelectList";
-import SelectListBox from "../SelectListBox";
+import SelectListBox, { calcWidthLimit } from "../SelectListBox";
 import ACore, { _, $, $$ } from "../../ACore";
 import ListSearchMaster from "../list/ListSearchMaster";
-import { copySelectionItemArray, keyStringOf } from "../utils";
+import { copySelectionItemArray, legacyKeyStringOf } from "../utils";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
 import TextMeasure from "../TextMeasure";
 import { drillProperty } from "absol/src/HTML5/OOP";
@@ -128,7 +128,7 @@ MListModal.prototype._initProperty = function () {
 
 
 MListModal.prototype.findItemsByValue = function (value) {//keep
-    return this._itemsByValue[keyStringOf(value)];
+    return this._itemsByValue[legacyKeyStringOf(value)];
 };
 
 MListModal.prototype.updateSize = function () {
@@ -355,7 +355,7 @@ MListModal.property.items = {
         this._preDisplayItems = this._listToDisplay(this._items);
         this._displayItems = this._filterValue(this._preDisplayItems);
         this._itemsByValue = items.reduce(function reducer(ac, cr) {
-            var key = keyStringOf(cr.value);
+            var key = legacyKeyStringOf(cr.value);
             if (!ac[key]) ac[key] = [];
             else console.error("Duplicate value", cr);
             ac[key].push(cr);
@@ -372,7 +372,7 @@ MListModal.property.items = {
             var valueKey;
             res.text = it.text + '';
             if (it.desc) res.text += it.desc;
-            valueKey = keyStringOf(it.value);
+            valueKey = legacyKeyStringOf(it.value);
             it.keyValue = valueKey;
             this.idx2key.push(valueKey);
             if (it.items && it.items.length > 0 && it.items.map) {
@@ -412,7 +412,7 @@ MListModal.property.values = {
         this._values = values;
         this._valueDict = values.reduce(function (ac, cr) {
             ac[cr + ''] = true;
-            ac[keyStringOf(cr)] = cr;
+            ac[legacyKeyStringOf(cr)] = cr;
             return ac;
         }, {});
 
@@ -554,6 +554,7 @@ Dom.ShareInstance.install('mlistmodal', MListModal);
  * @constructor
  */
 export function MListModalV2() {
+    this.widthLimit = calcWidthLimit();
     this.estimateSize = { textWidth: 0, descWidth: 0 };
     this.itemHolders = [];
     this.itemHolderByValue = {};
@@ -644,16 +645,24 @@ MListModalV2.prototype.cancelWaiting = function () {
 }
 
 MListModalV2.prototype.findItemsByValue = function (value) {
-    var holder = this.itemHolderByValue[keyStringOf(value)];
+    var holder = this.itemHolderByValue[legacyKeyStringOf(value)];
     if (!holder) return null;
     return [holder.data];
 };
 
 MListModalV2.prototype.findItemByValue = function (value) {
-    var holder = this.itemHolderByValue[keyStringOf(value)];
+    var holder = this.itemHolderByValue[legacyKeyStringOf(value)];
     if (!holder) return null;
     return holder.data;
 };
+
+MListModalV2.prototype.indexOfValue = function (value) {
+    return this.itemHolders.findIndex(it=>{
+        return it.data.value === value;
+    });
+}
+
+
 
 MListModalV2.prototype.viewListAt = function (idx) {
     var offset = this.pagingCtrl.offsetTopOfHolders[idx];
@@ -673,7 +682,7 @@ MListModalV2.prototype.updateSelectedItem = function () {
         this.selectedHolder.updateView();
     }
     var value = this.value;//computed value
-    this.selectedHolder = this.itemHolderByValue[keyStringOf(value)];
+    this.selectedHolder = this.itemHolderByValue[legacyKeyStringOf(value)];
     if (this.selectedHolder) {
         this.selectedHolder.selected = true;
         this.selectedHolder.updateView();
@@ -750,7 +759,7 @@ MListModalV2.property.value = {
         var value = this._value;
         var holder;
         if (this.strictValue) {
-            holder = this.itemHolderByValue[keyStringOf(value)];
+            holder = this.itemHolderByValue[legacyKeyStringOf(value)];
             if (holder) return value;
             if (this.itemHolders.length > 0) {
                 return this.itemHolders[0].data.value;
@@ -781,7 +790,7 @@ MListModalV2.property.selectedItem = {
     get: function () {
         var value = this._value;
         var holder;
-        holder = this.itemHolderByValue[keyStringOf(value)] || null;
+        holder = this.itemHolderByValue[legacyKeyStringOf(value)] || null;
         if (this.strictValue) {
             if (!holder && this.itemHolders.length > 0)
                 holder = this.itemHolders[0];
@@ -796,7 +805,7 @@ MListModalV2.property.selectedIndex = {
     get: function () {
         var value = this._value;
         var holder;
-        holder = this.itemHolderByValue[keyStringOf(value)] || null;
+        holder = this.itemHolderByValue[legacyKeyStringOf(value)] || null;
         if (this.strictValue) {
             if (!holder && this.itemHolders.length > 0)
                 holder = this.itemHolders[0];
@@ -812,7 +821,7 @@ MListModalV2.eventHandler = {};
 
 MListModalV2.eventHandler.selectItem = function (event) {
     var value = event.value;
-    var holder = this.itemHolderByValue[keyStringOf(value)];
+    var holder = this.itemHolderByValue[legacyKeyStringOf(value)];
     if (this.selectedHolder !== holder && this.selectedHolder) {
         this.selectedHolder.selected = false;
         this.selectedHolder.updateView();
@@ -1006,7 +1015,7 @@ function MLMHolder(boxElt, data) {
     this.value = data.value;
     this.wrappedText = [this.data.text];
     this.wrappedDesc = [this.data.desc];
-    this.keyValue = keyStringOf(data.value);
+    this.keyValue = legacyKeyStringOf(data.value);
     this.itemElt = null;
     this.computedSize = { width: 0, height: 30, col1maxWidth: 0, col2maxWidth: 0 };
     this.calcInitSize();

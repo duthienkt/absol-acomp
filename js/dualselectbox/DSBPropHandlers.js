@@ -3,7 +3,7 @@ var DSBPropHandlers = {};
 DSBPropHandlers.items = {
     set: function (items) {
         this.itemListCtrl.setItems(items);
-        if ('savedValue' in this) {
+        if (('savedValue' in this) || this.strictValue) {
             this.modes.normal.setValue(this.savedValue, this.strictValue);
         }
     },
@@ -37,6 +37,8 @@ DSBPropHandlers.strictValue = {
         else {
             this.$box.removeClass('as-strict-value');
         }
+        this.modes.normal.setValue(this.savedValue, !!value);
+
     },
     get: function () {
         return this.$box.hasClass('as-strict-value');

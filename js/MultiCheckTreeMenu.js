@@ -1,18 +1,16 @@
 import CheckTreeBox from "./CheckTreeBox";
-import ACore, { _, $, $$ } from "../ACore";
+import ACore, { $, _ } from "../ACore";
 import SelectBoxItem from "./SelectBoxItem";
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 import MultiSelectMenu from "./MultiSelectMenu";
 import CheckTreeLeafOnlyBox from "./CheckTreeLeafOnlyBox";
-import { copySelectionItemArray, isNaturalNumber, rootTreeValues2CheckedValues } from "./utils";
+import { copySelectionItemArray, isNaturalNumber, legacyKeyStringOf } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import AElement from "absol/src/HTML5/AElement";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import CheckUnsafeTreeLeafOnlyBox from "./CheckUnsafeTreeLeafOnlyBox";
 import { arrayCompare, arrayUnique } from "absol/src/DataStructure/Array";
-import LangSys from "absol/src/HTML5/LanguageSystem";
 import { AbstractInput, AbstractStyleExtended } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
 import Rectangle from "absol/src/Math/Rectangle";
@@ -93,10 +91,11 @@ function MultiCheckTreeMenu() {
      * @memberOf MultiCheckTreeMenu#
      */
 
-    /***
-     * todo: TREE has noSelect
+    /**
+     * @name readOnlyValues
+     * @type {Array}
+     * @memberOf MultiCheckTreeMenu#
      */
-
 }
 
 mixClass(MultiCheckTreeMenu, AbstractInput);
@@ -254,6 +253,25 @@ MultiCheckTreeMenu.prototype._assignTokens = function (items) {
     for (var i = 0; i < items.length; ++i) {
         this.$itemCtn.childNodes[i].data = items[i];
     }
+};
+
+MultiCheckTreeMenu.prototype.updateReadOnlyItems = function () {
+    //TODO: only support leafOny true
+    var readOnlyValues = this._readOnlyValues || [];
+    var items = Array.prototype.slice.call(this.$itemCtn.childNodes);
+    var dict = readOnlyValues.reduce((ac, cr) => {
+        ac[legacyKeyStringOf(cr)] = true;
+        return ac;
+    }, {});
+
+    items.forEach(function (it) {
+        if (dict[legacyKeyStringOf(it.data.value)]) {
+            it.readOnly = true;
+        }
+        else {
+            it.readOnly = false;
+        }
+    })
 
 };
 
@@ -278,6 +296,7 @@ MultiCheckTreeMenu.prototype.viewValues = function (values) {
     var items = this.findItemsByValues(values);
     this._filToken(items.length);
     this._assignTokens(items);
+    this.updateReadOnlyItems();
     this._viewValues = values;
     if (this.isFocus) {
         var bound = this.getBoundingClientRect();
@@ -449,6 +468,23 @@ MultiCheckTreeMenu.property.placeholder = {
     }
 };
 
+MultiCheckTreeMenu.property.readOnlyValues = {
+    /**
+     * @this MultiCheckTreeMenu
+     * @param values
+     */
+    set: function (values) {
+        if (!Array.isArray(values)) values = [];
+        else values = arrayUnique(values);
+        this._readOnlyValues = values;
+        this.$checkTreeBox.readOnlyValues = this._readOnlyValues;
+        this.updateReadOnlyItems();
+
+    },
+    get: function () {
+        return (this._readOnlyValues || []).slice();
+    }
+};
 
 MultiCheckTreeMenu.property.disabled = MultiSelectMenu.property.disabled;
 MultiCheckTreeMenu.property.readOnly = MultiSelectMenu.property.readOnly;

@@ -174,6 +174,8 @@ DSBModeNormal.prototype.setValue = function (value, strictValue) {
             leftOK = this.selectLeft(this.items[0].value);
         }
     }
+
+
     if (leftOK) this.viewRight(this.value[0]);
     var rightOK = this.selectRight(value[1]);
     if (!rightOK && strictValue) {

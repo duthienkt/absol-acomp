@@ -7,6 +7,7 @@ import MSelectListItem from "../selectlistbox/MSelectListItem";
 import { mixClass } from "absol/src/HTML5/OOP";
 import { AbstractInput } from "../Abstraction";
 
+
 /***
  * @extends AElement
  * @constructor
@@ -23,6 +24,7 @@ function MSelectMenu() {
     this.$selectlist = _({
         tag: MListModalV2
     });
+    this.$selectlistBox = this.$selectlist;//adapt
 
     this.$selectlist.cancelWaiting();
 
@@ -80,8 +82,6 @@ MSelectMenu.prototype.styleHandlers.variant = SelectMenu2.prototype.styleHandler
 MSelectMenu.prototype.styleHandlers.textAlign = SelectMenu2.prototype.styleHandlers.textAlign;
 
 
-
-
 MSelectMenu.prototype.findItemsByValue = function (value) {
     return this.$selectlist.findItemsByValue(value);
 };
@@ -124,8 +124,6 @@ MSelectMenu.prototype.getRecommendWith = function () {
 };
 
 MSelectMenu.prototype.init = SelectMenu.prototype.init;
-
-MSelectMenu.property = {};
 
 
 MSelectMenu.property.items = {
@@ -237,6 +235,20 @@ MSelectMenu.property.selectedIndex = SelectMenu.property.selectedIndex;
 
 MSelectMenu.property.disabled = SelectMenu.property.disabled;
 MSelectMenu.property.hidden = SelectMenu.property.hidden;
+
+MSelectMenu.property.readOnly = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-read-only');
+        }
+        else {
+            this.removeClass('as-read-only');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-read-only');
+    }
+}
 
 /**
  * @type {MSelectMenu}

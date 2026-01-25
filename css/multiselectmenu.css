@@ -16,8 +16,7 @@
     background-color: white;
     padding-right: 30px;
     white-space: normal;
-    --as-width-limit: 100vw;
-    max-width: var(--as-width-limit);
+    max-width: var(--as-combobox-width-limit);
 }
 
 .as-multi-select-menu.as-background-none {
@@ -50,7 +49,7 @@
 .as-multi-select-menu .absol-selectbox-item-text span{
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: calc(var(--as-width-limit) - 85px);
+    max-width: calc(var(--as-combobox-width-limit) - 85px);
 }
 
 .as-multi-select-menu-item-ctn {
@@ -64,7 +63,8 @@
     white-space: nowrap;
 }
 
-.as-multi-select-menu-item-ctn.as-has-more::after {
+.as-multi-select-menu-item-ctn.as-has-more::after,
+.as-multi-date-input-body.as-has-more::after{
     content: "...";
     display: inline-block;
     vertical-align: middle;
@@ -173,7 +173,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: calc(100% - 40px);
+    width: calc(100% - 30px);
     height: 100%;
 }
 

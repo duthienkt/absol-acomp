@@ -58,6 +58,7 @@ MChecklistItem.eventHandler.clickText = CheckListItem.eventHandler.clickText
 MChecklistItem.eventHandler.checkboxChange =  CheckListItem.eventHandler.checkboxChange;
 
 MChecklistItem.property.selected = CheckListItem.property.selected;
+MChecklistItem.property.readOnly = CheckListItem.property.readOnly;
 
 ACore.install(MChecklistItem);
 

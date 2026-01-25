@@ -10,7 +10,6 @@ import { getScreenSize } from "absol/src/HTML5/Dom";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import ListSearchMaster from "./list/ListSearchMaster";
 import OOP, { drillProperty } from "absol/src/HTML5/OOP";
-import TextMeasurement from "./tool/TextMeasurement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import DelaySignal from "absol/src/HTML5/DelaySignal";
 import { arrayUnique } from "absol/src/DataStructure/Array";
@@ -91,7 +90,6 @@ export function CheckListBox() {
     this._holderDict = {};
     this._estimateWidth = 100;
     this.widthLimit = calcWidthLimit();
-    this.addStyle('--as-width-limit', this.widthLimit + 'px');
     this.$scroller = $('.as-select-list-box-scroller', this);
     this.$content = $('.as-select-list-box-content', this);
     this.$pages = $$('.as-select-list-box-page', this);
