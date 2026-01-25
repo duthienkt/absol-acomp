@@ -1,0 +1,104 @@
+.as-step-indicator {
+    position: relative;
+    display: block;
+    --base-size: 40px;
+    --percent-value: 0%;
+    --estimate-width: 0;
+    min-width: var(--estimate-width);
+
+}
+
+.as-step-indicator-items-ctn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    z-index: 4;
+}
+
+.as-step-indicator-line {
+    z-index: 0;
+    position: absolute;
+    top: calc(50% - 1px);
+    left: calc(var(--base-size) / 2);
+    right: calc(var(--base-size) / 2);
+    box-sizing: border-box;
+}
+
+.as-step-indicator-line::before,
+.as-step-indicator-line::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    border: 1px solid #e0e0e0;
+    z-index: 0;
+}
+
+
+.as-step-indicator-line::after {
+    z-index: 2;
+    right: unset;
+    border-color: var(--primary-color);
+    width: var(--percent-value);
+    transition: width 0.2s;
+}
+
+
+.as-step-indicator-item {
+    position: relative;
+    width: var(--base-size);
+    height: var(--base-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.as-step-indicator-circle {
+    position: absolute;
+    box-sizing: border-box;
+    z-index: 0;
+    left: 3px;
+    top: 3px;
+    bottom: 3px;
+    right: 3px;
+    transition: left 0.2s, top 0.2s, bottom 0.2s, right 0.2s;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    background-color: white;
+}
+
+.as-step-indicator-item.as-active .as-step-indicator-circle {
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    border-color: var(--primary-color);
+}
+
+.as-step-indicator-item.as-active .as-step-indicator-label {
+    color: var(--primary-color);
+}
+
+.as-step-indicator-item.as-passed .as-step-indicator-circle {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.as-step-indicator-item.as-passed .as-step-indicator-label {
+    color: white;
+}
+
+
+.as-step-indicator-label {
+    font-size: inherit;
+    color: var(--gray-color);
+    z-index: 1;
+    font-weight: bold;
+}
+
+
+.as-step-indicator-label .mdi{
+    font-size: 1.25em;
+}
