@@ -155,7 +155,7 @@ LocationInput.property.value = {
         value = value || null;
         var lat, lng;
         if (typeof value === "string") {
-            this.$text.value = value;
+            this.$text.value = value.replace(/\s/g, '');
             return;
         }
         if (value instanceof Array) {
@@ -173,7 +173,7 @@ LocationInput.property.value = {
             }
         }
         if (isRealNumber(lat) && isRealNumber(lng)) {
-            this.$text.value = [lat, lng].join(', ');
+            this.$text.value = [lat, lng].join(',');
         }
         else {
             this.$text.value = '';
