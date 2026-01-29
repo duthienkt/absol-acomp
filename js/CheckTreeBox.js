@@ -754,6 +754,7 @@ TreeNodeHolder.prototype.calcWidth = function () {
     width += 43; //cheat for some size with checklistbox
     width += 14.7 + 5;//toggle icon
     width += 16;//checkbox
+    width += 21 * this.level;//level
     if (this.item.icon) width += 21;//icon
     width += 7 + TextMeasure.measureWidth(this.item.text || '', TextMeasure.FONT_ROBOTO, 14);//margin-text
 
