@@ -13,6 +13,18 @@ function ObsDiv() {
     this.startObserver();
     this.ruleCtrl = new ODRuleController(this);
     drillProperty(this, this.ruleCtrl, 'respRules', 'data');
+    /**
+     * @type {Array}
+     * @name respRules - Responsive rules to apply on this ObsDiv.
+     * @memberOf ObsDiv#
+     */
+
+    /**
+     * Whether this ObsDiv is reusable. If true, when the ObsDiv is hidden or removed from document, it will keep observing size and visibility changes. Default is false.
+     * @type {boolean}
+     * @name reusable
+     * @memberOf ObsDiv#
+     */
 }
 
 ObsDiv.tag = 'ObsDiv'.toLowerCase();
@@ -38,8 +50,10 @@ ObsDiv.prototype.startObserver = function () {
     this._intersectionObserver = new IntersectionObserver(entries => {
         var eventData = new ODIntersectionEvent(this, entries[0]);
         this.ruleCtrl.apply(eventData.borderRect);
-
         this.emit('viewchange', eventData);
+        if (eventData.action === 'remove' && !this.reusable) {
+            this.stopObserver();
+        }
     });
     this._intersectionObserver.observe(this);
 };
@@ -54,6 +68,22 @@ ObsDiv.prototype.stopObserver = function () {
         this._intersectionObserver = null;
     }
 };
+
+ObsDiv.property = {};
+
+ObsDiv.property.reusable = {
+    set: function (value) {
+        if (value) {
+            this.addClass('as-reusable');
+        }
+        else {
+            this.removeClass('as-reusable');
+        }
+    },
+    get: function () {
+        return this.hasClass('as-reusable');
+    }
+}
 
 
 export default ObsDiv;
