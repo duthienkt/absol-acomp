@@ -93,22 +93,23 @@
     padding-right: 4px;
     color: black;
     background-color: white;
-    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
-    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
+    /*-webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15); safari lost box shadow*/
+    /*-moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);*/
+    box-shadow: 0 0 10px 0 rgba(169, 169, 172, 0.75);
     border-radius: 5px;
     overflow: hidden;
 }
+
 .absol-context-menu-anchor .absol-vmenu:empty,
 .absol-context-menu-anchor .absol-hmenu:empty {
-    display:  none;
+    display: none;
 }
 
 
 .absol-context-menu-anchor .absol-dropright > .absol-dropright-content {
     -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
     -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
-    box-shadow:  0 0 10px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.15);
 }
 
 
