@@ -231,7 +231,7 @@
     --as-input-border-radius: 3px;
     --as-context-menu-font-size: 1rem;
     --as-context-font-family: Roboto, sans-serif;
-    --as-disabled-background-color: #D5D7DA;/*#EDEDED;/**/
+    --as-disabled-background-color: #F5F5F5;/*#D5D7DA;/*#EDEDED;/**/
     --as-disabled-natural-color:#D5D7DA;
     --as-light-disabled-background-color: #F6F4F4;
     --as-disabled-text-color: #ACACAC;
@@ -348,6 +348,9 @@
     --table-new-border: 1px solid var(--table-new-border-color);
     --table-new-row-hover: 0 0 4px 2px rgba(0, 0, 0, 0.15);
     --table-new-row-selected: #C5E5EC;
+
+    --header-bar-color: var(--dark-color);
+    --header-bar-background-color: #efefef;
 
     --icon-background-hover: #F4F4F4;
 
