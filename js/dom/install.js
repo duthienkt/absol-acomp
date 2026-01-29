@@ -200,11 +200,18 @@ import { EmptyTablePlaceholder } from "../dynamictable/DTBody";
 import ChatGPTButton from "../ChatGPTButton";
 import RibbonTextInput from "../RibbonTextInput";
 import SingleSelectList from "../SingleSelectList";
+import MultiDateInput from "../MultiDateInput";
+import FaceIdInput from "../FaceIdInput";
+import { FaceIdVerificationImage } from "../FaceIdEnrollment";
+import ObsDiv from "../ObsDiv";
+// import GSMInput from "../GSMInput";
 
 
 export var publicCreators = [
+    ObsDiv,
     MdiStoreMarkerOutline,
     ChatGPTButton,
+    // GSMInput,
     AutoCompleteInput,
     BoardTable,
     Board,
@@ -233,6 +240,7 @@ export var publicCreators = [
     DropZone,
 
     ExpressionInput,
+    FaceIdInput,
     IdentTextInput,
 
     EmojiPickerTooltip,
@@ -242,6 +250,7 @@ export var publicCreators = [
     Finder,
     FontFamilySelectList,
     FontInput,
+    FaceIdVerificationImage,
     Scrollbar,
     VScrollbar,
     HScrollbar,
@@ -259,6 +268,7 @@ export var publicCreators = [
     VRootMenu,
     MenuButton,
     DateInput2,
+    MultiDateInput,
     DateNLevelInput,
     Hanger,
     DraggableHStack,
@@ -333,8 +343,7 @@ export var publicCreators = [
     SelectBoxItem,
 
     DualSelectBox,
-    BrowserDetector.isMobile ? DualSelectMenuV2 : DualSelectMenu,
-
+    DualSelectMenuV2,
     SelectTable,
     SelectTable2,
     SelectTreeMenu,
@@ -442,12 +451,8 @@ function install(core) {
     core.install(publicCreators);
     core.install('checkboxbutton', CheckboxInput);
     core.install('selectbox', MultiSelectMenu);
-    if (BrowserDetector.isMobile) {
-        core.install('selectmenu', MSelectMenu);
-        core.install('mselectmenu', MSelectMenu);
-        // core.install('selecttreemenu', MSelectTreeMenu)
-    }
-    // core.install('mselectmenu', SelectMenu2);
+
+    core.install('mselectmenu', SelectMenu2);
     core.install('mselecttreemenu', SelectTreeMenu)
 
     core.install('MSelectTreeLeafMenu'.toLowerCase(), SelectTreeLeafMenu);
