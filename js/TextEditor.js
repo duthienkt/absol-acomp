@@ -6,6 +6,8 @@ import { getTextNodesIn, getTextIn, measureText } from "absol/src/HTML5/Text";
 import { AbstractInput } from "./Abstraction";
 import { notifyPreFocusEvent } from "./utils";
 import TextMeasure from "./TextMeasure";
+import { cropTextByUTF8BytesCount, getUTF8BytesCount } from "absol/src/String/stringUtils";
+import { isNaturalNumber } from "absol/src/Converter/DataTypes";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -27,12 +29,21 @@ export function TextInput() {
         var nativeValueDes = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
         Object.defineProperty(this, 'value', {
             set: function (value) {
+                var maxU8Length = this.maxU8Length;
+                if (maxU8Length) {
+                    value = cropTextByUTF8BytesCount(value, maxU8Length);
+                }
                 nativeValueDes.set.call(this, value);
                 this.updateContentWidthStyle();
                 return value;
             },
             get: function () {
-                return nativeValueDes.get.call(this);
+                var value = nativeValueDes.get.call(this);
+                // var maxU8Length = this.maxU8Length;
+                // if (maxU8Length) {
+                //     value = cropTextByUTF8BytesCount(value, maxU8Length);
+                // }
+                return value;
             },
             configurable: true,
             enumerable: true
@@ -42,7 +53,13 @@ export function TextInput() {
 
     }
 
-    this.addEventListener('input', this.updateContentWidthStyle.bind(this));
+    this.addEventListener('input', this.eventHandler.input);
+
+    /**
+     * @type {number|null}
+     * @name maxU8Length
+     * @memberOf TextInput#
+     */
 
 }
 
@@ -74,7 +91,49 @@ TextInput.prototype.styleHandlers.width = {
         else this.style.width = value;
         return value;
     }
+};
+
+TextInput.eventHandler = {};
+
+
+/**
+ * @this {TextInput}
+ * @param event
+ */
+TextInput.eventHandler.input = function (event) {
+    var value;
+    var u8Length;
+    var maxU8Length = this.maxU8Length;
+    if (maxU8Length) {
+        value = this.value;
+        u8Length = getUTF8BytesCount(value);
+        if (u8Length > maxU8Length) {
+            value = cropTextByUTF8BytesCount(value, maxU8Length);
+            this.value = value;
+        }
+    }
+    this.updateContentWidthStyle();
 }
+
+
+TextInput.property.maxU8Length = {
+    set: function (value) {
+        value = Math.floor(value);
+        if (isNaturalNumber(value) && value> 0) {
+            this._maxU8Length = value;
+        }
+        else {
+            this._maxU8Length = null;
+        }
+
+        setTimeout(this.eventHandler.input, 0);
+    },
+    get: function () {
+        if (isNaturalNumber(this._maxU8Length)) return this._maxU8Length;
+        return null;
+    }
+};
+
 
 
 function TextEditor() {
@@ -338,5 +397,3 @@ TextEditor.prototype.isEmptyText = function () {
 // };
 
 ACore.install('texteditor', TextEditor);
-
-// not comleted yet

@@ -4,6 +4,8 @@ import SelectMenu from "./SelectMenu";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { AbstractInput } from "./Abstraction";
+import { cropTextByUTF8BytesCount } from "absol/src/String/stringUtils";
+import { TextInput } from "./TextEditor";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -27,10 +29,43 @@ function TextArea2() {
         }
     }, { root: document.documentElement });
     this.obs.observe(this);
+
+
+    try {
+        var nativeValueDes = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value');
+        Object.defineProperty(this, 'value', {
+            set: function (value) {
+                var maxU8Length = this.maxU8Length;
+                if (maxU8Length) {
+                    value = cropTextByUTF8BytesCount(value, maxU8Length);
+                }
+                nativeValueDes.set.call(this, value);
+                this.updateSize();
+                return value;
+            },
+            get: function () {
+                var value = nativeValueDes.get.call(this);
+                // var maxU8Length = this.maxU8Length;
+                // if (maxU8Length) {
+                //     value = cropTextByUTF8BytesCount(value, maxU8Length);
+                // }
+                return value;
+            },
+            configurable: true,
+            enumerable: true
+        });
+
+    } catch (e) {
+
+    }
+
+
     this.on('keydown', this.eventHandler.keydown);
     this.on('paste', this.eventHandler.paste);
     this.on('cut', this.eventHandler.paste);
     this.requestUpdateSize = this.updateSize.bind(this);
+    this.addEventListener('input', this.eventHandler.input);
+
     AbstractInput.call(this);
 }
 
@@ -59,8 +94,13 @@ TextArea2.prototype.updateSize = function () {
     this.addStyle('--content-height', heightStyle);
 };
 
-TextArea2.eventHandler = {};
 
+
+TextArea2.property = {};
+TextArea2.prototype.maxU8Length = TextInput.prototype.maxU8Length;
+TextArea2.prototype.updateContentWidthStyle = TextArea2.prototype.updateSize;
+TextArea2.eventHandler = {};
+TextArea2.eventHandler.input = TextInput.eventHandler.input;
 /**
  *
  * @param event
@@ -103,6 +143,7 @@ TextArea2.eventHandler.keydown = function (event) {
 };
 
 
+
 TextArea2.eventHandler.paste = function (event) {
     // var text  = 
     var cl = event.clipboardData || window.clipboardData;
@@ -114,7 +155,6 @@ TextArea2.eventHandler.paste = function (event) {
 
     var heightSyle = this._measureHeight(newText);
     this.addStyle('--content-height', heightSyle);
-
 };
 
 
