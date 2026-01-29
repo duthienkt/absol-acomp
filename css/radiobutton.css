@@ -1,11 +1,22 @@
-.absol-radio-button {
-    display: inline;
+label.absol-radio-button {
+    display: inline-block;
+    position: relative;
+    font-size: inherit;
+    box-sizing: border-box;
+    vertical-align: middle;
     cursor: pointer;
+    padding: 0;
+    margin: 0; /*fix boostrap override*/
+    overflow: hidden;
+    border-radius: 50%;
     white-space: nowrap;
 }
 
+
 .absol-radio-button input {
-    display: none;
+    position: absolute;
+    left: -30px;
+    top: 0;
 }
 
 

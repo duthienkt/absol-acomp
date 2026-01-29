@@ -8,7 +8,7 @@ var _ = ACore._;
 var $ = ACore.$;
 
 /***
- * @extends Element
+ * @extends AElement
  * @constructor
  */
 function RadioInput() {

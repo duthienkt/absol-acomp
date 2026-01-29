@@ -6,6 +6,7 @@ import Svg from "absol/src/HTML5/Svg";
 import AElement from "absol/src/HTML5/AElement";
 import { ShareSerializer } from "absol/src/Print/printer";
 import Rectangle from "absol/src/Math/Rectangle";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 
 var _ = ACore._;
@@ -25,6 +26,8 @@ function Radio() {
     this.$labels = $$('span', this);
 
     OOP.drillProperty(this, this.$input, ['value', 'checked']);
+
+    //todo: add to hidden div to prevent lost value
 }
 
 Radio.tag = 'radio';
@@ -51,6 +54,7 @@ Radio.render = function () {
         ]
     });
 };
+
 
 
 Radio.prototype.notifyChange = function () {
@@ -124,6 +128,10 @@ Radio.getValueByName = function (name) {
         }
     }
     return res;
+};
+
+Radio.setValueByName = function (name, value) {
+
 };
 
 
