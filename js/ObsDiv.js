@@ -10,6 +10,7 @@ import { drillProperty } from "absol/src/HTML5/OOP";
  */
 function ObsDiv() {
     this.addClass('as-obs-div');
+    this.defineEvent(['resize', 'viewchange']);
     this.startObserver();
     this.ruleCtrl = new ODRuleController(this);
     drillProperty(this, this.ruleCtrl, 'respRules', 'data');
@@ -31,8 +32,7 @@ ObsDiv.tag = 'ObsDiv'.toLowerCase();
 
 ObsDiv.render = function () {
     return _({
-        tag: 'div',
-        extendEvent: ['resize', 'viewchange'],
+        tag: 'div'
     });
 };
 
