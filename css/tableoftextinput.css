@@ -21,6 +21,10 @@
     width: 445pt;
 }
 
+.as-table-of-text-input-wrapper.as-size-a3 .as-table-of-text-input {
+    width: 841pt;
+}
+
 .as-table-of-text-input pre {
     font: inherit;
     line-height: 1.75;
