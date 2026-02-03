@@ -19,7 +19,7 @@ function MultiCheckTreeLeafMenu() {
         tag: MultiCheckTreeLeafBox.tag,
         on: {
             change: this.eventHandler.selectBoxChange,
-            preupdateposition: this.eventHandler.preUpdateListPosition
+            // preupdateposition: this.eventHandler.preUpdateListPosition
         }
     });
 
