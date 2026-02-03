@@ -82,6 +82,12 @@
     background: rgba(13, 13, 13, 0.6);
 }
 
+.as-bscroller::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
+}
+
 .as-bscroller.dark,
 .dark .as-bscroller,
 .as-dark .as-bscroller,
