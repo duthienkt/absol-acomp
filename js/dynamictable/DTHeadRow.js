@@ -23,6 +23,7 @@ function DTHeadRow(head, data) {
     this._copyElt = null;
     this._fixedXYElt = null;
     this._fixedXElt = null;
+    this._fixedXRightElt = null;
 
 }
 
@@ -33,6 +34,8 @@ DTHeadRow.prototype.updateCopyEltSize = function () {
         this._fixedXElt.addStyle('height', bound.height + 'px');
     if (this._fixedXYElt)
         this._fixedXYElt.addStyle('height', bound.height + 'px');
+    if (this._fixedXYRightElt)
+        this._fixedXYRightElt.addStyle('height', bound.height + 'px');
     this._elt.addStyle('height', bound.height + 'px');
     this.cells.forEach(c => c.updateCopyEltSize());
 };
@@ -73,6 +76,19 @@ Object.defineProperty(DTHeadRow.prototype, 'fixedXYElt', {
     }
 });
 
+Object.defineProperty(DTHeadRow.prototype, 'fixedXYRightElt', {
+    get: function () {
+        if (this._fixedXYRightElt) return this._fixedXYRightElt;
+        var fixedColRight = this.adapter.fixedColRight || 0;
+        this._fixedXYRightElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-dt-fixed-xy-right',
+            child: this.cells.filter(c=> c.idx >= this.cells.length -  fixedColRight).map(c => c.elt)
+        });
+        return this._fixedXYRightElt;
+    }
+});
+
 Object.defineProperty(DTHeadRow.prototype, 'fixedXElt', {
     get: function () {
         if (this._fixedXElt) return this._fixedXElt;
@@ -83,6 +99,19 @@ Object.defineProperty(DTHeadRow.prototype, 'fixedXElt', {
             child:this.cells.filter(c=> c.idx < fixedCol).map(c => c.copyElt2)
         });
         return this._fixedXElt;
+    }
+});
+
+Object.defineProperty(DTHeadRow.prototype, 'fixedXRightElt', {
+    get: function () {
+        if (this._fixedXRightElt) return this._fixedXRightElt;
+        var fixedColRight = this.adapter.fixedColRight || 0;
+        this._fixedXRightElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-dt-fixed-xy-right',
+            child: this.cells.filter(c => c.idx >= this.cells.length - fixedColRight).map(c => c.copyElt2)
+        });
+        return this._fixedXRightElt;
     }
 });
 

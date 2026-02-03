@@ -76,6 +76,20 @@ Object.defineProperty(DTTable.prototype, 'fixedXElt', {
 });
 
 
+
+Object.defineProperty(DTTable.prototype, 'fixedXRightElt', {
+    get: function () {
+        if (this._fixedXRightElt) return this._fixedXRightElt;
+        this._fixedXRightElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-fixed-x-right',
+            child: [this.header.fixedXRightElt, this.body.fixedXRightElt]
+        });
+
+        return this._fixedXRightElt;
+    }
+});
+
 Object.defineProperty(DTTable.prototype, 'fixedYElt', {
     get: function () {
         if (this._fixedYElt) return this._fixedYElt;
@@ -93,12 +107,26 @@ Object.defineProperty(DTTable.prototype, 'fixedXYElt', {
         if (this._fixedXYElt) return this._fixedXYElt;
         this._fixedXYElt = _({
             elt: this.elt.cloneNode(false),
-            class: 'as-dt-fixed-y',
+            class: 'as-dt-fixed-xy',
             child: [this.header.fixedXYElt]
         });
         return this._fixedXYElt;
     }
 });
+
+
+Object.defineProperty(DTTable.prototype, 'fixedXYRightElt', {
+    get: function () {
+        if (this._fixedXYRightElt) return this._fixedXYRightElt;
+        this._fixedXYRightElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-dt-fixed-xy-right',
+            child: [this.header.fixedXYRightElt]
+        });
+        return this._fixedXYRightElt;
+    }
+});
+
 
 
 export default DTTable;

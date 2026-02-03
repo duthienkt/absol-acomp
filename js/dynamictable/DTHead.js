@@ -95,6 +95,20 @@ Object.defineProperty(DTHead.prototype, 'fixedXYElt', {
 });
 
 
+Object.defineProperty(DTHead.prototype, 'fixedXYRightElt', {
+    get: function () {
+        if (this._fixedXYRightElt) return this._fixedXYRightElt;
+        this._fixedXYRightElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-dt-fixed-xy-right',
+            child: this.rows.map(r => r.fixedXYRightElt)
+        });
+        return this._fixedXYRightElt;
+    }
+});
+
+
+
 Object.defineProperty(DTHead.prototype, 'fixedXElt', {
     get: function () {
         if (this._fixedXElt) return this._fixedXElt;
@@ -105,6 +119,19 @@ Object.defineProperty(DTHead.prototype, 'fixedXElt', {
         });
 
         return this._fixedXElt;
+    }
+});
+
+
+Object.defineProperty(DTHead.prototype, 'fixedXRightElt', {
+    get: function () {
+        if (this._fixedXRightElt) return this._fixedXRightElt;
+        this._fixedXRightElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-dt-fixed-x-right',
+            child: this.rows.map(r => r.fixedXRightElt)
+        });
+        return this._fixedXRightElt;
     }
 });
 

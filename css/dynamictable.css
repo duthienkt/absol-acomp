@@ -179,7 +179,8 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 
 
 .as-dynamic-table.as-dt-fixed-y,
-.as-dynamic-table.as-fixed-x {
+.as-dynamic-table.as-fixed-x,
+.as-dynamic-table.as-fixed-x-right {
     table-layout: fixed;
     width: auto;
     overflow: hidden;
@@ -198,9 +199,31 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     display: block;
 }
 
+.as-dynamic-table-fixed-x-right-ctn {
+    position: absolute;
+    right: 0;
+    left: auto;
+    top: 0;
+    z-index: 6;
+    display: none;
+}
+
+.as-dynamic-table-wrapper.as-has-fixed-col-right .as-dynamic-table-fixed-x-right-ctn {
+    display: block;
+    border-left: 1px solid var(--table-new-border-color);
+}
+
+
 .as-dynamic-table-fixed-xy-ctn {
     position: absolute;
     left: 0;
+    top: 0;
+    z-index: 9;
+}
+
+.as-dynamic-table-fixed-xy-right-ctn {
+    position: absolute;
+    right: 0;
     top: 0;
     z-index: 9;
 }
@@ -214,6 +237,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 .as-dynamic-table-wrapper.as-headless .as-dynamic-table-fixed-x-ctn,
+.as-dynamic-table-wrapper.as-headless .as-dynamic-table-fixed-x-right-ctn,
 .as-dynamic-table-wrapper.as-headless .as-dynamic-table-fixed-y-ctn,
 .as-dynamic-table-wrapper.as-headless .as-dynamic-table-fixed-xy-ctn {
     visibility: hidden;
@@ -721,3 +745,4 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y {
 /*    content: "Không có dữ liệu hiển thị";*/
 /*    line-height: 3;*/
 /*}*/
+

@@ -348,6 +348,7 @@ BaseMode.prototype.render = function () {
 
     this.body.table.wrapper.$space.addStyle('top', -dy + 'px');
     this.body.table.wrapper.$fixedXCtn.addStyle('top', -dy + 'px');
+    this.body.table.wrapper.$fixedXRightCtn.addStyle('top', -dy + 'px');
 };
 
 
@@ -414,6 +415,7 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
     var end = Math.min(start + rowPerPage * 2, this.resultItems.length);
     var elt = this.body.elt;
     var fixedXElt = this.body.fixedXElt;
+    var fixedXRightElt = this.body.fixedXRightElt;
 
 
     var rows = this.body.rows;
@@ -425,8 +427,10 @@ SearchingMode.prototype.updateRowsIfNeed = function () {
     }
     var nChildren = nRows.map(r => r.elt);
     var nFixedXChildren = nRows.map(r => r.fixedXElt);
+    var nFixedXRightChildren = nRows.map(r => r.fixedXRightElt);
     replaceChildrenInElt(elt, nChildren);
     replaceChildrenInElt(fixedXElt, nFixedXChildren);
+    replaceChildrenInElt(fixedXRightElt, nFixedXRightChildren);
     this.boundCache = null;
 
 
@@ -603,14 +607,17 @@ NormalMode.prototype.updateRowsIfNeed = function () {
 
     var elt = this.body.elt;
     var fixedXElt = this.body.fixedXElt;
+    var fixedXRightElt = this.body.fixedXRightElt;
     var end = Math.min(start + rowPerPage * 2, data.rows.length);
     var rows = this.body.rows;
     elt.clearChild();
     fixedXElt.clearChild();
+    fixedXRightElt.clearChild();
     var i;
     for (i = start; i < end; ++i) {
         elt.addChild(rows[i].elt);
         fixedXElt.addChild(rows[i].fixedXElt);
+        fixedXRightElt.addChild(rows[i].fixedXRightElt);
     }
     this.boundCache = null;
 
@@ -1002,6 +1009,18 @@ Object.defineProperty(DTBody.prototype, 'fixedXElt', {
         return this._fixedXElt;
     }
 });
+
+Object.defineProperty(DTBody.prototype, 'fixedXRightElt', {
+    get: function () {
+        if (this._fixedXRightElt) return this._fixedXRightElt;
+        this._fixedXRightElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-fixed-x-right',
+        });
+        return this._fixedXRightElt;
+    }
+});
+
 
 Object.defineProperty(DTBody.prototype, 'adapter', {
     get: function () {

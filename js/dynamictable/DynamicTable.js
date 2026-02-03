@@ -171,7 +171,9 @@ function DynamicTable() {
     this.$space = $('.as-dynamic-table-space', this);
     this.$fixedYCtn = $('.as-dynamic-table-fixed-y-ctn', this);
     this.$fixedXCtn = $('.as-dynamic-table-fixed-x-ctn', this);
+    this.$fixedXRightCtn = $('.as-dynamic-table-fixed-x-right-ctn', this);
     this.$fixedXYCtn = $('.as-dynamic-table-fixed-xy-ctn', this);
+    this.$fixedXYRightCtn = $('.as-dynamic-table-fixed-xy-right-ctn', this);
     this.$viewport = $('.as-dynamic-table-viewport', this);
     this.$hscrollbar = $('.as-dynamic-table-hb', this);
     this.$vscrollbar = $('.as-dynamic-table-vb', this);
@@ -279,6 +281,12 @@ function DynamicTable() {
     this.$space.addStyle = function () {
         return AElement.prototype.addStyle.apply(this, arguments);
     }
+
+    /**
+     * @type {DTDataTable}
+     * @name adapter
+     * @memberOf DynamicTable#
+     */
 }
 
 
@@ -309,8 +317,15 @@ DynamicTable.render = function (data, domDesc) {
                         class: 'as-dynamic-table-fixed-x-ctn'
                     },
                     {
+                        class: 'as-dynamic-table-fixed-x-right-ctn'
+                    },
+                    {
                         class: 'as-dynamic-table-fixed-xy-ctn'
+                    },
+                    {
+                        class:'as-dynamic-table-fixed-xy-right-ctn'
                     }
+
                 ]
             },
             {
@@ -489,21 +504,6 @@ DynamicTable.prototype.revokeResource = function () {
     return;
     var row, cell, keys, key;
     var rows = this._adapterData && this._adapterData.data && this._adapterData.data.body && this._adapterData.data.body.rows;
-    // if (rows) {
-    //     while (rows.length) {
-    //         row = rows.pop();
-    //         while (row.cells.length) {
-    //             cell = row.cells.pop();
-    //             keys = Object.keys(cell);
-    //             while (keys.length){
-    //                 key = keys.pop();
-    //                 cell[key] = null;
-    //                 delete cell[key];
-    //             }
-    //         }
-    //     }
-    // }
-    // revokeResource(rows);
 
     if (this.table) {
         this.table.revokeResource();
@@ -766,7 +766,9 @@ DynamicTable.property.adapter = {
 
         this.$fixedYCtn.clearChild().addChild(this.table.fixedYElt);
         this.$fixedXCtn.clearChild().addChild(this.table.fixedXElt);
+        this.$fixedXRightCtn.clearChild().addChild(this.table.fixedXRightElt);
         this.$fixedXYCtn.clearChild().addChild(this.table.fixedXYElt);
+        this.$fixedXYRightCtn.clearChild().addChild(this.table.fixedXYRightElt);
         if (this.extendStyle) this.addStyle(this.extendStyle);
         setTimeout(() => {
             this.requestUpdateSize();
@@ -974,6 +976,11 @@ LayoutController.prototype.onAdapter = function () {
     else {
         this.elt.removeClass('as-has-fixed-col');
     }
+
+    if (adapter.fixedColRight > 0) {
+        this.elt.addClass('as-has-fixed-col-right');
+    }
+
     if (adapter.rowsPerPage === Infinity) {
         this.elt.addClass('as-adapt-infinity-grow');
     }

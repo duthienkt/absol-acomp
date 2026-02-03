@@ -46,7 +46,7 @@ function DTBodyRow(body, data) {
         return ac + cell.colspan;
     }, 0);
     this.colCount = this.cells.reduce((ac, cell) => ac + cell.colspan, 0);
-    this.rowCount = this.cells.reduce((ac, cell) =>  Math.max(ac,cell.rowspan), 0);
+    this.rowCount = this.cells.reduce((ac, cell) => Math.max(ac, cell.rowspan), 0);
 }
 
 DTBodyRow.prototype.revoke = function () {
@@ -75,11 +75,15 @@ DTBodyRow.prototype.viewInto = function () {
 };
 
 DTBodyRow.prototype.updateCopyEltSize = function () {
-    if (!this._fixedXElt) return;
-    if (!this._elt.parentElement) return;
-    if (this._fixedXElt.childNodes.length === 0) return;//has no fixed column
+    var empty = !this._fixedXElt && !this._fixedXRightElt;
+    if (this._fixedXElt && this._fixedXElt.childNodes.length) empty = false;
+    if (this._fixedXRightElt && this._fixedXRightElt.childNodes.length) empty = false;
+    if (empty) return;
     var bound = this._elt.getBoundingClientRect();
-    this._fixedXElt.addStyle('height', bound.height + 'px');
+    if (this._fixedXRightElt)
+        this._fixedXRightElt.addStyle('height', bound.height + 'px');
+    if (this._fixedXElt)
+        this._fixedXElt.addStyle('height', bound.height + 'px');
 };
 
 DTBodyRow.prototype.updateData = function (data) {
@@ -115,24 +119,33 @@ DTBodyRow.prototype.updateData = function (data) {
 Object.defineProperty(DTBodyRow.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
+        var tableColCount = this.body.rows[0].colCount;
         var fixedCol = this.adapter.fixedCol || 0;
+        var fixedColRight = this.adapter.fixedColRight || 0;
         var child = this.cells.filter(c => c.idx < fixedCol).map(c => c.copyElt);
-        var child1 = this.cells.filter(c => c.idx >= fixedCol).map(c => c.elt);
+        var child1 = this.cells.filter(c => (c.idx >= fixedCol) && (c.idx < tableColCount - fixedColRight)).map(c => c.elt);
+        var child2 = this.cells.filter(c => (c.idx >= tableColCount - fixedColRight)).map(c => c.copyElt);
 
         this._elt = _({
             tag: 'tr', class: 'as-dt-body-row', props: {
                 dtBodyRow: this
             },
-            child: child.concat(child1),
+            child: child.concat(child1).concat(child2),
             on: {
                 mouseenter: () => {
                     if (this._fixedXElt) {
                         this._fixedXElt.classList.add('as-hover');
                     }
+                    if (this._fixedXRightElt) {
+                        this._fixedXRightElt.classList.add('as-hover');
+                    }
                 },
                 mouseleave: () => {
                     if (this._fixedXElt) {
                         this._fixedXElt.classList.remove('as-hover');
+                    }
+                    if (this._fixedXRightElt) {
+                        this._fixedXRightElt.classList.remove('as-hover');
                     }
                 }
             }
@@ -218,13 +231,13 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXElt', {
         var startRowIdx = this.idx;
         var endRowIdx = this.idx;
         var row = this;
-        while (startRowIdx >0 && row && row.colCount < tableColCount) {
+        while (startRowIdx > 0 && row && row.colCount < tableColCount) {
             --startRowIdx;
             row = this.body.rows[startRowIdx];
         }
         var heights = Array(tableColCount).fill(startRowIdx);
         var i, j, k, cell, colspan, rowspan, colIdx;
-        for (i = startRowIdx ; i <endRowIdx;++i) {
+        for (i = startRowIdx; i < endRowIdx; ++i) {
             row = this.body.rows[i];
             colIdx = 0;
             for (j = 0; j < row.cells.length; j++) {
@@ -237,7 +250,7 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXElt', {
             }
         }
         var needCloneCell = 0;
-        for ( i = 0; i < fixedCol; i++) {
+        for (i = 0; i < fixedCol; i++) {
             if (heights[i] <= endRowIdx) {
                 needCloneCell++;
             }
@@ -246,17 +259,70 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXElt', {
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-x',
             child: this.cells.slice(0, needCloneCell).map(cell => cell.elt),
-           on:{
-               mouseenter: () => {
-                   this._elt.classList.add('as-hover');
-               },
-               mouseleave: () => {
-                   this._elt.classList.remove('as-hover');
-               }
-           }
+            on: {
+                mouseenter: () => {
+                    this._elt.classList.add('as-hover');
+                },
+                mouseleave: () => {
+                    this._elt.classList.remove('as-hover');
+                }
+            }
         });
 
         return this._fixedXElt;
+    }
+});
+
+
+Object.defineProperty(DTBodyRow.prototype, 'fixedXRightElt', {
+    get: function () {
+        if (this._fixedXRightElt) return this._fixedXRightElt;
+        var fixedColRight = this.adapter.fixedColRight || 0;
+        var tableColCount = this.body.rows[0].colCount;
+        var startRowIdx = this.idx;
+        var endRowIdx = this.idx;
+        var row = this;
+        while (startRowIdx > 0 && row && row.colCount < tableColCount) {
+            --startRowIdx;
+            row = this.body.rows[startRowIdx];
+        }
+        var heights = Array(tableColCount).fill(startRowIdx);
+        var i, j, k, cell, colspan, rowspan, colIdx;
+        for (i = startRowIdx; i < endRowIdx; ++i) {
+            row = this.body.rows[i];
+            colIdx = 0;
+            for (j = 0; j < row.cells.length; j++) {
+                cell = row.cells[j];
+                colspan = cell.colspan;
+                for (k = 0; k < colspan; ++k) {
+                    heights[colIdx] = Math.max(heights[colIdx], i) + cell.rowspan;
+                    colIdx++;
+                }
+            }
+        }
+        var needCloneCell = 0;
+
+        for (i = 0; i < fixedColRight; i++) {
+            if (heights[tableColCount - 1 - i] <= endRowIdx) {
+                needCloneCell++;
+            }
+        }
+
+        this._fixedXRightElt = _({
+            elt: this.elt.cloneNode(false),
+            class: 'as-dt-fixed-x-right',
+            child: this.cells.slice(row.cells.length - needCloneCell, row.cells.length).map(cell => cell.elt),
+            on: {
+                mouseenter: () => {
+                    this._elt.classList.add('as-hover');
+                },
+                mouseleave: () => {
+                    this._elt.classList.remove('as-hover');
+                }
+            }
+        });
+
+        return this._fixedXRightElt;
     }
 });
 

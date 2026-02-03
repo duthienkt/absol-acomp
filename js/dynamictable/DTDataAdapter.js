@@ -19,8 +19,9 @@
  * @typedef DTDataTable
  * @property head
  * @property body
- * @property {number} rowsPerPage
- * @property {number} fixedCol
+ * @property {number} [rowsPerPage]
+ * @property {number} [fixedCol]
+ * @property {number} [fixedColRight]
  */
 
 import DTTable from "./DTTable";
