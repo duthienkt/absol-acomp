@@ -278,7 +278,6 @@ DualSelectBox.property.items = {
         this.cView.toView();
         this.cView.updateViewByValue();
         this.cView.toRightList();
-        console.log(this.cView)
 
     },
     get: function () {
