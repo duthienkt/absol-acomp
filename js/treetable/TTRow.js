@@ -101,7 +101,6 @@ TTRow.prototype.requestParentUpdateContent = function () {
     var c = this.body.table.elt.parentElement;
     while (c) {
         if (c.updateContent) {
-            console.log('update content');
             c.updateContent();
             break;
         }
