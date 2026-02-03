@@ -2,6 +2,7 @@ import '../css/tablevscroller.css';
 import ACore from "../ACore";
 import Dom, { depthClone } from "absol/src/HTML5/Dom";
 import { getAncestorElementOf, swapChildrenInElt } from "./utils";
+import ObsDiv from "./ObsDiv";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -72,6 +73,15 @@ TableVScroller.prototype.addChild = function (elt) {
         if (this.$table)  {
             this.$viewport.addChild(elt);
             this.update();
+            _({
+                tag: ObsDiv,
+                elt: this.$table,
+                on:{
+                    resize: ()=>{
+                        this.updateSize();
+                    }
+                }
+            });
         }
         else {
             throw new Error('Element must be a table!');
