@@ -167,6 +167,7 @@ DSMBoxController.prototype.onFocus = function () {
     box.updatePosition();
     box.scrollIntoSelected();
     this.elt.off('click', this.ev_click);
+    box.focus();
     setTimeout(() => {
         document.addEventListener('click', this.ev_clickOut)
     }, 10);
@@ -175,7 +176,8 @@ DSMBoxController.prototype.onFocus = function () {
 DSMBoxController.prototype.onBlur = function () {
     this.elt.$box.followTarget = null;
     this.elt.$box.selfRemove();
-    document.removeEventListener('click', this.ev_clickOut)
+    document.removeEventListener('click', this.ev_clickOut);
+    this.elt.$box.resetSearchState();
     setTimeout(() => {
         this.elt.on('click', this.ev_click);
     }, 50);

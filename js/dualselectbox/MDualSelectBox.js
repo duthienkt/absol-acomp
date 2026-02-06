@@ -87,6 +87,14 @@ MDualSelectBox.prototype.resetSearchState = function () {
     this.eventHandler.searchModify();
 }
 
+MDualSelectBox.prototype.focus = function () {
+    setTimeout(() => {
+        if (this.enableSearch) {
+            this.$searchInput.focus();
+        }
+    }, 10);
+}
+
 MDualSelectBox.property = DSBPropHandlers;
 
 MDualSelectBox.eventHandler = {};

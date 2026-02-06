@@ -23,6 +23,7 @@ MDSMBoxController.prototype.ev_close = function () {
 MDSMBoxController.prototype.onFocus = function (){
     this.$box.addTo(document.body);
     this.$box.viewToSelected();
+    this.$box.focus();
     this.elt.off('click', this.ev_click);
 };
 
@@ -30,6 +31,7 @@ MDSMBoxController.prototype.onFocus = function (){
 
 MDSMBoxController.prototype.onBlur = function (){
     this.$box.remove();
+    this.$box.resetSearchState();
     setTimeout(()=>{
         this.elt.on('click', this.ev_click);
     }, 50);

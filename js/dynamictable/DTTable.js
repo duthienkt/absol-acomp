@@ -7,6 +7,7 @@
 import DTHead from "./DTHead";
 import DTBody, { rawTableRemoveEmptyImage, rawTableViewEmptyImage } from "./DTBody";
 import { $$, _, $ } from "../../ACore";
+import ObsDiv from "../ObsDiv";
 
 
 function DTTable(wrapper, data) {
@@ -53,6 +54,18 @@ Object.defineProperty(DTTable.prototype, 'elt', {
                 this.body.elt
             ]
         });
+        setTimeout(()=>{// Wait for layout complete
+            _({
+                tag:ObsDiv,
+                elt: this._elt,
+                on:{
+                    resize: ()=>{
+                        this.wrapper.requestUpdateSize();
+                    }
+                }
+            });
+        }, 100);
+
         if (this.wrapper.placeholder) {
             rawTableRemoveEmptyImage(this._elt);
             rawTableViewEmptyImage(this._elt);

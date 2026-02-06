@@ -489,6 +489,7 @@ SMDropdownController.prototype.viewDropdown = function () {
     this.elt.$selectlistBox.refollow();
     this.elt.$selectlistBox.updatePosition();
     this.elt.$selectlistBox.viewListAtFirstSelected();
+    this.elt.$selectlistBox.focus();
 };
 
 SMDropdownController.prototype.hideDropdown = function () {
@@ -606,6 +607,7 @@ SMMobileDropdownController.prototype.viewDropdown = function () {
     }
     this.elt.$selectlistBox.viewListAt(0);
     this.elt.$selectlistBox.viewListAtFirstSelected();
+    this.elt.$selectlistBox.focus();
 };
 
 SMMobileDropdownController.prototype.hideDropdown = function () {
