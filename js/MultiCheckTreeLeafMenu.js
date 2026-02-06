@@ -7,6 +7,8 @@ import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import SelectMenu from "./SelectMenu2";
 import { loadLanguageModule } from "./MultiLanguageCSS";
 import { AbstractInput } from "./Abstraction";
+import { isNaturalNumber } from "./utils";
+import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
 
 /****
  * Only leafs have checkbox
@@ -19,7 +21,10 @@ function MultiCheckTreeLeafMenu() {
         tag: MultiCheckTreeLeafBox.tag,
         on: {
             change: this.eventHandler.selectBoxChange,
-            // preupdateposition: this.eventHandler.preUpdateListPosition
+            preupdateposition: this.eventHandler.preUpdateListPosition
+        },
+        props: {
+            initOpened: (isNaturalNumber(this.renderProps.initOpened) || this.renderProps.initOpened) ? this.renderProps.initOpened : 3
         }
     });
 
@@ -38,12 +43,16 @@ mixClass(MultiCheckTreeLeafMenu, AbstractInput);
 
 MultiCheckTreeLeafMenu.tag = 'MultiCheckTreeLeafMenu'.toLowerCase();
 
-MultiCheckTreeLeafMenu.render = function () {
+MultiCheckTreeLeafMenu.render = function (data, domDesc) {
+    var props = domDesc.props || {};
     return _({
         class: ['as-multi-select-menu', 'as-multi-check-tree-leaf-menu'],
         extendEvent: ['change'],
         attr: {
             tabindex: '1'
+        },
+        props: {
+            renderProps: props
         },
         child: [
             {
@@ -62,6 +71,57 @@ MultiCheckTreeLeafMenu.render = function () {
     });
 };
 
+MultiCheckTreeLeafMenu.prototype.styleHandlers.overflow = {
+    /**
+     * @this MultiCheckTreeMenu
+     * @param value
+     * @returns {*}
+     */
+    set: function (value) {
+        if (value === 'hidden') {
+            this.style.overflow = 'hidden';
+            this.$itemCtn.style.overflow = 'hidden';
+        }
+        else {
+            this.style.overflow = '';
+            this.$itemCtn.style.overflow = '';
+        }
+        return value;
+    }
+};
+
+MultiCheckTreeLeafMenu.prototype._updateOverflow = function () {
+    var bound;
+    var maxHeight, cBound;
+    if (this.getComputedStyleValue('overflow') === 'hidden') {
+        maxHeight = parseFloat((this.getComputedStyleValue('max-height')||'100px').replace('px'));
+        bound = this.getBoundingClientRect();
+        if (bound.width === 0) return;
+        this.$itemCtn.removeClass('as-has-more');
+        var hasMore = false;
+        var elt;
+        for (var i = 0; i < this.$itemCtn.childNodes.length; ++i) {
+            elt = this.$itemCtn.childNodes[i];
+            if (!hasMore) {
+                elt.removeStyle('display');
+                cBound = elt.getBoundingClientRect();
+                if (cBound.bottom > bound.top + maxHeight) {
+                    hasMore = true;
+                }
+            }
+            if (hasMore) {
+                elt.addStyle('display', 'none');
+            }
+        }
+        if (hasMore) {
+            this.$itemCtn.addStyle('white-space', 'pre-wrap');
+            this.$itemCtn.addClass('as-has-more');
+        }
+        else {
+            this.$itemCtn.removeStyle('white-space');
+        }
+    }
+};
 
 MultiCheckTreeLeafMenu.prototype._updateSelectedItems = function () {
     var values = this.$selectBox.values;
@@ -83,6 +143,7 @@ MultiCheckTreeLeafMenu.prototype._updateSelectedItems = function () {
             this.$itemCtn.childNodes[i].addStyle('display', 'none');
         }
     }
+    setTimeout(this._updateOverflow.bind(this), 100)
 };
 
 MultiCheckTreeLeafMenu.prototype._makeItem = function () {
@@ -113,7 +174,6 @@ MultiCheckTreeLeafMenu.prototype.init = function (props) {
 
     Object.assign(this, cProps);
 };
-
 
 
 MultiCheckTreeLeafMenu.property.items = {
@@ -165,7 +225,18 @@ MultiCheckTreeLeafMenu.property.placeholder = {
 MultiCheckTreeLeafMenu.eventHandler = {};
 
 MultiCheckTreeLeafMenu.eventHandler.clickOut = SelectTreeLeafMenu.eventHandler.clickOut;
-MultiCheckTreeLeafMenu.eventHandler.preUpdateListPosition = SelectMenu.eventHandler.preUpdateListPosition;
+MultiCheckTreeLeafMenu.eventHandler.preUpdateListPosition =  function () {
+    var bound = this.getBoundingClientRect();
+    var screenSize = getScreenSize();
+    var availableTop = bound.top - 5;
+    var availableBot = screenSize.height - 5 - bound.bottom;
+    this.$selectBox.addStyle('--max-height', Math.max(availableBot, availableTop) + 'px');
+    var outBound = traceOutBoundingClientRect(this);
+    if (bound.bottom < outBound.top || bound.top > outBound.bottom || bound.right < outBound.left || bound.left > outBound.right) {
+        this.isFocus = false;
+    }
+};
+
 
 MultiCheckTreeLeafMenu.eventHandler.click = function (event) {
     if (!this.readOnly && (event.target === this || event.target === this.$itemCtn)) {

@@ -38,6 +38,11 @@ function MultiCheckTreeLeafBox() {
     this.$content = $('.as-select-tree-leaf-box-content', this);
     this._savedStatus = {};
     this.estimateSize = { width: 0, height: 0, lv0Width: 0 };
+    /**
+     * @type {number}
+     * @name initOpened
+     * @memberOf MultiCheckTreeLeafBox#
+     */
 }
 
 
@@ -332,6 +337,15 @@ MultiCheckTreeLeafBox.property.items = {
         this.addStyle('--select-list-estimate-width', this.estimateSize.width + 'px');
         this._updateSelectedItems();
         this.updatePosition();
+
+        var initOpened = this.initOpened;
+        this.$items.forEach(function visit (elt){
+            var children = elt.getChildren();
+            if ((initOpened === true || (initOpened > elt.level)) && children.length>0) {
+                elt.status = 'open';
+                children.forEach(visit);
+            }
+        });
     }, get: function () {
         return this._items;
     }
