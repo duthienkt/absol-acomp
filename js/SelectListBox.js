@@ -436,7 +436,9 @@ SelectListBox.prototype._updateDisplayItem = function () {
 };
 
 SelectListBox.prototype.focus = function () {
-    if (this.enableSearch) this.$searchInput.focus();
+    setTimeout(()=>{
+        if (this.enableSearch) this.$searchInput.focus();
+    }, 10);
 };
 
 SelectListBox.prototype.footerMinWidth = 0;
