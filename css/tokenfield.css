@@ -2,11 +2,28 @@
     font-size: 1rem;
     border: 1px solid #dddddd;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .as-token-field[data-size="tiny"] {
     min-height: var(--tiny-size);
     border-radius: var(--tiny-radius);
+}
+
+.as-token-field[data-size="regular"] {
+    min-height: var(--default-size);
+    border-radius: var(--default-size);
+}
+
+.as-token-field[data-size="regular"]::before {
+    content: "";
+    display: inline-block;
+    height: calc(var(--default-size) - 2px);
+    vertical-align: middle;
+}
+
+.as-token-field[data-size="regular"]  .as-token-field-input-text {
+    height: calc(var(--default-size) - 2px);
 }
 
 .as-token-field-input-text {
@@ -18,7 +35,7 @@
     outline: none;
     height: var(--select-box-item-height);
     line-height: var(--select-box-item-height);
-    vertical-align: top;
+    vertical-align: middle;
     margin-top: 2px;
 }
 
@@ -26,6 +43,7 @@
     font: inherit;
     margin: 2px;
     outline: none;
+    vertical-align: middle;
 }
 
 .as-token-field-item:focus {
