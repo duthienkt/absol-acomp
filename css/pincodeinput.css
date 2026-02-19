@@ -1,0 +1,131 @@
+.as-pin-code-input {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    user-select: none;
+    font-size: inherit;
+    --as-pin-code-primary-color: #1e90ff;
+    overflow: hidden;
+}
+
+.as-pin-code-input-hidden {
+    position: absolute;
+    right: 0;
+    top: 0;
+    overflow: hidden;
+    background-color: transparent;
+    opacity: 0;
+    width: 1px;
+    padding:0 ;
+    height: 1px;
+    pointer-events: none;
+    color: transparent;
+    z-index: -10;
+    font-size: 1px;
+    box-sizing: border-box;
+    /*letter-spacing: 2.4em;*/
+    /*padding-left: 0.7em;*/
+    /*line-height: 2.5em;*/
+    /*position: fixed;*/
+    /*z-index: 100;*/
+}
+
+/* Hide selection color for hidden input */
+.as-pin-code-input-hidden::selection {
+    background: transparent !important;
+    color: transparent !important;
+    opacity: 0 !important;
+}
+.as-pin-code-input-hidden::-moz-selection {
+    background: transparent !important;
+    color: transparent !important;
+}
+
+.as-pin-code-input-cells-ctn {
+    display: flex;
+    gap: 0.5em;
+    position: relative;
+    z-index: 1;
+    background-color: white;
+}
+
+.as-pin-code-input-cell {
+    width: 2.2em;
+    height: 2.6em;
+    border: 1px solid var(--border-color, #c8c8c8);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+    line-height: 1;
+    box-sizing: border-box;
+    background: white;
+    position: relative;
+    overflow: hidden;
+}
+
+/* fake caret */
+.as-pin-code-input-cell::after {
+    content: '';
+    position: absolute;
+    top: 15%;
+    bottom: 15%;
+    width: 2px;
+    left: 50%;
+    background: var(--primary-color);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.as-pin-code-input-cell.as-active::after {
+    opacity: 1;
+    animation: as-pin-code-input-caret-blink 1s steps(2, end) infinite;
+}
+
+/* if cell has a digit, caret should be at the right edge like a normal input */
+.as-pin-code-input-cell.as-active.as-filled::after {
+    left: calc(50% - 0.6em);
+    width: 1.2em;
+    top: unset;
+    height: 2px;
+    transform: none;
+}
+
+.as-pin-code-input-cell.as-active.as-filled  .as-pin-code-input-cell-text{
+    background-color: rgba(70, 190, 234, 0.5);
+}
+
+@keyframes as-pin-code-input-caret-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+/* fake selection highlight ("bôi đen") */
+.as-pin-code-input-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--as-pin-code-primary-color);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.as-pin-code-input-cell.as-selected::before {
+    opacity: 0.22;
+}
+
+.as-pin-code-input-cell.as-selected .as-pin-code-input-cell-text {
+    color: #fff;
+    position: relative;
+}
+
+.as-pin-code-input-cell.as-active {
+    border-color: var(--as-pin-code-primary-color);
+    box-shadow: 0 0 0 2px rgba(30, 144, 255, 0.15);
+}
+
+.as-pin-code-input-cell-text {
+    font-variant-numeric: tabular-nums;
+    padding: 0.2em;
+}
