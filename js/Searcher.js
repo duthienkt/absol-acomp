@@ -36,7 +36,7 @@ ACore.creator['times-circle-ico'] = function () {
 
 /**
  * @augments {AbstractStyleExtended}
- * @extends {AElement}
+ * @augments {AElement}
  * @constructor
  */
 function SearchTextInput() {
@@ -65,7 +65,7 @@ function SearchTextInput() {
         }, 50);
     });
 
-   AbstractStyleExtended.call(this);
+    AbstractStyleExtended.call(this);
     /**
      * @type {string}
      * @name value
@@ -81,7 +81,7 @@ SearchTextInput.tag = 'SearchTextInput'.toLowerCase();
 SearchTextInput.render = function () {
     return _(
         {
-            class: 'absol-search-text-input',
+            class: ['absol-search-text-input'],
             child: [
                 {
                     class: 'absol-search-text-input-container',
@@ -89,7 +89,7 @@ SearchTextInput.render = function () {
                         tag: 'input',
                         attr: {
                             type: 'search',
-                            placeholder: LanguageSystem.getText('txt_search')|| 'Search...'
+                            placeholder: LanguageSystem.getText('txt_search') || 'Search...'
                         }
                     }
                 },
@@ -97,7 +97,7 @@ SearchTextInput.render = function () {
                     class: 'absol-search-text-button-container',
                     child: {
                         tag: 'button',
-                        child: ['find-ico', 'times-circle-ico', { tag:SpinnerIco.tag, style:{margin: 0} }]
+                        child: ['find-ico', 'times-circle-ico', { tag: SpinnerIco.tag, style: { margin: 0 } }]
                     }
                 }
             ]
@@ -192,11 +192,223 @@ SearchTextInput.eventHandler.inputKeyUp = function (event) {
 };
 
 
-ACore.creator.searchcrosstextinput = function () {
-    var res = _('searchtextinput', true);
-    return res;
-};
-
-ACore.creator.searchtextinput = SearchTextInput;
+ACore.install(SearchTextInput);
+ACore.install('searchtextinput', SearchTextInput);
+ACore.install('searchcrosstextinput', SearchTextInput);
 
 export default SearchTextInput;
+
+
+/**
+ * @augments {AElement}
+ *
+ * @constructor
+ */
+export function SearchMultiModeInput() {
+    this.$input = $('input', this);
+    this.$prevBtn = $('.as-smm-input-prev-btn', this);
+    this.$nextBtn = $('.as-smm-input-next-btn', this);
+    this.$modeBtn = $('.as-smm-input-mode-btn', this);
+    this.$clearBtn = $('.as-smm-input-clear-btn', this);
+    this.$count = $('.as-smm-input-result-count', this);
+    this.modeCtrl = new SMMIModeController(this);
+    this.actionCtrl = new SMMIActionController(this);
+    /**
+     *
+     * @type {"filter"|"highlight"}
+     */
+    this.mode = "filter";
+}
+
+SearchMultiModeInput.tag = 'SearchMultiModeInput'.toLowerCase();
+
+SearchMultiModeInput.render = function () {
+    return _(
+        {
+            extendEvent:['stoptyping'],
+            class: ['as-search-multi-mode-input', 'as-empty'],
+            child: [
+                {
+                    class: 'as-smm-text-input-container',
+                    child: {
+                        tag: 'input',
+                        attr: {
+                            type: 'search',
+                            placeholder: LanguageSystem.getText('txt_search') || 'Search...'
+                        }
+                    }
+                },
+                {
+                    class: 'as-smm-button-container',
+                    child: [
+                        {
+                            class: 'as-smm-input-result-count',
+                            child: { text: '0/0' }
+                        },
+                        {
+                            tag: 'button',
+                            class: ['as-transparent-button', 'as-smm-input-clear-btn'],
+                            child: 'span.mdi.mdi-close-circle'
+                        },
+                        {
+                            tag: 'button',
+                            class: ['as-transparent-button', 'as-smm-input-prev-btn'],
+                            child: 'span.mdi.mdi-chevron-up'
+                        },
+                        {
+                            tag: 'button',
+                            class: ['as-transparent-button', 'as-smm-input-next-btn'],
+                            child: 'span.mdi.mdi-chevron-down'
+                        },
+                        {
+                            tag: 'button',
+                            class: ['as-transparent-button', 'as-smm-input-mode-btn'],
+                            child: ['span.mdi.mdi-magnify', 'span.mdi.mdi-filter-variant']
+                        }
+                    ]
+                }
+            ]
+        }
+    );
+};
+
+SearchMultiModeInput.property = {};
+
+/**
+ * Current search text.
+ * @memberOf SearchMultiModeInput#
+ * @name value
+ * @type {string}
+ */
+SearchMultiModeInput.property.value = {
+    set: function (value) {
+        value = value == null ? '' : (value + '');
+        this.$input.value = value;
+        this.classList.toggle('as-empty', value.length === 0);
+    },
+    get: function () {
+        return this.$input.value;
+    }
+};
+
+SearchMultiModeInput.property.mode = {
+    set: function (mode) {
+        mode = mode === 'highlight' ? 'highlight' : 'filter';
+        this.attr('data-mode', mode);
+    },
+    get: function () {
+        return this.attr('data-mode') || 'filter';
+    }
+};
+
+/**
+ * Enable or disable the previous button
+ * @name canPrevious
+ * @memberOf SearchMultiModeInput#
+ * @type {boolean}
+ */
+SearchMultiModeInput.property.canPrevious = {
+    set: function (value) {
+        this.$prevBtn.disabled = !value;
+    },
+    get: function () {
+        return !this.$prevBtn.disabled;
+    }
+};
+
+/**
+ * Enable or disable the next button
+ * @name canNext
+ * @memberOf SearchMultiModeInput#
+ * @type {boolean}
+ */
+SearchMultiModeInput.property.canNext = {
+
+    set: function (value) {
+        this.$nextBtn.disabled = !value;
+    },
+    get: function () {
+        return !this.$nextBtn.disabled;
+    }
+};
+
+/**
+ * Text showing the count of search results (e.g. "3/10").
+ * @memberOf SearchMultiModeInput#
+ * @name countText
+ * @type {string}
+ */
+SearchMultiModeInput.property.countText = {
+    set: function (value) {
+        this.$count.textContent = value == null ? '' : String(value);
+    },
+    get: function () {
+        return this.$count.textContent;
+    }
+};
+
+
+ACore.install(SearchMultiModeInput);
+
+
+/**
+ *
+ * @param {SearchMultiModeInput} elt
+ * @constructor
+ */
+function SMMIModeController(elt) {
+    this.elt = elt;
+    this.elt.$modeBtn.on('click', this.ev_clickButton.bind(this));
+}
+
+SMMIModeController.prototype.ev_clickButton = function (event) {
+    if (this.elt.mode === 'filter') {
+        this.elt.mode = 'highlight';
+    }
+    else {
+        this.elt.mode = 'filter';
+    }
+};
+
+/**
+ *
+ * @param {SearchMultiModeInput} elt
+ * @constructor
+ */
+function SMMIActionController(elt) {
+    this.elt = elt;
+    for (var key in this) {
+        if (key.startsWith('ev_')) {
+            this[key] = this[key].bind(this);
+        }
+    }
+    this.elt.on('input', this.ev_input);
+    this.elt.$clearBtn.on('click', this.ev_clickClear);
+    this.typingTO = -1;
+}
+
+SMMIActionController.prototype.delayNotifyStopChange = function () {
+    clearTimeout(this.typingTO);
+    this.typingTO = setTimeout(() => {
+        this.elt.emit('stoptyping', { target: this.elt, type: 'stoptyping' }, this.elt);
+    }, 500);
+}
+
+SMMIActionController.prototype.ev_input = function (event) {
+    var value = this.elt.$input.value;
+    if (value.length === 0) {
+        this.elt.addClass('as-empty');
+    }
+    else {
+        this.elt.removeClass('as-empty');
+    }
+    this.delayNotifyStopChange();
+};
+
+SMMIActionController.prototype.ev_clickClear = function (event) {
+    this.elt.value = '';
+    this.elt.addClass('as-empty');
+    this.elt.$input.focus();
+    this.delayNotifyStopChange();
+
+};
