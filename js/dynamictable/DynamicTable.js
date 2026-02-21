@@ -178,6 +178,7 @@ function DynamicTable() {
     this.$hscrollbar = $('.as-dynamic-table-hb', this);
     this.$vscrollbar = $('.as-dynamic-table-vb', this);
 
+
     this.$pageSelector = new VirtualPageSelector(this);
     this.extendStyle = Object.assign(new Attributes(this), this.extendStyle);
     this.extendStyle.loadAttributeHandlers(this.styleHandlers);
@@ -190,6 +191,8 @@ function DynamicTable() {
     this.readySync = new Promise(rs => {
         this.onReady = rs;
     });
+
+    this.floatScrollbarCtrl = new FloatScrollbarController(this);
 
     var attached = false;
     var fistView = () => {
@@ -208,6 +211,7 @@ function DynamicTable() {
         ResizeSystem.add(this.$attachhook);
         this.layoutCtrl.onAttached();
         this.colSizeCtrl.onAttached();
+        this.floatScrollbarCtrl.start();
         manager.add(this);
         setTimeout(() => {
             this.requestUpdateSize();
@@ -246,6 +250,7 @@ function DynamicTable() {
 
             }
             else if (attached) {
+                this.floatScrollbarCtrl.stop();
                 if (obs) {
                     obs.disconnect();
                     obs = null;
@@ -323,7 +328,7 @@ DynamicTable.render = function (data, domDesc) {
                         class: 'as-dynamic-table-fixed-xy-ctn'
                     },
                     {
-                        class:'as-dynamic-table-fixed-xy-right-ctn'
+                        class: 'as-dynamic-table-fixed-xy-right-ctn'
                     }
 
                 ]
@@ -493,6 +498,7 @@ DynamicTable.prototype.requestUpdateSize = function () {
     var bound = this.$sizeDetector.getBoundingClientRect();
     if (bound.width <= 0 && bound.height <= 0 && !bound.top && !bound.left) return;
     this.layoutCtrl.onResize();
+    this.floatScrollbarCtrl.onResize();
 };
 
 DynamicTable.prototype.revokeResource = function () {
@@ -2022,6 +2028,109 @@ AutoFocusScroller.prototype.ev_focus = function (event) {
     }, 10);
 };
 
+/**
+ *
+ * @param {DynamicTable} elt
+ * @constructor
+ */
+function FloatScrollbarController(elt) {
+    this.elt = elt;
+    this.ev_scroll = this.ev_scroll.bind(this);
+    this.listenningElts = [];
+    this.$hscrollbar = this.elt.$hscrollbar;
+    this.$fixedYCtn = this.elt.$fixedYCtn;
+
+}
 
 
+FloatScrollbarController.prototype.start = function () {
+    this.$hscrollbarTesting = this.$hscrollbarTesting || $(this.$hscrollbar.cloneNode(false)).addStyle({
+        visibility: 'hidden',
+        pointerEvents: 'none',
+        opacity: 0
+    }).addTo(this.$hscrollbar.parentElement);
+    var c = this.elt.parentElement;
+    while (c) {
+        this.listenningElts.push(c);
+        c.addEventListener('scroll', this.ev_scroll);
+        c = c.parentElement;
+    }
+    document.addEventListener('scroll', this.ev_scroll);
+    this.listenningElts.push(document);
+};
+
+FloatScrollbarController.prototype.stop = function () {
+    this.listenningElts.forEach(elt => elt.removeEventListener('scroll', this.ev_scroll));
+    this.listenningElts = [];
+};
+
+
+FloatScrollbarController.prototype.onResize = function () {
+    this.update();
+};
+
+FloatScrollbarController.prototype.ev_scroll = function (event) {
+    this.update();
+};
+
+/**
+ * Finds the first ancestor element with a visible scrollbar (vertical or horizontal).
+ * @returns {Element|null} The scrolling element, or null if none found.
+ */
+FloatScrollbarController.prototype.findScrollingElement = function () {
+    var c = this.elt.parentElement;
+    var style, overflowY, overflowX, hasVerticalScroll;
+    while (c) {
+        style = window.getComputedStyle(c);
+        overflowY = style.overflowY;
+        overflowX = style.overflowX;
+        hasVerticalScroll = (overflowY === 'auto' || overflowY === 'scroll') && c.scrollHeight > c.clientHeight;
+        if (hasVerticalScroll) {
+            return c;
+        }
+        c = c.parentElement;
+    }
+    return null;
+};
+
+FloatScrollbarController.prototype.cleanStyle = function () {
+    this.$hscrollbar.removeStyle('border-top');
+    this.$hscrollbar.removeStyle('height');
+    this.$hscrollbar.removeStyle('width');
+    this.$hscrollbar.removeStyle('position');
+    this.$hscrollbar.removeStyle('top');
+    this.$hscrollbar.removeStyle('left');
+
+}
+
+FloatScrollbarController.prototype.update = function () {
+    if (!this.$hscrollbarTesting) return;
+    var scrollingElt = this.findScrollingElement();
+    if (!scrollingElt) {
+        this.cleanStyle();
+
+        return;
+    }
+    var bound = this.elt.getBoundingClientRect();
+    var fixedYBound = this.$fixedYCtn.getBoundingClientRect();
+    var scrollingBound = scrollingElt.getBoundingClientRect();
+    var testingBound = this.$hscrollbarTesting.getBoundingClientRect();
+    if (fixedYBound.bottom + 10 > scrollingBound.bottom) {
+        this.cleanStyle();
+
+        return;
+    }
+    if (bound.bottom < scrollingBound.bottom) {
+        this.cleanStyle();
+        return;
+    }
+
+    var offset = scrollingBound.bottom;
+    this.$hscrollbar.addStyle('position', 'fixed');
+    this.$hscrollbar.addStyle('top', 'calc(' + offset+ '- var(--dt-scroll-bar-width) - 1px)');
+    this.$hscrollbar.addStyle('width', testingBound.width + 'px');
+    this.$hscrollbar.addStyle('left', testingBound.left + 'px');
+    this.$hscrollbar.addStyle('height', 'calc(var(--dt-scroll-bar-width) + 1px)');
+    this.$hscrollbar.addStyle('border-top', '1px solid var(--border-color,#ccc)');
+};
 

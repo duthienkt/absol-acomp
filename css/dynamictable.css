@@ -281,6 +281,8 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
     width: 100%;
     height: var(--dt-scroll-bar-width);
     display: none;
+    z-index: 1000;
+    background-color: white;
 }
 
 .as-dynamic-table-wrapper.as-overflow-y .as-dynamic-table-hb {
