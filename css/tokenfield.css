@@ -12,7 +12,7 @@
 
 .as-token-field[data-size="regular"] {
     min-height: var(--default-size);
-    border-radius: var(--default-size);
+    border-radius: var(--default-radius);
 }
 
 .as-token-field[data-size="regular"]::before {
@@ -22,7 +22,7 @@
     vertical-align: middle;
 }
 
-.as-token-field[data-size="regular"]  .as-token-field-input-text {
+.as-token-field[data-size="regular"] .as-token-field-input-text {
     height: calc(var(--default-size) - 2px);
 }
 
