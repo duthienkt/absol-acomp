@@ -10,7 +10,7 @@
     box-sizing: border-box;
     width: 4em;
     --text-width: 0.5em;
-    font-family: Roboto, sans-serif;
+    font-family: inherit;
     overflow: hidden;
     background-color: white;
 }
