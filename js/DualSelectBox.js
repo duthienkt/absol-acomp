@@ -449,9 +449,11 @@ DualSelectBox.prototype.searchItemByText = function (text) {
 };
 
 DualSelectBox.prototype.focus = function () {
-    if (this.enableSearch) {
-        this.$searcTextInput.focus();
-    }
+    setTimeout(() => {
+        if (this.enableSearch) {
+            this.$searcTextInput.focus();
+        }
+    });
 };
 
 DualSelectBox.prototype.resetSearchState = function () {
@@ -561,7 +563,7 @@ DualSelectView.prototype.updateLeftSelectedItem = function () {
     if (this.$leftSelectedItem) {
         this.$leftSelectedItem.removeClass('as-selected');
     }
-    var value = this.box.value ||[null, null];
+    var value = this.box.value || [null, null];
     this.$leftSelectedItem = this.$leftItemByValue[value[0]] || null;
     if (this.$leftSelectedItem) {
         this.$leftSelectedItem.addClass('as-selected');
@@ -573,7 +575,7 @@ DualSelectView.prototype.updateRightSelectedItem = function () {
     if (this.$rightSelectedItem) {
         this.$rightSelectedItem.removeClass('as-selected');
     }
-    var value = this.box.value ||[null, null];
+    var value = this.box.value || [null, null];
     this.$rightSelectedItem = this.$rightItemByValue[value[1]] || null;
     if (this.$rightSelectedItem) {
         this.$rightSelectedItem.addClass('as-selected');
