@@ -12,6 +12,10 @@
     background-color: rgba(169, 169, 172, 0.1);
 }
 
+.as-check-tree-item.as-active-marked mark {
+    background-color: rgba(248, 89, 40, 0.89);
+}
+
 .as-check-tree-item .as-checkbox-input {
     margin-right: 0.35em;
 }
