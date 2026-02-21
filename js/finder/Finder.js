@@ -456,6 +456,7 @@ Finder.prototype.commands = FinderCommands;
 FinderCommands.upload = {
     text: 'Tải lên',
     icon: 'span.mdi.mdi-upload-outline',
+    variant: 'primary',
     match: function (fileElt) {
         return !fileElt && this.searchCtrl.state !== 'RUNNING' && this.dirStat && this.dirStat.writable;
     },
@@ -493,6 +494,7 @@ FinderCommands.upload_to_folder = {
 FinderCommands.delete = {
     icon: 'span.mdi.mdi-delete-outline',
     text: 'Xóa',
+    variant: 'danger',
     /***
      * @this Finder
      */
@@ -1089,6 +1091,10 @@ FinderCommands.nav_toggle = {
  * @constructor
  */
 function LayoutController(elt) {
+    /**
+     *
+     * @type {Finder}
+     */
     this.elt = elt;
     this.actionButtonWidth = 0;
     this.elt.domSignal.on('requestUpdateActionButtonSize', this.updateActionButtonSize.bind(this));
@@ -1178,8 +1184,13 @@ CommandController.prototype.updateButtons = function () {
         return _({
             tag: FlexiconButton.tag,
             attr: { name: name },
+            style: {
+                variant: desc.variant || 'light',
+                size: 'regular'
+            },
             props: {
-                text: desc.text || name
+                text: desc.text || name,
+                icon: desc.icon
             },
             on: {
                 click: () => {
@@ -1245,7 +1256,11 @@ CommandController.prototype.addButton = function (name, bf) {
     this.$normalActionCtn.addChildBefore(_({
         tag: FlexiconButton.tag,
         attr: { name: name },
+        style: {
+            variant: desc.variant || 'light'
+        },
         props: {
+            icon: desc.icon,
             text: desc.text || name
         },
         on: {
@@ -1657,7 +1672,7 @@ UploadController.prototype.upload = function (files) {
     //because file system in keeview not allow writing multiple file at the same time
     var syncs = files.reduce((sync, file, i) => {
         var percentText = $('.as-upload-percent', contentElt.firstChild.childNodes[i]);
-        return sync.then(()=>{
+        return sync.then(() => {
             return this.elt.fileSystem.writeFile(this.elt.path + '/' + file.name, file, done => {
                 var textBound = percentText.getBoundingClientRect();
                 var ctnBound = contentElt.getBoundingClientRect();
@@ -2404,7 +2419,7 @@ AbsolFileSystem.prototype.readDir = function (path) {
             res = res.filter(c => c.path.startsWith('/html'));
             res.forEach(c => {
                 c.name = c.path.split('/').pop();
-                c.url = c.path.replace('/html', this.API_PREFIX ||location.origin)
+                c.url = c.path.replace('/html', this.API_PREFIX || location.origin)
             });
             this.cache.readDir[path || '..'] = res.map(c => c.name);
             res.forEach(c => {
