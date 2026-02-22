@@ -2,18 +2,19 @@ import ACore, { _, $, $$ } from "../ACore";
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import CheckTreeItem from "./CheckTreeItem";
 import '../css/checktreebox.css';
-import { copySelectionItemArray, estimateWidth14, keyStringOf, measureText } from "./utils";
+import { keyStringOf, vScrollIntoView } from "./utils";
 import { prepareSearchForList, searchTreeListByText } from "./list/search";
 import SelectListBox from "./SelectListBox";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { arrayCompare, arrayUnique } from "absol/src/DataStructure/Array";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import SearchTextInput from "./Searcher";
+import SearchTextInput, { SearchMultiModeInput } from "./Searcher";
 import OOP from "absol/src/HTML5/OOP";
 import AElement from "absol/src/HTML5/AElement";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import noop from "absol/src/Code/noop";
 import TextMeasure from "./TextMeasure";
+import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 
 
 /***
@@ -23,6 +24,10 @@ import TextMeasure from "./TextMeasure";
 function CheckTreeBox() {
     if (this.cancelWaiting)
         this.cancelWaiting();
+    this.$searchInput = ($(SearchMultiModeInput.tag, this) || $(SearchTextInput.tag, this));
+    this.$searchInput.canPrevious = false;
+    this.$searchInput.canNext = false;
+
     /**
      *
      * @type {CTBItemListController}
@@ -32,13 +37,18 @@ function CheckTreeBox() {
     this.dropdownCtrl = new CTBDropdownController(this);
     this.actionCtrl = new CTBActionController(this);
     this.searchCtrl = new CTBSearchController(this);
-    OOP.drillProperty(this, this.searchCtrl, ['$searchInput']);
 
     this._initDomHook();
     this._initProperty();
     if (!this.updatePosition) {
         this.updatePosition = noop;
     }
+
+    /**
+     * @name $searchInput
+     * @type {SearchTextInput|SearchMultiModeInput}
+     * @memberof  CheckTreeBox#
+     */
 
     /**
      * @name mobile
@@ -172,7 +182,7 @@ CheckTreeBox.render = function () {
         child: [
             {
                 class: 'as-select-list-box-search-ctn',
-                child: 'searchtextinput'
+                child: { tag: SearchMultiModeInput }
             },
             content,
             footer
@@ -299,7 +309,7 @@ CheckTreeBox.eventHandler.selectItem = function (item, event) {
     var targetNode = ref || nodeHolder;
     var selected = item.selected;
     if (selected === 'all' && (targetNode.canSelectAll || targetNode.selected === 'none')) {
-        targetNode.selectAll(false,!!event);
+        targetNode.selectAll(false, !!event);
     }
     else {
         targetNode.unselectAll(false, !!event);
@@ -464,7 +474,7 @@ TreeRootHolder.prototype.calcEstimateSize = function () {
     }
 
     res.width = longest * this.boxElt.scale14;
-    res.lv0Width  = lv0Width * this.boxElt.scale14;
+    res.lv0Width = lv0Width * this.boxElt.scale14;
     return res;
 };
 
@@ -519,7 +529,7 @@ TreeRootHolder.prototype.depthIndexing = function (ac) {
  */
 export function TreeNodeHolder(boxElt, item, idx, parent) {
     this.boxElt = boxElt;
-    this.item = item;
+    this.item = item || { text: '' };
     this.idx = idx;
     this.tailIdx = idx;//last child index
     this.parent = parent;
@@ -552,6 +562,16 @@ export function TreeNodeHolder(boxElt, item, idx, parent) {
 
 TreeRootHolder.prototype.SubHolderClass = TreeNodeHolder;
 
+/**
+ *
+ * @param {string} subLCText - text to search, should be lowercase, none accent
+ * @return {boolean}
+ */
+TreeNodeHolder.prototype.includesText = function (subLCText) {
+    var text = this.item.text || '';
+    text = nonAccentVietnamese(text.toLowerCase());
+    return text.indexOf(subLCText) >= 0;
+};
 
 /***
  *
@@ -809,6 +829,8 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
         if (this._elt) {
             if (this._elt.nodeHolder === this) {
                 this._elt.nodeHolder = null;
+                this._elt.highlightedText = '';
+                this._elt.classList.remove('as-active-marked');
             }
         }
 
@@ -824,6 +846,8 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
             elt.status = this.status;
             elt.selected = this.selected;
             elt.readOnly = this.readOnly;
+            elt.classList.toggle('as-active-marked', !!this.activeHighlight);
+            if (this._highlightedText) elt.highlightedText = this._highlightedText;
             if (this.item.noSelect || !this.canSelect) {
                 elt.noSelect = true;
             }
@@ -832,6 +856,14 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
             }
         }
         else {
+            if (this._elt) {
+                if (this._elt.nodeHolder === this) {
+                    this._elt.classList.remove('as-active-marked', !!this.activeHighlight);
+                    if (this._elt.highlightedText) //only clear if highlighted
+                        this._elt.highlightedText = '';
+                    this._elt.nodeHolder = null;
+                }
+            }
             this._elt = null;
         }
     },
@@ -842,15 +874,15 @@ Object.defineProperty(TreeNodeHolder.prototype, 'itemElt', {
 });
 
 Object.defineProperty(TreeNodeHolder.prototype, 'readOnly', {
-   set: function (value) {
-       value = !!value;
-       this._readOnly = value;
-       if (this.itemElt) this.itemElt.readOnly = value;
-   },
+    set: function (value) {
+        value = !!value;
+        this._readOnly = value;
+        if (this.itemElt) this.itemElt.readOnly = value;
+    },
     get: function () {
-       var ref = this.findReferenceNode();
-       if (ref) return ref.readOnly;
-       return !!this._readOnly;
+        var ref = this.findReferenceNode();
+        if (ref) return ref.readOnly;
+        return !!this._readOnly;
     }
 });
 
@@ -883,6 +915,32 @@ TreeNodeHolder.prototype.updateSelectedFromRef = function () {
 };
 
 
+Object.defineProperty(TreeNodeHolder.prototype, 'highlightedText', {
+    set: function (value) {
+        value = value || '';
+        this._highlightedText = value;
+        if (this.itemElt) {
+            this.itemElt.highlightedText = value;
+        }
+    },
+    get: function () {
+        return this._highlightedText;
+    }
+});
+
+
+Object.defineProperty(TreeNodeHolder.prototype, 'activeHighlight', {
+    set: function (value) {
+        this._activeHighlight = !!value;
+        if (this.itemElt) {
+            this.itemElt.classList.toggle('as-active-marked', !!value);
+        }
+    },
+    get: function () {
+        return !!this._activeHighlight;
+    }
+});
+
 /**
  *
  * @param {CheckTreeBox} elt
@@ -895,6 +953,7 @@ export function CTBItemListController(elt) {
     this._values = [];
     this.itemHolderByValue = {};
     this.rootHolder = new RootHolderClass(this.elt, []);
+    this.highlightedHolders = [];
 
 
     // this.rootHolders = [];
@@ -921,6 +980,8 @@ export function CTBItemListController(elt) {
     this.$pages.forEach(function (p) {
         p.__viewOffset__ = -1;
     });
+    this.elt.$searchInput.on('previous', this.ev_highlightPrevious.bind(this))
+    this.elt.$searchInput.on('next', this.ev_highlightNext.bind(this))
 
 }
 
@@ -933,11 +994,43 @@ CTBItemListController.prototype.itemInPage = 36;
 
 CTBItemListController.prototype.resetView = function () {
     this.elt.$searchInput.value = '';
+    this.highlight('');
+    this.resetItems();
+};
+
+CTBItemListController.prototype.resetItems = function () {
     this.viewHolders = this.rootHolder.toArray();
     this.rootViewHolder = this.rootHolder;
     this.updateContentSize();
     this.viewListAt(0);
-}
+};
+
+CTBItemListController.prototype.getNodesState = function () {
+    var res = {};
+    this.rootHolder.traverse(holder => {
+        res[holder.idx] = holder.status;
+    });
+    return res;
+};
+
+CTBItemListController.prototype.applyNodesState = function (states) {
+    this.rootHolder.traverse(holder => {
+        var status = states[holder.idx];
+        if (!status) return;
+        if (holder.status === 'none') return;//can not open or close none node
+        if (status === 'open' && holder.status === 'close') {
+            holder.status = 'open';
+            if (holder.itemElt)
+                holder.itemElt.status = 'open';
+        }
+        else if (status === 'close' && holder.status === 'open') {
+            holder.status = 'close';
+            if (holder.itemElt)
+                holder.itemElt.status = 'close';
+        }
+    });
+};
+
 
 CTBItemListController.prototype.setItems = function (items) {
     if (!(items instanceof Array)) items = [];
@@ -1058,35 +1151,41 @@ CTBItemListController.prototype.findItemHoldersByValue = function (value) {
 
 CTBItemListController.prototype.isSelectedAll = function () {
     return this.rootHolder.selected;
+};
+
+CTBItemListController.prototype.highlight = function (subLCText) {
+    if (this.rootViewHolder !== this.rootHolder) {
+        this.resetItems();//only work in normal state, if in search state, reset to normal state
+    }
+    this.highlightedHolders.forEach(holder => {
+        holder.highlightedText = '';
+        holder.activeHighlight = false;
+    });
+
+    this.highlightedHolders = [];
+    this.activeHighlightedIdx = -1;
+    if (!subLCText) return;
+    this.rootHolder.traverse(holder => {
+        if (holder.includesText(subLCText)) {
+            holder.highlightedText = subLCText;
+            this.highlightedHolders.push(holder);
+        }
+    });
+    var n = this.highlightedHolders.length;
+    if (n > 0) this.activeHighlightedIdx = 0;
+    this.elt.$searchInput.countText = (this.activeHighlightedIdx + 1) + '/' + n;
+    this.elt.$searchInput.canNext = n > 1;
+    this.elt.$searchInput.canPrevious = false;
+    setTimeout(() => {
+        if (this.activeHighlightedIdx >= 0) {
+            this.highlightedHolders[this.activeHighlightedIdx].activeHighlight = true;
+            this.scrollIntoIndex(this.highlightedHolders[this.activeHighlightedIdx].idx);
+            this.viewListAt(this.highlightedHolders[this.activeHighlightedIdx].idx);
+            //todo: scroll to active highlight
+        }
+    }, 10)
 
 };
-/*
-CTBItemListController.prototype.selectAll = function (selected){
-    var preValues = this.getValues();
-    switch (selected) {
-        case 'all':
-            this.rootHolder.unselectAll();
-            break;
-        case 'child':
-            if (this.rootHolder.canSelectAll) {
-                this.rootHolder.selectAll();
-            }
-            else {
-                this.rootHolder.unselectAll();
-            }
-            break;
-        case 'none':
-            this.rootHolder.selectAll();
-            break;
-    }
-    if (this.rootViewHolder !== this.rootHolder) {
-        this.rootViewHolder.updateSelectedFromRef();
-    }
-    var newValues = this.getValues();
-    if (!arrayCompare(preValues, newValues)) {
-        this.elt.emit('change', { type: 'change', target: this }, this);
-    }
-};*/
 
 
 CTBItemListController.prototype.ev_scroll = function (event) {
@@ -1167,6 +1266,60 @@ CTBItemListController.prototype.ev_checkAllChange = function (event) {
     }
 };
 
+
+CTBItemListController.prototype.scrollIntoIndex = function (idx) {
+    var scrollTop = this.$scroller.scrollTop;
+    var topX = idx * this.itemHeight;//scroll to top
+    var bottomX = topX - this.$scroller.offsetHeight + this.itemHeight;//scroll to bottom
+    if (scrollTop <= topX && scrollTop >= bottomX) return;//in view
+    if (Math.abs(scrollTop - topX) < Math.abs(scrollTop - bottomX)) {
+        this.$scroller.scrollTop = topX;
+    }
+    else {
+        this.$scroller.scrollTop = bottomX;
+    }
+};
+
+
+CTBItemListController.prototype.ev_highlightPrevious = function (event) {
+    if (this.activeHighlightedIdx >= 0) {
+        this.highlightedHolders[this.activeHighlightedIdx].activeHighlight = false;
+    }
+    if (this.activeHighlightedIdx > 0) {
+        this.activeHighlightedIdx--;
+        this.elt.$searchInput.canNext = true;
+        this.highlightedHolders[this.activeHighlightedIdx].activeHighlight = true;
+        this.scrollIntoIndex(this.highlightedHolders[this.activeHighlightedIdx].idx);
+        this.viewListAt(this.highlightedHolders[this.activeHighlightedIdx].idx);
+        vScrollIntoView(this.highlightedHolders[this.activeHighlightedIdx].itemElt)
+    }
+    if (this.activeHighlightedIdx <= 0) {
+        this.elt.$searchInput.canPrevious = false;
+    }
+
+    this.elt.$searchInput.countText = (this.activeHighlightedIdx + 1) + '/' + this.highlightedHolders.length;
+
+};
+
+CTBItemListController.prototype.ev_highlightNext = function (event) {
+    if (this.activeHighlightedIdx >= 0) {
+        this.highlightedHolders[this.activeHighlightedIdx].activeHighlight = false;
+    }
+    if (this.activeHighlightedIdx < this.highlightedHolders.length - 1) {
+        this.activeHighlightedIdx++;
+        this.elt.$searchInput.canPrevious = true;
+        this.highlightedHolders[this.activeHighlightedIdx].activeHighlight = true;
+        this.scrollIntoIndex(this.highlightedHolders[this.activeHighlightedIdx].idx);
+        this.viewListAt(this.highlightedHolders[this.activeHighlightedIdx].idx);
+        vScrollIntoView(this.highlightedHolders[this.activeHighlightedIdx].itemElt)
+    }
+    if (this.activeHighlightedIdx >= this.highlightedHolders.length - 1) {
+        this.elt.$searchInput.canNext = false;
+    }
+    this.elt.$searchInput.countText = (this.activeHighlightedIdx + 1) + '/' + this.highlightedHolders.length;
+};
+
+
 /**
  *
  * @param {CheckTreeBox} elt
@@ -1195,17 +1348,64 @@ CTBActionController.prototype.ev_clickCloseBtn = function (event) {
 function CTBSearchController(elt) {
     this.elt = elt;
     this.cache = {};
-    this.$searchInput = $('searchtextinput', this.elt)
-        .on('stoptyping', this.ev_searchModify.bind(this));
+    /**
+     *
+     * @type {"normal"|"filter"|"highlight"}
+     */
+    this.state = 'normal';
+    /**
+     *
+     * @type {SearchTextInput|SearchMultiModeInput|HTMLElement|*}
+     */
+    this.$searchInput = this.elt.$searchInput;
+    this.$searchInput.on('stoptyping', this.ev_searchModify.bind(this));
+    this.savedStates = {};
 }
 
 
 CTBSearchController.prototype.ev_searchModify = function () {
     var text = this.$searchInput.value.trim();
-    if (text.length === 0) {
-        this.elt.listCtrl.resetView();
+    var mode = this.$searchInput.mode || 'filter';
+    var newStates, key;
+    if (text.length === 0 || mode === 'highlight') {
+        if (text.length === 0) {
+            if (this.state === 'highlight') {
+                this.elt.listCtrl.applyNodesState(this.savedStates);
+                //todo: restore node state
+            }
+            this.state = 'normal';
+            this.elt.listCtrl.highlight('');
+            this.elt.listCtrl.resetView();
+            this.elt.listCtrl.scrollIntoIndex(0);
+            this.elt.listCtrl.updateContentSize();
+            if (this.elt.updatePosition)
+                this.elt.updatePosition();
+            return;
+        }
+        else {
+            if (this.state !== 'highlight') {
+                this.state = 'highlight';//todo: save node state before open all nodes, restore when exit highlight mode
+                this.savedStates = this.elt.listCtrl.getNodesState();
+                newStates = {};
+                for (key in this.savedStates) {
+                    if (this.savedStates[key] === 'close') {
+                        newStates[key] = 'open';
+                    }
+                    else {
+                        newStates[key] = this.savedStates[key];
+                    }
+                }
+                this.elt.listCtrl.applyNodesState(newStates);
+                this.elt.listCtrl.resetItems();//open all nodes to make highlight work
+                this.elt.listCtrl.updateContentSize();
+            }
+            this.elt.listCtrl.highlight(nonAccentVietnamese(text.toLowerCase()));
+            if (this.elt.updatePosition)
+                this.elt.updatePosition();
+        }
         return;
     }
+    this.elt.listCtrl.highlight('');
     var searchData;
     if (this.cache[text]) {
         searchData = this.cache[text];
