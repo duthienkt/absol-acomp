@@ -225,7 +225,7 @@ SearchMultiModeInput.tag = 'SearchMultiModeInput'.toLowerCase();
 SearchMultiModeInput.render = function () {
     return _(
         {
-            extendEvent:['stoptyping'],
+            extendEvent: ['stoptyping', 'previous', 'next'],
             class: ['as-search-multi-mode-input', 'as-empty'],
             child: [
                 {
@@ -364,9 +364,11 @@ function SMMIModeController(elt) {
 SMMIModeController.prototype.ev_clickButton = function (event) {
     if (this.elt.mode === 'filter') {
         this.elt.mode = 'highlight';
+        this.elt.actionCtrl.delayNotifyStopChange();
     }
     else {
         this.elt.mode = 'filter';
+        this.elt.actionCtrl.delayNotifyStopChange();
     }
 };
 
@@ -384,6 +386,8 @@ function SMMIActionController(elt) {
     }
     this.elt.on('input', this.ev_input);
     this.elt.$clearBtn.on('click', this.ev_clickClear);
+    this.elt.$prevBtn.on('click', this.ev_clickPrev);
+    this.elt.$nextBtn.on('click', this.ev_clickNext);
     this.typingTO = -1;
 }
 
@@ -410,5 +414,13 @@ SMMIActionController.prototype.ev_clickClear = function (event) {
     this.elt.addClass('as-empty');
     this.elt.$input.focus();
     this.delayNotifyStopChange();
+};
 
+SMMIActionController.prototype.ev_clickPrev = function (event) {
+    this.elt.emit('previous', { target: this.elt, type: 'previous' }, this.elt);
+};
+
+
+SMMIActionController.prototype.ev_clickNext = function (event) {
+    this.elt.emit('next', { target: this.elt, type: 'next' }, this.elt);
 };
