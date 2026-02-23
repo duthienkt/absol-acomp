@@ -37,14 +37,14 @@ var makeSearchItem = (it, idx2key) => {
     it.valueKey = valueKey;
     idx2key.push(valueKey);
     if (it.items && it.items.length > 0 && it.items.map) {
-        res.items = it.items.map(cIt=>makeSearchItem(cIt, idx2key));
+        res.items = it.items.map(cIt => makeSearchItem(cIt, idx2key));
     }
     return res;
 };
 
 export var ComboboxDynamicCSS = new DynamicCSS();
 
-ResizeSystem.on('resizing', ()=> {
+ResizeSystem.on('resizing', () => {
     ComboboxDynamicCSS.setProperty(':root', '--as-combobox-width-limit', calcWidthLimit() + 'px')
         .commit();
 });
@@ -53,6 +53,31 @@ document.addEventListener('DOMContentLoaded', () => {
     ComboboxDynamicCSS.setProperty(':root', '--as-combobox-width-limit', calcWidthLimit() + 'px')
         .commit();
 });
+
+var searchInTopAnchors = [8, 0, 12, 1, 9, 2, 13, 3, 10];
+var searchInBottomAnchors = [4, 14, 5, 11, 6, 15, 7];
+
+var t = searchInTopAnchors.map(x => `.as-select-list-box.as-enable-search.as-anchor-${x}`).concat(['.as-select-list-box.as-enable-search']).join(', \n');
+ComboboxDynamicCSS.setProperty(t, 'padding-top', 'calc(2em + 10px)');
+
+t = searchInTopAnchors.map(x => `.as-select-list-box.as-enable-search.as-anchor-${x} .as-select-list-box-search-ctn`).concat(['.as-select-list-box.as-enable-search .as-select-list-box-search-ctn']).join(', \n');
+ComboboxDynamicCSS.setRule(t, {
+    top: '0',
+    bottom: 'unset'
+});
+
+
+t = searchInBottomAnchors.map(x => `.as-select-list-box.as-enable-search.as-anchor-${x}`).join(', \n');
+ComboboxDynamicCSS.setProperty(t, 'padding-bottom', 'calc(2em + 10px)');
+
+t = searchInBottomAnchors.map(x => `.as-select-list-box.as-enable-search.as-anchor-${x} .as-select-list-box-search-ctn`).join(', \n');
+ComboboxDynamicCSS.setRule(t, {
+    bottom: '0',
+    top: 'unset'
+});
+
+ComboboxDynamicCSS.commit();
+
 
 /***
  * @extends Follower
@@ -280,7 +305,7 @@ SelectListBox.prototype._updateSelectedItem = function () {
  */
 SelectListBox.prototype.viewListAt = function (offset) {
     if (!this.isDescendantOf(document.body)) {
-        this.$attachhook.once('attached', ()=>{
+        this.$attachhook.once('attached', () => {
             this.domSignal.emit('viewListAt', offset);
         });
         return;
@@ -423,11 +448,11 @@ SelectListBox.prototype._updateDisplayItemIndex = function () {
 };
 
 SelectListBox.prototype._updateItemNodeIndex = function () {
-    this._itemNodeHolderByValue = depthIndexingByValue(this._items|| []);
+    this._itemNodeHolderByValue = depthIndexingByValue(this._items || []);
 };
 
 SelectListBox.prototype._updateDisplayItem = function () {
-    this._displayItems = this._filterDisplayItems(this._preDisplayItems|| []);
+    this._displayItems = this._filterDisplayItems(this._preDisplayItems || []);
     this._updateDisplayItemIndex();
     this.$content.addStyle({
         'height': this._displayItems.length * this.itemHeight / 14 + 'em'
@@ -436,7 +461,7 @@ SelectListBox.prototype._updateDisplayItem = function () {
 };
 
 SelectListBox.prototype.focus = function () {
-    setTimeout(()=>{
+    setTimeout(() => {
         if (this.enableSearch) this.$searchInput.focus();
     }, 10);
 };
