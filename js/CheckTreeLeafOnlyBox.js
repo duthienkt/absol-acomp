@@ -5,7 +5,7 @@ import OOP from "absol/src/HTML5/OOP";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import { keyStringOf, legacyKeyStringOf } from "./utils";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
-import SearchTextInput from "./Searcher";
+import SearchTextInput, { SearchMultiModeInput } from "./Searcher";
 
 
 var normalizeItem = item => {
@@ -104,7 +104,7 @@ CheckTreeLeafOnlyBox.render = function () {
                         class: 'am-dropdown-box-header',
                         child: [
                             {
-                                tag: SearchTextInput.tag
+                                tag: SearchMultiModeInput
                             },
                             {
                                 tag: 'button',
@@ -127,7 +127,7 @@ CheckTreeLeafOnlyBox.render = function () {
         child: [
             {
                 class: 'as-select-list-box-search-ctn',
-                child: 'searchtextinput'
+                child: SearchMultiModeInput
             },
             content,
             footer
