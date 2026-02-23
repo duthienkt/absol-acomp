@@ -263,7 +263,7 @@ SearchMultiModeInput.render = function () {
                         {
                             tag: 'button',
                             class: ['as-transparent-button', 'as-smm-input-mode-btn'],
-                            child: ['span.mdi.mdi-magnify', 'span.mdi.mdi-filter-variant']
+                            child: ['span.mdi.mdi-text-search', 'span.mdi.mdi-filter-variant']
                         }
                     ]
                 }
