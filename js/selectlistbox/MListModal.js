@@ -447,9 +447,10 @@ MListModal.property.displayValue = {
 MListModal.property.enableSearch = {
     set: function (value) {
         if (value) this.$box.addClass('am-enable-search');
+        else this.$box.removeClass('am-enable-search');
     },
     get: function () {
-        return this.$box.removeClass('am-enable-search');
+        this.$box.hasClass('am-enable-search');
     }
 };
 
