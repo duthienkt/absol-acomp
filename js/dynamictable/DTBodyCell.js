@@ -74,6 +74,9 @@ Object.defineProperty(DTBodyCell.prototype, 'copyElt', {
     get: function () {
         if (this._copyElt) return this._copyElt;
         this._copyElt = $(this.elt.cloneNode(true)).addClass('as-copy-elt');
+        Array.prototype.forEach.call(this._copyElt.childNodes, (c, i) => {
+            c.onclick = this.elt.childNodes[i].onclick;
+        });
         return this._copyElt;
     }
 });
