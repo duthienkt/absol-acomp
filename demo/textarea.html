@@ -17,10 +17,12 @@
 
 <body>
     <script class="viewable">
-        absol._('textarea2').addTo(document.body);
-
+        var ta = absol._('textarea2').addTo(document.body);
+        ta.maxU8Length = 10;
       // var txt =  absol._('.as-text-input').addStyle('size', 'regular').addStyle("width", 'base-content').addTo(document.body);
         var tinput = absol._('textinput').addStyle('size', 'regular').addStyle("width", 'base-content').addTo(document.body);
+        tinput.maxU8Length = 10;
+        tinput.value = 'Hello world! abcdefghijklmnopqrstuvwxyz 0123456789';
        /* txt.addStyle({
             font: '14px Roboto'
         });

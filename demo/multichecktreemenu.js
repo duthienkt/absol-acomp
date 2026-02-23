@@ -55,7 +55,9 @@ function render(o) {
     var testBtn = render({
         tag: 'flexiconbutton',
         props: {
-            text: 'Test change value'
+            text: 'Test change value',
+            enableSearch: true
+
         },
         on: {
             click: function () {
@@ -84,7 +86,9 @@ function render(o) {
         props: {
             values: ['duthien1', -100010],
             leafOnly: true,
-            initOpened: 3
+            initOpened: 3,
+            enableSearch: true
+
         },
         on: {
             change: function () {
@@ -95,7 +99,9 @@ function render(o) {
     var testBtn = render({
         tag: 'flexiconbutton',
         props: {
-            text: 'Test change value'
+            text: 'Test change value',
+            enableSearch: true
+
         },
         on: {
             click: function () {
@@ -198,7 +204,8 @@ function render(o) {
         tag: 'multichecktreemenu',
         props: {
             values: ['duthien1', -100010],
-            leafOnly: true
+            leafOnly: true,
+            enableSearch: true
         },
         on: {
             change: function () {

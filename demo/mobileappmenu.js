@@ -10,6 +10,7 @@ module.exports = {
                 "name": "Công việc",
                 "type": "group",
                 "items": [{
+
                     "name": "Công việc",
                     "icon": "span.mdi.mdi-order-bool-ascending-variant",
                     "hidden": false,
@@ -791,7 +792,8 @@ module.exports = {
                     "name": "Tác vụ",
                     "icon": "span.mdi.mdi-format-list-checks",
                     "hidden": false,
-                    "task": "activities"
+                    "task": "activities",
+                    "count": 4
                 }, {
                     "name": "Check-in đối tác",
                     "icon": "span.mdi.mdi-map-marker-check",

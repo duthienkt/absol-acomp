@@ -82,3 +82,25 @@ _('br').addTo(document.body);
 
 });
 
+
+['tiny', 'small', 'regular', 'large'].forEach(function (size) {
+    var input0 = _({
+        tag: 'ribbontextinput',
+        style: {
+            margin: '0.2em',
+            size: size
+        },
+        props: {
+            label: 'span.mdi.mdi-close',
+            value: '20',
+            unit: 'px',
+            items:[
+                {
+                    text:"px"
+                }
+            ]
+        }
+    }).addTo(ctn);
+
+});
+

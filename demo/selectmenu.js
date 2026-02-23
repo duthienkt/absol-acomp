@@ -1,5 +1,5 @@
 var _ = absol._;
-var __ = (o, p)=> _(o).addTo((p && $(p)) || document.body);
+var __ = (o, p) => _(o).addTo((p && $(p)) || document.body);
 
 var mList = __({
     tag: 'selectlist',
@@ -9,11 +9,24 @@ var mList = __({
     },
     props: {
         items: Array(30).fill(0).map(function (u, i) {
-            return { text: "item " + i, value: i, desc: absol.string.randomPhrase(30) };
+
+            return { text: "item " + i, value: i, desc: absol.string.randomPhrase(30), disabled: i % 2 === 0 };
         })
     }
 });
 mList.items = mList.items;
+
+__({
+    tag: 'select',
+    child: Array(30).fill(0).map(function (u, i) {
+        return {
+            tag: 'option',
+            attrs: { value: i },
+            child: { text: 'item ' + i }
+        }
+        // return { text: "item " + i, value: i, desc: absol.string.randomPhrase(30), disabled: i%2 === 0 };
+    })
+});
 
 __(`<h1>Select Menu</h1>`);
 
@@ -23,19 +36,36 @@ function makeRandomList(n, hasDesc, hasIcon) {
             icon: hasIcon ? 'span.mdi.mdi-account' : null,
             text: absol.string.randomPhrase(30),
             value: i,
-            desc: hasDesc? absol.string.randomPhrase(30): null,
+            disabled: i % 2 === 0,
+            desc: hasDesc ? absol.string.randomPhrase(30) : null,
             extendClasses: i % 2 === 0 ? 'hover-blue' : 'hover-red'
         };
     })
 }
 
-__('<span>Normal </span>')
+__('<span>Normal </span>');
 __({
     tag: 'selectmenu',
     style: {
         display: 'inline-block',
         border: 'solid 1px gray',
         minWidth: 'unset',
+        width: '100px'
+    },
+    props: {
+        items: [
+            {text:"Nam", value: 1},
+            { text:"Nữ", value: 2}
+        ],
+        enableSearch: true
+    }
+});
+__({
+    tag: 'selectmenu',
+    style: {
+        display: 'inline-block',
+        border: 'solid 1px gray',
+        // minWidth: 'unset',
         width: '100px'
     },
     props: {
@@ -69,7 +99,7 @@ __({
     style: {
         display: 'inline-block',
         border: 'solid 1px gray',
-        minWidth:'unset',
+        // minWidth:'unset',
         width: '100px',
     },
     props: {
@@ -2356,7 +2386,7 @@ absol._({
         enableSearch: true,
     },
     style: {
-        minWidth:'unset',
+        minWidth: 'unset',
         width: '100px',
         display: 'inline-block',
         border: 'solid 1px gray',

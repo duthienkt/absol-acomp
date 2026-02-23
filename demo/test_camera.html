@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Camera Test</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background: #f4f4f4;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+		}
+		.camera-container {
+			background: #fff;
+			padding: 24px;
+			border-radius: 12px;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+		}
+		video {
+			border-radius: 8px;
+			width: 400px;
+			max-width: 90vw;
+			background: #222;
+		}
+		canvas {
+			display: none;
+		}
+		button {
+			margin-top: 16px;
+			padding: 8px 20px;
+			font-size: 16px;
+			border: none;
+			border-radius: 6px;
+			background: #007bff;
+			color: #fff;
+			cursor: pointer;
+			transition: background 0.2s;
+		}
+		button:hover {
+			background: #0056b3;
+		}
+		.photo-preview {
+			margin-top: 16px;
+			border-radius: 8px;
+			box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+			max-width: 400px;
+		}
+	</style>
+</head>
+<body>
+	<div class="camera-container">
+		<h2>Camera Test</h2>
+		<video id="video" autoplay playsinline></video>
+		<button id="capture">Capture Photo</button>
+		<canvas id="canvas"></canvas>
+		<img id="photo" class="photo-preview" alt="Photo preview" style="display:none;" />
+		<p id="error" style="color:red;"></p>
+	</div>
+	<script>
+		const video = document.getElementById('video');
+		const canvas = document.getElementById('canvas');
+		const photo = document.getElementById('photo');
+		const errorMsg = document.getElementById('error');
+		const captureBtn = document.getElementById('capture');
+
+		function  getUserMedia(){
+			var permissionsSync = new Promise(resolve => {
+				if (window.androidHost && window.mobileHost && window.mobileHost.requestPermission) {
+					if (androidHost.checkPermission("android.permission.CAMERA")) {
+						resolve(true);
+						return ;
+					}
+					var i;
+					window.mobileHost.requestPermission("android.permission.CAMERA",  resp=>{
+						if (resp && resp.length > 0) {
+							for (i =0; i < resp.length; ++i) {
+								if (resp[i].permissions === 'android.permission.CAMERA') {
+									resolve(resp[i].result);
+								}
+							}
+						}
+					});
+				}
+				else {
+					return resolve(true);//handle by browser
+				}
+			})
+
+
+			return permissionsSync.then(ok => {
+				if (!ok) return [];
+				return navigator.mediaDevices.getUserMedia({
+					// video: {
+					// 	facingMode: 'user'
+					// },
+					// audio: false,
+					video: true
+				});
+			})
+		}
+
+		async function startCamera() {
+			try {
+				const stream = await getUserMedia({ video: true });
+				video.srcObject = stream;
+			} catch (err) {
+				errorMsg.textContent = 'Camera access denied or not available.';
+			}
+		}
+
+		captureBtn.onclick = function() {
+			canvas.width = video.videoWidth;
+			canvas.height = video.videoHeight;
+			canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+			photo.src = canvas.toDataURL('image/png');
+			photo.style.display = 'block';
+		};
+
+		startCamera();
+	</script>
+</body>
+</html>

@@ -31,7 +31,10 @@
             props: {
                 enableSearch: true,
                 leafOnly: true,
-                debug: true
+                debug: true,
+                readOnlyValues: [105184],
+                values: [105184],
+                
             }
         }).addTo(document.body);
         absol.remoteNodeRequireAsync('./ex3.js').then(res=>{

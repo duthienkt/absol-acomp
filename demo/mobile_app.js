@@ -49,7 +49,8 @@ FirstPage.prototype.createView = function () {
                                     items: [
                                         {
                                             name: 'Tác vụ',
-                                            icon: 'EmojiMutedIcon'.toLowerCase()
+                                            icon: 'EmojiMutedIcon'.toLowerCase(),
+                                            count: 3
                                         },
                                         {
                                             name: 'Check-in đối tác',

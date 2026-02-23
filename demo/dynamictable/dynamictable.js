@@ -10,7 +10,7 @@ render("<h2>Paging - Search - Sort</h2>");
 var now = new Date().getTime();
 
 function makeRowData(i, id) {
-    var name = '[' + i + ']' + absol.string.randomPhrase(160).replace(/(^|\s)[a-z]/g, function (all) {
+    var name = '[' + i + ']' + absol.string.randomPhrase(30).replace(/(^|\s)[a-z]/g, function (all) {
         return all.toUpperCase();
     });
     var sid = 'M' + absol.$.zeroPadding(Math.random() * 1e7 >> 0, 7);
@@ -115,7 +115,7 @@ function makeRowData(i, id) {
                 render: function (tdElt, data, cellController) {
                     editBtn = _({
                         tag: 'flexiconbutton',
-                        style: { height: '25px' },
+                        style: { height: '25px', width: '30px', 'min-width': 'unset'},
                         props: {
                             icon: 'span.mdi.mdi-account-edit-outline'
                         },
@@ -132,7 +132,7 @@ function makeRowData(i, id) {
                     });
                     okBtn = _({
                         tag: 'flexiconbutton',
-                        style: { height: '25px', display: 'none' },
+                        style: { height: '25px', display: 'none',width: '30px', 'min-width': 'unset' },
                         props: {
                             icon: 'span.mdi.mdi-check-all'
                         },
@@ -148,7 +148,7 @@ function makeRowData(i, id) {
                     tdElt.addChild(editBtn);
                     removeBtn = _({
                         tag: 'flexiconbutton',
-                        style: { marginLeft: '5px', height: '25px' },
+                        style: { marginLeft: '5px', height: '25px',width: '30px', 'min-width': 'unset' },
                         class: 'warning',
                         props: {
                             variant: 'delete',
@@ -412,7 +412,7 @@ var table0 = render({
     // id:'dt_000',
     style: {
         variant:'secondary',
-        height: '500px',
+        height: '1200px',
         'min-width': '800px'
     },
     // class:'as-no-graphic',
@@ -421,6 +421,7 @@ var table0 = render({
         adapter: {
             // rowsPerPage: 15,//default: 20
             fixedCol: 2,
+            fixedColRight: 1,
             data: {
                 head: {
                     rows: [
@@ -464,7 +465,7 @@ var table0 = render({
                     ]
                 },
                 body: {
-                    rows: Array(0).fill(0).map(function (u, i) {
+                    rows: Array(200).fill(0).map(function (u, i) {
                         var id = 'row_' + i;
                         return makeRowData(i, id);
                     })
@@ -506,7 +507,7 @@ function makeRowData1(i, id, draggable) {
     });
     var editBtn = _({
         tag: 'flexiconbutton',
-        style: { height: '25px' },
+        style: { height: '25px', width: '30px', 'min-width': 'unset' },
         props: {
             icon: 'span.mdi.mdi-account-edit-outline'
         },
@@ -523,7 +524,7 @@ function makeRowData1(i, id, draggable) {
     });
     var okBtn = _({
         tag: 'flexiconbutton',
-        style: { height: '25px', display: 'none' },
+        style: { height: '25px', display: 'none', width: '30px', 'min-width': 'unset' },
         props: {
             icon: 'span.mdi.mdi-check-all'
         },
@@ -597,7 +598,7 @@ function makeRowData1(i, id, draggable) {
 
 var addBtn7 = render({
     tag: 'flexiconbutton',
-    style: { 'margin': '10px' },
+    style: { 'margin': '10px',  width: '30px', 'min-width': 'unset'},
     props: {
         text: 'addRowBefore(data, row_you_want_to)',
         icon: 'span.mdi.mdi-table-row-plus-before'

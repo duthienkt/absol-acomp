@@ -150,6 +150,7 @@ var table = render({
     class:'as-table-new',
     style:{
         whiteSpace: 'nowrap',
+        width: '100%'
     },
     props: {
         searchInput: searchInput,

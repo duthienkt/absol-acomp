@@ -67,11 +67,39 @@
     $('#test-zone').defineEvent('contextmenu').on('contextmenu', function (event) {
         console.log(event.selectedText);
         event.showContextMenu({
-            items: [{text: 'Expand Down', value: 1, icon: 'span.mdi.mdi-arrow-expand-down'}, {
-                text: 'Expand Up',
-                value: 2,
-                icon: 'span.mdi.mdi-arrow-expand-up'
-            }]
+            items: [
+                {
+                    text: 'Expand Down', value: 1, 
+                    icon: 'span.mdi.mdi-arrow-expand-down'
+                },
+                {
+                    text: 'Expand Up',
+                    value: 2,
+                    icon: 'span.mdi.mdi-arrow-expand-up'
+                },
+                {
+                    text: 'Expand Left',
+                    value: 3,
+                    icon: 'span.mdi.mdi-arrow-expand-left'
+                },
+                {
+                    text: 'Grow Right',
+                    value: 4,
+                    icon: 'span.mdi.mdi-arrow-expand-right',
+                    items:[
+                        {
+                            text: 'Sub Item 1',
+                            value: 41,
+                            icon: 'span.mdi.mdi-arrow-expand-right'
+                        },
+                        {
+                            text: 'Sub Item 2',
+                            value: 42,
+                            icon: 'span.mdi.mdi-arrow-expand-right'
+                        }
+                    ]
+                }
+            ]
         }, function (event) {
             console.log(event.menuItem.text);
         });

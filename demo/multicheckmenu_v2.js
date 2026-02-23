@@ -23,7 +23,8 @@ setTimeout(()=>{
             enableSearch: true,
             items: items,
             itemFocusable: true,
-            values: [1, 4, 5, 6]
+            values: [1, 4, 5, 6],
+            readOnlyValues:[4,5]
         },
         on: {
             change: function (event) {
