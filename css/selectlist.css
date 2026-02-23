@@ -148,7 +148,9 @@
 }
 
 .am-list-popup-box.am-enable-search .absol-search-text-input,
-.am-list-modal-v2.as-enable-search .absol-search-text-input {
+.am-list-modal-v2.as-enable-search .absol-search-text-input,
+.am-list-popup-box.am-enable-search .as-search-multi-mode-input,
+.am-list-modal-v2.as-enable-search .as-search-multi-mode-input {
     visibility: visible;
 }
 
@@ -165,7 +167,8 @@
     /*background-color: rgba(169, 169, 169, 0.2);*/
 }
 
-.am-list-popup-header .absol-search-text-input {
+.am-list-popup-header .absol-search-text-input,
+.am-list-popup-header .as-search-multi-mode-input {
     display: inline-block;
     width: calc(100% - 2em - 18px);
     vertical-align: middle;
@@ -208,7 +211,8 @@
     line-height: 1;
 }
 
-.am-list-popup-box .absol-search-text-input {
+.am-list-popup-box .absol-search-text-input,
+.am-list-popup-box .as-search-multi-mode-input {
     visibility: hidden;
 }
 

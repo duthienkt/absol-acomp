@@ -33,7 +33,9 @@
     --desc-width: 0;
 }
 
-.am-check-tree-box-modal:not(.as-enable-search) .absol-search-text-input {
+.am-check-tree-box-modal:not(.as-enable-search) .absol-search-text-input,
+.am-check-tree-box-modal:not(.as-enable-search)  .as-search-multi-mode-input
+{
     visibility: hidden;
     opacity: 0;
     pointer-events: none;

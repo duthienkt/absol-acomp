@@ -71,7 +71,7 @@ div.as-dropdown-box-common-style {
 
 /********** MOBILE ***************/
 
-.am-modal.am-dropdown-box-modal{
+.am-modal.am-dropdown-box-modal {
     z-index: 100001000;
 }
 
@@ -82,8 +82,9 @@ div.as-dropdown-box-common-style {
 }
 
 .am-dropdown-box.as-enable-search .absol-search-text-input,
-.am-dropdown-box-modal.as-enable-search .absol-search-text-input
-{
+.am-dropdown-box-modal.as-enable-search .absol-search-text-input,
+.am-dropdown-box.as-enable-search .as-search-multi-mode-input,
+.am-dropdown-box-modal.as-enable-search .as-search-multi-mode-input {
     visibility: visible;
 }
 
@@ -98,7 +99,8 @@ div.as-dropdown-box-common-style {
     border-bottom: solid 1px #dddddd;
 }
 
-.am-dropdown-box-header .absol-search-text-input {
+.am-dropdown-box-header .absol-search-text-input,
+.am-dropdown-box-header .as-search-multi-mode-input {
     display: inline-block;
     width: calc(100% - 2em - 18px);
     vertical-align: middle;
