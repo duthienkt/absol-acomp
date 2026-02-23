@@ -125,11 +125,10 @@
 .as-search-multi-mode-input[data-mode="filter"] .mdi-filter-variant,
 .as-search-multi-mode-input[data-mode="filter"] .as-smm-input-prev-btn,
 .as-search-multi-mode-input[data-mode="filter"] .as-smm-input-next-btn,
-.as-search-multi-mode-input[data-mode="highlight"] .mdi-magnify,
+.as-search-multi-mode-input[data-mode="highlight"] .mdi-text-search,
 .as-search-multi-mode-input.as-empty .as-smm-input-clear-btn,
 .as-search-multi-mode-input.as-empty .as-smm-input-result-count,
-.as-search-multi-mode-input[data-mode="filter"] .as-smm-input-result-count
-{
+.as-search-multi-mode-input[data-mode="filter"] .as-smm-input-result-count {
     display: none;
 }
 
@@ -174,7 +173,7 @@
     display: inline-block;
     vertical-align: middle;
     line-height: calc(var(--base-size) - 2px);
-    color:var(--gray-color);
+    color: var(--gray-color);
 }
 
 /* Hide browser clear button for search input in .as-smm-text-input-container */
