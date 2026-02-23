@@ -58,7 +58,7 @@ MCTBItemListController.prototype.update = function () {
 };
 
 MCTBItemListController.prototype.getItems = function () {
-    return copySelectionItemArray(this.items||[]);
+    return copySelectionItemArray(this.items || []);
 };
 
 MCTBItemListController.prototype.makeSearch = function (query) {
@@ -133,7 +133,6 @@ MCTBItemListController.prototype.makeSearch = function (query) {
 
     return result.resetAndGet();
 };
-
 
 
 /***
@@ -212,7 +211,7 @@ MCheckTreeItem.eventHandler = {};
 
 MCheckTreeItem.eventHandler.click = function (event) {
     if (hitElement(this.$checkbox, event)) return;
-    var  checkboxBound = this.$checkbox.getBoundingClientRect();
+    var checkboxBound = this.$checkbox.getBoundingClientRect();
     var canCheck = this.$checkbox.getComputedStyleValue('pointer-events') !== 'none' && !this.$checkbox.disabled && checkboxBound.width > 0;
     if (this.status === 'none' && canCheck) {
         this.$checkbox.checked = !this.$checkbox.checked;
@@ -264,10 +263,6 @@ MCheckTreeItem.property = CTIPropHandlers;
  * @name value
  * @memberOf MCheckTreeItem#
  */
-
-
-
-
 
 
 /***
@@ -407,9 +402,11 @@ MCheckTreeBox.prototype.getItemByValue = function (value) {
 };
 
 MCheckTreeBox.prototype.focus = function () {
-    if (this.enableSearch) {
-        this.$searchInput.focus();
-    }
+    setTimeout(() => {
+        if (this.enableSearch) {
+            this.$searchInput.focus();
+        }
+    }, 10);
 };
 
 
@@ -466,7 +463,6 @@ MCheckTreeBox.prototype.findItemHoldersByValue = function (value) {
         return [];
     }
 };
-
 
 
 /***
@@ -647,7 +643,7 @@ MCTBItemHolder.prototype.select = function (flag, isDownUpdate) {
         }
     }
     else {
-        if (flag && (!leafOnly ||this.hasLeaf)) {
+        if (flag && (!leafOnly || this.hasLeaf)) {
             this.selected = 'all';
         }
         else {
@@ -673,11 +669,10 @@ MCTBItemHolder.prototype.getRoot = function () {
 }
 
 
-
 /*********************************** ADAPT OLD VERSION ***************************************************************/
 
 Object.defineProperty(MCTBItemHolder.prototype, 'item', {
-    get: function (){
+    get: function () {
         return this.data;
     }
 });
