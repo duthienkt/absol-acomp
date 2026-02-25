@@ -44,8 +44,10 @@ var dateByLevel = (date, level) => {
         case 'year':
             return beginOfYear(date);
         case 'date':
-        default:
+        case 'day':
             return beginOfDay(date);
+        default:
+            return date;
 
     }
 }
@@ -93,41 +95,62 @@ function DateInput2() {
     OOP.drillProperty(this, this, 'maxLimitDate', 'max');
     OOP.drillProperty(this, this, 'maxDateLimit', 'max');
     AbstractInput.call(this);
+
+
+    /**
+     * The level of granularity for the calendar popup.
+     * Determines which calendar view is shown (day, week, month, quarter, year).
+     * @name calendarLevel
+     * @type {"day"|"week"|"month"|"quarter"|"year"}
+     * @default "day"
+     * @memberOf DateInput2#
+     */
+
     /**
      * @type {Date}
      * @name min
-     * @memberOf DateInput#
+     * @memberOf DateInput2#
      */
 
     /**
      * @type {Date}
      * @name max
-     * @memberOf DateInput#
+     * @memberOf DateInput2#
      */
 
     /**
      * @type {Date}
      * @name value
-     * @memberOf DateInput#
+     * @memberOf DateInput2#
      */
 
     /**
      * @type {string}
      * @name format
-     * @memberOf DateInput#
+     * @memberOf DateInput2#
      */
 
     /**
      * @deprecated
      * @type {Date}
      * @name minLimitDate
-     * @memberOf DateInput#
+     * @memberOf DateInput2#
      */
     /**
      * @deprecated
      * @type {Date}
      * @name maxLimitDate
-     * @memberOf DateInput#
+     * @memberOf DateInput2#
+     */
+    /**
+     * @type {boolean}
+     * @name notNull
+     * @memberOf DateInput2#
+     */
+    /**
+     * @type {boolean}
+     * @name strictValue
+     * @memberOf DateInput2#
      */
 }
 
@@ -230,12 +253,12 @@ DateInput2.prototype._applyValue = function (value) {
 };
 
 DateInput2.prototype._loadTextFromValue = function () {
-  var value = this.value;
+    var value = this.value;
     if (!value) {
         this.$input.value = this.format;
     }
     else {
-        this.$input.value = formatDateTime(this._value, this._format);
+        this.$input.value = formatDateTime(value, this._format);
     }
     this._updateNullClass();
 };
@@ -297,7 +320,7 @@ DateInput2.prototype._correctingInput = function () {
         tkDict.d.value = Math.max(1, Math.min(31, tkDict.d.value));
         if (tkDict.M && !isNaN(tkDict.M.value)) {
             tkDict.d.value = Math.min(tkDict.d.value,
-                daysInMonth((!tkDict.y ||isNaN(tkDict.y.value) )? 2020 : tkDict.y.value, tkDict.M.value - 1));
+                daysInMonth((!tkDict.y || isNaN(tkDict.y.value)) ? 2020 : tkDict.y.value, tkDict.M.value - 1));
         }
 
         if (equalMin) {
@@ -387,7 +410,7 @@ DateInput2.prototype._normalizeValue = function (date) {
             return null;
         }
         else {
-            return beginOfDay(date);
+            return date; //keep original time, not set to 00:00:00, because user may want to use time for comparison, but just not show it
         }
     }
     else {
@@ -430,7 +453,11 @@ DateInput2.prototype._explicit = function (value) {
     var time = value.getTime();
     time = Math.max(this._min.getTime(), time);
     time = Math.min(this._max.getTime(), time);
-    return dateByLevel(beginOfDay(new Date(time)), this.calendarLevel);
+    var level = this.calendarLevel;
+    if (level === 'day' && !this.strictValue) {
+        level = '*'
+    }
+    return dateByLevel(new Date(time), level);
 };
 
 DateInput2.prototype._applyTokenDict = function (format, dict, debug) {
@@ -783,6 +810,10 @@ DateInput2.eventHandler.calendarPick = function (event) {
 
 
 DateInput2.property.value = {
+    /**
+     * @this {DateInput2}
+     * @param value
+     */
     set: function (value) {
         value = this._normalizeValue(value);
         if (!value && this.notNull) value = beginOfDay(new Date());
@@ -790,6 +821,10 @@ DateInput2.property.value = {
         this._lastValue = this._explicit(this._value);
         this._loadTextFromValue();
     },
+    /**
+     * @this {DateInput2}
+     * @return {*}
+     */
     get: function () {
         return this._explicit(this._value);
     }
@@ -814,7 +849,9 @@ DateInput2.property.format = {
         }
         this._format = value;
         this._formatTokens = this._format.match(new RegExp(DATE_TIME_TOKEN_RGX.source, 'g')) || [];
-        this.value = this.value;//update
+
+        this._lastValue = this._explicit(this._value);
+        this._loadTextFromValue();
 
         var testData = new Date(2000, 9, 22, 12, 12, 22, 335);
         testData = formatDateTime(testData, value);
@@ -863,6 +900,14 @@ DateInput2.property.text = {
     }
 };
 
+DateInput2.property.strictValue = {
+    set: function (value) {
+        this.classList.toggle('as-strict-value', !!value);
+    },
+    get: function () {
+        return this.hasClass('as-strict-value');
+    }
+};
 
 DateInput2.property.calendarLevel = {
     /***
@@ -920,12 +965,13 @@ DateInput2.property.notNull = {
     set: function (value) {
         if (value) {
             this.addClass('as-must-not-null');
-            if (!this.value) this.value = new Date();
+            if (!this.value) this.value = beginOfDay(new Date());
         }
         else {
             this.removeClass('as-must-not-null');
         }
-        this.value = this.value;//update
+        this._lastValue = this._explicit(this._value);
+        this._loadTextFromValue();//update
     },
     get: function () {
         return this.hasClass('as-must-not-null');
