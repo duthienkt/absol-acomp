@@ -272,6 +272,10 @@ SearchMultiModeInput.render = function () {
     );
 };
 
+SearchMultiModeInput.prototype.focus = function () {
+    this.$input.focus();
+};
+
 SearchMultiModeInput.property = {};
 
 /**
