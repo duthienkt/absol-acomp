@@ -891,6 +891,8 @@ DTBody.prototype.moveRowAt = function (idx, newIdx) {
 };
 
 DTBody.prototype.clearRows = function () {
+    this.table.wrapper.$vscrollbar.innerOffset = 0;
+    this.table.wrapper.$vscrollbar.emit('scroll', {});
     var n = this.rows.length;
     this.rows.splice(0);
     this.data.rows.splice(0);
