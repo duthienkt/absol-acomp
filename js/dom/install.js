@@ -51,7 +51,7 @@ import RadioButton from "../RadioButton";
 import Radio from "../Radio";
 import RemoteSvg from "../RemoteSvg";
 import ResizeBox from "../ResizeBox";
-import SearchTextInput from "../Searcher";
+import SearchTextInput, { SearchMultiModeInput } from "../Searcher";
 import SelectBox from "../SelectBox";
 import SelectBoxItem from "../SelectBoxItem";
 import SelectTable from "../SelectTable";
@@ -204,6 +204,7 @@ import MultiDateInput from "../MultiDateInput";
 import FaceIdInput from "../FaceIdInput";
 import { FaceIdVerificationImage } from "../FaceIdEnrollment";
 import ObsDiv from "../ObsDiv";
+import PinCodeInput from "../PinCodeInput";
 // import GSMInput from "../GSMInput";
 
 
@@ -332,6 +333,7 @@ export var publicCreators = [
     RemoteSvg,
     ResizeBox,
     SearchTextInput,
+    SearchMultiModeInput,
     SelectListBox,
     SelectTreeBox,
     SelectMenu2,
@@ -359,6 +361,7 @@ export var publicCreators = [
     TextArea2,
     TextClipboard,
     TextInput,
+    PinCodeInput,
     TimeInput,
     Time24Input,
     TimeRange24Input,
