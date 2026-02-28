@@ -3,6 +3,8 @@ import { revokeResource } from "absol/src/DataStructure/Object";
 import Rectangle from "absol/src/Math/Rectangle";
 import { isRealNumber } from "absol/src/Converter/DataTypes";
 import { drillProperty } from "absol/src/HTML5/OOP";
+import BoundingObserver from "absol/src/HTML5/BoundingObserver";
+
 
 /**
  * @extends AElement
@@ -11,8 +13,16 @@ import { drillProperty } from "absol/src/HTML5/OOP";
 function ObsDiv() {
     this.addClass('as-obs-div');
     this.defineEvent(['resize', 'viewchange']);
-    this.startObserver();
+    this.obs = new BoundingObserver(this, {autoStart: true});
     this.ruleCtrl = new ODRuleController(this);
+    this.obs.on('viewchange', event =>{
+        this.ruleCtrl.apply(event.borderRect);
+        this.emit('viewchange', event);
+    });
+    this.obs.on('bound', event=>{
+        this.ruleCtrl.apply(event.borderRect);
+        this.emit('resize', event);
+    });
     drillProperty(this, this.ruleCtrl, 'respRules', 'data');
     /**
      * @type {Array}
@@ -36,43 +46,12 @@ ObsDiv.render = function () {
     });
 };
 
-ObsDiv.prototype.startObserver = function () {
-    if (this._resizeObserver || this._intersectionObserver) return;
-    // ResizeObserver: emit 'resize' event
-    this._resizeObserver = new ResizeObserver(entries => {
-        var eventData = new ODResizeEvent(this, entries[0]);
-        this.ruleCtrl.apply(eventData.borderRect);
-        this.emit('resize', eventData);
-    });
-    this._resizeObserver.observe(this);
-
-    // IntersectionObserver: emit 'visible'/'hidden' events
-    this._intersectionObserver = new IntersectionObserver(entries => {
-        var eventData = new ODIntersectionEvent(this, entries[0]);
-        this.ruleCtrl.apply(eventData.borderRect);
-        this.emit('viewchange', eventData);
-        if (eventData.action === 'remove' && !this.reusable) {
-            this.stopObserver();
-        }
-    });
-    this._intersectionObserver.observe(this);
-};
-
-ObsDiv.prototype.stopObserver = function () {
-    if (this._resizeObserver) {
-        this._resizeObserver.disconnect();
-        this._resizeObserver = null;
-    }
-    if (this._intersectionObserver) {
-        this._intersectionObserver.disconnect();
-        this._intersectionObserver = null;
-    }
-};
 
 ObsDiv.property = {};
 
 ObsDiv.property.reusable = {
     set: function (value) {
+        this.obs.reusable = !!value;
         if (value) {
             this.addClass('as-reusable');
         }
@@ -87,58 +66,6 @@ ObsDiv.property.reusable = {
 
 
 export default ObsDiv;
-
-
-/**
- *
- * @param {ObsDiv} elt
- * @param {ResizeObserverEntry} entry
- * @constructor
- */
-function ODResizeEvent(elt, entry) {
-    this.target = elt;
-    this.contentRect = Rectangle.fromClientRect(entry.contentRect);
-    var boundRect;
-    var adaptKeys = ['x', 'y'];
-    this.borderRect = new Rectangle(0, 0, 0, 0);
-    if (entry.borderBoxSize.length > 0) {
-        this.borderRect.width = entry.borderBoxSize[0].inlineSize;
-        this.borderRect.height = entry.borderBoxSize[0].blockSize;
-    }
-    else {
-        adaptKeys.push('width', 'height');
-    }
-
-    adaptKeys.forEach(key => {
-        Object.defineProperty(this.borderRect, key, {
-            get: function () {
-                boundRect = boundRect || Rectangle.fromClientRect(elt.getBoundingClientRect());
-                return boundRect[key];
-            }
-        });
-    });
-}
-
-ODResizeEvent.prototype.type = 'resize';
-
-/**
- *
- * @param {ObsDiv} elt
- * @param {IntersectionObserverEntry} entry
- * @constructor
- */
-function ODIntersectionEvent(elt, entry) {
-    this.target = elt;
-    this.borderRect = Rectangle.fromClientRect(entry.boundingClientRect);
-    this.action = entry.isIntersecting ? 'visible' : 'hidden';
-    if (!entry.isIntersecting) {
-        if (!elt.isDescendantOf(document.body)) {
-            this.action = 'remove';
-        }
-    }
-}
-
-ODIntersectionEvent.prototype.type = 'viewchange';
 
 
 /**
