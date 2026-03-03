@@ -1,0 +1,7 @@
+{
+    // Enable auto save when the editor loses focus
+    "files.autoSave": "onFocusChange",
+    "css.styleSheets": [
+       "css/*.css"
+  ]
+}
