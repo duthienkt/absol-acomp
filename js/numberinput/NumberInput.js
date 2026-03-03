@@ -47,7 +47,6 @@ function NumberInput() {
     this._step = 1;
 
 
-
     this.$upBtn = $('.absol-number-input-button-up-container button', this)
         .on('mousedown', this.eventHandler.mouseDownBtn.bind(this, 1));
     this.$downBtn = $('.absol-number-input-button-down-container button', this)
@@ -55,10 +54,14 @@ function NumberInput() {
 
     this.textCtrl = new NITextController(this);
 
-    this.$domSignal = _('attachhook').addTo(this);
-    this.$domSignal.once('attached', () => {
-        this.textCtrl.estimateWidthBy(this.$input.value);
+
+    this.obs = new IntersectionObserver(() => {
+        if (this.isDescendantOf(document.body))
+            this.textCtrl.estimateWidthBy(this.$input.value);
+        this.obs.disconnect();
+        this.obs = null;
     });
+    this.obs.observe(this);
 
     this.valueCtrl = new NIValueController(this);
     this.dragCtrl = new NIDragController(this);
@@ -222,7 +225,7 @@ NumberInput.prototype.doStep = function (stepCount) {
 }
 
 NumberInput.prototype.nextStep = function () {
-   this.doStep(1);
+    this.doStep(1);
 };
 
 NumberInput.prototype.prevStep = function () {
@@ -316,7 +319,7 @@ NumberInput.property.value = {
         this.textCtrl.flushValueToText();
     },
     get: function () {
-        return  this.valueCtrl.value;
+        return this.valueCtrl.value;
     }
 };
 
@@ -339,7 +342,7 @@ NumberInput.property.step = {
 
 NumberInput.property.max = {
     set: function (value) {
-       this.valueCtrl.max = value;
+        this.valueCtrl.max = value;
         this._prevValue = this.value;
         this.textCtrl.flushValueToText();
     },
@@ -355,7 +358,7 @@ NumberInput.property.min = {
         this.textCtrl.flushValueToText();
     },
     get: function () {
-        return  this.valueCtrl.min;
+        return this.valueCtrl.min;
     }
 };
 
@@ -448,7 +451,7 @@ NumberInput.property.notNull = {
         this.textCtrl.flushValueToText();
     },
     get: function () {
-       return  this.valueCtrl.notNull;
+        return this.valueCtrl.notNull;
     }
 };
 
@@ -524,7 +527,7 @@ NIValueController.prototype.formatNumber = function (value, format) {
         text = '';
     }
     else if (opt.locales === 'none') {
-        if (!isNaturalNumber(opt.maximumFractionDigits) ||opt.maximumFractionDigits === 20) {
+        if (!isNaturalNumber(opt.maximumFractionDigits) || opt.maximumFractionDigits === 20) {
             text = value + '';
         }
         else if (opt.maximumFractionDigits === opt.minimumIntegerDigits) {
@@ -545,7 +548,6 @@ NIValueController.prototype.formatNumber = function (value, format) {
     }
     return text;
 };
-
 
 
 NIValueController.prototype.viewDataAttr = function () {
@@ -682,13 +684,12 @@ Object.defineProperty(NIValueController.prototype, 'formatedValueText', {
 Object.defineProperty(NIValueController.prototype, 'formatedOriginValueText', {
     get: function () {
         var originFormat = Object.assign({}, this.format);
-        delete  originFormat.maximumFractionDigits;
-        delete  originFormat.minimumFractionDigits;
-        delete  originFormat.pow10;
+        delete originFormat.maximumFractionDigits;
+        delete originFormat.minimumFractionDigits;
+        delete originFormat.pow10;
         return this.formatNumber(this.value, originFormat);
     }
 });
-
 
 
 /**

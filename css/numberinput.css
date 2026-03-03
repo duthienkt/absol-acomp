@@ -70,7 +70,14 @@
     /*text-align: left;*/
     padding-left: 0;
     background-color: transparent;
+    padding-right: 0;
 }
+
+.absol-number-input.as-read-only.as-border-none {
+    width: var(--text-width);
+    padding: 0;
+}
+
 
 
 .absol-number-input-button-up-container {

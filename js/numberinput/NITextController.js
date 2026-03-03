@@ -32,7 +32,9 @@ function NITextController(elt) {
 NITextController.prototype.estimateWidthBy = function (text) {
     if (this.elt.hasClass('as-pressing')) return;
     var bound = this.elt.getBoundingClientRect();
-    var width = measureText(text, this.$input.getComputedStyleValue('font')).width;
+    var font = this.$input.getComputedStyleValue('font');
+    var width = measureText(text, font).width;
+    width = Math.ceil(width);
     this.elt.addStyle('--text-width', width + 'px');
     var newBound = this.elt.getBoundingClientRect();
     if (newBound.width !== bound.width) ResizeSystem.requestUpdateUpSignal(this.elt, true);
