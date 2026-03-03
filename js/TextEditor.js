@@ -8,6 +8,8 @@ import { notifyPreFocusEvent } from "./utils";
 import TextMeasure from "./TextMeasure";
 import { cropTextByUTF8BytesCount, getUTF8BytesCount } from "absol/src/String/stringUtils";
 import { isNaturalNumber } from "absol/src/Converter/DataTypes";
+import { TooltipInstance } from "./Tooltip";
+import LangSys from "absol/src/HTML5/LanguageSystem";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -93,6 +95,19 @@ TextInput.prototype.styleHandlers.width = {
     }
 };
 
+TextInput.prototype._showMaxU8LengthError = function () {
+    var content;
+    if (!this._tooltip) {
+        content = LangSys.getLanguage() === 'vi' ? "Văn bản vượt quá độ dài tốt đa" : "Text exceeds maximum length";
+        this._tooltip = new TooltipInstance({ elt: this, content: content, variant: 'danger' });
+    }
+    this._tooltip.show();
+    clearTimeout(this._tooltipTO);
+    this._tooltipTO = setTimeout(() => {
+        this._tooltip.hide();
+    }, 3000)
+};
+
 TextInput.eventHandler = {};
 
 
@@ -109,6 +124,7 @@ TextInput.eventHandler.input = function (event) {
         u8Length = getUTF8BytesCount(value);
         if (u8Length > maxU8Length) {
             value = cropTextByUTF8BytesCount(value, maxU8Length);
+            if (event) this._showMaxU8LengthError();
             this.value = value;
         }
     }
@@ -119,7 +135,7 @@ TextInput.eventHandler.input = function (event) {
 TextInput.property.maxU8Length = {
     set: function (value) {
         value = Math.floor(value);
-        if (isNaturalNumber(value) && value> 0) {
+        if (isNaturalNumber(value) && value > 0) {
             this._maxU8Length = value;
         }
         else {
@@ -133,7 +149,6 @@ TextInput.property.maxU8Length = {
         return null;
     }
 };
-
 
 
 function TextEditor() {
