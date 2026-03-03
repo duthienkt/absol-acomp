@@ -3,22 +3,23 @@ import ACore from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import { revokeResource } from "./utils";
 import noop from "absol/src/Code/noop";
+import ObsDiv from "./ObsDiv";
 
 
 var _ = ACore._;
 var $ = ACore.$;
 
 /**
- * @extends AElement
+ * @extends ObsDiv
  * @constructor
  */
 function VRuler() {
-    var self = this;
-    this.$attachHook = _('attachhook').on('error', function () {
-        this.updateSize = self.update.bind(self);
-        Dom.addToResizeSystem(this);
-        this.updateSize();
-    }).addTo(this);
+    this.on('resize', this.update.bind(this));
+    this.on('viewchange', event => {
+        if (event.action === 'remove' && !this.reusable) {
+            this.revokeResource();
+        }
+    });
 
     this.$lines = [];
     this.$numbers = [];
@@ -51,13 +52,13 @@ VRuler.tag = 'vruler';
 
 VRuler.render = function () {
     return _({
+        tag: ObsDiv,
         class: 'as-vruler'
     });
 };
 
 VRuler.prototype.revokeResource = function () {
     this.$measureTarget = null;
-    this.$attachHook.cancelWaiting();
     revokeResource(this.$lines);
     revokeResource(this.$numbers);
     this.clearChild();
@@ -66,6 +67,7 @@ VRuler.prototype.revokeResource = function () {
 
 VRuler.prototype.measureElement = function (elt) {
     if (typeof elt == "string") elt = $(elt);
+    if (elt === this.$measureTarget) return;
     this.$measureTarget = elt;
     this.update();
 };

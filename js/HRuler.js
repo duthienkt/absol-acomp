@@ -5,21 +5,22 @@ import AElement from "absol/src/HTML5/AElement";
 import noop from "absol/src/Code/noop";
 import { revokeResource } from "absol/src/DataStructure/Object";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import ObsDiv from "./ObsDiv";
 
 var _ = ACore._;
 var $ = ACore.$;
 
 /***
- * @extends AElement
+ * @extends ObsDiv
  * @constructor
  */
 function HRuler() {
-    this.$attachHook = _('attachhook').on('attached', () => {
-        this.requestUpdateSize = this.update.bind(this);
-        ResizeSystem.add(this.$attachHook);
-        this.requestUpdateSize();
-    }).addTo(this);
-    this.$attachHook.requestRevokeResource = this.revokeResource.bind(this);
+    this.on('resize', this.update.bind(this));
+    this.on('viewchange', event => {
+        if (event.action === 'remove' && !this.reusable) {
+            this.revokeResource();
+        }
+    });
 
     this.$lines = [];
     this.$numbers = [];
@@ -52,6 +53,7 @@ HRuler.tag = 'hruler';
 
 HRuler.render = function () {
     return _({
+        tag: ObsDiv,
         class: 'as-hruler'
     });
 };
@@ -159,12 +161,10 @@ HRuler.prototype.update = function () {
 };
 
 HRuler.prototype.revokeResource = function () {
-  this.$attachHook.cancelWaiting();
-  this.$measureTarget = null;
-  revokeResource(this.$lines);
-  revokeResource(this.$numbers);
-  this.clearChild();
-  this.revokeResource = noop;
+    this.$measureTarget = null;
+    revokeResource(this.$lines);
+    revokeResource(this.$numbers);
+    this.clearChild();
 };
 
 HRuler.property = {};
