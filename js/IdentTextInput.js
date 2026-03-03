@@ -1,5 +1,7 @@
 import ACore, { _ } from "../ACore";
 import { setCaretPosition } from "absol/src/HTML5/Text";
+import { AbstractInput } from "./Abstraction";
+import { mixClass } from "absol/src/HTML5/OOP";
 
 
 
@@ -9,12 +11,14 @@ import { setCaretPosition } from "absol/src/HTML5/Text";
  * @constructor
  */
 function IdentTextInput() {
+    AbstractInput.call(this);
     this.history = new ITIHistory(this);
     this.textCtrl = new ITITextController(this);
     // this.on('keydown', this.eventHandler.identTextKeyDown)
     //     .on('paste', this.applyData ? this.eventHandler.identTextPaste : this.eventHandler.identTextPaste1);
 }
 
+mixClass(IdentTextInput, AbstractInput);
 
 IdentTextInput.tag = 'IdentTextInput'.toLowerCase();
 
