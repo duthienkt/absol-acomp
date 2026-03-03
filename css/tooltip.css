@@ -12,6 +12,10 @@
     color: var(--tool-tip-text-color);
 }
 
+.absol-tooltip[data-variant="danger"] {
+    --tool-tip-background-color: var(--danger-color);
+}
+
 .absol-tooltip-content {
     display: block;
     border-radius: 0.25em;

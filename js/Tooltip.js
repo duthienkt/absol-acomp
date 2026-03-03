@@ -1,10 +1,23 @@
 import '../css/tooltip.css';
-import ACore from "../ACore";
-import Dom, {getScreenSize} from "absol/src/HTML5/Dom";
+import ACore, { _, $, $$ } from "../ACore";
+import Dom, { getScreenSize, isDomNode } from "absol/src/HTML5/Dom";
 import EventEmitter from "absol/src/HTML5/EventEmitter";
+import { AbstractStyleExtended } from "./Abstraction";
+import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import Rectangle from "absol/src/Math/Rectangle";
 
-var _ = ACore._;
-var $ = ACore.$;
+
+/**
+ * Option object for {@link TooltipInstance}.
+ *
+ * @typedef {Object} TooltipInstanceOption
+ * @property {HTMLElement|import('absol/src/HTML5/AElement').default|string} [elt]
+ *  The target element. If a string is provided, it will be used as a query selector.
+ * @property {string|Node|import('absol/src/HTML5/AElement').default} [content]
+ *  Tooltip content.
+ * @property {'top'|'left'|'right'|'bottom'|'auto'|'nw'|'ne'|'sw'|'se'} [orientation]
+ *  Preferred tooltip orientation.
+ */
 
 /***
  * @extends AElement
@@ -13,6 +26,11 @@ var $ = ACore.$;
 function ToolTip() {
     this.$content = $('.absol-tooltip-content', this);
     this.$arrow = $('.absol-tooltip-arrow', this);
+    /**
+     *
+     * @type {"top"|"left"|"right"|"bottom"|"nw"|"ne"|"sw"|"se"}
+     */
+    this.orientation = 'top';
 }
 
 ToolTip.tag = 'ToolTip'.toLowerCase();
@@ -33,249 +51,341 @@ ToolTip.render = function () {
     }
 });
 
-ACore.install(ToolTip);
+ToolTip.prototype.supportedOrientations = ['left', 'right', 'top', 'bottom', 'nw', 'ne', 'sw', 'se'];
 
-export function updateTooltipPosition(toolTipClass) {
-    var element = toolTipClass.$element;
-    if (!element) return;
-    var orientation = toolTipClass._orientation;
+ToolTip.property = {};
 
-    var tBound = toolTipClass.$tooltip.$content.getBoundingClientRect();
-    var ebound = element.getBoundingClientRect();
-    var screenSize = getScreenSize();
-    var sMargin = Math.round(Math.min(5, screenSize.width/100, screenSize.height));
-    screenSize.width = Math.min(screenSize.width, document.body.getBoundingClientRect().width);
-    var fontSize = toolTipClass.$tooltip.getFontSize();
-
-    var dx = 0;
-    var dy = 0;
-    var arrowPos = null;
-
-    var aHCenter = (ebound.left + ebound.width / 2 > tBound.width / 2)
-        && (screenSize.width - ebound.left - ebound.width / 2 > tBound.width / 2);
-    var aVCenter = (ebound.top + ebound.height / 2 > tBound.height / 2)
-        && (screenSize.height - ebound.top - ebound.height / 2 > tBound.height / 2);
-    var aTop = (tBound.height < ebound.top - sMargin);
-    var aBottom = tBound.height < screenSize.height - sMargin - ebound.bottom;
-    var aRight = tBound.width < screenSize.width - sMargin - ebound.right;
-    var aLeft = tBound.width < ebound.left - sMargin;
-
-    var aHLeft = (ebound.left + ebound.width / 2 - tBound.width / 2 < sMargin) && (ebound.left + ebound.width / 2 >= sMargin + fontSize / 2);
-    var aHRight = (ebound.left + ebound.width / 2 + tBound.width / 2 > screenSize.width - sMargin) && (ebound.left + ebound.width / 2 < screenSize.width - sMargin - fontSize / 2);
-    var aVTop = (ebound.top + ebound.width / 2 - tBound.height / 2 < sMargin) && (ebound.top + ebound.height / 2 >= sMargin + fontSize / 2);
-    var aVBottom = (ebound.top + ebound.width / 2 + tBound.height / 2 <= screenSize.height - sMargin) && (ebound.top + ebound.height / 2 > screenSize.height - sMargin - fontSize / 2);
-
-    if (orientation === 'auto' && aHCenter) {
-        if (aTop) {
-            orientation = 'top';
-        }
-        else if (aBottom) {
-            orientation = 'bottom';
-        }
-    }
-    if (orientation === 'auto' && aVCenter) {
-        if (aRight) {
-            orientation = 'right';
-        }
-        else if (aLeft) {
-            orientation = 'left';
-        }
-    }
-
-
-    if ((orientation === 'auto' || orientation === 'top' || orientation === 'bottom') && aHLeft) {
-        if (aTop || orientation === 'auto') orientation = "top";
-        else if (aBottom || orientation === 'auto') orientation = 'bottom';
-        if (aTop || aBottom) {
-            dx += tBound.width / 2 - (ebound.left + ebound.width / 2) + sMargin;
-            arrowPos = tBound.width / 2 - dx + 'px';
-        }
-    }
-    if ((orientation === 'auto' || orientation === 'top' || orientation === 'bottom') && aHRight) {
-        if (aTop || orientation === 'auto') orientation = "top";
-        else if (aBottom || orientation === 'auto') orientation = 'bottom';
-        if (aTop || aBottom) {
-            dx -= tBound.width / 2 - (screenSize.width - (ebound.left + ebound.width / 2)) + sMargin;
-            arrowPos = tBound.width / 2 - dx + 'px';
-        }
-    }
-
-
-    if ((orientation === 'auto'|| orientation === 'left' || orientation === 'right') && aVTop) {
-        if (aLeft || orientation === 'auto') orientation = "left";
-        else if (aRight || orientation === 'auto') {
-            orientation = 'right';
-        }
-        if (aLeft || aRight) {
-            dy += tBound.height / 2 - (ebound.top + ebound.height / 2) + sMargin;
-            arrowPos = tBound.height / 2 - dy + 'px';
-        }
-    }
-    if ((orientation === 'auto'|| orientation === 'left' || orientation === 'right') && aVBottom) {
-        if (aLeft || orientation === 'auto') orientation = "left";
-        else if (aRight || orientation === 'auto') {
-            orientation = 'right';
-        }
-        if (aLeft || aRight) {
-            dy -= tBound.height / 2 - (screenSize.height - (ebound.top + ebound.height / 2)) + sMargin;
-            arrowPos = tBound.height / 2 - dx + 'px'
-        }
-    }
-
-    if (orientation === 'auto') {
-        if (aRight) {
-            if (aTop) {
-                orientation = 'ne';
+ToolTip.property.orientation = {
+    set: function (value) {
+        this._orientation = null;
+        for (var i = 0; i < this.supportedOrientations.length; ++i) {
+            if (this.supportedOrientations[i] === value) {
+                this._orientation = value;
+                this.addClass(value);
             }
-            else if (aBottom) {
-                orientation = 'se';
+            else {
+                this.removeClass(this.supportedOrientations[i]);
             }
         }
-        else if (aLeft) {
-            if (aTop) {
-                orientation = 'nw';
-            }
-            else if (aBottom) {
-                orientation = 'sw';
-            }
+        if (!this._orientation) {
+            this._orientation = 'top';
+            this.addClass('top');
         }
+    },
+    get: function () {
+        return this._orientation;
     }
-    if (orientation === 'auto') orientation = "error";
-    toolTipClass.$tooltip.removeClass('top')
-        .removeClass('left')
-        .removeClass('right')
-        .removeClass('bottom')
-        .removeClass('ne')
-        .removeClass('nw')
-        .removeClass('se')
-        .removeClass('sw')
-        .addClass(orientation);
-
-
-    tBound = toolTipClass.$tooltip.getBoundingClientRect();
-
-    if (orientation == 'top') {
-        dy += ebound.top - tBound.height;
-        dx += ebound.left + ebound.width / 2 - tBound.width / 2;
-    }
-    else if (orientation == 'left') {
-        dy += ebound.top + ebound.height / 2 - tBound.height / 2;
-        dx += ebound.left - tBound.width;
-    }
-    else if (orientation == 'right') {
-        dy += ebound.top + ebound.height / 2 - tBound.height / 2;
-        dx += ebound.right;
-    }
-    else if (orientation == 'bottom') {
-        dy += ebound.bottom;
-        dx += ebound.left + ebound.width / 2 - tBound.width / 2;
-
-    }
-    else if (orientation === 'ne') {
-        dy += ebound.top - tBound.height;
-        dx += ebound.right;
-    }
-    else if (orientation === 'nw') {
-        dy += ebound.top - tBound.height;
-        dx += ebound.left - tBound.width;
-    }
-    else if (orientation === 'se') {
-        dy += ebound.bottom;
-        dx += ebound.right;
-    }
-    else if (orientation === 'sw') {
-        dy += ebound.bottom;
-        dx += ebound.left - tBound.width;
-    }
-    else {
-        throw new Error("Invalid orientation, orientation: ['left', 'right', 'top', 'bottom', 'auto', 'nw', 'ne', 'sw', 'se']");
-    }
-
-    if (arrowPos) {
-        toolTipClass.$tooltip.addStyle('--tool-tip-arrow-pos', arrowPos);
-    }
-    else {
-        toolTipClass.$tooltip.removeStyle('--tool-tip-arrow-pos')
-    }
-
-    toolTipClass.$holder.addStyle({
-        top: dy + 'px',
-        left: dx + 'px'
-    });
 }
 
+ACore.install(ToolTip);
 
-ToolTip.$holder = _('.absol-tooltip-root-holder')
-ToolTip.$tooltip = _('tooltip.top').addTo(ToolTip.$holder);
-ToolTip.$element = undefined;
-ToolTip.$content = undefined;
-ToolTip._orientation = 'top';
-ToolTip._session = Math.random() * 10000000000 >> 0;
 
-ToolTip.updatePosition = function () {
-    if (!ToolTip.$element) return;
-    updateTooltipPosition(ToolTip);
+/**
+ *
+ * @param {TooltipInstanceOption} [opt]
+ * @constructor
+ */
+export function TooltipInstance(opt) {
+    this.id = Math.random() * 10000000000 >> 0;
+    this.opt = opt || {};
+    this.opt.orientation = this.opt.orientation || 'auto';
+    this.orienttation = null;//previous orientation
+}
+
+//quick fix
+TooltipInstance.prototype.share = {
+    $holder: _('.absol-tooltip-root-holder'),
+    $tooltip: _({
+        tag: 'tooltip',
+        props: {
+            orientation: 'top'
+        }
+    }),
+    instance: null
 };
 
-ToolTip.$tooltip.$arrow.updateSize = ToolTip.updatePosition.bind(ToolTip);
+TooltipInstance.prototype.share.$tooltip.addTo(TooltipInstance.prototype.share.$holder);
 
 
-ToolTip.show = function (element, content, orientation) {
-    orientation = orientation || 'auto';
-    if (typeof content == 'string') {
+TooltipInstance.prototype.prepare = function () {
+    if (!this.share.$holder) {
+        this.share.$holder = _('.absol-tooltip-root-holder');
+    }
+    if (!this.share.$tooltip) {
+        this.share.$tooltip = _({
+            tag: 'tooltip',
+            props: {
+                orientation: 'top'
+            }
+        }).addTo(this.share.$holder);
+    }
+    if (this.$elt || this.$content) return;//prepare only once
+    this.$elt = $(this.opt.elt);//auto wrap element, if element is string, it will be query selector, if element is dom element, it will be wrapped as AElement, if element is AElement, it will be used directly
+    var content = this.opt.content;
+    if (typeof content === 'string') {
         content = _({
             tag: 'span',
             style: {
-                'white-space': 'nowrap'
+                'white-space': 'pre-wrap'
             },
             props: {
                 innerHTML: content
             }
         });
     }
+    else if (Array.isArray(content)) {
+        content = content.map(x => {
+            return _(x);
+        });
+    }
+    else if (isDomNode(content)) {
+
+    }
+    this.$content = content;
+    var images = $$('img', this.$content).filter(x => x.src);
+    if (images.length) {
+        this.contentSync = Promise.all(images.map(x => Dom.waitImageLoaded(x)));
+    }
+    else {
+        this.contentSync = null;
+    }
+
+    return this;
+
+};
+
+TooltipInstance.prototype.show = function () {
+    this.prepare();
+    if (this.share.instance === this) return;
+    if (this.share.instance) {
+        this.share.instance.hide();
+    }
+
+    this.share.instance = this;
+    if (this.opt.variant) {
+        this.share.$tooltip.attr('data-variant', this.opt.variant);
+    }
+    else {
+        this.share.$tooltip.attr('data-variant', null);
+    }
+    this.share.$tooltip.clearChild().addChild(this.$content);
+    this.share.$holder.addStyle('visibility', 'hidden').addTo(document.body);
+    if (this.share.$tooltip.$arrow) {
+        this.share.$tooltip.$arrow.requestUpdateSize = this.updatePosition.bind(this);
+        ResizeSystem.add(this.share.$tooltip.$arrow);
+    }
+    if (this.contentSync) {
+        this.contentSync.then(() => {
+            if (this.share.instance === this) {
+                this.updatePosition();
+                this.share.$holder.removeStyle('visibility');
+            }
+        });
+    }
+    else {
+        this.updatePosition();
+        this.share.$holder.removeStyle('visibility');
+    }
+};
+
+TooltipInstance.prototype.hide = function () {
+    if (this.share.instance !== this) return;
+    this.share.$holder.selfRemove();
+    this.share.$tooltip.clearChild();
+    this.share.instance = null;
+    if (this.share.$tooltip.$arrow) {
+        this.share.$tooltip.$arrow.requestUpdateSize = undefined;
+    }
+};
 
 
-    $('', content, function (elt) {
-        if (elt.tagName == "IMG" && elt.src) {
-            Dom.waitImageLoaded(elt).then(ToolTip.updatePosition.bind(ToolTip));
+/**
+ * Update tooltip position according to current `opt.elt` and preferred orientation.
+ * This function contains an inlined copy of the positioning logic.
+ */
+TooltipInstance.prototype.updatePosition = function () {
+    if (!this.$elt) return;
+    if (this.share.instance !== this) return;
+
+    // Attach holder to body when positioning (mirrors ToolTip.show behavior)
+
+    // Ensure arrow resize system is hooked
+
+    var element = this.$elt;
+    var orientation = this.opt.orientation || 'auto';
+    var prevOrientation = this.orienttation;
+    var exi = 1;
+
+    var tBound = this.share.$tooltip.$content.getBoundingClientRect();
+    var eBound = element.getBoundingClientRect();
+    var screenSize = getScreenSize();
+    var sMargin = Math.round(Math.min(5, screenSize.width / 100, screenSize.height));
+    screenSize.width = Math.min(screenSize.width, document.body.getBoundingClientRect().width);
+    var fontSize = this.share.$tooltip.getFontSize();
+
+    var destRect;
+    var destOrientation;
+    var destLostSquare = Infinity;
+
+
+    var screenRect = new Rectangle(sMargin, sMargin, screenSize.width - sMargin * 2, screenSize.height - sMargin * 2);
+    var dx = 0;
+    var dy = 0;
+    var arrowPos = null;
+
+    var allowOrientations = orientation === 'auto' ? ['top', 'bottom', 'left', 'right', "nw","ne","sw","se"] : [orientation];
+
+    var rRect;
+    var lostArea;
+    for (var i = 0; i < allowOrientations.length; ++i) {
+        rRect = Rectangle.fromClientRect(tBound);
+        orientation = allowOrientations[i];
+        if (orientation === 'top' || orientation === 'bottom') {
+            rRect.height += fontSize * 0.28;
+            rRect.x = eBound.left + eBound.width / 2 - tBound.width / 2;
+            if (orientation === 'top') {
+                rRect.y = eBound.top - rRect.height;
+            }
+            else {
+                rRect.y = eBound.bottom;
+            }
+            if (rRect.B().x > screenRect.B().x) rRect.x = screenRect.B().x - rRect.width;
+            if (rRect.x < screenRect.x) rRect.x = screenRect.x;
+            if (rRect.x + 0.28 * fontSize > eBound.right) {
+                rRect.x = eBound.right - 0.28 * fontSize - rRect.width;
+            }
+            if (rRect.x + rRect.width - 0.28 * fontSize < eBound.left) {
+                rRect.x = eBound.left + 0.28 * fontSize - rRect.width;
+            }
         }
-        else if (elt.sync) {
-            elt.sync.then(ToolTip.updatePosition.bind(ToolTip));
+        else if (orientation === 'left' || orientation === 'right') {
+            rRect.width += fontSize * 0.28;
+
+            rRect.y = eBound.top + eBound.height / 2 - tBound.height / 2;
+            if (orientation === 'left') {
+                rRect.x = eBound.left - rRect.width;
+            }
+            else {
+                rRect.x = eBound.right;
+            }
+            if (rRect.C().y > screenRect.C().y) rRect.y = screenRect.C().y - rRect.height;
+            if (rRect.y < screenRect.y) rRect.y = screenRect.y;
+            if (rRect.y + 0.28 * fontSize > eBound.bottom) {
+                rRect.y = eBound.bottom - 0.28 * fontSize - rRect.height;
+            }
+            if (rRect.y + rRect.height - 0.28 * fontSize < eBound.top) {
+                rRect.y = eBound.top + 0.28 * fontSize - rRect.height;
+            }
         }
+        else {
+            if (orientation === 'nw' || orientation === 'ne') {
+                rRect.height += fontSize * 0.28;
+                rRect.y = eBound.top - rRect.height;
+            }
+            else {
+                rRect.height += fontSize * 0.28;
+                rRect.y = eBound.bottom;
+            }
+            if (orientation === 'nw' || orientation === 'sw') {
+                rRect.width += fontSize * 0.28;
+                rRect.x = eBound.left - rRect.width;
+            }
+            else {
+                rRect.width += fontSize * 0.28;
+                rRect.x = eBound.right;
+            }
+        }
+
+        lostArea = rRect.square() - rRect.collapsedSquare(screenRect);
+
+        if (lostArea < exi && prevOrientation === orientation) {
+            lostArea = -1;
+        }
+        if (lostArea < destLostSquare) {
+            destLostSquare = lostArea;
+            destOrientation = orientation;
+            destRect = rRect.copy();
+            if (orientation === 'top' || orientation === 'bottom') {
+                arrowPos = Math.max(0.4 * fontSize, Math.min(rRect.width - 0.4 * fontSize, (eBound.left + eBound.width / 2 - rRect.x))) + 'px';
+            }
+            else {
+                arrowPos = Math.max(0.4 * fontSize, Math.min(rRect.height - 0.4 * fontSize, (eBound.top + eBound.height / 2 - rRect.y))) + 'px';
+            }
+        }
+    }
+
+
+    orientation = destOrientation;
+    this.orienttation = orientation;
+
+    if (orientation === 'auto') orientation = "error";
+    this.share.$tooltip.orientation = orientation;
+
+
+    if (arrowPos) {
+        this.share.$tooltip.addStyle('--tool-tip-arrow-pos', arrowPos);
+    }
+    else {
+        this.share.$tooltip.removeStyle('--tool-tip-arrow-pos')
+    }
+
+    this.share.$holder.addStyle({
+        top: destRect.y + 'px',
+        left: destRect.x + 'px'
     });
-    var currentSession = Math.random() * 10000000000 >> 0;
+}
 
-    ToolTip.$holder.addTo(document.body);
-    Dom.addToResizeSystem(ToolTip.$tooltip.$arrow);
 
-    ToolTip.$element = element;
-    ToolTip._session = currentSession;
-    ToolTip.$content = content;
-    ToolTip._orientation = orientation;
+/**
+ * adapt old module
+ */
+ToolTip.$holder = TooltipInstance.prototype.share.$holder;
+ToolTip.$tooltip = TooltipInstance.prototype.share.$tooltip;
+ToolTip.$element = undefined;
+ToolTip.$content = undefined;
+ToolTip._orientation = 'top';
+ToolTip._session = Math.random() * 10000000000 >> 0;
 
-    ToolTip.$tooltip.clearChild().addChild(content);
-    ToolTip.$holder.removeStyle('visibility');
-    ToolTip.$tooltip.removeClass('top')
-        .removeClass('left')
-        .removeClass('right')
-        .removeClass('bottom')
-        .removeClass('ne')
-        .removeClass('nw')
-        .removeClass('auto');
-    ToolTip.$tooltip.addClass(orientation);
-    ToolTip.updatePosition();
-    return currentSession;
+ToolTip.updatePosition = function () {
+    if (TooltipInstance.prototype.share.instance) {
+        TooltipInstance.prototype.share.instance.updatePosition();
+    }
+};
+
+export function updateTooltipPosition(tooltipClass) {
+    var dumInstance = {
+        share: tooltipClass,
+        opt: {
+            orientation: tooltipClass._orientation,
+            elt: tooltipClass.$element,
+            content: tooltipClass.$content,
+        },
+        $elt: tooltipClass.$element,
+        $content: tooltipClass.$content
+    }
+    for (var key in TooltipInstance.prototype) {
+        if (typeof TooltipInstance.prototype[key] === 'function') {
+            dumInstance[key] = TooltipInstance.prototype[key];
+        }
+    }
+    TooltipInstance.prototype.updatePosition.call(dumInstance);
+}
+
+ToolTip.show = function (element, content, orientation) {
+    var instance = new TooltipInstance({
+        elt: element,
+        content: content,
+        orientation: orientation || 'auto'
+    });
+    instance.show();
+    return instance.id;
 };
 
 
 ToolTip.close = function (session) {
-    if (session === true || session === this._session) {
-        ToolTip.$holder.addStyle('visibility', 'hidden');
-        ToolTip.$tooltip.clearChild();
-        ToolTip.$holder.addStyle({
-            top: false,
-            left: false
-        });
+    var instance = TooltipInstance.prototype.share.instance;
+    if (session === true || session === (instance && instance.id)) {
+        if (instance) instance.hide();
     }
 };
 
