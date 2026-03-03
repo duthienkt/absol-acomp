@@ -18,6 +18,7 @@ var STATE_NONE = 0;
 
 
 /***
+ * only change value if user modify input
  * @augments AbstractInput
  * @extends AElement
  * @constructor
@@ -505,7 +506,7 @@ DateTimeInput.prototype._dateFrom = function (value) {
     if (!value || !value.getTime) value = null;
     if (value) {
         value = new Date(value.getTime());
-        value.setSeconds(0, 0);
+        // value.setSeconds(0, 0); //keep seconds and milliseconds for correct comparing
     }
     return value || null;
 }
