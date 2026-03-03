@@ -77,8 +77,11 @@
         }).addTo(absol.$('#vruler-container'));
 
         var myHruler = absol._({
-            tag: 'hruler'
-
+            tag: 'hruler',
+            style:{
+                position:'relative',
+                left: '-20px'
+            }
         });
         var modal = absol._({
             style: {
@@ -91,6 +94,7 @@
             }
         });
         absol.$(document.body).addChildAfter(myHruler, myCat);
+        document.body.addStyle('padding', '50px');
         var myResizebox = absol._('resizebox').addTo(document.body)
             .on('beginmove', function (event) {
                 modal.addTo(document.body);
