@@ -507,28 +507,6 @@ DynamicTable.prototype.revokeResource = function () {
     this.css.stop();
     this.css = null;
     this.revokeResource = noop;
-    return;
-    var row, cell, keys, key;
-    var rows = this._adapterData && this._adapterData.data && this._adapterData.data.body && this._adapterData.data.body.rows;
-
-    if (this.table) {
-        this.table.revokeResource();
-        this.table = null;
-    }
-    if (this._adapter) {
-        this._adapter.revoke();
-        this._adapter = null;
-    }
-    this.attachSearchInput(null);
-    this.filterInputs = [];
-    this.waitingCtl = null;
-    this.layoutCtrl = null;
-    this.pointerCtrl = null;
-    this.colSizeCtrl = null;
-    this.rowDragCtrl = null;
-    manager.removeTrash();
-    ResizeSystem.removeTrash();
-
 };
 
 DynamicTable.prototype.getSavedState = function () {

@@ -768,7 +768,7 @@ DTBody.prototype.reindexRows = function (start, end) {
 
 DTBody.prototype.onRowSplice = function (idx) {
     this.curentMode.onRowSplice(idx);
-    if (this.master) this.master.transferFrom(idx);
+    if (this.master) this.master.transferFrom(Math.max(0,idx - 10));//cheat, trigger tranfer end event
     ResizeSystem.requestUpdateSignal();
 }
 
