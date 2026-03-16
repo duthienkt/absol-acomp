@@ -155,9 +155,18 @@
 
 }
 
+.as-solid-color-picker-special-ctn {
+    padding-top:5px ;
+}
+
+.as-solid-color-picker-special-ctn >div{
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
 .as-solid-color-picker-none-ctn {
     display: none;
-    margin-top: 5px;
     padding: 5px;
     cursor: default;
     user-select: none;

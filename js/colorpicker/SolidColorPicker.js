@@ -9,6 +9,8 @@ import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import { base64EncodeUnicode } from "absol/src/Converter/base64";
 import red_cross_tpl from '../../assets/icon/red_cross.tpl';
 import { isRealNumber } from "../utils";
+import FlexiconButton from "../FlexiconButton";
+import LangSys from "absol/src/HTML5/LanguageSystem";
 
 /**
  * @extends AElement
@@ -74,7 +76,6 @@ function SolidColorPicker() {
 
     this.$submitBtn = $('.as-solid-color-picker-submit-btn', this)
         .on('click', this.notifySubmit.bind(this));
-
 
     /**
      * @name hasOpacity
@@ -183,20 +184,42 @@ SolidColorPicker.render = function () {
                         class: 'as-solid-color-picker-near'
                     },
                     {
-                        class: 'as-solid-color-picker-none-ctn',
+                        class: 'as-solid-color-picker-special-ctn',
                         child: [
                             {
-                                tag: ColorCell,
-                                class: 'as-solid-color-picker-none-cell',
-                                props: {
-                                    value: null
-                                }
+                                class: 'as-solid-color-picker-none-ctn',
+                                child: [
+                                    {
+                                        tag: ColorCell,
+                                        class: 'as-solid-color-picker-none-cell',
+                                        props: {
+                                            value: null
+                                        }
+                                    },
+                                    {
+                                        child: { text: 'None' }
+                                    }
+                                ]
                             },
                             {
-                                child: { text: 'None' }
+                                class: 'as-solid-color-picker-eyedropper-ctn',
+                                child: [
+                                    {
+                                        tag: FlexiconButton,
+                                        style: {
+                                            variant: 'light',
+                                            size: 'small'
+                                        },
+                                        props: {
+                                            icon: 'span.mdi.mdi-eyedropper',
+                                            text: LangSys.getLanguage() === 'vix'?"Chọn từ màn hình":"Pick from screen"
+                                        }
+                                    }
+                                ]
                             }
                         ]
                     },
+
                     {
                         class: 'as-solid-color-picker-recent-title',
                         child: { text: 'RECENT COLOR' }
@@ -222,7 +245,7 @@ SolidColorPicker.render = function () {
                     {
                         tag: 'flexiconinput',
                         class: 'as-solid-color-picker-color-hex',
-                        style:{
+                        style: {
                             size: 'small'
                         },
                         props: {
@@ -233,7 +256,7 @@ SolidColorPicker.render = function () {
                     {
                         tag: 'flexiconinput',
                         class: 'as-solid-color-picker-color-opacity',
-                        style:{
+                        style: {
                             size: 'small'
                         },
                         props: {
@@ -790,7 +813,7 @@ SCPPickerMode.prototype.ev_alphaDrag = function (event) {
     var aBound = this.$alpha.getBoundingClientRect();
     var opacity = (event.clientX - aBound.left) * 100 / aBound.width;
     opacity = Math.max(0, Math.min(100, Math.round(opacity)));
-    var color = this.elt.value || new Color([0, 0, 0, 0]);
+    var color = this.elt.value || new Color([0, 0, 0, 1]);
     color.rgba[3] = opacity / 100;
     this.elt.rawValue = color;
     this.elt.footerCtrl.viewValue();
@@ -828,6 +851,14 @@ SCPPickerMode.prototype.ev_nearPressCell = function (event) {
  */
 function SCPFooterController(elt) {
     this.elt = elt;
+    this.$eyedropperBtn = $('.as-solid-color-picker-eyedropper-ctn button', this.elt);
+    if (!window.EyeDropper) {
+        this.$eyedropperBtn.addStyle('display', 'none');
+    }
+    else {
+        this.$eyedropperBtn.on('click', this.ev_eyedropperClick.bind(this));
+    }
+
     this.$selected = $('.as-solid-color-picker-selected', this.elt);
     this.$opacity = $('.as-solid-color-picker-color-opacity', this.elt)
         .on('change', this.ev_opacityChange.bind(this))
@@ -850,7 +881,7 @@ SCPFooterController.prototype.ev_opacityKeyUp = function (event) {
     var opacity = parseFloat(this.$opacity.value);
     if (!isNaN(opacity)) {
         opacity = Math.round(Math.max(0, Math.min(opacity, 100)));
-        var color = this.elt.value || new Color(0, 0, 0, 1);
+        var color = this.elt.value || new Color([0, 0, 0, 1]);
         color.rgba[3] = opacity / 100;
         this.elt.rawValue = color;
         this.elt.pickerMode.viewValue();
@@ -883,8 +914,6 @@ SCPFooterController.prototype.ev_hexKeyUp = function (event) {
     this.elt.pickerMode.viewValue();
     this.elt.swatchMode.viewValue();
     this.elt.notifyCanBeChanged();
-
-
 };
 
 
@@ -904,6 +933,27 @@ SCPFooterController.prototype.viewValue = function () {
     }
     else this.$opacity.value = '100';
 };
+
+SCPFooterController.prototype.ev_eyedropperClick = function (event) {
+    var self = this;
+    var eyeDropper = new window.EyeDropper();
+    eyeDropper.open().then(function (result) {
+        try {
+            var color = Color.parse(result.sRGBHex);
+            color.rgba[3] = self.opacity;
+            self.elt.rawValue = color;
+            self.viewValue();
+            self.elt.pickerMode.viewValue();
+            self.elt.swatchMode.viewValue();
+            self.elt.notifyCanBeChanged();
+        } catch (e) {
+            // ignore invalid color
+        }
+    }).catch(function () {
+        // user cancelled or error, do nothing
+    });
+};
+
 
 
 Object.defineProperty(SCPFooterController.prototype, 'opacity', {
