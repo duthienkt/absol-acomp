@@ -17,6 +17,7 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { arrayUnique } from "absol/src/DataStructure/Array";
 import { AbstractInput } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
+import DPTokenizer from "absol/src/Pharse/DPTokenizer";
 
 
 /***
@@ -543,7 +544,7 @@ EIEngine.prototype.ev_select = function (event) {
 };
 
 EIEngine.prototype.ev_keydown = function (event) {
-    setTimeout(()=>{
+    setTimeout(() => {
         this.elt.selection.redraw();
     }, 30)
 };
@@ -679,13 +680,14 @@ EIEngine.prototype.redrawTokens = function () {
  */
 EIEngine.prototype.makeTokenElt = function (token) {
     if (token.content === '\n') return _('br');
+    console.log(token)
     return _({
         tag: 'span',
         class: ['as-token'],
         attr: {
             'data-type': token.type
         },
-        child: { text: token.content }
+        child: { text: token.originalContent || token.content || '' }
     });
 };
 
@@ -999,7 +1001,6 @@ EIEngine.prototype.viewText = function (value) {
 
     this.updateTokenExType();
 }
-
 
 
 Object.defineProperty(EIEngine.prototype, 'value', {
@@ -2160,11 +2161,10 @@ rules.push({
     toAST: function (parsedNode) {
         return {
             type: 'NumericLiteral',
-            value: parseFloat(parsedNode.children[0].content)/100
+            value: parseFloat(parsedNode.children[0].content) / 100
         }
     }
 });
-
 
 
 rules.push({
@@ -2229,7 +2229,7 @@ rules.push({
     }
 });
 
-['+', '-', '*', '/', /*'%',*/ '&&', '||', 'XOR', "=", '==', '===', '!=', '<', '>', '>=', '<='].forEach(function (op) {
+['+', '-', '*', '/', /*'%',*/ '&&', 'and', '||', 'or', 'xor', "=", '==', '===', '!=', '<', '>', '>=', '<='].forEach(function (op) {
     rules.push({
         target: 'bin_op',
         elements: ['_' + op],
@@ -2645,4 +2645,41 @@ var EIGrammar = {
     rules: rules
 };
 
-var EIParser = new DPParser(EIGrammar);
+
+function EITokenizer() {
+    DPTokenizer.apply(this, arguments);
+}
+
+mixClass(EITokenizer, DPTokenizer);
+
+EITokenizer.prototype.tokenize = function () {
+    var res = DPTokenizer.prototype.tokenize.apply(this, arguments);
+    res.forEach(token => {
+        if (token.type === 'word') {
+            token.originalContent = token.content;
+            token.content = token.content.toLowerCase();
+        }
+    });
+    return res;
+};
+
+
+/**
+ * @extends DPParser
+ * @param opt
+ * @constructor
+ */
+function EIParserClass(opt) {
+    opt = opt || {};
+    if (opt.rules) {
+        this.rules = opt.rules;
+    }
+    this.targets = {};
+    this.tokenizer = new EITokenizer(opt);
+    this.computeTarget();
+}
+
+mixClass(EIParserClass, DPParser);
+
+
+var EIParser = new EIParserClass(EIGrammar);
