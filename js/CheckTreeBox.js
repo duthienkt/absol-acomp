@@ -1291,7 +1291,6 @@ CTBItemListController.prototype.ev_highlightPrevious = function (event) {
         this.highlightedHolders[this.activeHighlightedIdx].activeHighlight = true;
         this.scrollIntoIndex(this.highlightedHolders[this.activeHighlightedIdx].idx);
         this.viewListAt(this.highlightedHolders[this.activeHighlightedIdx].idx);
-        vScrollIntoView(this.highlightedHolders[this.activeHighlightedIdx].itemElt)
     }
     if (this.activeHighlightedIdx <= 0) {
         this.elt.$searchInput.canPrevious = false;
@@ -1311,7 +1310,7 @@ CTBItemListController.prototype.ev_highlightNext = function (event) {
         this.highlightedHolders[this.activeHighlightedIdx].activeHighlight = true;
         this.scrollIntoIndex(this.highlightedHolders[this.activeHighlightedIdx].idx);
         this.viewListAt(this.highlightedHolders[this.activeHighlightedIdx].idx);
-        vScrollIntoView(this.highlightedHolders[this.activeHighlightedIdx].itemElt)
+
     }
     if (this.activeHighlightedIdx >= this.highlightedHolders.length - 1) {
         this.elt.$searchInput.canNext = false;
