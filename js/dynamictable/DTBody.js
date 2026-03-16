@@ -540,7 +540,7 @@ SearchingMode.prototype.onResult = function (response) {
     for (i = 0; i < result.length; ++i) {
         rowIdx = result[i];
         startRow = rowIdx;
-        while (startRow > 0 && rows[startRow - 1] && rows[startRow].colCount < colCount) {
+        while (startRow > 0 && rows[startRow - 1] && rows[startRow] && rows[startRow].colCount < colCount) {
             --startRow;
         }
         rowIdx = startRow + rows[startRow].rowCount - 1;
