@@ -519,8 +519,14 @@ DynamicTable.prototype.getSavedState = function () {
 DynamicTable.prototype.setSavedState = function (state) {
     this.readySync.then(() => {
         state = state || {};
-        this.$vscrollbar.innerOffset = state.scrollTop || 0;
-        this.$hscrollbar.innerOffset = state.scrollLeft || 0;
+        var scrollTop = state.scrollTop || 0;
+        var scrollLeft = state.scrollLeft || 0;
+        scrollTop = Math.min(this.$vscrollbar.innerHeight - this.$vscrollbar.outerHeight, scrollTop);
+        scrollTop = Math.max(0, scrollTop);
+        scrollLeft = Math.min(this.$hscrollbar.innerWidth - this.$hscrollbar.outerWidth, scrollLeft);
+        scrollLeft = Math.max(0, scrollLeft);
+        this.$vscrollbar.innerOffset = scrollTop;
+        this.$hscrollbar.innerOffset = scrollLeft;
         this.$hscrollbar.emit('scroll');
         this.$vscrollbar.emit('scroll');
     });
@@ -2105,7 +2111,7 @@ FloatScrollbarController.prototype.update = function () {
 
     var offset = scrollingBound.bottom;
     this.$hscrollbar.addStyle('position', 'fixed');
-    this.$hscrollbar.addStyle('top', 'calc(' + offset+ '- var(--dt-scroll-bar-width) - 1px)');
+    this.$hscrollbar.addStyle('top', 'calc(' + offset + '- var(--dt-scroll-bar-width) - 1px)');
     this.$hscrollbar.addStyle('width', testingBound.width + 'px');
     this.$hscrollbar.addStyle('left', testingBound.left + 'px');
     this.$hscrollbar.addStyle('height', 'calc(var(--dt-scroll-bar-width) + 1px)');
