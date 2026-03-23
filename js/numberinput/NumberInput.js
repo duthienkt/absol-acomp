@@ -565,6 +565,7 @@ Object.defineProperty(NIValueController.prototype, 'value', {
         this._value = value;
     },
     get: function () {
+        if (this.elt.textCtrl.changed) this.elt.textCtrl.flushTextToValue();//make sure get value after text changed, iOS make not fire input event
         var value = this._value;
         if (!isRealNumber(value)) {
             if (this.notNull) {

@@ -3,6 +3,7 @@ import { measureText } from "absol/src/HTML5/Text";
 import { isNaturalNumber, isRealNumber } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import noop from "absol/src/Code/noop";
+import Snackbar from "../Snackbar";
 
 /***
  *
@@ -10,6 +11,7 @@ import noop from "absol/src/Code/noop";
  * @constructor
  */
 function NITextController(elt) {
+    this.prevBlurTime = 0;
     this.elt = elt;
     /***
      *
@@ -21,6 +23,7 @@ function NITextController(elt) {
             this[key] = this[key].bind(this);
     });
     this.elt.$input.on('keydown', this.onKeyDown)
+        .on('input', this.onKeyDown)
         .on('paste', this.onKeyDown)
         .on('blur', this.onBlur)
         .on('focus', this.onFocus);
@@ -100,6 +103,7 @@ NITextController.prototype.reformat = function () {
 
 
 NITextController.prototype.onBlur = function () {
+    this.prevBlurTime = Date.now();
     this.flushValueToText();
     this.elt.notifyChanged({ by: 'blur' });
 
@@ -407,6 +411,7 @@ NITextController.prototype.onKeyDown = function (event) {
         onKeys[key]();
     }
     else {
+        this.changed = true;
         setTimeout(() => {
             this.flushTextToValue();
         }, 10);
@@ -418,15 +423,27 @@ NITextController.prototype.onKeyDown = function (event) {
  * @param {FocusEvent|{}} event
  */
 NITextController.prototype.onFocus = function (event) {
-    setTimeout(()=>{
+    var focusTime = Date.now();
+    setTimeout(() => {
         var fOVT = this.elt.valueCtrl.formatedOriginValueText;
         var txt = this.$input.value;
         var selectionStart = this.$input.selectionStart;
         var selectionEnd = this.$input.selectionEnd;
         var selectionDir = this.$input.selectionDirection;
-        if (fOVT !== txt) {
+
+        if (fOVT !== txt && !this.elt.readOnly) {
             this.$input.value = fOVT;
-            this.$input.setSelectionRange(selectionStart, selectionEnd, selectionDir);
+            if (focusTime - this.prevBlurTime > 500) {
+                //fist focus
+                this.$input.select();
+            }
+            else {
+                this.$input.setSelectionRange(selectionStart, selectionEnd, selectionDir);
+            }
+        }
+        else if (focusTime - this.prevBlurTime > 500) {
+            //fist focus
+            this.$input.select();
         }
     }, 30);
 };
