@@ -38,7 +38,6 @@ var verifyItems = items => {
  * @constructor
  */
 function CheckTreeLeafOnlyBox() {
-    console.log(this.ListControllerClass )
     CheckTreeBox.apply(this, arguments);
     /***
      * @name readOnlyValues
