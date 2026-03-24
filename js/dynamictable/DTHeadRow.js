@@ -80,10 +80,16 @@ Object.defineProperty(DTHeadRow.prototype, 'fixedXYRightElt', {
     get: function () {
         if (this._fixedXYRightElt) return this._fixedXYRightElt;
         var fixedColRight = this.adapter.fixedColRight || 0;
+
+        var length = this.head.rows.reduce((ac, row)=>{
+            var lastCell = row.cells[row.cells.length - 1];
+            var res =  lastCell? lastCell.idx + lastCell.colspan : 0;
+            return Math.max(res, ac)
+        }, 0);
         this._fixedXYRightElt = _({
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-xy-right',
-            child: this.cells.filter(c=> c.idx >= this.cells.length -  fixedColRight).map(c => c.elt)
+            child: this.cells.filter(c=> c.idx >= length -  fixedColRight).map(c => c.elt)
         });
         return this._fixedXYRightElt;
     }
@@ -106,10 +112,17 @@ Object.defineProperty(DTHeadRow.prototype, 'fixedXRightElt', {
     get: function () {
         if (this._fixedXRightElt) return this._fixedXRightElt;
         var fixedColRight = this.adapter.fixedColRight || 0;
+
+        var length = this.head.rows.reduce((ac, row)=>{
+            var lastCell = row.cells[row.cells.length - 1];
+            var res =  lastCell? lastCell.idx + lastCell.colspan : 0;
+            console.log(row, res)
+            return Math.max(res, ac)
+        }, 0);
         this._fixedXRightElt = _({
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-xy-right',
-            child: this.cells.filter(c => c.idx >= this.cells.length - fixedColRight).map(c => c.copyElt2)
+            child: this.cells.filter(c => c.idx >= length - fixedColRight).map(c => c.copyElt2)
         });
         return this._fixedXRightElt;
     }
