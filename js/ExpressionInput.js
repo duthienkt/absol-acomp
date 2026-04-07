@@ -680,7 +680,6 @@ EIEngine.prototype.redrawTokens = function () {
  */
 EIEngine.prototype.makeTokenElt = function (token) {
     if (token.content === '\n') return _('br');
-    console.log(token)
     return _({
         tag: 'span',
         class: ['as-token'],
