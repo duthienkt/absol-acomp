@@ -31,6 +31,7 @@ import { randomIdent } from "absol/src/String/stringGenerate";
 import DomSignal from "absol/src/HTML5/DomSignal";
 import RibbonButton from "../RibbonButton";
 import { getScreenSize } from "absol/src/HTML5/Dom";
+import { cropTextByUTF8BytesCount } from "absol/src/String/stringUtils";
 
 var isMobile = BrowserDetector.isMobile;
 
@@ -1673,7 +1674,24 @@ UploadController.prototype.upload = function (files) {
     var syncs = files.reduce((sync, file, i) => {
         var percentText = $('.as-upload-percent', contentElt.firstChild.childNodes[i]);
         return sync.then(() => {
-            return this.elt.fileSystem.writeFile(this.elt.path + '/' + file.name, file, done => {
+            var fileFullName = file.name || 'upload.bin';
+            var parts = fileFullName.split('.');
+            var ext;
+            var fileName;
+            if (location.href.indexOf('keeview') >= 0) {
+                if (parts.length >= 2) {
+                    ext = parts.pop();
+                    fileName = parts.join('.');
+                    fileName = cropTextByUTF8BytesCount(fileName, 100);
+                    fileFullName = fileName + '.' + ext;
+                }
+                else {
+                    fileName = parts.join('.');
+                    fileName = cropTextByUTF8BytesCount(fileName, 100);
+                    fileFullName = fileName
+                }
+            }
+            return this.elt.fileSystem.writeFile(this.elt.path + '/' + fileFullName, file, done => {
                 var textBound = percentText.getBoundingClientRect();
                 var ctnBound = contentElt.getBoundingClientRect();
                 if (textBound.bottom > ctnBound.bottom) {
