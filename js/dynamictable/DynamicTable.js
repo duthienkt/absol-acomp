@@ -80,6 +80,15 @@ DynamicTableManager.prototype.initCss = function () {
 };
 
 DynamicTableManager.prototype.add = function (table) {
+    var id = table.id;
+    var addedIdDict = this.tables.reduce((ac, cr) => {
+        ac[cr.id] = cr;
+        return ac;
+    }, {});
+    if (addedIdDict[id] === table) return;//added
+    if (addedIdDict[id]) {
+        table.id = table.id + '_' + Math.random().toString(16).slice(2, 6);
+    }
     this.tables.push(table);
 };
 
@@ -209,10 +218,11 @@ function DynamicTable() {
         delete pendingTables[this._pendingId];
 
         ResizeSystem.add(this.$attachhook);
+        manager.add(this);
         this.layoutCtrl.onAttached();
         this.colSizeCtrl.onAttached();
         this.floatScrollbarCtrl.start();
-        manager.add(this);
+
         setTimeout(() => {
             this.requestUpdateSize();
             if (this.onReady) {
