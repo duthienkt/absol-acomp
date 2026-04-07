@@ -116,7 +116,6 @@ Object.defineProperty(DTHeadRow.prototype, 'fixedXRightElt', {
         var length = this.head.rows.reduce((ac, row)=>{
             var lastCell = row.cells[row.cells.length - 1];
             var res =  lastCell? lastCell.idx + lastCell.colspan : 0;
-            console.log(row, res)
             return Math.max(res, ac)
         }, 0);
         this._fixedXRightElt = _({
