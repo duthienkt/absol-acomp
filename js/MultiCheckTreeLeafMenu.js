@@ -14,6 +14,7 @@ import { getScreenSize, traceOutBoundingClientRect } from "absol/src/HTML5/Dom";
  * Only leafs have checkbox
  * @extends AElement
  * @constructor
+ * only change pendingValues when user change values, otherwise keep values to prevent change
  */
 function MultiCheckTreeLeafMenu() {
     loadLanguageModule();
@@ -28,6 +29,7 @@ function MultiCheckTreeLeafMenu() {
         }
     });
 
+    this.fallbackExt = new MCTLFallbackExt(this);
     this.$selectlistBox = this.$selectBox;
 
     OOP.drillProperty(this, this.$selectBox, 'enableSearch');
@@ -94,7 +96,7 @@ MultiCheckTreeLeafMenu.prototype._updateOverflow = function () {
     var bound;
     var maxHeight, cBound;
     if (this.getComputedStyleValue('overflow') === 'hidden') {
-        maxHeight = parseFloat((this.getComputedStyleValue('max-height')||'100px').replace('px'));
+        maxHeight = parseFloat((this.getComputedStyleValue('max-height') || '100px').replace('px'));
         bound = this.getBoundingClientRect();
         if (bound.width === 0) return;
         this.$itemCtn.removeClass('as-has-more');
@@ -179,6 +181,10 @@ MultiCheckTreeLeafMenu.prototype.init = function (props) {
 MultiCheckTreeLeafMenu.property.items = {
     set: function (items) {
         this.$selectBox.items = items;
+        if (this.fallbackExt) {
+            this.fallbackExt.onSetItems(items);
+
+        }
         this.addStyle('--select-list-estimate-width', Math.max(145 + 20, this.$selectBox.estimateSize.lv0Width || this.$selectBox.estimateSize.width) + 'px');
         this._updateSelectedItems();
     },
@@ -191,6 +197,10 @@ MultiCheckTreeLeafMenu.property.values = {
     set: function (values) {
         values = values || [];
         this.pendingValues = values;
+        if (this.fallbackExt) {
+            this.fallbackExt.onValues(values);
+            values = this.fallbackExt.getActualValues(values);
+        }
         this.$selectBox.values = values;
         this._updateSelectedItems();
 
@@ -225,7 +235,7 @@ MultiCheckTreeLeafMenu.property.placeholder = {
 MultiCheckTreeLeafMenu.eventHandler = {};
 
 MultiCheckTreeLeafMenu.eventHandler.clickOut = SelectTreeLeafMenu.eventHandler.clickOut;
-MultiCheckTreeLeafMenu.eventHandler.preUpdateListPosition =  function () {
+MultiCheckTreeLeafMenu.eventHandler.preUpdateListPosition = function () {
     var bound = this.getBoundingClientRect();
     var screenSize = getScreenSize();
     var availableTop = bound.top - 5;
@@ -263,3 +273,67 @@ MultiCheckTreeLeafMenu.eventHandler.itemPressClose = function (itemElt, event) {
 ACore.install(MultiCheckTreeLeafMenu);
 
 export default MultiCheckTreeLeafMenu;
+
+/**
+ *
+ * @param {MultiCheckTreeLeafMenu} elt
+ * @constructor
+ */
+function MCTLFallbackExt(elt) {
+    this.elt = elt;
+    this.userChanged = false;
+}
+
+MCTLFallbackExt.prototype.onSetItems = function (items) {
+    this.userChanged = false;
+    this.itemsSetted = true;
+
+    this.fallback2actualValueDict = {};
+
+    var visit = item => {
+        var value = item.value;
+        if (item.fallbackValues && item.fallbackValues.forEach) {
+            item.fallbackValues.forEach((fv, i) => {
+                var hld = this.fallback2actualValueDict[fv];
+                if (!hld || hld.i >= i) {
+                    this.fallback2actualValueDict[fv] = {
+                        i: i,
+                        value: value
+                    };
+                }
+            });
+        }
+        if (item.items && item.items.forEach) {
+            item.items.forEach(visit);
+        }
+    };
+
+    for (var i = items.length - 1; i >= 0; --i) {
+        visit(items[i]);
+    }
+
+
+    if (!this.userChanged && ('pendingValues' in this.elt)) {
+        this.elt.$selectBox.values = this.getActualValues(this.elt.pendingValues);
+    }
+};
+
+MCTLFallbackExt.prototype.onValues = function (values) {
+    this.userChanged = false;
+};
+
+MCTLFallbackExt.prototype.onUserChange = function () {
+    this.userChanged = true;
+};
+
+
+MCTLFallbackExt.prototype.getActualValues = function (values) {
+    values = values || [];
+    return values.map(val => {
+        var hld = this.fallback2actualValueDict[val];
+        return hld ? hld.value : val;
+    });
+};
+
+
+
