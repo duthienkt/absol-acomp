@@ -98,18 +98,21 @@
 }
 
 
-.as-cmd-tool-group-x2::before {
+.as-cmd-tool-group-x2:not(:first-child)::before {
     content: '';
     display: block;
     position: absolute;
-    top: 0;
-    bottom: 0;
+    top: 2px;
+    bottom: 2px;
     left: -1px;
-    border: 1px solid #ddd;
+    border-left: 1px solid #ddd;
 }
 
 .as-cmd-tool-tab {
     overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: white;
 }
 
 .as-cmd-tool-tab-list {
@@ -132,4 +135,5 @@
     height: 100%;
     width:  auto;
     font-size: 14px;
+    padding-right: 8px;
 }

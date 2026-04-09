@@ -240,8 +240,8 @@ CMDTool.prototype.cmdNodeHandlers = {
                 });
                 this.$tabBarCtn = _({
                     style: {
-                        textAlign: 'center',
-                        backgroundColor: 'rgba(169, 169, 169, 0.15)'
+                        textAlign: 'center'//,
+                        // backgroundColor: 'rgba(169, 169, 169, 0.15)'
 
                     },
                     child: [this.$tabBar]
