@@ -34,7 +34,7 @@ function DualSelectMenu() {
         this.$box.cancelWaiting();
     }
 
-    this.strictValue = false;
+    this.strictValue = true;
     AbstractInput.call(this);
     /**
      * @name readOnly
