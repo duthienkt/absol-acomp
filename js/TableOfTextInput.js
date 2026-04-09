@@ -45,6 +45,9 @@ function TableOfTextInput() {
      * @type {TEITable}
      */
     this.teiTable = new TEITable(this);
+    this.teiTable.elt.on('change', event => {
+        this.emit('change', event, this);//throw event out
+    });
     /**
      * @name data
      * @type {TEICell[]}
@@ -76,6 +79,7 @@ TableOfTextInput.tag = 'TableOfTextInput'.toLowerCase();
 
 TableOfTextInput.render = function () {
     return _({
+        extendEvent: 'change',
         class: 'as-table-of-text-input-wrapper',
         child: [
             {
@@ -116,6 +120,7 @@ function TEITable(wrapper) {
     this.wrapper = wrapper;
     this.elt = $('table', wrapper);
     this.$body = $('tbody', this.elt);
+
 
     /**
      *
@@ -163,7 +168,6 @@ TEITable.prototype.calcCellPos = function () {
             }
         }
     }
-
 };
 
 Object.defineProperties(TEITable.prototype, {
@@ -301,6 +305,7 @@ Object.defineProperties(TEITable.prototype, {
                 bounds.forEach(bound => {
                     var excelData = {
                         text: bound.text.replace(/\n+$/, ''),
+                        ignoreWidth: true
                     };
                     if (excelData.text.trim().length === 0) return;
 
@@ -352,7 +357,7 @@ Object.defineProperties(TEITable.prototype, {
                 if (marginTextL > 0) {
                     ac.richTextRows[ac.richTextRows.length - 1].push({
                         text: ' '.repeat(marginTextL),
-                        font: { 'name': 'Calibri' }
+                        font: { 'name': 'Calibri' },
                     });
                 }
 
@@ -453,12 +458,13 @@ function TEICell(row, data) {
                     this.table.formatTool.onBlur(this);
                 },
                 change: (event) => {
-                    if (event.originalEvent)
+                    if (event.originalEvent) {
                         this.table.elt.emit('change', {
                             type: 'change',
                             target: this.table,
                             cell: this
                         }, this.table.elt);
+                    }
                 }
             }
         }
@@ -764,7 +770,9 @@ function TEIFormatTool(table) {
     //     .on('click', this.ev_clickRemove);
 
     this.focusCell = null;
-    this.table.elt.on('change', () => this.updateAvailableCommands());
+    this.table.elt.on('change', event => {
+        this.updateAvailableCommands();
+    });
 }
 
 
