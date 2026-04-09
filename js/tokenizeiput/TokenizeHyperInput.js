@@ -1,7 +1,5 @@
 import '../../css/tokenizeinput.css';
 import ACore, { _, $ } from "../../ACore";
-import Dom from "absol/src/HTML5/Dom";
-import { dataURItoBlob, blobToFile, blobToArrayBuffer } from "absol/src/Converter/file";
 import AElement from "absol/src/HTML5/AElement";
 import BrowserDetector from "absol/src/Detector/BrowserDetector";
 import TIHistory from "./TIHistory";
@@ -9,7 +7,6 @@ import TITextController from "./TITextController";
 import TISelectionController from "./TISelectionController";
 import { keyboardEventToKeyBindingIdent } from "absol/src/Input/keyboard";
 import { getTagListInTextMessage } from "../utils";
-import { isToken } from "./tiutils";
 
 
 var textDelay = BrowserDetector.isSafari ? 100 : 1;
@@ -30,6 +27,9 @@ function TokenizeHyperInput() {
     this.on('paste', this.eventHandler.paste);
     this.on('keydown', this.eventHandler.keydown);
     this.on('mouseup', this.eventHandler.mouseup);
+    this.on('keyup', this.eventHandler.keyup);//fix iOS app lost event
+    this.on('input', this.eventHandler.keyup);
+
     this.value = '';
     this.historyCtrl.commit('', 0);
     /***
@@ -107,10 +107,21 @@ TokenizeHyperInput.prototype.redo = function () {
     this.historyCtrl.redo();
 };
 
+TokenizeHyperInput.prototype.notifyChange = function () {
+    clearTimeout(this._changeNotifyTimeout);
+    this.emit('change', {}, this);
+};
+
+TokenizeHyperInput.prototype.delayNotifyChange = function () {
+    clearTimeout(this._changeNotifyTimeout);
+    this._changeNotifyTimeout = setTimeout( ()=> {
+        this.notifyChange();
+    }, textDelay);
+}
 
 TokenizeHyperInput.prototype.commitChange = function (text, offset) {
     this.historyCtrl.commit(text, offset);
-    this.emit('change', {}, this);
+    this.notifyChange();
 };
 
 TokenizeHyperInput.prototype.waitToCommit = function (text, offset) {
@@ -214,6 +225,13 @@ TokenizeHyperInput.eventHandler.keydown = function (event) {
         this.waitToCommit();
     }, textDelay);
 };
+
+
+
+TokenizeHyperInput.eventHandler.keyup = function (event) {
+   this.delayNotifyChange();
+};
+
 
 /***
  * @this TokenizeHyperInput
