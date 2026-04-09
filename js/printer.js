@@ -144,7 +144,18 @@ export function silentDownloadAsPdf(adapter) {
                                 right: elt.fmComponent.style.paddingRight || 57
                             };
                         }
-                        delaySync.push(elt.fmComponent.fragment.afterEntryCompleted());
+                        if (elt.ezComponent) {
+                            if (elt.ezComponent.fragment && elt.ezComponent.fragment.afterEntryCompleted) {
+                                delaySync.push(elt.ezComponent.fragment.afterEntryCompleted());
+
+                            }
+                            else if (elt.ezComponent.afterEntryCompleted){
+                                delaySync.push(elt.ezComponent.afterEntryCompleted());
+                            }
+                        }
+                        else if (elt.fmComponent && elt.fmComponent.fragment && elt.fmComponent.fragment.afterEntryCompleted) {
+                            delaySync.push(elt.fmComponent.fragment.afterEntryCompleted());
+                        }
                     }
                     return Promise.all(delaySync).then(() => doc);
                 })
