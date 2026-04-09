@@ -63,6 +63,8 @@ function MultiCheckTreeMenu() {
 
     this.observer.observe(this.$itemCtn);
 
+    this.autoCorrector = new MCTMDCorrectingValues(this);
+
     //todo: auto disconnect observer when not needed
 
     /**
@@ -346,6 +348,7 @@ MultiCheckTreeMenu.prototype.cancelView = function () {
     this.viewValues(this.$checkTreeBox.viewValues);
 };
 
+
 MultiCheckTreeMenu.prototype.init = function (props) {
     props = props || {};
     var cProps = Object.assign({}, props);
@@ -402,7 +405,7 @@ MultiCheckTreeMenu.property.isFocus = {
 
 MultiCheckTreeMenu.property.items = {
     set: function (items) {
-        this._items = copySelectionItemArray(items || [], { removeNoView: true });
+        this._items = copySelectionItemArray(items || [], { removeNoView: true });//not clone items
         this.$checkTreeBox.items = this._items;
         this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.lv0Width || this.$checkTreeBox.estimateSize.width) + 'px');
         this.viewValues(this.$checkTreeBox.viewValues);
@@ -432,7 +435,8 @@ MultiCheckTreeMenu.property.values = {
      */
     get: function () {
         if (this.isFocus) return this._values.slice();
-        return this.$checkTreeBox.values.slice();
+        var values = this.$checkTreeBox.values.slice();
+        return this.autoCorrector.correctingValues(values);
     }
 };
 
@@ -697,3 +701,137 @@ Object.defineProperty(MCTMDropController.prototype, "isFocus", {
         return this.elt.hasClass('as-focus');
     }
 });
+
+/**
+ * Auto-correct values and fix bugs with incorrect values.
+ * @constructor
+ */
+function MCTMDCorrectingValues(elt) {
+    this.elt = elt;
+}
+
+
+MCTMDCorrectingValues.prototype.makeDict = function (values) {
+    values = values || [];
+    return values.reduce((ac, cr) => {
+        ac[cr] = true;
+        return ac;
+    }, {});
+};
+
+MCTMDCorrectingValues.prototype.correctNonLeafValues = function (values) {
+    values = values || [];
+    var items = this.elt._items;//raw item, not copied
+
+    var valueDict = this.makeDict(values);
+    var checkedDict = {};
+    var virtualItem = { value: "__virtualItem__", items: items };
+    var correctedValues = [];
+
+    var visitDown = function (item, parent) {
+        var value = item.value + '';
+        var noSelect = item.noSelect;
+        checkedDict[value] = (!noSelect) && (valueDict[value] || checkedDict[parent.value + '']);
+        if (Array.isArray(item.items)) {
+            item.items.forEach((cItem) => visitDown(cItem, item));
+        }
+    }
+
+    var visitUp = function (item) {
+        var allChildSelected;
+        var value = item.value + '';
+
+        if (Array.isArray(item.items) && item.items.length > 0) {
+            allChildSelected = true;
+            item.items.forEach((cItem) => {
+                visitUp(cItem, item);
+                var cValue = cItem.value + '';
+                if (!checkedDict[cValue]) {
+                    allChildSelected = false;
+                }
+            });
+        }
+        else {
+            allChildSelected = !!checkedDict[value];
+        }
+        var noSelect = item.noSelect;
+        checkedDict[value] = (!noSelect) && allChildSelected;
+    }
+
+    var visitForValue = function (item) {
+        var value = item.value + '';
+        if (checkedDict[value]) {
+            correctedValues.push(item.value)
+        }
+        else if (Array.isArray(item.items) && item.items.length > 0) {
+            item.items.forEach((cItem) => {
+                visitForValue(cItem);
+            })
+        }
+    }
+
+    virtualItem.items.forEach((cItem) => {
+        visitDown(cItem, virtualItem);
+    });
+
+    visitUp(virtualItem);
+
+    checkedDict["__virtualItem__"] = false;
+    visitForValue(virtualItem);
+    return correctedValues;
+};
+
+
+MCTMDCorrectingValues.prototype.correctLeafValues = function (values) {
+    var items = this.elt._items;//raw item, not copied
+    values = values || [];
+    var valueDict = this.makeDict(values);
+    var virtualItem = { value: "__virtualItem__", items: items };
+    var correctedValues = [];
+    var checkedDict = {};
+
+
+    var visitDown = function (item, parent) {
+        var value = item.value + '';
+        var parentValue = parent.value + '';
+        var noSelect = item.noSelect;
+        checkedDict[value] = (!noSelect) && (valueDict[value] || checkedDict[parentValue]);
+        if (Array.isArray(item.items) && item.items.length > 0) {
+            item.items.forEach((cItem) => {
+                visitDown(cItem, item);
+            });
+        }
+    };
+
+    var visitForValue = function (item) {
+        var value = item.value + '';
+        var isLeaf = item.isLeaf;
+        if (isLeaf) {
+            if (checkedDict[value]) {
+                correctedValues.push(item.value);
+            }
+        }
+        else if (Array.isArray(item.items) && item.items.length > 0) {
+            item.items.forEach((cItem) => {
+                visitForValue(cItem);
+            })
+        }
+    }
+
+    items.forEach((cItem) => {
+        visitDown(cItem, virtualItem);
+    });
+
+    visitForValue(virtualItem);
+    return correctedValues;
+};
+
+
+MCTMDCorrectingValues.prototype.correctingValues = function (values) {
+    if (this.elt.leafOnly) {
+        return this.correctLeafValues(values);
+    }
+    else {
+        return this.correctNonLeafValues(values);
+    }
+};
