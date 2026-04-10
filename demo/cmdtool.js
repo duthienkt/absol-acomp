@@ -100,19 +100,21 @@ var delegate = new absol.CMDToolDelegate();
 var cmdTool = new absol.CMDTool();
 cmdTool.getView().addTo(document.body);
 
+var cmdDescriptors = require('./cmd_descriptors.js');
 delegate.getCmdGroupTree = function () {
     return ELECmdTree;
 };
 
+
+
 delegate.getCmdDescriptor = function (name) {
-    return {
+    return Object.assign({},{
         type: 'trigger',
         name: name,
         icon: 'span.mdi.mdi-apple-keyboard-command',
         desc: name
-    }
+    }, cmdDescriptors[name]);
 };
 
 cmdTool.delegate = delegate;
 cmdTool.refresh();
-

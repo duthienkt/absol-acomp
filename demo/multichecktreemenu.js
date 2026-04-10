@@ -2,81 +2,120 @@ function render(o) {
     return absol._(o).addTo(document.body);
 }
 
-(function () {
-    // return;
-    render('<h2>Basic (auto: desktop/mobile)</h2>');
+var items = require('https://absol.cf/libs/absol-acomp/demo/sample_data/multichecktreemenuitems1.js');
+var dict = {};
+function visit(it) {
+    if (it.isLeaf && it.value <=0) console.log(it)
+    if (dict[it.value]){
+        console.log('duplicate value: ' + it.value, it);
+    }
+    else {
+        dict[it.value] = it;
+    }
+    if (it.items) it.items.forEach(visit);
+}
 
-    var menuE = render({
-        tag: 'multichecktreemenu',
-        style: { width: '350px', height: '300px' },
-        props: {
-            values: [],
-            enableSearch: true
-        },
-        on: {
-            change: function () {
-                absol.require('snackbar').show(JSON.stringify(this.values))
-            }
-        }
-    });
+items.forEach(visit);
 
-    var menu = render({
-        tag: 'multichecktreemenu',
-        style: { width: '250px', height: '100px' },
-        class:'as-border-none',
-        props: {
-            values:[-100072, -100073, -100074, -100075, -100085, -10,
-                -100086, -100087, -100088, -100089, -100090, -55, -100091,
-                -100092, -100093, -100094, -46, -100095, -100096, -41,
-                -100097, -100098, -39, -100099, -100037, -100034, -100000],
-            readOnly: true,
-            enableSearch: true
-        },
-        on: {
-            change: function () {
-                absol.require('snackbar').show(JSON.stringify(this.values))
-            }
-        }
-    });
-    render('br');
-    var menu1 = render({
-        tag: 'multicheckmenu',
-        props: {
-            values: [-100037, -100034, -100000],
-            enableSearch: true
-        },
-        on: {
-            change: function () {
-                absol.require('snackbar').show(JSON.stringify(this.values))
-            }
-        }
-    });
-    render('br');
-    var testBtn = render({
-        tag: 'flexiconbutton',
-        props: {
-            text: 'Test change value',
-            enableSearch: true
+console.log(dict)
 
-        },
-        on: {
-            click: function () {
-                menu.values = [-100072, -100073, -100074];
+var mn = render({
+    tag: 'multichecktreemenu',
+    props: {
+        leafOnly: true,
+        values: [-100072, -100073, -100074, -100075, -100085, -10,
+            -100086, -100087, -100088, -100089, -100090, -55, -100091,
+            -100092, -100093, -100094, -46, -100095, -100096, -41,
+            -100097, -100098, -39, -100099, -100037, -100034, -100000],
+        items: items, enableSearch: true
+    },
+    on:{
+        change: function () {
+            var values = mn.values;
+            if (values.some(x=> x < 0)) {
+                console.log('has negative value');
             }
+            console.log(values);
         }
-    });
-    absol.remoteNodeRequireAsync('./sampledata/com_tree.js').then((items) => {
-        menu.items = items;
-        menu1.items = items;
-    });
+    }
+});
 
-    render({
-        tag: 'a',
-        props: { href: './sampledata/com_tree.js', target: '__blank' },
-        child: { text: 'view items' }
-    });
-    render('.break-page');
-})();
+
+return;
+
+render('<h2>Basic (auto: desktop/mobile)</h2>');
+
+var menuE = render({
+    tag: 'multichecktreemenu',
+    style: { width: '350px', height: '300px' },
+    props: {
+        values: [],
+        enableSearch: true
+    },
+    on: {
+        change: function () {
+            absol.require('snackbar').show(JSON.stringify(this.values))
+        }
+    }
+});
+
+var menu = render({
+    tag: 'multichecktreemenu',
+    style: { width: '250px', height: '100px' },
+    class: 'as-border-none',
+    props: {
+        values: [-100072, -100073, -100074, -100075, -100085, -10,
+            -100086, -100087, -100088, -100089, -100090, -55, -100091,
+            -100092, -100093, -100094, -46, -100095, -100096, -41,
+            -100097, -100098, -39, -100099, -100037, -100034, -100000],
+        readOnly: true,
+        enableSearch: true
+    },
+    on: {
+        change: function () {
+            absol.require('snackbar').show(JSON.stringify(this.values))
+        }
+    }
+});
+render('br');
+var menu1 = render({
+    tag: 'multicheckmenu',
+    props: {
+        values: [-100037, -100034, -100000],
+        enableSearch: true
+    },
+    on: {
+        change: function () {
+            absol.require('snackbar').show(JSON.stringify(this.values))
+        }
+    }
+});
+render('br');
+var testBtn = render({
+    tag: 'flexiconbutton',
+    props: {
+        text: 'Test change value',
+        enableSearch: true
+
+    },
+    on: {
+        click: function () {
+            menu.values = [-100072, -100073, -100074];
+        }
+    }
+});
+absol.remoteNodeRequireAsync('./sampledata/com_tree.js').then((items) => {
+    menu.items = items;
+    menu1.items = items;
+});
+
+render({
+    tag: 'a',
+    props: { href: './sampledata/com_tree.js', target: '__blank' },
+    child: { text: 'view items' }
+});
+render('.break-page');
+
 
 (function () {
     // return;
@@ -197,40 +236,37 @@ function render(o) {
     render('.break-page');
 })();
 
-(function () {
-    // return;
-    render('<h2>leafOnly = true, noSelect</h2>');
-    var menu = render({
-        tag: 'multichecktreemenu',
-        props: {
-            values: ['duthien1', -100010],
-            leafOnly: true,
-            enableSearch: true
-        },
-        on: {
-            change: function () {
-                absol.require('snackbar').show(JSON.stringify(this.values))
-            }
+// return;
+render('<h2>leafOnly = true, noSelect</h2>');
+var menu = render({
+    tag: 'multichecktreemenu',
+    props: {
+        values: ['duthien1', -100010],
+        leafOnly: true,
+        enableSearch: true
+    },
+    on: {
+        change: function () {
+            absol.require('snackbar').show(JSON.stringify(this.values))
         }
+    }
+});
+absol.remoteNodeRequireAsync('./sampledata/com_tree_no_select.js').then((items) => {
+    items.forEach(function visit(item) {
+        if (item.icon.class.indexOf("mdi-account") >= 0) {
+            item.isLeaf = true;
+        }
+        if (item.items) item.items.forEach(visit);
+        if (item.value === 29) item.noSelect = true;
     });
-    absol.remoteNodeRequireAsync('./sampledata/com_tree_no_select.js').then((items) => {
-        items.forEach(function visit(item) {
-            if (item.icon.class.indexOf("mdi-account") >= 0) {
-                item.isLeaf = true;
-            }
-            if (item.items) item.items.forEach(visit);
-            if (item.value === 29) item.noSelect = true;
-        });
-        menu.items = items;
+    menu.items = items;
 
-        items_url.href = URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)], { type: 'text/plain;charset=utf-8;' }))
-    });
+    items_url.href = URL.createObjectURL(new Blob(['var items = ' + absol.generateJSVariable(items)], { type: 'text/plain;charset=utf-8;' }))
+});
 
-    var items_url = render({
-        tag: 'a',
-        props: { target: '__blank' },
-        child: { text: 'view items' }
-    });
-    render('.break-page');
-
-})();
+var items_url = render({
+    tag: 'a',
+    props: { target: '__blank' },
+    child: { text: 'view items' }
+});
+render('.break-page');

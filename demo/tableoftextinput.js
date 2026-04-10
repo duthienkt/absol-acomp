@@ -126,6 +126,7 @@ var headerInput = _({
         }
     }
 }).addTo(document.body);
+console.log(headerInput)
 
 _('<h3>footer</h3>').addTo(document.body);
 
@@ -139,6 +140,8 @@ var footerInput = _({
     },
     on: {
         change: function () {
+            console.log(this.excelRichTextRows)
+
             save();
             view();
         }
@@ -153,8 +156,11 @@ function save() {
 }
 
 function view() {
-    previewData.innerHTML = previewCode('headerInput.data = ' + absol.generateJSVariable(headerInput.data) + ';'
-        + 'footerInput.data = ' + absol.generateJSVariable(footerInput.data) + ';');
+    var headerData = absol.interpolateTplStringInObject(headerInput.data, {variables:{kek: "hello_1"}});
+    var footerData = footerInput.data;
+
+    previewData.innerHTML = previewCode('headerInput.data = ' + absol.generateJSVariable(headerData) + ';'
+        + 'footerInput.data = ' + absol.generateJSVariable(footerData) + ';');
 }
 
 function download() {

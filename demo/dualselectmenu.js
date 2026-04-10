@@ -76,10 +76,11 @@ var dsm = render({
     }
 });
 render({ style: { height: '30px' } });
+render("<h3>strictValue=false</h3>");
 var dsm1 = render({
     tag: 'dualselectmenu',
     props: {
-        //  strictValue: false,
+         strictValue: false,
         //  value: ['Vietnam', 'Kon Tum'],
         // enableSearch: true,
         //default format: "$0, $1"
@@ -117,7 +118,7 @@ dataSync.then(function (items) {
     });
     $(document.body).addChildAfter(downloadBtn, dsm);
     dsm.items = items;
-    dsm1.items = items;
+    dsm1.items = require('./sample_data/dualselectmenu01.js');
     var l = new absol.ListDictionary(items);
     console.log(l);
 });
