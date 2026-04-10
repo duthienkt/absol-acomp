@@ -280,7 +280,6 @@ CSTBItemListController.prototype._requestItem = function () {
         }
     });
     res.menuElt = this.elt;
-    console.log(res)
     return res;
 };
 
