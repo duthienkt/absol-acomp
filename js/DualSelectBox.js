@@ -367,8 +367,11 @@ DualSelectBox.eventHandler.clickLeftItem = function (itemElt, event) {
     var item = itemElt.itemData;
     this._value[0] = item.value;
     var rightValue = this._value[1];//auto select right value
+    // console.log(this.holderByValue[item.value], this.holderByValue[item.value].child[rightValue])
     if (this.holderByValue[item.value] && !this.holderByValue[item.value].child[rightValue]) {
-        this._value[1] = (item.items && item.items[0] && item.items[0].value) || null;
+        if (item.items && item.items[0]){
+            this._value[1] = item.items[0].value;
+        }
     }
 
     this.cView.updateLeftSelectedItem();
