@@ -26,6 +26,9 @@ function TimeRange24Input() {
         this.nextDateText = t;
     }
 
+    this.strictValue = false;//accept second as default
+    this.rawDayOffset = null;
+    this.rawDuration = null;
     /***
      *
      * @type {TimeInput}
@@ -53,6 +56,20 @@ function TimeRange24Input() {
     /***
      * @type {string}
      * @name format
+     * @memberOf TimeRange24Input#
+     */
+
+    /***
+     * @type {boolean}
+     * @name notNull
+     * @default false
+     * @memberOf TimeRange24Input#
+     */
+
+    /***
+     * @type {boolean}
+     * @name strictValue
+     * @default false
      * @memberOf TimeRange24Input#
      */
 }
@@ -135,7 +152,7 @@ TimeRange24Input.prototype.init = function (props) {
 TimeRange24Input.prototype._updateTextData = function () {
     var dayOffset = this.dayOffset;
     var duration = this.duration;
-    var text = formatTimeRange24({dayOffset: dayOffset, duration: duration}, {gmt: this.gmt});
+    var text = formatTimeRange24({ dayOffset: dayOffset, duration: duration }, { gmt: this.gmt });
     if (!isRealNumber(dayOffset) && !isRealNumber(duration)) {
         text = '';
     }
@@ -149,6 +166,7 @@ TimeRange24Input.property.notNull = {
      * @param value
      */
     set: function (value) {
+        this.classList.toggle('as-not-null', !!value);
         value = !!value;
         this.$offset.notNull = value;
         this.$duration.notNull = value;
@@ -178,23 +196,31 @@ TimeRange24Input.property.disabled = {
 
 
 TimeRange24Input.property.dayOffset = {
+    /**
+     * @this TimeRange24Input
+     * @param value
+     */
     set: function (value) {
         if (isRealNumber(value)) {
-            value = normalizeMinuteOfMillis(value);
+            value = Math.round(value);//is integer
         }
         else {
             value = null;
         }
-        if (this.gmt) {
-            if (isRealNumber(value))
-                value -= new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;
+        if (this.gmt && isRealNumber(value)) {
+            value -= new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;
         }
-        this.$offset.dayOffset = value;
-        this.$duration.dayOffset = value;
+
+        this.rawDayOffset = value;
+        var valueFI = normalizeValueForSubInput(this.rawDayOffset, this.rawDuration, this.gmt);
+
+        this.$offset.dayOffset = valueFI.dayOffset;
+        this.$duration.dayOffset = valueFI.dayOffset;
         this._updateTextData();
     },
     get: function () {
-        var value = this.$offset.dayOffset;
+        var value = this.strictValue?this.$offset.dayOffset: this.rawDayOffset;
+        //todo: strictValue
         if (this.gmt) {
             if (isRealNumber(value))
                 value += new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;
@@ -209,23 +235,22 @@ TimeRange24Input.property.gmt = {
         value = !!value;
         var prev = this.hasClass('as-gmt');
         if (prev === value) return;
-        var dayOffset = this.$offset.dayOffset;
-        if (value) {
-            this.addClass('as-gmt');
-            if (isRealNumber(dayOffset)) {
-                dayOffset -= new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;
-                this.$offset.dayOffset = dayOffset;
-                this.$duration.dayOffset = dayOffset;
+        this.classList.toggle('as-gmt', !!value);
+        if (isRealNumber(this.rawDayOffset)) {
+            if (value){
+                this.rawDayOffset += new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;//set after dayOffset
+
+            }
+            else {
+                this.rawDayOffset -= new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;//set after dayOffset
             }
         }
-        else {
-            this.removeClass('as-gmt');
-            if (isRealNumber(dayOffset)) {
-                dayOffset += new Date().getTimezoneOffset() * MILLIS_PER_MINUTE;
-                this.$offset.dayOffset = dayOffset;
-                this.$duration.dayOffset = dayOffset;
-            }
-        }
+
+
+        var valueFI = normalizeValueForSubInput(this.rawDayOffset, this.rawDuration, !!value);
+        this.$offset.dayOffset = valueFI.dayOffset;
+        this.$duration.dayOffset = valueFI.dayOffset;
+        this.$duration.value = valueFI.duration;
         this._updateTextData();
     },
     get: function () {
@@ -240,17 +265,23 @@ TimeRange24Input.property.duration = {
      */
     set: function (value) {
         if (isRealNumber(value)) {
-            value = Math.floor(Math.min(MILLIS_PER_DAY, Math.max(0, value)));
-            value = Math.floor(value / MILLIS_PER_MINUTE) * MILLIS_PER_MINUTE;
+            value = Math.round(value);
         }
         else {
             value = null;
         }
-        this.$duration.value = value;
+        this.rawDuration = value;
+        var valueFI = normalizeValueForSubInput(this.rawDayOffset, this.rawDuration, this.gmt);
+        this.$duration.value = valueFI.duration;
         this._updateTextData();
     },
     get: function () {
-        return this.$duration.value;
+        if (this.strictValue){
+            return this.$duration.value;
+        }
+        else {
+            return this.rawDuration;//updated in change event
+        }
     }
 };
 
@@ -299,6 +330,15 @@ TimeRange24Input.property.outputMode = {
     },
     get: function () {
         return this.$offset.outputMode;
+    }
+};
+
+TimeRange24Input.property.strictValue = {
+    set: function (value) {
+        this.classList.toggle('as-strict-value', !!value);
+    },
+    get: function () {
+        return this.hasClass('as-strict-value');
     }
 };
 
@@ -360,6 +400,8 @@ TimeRange24Input.eventHandler.offsetChange = function (event) {
         this.$duration.value = null;
         // this.$duration.value = isRealNumber(prevEnd) ? Math.min(prevEnd, MILLIS_PER_DAY - MILLIS_PER_MINUTE) : null;
     }
+    this.rawDayOffset = this.$duration.dayOffset;
+    this.rawDuration =  this.$duration.value;
     this._updateTextData();
     this.emit('change', {
         type: 'change',
@@ -372,6 +414,8 @@ TimeRange24Input.eventHandler.durationChange = function (event) {
     if (!isRealNumber(this.$offset.dayOffset) && isRealNumber(this.$duration.value)) {
         this.$offset.dayOffset = this.$duration.dayOffset;
     }
+    this.rawDayOffset = this.$duration.dayOffset;
+    this.rawDuration =  this.$duration.value;
     this._updateTextData();
 
     this.emit('change', {
@@ -385,3 +429,40 @@ TimeRange24Input.eventHandler.durationChange = function (event) {
 ACore.install(TimeRange24Input);
 
 export default TimeRange24Input;
+
+
+/**
+ *
+ * @param {number} dayOffset
+ * @param duration
+ * @param gmt
+ */
+function normalizeValueForSubInput(dayOffset, duration, gmt) {
+    var res = {};
+    var startTime;
+    var endTime;
+    if (isRealNumber(dayOffset)) {
+        if (gmt) {
+            startTime = dayOffset;
+        }
+        else {
+            startTime = dayOffset;
+        }
+        if (isRealNumber(duration)) {
+            endTime = startTime + duration;
+        }
+        else {
+            endTime = null;
+        }
+    }
+    else {
+        startTime = null;
+    }
+    if (isRealNumber(startTime)) startTime = normalizeMinuteOfMillis(startTime);
+    if (isRealNumber(endTime)) endTime = normalizeMinuteOfMillis(endTime);
+    res.dayOffset = startTime;
+    if (isRealNumber(startTime) && isRealNumber(endTime)) {
+        res.duration = endTime - startTime;
+    }
+    return res;
+}
