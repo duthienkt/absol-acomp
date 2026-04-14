@@ -273,6 +273,7 @@ Time24Input.property.value = {
         else {
             this._hour = null;
             this._minute = null;
+            this._nd = false;
         }
         this.textCtrl.updateTextFromValue();
         this._firedValue = this.value;
