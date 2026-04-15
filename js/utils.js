@@ -1,5 +1,5 @@
 import ACore, { _, $ } from "../ACore";
-import { stringHashCode } from "absol/src/String/stringUtils";
+import { cropTextByUTF8BytesCount, stringHashCode } from "absol/src/String/stringUtils";
 import YesNoQuestionDialog from "./YesNoQuestionDialog";
 import Modal from "./Modal";
 import ext2MineType from "absol/src/Converter/ext2MineType";
@@ -1087,6 +1087,11 @@ export function getDateTimeFormatTextWidth(format) {
     return dateTimeFormatTextWidthCache[format];
 }
 
+/**
+ *
+ * @param mil
+ * @return {number} from 0 to MILLIS_PER_DAY, include MILLIS_PER_DAY
+ */
 export var normalizeMinuteOfMillis = mil => {
     mil = mil >> 0;
     mil = Math.floor(mil / 6e4) * 6e4;
@@ -1095,7 +1100,6 @@ export var normalizeMinuteOfMillis = mil => {
     if (mil < 0) mil += MILLIS_PER_DAY;
     return mil;
 };
-
 
 /**
  *
@@ -2091,3 +2095,31 @@ export function autoNormalizeFileName(file) {
     }
 }
 
+/**
+ *
+ * @param fileFullName
+ * @param limit
+ * @return {string}
+ */
+export function cropFileName(fileFullName, limit) {
+    limit = limit || 100;
+    fileFullName = fileFullName || 'upload.bin';
+    var parts = fileFullName.split('.');
+    var ext;
+    var fileName;
+    if (location.href.indexOf('keeview') >= 0) {
+        if (parts.length >= 2) {
+            ext = parts.pop();
+            fileName = parts.join('.');
+            fileName = cropTextByUTF8BytesCount(fileName, 100);
+            fileFullName = fileName + '.' + ext;
+        }
+        else {
+            fileName = parts.join('.');
+            fileName = cropTextByUTF8BytesCount(fileName, 100);
+            fileFullName = fileName
+        }
+    }
+
+    return fileFullName;
+}

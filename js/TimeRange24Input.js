@@ -435,21 +435,20 @@ export default TimeRange24Input;
  *
  * @param {number} dayOffset
  * @param duration
- * @param gmt
  */
-function normalizeValueForSubInput(dayOffset, duration, gmt) {
+function normalizeValueForSubInput(dayOffset, duration) {
+    // console.log('in', dayOffset, duration, 'dura' ,duration/MILLIS_PER_HOUR);
     var res = {};
     var startTime;
     var endTime;
+    var moreThanDay = false;
     if (isRealNumber(dayOffset)) {
-        if (gmt) {
-            startTime = dayOffset;
-        }
-        else {
-            startTime = dayOffset;
-        }
+        startTime = dayOffset;
         if (isRealNumber(duration)) {
             endTime = startTime + duration;
+            if (endTime >= MILLIS_PER_DAY) {
+                moreThanDay = true;
+            }
         }
         else {
             endTime = null;
@@ -458,11 +457,16 @@ function normalizeValueForSubInput(dayOffset, duration, gmt) {
     else {
         startTime = null;
     }
+
+    // console.log("*",endTime/MILLIS_PER_HOUR, normalizeMinuteOfMillis(endTime)/MILLIS_PER_HOUR)
     if (isRealNumber(startTime)) startTime = normalizeMinuteOfMillis(startTime);
     if (isRealNumber(endTime)) endTime = normalizeMinuteOfMillis(endTime);
+    if (moreThanDay && endTime < MILLIS_PER_DAY) endTime += MILLIS_PER_DAY;
+    // console.log(startTime/MILLIS_PER_HOUR, endTime/MILLIS_PER_HOUR, (endTime - startTime)/MILLIS_PER_HOUR)
     res.dayOffset = startTime;
     if (isRealNumber(startTime) && isRealNumber(endTime)) {
         res.duration = endTime - startTime;
     }
+    // console.log(res);
     return res;
 }

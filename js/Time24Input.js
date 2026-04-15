@@ -268,7 +268,12 @@ Time24Input.property.value = {
             clockTime = millisToClock(value + this.dayOffset);
             this._hour = clockTime.hour;
             this._minute = clockTime.minute;
-            if (value === MILLIS_PER_DAY) this._nd = true;
+            if (value + this.dayOffset >= MILLIS_PER_DAY) {
+                this._nd = true;
+            }
+            else {
+                this._nd = false;
+            }
         }
         else {
             this._hour = null;
