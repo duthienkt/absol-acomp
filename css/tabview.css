@@ -466,7 +466,7 @@
 
 .as-tabview-right-ctn {
     position: absolute;
-    z-index: 150;
+    z-index: 1200;
     right: 0;
     top: 0;
 }
