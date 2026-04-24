@@ -133,6 +133,8 @@ DualSelectMenu.prototype.updateText = function () {
 
     var text = format.replace('$0', firstToken)
         .replace('$1', secToken);
+    text = text.trim().replace(/^[,;.]+/, '')
+        .replace(/[,;.]+$/, '');
     this.$item.clearChild().addChild(_({
         tag: 'span',
         class: 'absol-selectlist-item-text',
