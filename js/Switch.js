@@ -2,7 +2,7 @@ import '../css/switch.css';
 import ACore from "../ACore";
 import OOP, { mixClass } from "absol/src/HTML5/OOP";
 import CheckBoxInput from "./CheckBoxInput";
-import { AbstractStyleExtended } from "./Abstraction";
+import { AbstractInput, AbstractStyleExtended } from "./Abstraction";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -23,10 +23,10 @@ function Switch() {
     this.on('click', function (event){
         if (this.readOnly) event.preventDefault();
     }, true);
-    AbstractStyleExtended.call(this);
+    AbstractInput.call(this);
 }
 
-mixClass(Switch, AbstractStyleExtended);
+mixClass(Switch, AbstractInput);
 
 
 Switch.tag = 'switch';
@@ -80,24 +80,22 @@ Switch.attribute = {
     }
 };
 
-
-Switch.property = {
-    disabled: {
-        set: function (value) {
-            this.$input.disabled = !!value;
-            if (value) {
-                this.addClass('disabled');
-            }
-            else {
-                this.removeClass('disabled');
-            }
-        },
-        get: function () {
-            return this.$input.disabled;
+Switch.property.disabled= {
+    set: function (value) {
+        this.$input.disabled = !!value;
+        if (value) {
+            this.addClass('disabled');
+        }
+        else {
+            this.removeClass('disabled');
         }
     },
-    readOnly: CheckBoxInput.property.readOnly
-};
+    get: function () {
+        return this.$input.disabled;
+    }
+}
+
+Switch.property.readOnly = CheckBoxInput.property.readOnly;
 
 ACore.install('switch', Switch);
 
