@@ -5,7 +5,7 @@ import '../css/timerange24input.css';
 import { isRealNumber, millisToClock, normalizeMinuteOfMillis } from "./utils";
 import {
     beginOfDay, compareDate,
-    formatDateTime, formatTimeRange24,
+    formatDateTime, formatTimeRange24, isTimeRange24Null,
     MILLIS_PER_DAY,
     MILLIS_PER_HOUR,
     MILLIS_PER_MINUTE
@@ -345,6 +345,7 @@ TimeRange24Input.property.strictValue = {
 
 TimeRange24Input.property.value = {
     set: function (value) {
+        if (isTimeRange24Null(value)) value = null;
         var rangeValue = null;
         if (isRealNumber(value)) rangeValue = { dayOffset: value, duration: 0 };
         else if (!value) {
