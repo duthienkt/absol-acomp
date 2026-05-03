@@ -90,19 +90,21 @@ div.as-dropdown-box-common-style {
 
 .am-dropdown-box-header {
     height: calc(2em + 10px);
-    display: block;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
     white-space: nowrap;
     box-sizing: border-box;
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: 10px;
+    padding-right: 5px;
     border-bottom: solid 1px #dddddd;
 }
 
 .am-dropdown-box-header .absol-search-text-input,
 .am-dropdown-box-header .as-search-multi-mode-input {
     display: inline-block;
-    width: calc(100% - 2em - 18px);
     vertical-align: middle;
     box-sizing: border-box;
     background-color: white;
@@ -119,7 +121,6 @@ div.as-dropdown-box-common-style {
     font-size: inherit;
     border: none;
     outline: none;
-    margin-left: 10px;
     background-color: rgb(255, 255, 255);
     color: #7a7a7a;
     white-space: nowrap;
