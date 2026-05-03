@@ -1,4 +1,4 @@
-import { _, $ } from '../ACore';
+import ACore, { _, $ } from '../ACore';
 import { AbstractInput } from "./Abstraction";
 import { mixClass } from "absol/src/HTML5/OOP";
 import { isRealNumber } from "absol/src/Converter/DataTypes";
@@ -7,6 +7,7 @@ import TextMeasure from "./TextMeasure";
 import { QuickMenuInstance } from "./QuickMenu";
 import { copyEvent } from "absol/src/HTML5/EventEmitter";
 import { isDomNode } from "absol/src/HTML5/Dom";
+import { parseExtFloat } from "absol/src/Math/int";
 
 function RibbonTextInput() {
     this.$input = $('input', this);
@@ -40,10 +41,7 @@ function RibbonTextInput() {
      * @name items
      * @memberOf RibbonTextInput#
      */
-    
-    
-    
-    
+
 
     AbstractInput.call(this);
 
@@ -221,3 +219,103 @@ RibbonTextInput.property.disabled = {
 };
 
 export default RibbonTextInput;
+
+
+/**
+ * @extends RibbonTextInput
+ * @constructor
+ */
+export function ExcelWidthInput() {
+    RibbonTextInput.apply(this, arguments);
+    this.isAuto =  true;
+    this.prevNumber = 0;
+    this.$input.value = 'auto';
+    this.$input.on('change', ()=>{
+        var numberValue;
+        if (!this.isAuto) {
+            numberValue = parseExtFloat(this.$input.value);
+            if (isRealNumber(numberValue)) {
+                this.prevNumber = numberValue;
+            }
+            this.$input.value = this.prevNumber + '';
+        }
+    });
+    this.$input.on('input', ()=>{
+        var numberValue;
+        if (!this.isAuto) {
+            numberValue = parseExtFloat(this.$input.value);
+            if (isRealNumber(numberValue)) {
+                this.prevNumber = numberValue;
+            }
+        }
+    })
+    this.addStyle('text-align', 'right');
+    this.items = () => {
+        return [
+            { text: 'auto', value: 'auto', extendClasses: this.isAuto ? ['as-active'] : [] },
+            { text: 'ch', value: 'ch', extendClasses: !this.isAuto ? ['as-active'] : [] },
+        ]
+    }
+    this.on('select', (event)=> {
+        var item = event.item;
+        if (item.value === 'auto' && !this.isAuto) {
+            this.isAuto = true;
+            this.$input.value = 'auto';
+            this.$input.readOnly = true;
+            this.emit('change', { target: this, type: 'change', value: 'auto' }, this);
+        }
+        else if (item.value === 'ch' && this.isAuto) {
+            this.isAuto = false;
+            this.$input.value = (this.prevNumber+'') || '0';
+            this.$input.readOnly = false;
+            this.$input.select();
+            this.$input.focus();
+            this.emit('change', { target: this, type: 'change', value: this.value }, this);
+
+        }
+    });
+
+    /**
+     *
+     * @type {"auto"|number|string}
+     * @name value
+     * @memberOf ExcelWidthInput#
+     */
+}
+
+mixClass(ExcelWidthInput, RibbonTextInput);
+
+ExcelWidthInput.tag = 'ExcelWidthInput'.toLowerCase();
+
+ExcelWidthInput.property.value = {
+    set: function (value) {
+        var numberValue = parseExtFloat(value +'');
+        if (value === 'auto' || !isRealNumber(value)) {
+            this.prevNumber = 0;
+            this.isAuto = true;
+            this.$input.value = 'auto';
+            this.$input.readOnly = true;
+        }
+        else{
+            this.prevNumber = value;
+            this.$input.value = value +'';
+            this.$input.readOnly = false;
+            this.isAuto = false;
+        }
+    },
+    get: function () {
+        var valueNumber;
+        if (this.isAuto) {
+            return 'auto';
+        }
+        else {
+            valueNumber = parseExtFloat(this.$input.value);
+            if (isRealNumber(valueNumber)) {
+                this.prevNumber = valueNumber;
+            }
+            return this.prevNumber +'';
+        }
+    }
+};
+
+ACore.install(ExcelWidthInput);

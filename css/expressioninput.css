@@ -184,10 +184,13 @@
 
 
 .as-token.as-unexpected-token {
-    background-color: red;
-    animation-name: error_blink;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
+    background-color: transparent;
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: red;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 1px;
+    animation: none;
 }
 
 .as-expression-input-autocomplete {
