@@ -9,6 +9,7 @@ import Rectangle from "absol/src/Math/Rectangle";
 import AElement from "absol/src/HTML5/AElement";
 import { nonAccentVietnamese, normalizeFileName, normalizeIdent } from "absol/src/String/stringFormat";
 import TextMeasure from "./TextMeasure";
+import { parseExtFloat } from "absol/src/Math/int";
 
 export { normalizeFileName };
 
@@ -1164,6 +1165,9 @@ export function parseLocalFloat(text, opt) {
  * @param opt
  */
 export function formatLocalFloat(value, opt) {
+    if (typeof value === "string") {
+       value =  parseExtFloat(value);
+    }
     //todo: get option from systemconfig
     if (typeof opt === "string") {
         opt = { locales: opt };
