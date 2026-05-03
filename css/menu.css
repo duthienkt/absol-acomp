@@ -122,6 +122,10 @@
     padding-right: 1em;
 }
 
+.absol-vmenu-button.as-active {
+    background-color: var(--as-transparent-button-active-color);
+}
+
 .absol-vmenu {
 
 }
