@@ -142,6 +142,7 @@ var pendingTables = {};
  * @constructor
  */
 function DynamicTable() {
+    this.trace = new Error('DynamicTable created!');
     this._pendingId = randomIdent(4);
     pendingTables[this._pendingId] = this;
     manager.initIfNeed();
@@ -644,6 +645,13 @@ DynamicTable.prototype.attachSearchInput = function (inputElt) {
         this.$searchInput.$table = this;
         this.$searchInput.on('stoptyping', this.eventHandler.searchModify);
         this.$searchInput.on('keyup', this.eventHandler.searchKeyUp);
+        if (this.$searchInput.value) {
+            this.readySync.then(() => {
+                setTimeout(()=>{
+                    this.$searchInput.emit('stoptyping', {});
+                }, 0);
+            })
+        }
     }
 };
 
