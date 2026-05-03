@@ -198,7 +198,7 @@ import CheckboxStepper from "../CheckboxStepper";
 import LinearBackground from "../LinearBackground";
 import { EmptyTablePlaceholder } from "../dynamictable/DTBody";
 import ChatGPTButton from "../ChatGPTButton";
-import RibbonTextInput from "../RibbonTextInput";
+import RibbonTextInput, { ExcelWidthInput } from "../RibbonTextInput";
 import SingleSelectList from "../SingleSelectList";
 import MultiDateInput from "../MultiDateInput";
 import FaceIdInput from "../FaceIdInput";
@@ -327,6 +327,7 @@ export var publicCreators = [
     RibbonSplitButton,
     RibbonButton,
     RibbonTextInput,
+    ExcelWidthInput,
     SelectRibbonMenu,
     RotatedText,
     SelectList,
