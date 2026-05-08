@@ -10,6 +10,7 @@ import AElement from "absol/src/HTML5/AElement";
 import { nonAccentVietnamese, normalizeFileName, normalizeIdent } from "absol/src/String/stringFormat";
 import TextMeasure from "./TextMeasure";
 import { parseExtFloat } from "absol/src/Math/int";
+import { chToArial14Px } from "absol/src/Math/measurements";
 
 export { normalizeFileName };
 
@@ -734,7 +735,7 @@ export function htmlToText(html) {
             && parent && (parent.lastChild !== elt || parent.style.display.indexOf('inline') >= 0)) {
             return '\n';
         }
-        else if ((style.display||'block').indexOf('inline')<0
+        else if ((style.display || 'block').indexOf('inline') < 0
             && parent && parent.firstChild !== elt) {
             res += '\n';
         }
@@ -744,8 +745,8 @@ export function htmlToText(html) {
         }).join('');
     }
 
-    var text =  Array.prototype.map.call(div.childNodes, (cNode, index, arr) => {
-        return visit(cNode, {parent: div, style:{display:'block'}});
+    var text = Array.prototype.map.call(div.childNodes, (cNode, index, arr) => {
+        return visit(cNode, { parent: div, style: { display: 'block' } });
     }).join('');
     div.remove();
     return text;
@@ -814,7 +815,7 @@ export function htmlToRichText(html) {
             }
             else {
                 computed = getComputedStyle(node);
-                if ((computed.display || 'block').indexOf('inline')<0
+                if ((computed.display || 'block').indexOf('inline') < 0
                     && parent && parent.firstChild !== node && node !== div) {
                     richText.push({ text: '\r\n' });
                 }
@@ -865,7 +866,7 @@ export function richTextToHtml(richText) {
  */
 export function htmlToExcelRichTextCell(html) {
     var richText = htmlToRichText(html);
-    if (!richText ) return null;
+    if (!richText) return null;
     return {
         value: {
             richText: richText
@@ -878,6 +879,7 @@ export function excelRichTextCellToHtml(cell) {
     if (!richText) return null;
     return richTextToHtml(richText);
 }
+
 /***
  *
  * @param {number} v
@@ -1166,7 +1168,7 @@ export function parseLocalFloat(text, opt) {
  */
 export function formatLocalFloat(value, opt) {
     if (typeof value === "string") {
-       value =  parseExtFloat(value);
+        value = parseExtFloat(value);
     }
     //todo: get option from systemconfig
     if (typeof opt === "string") {
@@ -1569,11 +1571,11 @@ function compareSelectionItemArray(a, b) {
 
 export function adaptiveSelectionItemHolder(obj) {
     var res = {};
-    var item = obj.item|| obj.data || obj;
+    var item = obj.item || obj.data || obj;
     if (typeof obj.idx === "number") {
         res.idx = obj.idx;
     }
-    Object.assign(res,obj, item);
+    Object.assign(res, obj, item);
     if (item.items && item.items.length > 0) {
         res.items = item.items;
     }
@@ -1586,7 +1588,7 @@ export function adaptiveSelectionItemHolder(obj) {
 }
 
 
-export function adaptiveSelectionItemHolderAray(arr){
+export function adaptiveSelectionItemHolderAray(arr) {
     if (!arr) return [];
     return arr.map(adaptiveSelectionItemHolder);
 }
@@ -1786,8 +1788,8 @@ export function keyStringOf(o) {
         if (typeof o.getTime === "function") {
             return 'd(' + o.getTime() + ')';
         }
-        else if (typeof o.map === "function") {
-            return 'a(' + o.map(val => keyStringOf(val)).join(',') + ')';
+        else if (typeof o.map === "function") {//fix [string] and string return same result
+            return '[' + o.map(val => keyStringOf(val)).join(',') + ']';
         }
         else {
             keys = Object.keys(o);
@@ -1795,8 +1797,8 @@ export function keyStringOf(o) {
             return 'o(' + keys.map(key => key + ':' + keyStringOf(o[key])).join(',') + ')';
         }
     }
-    else {
-        return type[0] + '(' + o + ')';
+    else {//accept both string, number is same result
+        return o + '';
     }
 }
 
@@ -1945,6 +1947,26 @@ export function wrapText(text, width, font) {
 
 
     return res;
+}
+
+/**
+ *
+ * @param {string} value
+ * @return {string}
+ */
+export function replaceChUnitInStyleValue(value) {
+    if (typeof value !== "string") return value;
+    var regex = /[0-9.]+ch(?![a-zA-Z0-9])/g;
+    return value.replace(regex, (match) => {
+        var value = match.replace('ch', '');
+        value = parseExtFloat(value);
+        if (isRealNumber(value)) {
+            return chToArial14Px(value) + 'px';
+        }
+        else {
+            return match;
+        }
+    });
 }
 
 
