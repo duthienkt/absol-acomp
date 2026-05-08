@@ -8,6 +8,7 @@ import { QuickMenuInstance } from "./QuickMenu";
 import { copyEvent } from "absol/src/HTML5/EventEmitter";
 import { isDomNode } from "absol/src/HTML5/Dom";
 import { parseExtFloat } from "absol/src/Math/int";
+import LangSys from "absol/src/HTML5/LanguageSystem";
 
 function RibbonTextInput() {
     this.$input = $('input', this);
@@ -227,10 +228,10 @@ export default RibbonTextInput;
  */
 export function ExcelWidthInput() {
     RibbonTextInput.apply(this, arguments);
-    this.isAuto =  true;
+    this.isAuto = true;
     this.prevNumber = 0;
     this.$input.value = 'auto';
-    this.$input.on('change', ()=>{
+    this.$input.on('change', () => {
         var numberValue;
         if (!this.isAuto) {
             numberValue = parseExtFloat(this.$input.value);
@@ -240,7 +241,7 @@ export function ExcelWidthInput() {
             this.$input.value = this.prevNumber + '';
         }
     });
-    this.$input.on('input', ()=>{
+    this.$input.on('input', () => {
         var numberValue;
         if (!this.isAuto) {
             numberValue = parseExtFloat(this.$input.value);
@@ -250,13 +251,14 @@ export function ExcelWidthInput() {
         }
     })
     this.addStyle('text-align', 'right');
+    var customText = LangSys.getText('txt_custom') || ((LangSys.getLanguage() === 'vi' ? "Tùy chọn" : "Custom") + ' (ch)');
     this.items = () => {
         return [
             { text: 'auto', value: 'auto', extendClasses: this.isAuto ? ['as-active'] : [] },
-            { text: 'ch', value: 'ch', extendClasses: !this.isAuto ? ['as-active'] : [] },
+            { text: customText + '(ch)', value: 'ch', extendClasses: !this.isAuto ? ['as-active'] : [] },
         ]
     }
-    this.on('select', (event)=> {
+    this.on('select', (event) => {
         var item = event.item;
         if (item.value === 'auto' && !this.isAuto) {
             this.isAuto = true;
@@ -266,7 +268,7 @@ export function ExcelWidthInput() {
         }
         else if (item.value === 'ch' && this.isAuto) {
             this.isAuto = false;
-            this.$input.value = (this.prevNumber+'') || '0';
+            this.$input.value = (this.prevNumber + '') || '0';
             this.$input.readOnly = false;
             this.$input.select();
             this.$input.focus();
@@ -289,16 +291,17 @@ ExcelWidthInput.tag = 'ExcelWidthInput'.toLowerCase();
 
 ExcelWidthInput.property.value = {
     set: function (value) {
-        var numberValue = parseExtFloat(value +'');
-        if (value === 'auto' || !isRealNumber(value)) {
+        if (typeof value === 'string') value = value.trim().replace('ch', '');
+        var numberValue = parseExtFloat(value + '');
+        if (value === 'auto' || !isRealNumber(numberValue)) {
             this.prevNumber = 0;
             this.isAuto = true;
             this.$input.value = 'auto';
             this.$input.readOnly = true;
         }
-        else{
-            this.prevNumber = value;
-            this.$input.value = value +'';
+        else {
+            this.prevNumber = numberValue;
+            this.$input.value = value + '';
             this.$input.readOnly = false;
             this.isAuto = false;
         }
@@ -313,7 +316,7 @@ ExcelWidthInput.property.value = {
             if (isRealNumber(valueNumber)) {
                 this.prevNumber = valueNumber;
             }
-            return this.prevNumber +'';
+            return this.prevNumber + 'ch';
         }
     }
 };
