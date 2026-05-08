@@ -279,7 +279,7 @@ SelectListBox.prototype._filterDisplayItems = function (items) {
     if (this._displayValue === VALUE_NORMAL) return items;
     var dict = this._valueDict;
     return items.filter(function (item) {
-        return !dict[item.value + ''];
+        return !dict[keyStringOf(item.value)];
     });
 };
 
@@ -288,7 +288,7 @@ SelectListBox.prototype._updateSelectedItem = function () {
     var valueDict = this._valueDict;
     this.$listPages.forEach(function (pageElt) {
         Array.prototype.forEach.call(pageElt.childNodes, function (itemElt) {
-            var value = itemElt.value + '';
+            var value = keyStringOf(itemElt.value);
             if (valueDict[value]) {
                 itemElt.selected = true;
             }
@@ -346,7 +346,7 @@ SelectListBox.prototype.viewListAtFirstSelected = function () {
     }
     else if (this._values.length > 0) {
         var value = this._values[0];
-        var itemHolders = this._displayItemHolderByValue[value + ''];
+        var itemHolders = this._displayItemHolderByValue[keyStringOf(value)];
         if (itemHolders) {
             this.domSignal.once('scrollIntoSelected', function () {
                 var holder = itemHolders[0];
@@ -529,7 +529,7 @@ SelectListBox.prototype.prepareSearch = function () {
  * @returns {{idx: number, item:{text:string, value:number|string}}[]}
  */
 SelectListBox.prototype.findDisplayItemsByValue = function (value) {
-    return (this._displayItemHolderByValue[value] || []).slice();
+    return (this._displayItemHolderByValue[keyStringOf(value)] || []).slice();
 };
 
 
@@ -539,8 +539,9 @@ SelectListBox.prototype._implicit = function (values) {
         else values = [values];
     }
     return values.reduce(function (ac, cr) {
-        if (!ac.dict[cr]) {
-            ac.dict[cr] = true;
+        var key = keyStringOf(cr);
+        if (!ac.dict[key]) {
+            ac.dict[key] = true;
             ac.result.push(cr);
         }
         return ac;
@@ -550,7 +551,7 @@ SelectListBox.prototype._implicit = function (values) {
 SelectListBox.prototype._explicit = function (values) {
     if (this.strictValue) {
         return values.filter(function (value) {
-            return !!this._itemNodeHolderByValue[value];
+            return !!this._itemNodeHolderByValue[keyStringOf(value)];
         }.bind(this));
     }
     else {
@@ -565,11 +566,11 @@ SelectListBox.prototype._explicit = function (values) {
  * @returns {{idx: number, item:{text:string, value:number|string}}[]}
  */
 SelectListBox.prototype.findItemsByValue = function (value) {
-    return (this._itemNodeHolderByValue[value] || []).slice();
+    return (this._itemNodeHolderByValue[keyStringOf(value)] || []).slice();
 };
 
 SelectListBox.prototype.findItemByValue = function (value) {
-    var t = this._itemNodeHolderByValue[value];
+    var t = this._itemNodeHolderByValue[keyStringOf(value)];
     if (t && t.length > 0) {
         return t[0].item;
     }
@@ -605,7 +606,7 @@ SelectListBox.property.values = {
         values = this._implicit(values);
         this._values = values;
         this._valueDict = values.reduce(function (ac, cr) {
-            ac[cr + ''] = true;
+            ac[keyStringOf(cr)] = true;
             return ac;
         }, {});
         this._updateDisplayItem();
