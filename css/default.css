@@ -379,3 +379,8 @@
     font-size: 14px;
     font-family: Roboto, sans-serif;
 }
+
+html {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+}
