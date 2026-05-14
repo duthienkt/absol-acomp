@@ -1794,11 +1794,11 @@ export function keyStringOf(o) {
         else {
             keys = Object.keys(o);
             keys.sort();
-            return 'o(' + keys.map(key => key + ':' + keyStringOf(o[key])).join(',') + ')';
+            return '{' + keys.map(key => key + ':' + keyStringOf(o[key])).join(',') + '}';
         }
     }
     else {//accept both string, number is same result
-        return o + '';
+        return '<' + o + '>';
     }
 }
 
