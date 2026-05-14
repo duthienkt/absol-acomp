@@ -1,7 +1,8 @@
 import { $$, _, $ } from "../../ACore";
 import Follower from "../Follower";
-import { addElementClassName, findMaxZIndex, listenDomContentChange } from "../utils";
+import { addElementClassName, findMaxZIndex, listenDomContentChange, replaceChUnitInStyleValue } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
+import { parseMeasureValue } from "absol/src/JSX/attribute";
 
 
 var implicitSortKeyArr = key => {
@@ -29,6 +30,7 @@ function DTHeadCell(row, data) {
     this._copyElt = null;
     this._copyElt1 = null;
     this._copyElt2 = null;
+    this.computedStyle = {};
 
 
     if (data.attr) {
@@ -237,11 +239,36 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
             this._elt.attr(this.data.attr);
         }
 
+        var style = Object.assign({}, this.data.style);
+        for (var key in style) {
+            style[key] = replaceChUnitInStyleValue(style[key]);
+        }
+
+        var widthStyle, maxWidthStyle, minWidthStyle;
+        widthStyle = style.width;
+        maxWidthStyle = style.maxWidth;
+        minWidthStyle = style.minWidth;
+        if (widthStyle === 'auto') {
+            widthStyle = undefined;
+        }
+        if (maxWidthStyle === 'auto') {
+            maxWidthStyle = undefined;
+        }
+        if (minWidthStyle === 'auto') {
+            minWidthStyle = undefined;
+        }
+        if (maxWidthStyle) {
+            this.computedStyle.maxWidth = parseMeasureValue(maxWidthStyle);
+            if (this.computedStyle.maxWidth && this.computedStyle.maxWidth.unit === 'px') {
+                this.computedStyle.maxWidth = this.computedStyle.maxWidth.value;
+            }
+        }
+
         if (this.data.style) {
-            this._elt.addStyle(this.data.style);
-            if (this.data.style.width) {
-                this._elt.addStyle('max-width', this.data.style.width);
-                this._elt.addStyle('min-width', this.data.style.width);
+            this._elt.addStyle(style);
+            if (widthStyle && widthStyle !== 'auto') {
+                this._elt.addStyle('max-width', maxWidthStyle||widthStyle);
+                this._elt.addStyle('min-width', minWidthStyle ||widthStyle);
                 this._elt.addClass('as-wrap-text');
             }
         }

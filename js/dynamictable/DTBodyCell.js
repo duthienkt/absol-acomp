@@ -1,5 +1,10 @@
 import { $, _ } from "../../ACore";
-import { addElementClassName, jsStringOf, listenDomChange, listenDomContentChange } from "../utils";
+import {
+    addElementClassName,
+    jsStringOf,
+    listenDomContentChange,
+    replaceChUnitInStyleValue
+} from "../utils";
 import { formatDateTime } from "absol/src/Time/datetime";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 
@@ -50,7 +55,15 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
 
         if (this.data.attr) this._elt.attr(this.data.attr);
         if (typeof this.data.class) addElementClassName(this._elt, this.data.class);
-        if (this.data.style) this._elt.addStyle(this.data.style);
+
+        var style = Object.assign({}, this.data.style);
+        for (var key in style) {
+            style[key] = replaceChUnitInStyleValue(style[key]);
+        }
+
+        if (this.data.style) {
+            this._elt.addStyle(style);
+        }
 
         if (this.data.on) {
             Object.keys(this.data.on).forEach(key => {

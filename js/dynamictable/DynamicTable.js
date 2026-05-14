@@ -647,7 +647,7 @@ DynamicTable.prototype.attachSearchInput = function (inputElt) {
         this.$searchInput.on('keyup', this.eventHandler.searchKeyUp);
         if (this.$searchInput.value) {
             this.readySync.then(() => {
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.$searchInput.emit('stoptyping', {});
                 }, 0);
             })
