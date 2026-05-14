@@ -161,6 +161,10 @@ input[type="text"].as-text-input.as-background-none {
     vertical-align: middle;
 }
 
+.as-transparent-button:disabled {
+    pointer-events: none;
+}
+
 .as-transparent-button > svg,
 .as-transparent-button > img {
     width: 1.5em;
