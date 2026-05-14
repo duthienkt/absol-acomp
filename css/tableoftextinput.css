@@ -5,6 +5,7 @@
 
 .as-table-of-text-input-content-ctn {
     overflow: auto;
+    padding-bottom: 10px;
 }
 
 
@@ -14,20 +15,44 @@
     color: black;
     font-family: 'Aptos Narrow', Calibri, sans-serif, 'Mongolian Baiti', 'Microsoft Yi Baiti', 'Javanese Text', 'Yu Gothic';
     font-size: 11pt;
-    margin: 10px;
 }
 
-.as-table-of-text-input-wrapper.as-size-a4 .as-table-of-text-input {
-    width: 445pt;
+.as-table-of-text-input-wrapper.as-size-a4 {
+    min-width: min(460pt, calc(100vw - 200px));
+    max-width: calc(100vw - 200px);
 }
 
-.as-table-of-text-input-wrapper.as-size-a3 .as-table-of-text-input {
-    width: 841pt;
+
+.as-table-of-text-input-wrapper.as-size-a3 {
+    min-width: min(850pt, calc(100vw - 200px));
+    max-width: calc(100vw - 200px);
 }
+
+/*.as-table-of-text-input-wrapper.as-size-a4 .as-table-of-text-input {*/
+/*    width: 445pt;*/
+/*}*/
+
+/*.as-table-of-text-input-wrapper.as-size-a3 .as-table-of-text-input {*/
+/*    width: 841pt;*/
+/*}*/
 
 .as-table-of-text-input pre {
     font: inherit;
     line-height: 1.75;
+}
+
+.as-table-of-text-input > thead {
+    background-color: rgb(240, 240, 240);
+}
+
+.as-table-of-text-input thead th:first-child{
+    color: rgb(224, 224, 224);
+}
+
+.as-table-of-text-input > thead th {
+    border: 1px solid rgba(224, 224, 224);
+    color: rgba(106, 106, 106);
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .as-table-of-text-input.as-inline {
@@ -37,7 +62,7 @@
 .as-table-of-text-input-cell {
     vertical-align: top;
     padding: 0px 5px;
-    border: 1px dashed #808080;
+    border: 1px solid rgb(224, 224, 224);
     position: relative;
 }
 
@@ -45,11 +70,11 @@
     pointer-events: none;
     content: "";
     position: absolute;
-    border: 1px dashed var(--variant-color-primary);
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
+    border: 2px solid var(--variant-color-primary);
+    left: -1px;
+    right: -1px;
+    top: -1px;
+    bottom: -1px;
 }
 
 .as-table-of-text-input-cell .as-preinput {
@@ -99,4 +124,19 @@
     color: #2977ff;
     /*background-color: rgb(240, 247, 255);*/
     box-shadow: inset gray 0px 0px 4px -2px;
+}
+
+.as-tei-idx-cell {
+    border: 1px solid rgb(224, 224, 224);
+    background-color: rgb(240, 240, 240);
+    width: 25px;
+    min-width: 25px;
+    max-width: 25px;
+    text-align: right;
+    padding-right: 5px;
+    color: rgba(106, 106, 106);
+}
+
+.as-tei-idx-cell::before{
+    content: attr(data-idx);
 }

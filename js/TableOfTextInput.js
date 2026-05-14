@@ -90,6 +90,15 @@ TableOfTextInput.render = function () {
                     class: 'as-table-of-text-input',
                     child: [
                         {
+                            tag: 'thead',
+                            child: [{
+                                tag: 'tr', child:{
+                                    tag:'th',
+                                    child:{text:'◢'}
+                                }
+                            }]
+                        },
+                        {
                             tag: 'tbody',
                             child: []
                         }
@@ -101,6 +110,10 @@ TableOfTextInput.render = function () {
     });
 };
 
+
+TableOfTextInput.prototype.exportExcelData = function (){
+    return this.teiTable.exportExcelData(...arguments);
+}
 
 export default TableOfTextInput;
 
@@ -114,14 +127,15 @@ ACore.install(TableOfTextInput);
  */
 function TEITable(wrapper) {
     this._minCol = 3;
-    this._maxCol = 3;
+    this._maxCol = 30;
     this._minRow = 1;
-    this._maxRow = 9;
+    this._maxRow = 90;
     this.wrapper = wrapper;
     this.elt = $('table', wrapper);
     this.$body = $('tbody', this.elt);
+    this.$headerRow = $('thead > tr', this.elt);
 
-
+    this.headRow = new TEIHeadRow(this);
     /**
      *
      * @type {TEIRow[]}
@@ -137,15 +151,44 @@ TEITable.prototype.defaultData = {
             cells: [
                 { value: '' },
                 { value: '' },
+                { value: '' },
+                { value: '' },
+                { value: '' },
+                { value: '' }
+            ]
+        },
+        {
+            cells: [
+                { value: '' },
+                { value: '' },
+                { value: '' },
+                { value: '' },
+                { value: '' },
+                { value: '' }
+            ]
+        },
+        {
+            cells: [
+                { value: '' },
+                { value: '' },
+                { value: '' },
+                { value: '' },
+                { value: '' },
                 { value: '' }
             ]
         }
     ]
-}
+};
 
 
 TEITable.prototype.notifyChange = function (data) {
     this.elt.emit('change', Object.assign({ type: 'change', target: this }, data), this.elt);
+};
+
+TEITable.prototype.updateRowIndices = function () {
+    this.rows.forEach((row, i) => {
+        row.idx = i + 1;
+    });
 };
 
 TEITable.prototype.calcCellPos = function () {
@@ -169,6 +212,76 @@ TEITable.prototype.calcCellPos = function () {
         }
     }
 };
+
+
+export function teiDataToExcelData(data, rowOffset, colOffset) {
+    if (!isNaturalNumber(rowOffset)) rowOffset = 0;
+    if (!isNaturalNumber(colOffset)) colOffset = 0;
+    var xlCells = [];
+    var row, i, j, cell, style;
+    var richTextItem;
+    for (i = 0; i < data.rows.length; ++i) {
+        row = data.rows[i];
+        for (j = 0; j < row.cells.length; ++j) {
+            cell = row.cells[j];
+            if (!cell.value) continue;
+            if (!cell.value.trim()) continue;
+            style = cell.style || {};
+            richTextItem = {
+                text: cell.value,
+                ignoreWidth: true,
+                font: {
+                    name: 'Calibri'
+                }
+            };
+
+            if (style.color) {
+                richTextItem.font.color = {
+                    argb: 'ff' + Color.parse(style.color).toString('hex6').substring(1).toLowerCase()
+                };
+            }
+
+            if (style.fontWeight === 'bold') {
+                richTextItem.font.bold = true;
+            }
+
+            if (style.fontStyle === 'italic') {
+                richTextItem.font.italic = true;
+            }
+
+            if (style.fontSize) {
+                richTextItem.font.size = style.fontSize;
+            }
+
+            xlCells.push({
+                row: i + rowOffset,//excel_module use index from 0, not 1
+                col: j + colOffset,
+                value:{
+                    richText: [richTextItem]
+                }
+            });
+        }
+    }
+    var rowCount = data.rows.length;
+    var colCount = 0;
+    if (data.rows.length > 0) {
+        colCount = data.rows[0].cells.length;
+    }
+    return {
+        startRowIdx: rowOffset,
+        startColIdx: colOffset,
+        endRowIdx: rowOffset + rowCount,
+        endColIdx: colOffset + colCount,
+        rowCount: rowCount,
+        colCount: colCount,
+        cells: xlCells
+    };
+}
+
+TEITable.prototype.exportExcelData = function (rowOffset, colOffset) {
+    return teiDataToExcelData(this.data, rowOffset, colOffset);
+};
+
 
 Object.defineProperties(TEITable.prototype, {
     minCol: {
@@ -255,8 +368,10 @@ Object.defineProperties(TEITable.prototype, {
 
             this.rows.forEach(row => row.tr.remove());
             this.rows = value.rows.map(rowData => new TEIRow(this, rowData));
+            this.updateRowIndices();
             this.$body.addChild(this.rows.map(row => row.tr));
             this.calcCellPos();
+            this.headRow.update();
         },
         get: function () {
             return {
@@ -293,9 +408,9 @@ Object.defineProperties(TEITable.prototype, {
                 }).addTo(document.body);
             }
 
-            var textNodes = getTextNodesIn(this.elt).filter(t => !!t.data);
+            var textNodes = getTextNodesIn(this.$body).filter(t => !!t.data);
             var lineHeight = 25.662879943847656;
-            cBound = this.elt.getBoundingClientRect();
+            cBound = this.$body.getBoundingClientRect();
             var y0 = cBound.top + 4 + 3.2348480224609375;
             var textInfos = textNodes.reduce((ac, txt) => {
                 var cell = cellOf(txt);
@@ -388,6 +503,50 @@ Object.defineProperties(TEITable.prototype, {
 /**
  *
  * @param {TEITable} table
+ * @constructor
+ */
+function TEIHeadRow(table) {
+    this.table = table;
+    this.$tr = $('thead tr', this.table.wrapper);
+}
+
+TEIHeadRow.prototype.update = function () {
+    var rowLength = 0;
+    for (var i = 0; i < this.table.rows.length; i++) {
+        rowLength = Math.max(rowLength, this.table.rows[i].length);
+    }
+
+    var cellElt;
+    while (this.$tr.childNodes.length < rowLength + 1) {
+        cellElt = _({
+            tag: 'th',
+            child: {
+                text: this.numberToExcelColumn(this.$tr.childNodes.length - 1)
+            }
+        });
+        this.$tr.addChild(cellElt);
+    }
+
+    while (this.$tr.childNodes.length > rowLength + 1) {
+        this.$tr.lastChild.remove();
+    }
+
+};
+
+
+TEIHeadRow.prototype.numberToExcelColumn = function (index) {
+    var label = '';
+    index = Number(index);
+    while (index >= 0) {
+        label = String.fromCharCode(index % 26 + 65) + label;
+        index = Math.floor(index / 26) - 1;
+    }
+    return label;
+};
+
+/**
+ *
+ * @param {TEITable} table
  * @param  data
  * @constructor
  */
@@ -396,6 +555,13 @@ function TEIRow(table, data) {
     if (!(data.cells instanceof Array)) data.cells = [];
     this.table = table;
     this.tr = _('tr');
+    this.$indexCell = _({
+        tag:'td',
+        class:'as-tei-idx-cell',
+        attr:{
+            'data-idx': 0
+        }
+    }).addTo(this.tr);
     /**
      *
      * @type {TEICell[]}
@@ -407,12 +573,30 @@ function TEIRow(table, data) {
 Object.defineProperty(TEIRow.prototype, 'data', {
     set: function (data) {
         this.cells = data.cells.map(cellData => new TEICell(this, cellData));
-        this.tr.clearChild().addChild(this.cells.map(cell => cell.td));
+        while (this.tr.lastChild !== this.$indexCell && this.tr.lastChild) {
+            this.tr.lastChild.remove();
+        }
+        this.tr.addChild(this.cells.map(cell => cell.td));
     },
     get: function () {
         return {
             cells: this.cells.map(cell => cell.data)
         }
+    }
+});
+
+Object.defineProperty(TEIRow.prototype, 'length', {
+    get: function () {
+        return this.cells.length;
+    }
+});
+
+Object.defineProperty(TEIRow.prototype, 'idx', {
+    get: function () {
+        return parseInt(this.$indexCell.attr('data-idx'));
+    },
+    set: function (idx) {
+        this.$indexCell.attr('data-idx', idx);
     }
 });
 
@@ -797,6 +981,7 @@ TEIFormatTool.prototype.commands = {
                 row.cells.splice(idx, 0, newCell);
 
             });
+            this.table.headRow.update();
             this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
 
         }
@@ -814,6 +999,7 @@ TEIFormatTool.prototype.commands = {
                 row.cells.splice(idx + 1, 0, newCell);
 
             });
+            this.table.headRow.update();
             this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
         }
     },
@@ -838,6 +1024,7 @@ TEIFormatTool.prototype.commands = {
                 }))
             });
             this.table.rows.splice(idx, 0, newRow);
+            this.table.updateRowIndices();
             this.table.$body.addChildBefore(newRow.tr, focusRow.tr);
             this.table.notifyChange({ newRow: newRow });
         }
@@ -857,6 +1044,7 @@ TEIFormatTool.prototype.commands = {
                 }))
             });
             this.table.rows.splice(idx + 1, 0, newRow);
+            this.table.updateRowIndices();
             this.table.$body.addChildAfter(newRow.tr, focusRow.tr);
             this.table.notifyChange({ newRow: newRow });
         }
@@ -880,6 +1068,7 @@ TEIFormatTool.prototype.commands = {
                 cell.td.remove();
                 row.cells.splice(idx, 1);
             });
+            this.table.headRow.update();
             this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
             var cellNext = focusRow.cells[idx - 1] || focusRow.cells[idx];
             if (cellNext) cellNext.focus();
@@ -902,6 +1091,7 @@ TEIFormatTool.prototype.commands = {
             var colIdx = focusRow.cells.indexOf(this.focusCell);
             focusRow.tr.remove();
             this.table.rows.splice(idx, 1);
+            this.table.updateRowIndices();
             this.table.elt.emit('change', { type: 'change', target: this.table }, this.table.elt);
             var nextRow = this.table.rows[idx] || this.table.rows[idx - 1];
             var nexCell;
