@@ -32,19 +32,20 @@ DSMPropsHandlers.isFocus = {
 
 DSMPropsHandlers.items = {
     set: function (items) {
-        items = items ||[];
-        var textWidth =  TextMeasure.measureWidth('____', TextMeasure.FONT_ROBOTO, 14);
-        var visit = (item, pWidth, d)=>{
+        items = items || [];
+        var textWidth = TextMeasure.measureWidth('____', TextMeasure.FONT_ROBOTO, 14);
+        var visit = (item, pWidth, d) => {
             if (d === 2) return;
             var text = item.text + '';
-            var tWidth = TextMeasure.measureWidth(text, TextMeasure.FONT_ROBOTO, 14)+ pWidth;
+            if (d === 0) text += ', ';
+            var tWidth = TextMeasure.measureWidth(text, TextMeasure.FONT_ROBOTO, 14) + pWidth;
             if (tWidth > textWidth) textWidth = tWidth;
             if (item.items && item.items.length) {
-                item.items.forEach(it=> visit(it, pWidth, d+1))
+                item.items.forEach(it => visit(it, tWidth, d + 1))
             }
         }
-        items.forEach(it=> visit(it, 0,0));
-        this.addStyle('--estimate-text-width', (textWidth/ 14) + 'em');
+        items.forEach(it => visit(it, 0, 0));
+        this.addStyle('--estimate-text-width', (textWidth / 14) + 'em');
 
         this.$box.items = items;
         if ('pendingValue' in this) {
@@ -95,7 +96,7 @@ DSMPropsHandlers.selectedItem = {
      * @return {*}
      */
     get: function () {
-       return this.seletedItems;
+        return this.seletedItems;
     }
 };
 
@@ -104,7 +105,7 @@ DSMPropsHandlers.format = {
     set: function (value) {
         value = value || '$0, $1';
         var text = value.replace('$0', '').replace('$1', '');
-        this.addStyle('--estimate-format-width', (TextMeasure.measureWidth(text, TextMeasure.FONT_ROBOTO, 14) /14) + 'em');
+        this.addStyle('--estimate-format-width', (TextMeasure.measureWidth(text, TextMeasure.FONT_ROBOTO, 14) / 14) + 'em');
         this.attr('data-format', value);
         this.updateText();
     },
