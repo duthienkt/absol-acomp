@@ -152,7 +152,11 @@
 
 .as-solid-color-picker.as-nullable .as-solid-color-picker-none-ctn{
     display: inline-block;
+}
 
+
+.as-solid-color-picker:not(.as-nullable) .as-solid-color-picker-none-ctn{
+    display: none;
 }
 
 .as-solid-color-picker-special-ctn {
