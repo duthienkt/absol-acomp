@@ -161,13 +161,18 @@
 }
 
 
-body .cke_contents_ltr h1,
-body .cke_contents_ltr h2,
-body .cke_contents_ltr h3,
+
 body .cke_contents_ltr h4,
 body .cke_contents_ltr h5,
 body .cke_contents_ltr h6 {
     font-weight: normal;
+    line-height: 1.2;
+}
+
+body .cke_contents_ltr h1,
+body .cke_contents_ltr h2,
+body .cke_contents_ltr h3 {
+    font-weight: bold;/*May 22, 2026, GSAV Thien*/
     line-height: 1.2;
 }
 
