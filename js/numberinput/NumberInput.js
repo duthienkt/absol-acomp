@@ -37,11 +37,12 @@ function NumberInput() {
     // .on('keyup', this.eventHandler.keyup)
     // .on('paste', this.eventHandler.paste)
     // .on('change', this.eventHandler.change);
-    this.$input.value = '0';
+    this.$input.value = '';
 
     this.$input.on('blur', () => {
         this.emit('blur', { target: this, type: 'blur' }, this);//todo: check
     });
+    this.$text = $('.absol-number-input-text-formated', this);
 
     this._prevValue = 0;//to know whenever the value changed
     this._step = 1;
@@ -51,6 +52,8 @@ function NumberInput() {
         .on('mousedown', this.eventHandler.mouseDownBtn.bind(this, 1));
     this.$downBtn = $('.absol-number-input-button-down-container button', this)
         .on('mousedown', this.eventHandler.mouseDownBtn.bind(this, -1));
+
+    this.$textCtn = $('.absol-number-input-text-container', this);
 
     this.textCtrl = new NITextController(this);
 
@@ -65,6 +68,7 @@ function NumberInput() {
 
     this.valueCtrl = new NIValueController(this);
     this.dragCtrl = new NIDragController(this);
+    this.textCtrl.flushValueToText();
     AbstractInput.call(this);
 
     /****
@@ -159,7 +163,11 @@ NumberInput.render = function () {
         child: [
             {
                 class: 'absol-number-input-text-container',
-                child: 'input[type="text"]'
+                child: [{
+                    class: 'absol-number-input-text-formated',
+                    child: { tag: 'span',
+                    child:{text:''}}
+                }, 'input[type="text"]']
             },
             {
                 class: 'absol-number-input-button-up-container',
@@ -182,7 +190,7 @@ NumberInput.render = function () {
 
 NumberInput.prototype.styleHandlers.textAlign = {
     set: function (value) {
-        this.$input.addStyle('textAlign', value);
+        this.$textCtn.addStyle('textAlign', value);
     }
 };
 
@@ -475,7 +483,7 @@ ACore.install('NumberInput'.toLowerCase(), NumberInput);
 export default NumberInput;
 
 /**
- *
+ * Only handle data, debug, not view
  * @param {NumberInput} elt
  * @constructor
  */
@@ -543,6 +551,10 @@ NIValueController.prototype.formatNumber = function (value, format) {
         }
     }
     else {
+        opt.minimumFractionDigits = opt.minimumFractionDigits || 0;
+        if (typeof opt.maximumFractionDigits !== 'number') {
+            opt.maximumFractionDigits = 20;
+        }
         formatter = new Intl.NumberFormat(this._format.locales || 'en-US', opt);
         text = formatter.format(value);
     }
@@ -677,20 +689,37 @@ Object.defineProperty(NIValueController.prototype, 'floatFixed', {
 
 Object.defineProperty(NIValueController.prototype, 'formatedValueText', {
     get: function () {
-        return this.formatNumber(this.value, this.format);
+        var value = this.value;
+        if (!isRealNumber(value)) return '';
+        return this.formatNumber(value, this.format);
     }
 });
 
 
 Object.defineProperty(NIValueController.prototype, 'formatedOriginValueText', {
     get: function () {
+        var value = this.value;
+        if (!isRealNumber(value)) return '';
         var originFormat = Object.assign({}, this.format);
         delete originFormat.maximumFractionDigits;
         delete originFormat.minimumFractionDigits;
         delete originFormat.pow10;
-        return this.formatNumber(this.value, originFormat);
+        return this.formatNumber(value, originFormat);
     }
 });
+
+
+
+Object.defineProperty(NIValueController.prototype, 'originValueText', {
+    get: function () {
+       var value = this.value;
+        if (!isRealNumber(value)) return '';
+       return value + '';
+    }
+});
+
+
+
 
 
 /**

@@ -48,6 +48,7 @@ NITextController.prototype.flushTextToValue = function () {
     var thousandsSeparator = this.elt.thousandsSeparator || '';
     var decimalSeparator = this.elt.decimalSeparator;
     var text = this.$input.value;
+
     text = text.replace(/[^0-9\-+.,]/g, '');
     var parts = text.split(decimalSeparator);
     var thousands = parts[0].split(thousandsSeparator).join('').trim();
@@ -59,14 +60,15 @@ NITextController.prototype.flushTextToValue = function () {
     else {
         value = parseInt(thousands, 10);
     }
-
     this.elt.valueCtrl.value = parseFloat(value);
 };
 
 
 NITextController.prototype.flushValueToText = function () {
-    var text = this.elt.valueCtrl.formatedValueText;
+    var text = this.elt.valueCtrl.originValueText;
     this.$input.value = text;
+    text = this.elt.valueCtrl.formatedValueText;
+    this.elt.$text.firstChild.firstChild.data = text;
     this.estimateWidthBy(text);
 };
 
@@ -103,293 +105,15 @@ NITextController.prototype.reformat = function () {
 
 
 NITextController.prototype.onBlur = function () {
+    clearTimeout(this.blurClazzTO );
+    this.blurClazzTO =  setTimeout(()=>{
+        this.elt.removeClass('as-focus');
+    }, 100);
     this.prevBlurTime = Date.now();
     this.flushValueToText();
     this.elt.notifyChanged({ by: 'blur' });
 
 }
-
-/***
- * @deprecated
- * @param {KeyboardEvent|ClipboardEvent|{}} event
- * @param {boolean=} event
- */
-NITextController.prototype.onKeyDownOld = function (event, dontInsert) {
-    var key = event.type === 'keydown' ? keyboardEventToKeyBindingIdent(event) : '';
-    if ((key.length === 1 && !key.match(/[0-9.,\-]/)) || key.match(/^shift-.$/)) {
-        event.preventDefault();
-        return;
-    }
-    var thousandsSeparator = this.elt.thousandsSeparator;
-    var decimalSeparator = this.elt.decimalSeparator;
-
-    var value = this.$input.value;
-    var sStart = this.$input.selectionStart;
-    var sEnd = this.$input.selectionEnd;
-    var sDir = this.$input.selectionDirection;
-    var onKeys = {};
-
-
-    onKeys.unidentified = () => {
-        var oldText = this.$input.value;
-        setTimeout(() => {
-            var newText = this.$input.value;
-            if (oldText === newText) return;
-            var key = newText[sStart];
-            if (!key) return;//todo
-            var fakeEvent = {
-                type: 'keydown',
-                preventDefault: noop,
-                key: key
-            }
-            if (key.match(/^[0-9.]$/)) {
-                this.onKeyDown(fakeEvent, true);
-            }
-            else {
-                this.$input.value = oldText;
-                this.$input.setSelectionRange(sStart, sStart);
-                this.onKeyDown(fakeEvent);
-            }
-        }, 10);
-    };
-
-
-    onKeys.process = () => {
-        setTimeout(() => {
-            this.flushTextToValue();
-        }, 10);
-
-    }
-
-    onKeys.paste = () => {
-        var clipboardData = event.clipboardData || window.clipboardData;
-        var pastedData = clipboardData.getData('Text');
-        var hasSeparator = value.indexOf(decimalSeparator) >= 0;
-        pastedData = pastedData.split('').filter(c => {
-            if (c.match(/[0-9]/)) return true;
-            if (!hasSeparator && c === hasSeparator) {
-                hasSeparator = true;
-                return true;
-            }
-        }).join('');
-        if (this.elt.readOnly) return;
-        if (!dontInsert) {
-            this.$input.value = value.substring(0, sStart) + pastedData + value.substring(sEnd);
-            this.$input.setSelectionRange(sStart + pastedData.length, sStart + pastedData.length);
-        }
-        this.reformat();
-        this.flushTextToValue();
-    };
-
-    onKeys.arrowleft = () => {
-        if (sStart === sEnd) {
-            if (value[sStart - 2] === thousandsSeparator) {
-                this.$input.setSelectionRange(sStart - 2, sStart - 2);
-            }
-            else if (sStart > 0) {
-                this.$input.setSelectionRange(sStart - 1, sStart - 1);
-            }
-        }
-        else {
-            this.$input.setSelectionRange(sStart, sStart);
-        }
-    };
-
-    onKeys['shift-arrowleft'] = () => {
-        var newSStart;
-        var newSEnd;
-        if (sDir === 'backward') {
-            newSStart = sEnd;
-            newSEnd = sStart - 1;
-
-        }
-        else {
-            newSStart = sStart;
-            newSEnd = sEnd - 1;
-        }
-        if (value[newSEnd - 1] === thousandsSeparator) newSEnd--;
-        newSEnd = Math.max(0, newSEnd);
-        if (newSStart <= newSEnd) {
-            this.$input.setSelectionRange(newSStart, newSEnd, "forward");
-        }
-        else {
-            this.$input.setSelectionRange(newSEnd, newSStart, "backward");
-        }
-    };
-
-
-    onKeys.arrowright = () => {
-        if (sStart === sEnd) {
-            if (value[sStart] === thousandsSeparator) {
-                this.$input.setSelectionRange(sStart + 2, sStart + 2);
-            }
-            else if (sStart < value.length) {
-                this.$input.setSelectionRange(sStart + 1, sStart + 1);
-            }
-        }
-        else {
-            this.$input.setSelectionRange(sStart, sStart);
-        }
-    };
-
-
-    onKeys['shift-arrowright'] = () => {
-        var newSStart;
-        var newSEnd;
-        if (sDir === 'backward') {
-            newSStart = sEnd;
-            newSEnd = sStart + 1;
-        }
-        else {
-            newSStart = sStart;
-            newSEnd = sEnd + 1;
-        }
-        if (value[newSEnd - 1] === thousandsSeparator) newSEnd++;
-        newSEnd = Math.min(value.length, newSEnd);
-
-        if (newSStart <= newSEnd) {
-            this.$input.setSelectionRange(newSStart, newSEnd, "forward");
-        }
-        else {
-            this.$input.setSelectionRange(newSEnd, newSStart, "backward");
-        }
-    };
-
-
-    onKeys.number = () => {
-        if (this.elt.readOnly) return;
-        if (!dontInsert) {
-            this.$input.value = value.substring(0, sStart) + key + value.substring(sEnd);
-            this.$input.setSelectionRange(sStart + 1, sStart + 1);
-        }
-        this.reformat();
-        this.flushTextToValue();
-    };
-    onKeys['-'] = () => {
-        if (this.elt.readOnly) return;
-        if (value.indexOf('-') >= 0 || sStart > 0) return;
-        this.$input.value = '-' + value.substring(sEnd);
-        this.$input.setSelectionRange(1, 1);
-        this.reformat();
-        this.flushTextToValue();
-    };
-
-    onKeys.backspace = () => {
-        if (this.elt.readOnly) return;
-        var delStart, delEnd;
-        if (sStart === sEnd) {
-            if (sStart > 0) {
-                delStart = sStart - 1;
-                delEnd = sStart;
-            }
-        }
-        else {
-            delStart = sStart;
-            delEnd = sEnd;
-
-        }
-        if (delStart === undefined || delEnd === undefined) return;
-        this.$input.value = value.substring(0, delStart) + value.substring(delEnd);
-        this.$input.setSelectionRange(delStart, delStart);
-        this.reformat();
-        this.flushTextToValue();
-    };
-
-    onKeys.enter = () => {
-        if (this.elt.readOnly) return;
-        this.flushValueToText();
-        this.$input.setSelectionRange(this.$input.value.length, this.$input.value.length);
-        this.elt.notifyChanged({ by: 'enter' });
-    };
-
-
-    onKeys.delete = () => {
-        if (this.elt.readOnly) return;
-        var delStart, delEnd;
-
-        if (sStart === sEnd) {
-            if (sStart < value.length) {
-                delStart = sStart;
-                delEnd = sStart + 1;
-                if (value[delStart] === thousandsSeparator)
-                    delEnd++;
-            }
-        }
-        else {
-            delStart = sStart;
-            delEnd = sEnd;
-        }
-
-        if (isNaturalNumber(delStart) && isNaturalNumber(delEnd)) {
-            this.$input.value = value.substring(0, delStart) + value.substring(delEnd);
-            this.$input.setSelectionRange(delStart, delStart);
-            this.reformat();
-            this.flushTextToValue();
-        }
-    };
-
-    onKeys.decimalSeparator = () => {
-        if (this.elt.readOnly) return;
-        var idx = value.indexOf(decimalSeparator);
-        if (idx >= 0) {
-            if (idx < sStart) {
-                this.$input.value = value.substring(0, sStart).replace(decimalSeparator, '')
-                    + decimalSeparator + value.substring(sEnd);
-                this.$input.setSelectionRange(sStart, sStart);
-            }
-            else if (idx < sEnd) {
-                this.$input.value = value.substring(0, sStart)
-                    + decimalSeparator + value.substring(sEnd);
-                this.$input.setSelectionRange(sStart + 1, sStart + 1);
-            }
-            else {
-                this.$input.value = value.substring(0, sStart)
-                    + decimalSeparator + value.substring(sEnd).replace(decimalSeparator, '');
-                this.$input.setSelectionRange(sStart + 1, sStart + 1);
-            }
-        }
-        else {
-            this.$input.value = value.substring(0, sStart) + decimalSeparator + value.substring(sEnd);
-            this.$input.setSelectionRange(sStart + 1, sStart + 1);
-        }
-        this.reformat();
-        this.flushTextToValue();
-    };
-
-    if (key === 'arrowup') {
-        if (sStart === 0 && sEnd === 0) {
-            this.elt.nextStep();
-            event.preventDefault();
-            this.$input.setSelectionRange(0, 0);
-        }
-    }
-    else if (key === 'arrowdown') {
-        if (sStart === value.length && sEnd === value.length) {
-            this.elt.prevStep();
-            event.preventDefault();
-            this.$input.setSelectionRange(this.$input.value.length, this.$input.value.length);
-        }
-    }
-    else if (key === 'ctrl-x') {
-        onKeys.delete();
-    }
-    else if (onKeys[event.type]) {
-        event.preventDefault();
-        onKeys[event.type]();
-    }
-    else if (onKeys[key]) {
-        event.preventDefault();
-        onKeys[key]();
-    }
-    else if (key.match(/^[0-9.]$/)) {
-        event.preventDefault();
-        onKeys.number();
-    }
-    else if (key === decimalSeparator) {
-        event.preventDefault();
-        onKeys.decimalSeparator();
-    }
-};
 
 
 /***
@@ -424,8 +148,10 @@ NITextController.prototype.onKeyDown = function (event) {
  */
 NITextController.prototype.onFocus = function (event) {
     var focusTime = Date.now();
+    this.elt.addClass('as-focus');
+    clearTimeout(this.blurClazzTO );
     setTimeout(() => {
-        var fOVT = this.elt.valueCtrl.formatedOriginValueText;
+        var fOVT = this.elt.valueCtrl.originValueText;
         var txt = this.$input.value;
         var selectionStart = this.$input.selectionStart;
         var selectionEnd = this.$input.selectionEnd;
