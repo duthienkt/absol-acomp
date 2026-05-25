@@ -46,12 +46,46 @@
     width: calc(var(--text-width) + 2.2em);
 }
 
+.absol-number-input:not(.as-focus) input,
+.absol-number-input.as-focus .absol-number-input-text-formated {
+    opacity: 0;
+    color: transparent;
+}
+
+
+.absol-number-input.as-focus input,
+.absol-number-input:not(.as-focus) .absol-number-input-text-formated {
+    opacity: 1;
+}
+
 .absol-number-input-text-container {
     right: 0;
     left: 0em;
     top: 0;
     bottom: 0;
     position: absolute;
+    text-align: right;
+    /*display: flex;*/
+    /*align-content: center;*/
+}
+
+.absol-number-input-text-formated {
+    text-align: inherit;
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-items: stretch;
+}
+
+.absol-number-input-text-formated >span{
+    display: block;
+    flex-grow: 1;
+    padding: 0 0.35em;
 }
 
 /*.absol-number-input.as-read-only .absol-number-input-button-up-container,*/
@@ -70,6 +104,11 @@
     /*text-align: left;*/
     padding-left: 0;
     background-color: transparent;
+    padding-right: 0;
+}
+
+.absol-number-input.as-read-only.as-border-none .absol-number-input-text-formated span{
+    padding-left: 0;
     padding-right: 0;
 }
 
@@ -117,6 +156,10 @@
     display: none;
 }
 
+.as-printer-content .absol-number-input input[type="text"] {
+    display: none;
+}
+
 .absol-number-input-button-up-container > button:active,
 .absol-number-input-button-down-container > button:active {
     color: black;
@@ -133,7 +176,7 @@
     outline: none;
     width: 100%;
     height: 100%;
-    text-align: right;
+    text-align: inherit;
     padding: 0 0.35em;
     box-sizing: border-box;
     font: inherit;
