@@ -27,8 +27,9 @@ function ColorPickerButton() {
                 `url("data:image/svg+xml;base64,${base64EncodeUnicode(red_cross_tpl.replace(/\$width/g, '33').replace(/\$height/g, '18'))}")`)
             .commit();
     }
-    this.mode = 'OBJECT';
     this.$innerValue = $('.as-color-picker-button-inner', this);
+
+    this.mode = 'OBJECT';
     this.prepare();
     this.on('click', this.eventHandler.click);
     AbstractInput.call(this);
@@ -195,7 +196,7 @@ ColorPickerButton.render = function () {
 ColorPickerButton.property.value = {
     set: function (value) {
         this._value = value;
-        this.$innerValue.value = value || null;
+        this.$innerValue.value = this.value;
     },
     get: function () {
         var nullable = this.nullable;
@@ -218,6 +219,8 @@ ColorPickerButton.property.mode = {
         if (this.supportedModes.indexOf(value) < 0) value = 'OBJECT';
         this.attr('data-mode', value);
         this._mode = value;
+        this.$innerValue.value = this.value;
+
     },
     get: function () {
         return this._mode;
@@ -240,6 +243,7 @@ ColorPickerButton.property.nullable = {
         else {
             this.removeClass('as-null-nullable');
         }
+        this.$innerValue.value = this.value;
     },
     get: function () {
         return this.hasClass('as-nullable');
