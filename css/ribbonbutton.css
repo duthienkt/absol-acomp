@@ -188,6 +188,10 @@ svg.as-ribbon-button-icon {
     font-size: 20px;
 }
 
+.as-ribbon-button-content .as-ribbon-button-icon {
+     pointer-events: none;/*fix lost click event when icon change*/
+}
+
 .as-ribbon-button .as-ribbon-button-content {
     display: flex;
     height: 100%;
