@@ -60,7 +60,7 @@ Object.defineProperty(DTTable.prototype, 'elt', {
                 elt: this._elt,
                 on:{
                     resize: ()=>{
-                        this.wrapper.requestUpdateSize();
+                        if (!this.wrapper.resized) this.wrapper.requestUpdateSize();
                     }
                 }
             });

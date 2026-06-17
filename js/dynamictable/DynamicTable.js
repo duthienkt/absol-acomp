@@ -506,10 +506,15 @@ DynamicTable.prototype.addClass = function (className) {
 
 DynamicTable.prototype.requestUpdateSize = function () {
     if (!this.isDescendantOf(document.body)) return;
+    this.resized = true;
+    clearTimeout(this.resizedTO);
     var bound = this.$sizeDetector.getBoundingClientRect();
     if (bound.width <= 0 && bound.height <= 0 && !bound.top && !bound.left) return;
     this.layoutCtrl.onResize();
     this.floatScrollbarCtrl.onResize();
+    this.resizedTO = window.setTimeout( ()=> {
+        this.resized = false;//anti flicker
+    }, 120);
 };
 
 DynamicTable.prototype.revokeResource = function () {
