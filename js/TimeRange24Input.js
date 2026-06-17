@@ -29,6 +29,7 @@ function TimeRange24Input() {
     this.strictValue = false;//accept second as default
     this.rawDayOffset = null;
     this.rawDuration = null;
+    this.$dataText = $('.as-time-range-24-input-data-text', this);
     /***
      *
      * @type {TimeInput}
@@ -90,7 +91,12 @@ TimeRange24Input.render = function () {
                 format: 'HH:mm'
             }
         },
-            Time24Input.tag
+            Time24Input.tag,
+            {
+                tag:'span',
+                class:'as-time-range-24-input-data-text',
+                child:{text:""}
+            }
         ]
     });
 };
@@ -156,7 +162,7 @@ TimeRange24Input.prototype._updateTextData = function () {
     if (!isRealNumber(dayOffset) && !isRealNumber(duration)) {
         text = '';
     }
-    this.attr('data-text', text);
+    this.$dataText.firstChild.data = text ||'';
 };
 
 

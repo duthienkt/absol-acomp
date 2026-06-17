@@ -17,17 +17,14 @@
     display: none;
 }
 
-.as-time-range-24-input.as-read-only.as-border-none::after{
-    content: attr(data-text);
+
+.as-time-range-24-input-data-text {
+    display: none;
     vertical-align: middle;
-    display: inline-block;
 }
 
-.as-time-range-24-input.as-read-only.as-border-none::before{
-    content: "";
-    vertical-align: middle;
+.as-time-range-24-input.as-read-only.as-border-none .as-time-range-24-input-data-text{
     display: inline-block;
-    height: calc(2em + 2px);
 }
 
 
