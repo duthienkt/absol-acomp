@@ -48,6 +48,7 @@ function TableOfTextInput() {
     this.teiTable.elt.on('change', event => {
         this.emit('change', event, this);//throw event out
     });
+    this.focusCtrl = new TEIFocusController(this);
     /**
      * @name data
      * @type {TEICell[]}
@@ -92,9 +93,9 @@ TableOfTextInput.render = function () {
                         {
                             tag: 'thead',
                             child: [{
-                                tag: 'tr', child:{
-                                    tag:'th',
-                                    child:{text:'◢'}
+                                tag: 'tr', child: {
+                                    tag: 'th',
+                                    child: { text: '◢' }
                                 }
                             }]
                         },
@@ -111,13 +112,49 @@ TableOfTextInput.render = function () {
 };
 
 
-TableOfTextInput.prototype.exportExcelData = function (){
+TableOfTextInput.prototype.exportExcelData = function () {
     return this.teiTable.exportExcelData(...arguments);
 }
 
 export default TableOfTextInput;
 
 ACore.install(TableOfTextInput);
+
+
+function TEIFocusController(elt) {
+    this.elt = elt;
+    this.ev_clickOut = this.ev_clickOut.bind(this);
+    this.ev_click = this.ev_click.bind(this);
+    this.to = -1;
+    this.elt.on('click', this.ev_click);
+}
+
+TEIFocusController.prototype.notifyFocus = function () {
+    if (this.elt.hasClass('as-focus')) return;
+    this.elt.addClass('as-focus');
+    clearTimeout(this.to);
+    this.to = setTimeout(() => {
+        document.addEventListener('click', this.ev_clickOut);
+    });
+};
+
+TEIFocusController.prototype.notifyBlur = function () {
+    if (!this.elt.hasClass('as-focus')) return;
+    this.elt.removeClass('as-focus');
+    clearTimeout(this.to);
+    document.removeEventListener('click', this.ev_clickOut);
+};
+
+
+TEIFocusController.prototype.ev_clickOut = function (event) {
+    if (!hitElement(this.elt, event)) {
+        this.notifyBlur();
+    }
+};
+
+TEIFocusController.prototype.ev_click = function () {
+    this.notifyFocus();
+}
 
 
 /**
@@ -218,6 +255,7 @@ export function teiDataToExcelData(data, rowOffset, colOffset) {
     if (!isNaturalNumber(rowOffset)) rowOffset = 0;
     if (!isNaturalNumber(colOffset)) colOffset = 0;
     var xlCells = [];
+    var xlCell;
     var row, i, j, cell, style;
     var richTextItem;
     for (i = 0; i < data.rows.length; ++i) {
@@ -252,14 +290,18 @@ export function teiDataToExcelData(data, rowOffset, colOffset) {
             if (style.fontSize) {
                 richTextItem.font.size = style.fontSize;
             }
-
-            xlCells.push({
+            xlCell = {
                 row: i + rowOffset,//excel_module use index from 0, not 1
                 col: j + colOffset,
-                value:{
+                value: {
                     richText: [richTextItem]
                 }
-            });
+            };
+            if (style.textAlign && style.textAlign !== 'left') {
+                xlCell.horizontal = style.textAlign;
+            }
+
+            xlCells.push(xlCell);
         }
     }
     var rowCount = data.rows.length;
@@ -556,9 +598,9 @@ function TEIRow(table, data) {
     this.table = table;
     this.tr = _('tr');
     this.$indexCell = _({
-        tag:'td',
-        class:'as-tei-idx-cell',
-        attr:{
+        tag: 'td',
+        class: 'as-tei-idx-cell',
+        attr: {
             'data-idx': 0
         }
     }).addTo(this.tr);
@@ -1116,7 +1158,9 @@ TEIFormatTool.prototype.onFocus = function (cell) {
             document.addEventListener('click', this.ev_clickOut);
         }, 30);
     }
-
+    if (this.table.wrapper && this.table.wrapper.focusCtrl) {
+        this.table.wrapper.focusCtrl.notifyFocus();
+    }
 
     this.focusCell = cell;
     this.focusCell.td.addClass('as-focus');
@@ -1151,16 +1195,12 @@ TEIFormatTool.prototype.updateAvailableCommands = function () {
 
 
 TEIFormatTool.prototype.onBlur = function (cell) {
-
 };
 
 
 TEIFormatTool.prototype.ev_clickOut = function (event) {
     if (hitElement(this.table.wrapper, event)) return;
-    if (this.focusCell) {
-        this.focusCell.td.removeClass('as-focus');
-        this.focusCell = null;
-    }
+
     document.removeEventListener('click', this.ev_clickOut);
 };
 
@@ -1175,6 +1215,7 @@ TEIFormatTool.prototype.ev_fontSizeChange = function () {
 };
 
 TEIFormatTool.prototype.ev_clickBold = function () {
+    if (!this.focusCell) return;
     if (this.$bold.hasClass('as-checked')) {
         this.$bold.removeClass('as-checked');
         this.focusCell.style.fontWeight = 'normal';
