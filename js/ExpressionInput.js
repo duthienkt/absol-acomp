@@ -9,7 +9,7 @@ import { findMaxZIndex, revokeResource, vScrollIntoView, getNonOverlappingBounds
 import { getScreenSize, isDomNode } from "absol/src/HTML5/Dom";
 import SCGrammar from "absol/src/SCLang/SCGrammar";
 import DPParser from "absol/src/Pharse/DPParser";
-import { parsedNodeToAST, parsedNodeToASTChain } from "absol/src/Pharse/DPParseInstance";
+import DPParseInstance, { parsedNodeToAST, parsedNodeToASTChain } from "absol/src/Pharse/DPParseInstance";
 import Follower from "./Follower";
 import { hitElement, isMouseRight } from "absol/src/HTML5/EventEmitter";
 import AElement from "absol/src/HTML5/AElement";
@@ -43,7 +43,7 @@ function ExpressionInput() {
 
     this.autoCompleteCtrl = new EIAutoCompleteController(this);
     this.cmdTool = new EICommandTool(this);
-
+    this.validator = new EICallValidator(this);
     this._icon = null;
     AbstractInput.call(this);
 
@@ -178,7 +178,7 @@ ExpressionInput.property.value = {
     },
     set: function (value) {
         this.engine.value = value;
-        // this.undoMgn.reset();
+        this.engine.highlightError();
     }
 };
 
@@ -580,6 +580,7 @@ EIEngine.prototype.highlightError = function () {
         tokenErrorIdx = it.error.tokenIdx;
     }
     else {
+        elt.attr('title', null);
         elt.removeClass('as-error');
     }
 
@@ -594,6 +595,9 @@ EIEngine.prototype.highlightError = function () {
             }
             notSkipCount++;
         }
+    }
+    if (it.ast) {
+        this.elt.validator.validate();//only validate when no syntax error
     }
 };
 
@@ -686,7 +690,10 @@ EIEngine.prototype.makeTokenElt = function (token) {
         attr: {
             'data-type': token.type
         },
-        child: { text: token.originalContent || token.content || '' }
+        child: { text: token.originalContent || token.content || '' },
+        props: {
+            tokenData: token
+        }
     });
 };
 
@@ -2034,7 +2041,8 @@ rules.push({
     toAST: function (parsedNode) {
         return {
             type: 'Identifier',
-            name: parsedNode.children[0].content
+            name: parsedNode.children[0].content,
+            nd: parsedNode
         }
     }
 });
@@ -2086,7 +2094,8 @@ rules.push({
         return {
             type: 'CallExpression',
             arguments: parsedNode.children[2].rule.toASTChain(parsedNode.children[2]),
-            callee: parsedNodeToAST(parsedNode.children[0])
+            callee: parsedNodeToAST(parsedNode.children[0]),
+            nd: parsedNode
         }
     }
 });
@@ -2099,7 +2108,8 @@ rules.push({
         return {
             type: 'CallExpression',
             arguments: [],
-            callee: parsedNodeToAST(parsedNode.children[0])
+            callee: parsedNodeToAST(parsedNode.children[0]),
+            nd: parsedNode
         };
     }
 });
@@ -2229,7 +2239,7 @@ rules.push({
     }
 });
 
-['+', '-', '*', '/', /*'%',*/ '&&', 'and', '||', 'or', 'xor', "=", '==', '===', '!=','<>', '<', '>', '>=', '<='].forEach(function (op) {
+['+', '-', '*', '/', /*'%',*/ '&&', 'and', '||', 'or', 'xor', "=", '==', '===', '!=', '<>', '<', '>', '>=', '<='].forEach(function (op) {
     rules.push({
         target: 'bin_op',
         elements: ['_' + op],
@@ -2322,14 +2332,6 @@ rules.push({
     }
 });
 
-
-// rules.push({
-//     target: 'exp',
-//     elements: ['_(', 'exp', '_)'],
-//     toAST: function (parsedNode) {
-//         return parsedNodeToAST(parsedNode.children[1]);
-//     }
-// });
 
 ['+', '-', '!'].forEach(function (op) {
     ['number', 'bracket_group', 'ident', 'function_call', 'mem_exp', 'unary_exp'].forEach(function (arg) {
@@ -2663,7 +2665,6 @@ EITokenizer.prototype.tokenize = function () {
     return res;
 };
 
-
 /**
  * @extends DPParser
  * @param opt
@@ -2683,3 +2684,148 @@ mixClass(EIParserClass, DPParser);
 
 
 var EIParser = new EIParserClass(EIGrammar);
+
+
+/**
+ *
+ * @param {ExpressionInput} elt
+ * @constructor
+ */
+function EICallValidator(elt) {
+    this.elt = elt;
+    this.error = null;
+}
+
+/**
+ * @callback VisitorFunc
+ * @this {EICallValidator}
+ * @param {Object} nd
+ * @returns {*}
+ */
+
+EICallValidator.prototype.viewError = function () {
+    var error = this.error;
+    if (!this.error) return;
+    var start = error.trackingTokens.reduce((start, token) => Math.min(start, token.start), Infinity);
+    var end = error.trackingTokens.reduce((end, token) => Math.max(end, token.end), -Infinity);
+    var errorTokens = this.parsed.tokens.slice(start, end);
+    start = errorTokens.reduce((ac, token) => Math.min(ac, token.index), Infinity);
+    end = errorTokens.reduce((ac, token) => Math.max(ac, token.index + 1), Infinity);
+    var subTokenChain = this.tokenChain.slice(start, end);
+    if (subTokenChain.length > 0) {
+        this.elt.addClass('as-warning')
+            .attr('title', error.message);
+        subTokenChain[0].addClass('as-warning-start');
+        subTokenChain[subTokenChain.length - 1].addClass('as-warning-end');
+    }
+
+}
+
+EICallValidator.prototype.validate = function () {
+    var tokenChain = this.elt.engine.getTokenChain();
+    var tokens = tokenChain.map((tke, i) => Object.assign(tke.tokenData, { index: i }));
+    if (tokens.length <= 0) return;
+    var it = EIParser.parse(tokens, 'exp_excel');
+    this.parsed = it;
+    if (!it.ast) return;//verify again
+    this.tokenChain = tokenChain;
+    this.error = null;
+    this.accept(it.ast);
+    this.viewError();
+};
+
+
+EICallValidator.prototype.getTrackingTokensOfAst = function (ast, ac) {
+    ac = ac || [];
+    var key, keys, value;
+    var nd;
+    if (ast && ast.nd) {
+        nd = ast.nd;
+        ac.push(nd);
+        return ac;
+    }
+    keys = Object.keys(ast);
+    for (var i = 0; i < keys.length; i++) {
+        key = keys[i];
+        value = ast[key];
+        if (value && (typeof value === 'object') && (typeof value.type === "string")) {
+            this.getTrackingTokensOfAst(value, ac);
+        }
+    }
+    return ac;
+};
+
+EICallValidator.prototype.validateFunctionWidthArgs = function (fName, argCount, ast) {
+    if (fName === 'if' && argCount !== 3) {
+        this.error = {
+            trackingTokens: this.getTrackingTokensOfAst(ast),
+            message: "Function if expects 3 arguments"
+        };
+        return false;
+    }  //test
+    return true;
+};
+
+/**
+ *
+ * @type {Object<string, VisitorFunc>}
+ */
+EICallValidator.prototype.visitors = {};
+
+/** @this {EICallValidator} */
+EICallValidator.prototype.visitors.CallExpression = function (nd) {
+    var callee = this.accept(nd.callee);
+    var argumentLength = nd.arguments.length;
+    this.validateFunctionWidthArgs(callee, argumentLength, nd);
+    var argumentTexts;
+    if (!this.error)
+        argumentTexts = nd.arguments.map(c => this.accept(c));
+    else argumentTexts = [];//skip inner
+    return `${callee}(${argumentTexts.join(',')})`;
+    // var functionName =
+};
+
+/** @this {EICallValidator}*/
+EICallValidator.prototype.visitors.Identifier = function (nd) {
+    return nd.name;
+};
+
+/** @this {EICallValidator} */
+EICallValidator.prototype.visitors.BinaryExpression = function (nd) {
+    return (this.accept(nd.left) || '')
+        + ((nd.operator && nd.operator.content) || '')
+        + (this.accept(nd.right) || '');
+};
+
+
+/** @this {EICallValidator} */
+EICallValidator.prototype.visitors['*'] = function (nd) {
+    var keys = Object.keys(nd);
+    var value;
+    var tokenRange = {};
+    var key;
+    var res = '';
+    for (var i = 0; i < keys.length; i++) {
+        key = keys[i];
+        if (key === 'nd') continue;
+        value = nd[key];
+        if (typeof value === 'object' && value !== null && 'type' in value) {
+            res += this.accept(value) || '';
+        }
+        else if (key === 'content' && (typeof value === 'string')) {
+            res += value;
+        }
+        else if (key === 'value') {
+            res += JSON.stringify(value);
+        }
+        if (this.canceled) break;
+    }
+    return res;
+};
+
+
+EICallValidator.prototype.accept = function (nd) {
+    var type = nd.type;
+    var handler = this.visitors[type] || this.visitors['*'];
+    return handler.call(this, nd);
+};

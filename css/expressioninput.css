@@ -193,6 +193,18 @@
     animation: none;
 }
 
+
+.as-token.as-warning-start, .as-token.as-warning-end {
+    background-color: transparent;
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 1px;
+    animation: none;
+    text-decoration-color: #ff6200;
+}
+
+
 .as-expression-input-autocomplete {
     min-width: 10em;
     position: fixed;
