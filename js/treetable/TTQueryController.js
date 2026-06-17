@@ -55,6 +55,10 @@ TTQueryController.prototype.detachFilterInput = function (input) {
 
 TTQueryController.prototype.attachSearchInput = function (input) {
     if (this.$searchInput === input) return;
+    if (this.$searchInput) {
+        this.detachSearchInput(this.$searchInput);
+    }
+    if (!input) return;
     if (input.detachTreeTable) input.detachTreeTable();
     this.$searchInput = input;
     if ($(input).isSupportedEvent('stoptyping')) {
@@ -63,7 +67,12 @@ TTQueryController.prototype.attachSearchInput = function (input) {
     else {
         input.on('change', this.request);
     }
-    input.detachTreeTable = this.detachSearchInput.bind(this, input)
+    input.detachTreeTable = this.detachSearchInput.bind(this, input);
+    setTimeout(()=>{
+        if (this.elt.adapter && this.$searchInput && this.$searchInput.value.trim()) {
+            this.request();
+        }
+    }, 5);
 };
 
 

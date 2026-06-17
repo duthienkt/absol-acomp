@@ -38,6 +38,7 @@ TTBody.prototype.applyQueryResult = function (queryResult) {
     else {
         this.table.elt.removeClass('as-searching');
         this.renderRows();
+        this.table.elt.notifySizeChange();
     }
 
 };
