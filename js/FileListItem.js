@@ -2,12 +2,15 @@ import ACore, { $, _ } from "../ACore";
 import '../css/filelistinput.css';
 import ExtIcons from "../assets/exticons/catalog.json";
 import MessageInput from "./messageinput/MessageInput";
-import { autoNormalizeFileName, fileInfoOf, isURLAddress } from "./utils";
+import { autoNormalizeFileName, fileInfoOf, findMaxZIndex, isURLAddress } from "./utils";
 import QuickMenu from "./QuickMenu";
 import LanguageSystem from "absol/src/HTML5/LanguageSystem";
 import CheckboxInput from "./CheckBoxInput";
 import OOP from "absol/src/HTML5/OOP";
 import { hitElement, isMouseLeft } from "absol/src/HTML5/EventEmitter";
+import ext2MineType from "absol/src/Converter/ext2MineType";
+import Modal from "./Modal";
+import WindowBox from "./WindowBox";
 
 /***
  * @extends AElement
@@ -32,10 +35,16 @@ function FileListItem() {
             var itemElt = this
             var menuItems = [];
             menuItems.push({
+                text: LanguageSystem.getText('txt_view') || "View",
+                icon: 'span.mdi.mdi-eye-outline',
+                cmd: 'view',
+            });
+            menuItems.push({
                 text: LanguageSystem.getText('txt_download') || "Download",
                 icon: 'span.mdi.mdi-download',
-                cmd: 'download'
+                cmd: 'download',
             });
+
             if (!list.readOnly) {
                 if (itemElt)
                     menuItems.push({
@@ -76,6 +85,8 @@ function FileListItem() {
                     self.files = [];
                     self.emit('change', { type: 'change', items: files, target: this, action: 'delete_all' }, this);
                     break;
+                case 'view':
+                    itemElt.openViewer();
             }
         }.bind(this)
     });
@@ -176,6 +187,110 @@ FileListItem.property.value = {
     get: function () {
         return this._value;
     }
+};
+
+FileListItem.prototype.openViewer = function () {
+    var value = this.value;
+    if (!value) return;
+    var url = typeof value === 'string' ? value : value.url;
+    var type = this.fileType;
+    if (!url) return;
+    if (type === 'xlsx' || type === 'docx' || type === 'xls' || type === 'doc' || type === 'ppt' || type === 'pptx') {
+        url = 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(url);
+    }
+    else {
+        url = encodeURI(url);
+    }
+    var mineType = ext2MineType[type] || 'none';
+    var content;
+    if (mineType.startsWith('video')) {
+        content = _({
+            tag: 'video',
+            style: {
+                maxWidth: 'calc(90vw - 20px)',
+                maxHeight: 'calc(90vh - 80px)',
+                width: '900px',
+                height: 'auto'
+            },
+            attr: {
+                autoplay: 'true',
+                controls: 'true'
+            },
+            props: {
+                src: url
+            }
+        });
+    }
+    else if (mineType.startsWith('audio')) {
+        content = _({
+            tag: 'audio',
+            style: {
+                margin: '5px'
+            },
+            attr: {
+                autoplay: 'true',
+                controls: 'true'
+            },
+            props: {
+                src: url
+            }
+
+        });
+    }
+    else if (mineType.startsWith('image')) {
+        content = _({
+            tag: 'img',
+            style: {
+                maxWidth: 'calc(90vw - 20px)',
+                maxHeight: 'calc(90vh - 80px)',
+                width: 'auto',
+                height: 'auto'
+            },
+            attr: {},
+            props: {
+                src: url
+            }
+        });
+    }
+    else {
+        content = _({
+            tag: 'iframe',
+            style: {
+                maxWidth: 'calc(90vw - 20px)',
+                maxHeight: 'calc(90vh - 80px)',
+                width: '900px',
+                height: '600px'
+            },
+            props: {
+                src: url,
+                onload: function () {
+                    // console.log(this.contentWindow.document.body.offsetHeight, this.contentWindow.document.body.offsetWidth)
+                }
+            }
+
+        });
+    }
+
+    var modal = _({
+        tag: Modal.tag,
+        style: { zIndex: findMaxZIndex(this) + 9000 },
+        child: {
+            tag: WindowBox.tag,
+            child: content,
+            props: {
+                windowTitle: this.fileName || "Preview",
+                windowActions: [
+                    { name: 'close', icon: 'span.mdi.mdi-close' }
+                ]
+            },
+            on: {
+                action: () => {
+                    modal.remove();
+                }
+            }
+        }
+    }).addTo(document.body);
+
 };
 
 FileListItem.eventHandler = {};
