@@ -378,7 +378,11 @@ SelectListBox.prototype.viewListAtCurrentScrollTop = function () {
 
 SelectListBox.prototype.searchItemByText = function (text) {
     text = text.trim().replace(/\s\s+/, ' ');
-    if (text.length === 0) return Promise.resolve(this._items);
+    if (text.length === 0) {
+        if (this.stopSearch)//todo: some module not support yet
+            this.stopSearch();
+        return Promise.resolve(this._items);
+    }
     this.prepareSearch();
     this._searchCache[text] = this._searchCache[text] || this.searchMaster.query({ text: text }).then(searchResult => {
         if (!searchResult) return;
@@ -516,11 +520,24 @@ SelectListBox.prototype.transferSearchDataIfNeed = function () {
 };
 
 SelectListBox.prototype.prepareSearch = function () {
+    clearTimeout(this.stopSearchTO);
     if (!this.searchMaster) {
         this.searchMaster = new ListSearchMaster();
         this.transferSearchDataIfNeed();
     }
 };
+
+SelectListBox.prototype.stopSearch = function () {
+    clearTimeout(this.stopSearchTO);
+    if (!this.searchMaster) return;
+    this.stopSearchTO = setTimeout( ()=> {
+        if (this.searchMaster) {
+            this.searchMaster.destroy();
+            this.searchMaster = null;
+        }
+    }, 10000);
+};
+
 
 
 /***

@@ -62,20 +62,6 @@ function SelectMenu() {
 
     var firstCheckView = false;
     var this1 = this;
-    var checkView = () => {
-        if (this1.isDescendantOf && this1.isDescendantOf(document.body)) {
-            setTimeout(checkView, 5000);
-            firstCheckView = true;
-        }
-        else if (firstCheckView) {
-            setTimeout(checkView, 1000);
-        }
-        else {
-            if (this1.$selectlistBox.searchMaster)
-                this1.$selectlistBox.searchMaster.destroy();
-        }
-    }
-    setTimeout(checkView, 3000);
     this.$selectlistBox.on('pressitem', this.eventHandler.selectListBoxPressItem);
     this.$selectlistBox.sponsorElement = this;
 
