@@ -543,6 +543,8 @@ SearchingMode.prototype.onResult = function (response) {
         while (startRow > 0 && rows[startRow - 1] && rows[startRow] && rows[startRow].colCount < colCount) {
             --startRow;
         }
+        if (startRow < 0) break;
+        if (startRow >= rows.length) break;//why  rows[startRow] is undefined?
         rowIdx = startRow + rows[startRow].rowCount - 1;
         for (j = startRow; j <= rowIdx; ++j) {
             if (addedRows[j]) continue;
