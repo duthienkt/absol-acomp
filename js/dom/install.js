@@ -205,6 +205,7 @@ import FaceIdInput from "../FaceIdInput";
 import { FaceIdVerificationImage } from "../FaceIdEnrollment";
 import ObsDiv from "../ObsDiv";
 import PinCodeInput from "../PinCodeInput";
+// import ColumnWidthEditor from "../ColumnWidthEditor";
 // import GSMInput from "../GSMInput";
 
 
@@ -340,7 +341,6 @@ export var publicCreators = [
     SelectMenu2,
     SingleSelectList,
     SelectBox,
-    MultiSelectMenu,
     MultiCheckTreeLeafBox,
     BrowserDetector.isMobile ? MultiCheckTreeLeafMenuV2 : MultiCheckTreeLeafMenu,
     SelectBoxItem,
@@ -423,6 +423,7 @@ export var publicCreators = [
 
     TreeChart,
     TableOfTextInput,
+    // ColumnWidthEditor,
     CompactDataGridEditor,
 
     MHeaderBar,
@@ -463,7 +464,7 @@ function install(core) {
     core.install('MMultiCheckTreeMenu'.toLowerCase(), MultiCheckTreeMenu);
     core.install('MMultiCheckTreeLeafMenu'.toLowerCase(), MultiCheckTreeLeafMenu);
     core.install('mknav', MKNavigator);
-
+    core.install('multiselectmenu',MultiCheckMenu)
 }
 
 export default install;
