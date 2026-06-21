@@ -313,16 +313,36 @@ BaseMode.prototype.updateRowsIfNeed = function () {
     throw Error("Not implement!");
 };
 
+BaseMode.prototype.waitBound = function () {
+    if (this.observer) return;
+    this.observer = new MutationObserver((mutations) => {
+        var bound = this.body.table.wrapper.getBoundingClientRect();
+        if (bound.width > 0 || bound.height > 0) {
+            this.render();
+            this.cancelWaitingBound();
+        }
+    });
+
+    var c = this.body.table.wrapper.parentElement;
+    while (c && c.tagName !== "BODY") {
+        this.observer.observe(c, { attributes: true, attributeFilter: ['class', 'style'] });
+        c = c.parentElement;
+    }
+};
+
+BaseMode.prototype.cancelWaitingBound = function () {
+    if (this.observer) {
+        this.observer.disconnect();
+        this.observer = null;
+    }
+};
+
 
 BaseMode.prototype.render = function () {
     this.updateRowsIfNeed();
     var bounds = this.getBoundOfRows();
     if (!bounds) {
-        setTimeout(() => {
-            if (this.body.elt.isDescendantOf(document.body)) {
-                this.render();
-            }
-        }, 5);
+        this.waitBound();
         return;
     }
     var dy = 0, rowIdx;
