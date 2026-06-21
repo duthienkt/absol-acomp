@@ -105,14 +105,14 @@ CKPlaceholder.prototype._makeInitConfig = function () {
 };
 
 CKPlaceholder.prototype.focus = function () {
-  if (this.editor) {
-      this.editor.focus();
-  }
-  else {
-     this.once('editorready',()=>{
-         this.editor.focus();
-     })
-  }
+    if (this.editor) {
+        this.editor.focus();
+    }
+    else {
+        this.once('editorready', () => {
+            this.editor.focus();
+        })
+    }
 };
 
 
@@ -140,9 +140,16 @@ CKPlaceholder.eventHandler = {};
 CKPlaceholder.eventHandler.attached = function () {
     this.$attachhook.remove();
     var config = this.config;
-    var width = this.style.width;
+    var width, height;
+    /**** as-ckeditor-wrapper support form - temp fixed ***/
+    if (this.parentElement.hasClass && this.parentElement.hasClass('as-ckeditor-wrapper')) {
+        width = this.parentElement.style.getPropertyValue('--as-width');
+        height = this.parentElement.style.getPropertyValue('--as-height');
+    }
+
+    width = width || this.style.width;
     if (width.endsWith('px')) config.width = width;
-    var height = this.style.height;
+    height = height || this.style.height;
     if (height.endsWith('px')) config.height = height;
     config = ckMakeDefaultConfig(this.config, this.extensions, this);
     if (this.readOnly) {
