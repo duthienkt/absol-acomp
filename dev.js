@@ -41,6 +41,7 @@ import { RawTableSearcher } from "./js/RawTable";
 import { rawTableRemoveEmptyImage, rawTableViewEmptyImage } from "./js/dynamictable/DTBody";
 import { openFaceIdEnrollmentDialog } from "./js/FaceIdEnrollment";
 import { openFaceIdAuthenticationDialog } from "./js/FaceAuthentication";
+import { teiDataToExcelData } from "./js/TableOfTextInput";
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
 absol.vScrollIntoView = vScrollIntoView;
@@ -124,6 +125,8 @@ Dom.documentReady.then(function () {
 });
 
 Object.assign(absol.$, utils);
+
+absol.teiDataToExcelData = teiDataToExcelData;
 absol.ExpSearcher = ExpSearcher;
 // materializeIconTrigger();
 
