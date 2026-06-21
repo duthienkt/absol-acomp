@@ -1,7 +1,10 @@
 import ACore, { _, $, $$ } from "../ACore";
 import Dom from "absol/src/HTML5/Dom";
 import '../css/cpuviewer.css';
-
+import Rectangle from "absol/src/Math/Rectangle";
+import Vec2 from "absol/src/Math/Vec2";
+import FlagManager from "absol/src/Code/FlagManager";
+import BrowserDetector from "absol/src/Detector/BrowserDetector";
 
 /***
  * @extends AElement
@@ -23,6 +26,7 @@ function CPUViewer() {
     this.counter = 0;
 
     this['tick'] = this.tick.bind(this);
+
 }
 
 CPUViewer.tag = 'CPUViewer'.toLowerCase();
@@ -42,8 +46,10 @@ CPUViewer.render = function () {
 
 CPUViewer.prototype.start = function () {
     if (this.inv < 0) {
-        this.offsetTime = new Date().getTime();
-        setInterval(this.tick, 250)
+        this.offsetTime = performance.now();
+        setInterval(this.tick, 250);
+        document.addEventListener('mousemove', this.eventHandler.onMouseMove);
+
     }
 };
 
@@ -51,12 +57,26 @@ CPUViewer.prototype.stop = function () {
     if (this.inv > 0) {
         clearInterval(this.inv);
         this.inv = -1;
+        document.removeEventListener('mousemove', this.eventHandler.onMouseMove);
+
+    }
+};
+
+
+CPUViewer.eventHandler = {};
+
+CPUViewer.eventHandler.onMouseMove = function (event) {
+    var bound = Rectangle.fromClientRect(this.getBoundingClientRect());
+    var point = new Vec2(event.clientX, event.clientY);
+    if (bound.containsPoint(point)) {
+        this.addClass('as-hover');
+    }
+    else {
+        this.removeClass('as-hover');
     }
 };
 
 CPUViewer.prototype.tick = function () {
-
-
     while (this.holdTime > 250) {
         this.holdTime -= 250;
         this.usage.push(100);
@@ -73,7 +93,7 @@ CPUViewer.prototype.tick = function () {
         y = this.usage[x] / 2;
         this.ctx.fillRect(x, 50 - y, 1, y);
     }
-    var now = new Date().getTime();
+    var now = performance.now();
     this.logOffset = now;
     this.holdStart = now;
     this.holdTime = 0;
@@ -82,7 +102,7 @@ CPUViewer.prototype.tick = function () {
 
 CPUViewer.prototype.hold = function () {
     if (this.counter === 0) {
-        this.holdStart = new Date().getTime();
+        this.holdStart = performance.now();
     }
     this.counter++;
 };
@@ -91,7 +111,7 @@ CPUViewer.prototype.release = function () {
     if (this.counter <= 0) return;
     this.counter--;
     if (this.counter === 0) {
-        this.holdTime += new Date().getTime() - this.holdStart;
+        this.holdTime += performance.now() - this.holdStart;
     }
 };
 
@@ -130,6 +150,11 @@ CPUViewer.stop = function () {
     this.instance.stop();
     this.instance.remove();
     this.state = 'NOT_ATTACHED';
+    CPUViewer.hold = function () {
+    };
+
+    CPUViewer.release = function () {
+    };
 
 
 };
@@ -153,18 +178,51 @@ function AttachHookView() {
 }
 
 
-Dom.documentReady.then(() => {
-    return;
-    if (!window.ABSOL_DEBUG && location.href.indexOf('localhost') < 0) {
-        return;
+function startCPUViewerIfNeed() {
+    if (BrowserDetector.isMobile) return;
+    var originSTO = window.setTimeout;
+    var originSIV = window.setInterval;
+    FlagManager.add('CPU_VIEWER', false);
+    if (location.href.indexOf('localhost:8080')>=0 || window.CPU_VIEWER) {
+        CPUViewer.start();
+        window.cpuRisedHanders = [];
+        window.setTimeout = function (handler) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            if (typeof handler === 'function') {
+                args.unshift(function () {
+                    while (window.cpuRisedHanders.length > 1000) window.cpuRisedHanders.pop();
+                    CPUViewer.hold();
+                    handler.apply(null, args);
+                    CPUViewer.release();
+                    if (handler.name !== 'intervalFuncLoop')
+                        window.cpuRisedHanders.push(handler);
+                });
+                return originSTO.apply(this, args);
+            }
+            else {
+                return originSTO.apply(this, arguments);
+            }
+        }
+
+        window.setInterval = function (handler, timeout, args) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            if (typeof handler === 'function') {
+                args.unshift(function () {
+                    while (window.cpuRisedHanders.length > 1000) window.cpuRisedHanders.pop();
+                    CPUViewer.hold();
+                    handler.apply(null, args);
+                    CPUViewer.release();
+                    if (handler.name !== 'intervalFuncLoop')
+                        window.cpuRisedHanders.push(handler);
+                });
+                return originSIV.apply(this, args);
+            }
+            else {
+                return originSIV.apply(this, arguments);
+            }
+        }
     }
+}
 
-    var elt = _({
-        class:'as-pending-attachhook-count'
-    }).addTo(document.body);
-
-    setInterval(() => {
-        elt.innerHTML = '' + Object.keys(pendingAttachHooks).length
-    }, 2000);
-});
+startCPUViewerIfNeed();
 

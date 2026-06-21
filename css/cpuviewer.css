@@ -6,6 +6,11 @@
     z-index: 1000000000;
     border: 1px solid black;
     display: inline-block;
+    pointer-events: none;
+}
+
+.as-cpu-viewer.as-hover{
+    opacity: 0.3;
 }
 
 .as-cpu-viewer canvas{
