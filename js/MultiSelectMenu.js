@@ -407,6 +407,5 @@ MultiSelectMenu.eventHandler.pressCloseItem = function (item, event) {
     }
 };
 
-ACore.install(MultiSelectMenu);
 
 export default MultiSelectMenu;
