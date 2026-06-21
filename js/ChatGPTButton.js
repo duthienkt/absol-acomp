@@ -220,13 +220,23 @@ CGBMessageController.prototype.pushToHistory = function (role, content) {
 };
 
 CGBMessageController.prototype.viewMessage = function (role, content) {
+    content = content ||"";
+    content = content.replace(/<!DOCTYPE\s+html\s*>/gi, "");
+    content = content.replace(/<\/?\s*(html|head|body)\b[^>]*>/gi, "");
+    var contentElt = _({
+        class: 'as-chat-gpt-message-content',
+        props:{
+            innerHTML: content
+        }
+    });
     var ctn = _({
         class: 'as-chat-gpt-message-wrapper',
         attr: {
             'data-role': role
         },
-        child: { class: 'as-chat-gpt-message-content', child: { text: content } },
+        child:  contentElt
     });
+
     this.elt.$contentCtn.addChild(ctn);
     this.elt.$contentCtn.scrollTop = this.elt.$contentCtn.scrollHeight;
     return ctn;
