@@ -1,7 +1,9 @@
+import { keyStringOf } from "../utils";
+
 export function depthIndexingByValue(items, context) {
     context = context || {idx: 0, dict: {}};
     return items.reduce(function (ac, cr, idx) {
-        var value = typeof cr === "string" ? cr : cr.value + '';
+        var value = typeof cr === "string" ? keyStringOf(cr) : keyStringOf(cr.value);
         ac[value] = ac[value] || [];
         ac[value].push({
             idx: context.idx++,
@@ -16,7 +18,7 @@ export function depthIndexingByValue(items, context) {
 
 export function indexingByValue(items, dict) {
     return items.reduce(function (ac, cr, idx) {
-        var value = typeof cr === "string" ? cr : cr.value + '';
+        var value = typeof cr === "string" ? keyStringOf(cr) : keyStringOf(cr.value);
         ac[value] = ac[value] || [];
         ac[value].push({
             idx: idx,
