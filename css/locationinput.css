@@ -45,6 +45,8 @@
 
 .as-location-picker-search-input > input {
     outline: none;
+    color: inherit;
+
 }
 
 
@@ -160,7 +162,7 @@
     padding: 0 0 0 var(--as-input-horizontal-padding);
     font: inherit;
     box-sizing: border-box;
-
+    color: inherit;
 }
 
 .as-location-input-icon-ctn {

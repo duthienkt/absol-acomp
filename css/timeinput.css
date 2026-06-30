@@ -45,7 +45,7 @@
 
 
 .ac-time-input.as-disabled {
-    color: rgb(102, 102, 102);
+    color: var(--as-disabled-text-color);
     pointer-events: none;
 }
 

@@ -189,10 +189,9 @@
 
 .absol-number-input.absol-disabled {
     pointer-events: none;
-    color: var(--as-disabled-text-color);
 }
 
-.absol-number-input.absol-disabled input {
+.absol-number-input.absol-disabled  {
     background-color: var(--as-disabled-background-color);
 }
 

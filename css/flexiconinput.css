@@ -44,6 +44,7 @@
 }
 
 .as-flexicon-input.as-disabled {
+    color: var(--as-disabled-text-color);
     background-color: var(--as-disabled-background-color);
 }
 
@@ -100,6 +101,7 @@
     display: inline-block;
     vertical-align: middle;
     text-align: inherit;
+    color: inherit;
 }
 
 

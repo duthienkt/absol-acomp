@@ -29,6 +29,9 @@
     padding: 0;
 }
 
-.absol-textarea2:disabled {
+.absol-textarea2:disabled,
+textarea.absol-textarea2:disabled
+{
+    color: var(--as-disabled-text-color);
     background-color: var(--as-disabled-background-color);
 }
