@@ -45,6 +45,7 @@ NITextController.prototype.estimateWidthBy = function (text) {
 
 
 NITextController.prototype.flushTextToValue = function () {
+    this.changed = false;
     var thousandsSeparator = this.elt.thousandsSeparator || '';
     var decimalSeparator = this.elt.decimalSeparator;
     var text = this.$input.value;
