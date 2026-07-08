@@ -554,6 +554,13 @@ DynamicTable.prototype.addRowBefore = function (rowData, bf) {
 };
 
 
+
+DynamicTable.prototype.addRowsBefore = function (rowData, bf) {
+    return this.table.body.addRowsBefore(rowData, bf);
+};
+
+
+
 DynamicTable.prototype.addRowAfter = function (rowData, at) {
     return this.table.body.addRowAfter(rowData, at);
 };
@@ -601,8 +608,8 @@ DynamicTable.prototype.requireRows = function (start, end) {
     return this.table.body.requireRows(start, end);
 };
 
-DynamicTable.prototype.clearRows = function () {
-    return this.table.body.clearRows();
+DynamicTable.prototype.clearRows = function (start, end) {
+    return this.table.body.clearRows(start, end);
 };
 
 DynamicTable.prototype.isLastRow = function (o) {

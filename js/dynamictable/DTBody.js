@@ -818,6 +818,19 @@ DTBody.prototype.addRowBefore = function (rowData, bf) {
     }
 };
 
+
+DTBody.prototype.addRowsBefore = function (rowsData, bf) {
+    var idx;
+    if (bf === null || bf === undefined) {
+        return this.addRows(rowsData);
+    }
+    else {
+        idx = this.rowIndexOf(bf);
+        if (idx < 0) throw new Error("$bf not is a row in table");
+        return this.addRows(rowsData, idx);
+    }
+};
+
 DTBody.prototype.addRowAfter = function (rowData, at) {
     var idx;
     if (at === null || at === undefined) {
@@ -827,6 +840,20 @@ DTBody.prototype.addRowAfter = function (rowData, at) {
         idx = this.rowIndexOf(at);
         if (idx < 0) throw new Error("$bf not is a row in table");
         return this.addRow(rowData, idx + 1);
+    }
+};
+
+
+
+DTBody.prototype.addRowsAfter = function (rowsData, at) {
+    var idx;
+    if (at === null || at === undefined) {
+        return this.addRows(rowsData, 0);
+    }
+    else {
+        idx = this.rowIndexOf(at);
+        if (idx < 0) throw new Error("$bf not is a row in table");
+        return this.addRows(rowsData, idx + 1);
     }
 };
 
@@ -912,12 +939,14 @@ DTBody.prototype.moveRowAt = function (idx, newIdx) {
     this.onRowSplice(Math.min(idx, newIdx));
 };
 
-DTBody.prototype.clearRows = function () {
+DTBody.prototype.clearRows = function (start, end) {
+    if (!isNaturalNumber(start)) start = 0;
+    if (!isNaturalNumber(end)) end = this.rows.length;
     this.table.wrapper.$vscrollbar.innerOffset = 0;
     this.table.wrapper.$vscrollbar.emit('scroll', {});
-    var n = this.rows.length;
-    this.rows.splice(0);
-    this.data.rows.splice(0);
+    var n =end - start;
+    this.rows.splice(start, n);
+    this.data.rows.splice(start, n);
     if (this.curentMode.onRowRemoved)
         this.curentMode.onRowRemoved(0, n);
     this.onRowSplice(0);
