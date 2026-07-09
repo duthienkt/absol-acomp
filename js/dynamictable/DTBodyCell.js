@@ -99,7 +99,7 @@ DTBodyCell.prototype.requestUpdateContent = function () {
         this._copyElt.clearChild();
         this._copyElt.addChild(Array.prototype.map.call(this._elt.childNodes, c => c.cloneNode(true)));
     }
-    ResizeSystem.updateUp(this._elt, true);
+    // ResizeSystem.updateUp(this._elt, true);
     ResizeSystem.requestUpdateUpSignal(this._elt, true);
 }
 

@@ -183,7 +183,7 @@ DTHeadCell.prototype.updateCopyContent = function () {
     if (this._copyElt) {
         this._copyElt.clearChild().addChild(makeCopyChildren());
     }
-    ResizeSystem.updateUp(this._elt);
+    // ResizeSystem.updateUp(this._elt);
     ResizeSystem.requestUpdateUpSignal(this._elt);
 };
 
