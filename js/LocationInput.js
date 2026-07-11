@@ -90,7 +90,7 @@ LocationInput.prototype._attachPicker = function () {
     this.share.$picker.$searchInput.value = '';
     this.share.$picker.readOnly = this.readOnly;
     var zIndex = findMaxZIndex(this);
-    this.share.$modal.addStyle('z-index', zIndex + 10);
+    this.share.$modal.addStyle('z-index', zIndex + 1000);
     setTimeout(function () {
         document.addEventListener('click', this.eventHandler.clickOut);
     }.bind(this), 100);
