@@ -121,6 +121,7 @@ LocationInput.prototype._releasePicker = function () {
 LocationInput.eventHandler = {};
 
 LocationInput.eventHandler.pickerAction = function (event) {
+    console.log(event)
     if (!this.readOnly && event.action === 'OK' && this.share.$picker.selectedPlace && this.share.$picker.selectedPlace.geometry && this.share.$picker.selectedPlace.geometry.location) {
         this.$text.value = [this.share.$picker.selectedPlace.geometry.location.lat(), this.share.$picker.selectedPlace.geometry.location.lng()].join(', ');
         this.emit('change', { type: 'change', originalEvent: event.originalEvent || event, target: this }, this);

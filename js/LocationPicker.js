@@ -169,7 +169,7 @@ function LocationPicker() {
 
     this.$okBtn = _({
             tag: FlexiconButton.tag,
-            class: 'primary',
+            class: ['as-location-picker-ok-btn','primary'],
             props: {
                 text: 'OK',
                 disabled: true
