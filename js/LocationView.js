@@ -5,6 +5,9 @@ import { randomIdent } from "absol/src/String/stringGenerate";
 import Color from "absol/src/Color/Color";
 import { getGoogleMarkerLib } from "./LocationPicker";
 import Svg from "absol/src/HTML5/Svg";
+import Context from "absol/src/AppPattern/Context";
+import { mixClass } from "absol/src/HTML5/OOP";
+import DelaySignal from "absol/src/HTML5/DelaySignal";
 
 var MARKER_RADIUS = 10;
 var MARKER_BORDER_COLOR = '#4945C8';
@@ -357,7 +360,7 @@ LVPoints.prototype.view = function (number) {
             this.infoWindow = new google.maps.InfoWindow(this.data.info);
         }
 
-        if (this.infoWindow ) {
+        if (this.infoWindow) {
             this.content.on('mouseover', () => {
                 if (lastOpenInfo === this.infoWindow) return;
                 try {
@@ -376,10 +379,10 @@ LVPoints.prototype.view = function (number) {
         }
 
     }
-    else if (number >1) {
-        this.content.on('click', ()=>{
+    else if (number > 1) {
+        this.content.on('click', () => {
             this.map.setCenter(this.latLng);
-            this.map.setZoom(this.map.getZoom()+1);
+            this.map.setZoom(this.map.getZoom() + 1);
         })
     }
 }
@@ -472,66 +475,85 @@ LVCluster.prototype.onIdle = function () {
  * @constructor
  */
 function LocationView() {
-    this.map = new google.maps.Map(this, {
-        zoom: 8,
-        center: new google.maps.LatLng(21.018755, 105.839729),
-        scaleControl: true,
-        mapId: randomIdent()
-    });
-    google.maps.event.addListener(this.map, "zoom_changed", this.eventHandler.mapZoomChanged);
-    google.maps.event.addListener(this.map, 'bounds_changed', this.eventHandler.mapBoundsChanged);
-
-    this.marker = null;
-    this._value = null;
     this.$domSignal = _('attachhook').addTo(this);
     this.domSignal = new DomSignal(this.$domSignal);
+    var predictionProps = this.predictionProps;
+    if (predictionProps.points || predictionProps.polylines) {
+        this.view = new LVGMapView(this);
+    }
+    else {
+        this.view = new LVStaticView(this);
+    }
+
+    this._value = null;
+
+    this._showPolylineRoute = true;
+
+    this.text = '';
+
+    this.view.start();
+
+
+    /****
+     * @memberOf LocationView#
+     * @type {LVPoints[]}
+     * @name $points
+     */
+
     /***
-     * @type {LatLng}
+     * @type {string|*}
      * @name value
      * @memberOf LocationView#
      */
-    /****
-     *
-     * @type {LVPolyline[]}
-     */
-    this.$polylines = [];
-    this._showPolylineRoute = true;
 
-    /****
-     *
-     * @type {LVPoints[]}
+    /**
+     * @type {number}
+     * @name zoom
+     * @memberOf  LocationView#
      */
-    this.$points = [];
+
+    /**
+     * @type {boolean}
+     * @name showPolylineRoute
+     * @memberOf LocationView#
+     */
+
+
 
 }
 
 LocationView.tag = 'LocationView'.toLowerCase();
 
 LocationView.render = function () {
-    return _({
+    var desc = arguments[1] || {};
+    var props = arguments[1].props || {};
+
+
+    var res = _({
         class: 'as-location-view'
     });
+
+    /**
+     * @name predictionProps
+     * @type {{}}
+     * @memberOf LocationView#
+     */
+    res.predictionProps = props;//for optimize view
+
+    return res;
 };
 
 LocationView.prototype.getPolylineById = function (id) {
-    return this.$polylines.find(function (pll) {
-        return pll.id === id;
-    }) || null;
+    return this.view.getPolylineById(id);
 };
 
 LocationView.prototype.getPolylines = function () {
-    return this.$polylines.slice();
+    return this.view.getPolylines();
 };
 
-LocationView.prototype.getPolylinesAsync  = function () {
-    if (this.polylineSync) {
-        return this.polylineSync.then(()=>{
-            return this.$polylines.slice()
-        });
-    }
-    else return  Promise.resolve([]);
+LocationView.prototype.getPolylinesAsync = function () {
+    return this.view.getPolylinesAsync();
 };
-
 
 
 LocationView.property = {};
@@ -539,13 +561,16 @@ LocationView.property = {};
 
 LocationView.property.zoom = {
     set: function (value) {
+
         if (!isRealNumber(value)) {
             value = 1;
         }
-        this.map.setZoom(value);
+        value = Math.max(1, Math.min(20, value));
+        this._zoom = value;
+        this.view.onZoom(value);
     },
     get: function () {
-        return this.map.getZoom();
+        return this._zoom;
     }
 };
 
@@ -553,23 +578,8 @@ LocationView.property.zoom = {
 LocationView.property.value = {
     set: function (value) {
         value = value || null;
-        var latlng = implicitLatLng(value);
-        latlng = latlng || new google.maps.LatLng(21.018755, 105.839729);
-        this.map.setCenter(latlng || new google.maps.LatLng(21.018755, 105.839729));
         this._value = value;
-        getGoogleMarkerLib().then(() => {
-            if (this.marker) {
-                this.marker.setMap(null);
-                this.marker = null;
-            }
-            if (latlng && value) {
-                this.marker = new google.maps.marker.AdvancedMarkerElement({
-                    map: this.map,
-                    position: latlng,
-                });
-            }
-        })
-
+        this.view.onValue(value);
     },
     get: function () {
         return this._value;
@@ -579,42 +589,7 @@ LocationView.property.value = {
 LocationView.property.polylines = {
     set: function (polylines) {
         this._polylines = polylines || [];
-        this.$polylines.forEach(function (pll) {
-            pll.remove();
-        });
-
-        this.polylineSync = getGoogleMarkerLib().then(() => {
-            this.$polylines = polylines.map(function (pll) {
-                return new LVPolyline(this, pll);
-            }.bind(this));
-            var zoom;
-            var center;
-            var points = this.$polylines.reduce(function (ac, $polyline) {
-                return ac.concat($polyline.polylineData.path);
-            }, []);
-
-            var bounds = points.reduce(function (ac, cr) {
-                ac.extend(cr);
-                return ac;
-            }, new google.maps.LatLngBounds());
-
-            this.domSignal.once('update_view', function () {
-                if (points.length > 1) {
-                    zoom = getMapZoomLevel(this.getBoundingClientRect(), bounds);
-                    center = bounds.getCenter();
-                }
-                else {
-                    zoom = 17;
-                    center = points[0] || new google.maps.LatLng(21.018755, 105.839729);
-                }
-                zoom = Math.min(zoom, 17);
-                this.map.setZoom(zoom);
-                this.map.setCenter(center);
-            }.bind(this), 100);
-            this.domSignal.emit('update_view');
-        })
-
-
+        this.view.onPolylines(this._polylines);
     },
     get: function () {
         return this._polylines;
@@ -624,16 +599,15 @@ LocationView.property.polylines = {
 LocationView.property.showPolylineRoute = {
     set: function (value) {
         this._showPolylineRoute = !!value;
-        this.$polylines.forEach(function (pll) {
-            pll.showRoute = value;
-        })
+        this.view.onShowPolylineRoute(value);
+
     },
     /**
      * @this LocationView
      * @returns {*|boolean}
      */
     get: function () {
-        return this._showPolylineRoute;
+        return !!this._showPolylineRoute;
     }
 };
 
@@ -644,61 +618,8 @@ LocationView.property.points = {
      * @param points
      */
     set: function (points) {
-        this.$points.forEach(function (point) {
-            point.remove();
-        });
         this._points = points || [];
-
-        getGoogleMarkerLib().then(() => {
-            var now = Date.now();
-            var rp = this._points.reduce(function (ac, pointData) {
-                var id = pointData.id;
-                var point;
-                if (id && ac.dict[id]) {
-                    ac.dict[id].refData.push(pointData);
-                }
-                else {
-                    point = new LVPoints(this, pointData);
-                    ac.dict[point.id] = point;
-                    ac.arr.push(point);
-                }
-
-                return ac;
-            }.bind(this), { arr: [], dict: {} });
-
-            this.$points = rp.arr;
-            var zoom;
-            var center;
-            var latLngs = this.$points.map(function (p) {
-                return p.latLng;
-            }, []).filter(function (x) {
-                return !!x;
-            });
-            var bounds = latLngs.reduce(function (ac, cr) {
-                ac.extend(cr);
-                return ac;
-            }, new google.maps.LatLngBounds());
-
-
-            this.pointsCluster = new LVCluster(this, this.$points);
-            // console.log('set points', Date.now() - now);
-
-            this.domSignal.once('update_view', function () {
-                if (points.length > 1) {
-                    zoom = getMapZoomLevel(this.getBoundingClientRect(), bounds);
-                    center = bounds.getCenter();
-                }
-                else {
-                    zoom = 17;
-                    center = points[0] || new google.maps.LatLng(21.018755, 105.839729);
-                }
-                zoom = Math.min(zoom, 17);
-                this.map.setZoom(zoom);
-                this.map.setCenter(center);
-                if (this.pointsCluster) this.pointsCluster.onProcessed();
-            }.bind(this), 100);
-            this.domSignal.emit('update_view');
-        });
+        this.view.onPoints(this._points);
     },
     get: function () {
         return this._points;
@@ -710,21 +631,344 @@ LocationView.eventHandler = {};
 LocationView.eventHandler.mapZoomChanged = function () {
     if (this.pointsCluster)
         this.pointsCluster.onProcessed();
-    // var now = Date.now();
-    // var eltRect = Rectangle.fromClientRect(this.getBoundingClientRect());
-    // var bounds = this.map.getBounds();
-    // // var mapRect = new Rectangle()
-    //
-    // console.log('zoom changed', Date.now() - now);
-
-};
-
-LocationView.eventHandler.mapBoundsChanged = function () {
-    if (this.pointsCluster)
-        this.pointsCluster.onProcessed();
 };
 
 
 ACore.install(LocationView);
 
 export default LocationView;
+
+
+/**
+ * @extends Context
+ * @param {LocationView} lvElt
+ * @constructor
+ */
+function LVStaticView(lvElt) {
+    Context.call(this);
+    this.lvElt = lvElt;
+
+}
+
+mixClass(LVStaticView, Context);
+
+LVStaticView.prototype.type = 'static';
+
+LVStaticView.prototype.onStart = function () {
+    this.lvElt.clearChild();
+    this.lvElt.attr('data-view-type', 'static');
+    this.$iframe = _({
+        tag: 'iframe',
+        class: 'gmap_iframe',
+        attr: {
+            frameborder: '0',
+            scrolling: 'no',
+            marginheight: '0',
+            marginwidth: '0',
+            // src: 'https://maps.google.com/maps?hl=vi&q=Ha%20Noi&t=&z=14&ie=UTF8&iwloc=B&output=embed'
+        },
+        style: {
+            width: '100%',
+            height: '100%'
+        }
+    });
+
+    this.$iframe.addTo(this.lvElt);
+    this.lvElt.domSignal.on('update_static_view', this.updateUrl.bind(this));
+    this.lvElt.domSignal.emit('update_static_view');
+};
+
+LVStaticView.prototype.getPolylines = function () {
+    return [];//not support
+};
+
+LVStaticView.prototype.getPolylinesAsync = function () {
+    return Promise.resolve([]);
+};
+
+LVStaticView.prototype.getPolylineById = function (id) {
+    return null; //not support
+};
+
+LVStaticView.prototype.onStop = function () {
+
+};
+
+LVStaticView.prototype.onValue = function (value) {
+    this.lvElt.domSignal.emit('update_static_view');
+};
+
+
+LVStaticView.prototype.onZoom = function (value) {
+    this.lvElt.domSignal.emit('update_static_view');
+};
+
+LVStaticView.prototype.onPoints = function (points) {
+    this.stop();
+    this.lvElt.view = new LVGMapView(this.lvElt);
+    this.lvElt.view.start();
+    this.lvElt.view.onPoints(points);
+    if(this.lvElt.value) {
+        this.lvElt.view.onValue(this.lvElt.value);
+    }
+    this.lvElt.view.onZoom(this.lvElt.zoom);
+    this.lvElt.view.onShowPolylineRoute(this.lvElt.showPolylineRoute);
+};
+
+LVStaticView.prototype.onPolylines = function (polylines) {
+    this.stop();
+    this.lvElt.view = new LVGMapView(this.lvElt);
+    this.lvElt.view.start();
+    this.lvElt.view.onPolylines(polylines);
+    if(this.lvElt.value) {
+        this.lvElt.view.onValue(this.lvElt.value);
+    }
+    this.lvElt.view.onZoom(this.lvElt.zoom);
+    this.lvElt.view.onShowPolylineRoute(this.lvElt.showPolylineRoute);
+};
+
+LVStaticView.prototype.onShowPolylineRoute = function (value) {
+
+};
+
+LVStaticView.prototype.updateUrl = function () {
+    if (this.lvElt.view !== this) return;//removed
+    if (!this.lvElt.value) return;
+    var latLng = implicitLatLng(this.lvElt.value);
+    if (!latLng) return;
+
+    var lat = latLng.lat();
+    var lng = latLng.lng();
+    var zoom = this.lvElt.zoom;
+    var text = (this.lvElt.text || '').trim();
+
+    var q = text ? (text + ' @' + lat + ',' + lng) : (lat + ',' + lng);
+
+    var url = 'https://maps.google.com/maps'
+        + '?hl=vi'
+        + '&q=' + encodeURIComponent(q)
+        + '&z=' + encodeURIComponent(zoom)
+        + '&output=embed';
+
+    this.$iframe.src = url;
+};
+
+
+/**
+ * @extends Context
+ * @param {LocationView} lvElt
+ * @constructor
+ */
+function LVGMapView(lvElt) {
+    Context.call(this);
+    this.lvElt = lvElt;
+    /**
+     *
+     * @type {LVCluster|null}
+     */
+    this.pointsCluster = null;
+    for (var key in this) {
+        if (key.startsWith('ev_')) {
+            this[key] = this[key].bind(this);
+        }
+    }
+    this.marker = null;
+    this.polylineSync = null;
+    this.$points = [];
+    this.$polylines = [];
+
+}
+
+mixClass(LVGMapView, Context);
+
+LVGMapView.prototype.type = "gmap";
+
+LVGMapView.prototype.mapKeys = ['map', 'pointsCluster', '$points', '$polylines', 'marker'];//only for adapt, not for set, get value
+
+LVGMapView.prototype.onStart = function () {
+    this.lvElt.clearChild();
+    this.mapKeys.forEach((key) => {
+        Object.defineProperty(this.lvElt, key, {
+            set: (value) => {
+                this[key] = value;
+            },
+            get: () => {
+                return this[key];
+            },
+            configurable: true,
+            enumerable: true
+        })
+    });
+
+    this.map = new google.maps.Map(this.lvElt, {
+        zoom: 8,
+        center: new google.maps.LatLng(21.018755, 105.839729),
+        scaleControl: true,
+        mapId: randomIdent()
+    });
+    google.maps.event.addListener(this.map, "zoom_changed", this.ev_mapZoomChanged);
+    google.maps.event.addListener(this.map, 'bounds_changed', this.ev_mapBoundsChanged);
+};
+
+LVGMapView.prototype.onStop = function () {
+    this.mapKeys.forEach((key) => {
+        delete this.lvElt[key];
+    });
+};
+
+
+LVGMapView.prototype.onValue = function (value) {
+    var latlng = implicitLatLng(value);
+    latlng = latlng || new google.maps.LatLng(21.018755, 105.839729);
+    this.map.setCenter(latlng || new google.maps.LatLng(21.018755, 105.839729));
+    getGoogleMarkerLib().then(() => {
+        if (this.marker) {
+            this.marker.setMap(null);
+            this.marker = null;
+        }
+        if (latlng && value) {
+            this.marker = new google.maps.marker.AdvancedMarkerElement({
+                map: this.map,
+                position: latlng,
+            });
+        }
+    })
+};
+
+LVGMapView.prototype.onPolylines = function (polylines) {
+    this.$polylines.forEach(function (pll) {
+        pll.remove();
+    });
+
+    var lvElt = this.lvElt;
+    this.polylineSync = getGoogleMarkerLib().then(() => {
+        this.$polylines = polylines.map((pll) => {
+            return new LVPolyline(lvElt, pll);
+        });
+        var zoom;
+        var center;
+        var points = this.$polylines.reduce(function (ac, $polyline) {
+            return ac.concat($polyline.polylineData.path);
+        }, []);
+
+        var bounds = points.reduce(function (ac, cr) {
+            ac.extend(cr);
+            return ac;
+        }, new google.maps.LatLngBounds());
+
+        lvElt.domSignal.once('update_view', function () {
+            if (points.length > 1) {
+                zoom = getMapZoomLevel(lvElt.getBoundingClientRect(), bounds);
+                center = bounds.getCenter();
+            }
+            else {
+                zoom = 17;
+                center = points[0] || new google.maps.LatLng(21.018755, 105.839729);
+            }
+            zoom = Math.min(zoom, 17);
+            this.map.setZoom(zoom);
+            this.map.setCenter(center);
+        }.bind(this), 100);
+        lvElt.domSignal.emit('update_view');
+    })
+
+};
+
+LVGMapView.prototype.ev_mapZoomChanged = function () {
+    if (this.pointsCluster)
+        this.pointsCluster.onProcessed();
+};
+
+
+LVGMapView.prototype.ev_mapBoundsChanged = function () {
+    if (this.pointsCluster)
+        this.pointsCluster.onProcessed();
+};
+
+LVGMapView.prototype.onZoom = function (value) {
+    this.map.setZoom(value);
+};
+
+LVGMapView.prototype.onShowPolylineRoute = function (value) {
+    this.$polylines.forEach(function (pll) {
+        pll.showRoute = value;
+    });
+};
+
+
+LVGMapView.prototype.onPoints = function (points) {
+    this.$points.forEach(function (point) {
+        point.remove();
+    });
+    var lvElt = this.lvElt;
+    getGoogleMarkerLib().then(() => {
+        var now = Date.now();
+        var rp = points.reduce(function (ac, pointData) {
+            var id = pointData.id;
+            var point;
+            if (id && ac.dict[id]) {
+                ac.dict[id].refData.push(pointData);
+            }
+            else {
+                point = new LVPoints(lvElt, pointData);
+                ac.dict[point.id] = point;
+                ac.arr.push(point);
+            }
+
+            return ac;
+        }, { arr: [], dict: {} });
+
+        this.$points = rp.arr;
+        var zoom;
+        var center;
+        var latLngs = this.$points.map(function (p) {
+            return p.latLng;
+        }, []).filter(function (x) {
+            return !!x;
+        });
+        var bounds = latLngs.reduce(function (ac, cr) {
+            ac.extend(cr);
+            return ac;
+        }, new google.maps.LatLngBounds());
+
+
+        this.pointsCluster = new LVCluster(lvElt, this.$points);
+        // console.log('set points', Date.now() - now);
+
+        lvElt.domSignal.once('update_view',  ()=> {
+            if (points.length > 1) {
+                zoom = getMapZoomLevel(lvElt.getBoundingClientRect(), bounds);
+                center = bounds.getCenter();
+            }
+            else {
+                zoom = 17;
+                center = points[0] || new google.maps.LatLng(21.018755, 105.839729);
+            }
+            zoom = Math.min(zoom, 17);
+            this.map.setZoom(zoom);
+            this.map.setCenter(center);
+            if (this.pointsCluster) this.pointsCluster.onProcessed();
+        });
+        lvElt.domSignal.emit('update_view');
+    });
+};
+
+LVGMapView.prototype.getPolylineById = function (id) {
+    return this.$polylines.find(function (pll) {
+        return pll.id === id;
+    }) || null;
+};
+
+LVGMapView.prototype.getPolylines = function () {
+    return this.$polylines.slice();
+};
+
+
+LVGMapView.prototype.getPolylinesAsync = function () {
+    if (this.polylineSync) {
+        return this.polylineSync.then(() => {
+            return this.$polylines.slice();
+        });
+    }
+    else return Promise.resolve([]);
+};
