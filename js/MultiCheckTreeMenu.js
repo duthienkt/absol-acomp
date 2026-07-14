@@ -709,9 +709,10 @@ Object.defineProperty(MCTMDropController.prototype, "isFocus", {
 
 /**
  * Auto-correct values and fix bugs with incorrect values.
+ * @param {MultiCheckTreeMenu ||{items, leafOnly: boolean, excludeNoSelectValues: boolean}}elt
  * @constructor
  */
-function MCTMDCorrectingValues(elt) {
+export function MCTMDCorrectingValues(elt) {
     this.elt = elt;
 }
 
@@ -725,6 +726,7 @@ MCTMDCorrectingValues.prototype.makeDict = function (values) {
 };
 
 MCTMDCorrectingValues.prototype.correctNonLeafValues = function (values) {
+    var excludeNoSelectValues = this.elt.excludeNoSelectValues;
     values = values || [];
     var items = this.elt._items;//raw item, not copied
 
@@ -735,7 +737,8 @@ MCTMDCorrectingValues.prototype.correctNonLeafValues = function (values) {
 
     var visitDown = function (item, parent) {
         var value = item.value + '';
-        checkedDict[value] = (valueDict[value] || checkedDict[parent.value + '']);
+        var isExcluded = excludeNoSelectValues && item.noSelect;
+        checkedDict[value] = (valueDict[value] || checkedDict[parent.value + '']) && !isExcluded;
         if (Array.isArray(item.items)) {
             item.items.forEach((cItem) => visitDown(cItem, item));
         }
@@ -787,6 +790,7 @@ MCTMDCorrectingValues.prototype.correctNonLeafValues = function (values) {
 
 
 MCTMDCorrectingValues.prototype.correctLeafValues = function (values) {
+    var excludeNoSelectValues = this.elt.excludeNoSelectValues;
     var items = this.elt._items;//raw item, not copied
     values = values || [];
     var valueDict = this.makeDict(values);
@@ -798,7 +802,8 @@ MCTMDCorrectingValues.prototype.correctLeafValues = function (values) {
     var visitDown = function (item, parent) {
         var value = item.value + '';
         var parentValue = parent.value + '';
-        checkedDict[value] =  (valueDict[value] || checkedDict[parentValue]);
+        var isExcluded = excludeNoSelectValues && item.noSelect;
+        checkedDict[value] =  (valueDict[value] || checkedDict[parentValue]) && !isExcluded;
         if (Array.isArray(item.items) && item.items.length > 0) {
             item.items.forEach((cItem) => {
                 visitDown(cItem, item);
