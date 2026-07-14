@@ -405,12 +405,14 @@ MultiCheckTreeMenu.property.isFocus = {
 
 MultiCheckTreeMenu.property.items = {
     set: function (items) {
+        this.$checkTreeBox.forceSelecting = true;
         this._items = copySelectionItemArray(items || [], { removeNoView: true });//not clone items
         this.$checkTreeBox.items = this._items;
         this.addStyle('--list-min-width', Math.max(145 + 20, this.$checkTreeBox.estimateSize.lv0Width || this.$checkTreeBox.estimateSize.width) + 'px');
         this.viewValues(this.$checkTreeBox.viewValues);
         this._values = this.$checkTreeBox.values.slice();
         this.eventHandler.viewChange();
+        this.$checkTreeBox.forceSelecting = false;
     },
     get: function () {
         return this.$checkTreeBox.items || [];
@@ -423,12 +425,15 @@ MultiCheckTreeMenu.property.values = {
      * @param values
      */
     set: function (values) {
+        this.$checkTreeBox.forceSelecting = true;
         if (!(values instanceof Array)) values = [];
         values = arrayUnique(values);
         this.$checkTreeBox.values = values;
         this.viewValues(this.$checkTreeBox.viewValues);
         this._values = this.$checkTreeBox.values.slice();
         this.eventHandler.viewChange();
+        this.$checkTreeBox.forceSelecting = false;
+
     },
     /***
      * @this MultiCheckTreeMenu
@@ -730,8 +735,7 @@ MCTMDCorrectingValues.prototype.correctNonLeafValues = function (values) {
 
     var visitDown = function (item, parent) {
         var value = item.value + '';
-        var noSelect = item.noSelect;
-        checkedDict[value] = (!noSelect) && (valueDict[value] || checkedDict[parent.value + '']);
+        checkedDict[value] = (valueDict[value] || checkedDict[parent.value + '']);
         if (Array.isArray(item.items)) {
             item.items.forEach((cItem) => visitDown(cItem, item));
         }
@@ -754,8 +758,8 @@ MCTMDCorrectingValues.prototype.correctNonLeafValues = function (values) {
         else {
             allChildSelected = !!checkedDict[value];
         }
-        var noSelect = item.noSelect;
-        checkedDict[value] = (!noSelect) && allChildSelected;
+
+        checkedDict[value] = allChildSelected;
     }
 
     var visitForValue = function (item) {
@@ -794,8 +798,7 @@ MCTMDCorrectingValues.prototype.correctLeafValues = function (values) {
     var visitDown = function (item, parent) {
         var value = item.value + '';
         var parentValue = parent.value + '';
-        var noSelect = item.noSelect;
-        checkedDict[value] = (!noSelect) && (valueDict[value] || checkedDict[parentValue]);
+        checkedDict[value] =  (valueDict[value] || checkedDict[parentValue]);
         if (Array.isArray(item.items) && item.items.length > 0) {
             item.items.forEach((cItem) => {
                 visitDown(cItem, item);

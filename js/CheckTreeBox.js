@@ -44,6 +44,7 @@ function CheckTreeBox() {
         this.updatePosition = noop;
     }
 
+    this.forceSelecting = false;//todo: handle set value by code or user action
     /**
      * @name $searchInput
      * @type {SearchTextInput|SearchMultiModeInput}
@@ -72,6 +73,7 @@ function CheckTreeBox() {
      * @memberof CheckTreeBox#
      * @type {Array}
      */
+
 }
 
 CheckTreeBox.tag = 'CheckTreeBox'.toLowerCase();
@@ -265,7 +267,7 @@ CheckTreeBox.property.values = {
         this.listCtrl.setValues(values);
     },
     get: function () {
-        return this.listCtrl.getValues();
+       return this.listCtrl.getValues();
     }
 };
 
@@ -374,6 +376,8 @@ export function TreeRootHolder(boxElt, items) {
         }, { idx: this.idx, arr: this.child });
         this.tailIdx = this.child[this.child.length - 1].tailIdx;
     }
+    this.isSelectable = (this.child.length === 0 || this.child.some(c => c.isSelectable));
+    this.isAllSelectable = this.child.every(c => c.isSelectable);
     this.canSelectAll = this.child.every(c => c.canSelectAll);
     this.canSelect = (this.child.length === 0 || this.child.some(c => c.canSelect));
 }
@@ -556,8 +560,10 @@ export function TreeNodeHolder(boxElt, item, idx, parent) {
         this.tailIdx = this.child[this.child.length - 1].tailIdx;
 
     }
+    this.isAllSelectable = this.child.every(c => c.isSelectable);//select programmatically, not by user
     this.canSelectAll = !this.item.noSelect && this.child.every(c => c.canSelectAll);
-    this.canSelect = !this.item.noSelect && (this.child.length === 0 || this.child.some(c => c.canSelect));
+    this.isSelectable = this.child.length === 0 || this.child.some(c => c.canSelect);//select programmatically, not by user
+    this.canSelect = !this.item.noSelect && this.isSelectable;//user can select
 }
 
 TreeRootHolder.prototype.SubHolderClass = TreeNodeHolder;
@@ -687,10 +693,13 @@ TreeNodeHolder.prototype.toggle = function () {
  * @param {boolean=} byUser
  */
 TreeNodeHolder.prototype.selectAll = function (isDownUpdate, byUser) {
+    var forceSelecting = this.boxElt.forceSelecting;
     if (this.selected === 'all') return;
-    if (!this.canSelect) return;
+    var canSelect = forceSelecting? this.isSelectable  : this.canSelect;
+    if (!canSelect) return;
     if (byUser && this.readOnly) return;
-    if (this.canSelectAll)
+    var canSelectAll = forceSelecting? this.isAllSelectable: this.canSelectAll;
+    if (canSelectAll)
         this.selected = 'all';
     else
         this.selected = 'child';

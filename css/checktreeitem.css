@@ -36,14 +36,15 @@
     fill: #ebebe4;
 }
 
-.as-check-tree-item.as-no-select .as-checkbox-input .tick,
-.as-check-tree-item.as-no-select .as-checkbox-input .minus,
-.absol-checkbox.as-no-select .tick,
-.absol-checkbox.as-no-select .minus {
-    display: none;
-    opacity: 0;
-    visibility: hidden;
-}
+/* noSelect but selectable in code  */
+/*.as-check-tree-item.as-no-select .as-checkbox-input .tick,*/
+/*.as-check-tree-item.as-no-select .as-checkbox-input .minus,*/
+/*.absol-checkbox.as-no-select .tick,*/
+/*.absol-checkbox.as-no-select .minus {*/
+/*    display: none;*/
+/*    opacity: 0;*/
+/*    visibility: hidden;*/
+/*}*/
 
 .as-check-tree-item.as-check-unsafe-tree-item {
     padding-right: 45px;

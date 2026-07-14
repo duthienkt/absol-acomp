@@ -39,10 +39,11 @@ var verifyItems = items => {
  */
 function CheckTreeLeafOnlyBox() {
     CheckTreeBox.apply(this, arguments);
+    this.forceSelecting = false;//todo: handle set value by code or user action
     /***
      * @name readOnlyValues
      * @type {Array}
-        * @memberOf CheckTreeLeafOnlyBox#
+     * @memberOf CheckTreeLeafOnlyBox#
      */
 }
 
@@ -266,7 +267,10 @@ export function TreeLeafOnlyNodeHolder() {
     if (this.child.length > 0) {
         this.item.noSelect = this.child.every(c => c.item.noSelect);//all child is noSelect=> noSelect
     }
+
+    this.isSelectable = this.isSelectable && this.leafCount > 0;
     this.canSelect = this.canSelect && this.leafCount > 0;
+
     this.canSelectAll = this.canSelect && !this.item.noSelect && this.child.every(c => c.canSelectAll || c.leafCount === 0);
 
     if (this.leafCount === 0) this.selected = 'empty';
