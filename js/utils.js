@@ -1037,21 +1037,27 @@ export function findVScrollContainer(elt) {
  * @param {{mode?:"nearest"|"top", waitForImages?: boolean}} opt
  */
 export function vScrollIntoView(elt, opt) {
+    var eltList = [];//multiple elements with same hash, we will scroll to the first visible element in the list
+    var query = '';
     if (elt && typeof elt === 'object' && (typeof elt.href === 'string' || typeof elt.hash === 'string')) {
         var hash = (typeof elt.hash === 'string' && elt.hash.length > 0) ? elt.hash : '';
         if (!hash && typeof elt.href === 'string') {
             hash = (elt.href.match(/#(.*)$/) || [])[0] || '';
         }
         if (hash) {
-            var query = hash.replace(/^#/, '');
+            query = hash.replace(/^#/, '');
             if (query) {
                 query = '#' + query;
-                elt = $(query);
+                eltList = $$(query);
+                elt = eltList.find(e => e.getBoundingClientRect().height > 0 || e.getBoundingClientRect().width > 0);
+                elt = elt || eltList[0];
             }
         }
     }
     else if (typeof elt === 'string') {
-        elt = $(elt);
+        query = elt;
+        eltList = $$(query);
+        elt = eltList.find(e => e.getBoundingClientRect().height > 0 || e.getBoundingClientRect().width > 0);
     }
 
     if (!elt || !elt.getBoundingClientRect) return;
@@ -2218,4 +2224,14 @@ export function cropFileName(fileFullName, limit) {
     }
 
     return fileFullName;
+}
+
+/*
+*
+* @param {File|{name: string|converted_name:string}|null|undefined} file
+*/
+export function autoNormalizeFileName(file) {
+    if (file && file.name && !file.converted_name) {
+        file.converted_name = normalizeFileName(file.name);
+    }
 }
