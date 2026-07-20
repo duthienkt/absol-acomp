@@ -42,6 +42,8 @@ import { rawTableRemoveEmptyImage, rawTableViewEmptyImage } from "./js/dynamicta
 import { openFaceIdEnrollmentDialog } from "./js/FaceIdEnrollment";
 import { openFaceIdAuthenticationDialog } from "./js/FaceAuthentication";
 import { teiDataToExcelData } from "./js/TableOfTextInput";
+import { MCTMDCorrectingValues } from "./js/MultiCheckTreeMenu";
+
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
 absol.vScrollIntoView = vScrollIntoView;
@@ -128,6 +130,8 @@ Object.assign(absol.$, utils);
 
 absol.teiDataToExcelData = teiDataToExcelData;
 absol.ExpSearcher = ExpSearcher;
+
+absol.MCTMDCorrectingValues = MCTMDCorrectingValues;
 // materializeIconTrigger();
 
 absol.openFileDialog = openFileDialog;
@@ -142,10 +146,10 @@ absol.CMDTool = CMDTool;
 absol.CMDToolDelegate = CMDToolDelegate;
 
 absol.RawTableSearcher = RawTableSearcher;
-absol['rawTable'+'ViewEmptyImage'] = rawTableViewEmptyImage;
-absol['rawTableRe'+'moveEmptyImage'] = rawTableRemoveEmptyImage;
+absol['rawTable' + 'ViewEmptyImage'] = rawTableViewEmptyImage;
+absol['rawTableRe' + 'moveEmptyImage'] = rawTableRemoveEmptyImage;
 
-absol['measur'+'eTextWidth'] = measureTextWidth;
+absol['measur' + 'eTextWidth'] = measureTextWidth;
 
 
 Dom.documentReady.then(function () {
