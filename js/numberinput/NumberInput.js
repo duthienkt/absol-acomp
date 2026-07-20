@@ -60,7 +60,7 @@ function NumberInput() {
 
     this.obs = new IntersectionObserver(() => {
         if (this.isDescendantOf(document.body))
-            this.textCtrl.estimateWidthBy(this.$input.value);
+            this.textCtrl.estimateWidthBy(this.valueCtrl.formatedValueText);
         this.obs.disconnect();
         this.obs = null;
     });
@@ -285,7 +285,7 @@ NumberInput.eventHandler.mouseDownBtn = function (dir, event) {
             this.$input.focus();
         }
         this.notifyChanged({ originEvent: event, by: 'press_button' });
-        this.textCtrl.estimateWidthBy(this.$input.value);
+        this.textCtrl.estimateWidthBy(this.valueCtrl.formatedValueText);
     }
 
     document.addEventListener('mouseup', finish);
