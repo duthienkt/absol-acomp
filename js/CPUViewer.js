@@ -24,7 +24,7 @@ function CPUViewer() {
     this.holdTime = 0;
     this.logOffset = 0;
     this.counter = 0;
-
+    this.scale = 1;
     this['tick'] = this.tick.bind(this);
 
 }
@@ -90,7 +90,7 @@ CPUViewer.prototype.tick = function () {
     var y;
     this.ctx.fillStyle = 'yellow';
     for (var x = 0; x < this.usage.length; ++x) {
-        y = this.usage[x] / 2;
+        y = Math.ceil(this.usage[x] / 2 * this.scale)  ;
         this.ctx.fillRect(x, 50 - y, 1, y);
     }
     var now = performance.now();
@@ -182,6 +182,7 @@ function startCPUViewerIfNeed() {
     if (BrowserDetector.isMobile) return;
     var originSTO = window.setTimeout;
     var originSIV = window.setInterval;
+    window.CPUViewer = CPUViewer;
     FlagManager.add('CPU_VIEWER', false);
     if (location.href.indexOf('localhost:8080')>=0 || window.CPU_VIEWER) {
         CPUViewer.start();
@@ -192,10 +193,12 @@ function startCPUViewerIfNeed() {
                 args.unshift(function () {
                     while (window.cpuRisedHanders.length > 1000) window.cpuRisedHanders.pop();
                     CPUViewer.hold();
+                    var t = performance.now();
                     handler.apply(null, args);
+                    t = performance.now() - t;
                     CPUViewer.release();
                     if (handler.name !== 'intervalFuncLoop')
-                        window.cpuRisedHanders.push(handler);
+                        window.cpuRisedHanders.unshift({ h: handler, t: t });
                 });
                 return originSTO.apply(this, args);
             }
@@ -213,7 +216,7 @@ function startCPUViewerIfNeed() {
                     handler.apply(null, args);
                     CPUViewer.release();
                     if (handler.name !== 'intervalFuncLoop')
-                        window.cpuRisedHanders.push(handler);
+                        window.cpuRisedHanders.unshift(handler);
                 });
                 return originSIV.apply(this, args);
             }
