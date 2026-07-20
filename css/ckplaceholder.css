@@ -32,6 +32,11 @@ div.as-ck-inline-short-text {
     white-space: nowrap;
 }
 
+.as-ck-inline-short-text[data-size="regular"] {
+    height: var(--default-size);
+    border-radius: var(--default-radius);
+}
+
 .as-ck-inline-short-text p {
     padding: 0;
     margin: 0;
