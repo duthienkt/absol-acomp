@@ -14,39 +14,50 @@ var warned = false;
  * @constructor
  */
 function SinglePage() {
-    var thisSP = this;
-    this._updateIntv = -1;
-    this._tick = function () {
-        if (this.isDescendantOf(document.body)) {
-            if (this.$header) {
-                var headerHeight = this.$header.getBoundingClientRect().height;
-                if (this._prevHeaderHeight !== headerHeight) {
-                    ResizeSystem.update();
-                }
-            }
-        }
-        else {
-            clearInterval(this._updateIntv);
-            this._updateIntv = -1;
-        }
-    }.bind(this);
+    // var thisSP = this;
+    // this._updateIntv = -1;
+    // this._tick = function () {
+    //     if (this.isDescendantOf(document.body)) {
+    //         if (this.$header) {
+    //             var headerHeight = this.$header.getBoundingClientRect().height;
+    //             if (this._prevHeaderHeight !== headerHeight) {
+    //                 ResizeSystem.update();
+    //             }
+    //         }
+    //     }
+    //     else {
+    //         clearInterval(this._updateIntv);
+    //         this._updateIntv = -1;
+    //     }
+    // }.bind(this);
+    var scrollerObs = null;
+
     this.$attachhook = $('attachhook', this)
         .on('attached', function () {
             this.updateSize();
             setTimeout(this.updateSize, 20);
             Dom.addToResizeSystem(this);
-            if (thisSP._updateIntv < 0) {
-                thisSP._updateIntv = setInterval(thisSP._tick, 200);
-            }
-            if (obs) {
-                obs.disconnect();
-                obs = null;
-            }
-
+            // if (thisSP._updateIntv < 0) {
+            //     thisSP._updateIntv = setInterval(thisSP._tick, 200);
+            // }
         });
-    var obs = new IntersectionObserver( (entries) =>{
-        this.updateSize();
-    }, {root: document.body});
+    var obs = new IntersectionObserver(function (entries) {
+        var entry = entries[0];
+        var isVisible = !!(entry && entry.isIntersecting);
+        if (isVisible) {
+            this.updateSize();
+            if (!scrollerObs && typeof ResizeObserver === 'function' && this.$scroller) {
+                scrollerObs = new ResizeObserver(function () {
+                    this.updateSize();
+                }.bind(this));
+                scrollerObs.observe(this.$scroller);
+            }
+        }
+        else if (scrollerObs) {
+            scrollerObs.disconnect();
+            scrollerObs = null;
+        }
+    }.bind(this), {root: document.body});
     obs.observe(this);
     this.$attachhook.updateSize = this.updateSize.bind(this);
     this.$header = null;
