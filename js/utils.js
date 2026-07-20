@@ -1,4 +1,4 @@
-import ACore, { _, $ } from "../ACore";
+import ACore, { _, $, $$ } from "../ACore";
 import { cropTextByUTF8BytesCount, stringHashCode } from "absol/src/String/stringUtils";
 import YesNoQuestionDialog from "./YesNoQuestionDialog";
 import Modal from "./Modal";
@@ -11,6 +11,7 @@ import { nonAccentVietnamese, normalizeFileName, normalizeIdent } from "absol/sr
 import TextMeasure from "./TextMeasure";
 import { parseExtFloat } from "absol/src/Math/int";
 import { chToArial14Px } from "absol/src/Math/measurements";
+import { isDomNode, waitImageLoaded } from "absol/src/HTML5/Dom";
 
 export { normalizeFileName };
 
@@ -1032,23 +1033,70 @@ export function findVScrollContainer(elt) {
 
 /**
  *
- * @param {HTMLElement} elt
+ * @param {HTMLElement|Location|{href?:string, hash?:string}} elt
+ * @param {{mode?:"nearest"|"top", waitForImages?: boolean}} opt
  */
-export function vScrollIntoView(elt) {
-    var parent = findVScrollContainer(elt);
-    var eBound = elt.getBoundingClientRect();
-    var viewportBound = parent.getBoundingClientRect();
-    var currentScrollTop = parent.scrollTop;
-    var newScrollTop = currentScrollTop;
-    if (eBound.bottom > viewportBound.bottom) {
-        newScrollTop = currentScrollTop + (eBound.bottom - viewportBound.bottom);
+export function vScrollIntoView(elt, opt) {
+    if (elt && typeof elt === 'object' && (typeof elt.href === 'string' || typeof elt.hash === 'string')) {
+        var hash = (typeof elt.hash === 'string' && elt.hash.length > 0) ? elt.hash : '';
+        if (!hash && typeof elt.href === 'string') {
+            hash = (elt.href.match(/#(.*)$/) || [])[0] || '';
+        }
+        if (hash) {
+            var query = hash.replace(/^#/, '');
+            if (query) {
+                query = '#' + query;
+                elt = $(query);
+            }
+        }
     }
-    if (eBound.top < viewportBound.top) {
-        newScrollTop = currentScrollTop - (viewportBound.top - eBound.top);
+    else if (typeof elt === 'string') {
+        elt = $(elt);
     }
 
-    if (newScrollTop !== currentScrollTop) {
-        parent.scrollTop = newScrollTop;
+    if (!elt || !elt.getBoundingClientRect) return;
+    opt = opt || {};
+    var mode = opt.mode || 'nearest';
+    var parent = findVScrollContainer(elt);
+    if (!parent) return;
+
+    function doScroll() {
+        var eBound = elt.getBoundingClientRect();
+        var viewportBound = parent.getBoundingClientRect();
+        var currentScrollTop = parent.scrollTop;
+        var newScrollTop = currentScrollTop;
+
+        if (mode === 'top') {
+            newScrollTop = currentScrollTop + (eBound.top - viewportBound.top);
+        }
+        else {
+            if (eBound.bottom > viewportBound.bottom) {
+                newScrollTop = currentScrollTop + (eBound.bottom - viewportBound.bottom);
+            }
+            if (eBound.top < viewportBound.top) {
+                newScrollTop = currentScrollTop - (viewportBound.top - eBound.top);
+            }
+        }
+
+        if (newScrollTop !== currentScrollTop) {
+            parent.scrollTop = newScrollTop;
+        }
+    }
+    var sync;
+    if (opt.waitForImages) {
+        sync = $$('img', parent).filter(ie=>{
+            return (ie.getAttribute('src') || "").trim().length > 0;
+        }).map(ie=>{
+            return waitImageLoaded(ie, 1000);
+        });
+        Promise.all(sync).then(()=>{
+            doScroll();
+        }).catch(()=>{
+            doScroll();
+        });
+    }
+    else {
+        doScroll();
     }
 }
 
@@ -1654,24 +1702,55 @@ export function normalizeLatLngString(text) {
     else return '';
 }
 
+export function FallbackLatLng(latitude, longitude) {
+    this._latitude = latitude;
+    this._longitude = longitude;
+}
+
+FallbackLatLng.prototype.lat = function () {
+    return this._latitude;
+};
+
+FallbackLatLng.prototype.lng = function () {
+    return this._longitude;
+};
+
+
+
+FallbackLatLng.prototype.toJSON = function () {
+    return {
+        lat: this._latitude,
+        lng: this._longitude
+    };
+};
+
+FallbackLatLng.prototype.toString = function () {
+    return '(' + this._latitude + ', ' + this._longitude + ')';
+};
+
+
+
 export function implicitLatLng(value) {
+    var clazz = (google && google.maps && google.maps.LatLng) ? google.maps.LatLng : FallbackLatLng;
     var latlng = null;
     var nums;
     if (typeof value === "string") {
         latlng = parseDMS(value);
         if (latlng) {
-            latlng = new google.maps.LatLng(latlng.latitude, latlng.longitude);
+            latlng = new clazz(latlng.latitude, latlng.longitude);
         }
         else {
             latlng = parseLatLng(value);
             if (latlng) {
-
+                latlng = new clazz(latlng.latitude, latlng.longitude);
             }
-            nums = value.split(/\s*,\s*/).map(function (t) {
-                return parseFloat(t);
-            });
-            if (isRealNumber(nums[0]) && isRealNumber(nums[1])) {
-                latlng = new google.maps.LatLng(nums[0], nums[1]);
+            else {
+                nums = value.split(/\s*,\s*/).map(function (t) {
+                    return parseFloat(t);
+                });
+                if (isRealNumber(nums[0]) && isRealNumber(nums[1])) {
+                    latlng = new clazz(nums[0], nums[1]);
+                }
             }
         }
     }
@@ -1679,13 +1758,13 @@ export function implicitLatLng(value) {
         latlng = value;
     }
     else if (value && isRealNumber(value.latitude) && isRealNumber(value.longitude)) {
-        latlng = new google.maps.LatLng(value.latitude, value.longitude);
+        latlng = new clazz(value.latitude, value.longitude);
     }
     else if (value && isRealNumber(value.lat) && isRealNumber(value.lng)) {
-        latlng = new google.maps.LatLng(value.lat, value.lng);
+        latlng = new clazz(value.lat, value.lng);
     }
     else if ((value instanceof Array) && isRealNumber(value[0]) && isRealNumber(value[1])) {
-        latlng = new google.maps.LatLng(value[0], value[1]);
+        latlng = new clazz(value[0], value[1]);
     }
     return latlng;
 }
@@ -2111,15 +2190,6 @@ export function notifyPreFocusEvent(elt) {
 }
 
 
-/**
- *
- * @param {File|{name: string|converted_name:string}|null|undefined} file
- */
-export function autoNormalizeFileName(file) {
-    if (file && file.name && !file.converted_name) {
-        file.converted_name = normalizeFileName(file.name);
-    }
-}
 
 /**
  *
