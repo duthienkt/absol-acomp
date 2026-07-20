@@ -15,6 +15,13 @@
     line-height: 16px;
 }
 
+.absol-checkbox[data-size="regular"] {
+    display: inline-flex;
+    align-items: center;
+    height: var(--default-size);
+}
+
+
 .absol-checkbox:not(.as-read-only):not(.as-disabled) {
     cursor: pointer;
     user-select: none;
