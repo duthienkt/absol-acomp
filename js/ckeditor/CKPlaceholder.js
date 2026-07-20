@@ -105,14 +105,23 @@ CKPlaceholder.prototype._makeInitConfig = function () {
 };
 
 CKPlaceholder.prototype.focus = function () {
-    if (this.editor) {
-        this.editor.focus();
-    }
-    else {
-        this.once('editorready', () => {
+    if (this.focusing) return;//anti loop
+    this.focusing = true;
+    try {
+        HTMLElement.prototype.focus.call(this);
+        if (this.editor) {
             this.editor.focus();
-        })
+        }
+        else {
+            this.once('editorready', () => {
+                this.editor.focus();
+            })
+        }
     }
+    catch (e) {
+        console.error(e);
+    }
+    this.focusing = false;
 };
 
 
