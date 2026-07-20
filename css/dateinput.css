@@ -73,7 +73,8 @@
     min-width: calc(var(--format-width) + 1em);
 }
 
-.as-date-input.as-value-null.as-read-only .as-date-input-text
+.as-date-input.as-value-null.as-read-only .as-date-input-text,
+.as-date-time-input.as-value-null.as-read-only::before
 {
     visibility: hidden;
 }
@@ -207,7 +208,17 @@
     vertical-align: middle;
     position: relative;
     width: 13.5em;
-    height: calc(2em + 2px);
+    --base-size: calc(2em + 2px);
+    height: var(--base-size);
+}
+
+.as-date-n-level-input[data-size="regular"] {
+    --base-size: var(--default-size);
+    font-size: var(--default-font-size);
+}
+
+.as-date-n-level-input[data-size="regular"] .as-date-input {
+    border-radius: var(--default-radius);
 }
 
 .as-date-n-level-input .as-date-input {
@@ -225,7 +236,7 @@
     left: 1px;
     top: 1px;
     width: 2em;
-    height: 2em;
+    height: calc(100% - 2px);
     padding: 0;
 }
 

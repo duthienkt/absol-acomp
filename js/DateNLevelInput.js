@@ -20,6 +20,7 @@ function DateNLevelInput() {
     drillProperty(this, this.$date, 'min');
     drillProperty(this, this.$date, 'max');
     AbstractInput.call(this);
+    this.addStyle('size', 'regular');
     /**
      * @name level
      * @type {"date"| "week" | "month" | "quarter" | "year"}
