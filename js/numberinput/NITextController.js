@@ -36,7 +36,7 @@ NITextController.prototype.estimateWidthBy = function (text) {
     if (this.elt.hasClass('as-pressing')) return;
     var bound = this.elt.getBoundingClientRect();
     var font = this.$input.getComputedStyleValue('font');
-    var width = measureText(text, font).width;
+    var width = measureText(text, font || '14px Roboto').width;
     width = Math.ceil(width);
     this.elt.addStyle('--text-width', width + 'px');
     var newBound = this.elt.getBoundingClientRect();
