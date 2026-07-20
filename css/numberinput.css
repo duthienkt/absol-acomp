@@ -39,7 +39,8 @@
 
 
 .absol-number-input.as-width-auto {
-    width: calc(var(--text-width) + 1em);
+    min-width: calc(var(--text-width) + 1em);
+    width: auto;
 }
 
 .absol-number-input.as-has-stepper.as-width-auto:not(.as-read-only) {
