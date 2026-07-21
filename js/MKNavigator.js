@@ -247,7 +247,7 @@ MKNavigator.property.value = {
     },
     get: function () {
         if (this.$itemByValue[this._value]) return this._value;
-        if (this._items.length > 0) return this._items[0];
+        if (this._items.length > 0) return this._items[0].value;
         return this._value;
     }
 };
