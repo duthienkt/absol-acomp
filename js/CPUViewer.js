@@ -194,7 +194,7 @@ function startCPUViewerIfNeed() {
                     while (window.cpuRisedHanders.length > 1000) window.cpuRisedHanders.pop();
                     CPUViewer.hold();
                     var t = performance.now();
-                    handler.apply(null, args);
+                    handler.apply(this, arguments);
                     t = performance.now() - t;
                     CPUViewer.release();
                     if (handler.name !== 'intervalFuncLoop')
@@ -213,10 +213,12 @@ function startCPUViewerIfNeed() {
                 args.unshift(function () {
                     while (window.cpuRisedHanders.length > 1000) window.cpuRisedHanders.pop();
                     CPUViewer.hold();
-                    handler.apply(null, args);
+                    var t = performance.now();
+                    handler.apply(this, arguments);
+                    t = performance.now() - t;
                     CPUViewer.release();
                     if (handler.name !== 'intervalFuncLoop')
-                        window.cpuRisedHanders.unshift(handler);
+                        window.cpuRisedHanders.unshift({ h: handler, t: t });
                 });
                 return originSIV.apply(this, args);
             }
