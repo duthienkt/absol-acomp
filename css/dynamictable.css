@@ -509,7 +509,7 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 }
 
 .as-dt-body-cell > .absol-checkbox:last-child:first-child {
-    display: inline-block;
+    display: inline-flex;
     vertical-align: middle;
 }
 

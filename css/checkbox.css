@@ -1,12 +1,12 @@
 /** align middle in table cell **/
 .KPIsimpletableclass td > .absol-checkbox:first-child:last-child,
 .KPIsimpletableclass td > .absol-checkbox.as-no-label:first-child:last-child .as-checkbox-input {
-    display: block;
+    display: flex;
     margin: auto;
 }
 
 .cardsimpletableclass > table > tbody > tr > td > .absol-checkbox:first-child:last-child {
-    display: block;
+    display: flex;
 }
 
 .absol-checkbox {
