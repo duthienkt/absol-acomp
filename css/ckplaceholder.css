@@ -19,6 +19,13 @@ span.cke_button_icon.cke_button__insert_video_icon {
 }
 
 
+
+span.cke_button_icon.cke_button__copy-cell-content_icon {
+    background-size: cover;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHRpdGxlPnNlbGVjdC1wbGFjZTwvdGl0bGU+PHBhdGggZD0iTTQgM0g1VjVIM1Y0QzMgMy41IDMuNSAzIDQgM00yMCAzQzIwLjUgMyAyMSAzLjUgMjEgNFY1SDE5VjNIMjBNMTUgNVYzSDE3VjVIMTVNMTEgNVYzSDEzVjVIMTFNNyA1VjNIOVY1SDdNMjEgMTJDMjEgMTIuNSAyMC41IDEzIDIwIDEzSDE5VjExSDIxVjEyTTE1IDEzVjExSDE3VjEzSDE1TTExIDEzVjExSDEzVjEzSDExTTcgMTNWMTFIOVYxM0g3TTQgMTNDMy41IDEzIDMgMTIuNSAzIDEyVjExSDVWMTNINE0zIDdINVY5SDNWN00yMSA3VjlIMTlWN0gyMU03IDE2TDEyIDIxTDE3IDE2SDdaIiAvPjwvc3ZnPg==");
+}
+
+
 div.as-ck-inline-short-text {
     border: 1px solid #dddddd;
     height: 30px;
