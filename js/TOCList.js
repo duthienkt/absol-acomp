@@ -194,8 +194,7 @@ TOCList.prototype.makeNodeController = function (nodeData) {
  * @returns {TOCVirtualRootController}
  */
 TOCList.prototype._calcSearch = function (query) {
-    var searchRootController = this.searchCache[query];
-    if (searchRootController) return searchRootController;
+    var searchRootController = null;//disable cache of TOCVirtualRootController because of bug
     var itemTree = this.searchCache.__itemTree__;
     if (!itemTree) {
         itemTree = this.nodes.map(function visit(node) {
@@ -216,8 +215,7 @@ TOCList.prototype._calcSearch = function (query) {
         }
         return node;
     });
-    this.searchCache[query] = new TOCVirtualRootController(this, resultNodes)
-    return this.searchCache[query];
+    return new TOCVirtualRootController(this, resultNodes);
 };
 
 TOCList.prototype.search = function (query) {
