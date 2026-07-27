@@ -9,12 +9,13 @@ import DynamicLinkExtension from "./DynamicLinkExtension";
 import ImageFileExtension from "./ImageFileExtension";
 import VideoExtension from "./VideoExtension";
 import MDIExtension from "./MDIExtension";
+import CopyCellContentExtension from "./CopyCellContentExtension";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 
 var ckContentStyleUrl;
 var ckPluginInitialized = false;
 
-export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension, VideoExtension, MDIExtension];
+export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension, VideoExtension, MDIExtension, CopyCellContentExtension];
 
 export var CKExtensionDict = CKExtensions.reduce(function (ac, cr) {
     ac[cr.name] = cr;
@@ -57,6 +58,15 @@ export var CKStylesSetDefault = [
 export function ckInit() {
     if (!window.CKEDITOR) return;
     if (ckPluginInitialized) return;
+
+    var removedPlugins = (CKEDITOR.config.removePlugins || '').trim().split(/\s*,\s*/).filter(function (name) {
+        return !!name;
+    });
+    if (removedPlugins.indexOf('magicline') < 0) {
+        removedPlugins.push('magicline');
+    }
+    CKEDITOR.config.removePlugins = removedPlugins.join(',');
+
     var styleCode = ckContentStyleText
         .replace(/\$basePath/g, CKEDITOR.basePath);
 
@@ -70,7 +80,7 @@ export function ckInit() {
         if (e.plugin) {
             CKEDITOR.plugins.add(e.name, e.plugin);
         }
-    })
+    });
 }
 
 export function ckMakeDefaultConfig(config, extensions, holderElt) {
@@ -96,6 +106,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
         }).join(',');
     if (extensions) extensions.push('video');
     if (extensions) extensions.push('mdi');
+    if (extensions) extensions.push(CopyCellContentExtension.name);
     if (extensions && extensions.indexOf(VariableExtension.name) >= 0) {
         config.title = false;
     }
