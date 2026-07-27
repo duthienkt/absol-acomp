@@ -17,10 +17,46 @@ function StaticTabbar() {
     this._btDict = {};
     this._activedButton = undefined;
     this.sync = new Promise(function (resolve) {
-        _('attachhook').on('error', function () {
+        _('attachhook').once('attached', function () {
             this.remove();
             resolve();
         }).addTo(thisST);
+    });
+
+    this.sync.then(()=>{
+        var resizeObserver = null;
+        var documentClickHandler = null;
+        var onResize = function () {
+            if (thisST._value !== undefined) thisST.activeTab(thisST._value);
+        };
+        var onDocumentClick = function () {
+            if (!thisST.isConnected) {
+                clearListening();
+            }
+        };
+        var clearListening = function () {
+            if (resizeObserver) {
+                resizeObserver.disconnect();
+                resizeObserver = null;
+            }
+            if (documentClickHandler) {
+                document.removeEventListener('click', documentClickHandler, true);
+                documentClickHandler = null;
+             }
+             window.removeEventListener('resize', onResize);
+        };
+
+        if (typeof ResizeObserver === 'function') {
+            resizeObserver = new ResizeObserver(onResize);
+            resizeObserver.observe(thisST);
+        }
+        else {
+            window.addEventListener('resize', onResize);
+        }
+
+        // Check detach state on user interaction and stop listeners to avoid leaks.
+        documentClickHandler = onDocumentClick;
+        document.addEventListener('click', documentClickHandler, true);
     });
     AbstractStyleExtended.call(this);
     return this;
@@ -68,7 +104,11 @@ StaticTabbar.property.items = {
         this._items = value;
         var self = this;
         this.$buttons = this.items.map(function (tab) {
-            var ident = (tab.value || randomIdent());
+            var ident = tab.value;
+            if (ident === undefined) {
+                ident = randomIdent();
+                tab.value = ident;
+            }
             var button = _({
                 tag: 'button',
                 class: 'absol-static-tabbar-button',
@@ -79,7 +119,7 @@ StaticTabbar.property.items = {
                 },
                 on: {
                     click: function (event) {
-                        if (self.value != tab.value) {
+                        if (self.value !== tab.value) {
                             self.value = ident;
                             self.fireChange(tab);
                         }
@@ -137,5 +177,4 @@ StaticTabbar.prototype.activeTab = function (ident) {
 ACore.install('statictabbar', StaticTabbar);
 
 export default StaticTabbar;
-
 
