@@ -6,6 +6,21 @@
     font-size: 14px;
 }
 
+
+.absol-static-tabbar[data-size="regular"][data-variant="secondary"] {
+    font-size: 14px;
+    height: 36px;
+}
+
+.absol-static-tabbar[data-size="regular"][data-variant="secondary"] .absol-static-tabbar-button {
+    height: 36px;
+}
+
+
+.absol-static-tabbar[data-size="regular"][data-variant="secondary"] .absol-static-tabbar-hline {
+    height: 80%;
+}
+
 .absol-static-tabbar-button {
     height: 2em;
     background-color: transparent;
