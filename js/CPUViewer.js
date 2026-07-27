@@ -228,6 +228,8 @@ function startCPUViewerIfNeed() {
         }
     }
 }
+setTimeout(()=>{
+    startCPUViewerIfNeed();
+}, 100);
 
-startCPUViewerIfNeed();
 
