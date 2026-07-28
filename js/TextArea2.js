@@ -96,7 +96,6 @@ TextArea2.prototype.updateSize = function () {
 
 
 
-TextArea2.property = {};
 TextArea2.prototype.maxU8Length = TextInput.prototype.maxU8Length;
 TextArea2.prototype.updateContentWidthStyle = TextArea2.prototype.updateSize;
 TextArea2.prototype._showMaxU8LengthError = TextInput.prototype._showMaxU8LengthError;
