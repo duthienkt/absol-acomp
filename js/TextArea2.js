@@ -96,6 +96,22 @@ TextArea2.prototype.updateSize = function () {
 
 
 
+TextArea2.prototype.styleHandlers.height = {
+    set: function (value) {
+        value = value ||'';
+        value = value.trim();
+        if (value === 'auto' || !value) {
+            this.style.height = '';
+        }
+        else {
+            this.style.setProperty('height', value);
+            this.style.overflow = 'auto';
+        }
+
+        return value;
+    }
+};
+
 TextArea2.prototype.maxU8Length = TextInput.prototype.maxU8Length;
 TextArea2.prototype.updateContentWidthStyle = TextArea2.prototype.updateSize;
 TextArea2.prototype._showMaxU8LengthError = TextInput.prototype._showMaxU8LengthError;
