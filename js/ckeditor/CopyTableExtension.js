@@ -1,20 +1,15 @@
 import Snackbar from "../Snackbar";
 
-var name = 'copy_cell_content';
-var command = 'copy-cell-content';
+var name = 'copy_table';
+var command = 'copy-table';
 
-function findTargetElement(editor) {
+function findSelectedTable(editor) {
 	var sel = editor.getSelection();
 	var startElt = sel && sel.getStartElement();
 	if (!startElt) return null;
 
-	// Prefer the current table cell; if not in a table, fallback to the current paragraph.
-	return startElt.getAscendant('td', true) || startElt.getAscendant('p', true)
-        || startElt.getAscendant('h1', true)
-        || startElt.getAscendant('h2', true)
-        || startElt.getAscendant('h3', true)
-        || startElt.getAscendant('h4', true)
-        ;
+	// Copy only the table where the caret/selection currently sits.
+	return startElt.getAscendant('table', true);
 }
 
 function fallbackCopyText(text) {
@@ -79,30 +74,35 @@ function restoreSelection(editor, ranges) {
 
 function init(editor) {
 	editor.ui.addButton(command, {
-		label: 'Copy Cell Content',
+		label: 'Copy Selected Table',
 		command: command,
 	});
 
 	editor.addCommand(command, {
 		readOnly: 1,
 		exec: function (editor) {
-			var targetElt = findTargetElement(editor);
-			if (!targetElt) return;
-			var selectedRanges = selectCopiedContent(editor, targetElt);
+			var targetTable = findSelectedTable(editor);
+			if (!targetTable) {
+				Snackbar.show("Please place the cursor inside a table.", { type: 'warning' });
+				return;
+			}
+			var selectedRanges = selectCopiedContent(editor, targetTable);
 
-			var html = targetElt.getHtml() || '';
-			var text = targetElt.getText() || '';
+			var html = (targetTable.getOuterHtml && targetTable.getOuterHtml()) || '';
+			var text = targetTable.getText() || '';
 
 			copyContentToClipboard(html, text)
-                .then(()=>{
-                    Snackbar.show("Content copied to clipboard.", { type: 'success' });
-                }).catch(function () {
-                Snackbar.show("Failed to copy content to clipboard. Please try again.", { type: 'error' });
-				return null;
-			}).then(function () {
-				// fallbackCopyText temporarily steals DOM selection, so restore editor selection.
-				restoreSelection(editor, selectedRanges);
-			});
+				.then(function () {
+					Snackbar.show("Table copied to clipboard.", { type: 'success' });
+				})
+				.catch(function () {
+					Snackbar.show("Failed to copy table to clipboard. Please try again.", { type: 'error' });
+					return null;
+				})
+				.then(function () {
+					// fallbackCopyText temporarily steals DOM selection, so restore editor selection.
+					restoreSelection(editor, selectedRanges);
+				});
 		}
 	});
 }
@@ -120,4 +120,3 @@ export default {
  * @type {{}}
  * @memberOf CKPlaceholder#
  */
-
