@@ -1088,16 +1088,17 @@ export function vScrollIntoView(elt, opt) {
             parent.scrollTop = newScrollTop;
         }
     }
+
     var sync;
     if (opt.waitForImages) {
-        sync = $$('img', parent).filter(ie=>{
+        sync = $$('img', parent).filter(ie => {
             return (ie.getAttribute('src') || "").trim().length > 0;
-        }).map(ie=>{
+        }).map(ie => {
             return waitImageLoaded(ie, 1000);
         });
-        Promise.all(sync).then(()=>{
+        Promise.all(sync).then(() => {
             doScroll();
-        }).catch(()=>{
+        }).catch(() => {
             doScroll();
         });
     }
@@ -1722,7 +1723,6 @@ FallbackLatLng.prototype.lng = function () {
 };
 
 
-
 FallbackLatLng.prototype.toJSON = function () {
     return {
         lat: this._latitude,
@@ -1733,7 +1733,6 @@ FallbackLatLng.prototype.toJSON = function () {
 FallbackLatLng.prototype.toString = function () {
     return '(' + this._latitude + ', ' + this._longitude + ')';
 };
-
 
 
 export function implicitLatLng(value) {
@@ -2196,7 +2195,6 @@ export function notifyPreFocusEvent(elt) {
 }
 
 
-
 /**
  *
  * @param fileFullName
@@ -2234,4 +2232,113 @@ export function autoNormalizeFileName(file) {
     if (file && file.name && !file.converted_name) {
         file.converted_name = normalizeFileName(file.name);
     }
+}
+
+
+export function readClipboardHTML() {
+
+    if (!navigator.clipboard) {
+        return Promise.reject(new Error('Clipboard API is not available.'));
+    }
+
+    if (navigator.clipboard.read) {
+        return navigator.clipboard.read()
+            .then(function (items) {
+                var htmlPromises = (items || []).map(function (item) {
+                    if (!item || !item.types || item.types.indexOf('text/html') < 0) return null;
+                    return item.getType('text/html').then(function (blob) {
+                        return blob.text();
+                    });
+                }).filter(Boolean);
+
+                if (htmlPromises.length === 0) return null;
+                return Promise.all(htmlPromises).then(function (parts) {
+                    return parts.filter(Boolean).join('\n');
+                });
+            })
+            .then(function (html) {
+                if (html) return html;
+                if (navigator.clipboard.readText) return navigator.clipboard.readText();
+                return '';
+            });
+    }
+
+    if (navigator.clipboard.readText) {
+        return navigator.clipboard.readText();
+    }
+
+    return Promise.reject(new Error('No clipboard read method available.'));
+}
+
+
+/***
+ * @name variables
+ * @type {{}}
+ * @memberOf CKPlaceholder#
+ */
+
+/**
+ * @returns {Promise<>}
+ */
+export function parseAllTableInClipboard() {
+    var t = readClipboardHTML();
+    t = t.then(html => {
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        var tables = Array.prototype.filter.call(div.childNodes, c => {
+            return c.tagName === 'TABLE';
+        }) || div.querySelectorAll('table');
+
+        return Array.prototype.slice.call(tables);
+    }).catch(err => {
+        console.log(err);
+        return [];
+    });
+
+    function getCellData(cellElt) {
+        var colspan = cellElt.getAttribute('colspan');
+        var rowspan = cellElt.getAttribute('rowspan');
+        colspan = parseInt(colspan, 10) || 1;
+        rowspan = parseInt(rowspan, 10) || 1;
+        return {
+            text: cellElt.textContent,
+            html: cellElt.innerHTML,
+            colspan: colspan,
+            rowspan: rowspan
+        }
+    }
+
+    function getRowData(rowElt) {
+        var cells = Array.prototype.filter.call(rowElt.childNodes, c => {
+            return c.tagName === 'TD' || c.tagName === 'TH';
+        });
+        return cells.map(getCellData);
+    }
+
+    function getTableRowsData(partElt) {
+        var rows = Array.prototype.filter.call(partElt.childNodes, c => {
+            return c.tagName === 'TR';
+        });
+        return rows.map(getRowData);
+    }
+
+    function getTableData(tableElt) {
+        var body = Array.prototype.find.call(tableElt.childNodes, c => {
+            return c.tagName === 'TBODY';
+        });
+
+        var head = Array.prototype.find.call(tableElt.childNodes, c => {
+            return c.tagName === 'THEAD';
+        });
+
+        return {
+            head: getTableRowsData(head),
+            body: getTableRowsData(body)
+        }
+    }
+
+    t = t.then(tables => {
+        return tables.map(getTableData);
+    });
+    return t;
 }
