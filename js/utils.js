@@ -2347,3 +2347,68 @@ export function parseAllTableInClipboard() {
     });
     return t;
 }
+
+/**
+ * @param {AElement|HTMLElement} elt
+ * @returns {null|{bound: DOMRect, borderLeft: number, borderTop: number, borderRight: number, borderBottom: number, paddingLeft: number, paddingTop: number, paddingRight: number, paddingBottom: number}}
+ */
+function getBoundingBoxMetrics(elt) {
+    if (!elt || !elt.getBoundingClientRect) return null;
+    var bound = elt.getBoundingClientRect();
+    var style = getComputedStyle(elt);
+    return {
+        bound: bound,
+        borderLeft: parseFloat(style.borderLeftWidth) || 0,
+        borderTop: parseFloat(style.borderTopWidth) || 0,
+        borderRight: parseFloat(style.borderRightWidth) || 0,
+        borderBottom: parseFloat(style.borderBottomWidth) || 0,
+        paddingLeft: parseFloat(style.paddingLeft) || 0,
+        paddingTop: parseFloat(style.paddingTop) || 0,
+        paddingRight: parseFloat(style.paddingRight) || 0,
+        paddingBottom: parseFloat(style.paddingBottom) || 0
+    };
+}
+
+
+/**
+ * Return the element content box in viewport coordinates.
+ * Border and padding are excluded from the returned rectangle.
+ *
+ * @param {AElement|HTMLElement} elt
+ * @return {Rectangle}
+ */
+export function getBoundingContentRect(elt) {
+    var m = getBoundingBoxMetrics(elt);
+    if (!m) {
+        return new Rectangle(0, 0, 0, 0);
+    }
+
+    var x = m.bound.left + m.borderLeft + m.paddingLeft;
+    var y = m.bound.top + m.borderTop + m.paddingTop;
+    var width = Math.max(0, m.bound.width - m.borderLeft - m.borderRight - m.paddingLeft - m.paddingRight);
+    var height = Math.max(0, m.bound.height - m.borderTop - m.borderBottom - m.paddingTop - m.paddingBottom);
+
+    return new Rectangle(x, y, width, height);
+}
+
+/**
+ * Return the element padding box in viewport coordinates.
+ * Border is excluded; padding and content are included.
+ *
+ * @param {AElement|HTMLElement} elt
+ * @return {Rectangle}
+ */
+export function getBoundingPaddingRect(elt) {
+    var m = getBoundingBoxMetrics(elt);
+    if (!m) {
+        return new Rectangle(0, 0, 0, 0);
+    }
+
+    var x = m.bound.left + m.borderLeft;
+    var y = m.bound.top + m.borderTop;
+    var width = Math.max(0, m.bound.width - m.borderLeft - m.borderRight);
+    var height = Math.max(0, m.bound.height - m.borderTop - m.borderBottom);
+
+    return new Rectangle(x, y, width, height);
+}
+
