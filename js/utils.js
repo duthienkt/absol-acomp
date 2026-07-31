@@ -138,17 +138,29 @@ export function contenteditableTextOnly(element, processText) {
     element.__contenteditableTextOnly__ = true;
     element.addEventListener("paste", function (e) {
         e.preventDefault();
+        var text = getClipboardPlainText(e);
+        if (processText) text = processText(text);
         if (e.clipboardData && e.clipboardData.getData) {
-            var text = e.clipboardData.getData("text/plain");
-            if (processText) text = processText(text)
             document.execCommand("insertHTML", false, text);
         }
-        else if (window.clipboardData && window.clipboardData.getData) {
-            var text = window.clipboardData.getData("Text");
-            if (processText) text = processText(text)
+        else {
             insertTextAtCursor(text);
         }
     });
+}
+
+/**
+ * @param {ClipboardEvent=} e
+ * @returns {string}
+ */
+export function getClipboardPlainText(e) {
+    if (e && e.clipboardData && e.clipboardData.getData) {
+        return e.clipboardData.getData("text/plain") || "";
+    }
+    if (window.clipboardData && window.clipboardData.getData) {
+        return window.clipboardData.getData("Text") || "";
+    }
+    return "";
 }
 
 export function getSelectionText() {
@@ -242,14 +254,7 @@ export function preventNotNumberInput(elt) {
     });
     elt.addEventListener("paste", function (e) {
         e.preventDefault();
-        var text = "";
-        if (e.clipboardData && e.clipboardData.getData) {
-            text = e.clipboardData.getData("text/plain");
-
-        }
-        else if (window.clipboardData && window.clipboardData.getData) {
-            text = window.clipboardData.getData("Text");
-        }
+        var text = getClipboardPlainText(e);
         var matched = text.match(/[+-]?([0-9]*[.])?[0-9]+/);
         if (matched) {
             this.value = matched[0];
