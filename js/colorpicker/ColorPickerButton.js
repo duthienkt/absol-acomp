@@ -201,14 +201,26 @@ ColorPickerButton.property.value = {
     get: function () {
         var nullable = this.nullable;
         var value = this._value;
-        if (!this._value && nullable) return value;//null, ""
+        if (!this._value && nullable) {
+            if (this.mode === 'OBJECT') {
+                return value || null;
+            }
+            else {
+                return value || '';
+            }
+        }
         if (!this._value && !nullable) {
             value = new Color([0, 0, 0, 1]);
         }
         if (this.mode.match(/HEX4|HEX6|HEX8|RGB|RGBA/) && value && value.toHex3) {
             value = value.toString(this.mode);
         }
-        return value;
+        if (this.mode === 'OBJECT') {
+            return value || null;
+        }
+        else {
+            return value || '';
+        }
     }
 };
 

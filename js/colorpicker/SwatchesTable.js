@@ -37,7 +37,7 @@ ColorCell.property = {};
 
 ColorCell.property.value = {
     set: function (value) {
-        if (value === null || value === undefined) {
+        if (value === null || value === undefined || !value) {
             this.addClass('as-null');
         }
         else if (value) {
