@@ -44,12 +44,15 @@ CPUViewer.render = function () {
     });
 };
 
+//keep origin function
+CPUViewer.prototype.setTimeout = setTimeout.bind(window);
+CPUViewer.prototype.setInterval = setInterval.bind(window);
+
 CPUViewer.prototype.start = function () {
     if (this.inv < 0) {
         this.offsetTime = performance.now();
-        setInterval(this.tick, 250);
+        this.inv = this.setInterval(this.tick, 250);
         document.addEventListener('mousemove', this.eventHandler.onMouseMove);
-
     }
 };
 
