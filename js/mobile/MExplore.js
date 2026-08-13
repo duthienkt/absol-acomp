@@ -308,6 +308,8 @@ MExploreGroup.property.hidden = {
     }
 };
 
+
+var firstView = true;
 /**
  * @extends AElement
  * @constructor
@@ -320,6 +322,10 @@ export function MSpringboardMenu() {
     this.$groups = [];
     this.$attachHook = _('attachhook').addTo(this);
     this.$attachHook.on('attached', () => {
+        if (firstView) {
+            firstView = false;
+            console.log("Menu attached after: " + (performance.now() / 1000).toFixed(2) + "s");
+        }
         ResizeSystem.add(this);
         this.updateSize();
         this.keyboardCtrl.lowPriorityFocus();
