@@ -2293,7 +2293,6 @@ export function parseAllTableInClipboard() {
         var tables = Array.prototype.filter.call(div.childNodes, c => {
             return c.tagName === 'TABLE';
         }) || div.querySelectorAll('table');
-
         return Array.prototype.slice.call(tables);
     }).catch(err => {
         console.log(err);
@@ -2321,6 +2320,7 @@ export function parseAllTableInClipboard() {
     }
 
     function getTableRowsData(partElt) {
+        if (!partElt) return [];
         var rows = Array.prototype.filter.call(partElt.childNodes, c => {
             return c.tagName === 'TR';
         });
