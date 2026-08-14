@@ -198,20 +198,23 @@ DTHeadCell.prototype.requestUpdateContent = function () {
 
 DTHeadCell.prototype.updateCopyEltSize = function () {
     if (!this._copyElt && !this._copyElt1 && !this._copyElt2) return;
-    // copyElt is in space
-    var bound = this._copyElt.getBoundingClientRect();
-    var matchHeight = this._elt.hasClass('as-matched-head-height');
-    this._elt.addStyle('width', bound.width + 'px');
-    if (matchHeight) this._elt.addStyle('min-width', bound.width + 'px');
-    if (this._copyElt1) {
-        this._copyElt1.addStyle('width', bound.width + 'px');
-        if (matchHeight) this._copyElt1.addStyle('min-width', bound.width + 'px');
 
-    }
-    if (this._copyElt2) {
-        this._copyElt2.addStyle('width', bound.width + 'px');
-        if (matchHeight) this._copyElt2.addStyle('min-width', bound.width + 'px');
-    }
+    var cellEltList = [this._elt, this._copyElt, this._copyElt1, this._copyElt2].filter(elt => elt);
+    var baseElt = cellEltList.find(elt=>{
+        return elt.isDescendantOf(this.row.head.table.elt);
+    });
+    if (!baseElt) baseElt = this._elt;
+    // copyElt is in space
+    var bound = baseElt.getBoundingClientRect();
+    var matchHeight = this._elt.hasClass('as-matched-head-height');
+    baseElt.addStyle('width', bound.width + 'px');
+    if (matchHeight) baseElt.addStyle('min-width', bound.width + 'px');
+    cellEltList.forEach(elt => {
+        if (elt === baseElt) return;
+        elt.addStyle('width', bound.width + 'px');
+        elt.addStyle('max-width', bound.width + 'px');
+        if (matchHeight) elt.addStyle('min-width', bound.width + 'px');
+    });
 };
 
 Object.defineProperty(DTHeadCell.prototype, 'elt', {
