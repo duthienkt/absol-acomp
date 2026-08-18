@@ -201,7 +201,7 @@ FaceAuthentication.prototype.ev_steady = function (event) {
         var sc = human.match.similarity(face.embedding, cr);
         return Math.max(ac, sc);
     }, 0)
-    if (newScore < 0.5) {
+    if (newScore < 0.3) {
         this.score = 0;
 
     }
@@ -223,11 +223,11 @@ FaceAuthentication.prototype.ev_steady = function (event) {
         this.$input.stopCamera();
         this.$input.stopDetect();
         sync = [new Promise(resolve => setTimeout(resolve, 500))];
+        if (this.sqCapture) {
+            sync.push(this.sqCapture.exportFile())
+        }
 
         if (this.score >= this.successThreshold) {
-            if (this.sqCapture) {
-                sync.push(this.sqCapture.exportFile())
-            }
             Promise.all(sync).then((res)=>{
                 var resp = { success: true, score: this.score };
                 if (res[1]) resp.verificationImage = res[1];
@@ -239,12 +239,13 @@ FaceAuthentication.prototype.ev_steady = function (event) {
         }
         else {
             Promise.all(sync).then((res)=>{
-                this.resolve({ success: false, score: this.score });
+                var resp = { success: false, score: this.score };
+                if (res[1]) resp.verificationImage = res[1];
+                this.resolve(resp);
                 this.stop();
             });
         }
     }
-
 };
 
 

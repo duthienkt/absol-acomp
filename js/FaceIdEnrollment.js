@@ -84,9 +84,10 @@ FaceIdEnrollment.prototype.createDesktopContainer = function () {
         },
         on: {
             click: () => {
-                console.log('resolve false');
-                this.resolve({ success: false });
-                this.stop();
+                this.exportImages().then(res => {
+                    this.resolve(Object.assign(res, { success: false, message: "user_cancel" }));
+                    this.stop();
+                });
             }
         }
     })).addStyle('position', 'relative');
@@ -106,8 +107,10 @@ FaceIdEnrollment.prototype.createMobileContainer = function () {
                 },
                 on: {
                     action: () => {
-                        this.resolve({ success: false });
-                        this.stop();
+                        this.exportImages().then(res => {
+                            this.resolve(Object.assign(res, { success: false, message: "user_cancel" }));
+                            this.stop();
+                        });
                     }
                 }
             },
@@ -316,9 +319,22 @@ FaceIdEnrollment.prototype.submit = function () {
     var vectorsFile = vectorsToFile(vectors, 'faceid_' + randomIdent(5) + '.dat', { type: 'application/octet-stream' });
     var sync = [];
     var res = { success: true, vectors: vectors, vectorsFile: vectorsFile };
+    var t = this.exportImages().then(res1 => {
+        Object.assign(res, res1);
+    });
+    sync.push(t);
+
+    Promise.all(sync).then(() => {
+        this.resolve(res);
+        this.stop();
+    })
+};
+
+FaceIdEnrollment.prototype.exportImages = function (){
+    var res = {};
+    var sync = [];
     var t;
     if (this.sqCapture) {
-
         t = this.sqCapture.exportFile().then(file => {
             res.verificationImage = file;
         });
@@ -330,10 +346,7 @@ FaceIdEnrollment.prototype.submit = function () {
         });
         sync.push(t);
     }
-    Promise.all(sync).then(() => {
-        this.resolve(res);
-        this.stop();
-    })
+    return Promise.all(sync).then(() => res);
 };
 
 /**
@@ -436,7 +449,7 @@ export function HeadSteadyDetector() {
 
 mixClass(HeadSteadyDetector, EventEmitter);
 
-HeadSteadyDetector.prototype.maxDistance = 0.2;
+HeadSteadyDetector.prototype.maxDistance = 0.4;
 HeadSteadyDetector.prototype.requireTime = 500;
 HeadSteadyDetector.prototype.requireN = 2;
 
@@ -459,7 +472,7 @@ HeadSteadyDetector.prototype.feed = function (face) {
     var sum = this.queue.reduce((a, b) => a + b.d, 0);
     var average = sum / this.queue.length;
     var sd = Math.sqrt(this.queue.reduce((a, b) => a + (b.d - average) * (b.d - average), 0) / this.queue.length);
-    if (sd < 0.01) {
+    if (sd < 0.05) {
         this.emit('steady', { face: face });
     }
 }
