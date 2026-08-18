@@ -37,6 +37,20 @@ DTBodyCell.prototype.revoke = function () {
     this.data = null;
 };
 
+DTBodyCell.prototype.setStyleTo = function (elt) {
+    if (!elt) return;
+
+    var style = Object.assign({}, this.data.style);
+    for (var key in style) {
+        style[key] = replaceChUnitInStyleValue(style[key]);
+    }
+
+    if (this.data.style) {
+        this._elt.addStyle(style);
+    }
+
+};
+
 
 Object.defineProperty(DTBodyCell.prototype, 'elt', {
     get: function () {
@@ -55,15 +69,7 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
 
         if (this.data.attr) this._elt.attr(this.data.attr);
         if (typeof this.data.class) addElementClassName(this._elt, this.data.class);
-
-        var style = Object.assign({}, this.data.style);
-        for (var key in style) {
-            style[key] = replaceChUnitInStyleValue(style[key]);
-        }
-
-        if (this.data.style) {
-            this._elt.addStyle(style);
-        }
+        this.setStyleTo(this._elt);
 
         if (this.data.on) {
             Object.keys(this.data.on).forEach(key => {

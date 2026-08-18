@@ -217,6 +217,43 @@ DTHeadCell.prototype.updateCopyEltSize = function () {
     });
 };
 
+DTHeadCell.prototype.setStyleTo = function (elt) {
+  if (!elt) return;
+    var style = Object.assign({}, this.data.style);
+    for (var key in style) {
+        style[key] = replaceChUnitInStyleValue(style[key]);
+    }
+
+    var widthStyle, maxWidthStyle, minWidthStyle;
+    widthStyle = style.width;
+    maxWidthStyle = style.maxWidth;
+    minWidthStyle = style.minWidth;
+    if (widthStyle === 'auto') {
+        widthStyle = undefined;
+    }
+    if (maxWidthStyle === 'auto') {
+        maxWidthStyle = undefined;
+    }
+    if (minWidthStyle === 'auto') {
+        minWidthStyle = undefined;
+    }
+    if (maxWidthStyle) {
+        this.computedStyle.maxWidth = parseMeasureValue(maxWidthStyle);
+        if (this.computedStyle.maxWidth && this.computedStyle.maxWidth.unit === 'px') {
+            this.computedStyle.maxWidth = this.computedStyle.maxWidth.value;
+        }
+    }
+
+    if (this.data.style) {
+        elt.addStyle(style);
+        if (widthStyle && widthStyle !== 'auto') {
+            elt.addStyle('max-width', maxWidthStyle||widthStyle);
+            elt.addStyle('min-width', minWidthStyle ||widthStyle);
+            elt.addClass('as-wrap-text');
+        }
+    }
+};
+
 Object.defineProperty(DTHeadCell.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
@@ -242,39 +279,8 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
             this._elt.attr(this.data.attr);
         }
 
-        var style = Object.assign({}, this.data.style);
-        for (var key in style) {
-            style[key] = replaceChUnitInStyleValue(style[key]);
-        }
 
-        var widthStyle, maxWidthStyle, minWidthStyle;
-        widthStyle = style.width;
-        maxWidthStyle = style.maxWidth;
-        minWidthStyle = style.minWidth;
-        if (widthStyle === 'auto') {
-            widthStyle = undefined;
-        }
-        if (maxWidthStyle === 'auto') {
-            maxWidthStyle = undefined;
-        }
-        if (minWidthStyle === 'auto') {
-            minWidthStyle = undefined;
-        }
-        if (maxWidthStyle) {
-            this.computedStyle.maxWidth = parseMeasureValue(maxWidthStyle);
-            if (this.computedStyle.maxWidth && this.computedStyle.maxWidth.unit === 'px') {
-                this.computedStyle.maxWidth = this.computedStyle.maxWidth.value;
-            }
-        }
-
-        if (this.data.style) {
-            this._elt.addStyle(style);
-            if (widthStyle && widthStyle !== 'auto') {
-                this._elt.addStyle('max-width', maxWidthStyle||widthStyle);
-                this._elt.addStyle('min-width', minWidthStyle ||widthStyle);
-                this._elt.addClass('as-wrap-text');
-            }
-        }
+        this.setStyleTo(this._elt);
 
         if (this.data.id !== null && this.data.id !== undefined) {
             this._elt.attr('data-col-id', this.data.id + '');
@@ -339,6 +345,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
 Object.defineProperty(DTHeadCell.prototype, 'copyElt', {
     get: function () {
         if (this._copyElt) return this._copyElt;
+        this.setStyleTo(this._copyElt);
         this._copyElt = $(this.elt.cloneNode(true)).addClass('as-copy-elt');
         if (this.data.style && this.data.style.width) {
             var self = this;
@@ -358,6 +365,7 @@ Object.defineProperty(DTHeadCell.prototype, 'copyElt', {
 Object.defineProperty(DTHeadCell.prototype, 'copyElt1', {
     get: function () {
         if (this._copyElt1) return this._copyElt1;
+        this.setStyleTo(this._copyElt1);
         this._copyElt1 = $(this.elt.cloneNode(true)).addClass('as-copy-elt-1');
         return this._copyElt1;
     }
@@ -366,6 +374,7 @@ Object.defineProperty(DTHeadCell.prototype, 'copyElt1', {
 Object.defineProperty(DTHeadCell.prototype, 'copyElt2', {
     get: function () {
         if (this._copyElt2) return this._copyElt2;
+        this.setStyleTo(this._copyElt2);
         this._copyElt2 = $(this.elt.cloneNode(true)).addClass('as-copy-elt-2');
         return this._copyElt2;
     }
