@@ -35,11 +35,11 @@
     list-style: none;
 }
 
-.cke_contents_ltr ul li {
+.cke_contents_ltr ul > li {
     position: relative;
 }
 
-.cke_contents_ltr ul li::before {
+.cke_contents_ltr ul > li::before {
     color: #007bff;
     content: '●';
     position: absolute;
