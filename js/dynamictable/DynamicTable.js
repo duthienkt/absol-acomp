@@ -1154,7 +1154,7 @@ LayoutController.prototype.update = function () {
         if (!ctn.hasClass || !ctn.hasClass('absol-single-page-scroller-viewport')) return false;
         if (ctn.lastChild === ctn.firstChild && ctn.firstChild === this.elt) return singleView;
     })();
-    var singleViewBound;
+
     var getMaxBoundHeight = () => {
         var mxH = Infinity;
         if (this.elt.hasClass('as-adapt-infinity-grow')) return Infinity;

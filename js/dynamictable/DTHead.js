@@ -33,7 +33,7 @@ DTHead.prototype.makeCellIdx = function () {
             cell.idx = colIdx;
             colspan = cell.colspan;
             rowspan = cell.rowspan;
-            if (rowspan ===this.rows.length) {
+            if (rowspan === this.rows.length) {
                 cell.elt.addClass('as-matched-head-height');
             }
             for (k = 0; k < colspan; ++k) {

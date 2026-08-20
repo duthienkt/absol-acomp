@@ -80,10 +80,12 @@ DTBodyRow.prototype.updateCopyEltSize = function () {
     if (this._fixedXRightElt && this._fixedXRightElt.childNodes.length) empty = false;
     if (empty) return;
     var bound = this._elt.getBoundingClientRect();
+    this._elt.computedBound = bound;
     if (this._fixedXRightElt)
-        this._fixedXRightElt.addStyle('height', bound.height + 'px');
+        this._fixedXRightElt.addStyle('height', bound.height + 'px')
+            .addStyle('max-height', bound.height + 'px').addStyle('min-height', bound.height + 'px');
     if (this._fixedXElt)
-        this._fixedXElt.addStyle('height', bound.height + 'px');
+        this._fixedXElt.addStyle('height', bound.height + 'px').addStyle('max-height', bound.height + 'px').addStyle('min-height', bound.height + 'px');
 };
 
 DTBodyRow.prototype.updateData = function (data) {

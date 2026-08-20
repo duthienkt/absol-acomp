@@ -3,6 +3,7 @@ import Follower from "../Follower";
 import { addElementClassName, findMaxZIndex, listenDomContentChange, replaceChUnitInStyleValue } from "../utils";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
+import AElement from "absol/src/HTML5/AElement";
 
 
 var implicitSortKeyArr = key => {
@@ -207,12 +208,12 @@ DTHeadCell.prototype.updateCopyEltSize = function () {
     // copyElt is in space
     var bound = baseElt.getBoundingClientRect();
     var matchHeight = this._elt.hasClass('as-matched-head-height');
-    baseElt.addStyle('width', bound.width + 'px');
-    if (matchHeight) baseElt.addStyle('min-width', bound.width + 'px');
+
     cellEltList.forEach(elt => {
         if (elt === baseElt) return;
         elt.addStyle('width', bound.width + 'px');
         elt.addStyle('max-width', bound.width + 'px');
+        elt.addStyle('height', bound.height + 'px');
         if (matchHeight) elt.addStyle('min-width', bound.width + 'px');
     });
 };
@@ -347,17 +348,6 @@ Object.defineProperty(DTHeadCell.prototype, 'copyElt', {
         if (this._copyElt) return this._copyElt;
         this.setStyleTo(this._copyElt);
         this._copyElt = $(this.elt.cloneNode(true)).addClass('as-copy-elt');
-        if (this.data.style && this.data.style.width) {
-            var self = this;
-            setTimeout(function wait() {
-                if (self._copyElt.isDescendantOf(document.body)) {
-                    self._copyElt.addStyle('width', self._copyElt.getBoundingClientRect().width + 'px');
-                }
-                else {
-                    setTimeout(wait, 10);
-                }
-            }, 10);
-        }
         return this._copyElt;
     }
 });
