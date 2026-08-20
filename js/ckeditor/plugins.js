@@ -70,7 +70,8 @@ export function ckInit() {
     CKEDITOR.config.removePlugins = removedPlugins.join(',');
 
     var styleCode = ckContentStyleText
-        .replace(/\$basePath/g, CKEDITOR.basePath);
+        .replace(/\$basePath/g, CKEDITOR.basePath)
+        + '\n/*# sourceURL=ckeditor/ckcontentstyle.css */';
 
     ckContentStyleUrl = URL.createObjectURL(stringToBlob(styleCode, 'css'));
     ckPluginInitialized = true;
