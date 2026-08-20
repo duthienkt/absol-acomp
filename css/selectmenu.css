@@ -349,6 +349,11 @@
     max-width: var(--as-combobox-width-limit);
 }
 
+.as-select-menu.as-has-icon{
+    width: calc(var(--select-list-estimate-width) + 34px + 27px);
+    min-width: calc(var(--select-list-estimate-width) + 34px + 27px);
+}
+
 .as-select-menu.as-background-none,
 .absol-selectmenu.as-background-none {
     background-color: transparent;

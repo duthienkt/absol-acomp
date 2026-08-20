@@ -294,6 +294,12 @@ SelectMenu.property.items = {
         this.addStyle('--select-list-desc-width', estimateDescWidth / 14 + 'em');
         this.updateItem();
         this.$selectlistBox.values = [this.value];
+        if (this.$selectlistBox.hasClass('as-has-icon')) {//icon size effect to min-width
+            this.addClass('as-has-icon');
+        }
+        else {
+            this.removeClass('as-has-icon');
+        }
     },
     get: function () {
         return this.$selectlistBox.items;
