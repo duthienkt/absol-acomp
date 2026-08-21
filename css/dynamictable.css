@@ -553,12 +553,15 @@ td .as-dynamic-table-wrapper .as-dt-header-cell {
 
 
 /*Keeview modal*/
-body > div > table .as-dynamic-table-wrapper {
+body > div > table .as-dynamic-table-wrapper,
+.mk-main-left-ctn .as-dynamic-table-wrapper {
     width: var(--dt-content-width);
     max-width: calc(90vw - 50px);
 }
 
-body > div > table .as-dynamic-table-wrapper.as-overflow-y {
+body > div > table .as-dynamic-table-wrapper.as-overflow-y,
+.mk-main-left-ctn .as-dynamic-table-wrapper.as-overflow-y
+{
     width: calc(var(--dt-content-width) + var(--dt-scroll-bar-width));
     max-width: calc(90vw - 50px);
 }
