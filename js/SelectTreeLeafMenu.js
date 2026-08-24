@@ -176,6 +176,7 @@ SelectTreeLeafMenu.property.value = {
         else {
             this.$holderItem.data = { text: '' };
         }
+        this._commitedValue = this.value;
     },
     get: function () {
         return this.$selectBox.value;
@@ -206,17 +207,18 @@ SelectTreeLeafMenu.eventHandler.clickOut = function (event) {
 
 
 SelectTreeLeafMenu.eventHandler.click = function (event) {
-    if (!this.disabled)
+    if (!this.disabled) {
         this.isFocus = true;
+    }
 };
 
 SelectTreeLeafMenu.eventHandler.pressItem = function (event) {
     this.$selectBox.value = event.item.value;
     this.$holderItem.data = event.item;
-    var prevValue = this._value;
-    this._value = event.item.value;
+    var prevValue = this._commitedValue;
     this.isFocus = false;
-    if (prevValue !== this._value) {
+    if (prevValue !== this.value) {
+        this._commitedValue = this.value;
         this.emit('change', {
             item: event,
             type: 'change',
