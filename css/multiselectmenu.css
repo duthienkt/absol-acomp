@@ -17,6 +17,11 @@
     padding-right: 30px;
     white-space: normal;
     max-width: var(--as-combobox-width-limit);
+    cursor: pointer;
+}
+
+.as-multi-select-menu.as-read-only {
+    cursor: default;
 }
 
 .as-multi-select-menu.as-background-none {
