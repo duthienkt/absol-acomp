@@ -253,6 +253,14 @@
 
 }
 
+.as-expression-input.as-read-only .as-expression-input-selection-part.as-cursor::before {
+    visibility: hidden;
+}
+
+.as-expression-input.as-read-only *{
+    cursor: default;
+}
+
 
 .as-ei-suggestion-list-item {
     --level: 0;
