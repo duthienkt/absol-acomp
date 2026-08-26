@@ -1090,56 +1090,63 @@ LayoutController.prototype.onAttached = function () {
     ResizeSystem.updateUp(this.elt.parentElement);
 
     this.update();
+    var firstScrollCallback =  () => {
+        var offset = this.elt.$vscrollbar.offsetTop;
+        if (offset === 0) return;
+        this.elt.$vscrollbar.off('scroll', firstScrollCallback);
+        // return;
+        setTimeout(() => {
+            if (this.elt.table.body.rows.length === 0) return;
+            var tableId = this.elt.id;
+
+            var rows = this.elt.table.header.rows;
+            if (!rows || rows.length === 0) return;
+            var changed = false;
+            var colDict = {};
+            var cssChanged = false;
+
+            rows.forEach(row => {
+                var cells = row.cells;
+                if (!cells) return;
+                cells.forEach(cell => {
+                    var colId = cell.data.id;
+                    var bound;
+                    if (cell.colspan > 1) return;
+                    if (!colId && !colDict[cell.idx]) {//local style
+                        bound = cell.copyElt.getBoundingClientRect();
+                        if (bound.width > 0) {
+                            this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'width', bound.width + 'px');
+                            this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'max-width', bound.width + 'px');
+                            this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'min-width', bound.width + 'px');
+                            cssChanged = true;
+                        }
+
+                        return;
+                    }
+                    if (!manager.hasColSize(tableId, colId)) {
+                        bound = cell.copyElt.getBoundingClientRect();
+                        if (bound.width) {
+                            manager.setColWidth(tableId, colId, bound.width);
+                            changed = true;
+                        }
+                    }
+                });
+            });
+
+
+            if (changed) manager.commit();
+            if (cssChanged) this.elt.css.commit();
+        }, 100);
+
+    }
 
     if (this.elt.table) {
         this.handleDisplay();
         this.handleMinWidth();
         this.elt.table.updateCopyEltSize();
         this.updateOverflowStatus();
-        this.elt.$vscrollbar.once('scroll', () => {
-            // return;
-            setTimeout(() => {
-                if (this.elt.table.body.rows.length === 0) return;
-                var tableId = this.elt.id;
 
-                var rows = this.elt.table.header.rows;
-                if (!rows || rows.length === 0) return;
-                var changed = false;
-                var colDict = {};
-
-                rows.forEach(row => {
-                    var cells = row.cells;
-                    if (!cells) return;
-                    cells.forEach(cell => {
-                        var colId = cell.data.id;
-                        var bound;
-                        if (cell.colspan > 1) return;
-                        if (!colId && !colDict[cell.idx]) {//local style
-                            bound = cell.copyElt.getBoundingClientRect();
-                            if (bound.width > 0) {
-                                this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'width', bound.width + 'px')
-                                this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'max-width', bound.width + 'px')
-                                this.elt.css.setProperty(`#${this.elt.id} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'min-width', bound.width + 'px')
-                                    .commit();
-                            }
-
-                            return;
-                        }
-                        if (!manager.hasColSize(tableId, colId)) {
-                            bound = cell.copyElt.getBoundingClientRect();
-                            if (bound.width) {
-                                manager.setColWidth(tableId, colId, bound.width);
-                                changed = true;
-                            }
-                        }
-                    });
-                })
-
-
-                if (changed) manager.commit();
-            }, 100);
-
-        });
+        this.elt.$vscrollbar.on('scroll',firstScrollCallback);
     }
 };
 
