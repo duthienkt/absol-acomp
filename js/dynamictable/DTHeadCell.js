@@ -173,6 +173,24 @@ DTHeadCell.prototype.nextSortState = function (event) {
 };
 
 DTHeadCell.prototype.updateCopyContent = function () {
+    var cell = this;// reupdate size
+    var colId = cell.data.id;
+    var bound;
+    var tableId = this.row.head.table.wrapper.id;
+    var manager = this.row.head.table.wrapper.manager;
+    var css = this.row.head.table.wrapper.css;
+    if (!colId) {
+        css.removeProperty(`#${tableId} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'width')
+            .removeProperty(`#${tableId} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'max-width')
+            .removeProperty(`#${tableId} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'min-width')
+            .commit();
+    }
+    else {
+        manager.setColWidth(tableId, colId, undefined);
+    }
+
+    this._elt.removeStyle('width').removeStyle('max-width').removeStyle('min-width');
+    this.setStyleTo(this._elt);
     var makeCopyChildren = () => Array.prototype.map.call(this._elt.childNodes, elt => elt.cloneNode(true));
     if (this._copyElt1) {
         this._copyElt1.clearChild().addChild(makeCopyChildren());
@@ -182,8 +200,31 @@ DTHeadCell.prototype.updateCopyContent = function () {
         this._copyElt2.clearChild().addChild(makeCopyChildren());
     }
     if (this._copyElt) {
+        this._copyElt.removeStyle('width').removeStyle('max-width').removeStyle('min-width');
         this._copyElt.clearChild().addChild(makeCopyChildren());
+        this.setStyleTo(this._copyElt);
     }
+
+    if (cell.colspan > 1) return;
+
+    if (!colId) {//local style
+        bound = cell.copyElt.getBoundingClientRect();
+        if (bound.width > 0) {
+            css.setProperty(`#${tableId} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'width', bound.width + 'px')
+                .setProperty(`#${tableId} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'max-width', bound.width + 'px')
+                .setProperty(`#${tableId} th[data-col-idx="${cell.idx}"]:not(colspan)`, 'min-width', bound.width + 'px')
+                .commit();
+        }
+        return;
+    }
+    if (!manager.hasColSize(tableId, colId)) {
+        bound = cell.copyElt.getBoundingClientRect();
+        if (bound.width) {
+            manager.setColWidth(tableId, colId, bound.width);
+        }
+    }
+
+
     // ResizeSystem.updateUp(this._elt);
     ResizeSystem.requestUpdateUpSignal(this._elt);
 };
@@ -191,8 +232,8 @@ DTHeadCell.prototype.updateCopyContent = function () {
 DTHeadCell.prototype.requestUpdateContent = function () {
     if (this.ucTO > 0) return;
     // this.ucTO = setTimeout(() => {
-        this.ucTO = -1;
-        this.updateCopyContent();
+    this.ucTO = -1;
+    this.updateCopyContent();
     // }, 20)
 };
 
@@ -201,7 +242,7 @@ DTHeadCell.prototype.updateCopyEltSize = function () {
     if (!this._copyElt && !this._copyElt1 && !this._copyElt2) return;
 
     var cellEltList = [this._elt, this._copyElt, this._copyElt1, this._copyElt2].filter(elt => elt);
-    var baseElt = cellEltList.find(elt=>{
+    var baseElt = cellEltList.find(elt => {
         return elt.isDescendantOf(this.row.head.table.elt);
     });
     if (!baseElt) baseElt = this._elt;
@@ -219,7 +260,7 @@ DTHeadCell.prototype.updateCopyEltSize = function () {
 };
 
 DTHeadCell.prototype.setStyleTo = function (elt) {
-  if (!elt) return;
+    if (!elt) return;
     var style = Object.assign({}, this.data.style);
     for (var key in style) {
         style[key] = replaceChUnitInStyleValue(style[key]);
@@ -248,8 +289,8 @@ DTHeadCell.prototype.setStyleTo = function (elt) {
     if (this.data.style) {
         elt.addStyle(style);
         if (widthStyle && widthStyle !== 'auto') {
-            elt.addStyle('max-width', maxWidthStyle||widthStyle);
-            elt.addStyle('min-width', minWidthStyle ||widthStyle);
+            elt.addStyle('max-width', maxWidthStyle || widthStyle);
+            elt.addStyle('min-width', minWidthStyle || widthStyle);
             elt.addClass('as-wrap-text');
         }
     }
@@ -333,7 +374,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
         // listenDomContentChange(this._elt, (event) => {
         //     this.requestUpdateContent();
         // });
-        setTimeout(()=>{
+        setTimeout(() => {
             listenDomContentChange(this._elt, (event) => {
                 this.requestUpdateContent();
             });

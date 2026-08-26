@@ -25,6 +25,7 @@ import AElement from "absol/src/HTML5/AElement";
 import { computeMeasureExpression, parseMeasureValue } from "absol/src/JSX/attribute";
 import Attributes from "absol/src/AppPattern/Attributes";
 import { kebabCaseToCamelCase } from "absol/src/String/stringFormat";
+import { isNone } from "absol/src/Converter/DataTypes";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -117,11 +118,20 @@ DynamicTableManager.prototype.setColWidth = function (tableId, colId, value, sto
         this.data.colWidth[tableId][colId] = value;
         this.storageChanged = true;
     }
-    if (typeof value === "number") value = value + 'px';
-    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'width', value);
-    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'max-width', value);
-    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'min-width', value);
-    this.css.setProperty(`#${tableId} th[data-col-id="${colId}"] *`, 'white-space', 'pre-wrap');
+    if (!isNone(value)) {
+        if (typeof value === "number") value = value + 'px';
+        this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'width', value);
+        this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'max-width', value);
+        this.css.setProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'min-width', value);
+        this.css.setProperty(`#${tableId} th[data-col-id="${colId}"] *`, 'white-space', 'pre-wrap');
+    }
+    else {
+        this.css.removeProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'width');
+        this.css.removeProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'max-width');
+        this.css.removeProperty(`#${tableId} th[data-col-id="${colId}"]:not([colspan])`, 'min-width');
+        this.css.removeProperty(`#${tableId} th[data-col-id="${colId}"] *`, 'white-space');
+    }
+
 };
 
 DynamicTableManager.prototype.commit = function () {
@@ -143,6 +153,7 @@ var pendingTables = {};
  */
 function DynamicTable() {
     this.trace = new Error('DynamicTable created!');
+    this.manager = manager;
     this._pendingId = randomIdent(4);
     pendingTables[this._pendingId] = this;
     manager.initIfNeed();
