@@ -1221,6 +1221,19 @@ export function parseLocalFloat(text, opt) {
     return parseFloat(text);
 }
 
+
+var defaultLC;
+var formatCache = {};
+
+function numFormaterHashKey(locales,formatOpt) {
+    formatOpt = formatOpt || {};
+    var res = '';
+    res +=  (locales || 'lc') + '|';
+    res +=  formatOpt.maximumFractionDigits+'|';
+    res +=  formatOpt.minimumFractionDigits+'';
+    return res;
+}
+
 /**
  *
  * @param value
@@ -1246,8 +1259,10 @@ export function formatLocalFloat(value, opt) {
         opt = {};
     }
 
+
     if (!opt.locales) {
-        opt.locales = new Intl.NumberFormat().resolvedOptions().locale;
+        defaultLC = defaultLC || new Intl.NumberFormat().resolvedOptions().locale;
+        opt.locales = defaultLC;
     }
 
     if (window.systemconfig) {
@@ -1331,8 +1346,13 @@ export function formatLocalFloat(value, opt) {
         }
     }
 
-
-    var parts = new Intl.NumberFormat(opt.locales, formatOpt).formatToParts(value);
+    var key = numFormaterHashKey(opt.locales, formatOpt);
+    var formatter = formatCache[key];
+    if (!formatter ) {
+        formatter = new Intl.NumberFormat(opt.locales, formatOpt);
+        formatCache[key] = formatter;
+    }
+    var parts = formatter.formatToParts(value);
 
     return parts.map(pt => {
         if ((pt.type === 'group') && (typeof opt.thousandSeparator === "string")) return opt.thousandSeparator;
@@ -1340,6 +1360,8 @@ export function formatLocalFloat(value, opt) {
         return pt.value;
     }).join('');
 }
+
+
 
 /***
  *
@@ -2412,3 +2434,20 @@ export function getBoundingPaddingRect(elt) {
     return new Rectangle(x, y, width, height);
 }
 
+
+export function getPreviewOfficeUrl(url) {
+    var sourceUrl = (url == null ? '' : (url + '')).trim();
+    var absoluteUrl = sourceUrl;
+
+    // Keep absolute links unchanged; resolve relative links from current location.
+    if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(sourceUrl) && !sourceUrl.startsWith('//')) {
+        try {
+            absoluteUrl = new URL(sourceUrl, window.location.href).href;
+        }
+        catch (err) {
+            absoluteUrl = sourceUrl;
+        }
+    }
+
+    return 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(absoluteUrl);
+}
