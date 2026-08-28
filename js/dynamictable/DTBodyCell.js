@@ -60,13 +60,6 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
         });
         this._elt.holder = this;
 
-        var addChild = this._elt.addChild;
-        this._elt.addChild = function () {
-            addChild.apply(this, arguments);
-            ResizeSystem.requestUpdateUpSignal(this);
-            return this;
-        };
-
         if (this.data.attr) this._elt.attr(this.data.attr);
         if (typeof this.data.class) addElementClassName(this._elt, this.data.class);
         this.setStyleTo(this._elt);
@@ -82,6 +75,14 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
         }
         if (this._idx !== null) this._elt.attr('data-col-idx', this._idx + '');
         this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
+
+
+        var addChild = this._elt.addChild;
+        this._elt.addChild = function () {
+            addChild.apply(this, arguments);
+            ResizeSystem.requestUpdateUpSignal(this);
+            return this;
+        };
         listenDomContentChange(this._elt, (event) => {
             this.requestUpdateContent();
         });
@@ -107,7 +108,7 @@ DTBodyCell.prototype.requestUpdateContent = function () {
     }
     // ResizeSystem.updateUp(this._elt, true);
     ResizeSystem.requestUpdateUpSignal(this._elt, true);
-}
+};
 
 
 Object.defineProperty(DTBodyCell.prototype, 'innerText', {

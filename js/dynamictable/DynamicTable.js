@@ -26,6 +26,7 @@ import { computeMeasureExpression, parseMeasureValue } from "absol/src/JSX/attri
 import Attributes from "absol/src/AppPattern/Attributes";
 import { kebabCaseToCamelCase } from "absol/src/String/stringFormat";
 import { isNone } from "absol/src/Converter/DataTypes";
+import { quickAssign } from "absol/src/HTML5/OOP";
 
 var loadStyleSheet = function () {
     var dynamicStyleSheet = {};
@@ -100,12 +101,14 @@ DynamicTableManager.prototype.removeTrash = function () {
 DynamicTableManager.prototype.commitColWidth = function (sender, tableId, colId, value, storage) {
     this.setColWidth(tableId, colId, value, storage);
     this.removeTrash();
+
     this.commit();
     this.tables.forEach(table => {
         if (table.id === table && table !== sender) {
             table.requestUpdateSize();
         }
     });
+
 };
 
 DynamicTableManager.prototype.hasColSize = function (tableId, colId) {
@@ -201,7 +204,7 @@ function DynamicTable() {
 
 
     this.$pageSelector = new VirtualPageSelector(this);
-    this.extendStyle = Object.assign(new Attributes(this), this.extendStyle);
+    this.extendStyle = quickAssign(new Attributes(this), this.extendStyle);
     this.extendStyle.loadAttributeHandlers(this.styleHandlers);
 
 
@@ -305,11 +308,9 @@ function DynamicTable() {
     this.afs = new AutoFocusScroller(this);
 
 
-    this.$space.addStyle = function () {
-        return AElement.prototype.addStyle.apply(this, arguments);
-    }
 
-    /**
+
+    /***
      * @type {DTDataTable}
      * @name adapter
      * @memberOf DynamicTable#
@@ -473,7 +474,7 @@ DynamicTable.prototype.styleHandlers.variant = {
 };
 
 DynamicTable.prototype.init = function (props) {
-    props = Object.assign({}, props);
+    props = quickAssign({}, props);
     if (props.placeholder) {
         this.placeholder = props.placeholder;
         delete props.placeholder;
@@ -787,13 +788,16 @@ DynamicTable.property.adapter = {
      * @param data
      */
     set: function (data) {
-        if (!data) return
+        if (!data) return;
         this._adapterData = data;
         this._adapter = new DTDataAdapter(this, data);
         this.layoutCtrl.onAdapter();
 
+
         this.table = new DTTable(this, this._adapterData.data);
+
         this.$space.clearChild().addChild(this.table.elt);
+
 
         this.$fixedYCtn.clearChild().addChild(this.table.fixedYElt);
         this.$fixedXCtn.clearChild().addChild(this.table.fixedXElt);
@@ -812,6 +816,7 @@ DynamicTable.property.adapter = {
         setTimeout(() => {
             this.requestUpdateSize();
         }, 100);
+
     },
     get: function () {
         return this._adapterData;

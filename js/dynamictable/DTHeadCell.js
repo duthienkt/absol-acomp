@@ -4,6 +4,7 @@ import { addElementClassName, findMaxZIndex, listenDomContentChange, replaceChUn
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import AElement from "absol/src/HTML5/AElement";
+import { quickAssign } from "absol/src/HTML5/OOP";
 
 
 var implicitSortKeyArr = key => {
@@ -261,7 +262,7 @@ DTHeadCell.prototype.updateCopyEltSize = function () {
 
 DTHeadCell.prototype.setStyleTo = function (elt) {
     if (!elt) return;
-    var style = Object.assign({}, this.data.style);
+    var style = quickAssign({}, this.data.style);
     for (var key in style) {
         style[key] = replaceChUnitInStyleValue(style[key]);
     }

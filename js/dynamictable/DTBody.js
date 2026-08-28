@@ -12,6 +12,8 @@ import OOP from "absol/src/HTML5/OOP";
 import LangSys from "absol/src/HTML5/LanguageSystem";
 
 
+var ROW_PER_PAGE = 50;
+
 function viewEmptyImageIn(elt) {
     var rid = randomIdent(8);
     var img = `<svg width="100" height="100" viewBox="0 0 144 144" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -364,7 +366,7 @@ BaseMode.prototype.render = function () {
 
     //small padding top
     var hs = this.body.table.wrapper.$vscrollbar.innerOffset / ((this.body.table.wrapper.$vscrollbar.innerHeight - this.body.table.wrapper.$vscrollbar.outerHeight) || 1)
-    dy += hs * 100;
+    dy += hs * ROW_PER_PAGE;
 
     this.body.table.wrapper.$space.addStyle('top', -dy + 'px');
     this.body.table.wrapper.$fixedXCtn.addStyle('top', -dy + 'px');
@@ -614,7 +616,7 @@ NormalMode.prototype.updateRowsIfNeed = function () {
     }
 
     var screenSize = getScreenSize();
-    var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40 + 1) / 100) * 100;
+    var rowPerPage = Math.ceil(Math.ceil(screenSize.height / 40 + 1) / ROW_PER_PAGE) * ROW_PER_PAGE;
     if (this.body.table.wrapper.hasClass('as-adapt-infinity-grow')) rowPerPage = 1e7;
     var newRowOffset = Math.floor(this.offset / rowPerPage) * rowPerPage;
 

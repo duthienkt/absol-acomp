@@ -3,6 +3,7 @@ import DTBodyCell from "./DTBodyCell";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import { addElementClassName } from "../utils";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import { quickAssign } from "absol/src/HTML5/OOP";
 
 /***
  *
@@ -16,16 +17,25 @@ function DTBodyRow(body, data) {
     this.data.cells = this.data.cells || [];
     this._elt = null;
     this._fixedXElt = null;
-    this.filterKeys = Object.assign({}, this.data.keys);
+    this.filterKeys = quickAssign({}, this.data.keys);
+
     this.data.cells.reduce((ac, cr, i) => {
+        var sortKey;
+        if (typeof cr.sortKey === "string" ) {
+            sortKey = cr.sortKey;
+        }
+        else {
+            sortKey = '[' + i + ']';
+        }
+
         if (typeof cr.keySort === "string") {
-            ac['[' + i + ']'] = nonAccentVietnamese(cr.keySort).toLowerCase();
+            ac[sortKey] = nonAccentVietnamese(cr.keySort).toLowerCase();
         }
         else if (typeof cr.keySort === "number") {
-            ac['[' + i + ']'] = cr.keySort;
+            ac[sortKey] = cr.keySort;
         }
         else if (typeof cr.innerText === "string") {
-            ac['[' + i + ']'] = nonAccentVietnamese(cr.innerText).toLowerCase();
+            ac[sortKey] = nonAccentVietnamese(cr.innerText).toLowerCase();
         }
         return ac;
     }, this.filterKeys);
@@ -121,13 +131,13 @@ DTBodyRow.prototype.updateData = function (data) {
 Object.defineProperty(DTBodyRow.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
+
         var tableColCount = this.body.rows[0].colCount;
         var fixedCol = this.adapter.fixedCol || 0;
         var fixedColRight = this.adapter.fixedColRight || 0;
         var child = this.cells.filter(c => c.idx < fixedCol).map(c => c.copyElt);
         var child1 = this.cells.filter(c => (c.idx >= fixedCol) && (c.idx < tableColCount - fixedColRight)).map(c => c.elt);
         var child2 = this.cells.filter(c => (c.idx >= tableColCount - fixedColRight)).map(c => c.copyElt);
-
         this._elt = _({
             tag: 'tr', class: 'as-dt-body-row', props: {
                 dtBodyRow: this
@@ -152,6 +162,7 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
                 }
             }
         });
+
         this._elt.attr('data-id', this.id + '');
         if (this.data.class) {
             addElementClassName(this._elt, this.data.class);

@@ -1,4 +1,12 @@
 function DTSearchFactor(global) {
+    function quickAssign(target, source, keys) {
+        if (!source) return target;
+        keys = keys || Object.keys(source);
+        for (var i = 0; i < keys.length; ++i) {
+            target[keys[i]] = source[keys[i]];
+        }
+        return target;
+    }
     /***
      * @typedef SelectionItem2
      * @property {String} text
@@ -216,7 +224,7 @@ function DTSearchFactor(global) {
         function calcByWordDict(queryWords, wordDict) {
             var hwScore = 0;
             var i;
-            wordDict = Object.assign({}, wordDict);
+            wordDict = quickAssign({}, wordDict);
             var bestWordMatched, bestWordMatchScore = 0;
             var word, wordScore;
             for (i = 0; i < queryWords.length; ++i) {

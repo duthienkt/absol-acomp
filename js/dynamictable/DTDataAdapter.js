@@ -26,6 +26,7 @@
 
 import DTTable from "./DTTable";
 import { _, $ } from "../../ACore";
+import { quickAssign } from "absol/src/HTML5/OOP";
 
 
 /***
@@ -43,7 +44,7 @@ function DTDataAdapter(tableElt, opt) {
     this.data = null;
     this.rowsPerPage = 20;
     this.fixedCol = 0;
-    Object.assign(this, opt);
+    quickAssign(this, opt);
     if (this.fixedCol === 0) {
         this.tableElt.removeClass('as-has-fixed-col');
     }

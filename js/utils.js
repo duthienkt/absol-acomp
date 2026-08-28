@@ -2085,6 +2085,8 @@ var listenMethodNames = ['appendChild', 'insertBefore', 'addStyle', 'removeStyle
 var originalMethodNames = listenMethodNames.map(x => 'original_' + x);
 
 export function listenDomContentChange(elt, callback) {
+    if (!elt) return;
+    if (elt.nodeType !== Node.ELEMENT_NODE) return;
     function emit(name, event) {
         if (!callback) return;
         if (name === 'change') {
@@ -2138,6 +2140,10 @@ export function listenDomContentChange(elt, callback) {
         if (!child) return;
         if (child.nodeType !== Node.ELEMENT_NODE) return;
         if (child.domHooked) return;
+        if (child._azar_extendTags ) {
+            for (var k in child._azar_extendTags) return;//quick check
+            return;
+        }
         child.domHooked = true;
         var i;
         var ln;
@@ -2155,11 +2161,8 @@ export function listenDomContentChange(elt, callback) {
                 emit('scrollIntoView', { target: this, method: name, args: Array.prototype.slice.call(arguments) });
             };
         }
-
-        if (!child._azar_extendTags || Object.keys(child._azar_extendTags).length === 0) {
-            for (i = 0; i < child.childNodes.length; ++i)
-                addHook(child.childNodes[i]);
-        }
+        for (i = 0; i < child.childNodes.length; ++i)
+            addHook(child.childNodes[i]);
     }
 
     var removeHook = (child) => {
