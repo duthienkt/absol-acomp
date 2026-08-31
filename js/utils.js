@@ -2142,7 +2142,6 @@ export function listenDomContentChange(elt, callback) {
         if (child.domHooked) return;
         if (child._azar_extendTags ) {
             for (var k in child._azar_extendTags) return;//quick check
-            return;
         }
         child.domHooked = true;
         var i;
@@ -2169,6 +2168,11 @@ export function listenDomContentChange(elt, callback) {
         if (!child) return;
         if (child.nodeType !== Node.ELEMENT_NODE) return;
         if (!child.domHooked) return;
+        if (child._azar_extendTags ) {
+            for (var k in child._azar_extendTags) {
+                return;//quick check
+            }
+        }
         delete child.domHooked;
         var i;
         for (i = 0; i < listenMethodNames.length; ++i) {
