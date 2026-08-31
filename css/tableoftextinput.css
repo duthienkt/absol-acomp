@@ -1,6 +1,7 @@
 
 .as-table-of-text-input-wrapper {
     border: 1px solid #dddddd;
+    --focus-color: #76a0cd;
 }
 
 .as-table-of-text-input-content-ctn {
@@ -15,6 +16,10 @@
     color: black;
     font-family: 'Aptos Narrow', Calibri, sans-serif, 'Mongolian Baiti', 'Microsoft Yi Baiti', 'Javanese Text', 'Yu Gothic';
     font-size: 11pt;
+}
+
+.as-table-of-text-input > thead {
+    user-select: none;
 }
 
 .as-table-of-text-input-wrapper.as-size-a4 {
@@ -45,7 +50,7 @@
     background-color: rgb(240, 240, 240);
 }
 
-.as-table-of-text-input thead th:first-child{
+.as-table-of-text-input thead th:first-child {
     color: rgb(224, 224, 224);
 }
 
@@ -70,15 +75,15 @@
     pointer-events: none;
     content: "";
     position: absolute;
-    border: 2px solid #76a0cd;
+    border: 2px solid var(--focus-color);
     left: -1px;
     right: -1px;
     top: -1px;
     bottom: -1px;
 }
 
-.as-table-of-text-input-wrapper.as-focus .as-table-of-text-input-cell.as-focus::before {
-    border-color: var(--variant-color-primary);
+.as-table-of-text-input-wrapper.as-focus {
+    --focus-color: var(--variant-color-primary);
 }
 
 .as-table-of-text-input-cell .as-preinput {
@@ -124,7 +129,7 @@
 }
 
 
-.as-table-of-text-input-tool  button.as-checked {
+.as-table-of-text-input-tool button.as-checked {
     color: #2977ff;
     /*background-color: rgb(240, 247, 255);*/
     box-shadow: inset gray 0px 0px 4px -2px;
@@ -141,6 +146,61 @@
     color: rgba(106, 106, 106);
 }
 
-.as-tei-idx-cell::before{
+.as-tei-idx-cell::before {
     content: attr(data-idx);
+}
+
+.as-tei-drag-box {
+    position: fixed;
+    z-index: 1e6;
+    background-color: #fff;
+    pointer-events: none;
+    box-sizing: border-box;
+    background-color: rgba(41, 119, 255, 0.12);
+    border: 1px solid var(--variant-color-primary);
+}
+
+/*.as-table-of-text-input-cell::before{*/
+/*    content: attr(data-info);*/
+/*    color: gray;*/
+/*}*/
+
+.as-table-of-text-input-cell.as-selected::after {
+    pointer-events: none;
+    content: "";
+    position: absolute;
+    border: 1px solid transparent;
+    left: -1px;
+    right: -1px;
+    top: -1px;
+    bottom: -1px;
+    background-color: rgb(0, 123, 255, 0.1);
+}
+
+.as-table-of-text-input-cell.as-selected.as-focus::after {
+    background-color: transparent;
+}
+
+.as-table-of-text-input-cell.as-selected-left::after {
+    border-left-color: var(--focus-color);
+}
+
+
+.as-table-of-text-input-cell.as-selected-right::after {
+    border-right-color: var(--focus-color);
+}
+
+
+.as-table-of-text-input-cell.as-selected-top::after {
+    border-top-color: var(--focus-color);
+}
+
+
+.as-table-of-text-input-cell.as-selected-bottom::after {
+    border-bottom-color: var(--focus-color);
+}
+
+
+.as-table-of-text-input-cell.as-selected-in::after {
+    /*no border*/
 }
