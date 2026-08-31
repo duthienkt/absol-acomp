@@ -48,8 +48,23 @@ DTBodyCell.prototype.setStyleTo = function (elt) {
     if (this.data.style) {
         this._elt.addStyle(style);
     }
-
 };
+
+DTBodyCell.prototype.hookEltIfRendered = function () {
+    if (!this._elt) return;
+    if (this._hooked) return;
+    this._hooked = true;
+
+    var addChild = this._elt.addChild;
+    this._elt.addChild = function () {
+        addChild.apply(this, arguments);
+        ResizeSystem.requestUpdateUpSignal(this);
+        return this;
+    };
+    listenDomContentChange(this._elt, (event) => {
+        this.requestUpdateContent();
+    });
+}
 
 
 Object.defineProperty(DTBodyCell.prototype, 'elt', {
@@ -75,17 +90,6 @@ Object.defineProperty(DTBodyCell.prototype, 'elt', {
         }
         if (this._idx !== null) this._elt.attr('data-col-idx', this._idx + '');
         this.row.body.table.adapter.renderBodyCell(this.elt, this.data, this);
-
-
-        var addChild = this._elt.addChild;
-        this._elt.addChild = function () {
-            addChild.apply(this, arguments);
-            ResizeSystem.requestUpdateUpSignal(this);
-            return this;
-        };
-        listenDomContentChange(this._elt, (event) => {
-            this.requestUpdateContent();
-        });
         return this._elt;
     }
 });

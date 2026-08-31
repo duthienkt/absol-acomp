@@ -98,6 +98,15 @@ DTBodyRow.prototype.updateCopyEltSize = function () {
         this._fixedXElt.addStyle('height', bound.height + 'px').addStyle('max-height', bound.height + 'px').addStyle('min-height', bound.height + 'px');
 };
 
+DTBodyRow.prototype.hookEltIfRendered = function () {
+    if(!this._elt) return;
+    if (this._hooked) return;
+    this._hooked = true;
+    for (var i = 0; i < this.cells.length; ++i) {
+        this.cells[i].hookEltIfRendered();
+    }
+};
+
 DTBodyRow.prototype.updateData = function (data) {
     var rowIdx = this.body.rowIndexOf(this.data);
     this.body.data.rows[rowIdx] = data;

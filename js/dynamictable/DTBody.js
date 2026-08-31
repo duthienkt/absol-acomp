@@ -638,11 +638,18 @@ NormalMode.prototype.updateRowsIfNeed = function () {
     fixedXElt.clearChild();
     fixedXRightElt.clearChild();
     var i;
+    var needHookRows = [];
     for (i = start; i < end; ++i) {
+        needHookRows.push(rows[i]);
         elt.addChild(rows[i].elt);
         fixedXElt.addChild(rows[i].fixedXElt);
         fixedXRightElt.addChild(rows[i].fixedXRightElt);
     }
+    setTimeout(() => {
+        for (var k = 0; k < needHookRows.length; ++k) {
+            needHookRows[k].hookEltIfRendered();
+        }
+    }, 1);
     this.boundCache = null;
 
     var bounds = this.getBoundOfRows();
