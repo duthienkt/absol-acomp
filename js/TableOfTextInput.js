@@ -1189,9 +1189,7 @@ TEIFormatTool.prototype.commands = {
             for (var k = 0; k < colspan; ++k) {
                 this.removeColumnAt(colpos);
             }
-            if (this.focusCell) {
-                this.table.selectTool.selectCell(this.focusCell);
-            }
+
             this.table.notifyChange({});
         }
     },
