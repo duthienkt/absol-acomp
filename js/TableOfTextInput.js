@@ -772,6 +772,12 @@ TEICell.prototype.remove = function () {
     if (idx >= 0) this.row.cells.splice(idx, 1);
 };
 
+TEICell.prototype.resetStyle = function () {
+    Object.keys(this.styleHandlers).forEach(key => {
+        this.style[key] = undefined;
+    });
+};
+
 TEICell.prototype.styleHandlers = {
     fontWeight: {
         set: function (value) {
@@ -1297,8 +1303,14 @@ TEIFormatTool.prototype.mergeSelectedCells = function () {
     var minCol = Infinity, maxCol = -Infinity, minRow = Infinity, maxRow = -Infinity;
     var cell;
     var i;
+    var dataCell = selectedCells.find(cell =>{
+       var text = cell.$input.value.trim();
+       return !!text;
+    });
     var rootCell = selectedCells[0];
     this.table.selectTool.deselectAll();
+    rootCell = rootCell || selectedCells[0];
+
 
     for (i = 0; i < selectedCells.length; i++) {
         cell = selectedCells[i];
@@ -1317,6 +1329,11 @@ TEIFormatTool.prototype.mergeSelectedCells = function () {
         if (cell !== rootCell) {
             cell.remove();
         }
+    }
+    if (dataCell !== rootCell) {
+        rootCell.$input.value = dataCell.$input.value;
+        rootCell.resetStyle();
+        quickAssign(rootCell.style, dataCell.style.export());
     }
     this.table.calcCellPos();
     this.table.selectTool.selectCell(rootCell);
