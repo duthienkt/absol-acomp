@@ -961,6 +961,10 @@ function TEIFormatTool(table) {
         class: 'as-table-of-text-input-tool',
         child: [
             {
+              class:'as-table-of-text-input-tool-icon' ,
+                child:'span.mdi.mdi-table-edit'
+            },
+            {
                 tag: 'numberinput',
                 class: 'as-table-of-text-input-tool-font-size',
                 props: {

@@ -86,6 +86,23 @@
     --focus-color: var(--variant-color-primary);
 }
 
+.as-table-of-text-input-wrapper:not(.as-focus) .as-table-of-text-input-tool > button,
+.as-table-of-text-input-wrapper:not(.as-focus) .as-table-of-text-input-tool > .as-ribbon-split-button,
+.as-table-of-text-input-wrapper:not(.as-focus) .as-table-of-text-input-tool > .absol-number-input {
+    visibility: hidden;
+}
+
+.as-table-of-text-input-tool-icon {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 1.6em;
+    color: gray;
+}
+
+.as-table-of-text-input-wrapper.as-focus .as-table-of-text-input-tool-icon {
+    display: none;
+}
+
 .as-table-of-text-input-cell .as-preinput {
     outline: none;
     display: block;
