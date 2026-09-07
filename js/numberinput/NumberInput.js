@@ -511,12 +511,21 @@ NIValueController.prototype.locales2Format = {
 };
 
 NIValueController.prototype.makeDefaultFormat = function () {
+    var defaultLocale =navigator.language === 'vi'? 'vi-VN': 'en-US';
+    if (window.systemconfig) {
+        if (window.systemconfig.commaSign === ',') {
+            defaultLocale = 'vi-VN';
+        }
+        else {
+            defaultLocale = 'en-US';
+        }
+    }
     return Object.assign({
-        locales: 'en-US',
+        locales: defaultLocale,
         maximumFractionDigits: 20,
         minimumFractionDigits: 0,
         pow10: null//only apply if maximumFractionDigits === 0
-    }, this.locales2Format['en-US']);
+    }, this.locales2Format[defaultLocale]);
 };
 
 NIValueController.prototype.formatNumber = function (value, format) {
@@ -689,7 +698,7 @@ Object.defineProperty(NIValueController.prototype, 'floatFixed', {
 });
 
 
-Object.defineProperty(NIValueController.prototype, 'formatedValueText', {
+Object.defineProperty(NIValueController.prototype, 'formatedValueText', {//use for view
     get: function () {
         var value = this.value;
         if (!isRealNumber(value)) return '';
@@ -714,9 +723,12 @@ Object.defineProperty(NIValueController.prototype, 'formatedOriginValueText', {
 
 Object.defineProperty(NIValueController.prototype, 'originValueText', {
     get: function () {
-       var value = this.value;
+        var value = this.value;
         if (!isRealNumber(value)) return '';
-       return value + '';
+        var text = this.formatedOriginValueText;
+        var thousandsSeparator = this.format.thousandsSeparator || '';
+        text = text.replace(new RegExp('\\' + thousandsSeparator, 'g'), '');
+        return text + '';
     }
 });
 
