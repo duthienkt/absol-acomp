@@ -1,6 +1,6 @@
 import '../css/exptree.css';
 import ACore from "../ACore";
-import { contenteditableTextOnly } from "./utils";
+import { buildHighlightedTextElements, contenteditableTextOnly } from "./utils";
 import OOP from "absol/src/HTML5/OOP";
 import EventEmitter, { copyEvent } from "absol/src/HTML5/EventEmitter";
 import Dom from "absol/src/HTML5/Dom";
@@ -8,6 +8,7 @@ import AElement from "absol/src/HTML5/AElement";
 import { randomIdent } from "absol/src/String/stringGenerate";
 import prepareSearchForItem, { searchTreeListByText } from "./list/search";
 import { stringHashCode } from "absol/src/String/stringUtils";
+import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -72,6 +73,16 @@ export function ExpNode() {
     this._level = 0;
     this.__isExpNode__ = true;
     return thisEN;
+    /**
+     * @type {string}
+     * @name name
+     * @memberOf ExpNode#
+     */
+    /**
+     * @type {string}
+     * @name highlightedText
+     * @memberOf ExpNode#
+     */
 }
 
 
@@ -92,6 +103,13 @@ ExpNode.render = function () {
             'span.absol-exp-node-desc'
         ]
     });
+};
+
+ExpNode.prototype.updateName = function () {
+    var value = this.name || '';
+    var highlightedText = this.highlightedText || '';
+    this.$name.clearChild();
+    this.$name.addChild(buildHighlightedTextElements(value, highlightedText));
 };
 
 ExpNode.property = {};
@@ -140,16 +158,36 @@ ExpNode.property.level = {
 
 ExpNode.property.name = {
     set: function (value) {
-        value = value + '';
+        var prevValue = this._name || '';
+        if (typeof value === 'number') value = value + '';
+        else {
+            value = value|| '';
+            value = value + '';
+        }
+        if (prevValue === value) return;
+
         this._name = value;
-        this.$name.clearChild();
-        if (value && value.length > 0)
-            this.$name.addChild(_({ text: value }));
+        this.updateName();
+
     },
     get: function () {
         return this._name || '';
     }
 };
+
+ExpNode.property.highlightedText = {
+    set: function (value) {
+        var prevValue = this._highlightedText || '';
+        value = value || '';
+        if (prevValue === value) return;
+        this._highlightedText = value;
+        this.updateName();
+    },
+    get: function () {
+        return this._highlightedText || '';
+    }
+};
+
 ExpNode.property.desc = {
     set: function (value) {
         this._desc = (value || '') + '';
@@ -393,7 +431,7 @@ export function ExpTree() {
         .on('presstoggle', this.eventHandler.nodePressToggle);
 
     this.$itemsContainer = $('.absol-exp-items', thisET);
-    OOP.drillProperty(this, this.$node, ['desc', 'name', 'title', 'extSrc', 'active', 'icon']);
+    OOP.drillProperty(this, this.$node, ['desc', 'name', 'title', 'extSrc', 'active', 'icon', 'highlightedText']);
     this.__isExpTree__ = true;
     this._level = 0;
 }
@@ -417,7 +455,7 @@ ExpTree.property = {};
 ExpTree.property.level = {
     set: function (value) {
         value = value || 0;
-        if (value != this.level) {
+        if (value !== this.level) {
             this.$node.level = value;
             Array.prototype.forEach.call(this.$itemsContainer.childNodes, function (e) {
                 e.level = value + 1;
@@ -434,7 +472,7 @@ ExpTree.property.level = {
 ExpTree.property.status = {
     set: function (value) {
         this.$node.status = value;
-        if (value != 'open') {
+        if (value !== 'open') {
             this.addClass('hide-children');
         }
         else {

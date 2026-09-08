@@ -4,6 +4,7 @@ import { getDescriptionOfListItem, getTextOfListItem } from "./SelectListItem";
 import '../css/checktreeitem.css';
 import { hitElement } from "absol/src/HTML5/EventEmitter";
 import { nonAccentVietnamese } from "absol/src/String/stringFormat";
+import { buildHighlightedTextElements } from "./utils";
 
 
 /***
@@ -84,31 +85,7 @@ CheckTreeItem.prototype.updateName = function () {
     this.$name.clearChild();
     var value = this.name;
     var highlightedText = this.highlightedText.toLowerCase();
-    var parts = [];
-    var idx;
-    if (value && value.length > 0) {
-        if (highlightedText) {
-            while (value) {
-                idx = nonAccentVietnamese(value.toLowerCase()).indexOf(highlightedText);
-                if (idx < 0) {
-                    parts.push(_({ text: value }));
-                    value = '';
-                }
-                else {
-                    if (idx > 0) {
-                        parts.push(_({ text: value.substring(0, idx) }));
-                    }
-                    parts.push(_({ tag: 'mark', child: { text: value.substring(idx, idx + highlightedText.length) } }));
-                    value = value.substring(idx + highlightedText.length);
-                }
-            }
-            this.$name.addChild(parts);
-        }
-        else {
-            this.$name.addChild(_({ text: value }));
-        }
-    }
-
+    this.$name.addChild(buildHighlightedTextElements(value, highlightedText));
 };
 
 CheckTreeItem.property.name = {

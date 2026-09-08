@@ -180,6 +180,61 @@ export function getSelectionText() {
     return text;
 }
 
+/**
+ * Build text nodes with highlighted segments wrapped by <mark>.
+ * Matching is case-insensitive and accent-insensitive.
+ *
+ * @param {string|number|boolean|null|undefined} text
+ * @param {string|number|boolean|null|undefined} highlightedText
+ * @returns {Array<AElement|Text>}
+ */
+export function buildHighlightedTextElements(text, highlightedText) {
+    var res = [];
+    if (text === null || text === undefined) return res;
+    if (typeof text !== 'string' && typeof text !== 'number' && typeof text !== 'boolean') return res;
+
+    var sourceText = text + '';
+    if (!sourceText) return res;
+
+    var normalizedHighlightedText = '';
+    if (highlightedText !== null && highlightedText !== undefined) {
+        if (typeof highlightedText !== 'string' && typeof highlightedText !== 'number' && typeof highlightedText !== 'boolean') {
+            return [_({ text: sourceText })];
+        }
+        normalizedHighlightedText = nonAccentVietnamese((highlightedText + '').trim()).toLowerCase();
+    }
+
+    if (!normalizedHighlightedText) {
+        return [_({ text: sourceText })];
+    }
+
+    var normalizedSourceText = nonAccentVietnamese(sourceText).toLowerCase();
+    var cursor = 0;
+    var idx;
+    while (cursor < sourceText.length) {
+        idx = normalizedSourceText.indexOf(normalizedHighlightedText, cursor);
+        if (idx < 0) {
+            if (cursor < sourceText.length) {
+                res.push(_({ text: sourceText.substring(cursor) }));
+            }
+            break;
+        }
+
+        if (idx > cursor) {
+            res.push(_({ text: sourceText.substring(cursor, idx) }));
+        }
+
+        res.push(_({
+            tag: 'mark',
+            child: { text: sourceText.substring(idx, idx + normalizedHighlightedText.length) }
+        }));
+        cursor = idx + normalizedHighlightedText.length;
+    }
+
+    return res;
+}
+
+
 /***
  *
  * @param num

@@ -6,6 +6,8 @@ import SelectListBox from "./SelectListBox";
 import prepareSearchForItem, { calcItemMatchScore, prepareSearchForList } from "./list/search";
 import { estimateWidth14, keyStringOf } from "./utils";
 import TextMeasure from "./TextMeasure";
+import SearchTextInput, { SearchMultiModeInput } from "./Searcher";
+import { nonAccentVietnamese } from "absol/src/String/stringFormat";
 
 function isBranchStatus(status) {
     return status === 'open' || status === 'close';
@@ -32,6 +34,10 @@ function SelectTreeLeafBox() {
 
     this.$dislayItems = this.$items;
     this.$dislayItemByValue = this.$itemByValue;
+
+    this.queryState = 'none';//none, searching, highlight
+    this.hightlightedItems = [];
+    this.activeHighlightedIdx = -1;
 
     this.$content = $('.as-select-tree-leaf-box-content', this);
     this._savedStatus = {};
@@ -76,7 +82,7 @@ SelectTreeLeafBox.render = function () {
         tag: Follower, attr: {
             tabindex: 0
         }, class: ['as-select-tree-leaf-box', 'as-select-list-box'], extendEvent: ['pressitem'], child: [{
-            class: 'as-select-list-box-search-ctn', child: 'searchtextinput'
+            class: 'as-select-list-box-search-ctn', child: SearchMultiModeInput.tag
         }, {
             class: ['as-bscroller', 'as-select-list-box-scroller', 'as-select-tree-leaf-box-content'], child: []
         }, 'attachhook.as-dom-signal'],
@@ -88,14 +94,18 @@ SelectTreeLeafBox.render = function () {
 
 
 SelectTreeLeafBox.prototype._initControl = function () {
-    this.$searchInput = $('searchtextinput', this)
-        .on('stoptyping', this.eventHandler.searchModify);
+    this.$searchInput =  ($(SearchMultiModeInput.tag, this) || $(SearchTextInput.tag, this))
+        .on('stoptyping', this.eventHandler.searchModify)
+        .on('previous', this.eventHandler.highlightPrevious)
+        .on('next', this.eventHandler.highlightNext);
 };
 
 
 SelectTreeLeafBox.prototype.resetSearchState = function () {
     var value = this.$searchInput.value;
     if (value.length > 0) {
+        this._clearHighlight();
+        this._recoverStatus();
         this.$searchInput.value = '';
         if (value.trim().length) {
             this.$content.clearChild();
@@ -418,17 +428,110 @@ SelectTreeLeafBox.prototype._search = function (query) {
     };
 }
 
+SelectTreeLeafBox.prototype._highlight = function (text) {
+    this._clearHighlight();
+    var query = text.trim();
+    if (query.length === 0) return;
+    query = query.toLowerCase();
+    query = nonAccentVietnamese(query);
+    var nd = null;
+    var itemData, itemText;
+    for (var  val in this.$itemByValue) {
+        nd = this.$itemByValue[val];
+        itemData = nd.itemData;
+        itemText = itemData.text +'';
+        if (itemData.txtLCNVN) {
+            itemText = nd.txtLCNVN;
+        }
+        else {
+            itemText = nonAccentVietnamese(itemText.toLowerCase());
+            nd.txtLCNVN = itemText;
+        }
+
+        if (itemText.indexOf(query) >= 0) {
+            nd.highlightedText = query;
+            this.hightlightedItems.push(nd);
+        }
+        if (nd.status === 'close'){
+            nd.status = 'open';
+        }
+    }
+    if (this.hightlightedItems.length > 0) {
+        this.activeHighlightedIdx = 0;
+        this.$searchInput.countText = (this.activeHighlightedIdx + 1) + '/' + this.hightlightedItems.length;
+        this.$searchInput.canNext = this.hightlightedItems.length > 1;
+        this.$searchInput.canPrevious = false;
+        this.hightlightedItems[this.activeHighlightedIdx].addClass('as-active-marked');
+        this.viewToValue(this.hightlightedItems[this.activeHighlightedIdx].itemData.value);
+    }
+    else {
+        this.$searchInput.countText = '0/0';
+    }
+
+
+}
+
+SelectTreeLeafBox.prototype._clearHighlight = function () {
+    this.hightlightedItems.forEach(function (item) {
+        item.highlightedText = '';
+        item.removeClass('as-active-marked');
+    });
+    this.hightlightedItems = [];
+    this.activeHighlightedIdx = -1;
+};
+
+SelectTreeLeafBox.prototype._backupStatus = function () {
+    var nd;
+    for (var val in this.$itemByValue) {
+        nd = this.$itemByValue[val];
+        if (isBranchStatus(nd.status)) {
+            this._savedStatus[val] = nd.status;
+        }
+    }
+};
+
+
+SelectTreeLeafBox.prototype._recoverStatus = function () {
+    var nd;
+    var savedStatus = this._savedStatus;
+    for (var val in savedStatus) {
+        nd = this.$itemByValue[val];
+        if (!nd) continue;
+        if (isBranchStatus(nd.status) && isBranchStatus(savedStatus[val])) {
+            nd.status = savedStatus[val];
+        }
+    }
+};
+
+
+
 /***
  * @this SelectTreeLeafBox
  */
 SelectTreeLeafBox.eventHandler.searchModify = function () {
+    var mode = this.$searchInput.mode;
     var query = this.$searchInput.value.trim();
-    if (query.length === 0) {
+    var queryState = query.length === 0 ? 'none' : (mode === 'highlight' ? 'highlight' : 'searching');
+    if (queryState === this.queryState && queryState === 'none') return;
+
+    if (queryState !== 'searching') {
         this.$content.clearChild().addChild(this.$items);
         this.$dislayItemByValue = this.$itemByValue;
         this.$dislayItems = this.$items;
+
+        if (queryState === 'highlight') {
+            if (this.queryState === 'none') {
+                this._backupStatus();
+            }
+            this._highlight(query);
+        }
+        else {
+            this._clearHighlight();
+            this._recoverStatus();
+        }
         this._updateSelectedItem();
         this.updatePosition();
+        this.queryState = queryState;
         return;
     }
     if (!this._searchCache[query]) {
@@ -451,6 +554,43 @@ SelectTreeLeafBox.eventHandler.searchModify = function () {
     this._updateSelectedItem();
     this.updatePosition();
 };
+
+
+SelectTreeLeafBox.eventHandler.highlightPrevious = function () {
+    var currentElt = this.hightlightedItems[this.activeHighlightedIdx];
+    if (currentElt) {
+        currentElt.removeClass('as-active-marked');
+    }
+    if (this.activeHighlightedIdx <= 0) return;
+    this.activeHighlightedIdx--;
+    currentElt = this.hightlightedItems[this.activeHighlightedIdx];
+    if (currentElt) {
+        currentElt.addClass('as-active-marked');
+        this.viewToValue(currentElt.itemData.value);
+    }
+    this.$searchInput.countText = (this.activeHighlightedIdx + 1) + '/' + this.hightlightedItems.length;
+    this.$searchInput.canNext = true;
+    this.$searchInput.canPrevious = this.activeHighlightedIdx > 0;
+
+};
+SelectTreeLeafBox.eventHandler.highlightNext = function () {
+    var currentElt = this.hightlightedItems[this.activeHighlightedIdx];
+    if (currentElt) {
+        currentElt.removeClass('as-active-marked');
+    }
+    if (this.activeHighlightedIdx >= this.hightlightedItems.length - 1) return;
+    this.activeHighlightedIdx++;
+    currentElt = this.hightlightedItems[this.activeHighlightedIdx];
+    console.log('currentElt', currentElt)
+    if (currentElt) {
+        currentElt.addClass('as-active-marked');
+        this.viewToValue(currentElt.itemData.value);
+    }
+    this.$searchInput.countText = (this.activeHighlightedIdx + 1) + '/' + this.hightlightedItems.length;
+    this.$searchInput.canNext = this.activeHighlightedIdx < this.hightlightedItems.length - 1;
+    this.$searchInput.canPrevious = true;
+};
+
 
 
 ACore.install(SelectTreeLeafBox);
