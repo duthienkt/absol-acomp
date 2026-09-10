@@ -165,8 +165,10 @@ NumberInput.render = function () {
                 class: 'absol-number-input-text-container',
                 child: [{
                     class: 'absol-number-input-text-formated',
-                    child: { tag: 'span',
-                    child:{text:''}}
+                    child: {
+                        tag: 'span',
+                        child: { text: '' }
+                    }
                 }, 'input[type="text"]']
             },
             {
@@ -511,7 +513,7 @@ NIValueController.prototype.locales2Format = {
 };
 
 NIValueController.prototype.makeDefaultFormat = function () {
-    var defaultLocale =navigator.language === 'vi'? 'vi-VN': 'en-US';
+    var defaultLocale = navigator.language === 'vi' ? 'vi-VN' : 'en-US';
     if (window.systemconfig) {
         if (window.systemconfig.commaSign === ',') {
             defaultLocale = 'vi-VN';
@@ -720,20 +722,25 @@ Object.defineProperty(NIValueController.prototype, 'formatedOriginValueText', {
 });
 
 
-
 Object.defineProperty(NIValueController.prototype, 'originValueText', {
     get: function () {
         var value = this.value;
         if (!isRealNumber(value)) return '';
         var text = this.formatedOriginValueText;
         var thousandsSeparator = this.format.thousandsSeparator || '';
-        text = text.replace(new RegExp('\\' + thousandsSeparator, 'g'), '');
+        var regex;
+        if (thousandsSeparator === ' ') {
+            regex = new RegExp('\\s', 'g');
+        }
+        else if (['-', ',', '.'].indexOf(thousandsSeparator) > -1) {
+            regex = new RegExp('\\' + thousandsSeparator, 'g');
+        }
+        if (regex) {
+            text = text.replace(regex, '');
+        }
         return text + '';
     }
 });
-
-
-
 
 
 /**
