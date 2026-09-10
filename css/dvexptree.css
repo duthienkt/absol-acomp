@@ -1,11 +1,14 @@
-.as-dv-exp-tree {
+.as-dv-exp-tree,
+.as-cx-exp-tree {
 
 }
 
-.as-dv-exp-tree > .absol-exp-node > .absol-exp-node-level {
+.as-dv-exp-tree > .absol-exp-node > .absol-exp-node-level,
+.as-cx-exp-tree > .absol-exp-node > .absol-exp-node-level {
 }
 
-.as-dv-exp-tree > .absol-exp-node > .absol-radio-button {
+.as-dv-exp-tree > .absol-exp-node > .absol-radio-button,
+.as-cx-exp-tree > .absol-exp-node > .as-checkbox-input {
     vertical-align: middle;
     display: inline-block;
     margin-right: 5px;
@@ -38,6 +41,23 @@
 
 .as-dv-exp-tree:not(.as-has-index-input) > .absol-exp-node > .as-dv-exp-tree-index {
     display: none;
+}
+
+
+.as-exp-searcher-attached.as-searching .absol-exp-tree:not(.as-in-search-result) {
+    display: none;
+}
+
+.as-exp-searcher-attached:not(.absol-exp-tree).as-in-search-result,
+.as-exp-searcher-attached.absol-exp-tree.as-in-search-result  .absol-exp-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.as-exp-searcher-attached.as-searching .absol-exp-items {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
 }
 
 /*.as-dv-exp-tree>.absol-exp-node:not(.status-open):not(.status-close)>.toggler-ico{*/

@@ -205,6 +205,7 @@ import FaceIdInput from "../FaceIdInput";
 import { FaceIdVerificationImage } from "../FaceIdEnrollment";
 import ObsDiv from "../ObsDiv";
 import PinCodeInput from "../PinCodeInput";
+import CXExpTree from "../CXExpTree";
 // import ColumnWidthEditor from "../ColumnWidthEditor";
 // import GSMInput from "../GSMInput";
 
@@ -286,6 +287,7 @@ export var publicCreators = [
     ExpTree,
     ExpGroup,
     DVExpTree,
+    CXExpTree,
     FlexiconButton,
     FlexiconInput,
     Follower,
