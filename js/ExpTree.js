@@ -58,7 +58,7 @@ export function ExpNode() {
             this.emit('presstoggle', copyEvent(event, { target: thisEN, type: 'pressremove' }), this);
         }
         else if (!EventEmitter.hitElement(thisEN.$removeIcon, event)) {
-            this.emit('press', copyEvent(event, { target: thisEN, type: 'press' }), this);
+            this.emit('press', copyEvent(event, { target: thisEN, type: 'press', originalEvent: event }), this);
         }
     });
 
