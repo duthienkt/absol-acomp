@@ -655,6 +655,7 @@ export default ExpTree;
  */
 export function ExpSearcher(elt, opt) {
     this.elt = elt;
+    this.elt.classList.add('as-exp-searcher-attached');
     this.cache = {};
     this.prevHash = null;
     this.searching = false;
@@ -781,6 +782,7 @@ ExpSearcher.prototype.ev_stopTyping = function () {
 };
 
 ExpSearcher.prototype.destroy = function () {
+    this.elt.classList.remove('as-exp-searcher-attached');
     this.inputElt = null;
     this.query('');
 }
