@@ -44,8 +44,13 @@
 }
 
 
-.as-exp-searcher-attached.as-searching .absol-exp-tree:not(.as-in-search-result) {
+.as-exp-searcher-attached.as-searching:not(.as-result-leaf) .absol-exp-tree:not(.as-in-search-result),
+.as-exp-searcher-attached.as-searching .absol-exp-tree:not(.as-result)  .absol-exp-tree:not(.as-in-search-result){
     display: none;
+}
+
+.as-exp-searcher-attached.as-searching .absol-exp-tree.as-result-leaf  .absol-exp-tree:not(.as-in-search-result) {
+    display: block;
 }
 
 .as-exp-searcher-attached:not(.absol-exp-tree).as-in-search-result,
@@ -54,7 +59,7 @@
     flex-direction: column;
 }
 
-.as-exp-searcher-attached.as-searching .absol-exp-items {
+.as-exp-searcher-attached.as-searching .absol-exp-tree:not(.hide-children)>.absol-exp-items {
     display: flex;
     align-items: stretch;
     flex-direction: column;

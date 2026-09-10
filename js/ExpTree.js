@@ -671,7 +671,7 @@ ExpSearcher.prototype.reset = function () {
     this.elt.removeClass('as-searching')
 
     var visit = treeNode => {
-        treeNode.removeClass('as-in-search-result').removeStyle('order');
+        treeNode.removeClass('as-in-search-result').removeStyle('order').removeClass('as-result-leaf');
         if (this.state[treeNode.id]) {
             if (treeNode.status === 'open' || treeNode.status === 'close' && this.state[treeNode.id] !== 'none') {
                 treeNode.status = this.state[treeNode.id];
@@ -758,20 +758,35 @@ ExpSearcher.prototype.query = function (text) {
     var searchRes = this.cache[text] || searchTreeListByText(text, items);
 
     var dict = searchRes.reduce(function cb(ac, cr, i) {
-        ac[cr.value] = i;
+        ac[cr.value] = i +'';
         if (cr.items) cr.items.reduce(cb, ac);
         return ac;
     }, {});
 
     var visit = treeNode => {
-        if (treeNode.id in dict) {
+        var inResult =  dict[treeNode.id];
+        if (inResult) {
             treeNode.addClass('as-in-search-result').addStyle('order', dict[treeNode.id]);
 
         }
         else {
-            treeNode.removeClass('as-in-search-result').removeStyle('order');
+            treeNode.removeClass('as-in-search-result').removeStyle('order').removeClass('as-result-leaf');
         }
-        this.getChildrenOf(treeNode).forEach(c => visit(c));
+        var children = this.getChildrenOf(treeNode);
+        children.forEach(c => visit(c));
+        var keepChild = false;
+        if (children.length > 0 && inResult) {
+            keepChild = children.every(c => !( dict[c.id]));
+        }
+        if (keepChild) {
+            treeNode.addClass('as-result-leaf')
+        }
+        else {
+            treeNode.removeClass('as-result-leaf')
+        }
+        if (keepChild && (treeNode.status === 'open')) {
+            treeNode.status = 'close';
+        }
     };
     visit(this.elt);
     this.elt.addClass('as-searching');
