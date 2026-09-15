@@ -166,8 +166,8 @@ MultiCheckTreeMenu.prototype.styleHandlers.width = {
     set: function (value) {
         var parsedValue = parseMeasureValue(value);
         if (parsedValue && parsedValue.unit === 'px') {
-            this.addClass('as-has-max-width');
-            this.addStyle('--max-width', value);
+            // this.addClass('as-has-max-width');
+            // this.addStyle('--max-width', value);
             this.style.width = value;
         }
         else if (parsedValue && parsedValue.unit === '%') {
@@ -176,7 +176,7 @@ MultiCheckTreeMenu.prototype.styleHandlers.width = {
         }
         else {
             this.style.width = value;
-            this.removeClass('as-has-max-width');
+            // this.removeClass('as-has-max-width');
             this.classList.remove('as-width-percent');
         }
         return value;
