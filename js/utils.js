@@ -1280,12 +1280,12 @@ export function parseLocalFloat(text, opt) {
 var defaultLC;
 var formatCache = {};
 
-function numFormaterHashKey(locales,formatOpt) {
+function numFormaterHashKey(locales, formatOpt) {
     formatOpt = formatOpt || {};
     var res = '';
-    res +=  (locales || 'lc') + '|';
-    res +=  formatOpt.maximumFractionDigits+'|';
-    res +=  formatOpt.minimumFractionDigits+'';
+    res += (locales || 'lc') + '|';
+    res += formatOpt.maximumFractionDigits + '|';
+    res += formatOpt.minimumFractionDigits + '';
     return res;
 }
 
@@ -1403,7 +1403,7 @@ export function formatLocalFloat(value, opt) {
 
     var key = numFormaterHashKey(opt.locales, formatOpt);
     var formatter = formatCache[key];
-    if (!formatter ) {
+    if (!formatter) {
         formatter = new Intl.NumberFormat(opt.locales, formatOpt);
         formatCache[key] = formatter;
     }
@@ -1415,7 +1415,6 @@ export function formatLocalFloat(value, opt) {
         return pt.value;
     }).join('');
 }
-
 
 
 /***
@@ -2142,6 +2141,7 @@ var originalMethodNames = listenMethodNames.map(x => 'original_' + x);
 export function listenDomContentChange(elt, callback) {
     if (!elt) return;
     if (elt.nodeType !== Node.ELEMENT_NODE) return;
+
     function emit(name, event) {
         if (!callback) return;
         if (name === 'change') {
@@ -2195,7 +2195,7 @@ export function listenDomContentChange(elt, callback) {
         if (!child) return;
         if (child.nodeType !== Node.ELEMENT_NODE) return;
         if (child.domHooked) return;
-        if (child._azar_extendTags ) {
+        if (child._azar_extendTags) {
             for (var k in child._azar_extendTags) return;//quick check
         }
         child.domHooked = true;
@@ -2223,7 +2223,7 @@ export function listenDomContentChange(elt, callback) {
         if (!child) return;
         if (child.nodeType !== Node.ELEMENT_NODE) return;
         if (!child.domHooked) return;
-        if (child._azar_extendTags ) {
+        if (child._azar_extendTags) {
             for (var k in child._azar_extendTags) {
                 return;//quick check
             }
@@ -2505,11 +2505,64 @@ export function getPreviewOfficeUrl(url) {
     if (!/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(sourceUrl) && !sourceUrl.startsWith('//')) {
         try {
             absoluteUrl = new URL(sourceUrl, window.location.href).href;
-        }
-        catch (err) {
+        } catch (err) {
             absoluteUrl = sourceUrl;
         }
     }
 
     return 'https://view.officeapps.live.com/op/embed.aspx?src=' + encodeURIComponent(absoluteUrl);
+}
+
+/**
+ *
+ * @param {Object<string, {text, href, anchors: Object<string, any>}>}dynamicLinks
+ * @param anchor
+ * @returns {{html: string, attr: {class: string}, text: string}}
+ */
+export function resolveDynamicLink(dynamicLinks, anchor) {
+    anchor = anchor || {};
+    var linkInfo;
+    var text = '';
+    var fragment, href, id;
+    var attr = {
+        class: 'as-ck-widget-dynamic-link'
+    };
+
+    //get id
+    id = anchor.id;
+    fragment = anchor.fragment;
+    if (!fragment) {
+        if (typeof anchor.href === 'string') {
+            fragment = anchor.href.match(/#([a-zA-Z0-9_-]+)/);
+            if (fragment) {
+                fragment = fragment[1];
+            }
+            else fragment = null;
+        }
+    }
+
+    linkInfo = dynamicLinks[id] || { href: '.', text: '' };
+    attr.href = linkInfo.href || anchor.href || '.';
+
+
+    text = linkInfo.text || anchor.text || '';
+
+    if (fragment) {
+        attr.href += '#' + fragment;
+        if (linkInfo.anchors && linkInfo.anchors[fragment]) {
+            text = linkInfo.anchors[fragment].text || text;
+        }
+        else  {
+            text = linkInfo.text + "#" + fragment;
+        }
+    }
+
+
+    var attrText = Object.keys(attr).map(key => `${key}="${attr[key]}"`).join(' ');
+
+    return {
+        html: `<a ${attrText}>${text}</a>`,
+        attr: attr,
+        text: text
+    };
 }
