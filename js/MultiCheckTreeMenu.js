@@ -836,10 +836,13 @@ MCTMDCorrectingValues.prototype.correctLeafValues = function (values) {
 
 
 MCTMDCorrectingValues.prototype.correctingValues = function (values) {
+    var res;
     if (this.elt.leafOnly) {
-        return this.correctLeafValues(values);
+        res =  this.correctLeafValues(values);
     }
     else {
-        return this.correctNonLeafValues(values);
+        res = this.correctNonLeafValues(values);
     }
+    res = arrayUnique(res);
+    return res;
 };
