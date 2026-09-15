@@ -1,4 +1,5 @@
 import { $$, _ } from "../../ACore";
+import { resolveDynamicLink } from "../utils";
 
 var name = 'dynamic_link';
 var command = 'insert_dynamic_link';
@@ -34,21 +35,31 @@ function init(editor) {
 var parserDiv = _('div');
 
 function explicit(data, placeHolderElt) {
-    parserDiv.innerHTML = data;
-    $$('.as-ck-widget-dynamic-link', parserDiv).forEach(function (elt) {
-    });
-    return parserDiv.innerHTML;
+    return data;
+    // parserDiv.innerHTML = data;
+    // $$('.as-ck-widget-dynamic-link', parserDiv).forEach(function (elt) {
+    // });
+    // return parserDiv.innerHTML;
 }
 
 function implicit(data, placeHolderElt) {
     parserDiv.innerHTML = data;
     $$('.as-ck-widget-dynamic-link', parserDiv).forEach(function (elt) {
-        var id = elt.getAttribute('data-link-id');
-        var info = placeHolderElt.dynamicLinks && placeHolderElt.dynamicLinks[id];
-        if (info){
-            elt.setAttribute('href', info.href);
-            elt.innerHTML = info.text || info.href;
-        }
+        var anchorData = {};
+        anchorData.id = elt.getAttribute('data-link-id');
+        anchorData.fragment = elt.getAttribute('data-fragment');
+        anchorData.href = elt.getAttribute('href');
+        anchorData.text = elt.innerHTML;
+        var resolved = resolveDynamicLink(placeHolderElt.dynamicLinks, anchorData);
+        elt.attr(resolved.attr);
+        elt.innerHTML = resolved.text;
+        // //return
+        // var id = elt.getAttribute('data-link-id');
+        // var info = placeHolderElt.dynamicLinks && placeHolderElt.dynamicLinks[id];
+        // if (info){
+        //     elt.setAttribute('href', info.href);
+        //     elt.innerHTML = info.text || info.href;
+        // }
     });
     return parserDiv.innerHTML;
 }
@@ -73,7 +84,7 @@ export default {
          *
          */
         insertDynamicLink: function (id, href, text) {
-            var info = (this.dynamicLinks && this.dynamicLinks[id]) || {href:'.', text: 'undefined'};
+            var info = (this.dynamicLinks && this.dynamicLinks[id]) || { href:'.', text: location.href };
             if (!href){
                 href = info.href;
             }
@@ -91,6 +102,30 @@ export default {
             return (elt.$.firstChild &&  elt.$.firstChild.getAttribute('data-link-id')) || null;
         }
     }
+}
+
+
+export function getCKAnchorsInHTML(html) {
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    Array.prototype.forEach.call(div.querySelectorAll('img'), function (img) {//prevent loading images
+        img.src = '';
+        img.remove();
+    });
+    var anchors = div.getElementsByTagName('a');
+    anchors = Array.from(anchors).map(function (e) {
+        return {
+            elt: e.parentElement,
+            id: e.id,
+            name: e.getAttribute('name'),
+        };
+    }).filter(function (e) {
+        return e.id && e.name;
+    }).map(function (e) {
+        e.text = e.elt.textContent || e.name;
+        return e;
+    });
+    return anchors;
 }
 
 /***
