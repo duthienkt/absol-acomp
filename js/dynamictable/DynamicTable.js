@@ -630,6 +630,17 @@ DynamicTable.prototype.isLastRow = function (o) {
     return row === rows[rows.length - 1];
 };
 
+DynamicTable.prototype.getLastRow = function () {
+    var rows = this.table.body.rows;
+    return rows[rows.length - 1];
+};
+
+
+
+DynamicTable.prototype.getFirstRow = function () {
+    var rows = this.table.body.rows;
+    return rows[0];
+};
 
 DynamicTable.prototype.viewIntoRow = function (row) {
     var counter = 300;

@@ -117,22 +117,34 @@ DTBodyRow.prototype.updateData = function (data) {
     else {
         this.id = randomIdent(8);
     }
+
     this.cells = this.data.cells.map((cellData) => new DTBodyCell(this, cellData));
     this.cells.reduce((ac, cell) => {
         cell.idx = ac;
         return ac + cell.colspan;
     }, 0);
 
-    if (this._elt) {
-        this._elt.attr('data-id', this.id + '');
-        this._elt.clearChild().addChild(this.cells.map(function (cell) {
-            return cell.elt;
-        }));
-        this.$idx = $('.as-dt-row-index', this._elt);
-        this.draggable = !!$('.as-drag-zone', this._elt);
-        if (this.$idx)
-            this.$idx.attr('data-idx', this._idx + 1 + '');
+    this.$idx = this.cells.reduce((ac, c) => {
+        return ac || $('.as-dt-row-index', c.elt);
+    }, null);
+
+    var oldElt = this._elt;
+    var oldFixedXElt = this._fixedXElt;
+    var oldFixedXRightElt = this._fixedXRightElt;
+    this._elt = null;
+    this._fixedXElt = null;
+    this._fixedXRightElt = null;
+
+    if (oldElt) {
+        oldElt.selfReplace(this.elt);
     }
+    if (oldFixedXElt) {
+        oldFixedXElt.selfReplace(this.fixedXElt);
+    }
+    if (oldFixedXRightElt) {
+        oldFixedXRightElt.selfReplace(this.fixedXRightElt);
+    }
+
     this.body.onRowSplice(rowIdx);
 };
 
@@ -140,6 +152,7 @@ DTBodyRow.prototype.updateData = function (data) {
 Object.defineProperty(DTBodyRow.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
+        //draw content
 
         var tableColCount = this.body.rows[0].colCount;
         var fixedCol = this.adapter.fixedCol || 0;
@@ -199,6 +212,7 @@ Object.defineProperty(DTBodyRow.prototype, 'elt', {
         this.draggable = !!$('.as-drag-zone', this._elt);
         if (this.$idx)
             this.$idx.attr('data-idx', this._idx + 1 + '');
+
 
         var originAddStyle = this._elt.addStyle;
         var originRemoveStyle = this._elt.removeStyle;
