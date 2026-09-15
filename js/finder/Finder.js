@@ -32,6 +32,8 @@ import DomSignal from "absol/src/HTML5/DomSignal";
 import RibbonButton from "../RibbonButton";
 import { getScreenSize } from "absol/src/HTML5/Dom";
 import { cropTextByUTF8BytesCount } from "absol/src/String/stringUtils";
+import { copyText } from "absol/src/HTML5/Clipboard";
+import Snackbar from "../Snackbar";
 
 var isMobile = BrowserDetector.isMobile;
 
@@ -747,6 +749,29 @@ FinderCommands.download = {
     }
 };
 
+FinderCommands.copy_url = {
+    icon: 'span.mdi.mdi-link-variant',
+    text: 'Sao chép liên kết',
+    match: function (elt) {
+        return elt && this.selectCtrl.$selectedItems.length === 1
+            && this.selectCtrl.$selectedItems.every(elt => elt.stat && !elt.stat.isDirectory);
+    },
+    /***
+     * @this Finder
+     */
+    exec: function () {
+        this.selectCtrl.$selectedItems.slice(0, 1).forEach(elt => {
+            if (elt.isDirectory) return;
+            var url = elt.stat.url;
+            if (!url) return;
+            copyText(url).then(()=>{
+               Snackbar.show('Đã sao chép liên kết vào bộ nhớ tạm');
+            });
+        });
+    }
+};
+
+
 
 FinderCommands.rename = {
     icon: 'span.mdi.mdi-rename',
@@ -1168,7 +1193,7 @@ function CommandController(elt) {
     this.commands = Object.assign({}, this.elt.commands);
     this.buttonNames = ['upload', 'view', 'download', 'move', 'rename', 'delete'];
     this.folderMenuItemNames = ['upload_to_folder', 'move_dir'];
-    this.contentMenuItemNames = ['view', 'download', 'upload', 'select_all', 'move', 'delete', 'rename'];
+    this.contentMenuItemNames = ['view', 'download','copy_url', 'upload', 'select_all', 'move', 'delete', 'rename'];
 
     this.$navCtn = this.elt.$navCtn;
     this.$navCtn.defineEvent('contextmenu').on('contextmenu', this.ev_navContextMenu);
