@@ -185,6 +185,7 @@ body.cke_contents_ltr h3 {
 body .cke_contents_ltr h1,
 body.cke_contents_ltr h1 {
     color: #1f4e79;
+    margin-top: 32px;
 }
 
 body .cke_contents_ltr h2,
