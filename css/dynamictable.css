@@ -729,25 +729,26 @@ body > div > table .as-dynamic-table-wrapper.as-overflow-y,
 }
 
 
-/*.as-dynamic-table-space .as-dt-body:empty::before,*/
-/*.as-table-new > tbody:empty::before {*/
-/*    content: " ";*/
-/*    display: table-row;*/
-/*    box-sizing: border-box;*/
-/*    height: 80px;*/
-/*    background-size: contain;*/
-/*    background-repeat: no-repeat;*/
-/*    background-image: url("data:image/svg+xml,%3Csvg width='144' height='144' viewBox='0 0 144 144' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='72' cy='72' r='72' fill='%23F8F9FA'/%3E%3Crect x='27' y='34' width='91' height='20' rx='5' fill='%23E8EAED'/%3E%3Crect x='27' y='60' width='30' height='51' rx='5' fill='url(%23paint0_linear_600_5463)'/%3E%3Crect x='64' y='60' width='54' height='51' rx='5' fill='url(%23paint1_linear_600_5463)'/%3E%3Cdefs%3E%3ClinearGradient id='paint0_linear_600_5463' x1='42' y1='60' x2='42' y2='111' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23E8EAED'/%3E%3Cstop offset='1' stop-color='%23E8EAED' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='paint1_linear_600_5463' x1='91' y1='60' x2='91' y2='111' gradientUnits='userSpaceOnUse'%3E%3Cstop stop-color='%23E8EAED'/%3E%3Cstop offset='1' stop-color='%23E8EAED' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3C/svg%3E%0A");*/
-/*}*/
+.as-dt-blink-cel,
+.as-dt-blink-cell {
+    animation-name: as-dt-blink-cell-highlight !important;
+    animation-duration: 1s;
+    animation-timing-function: ease-out;
+    animation-iteration-count: 1;
+    animation-fill-mode: none !important;
+}
 
-
-/*.as-dynamic-table-space .as-dt-body:empty::after,*/
-/*.as-table-new >tbody:empty::after {*/
-/*    font-family: Roboto, sans-serif;*/
-/*    font-size: 14px;*/
-/*    text-align: center;*/
-/*    display: table-row;*/
-/*    content: "Không có dữ liệu hiển thị";*/
-/*    line-height: 3;*/
-/*}*/
-
+@keyframes as-dt-blink-cell-highlight {
+    0% {
+        box-shadow: inset 0 0 0 0 rgba(255, 230, 120, 0);
+        background-color: transparent  !important;
+    }
+    35% {
+        box-shadow: inset 0 0 0 9999px rgb(255, 239, 160);
+        background-color: rgba(255, 239, 160, 0.55) !important;
+    }
+    100% {
+        box-shadow: inset 0 0 0 0 rgba(255, 230, 120, 0);
+        background-color: transparent  !important;
+    }
+}

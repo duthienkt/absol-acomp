@@ -306,8 +306,7 @@ function DynamicTable() {
     this.colSizeCtrl = new ColSizeController(this);
     this.rowDragCtrl = new RowDragController(this);
     this.afs = new AutoFocusScroller(this);
-
-
+    this.gotoTool = new DTGotoTool(this);
 
 
     /***
@@ -524,7 +523,7 @@ DynamicTable.prototype.requestUpdateSize = function () {
     if (bound.width <= 0 && bound.height <= 0 && !bound.top && !bound.left) return;
     this.layoutCtrl.onResize();
     this.floatScrollbarCtrl.onResize();
-    this.resizedTO = window.setTimeout( ()=> {
+    this.resizedTO = window.setTimeout(() => {
         this.resized = false;//anti flicker
     }, 120);
 };
@@ -566,11 +565,9 @@ DynamicTable.prototype.addRowBefore = function (rowData, bf) {
 };
 
 
-
 DynamicTable.prototype.addRowsBefore = function (rowData, bf) {
     return this.table.body.addRowsBefore(rowData, bf);
 };
-
 
 
 DynamicTable.prototype.addRowAfter = function (rowData, at) {
@@ -634,7 +631,6 @@ DynamicTable.prototype.getLastRow = function () {
     var rows = this.table.body.rows;
     return rows[rows.length - 1];
 };
-
 
 
 DynamicTable.prototype.getFirstRow = function () {
@@ -791,6 +787,15 @@ DynamicTable.prototype.notifyRowChange = function (row) {
 
 DynamicTable.prototype.notifyRowsChange = noop;
 
+
+/**
+ * use for select-tree-menu
+ */
+DynamicTable.prototype.getHeaderStructSelection = function () {
+    if (this.table) return this.table.getHeaderStructSelection();
+    return [];
+};
+
 DynamicTable.property = {};
 
 DynamicTable.property.adapter = {
@@ -827,7 +832,6 @@ DynamicTable.property.adapter = {
         setTimeout(() => {
             this.requestUpdateSize();
         }, 100);
-
     },
     get: function () {
         return this._adapterData;
@@ -873,7 +877,16 @@ DynamicTable.property.hiddenColumns = {
     get: function () {
         return this._hiddenColumns;
     }
-}
+};
+
+DynamicTable.property.gotoButton = {
+    set: function (value) {
+        this.gotoTool.button = value;
+    },
+    get: function () {
+        return this.gotoTool.button;
+    }
+};
 
 
 /***
@@ -1106,7 +1119,7 @@ LayoutController.prototype.onAttached = function () {
     ResizeSystem.updateUp(this.elt.parentElement);
 
     this.update();
-    var firstScrollCallback =  () => {
+    var firstScrollCallback = () => {
         var offset = this.elt.$vscrollbar.offsetTop;
         if (offset === 0) return;
         this.elt.$vscrollbar.off('scroll', firstScrollCallback);
@@ -1162,7 +1175,7 @@ LayoutController.prototype.onAttached = function () {
         this.elt.table.updateCopyEltSize();
         this.updateOverflowStatus();
 
-        this.elt.$vscrollbar.on('scroll',firstScrollCallback);
+        this.elt.$vscrollbar.on('scroll', firstScrollCallback);
     }
 };
 
@@ -2182,3 +2195,114 @@ FloatScrollbarController.prototype.update = function () {
     this.$hscrollbar.addStyle('border-top', '1px solid var(--border-color,#ccc)');
 };
 
+/**
+ *
+ * @param {DynamicTable} elt
+ * @constructor
+ */
+function DTGotoTool(elt) {
+    this.elt = elt;
+    this.ev_clickButton = this.ev_clickButton.bind(this);
+    this.ev_clickOut = this.ev_clickOut.bind(this);
+    this.$dropdown = null;
+}
+
+
+DTGotoTool.prototype.attach = function () {
+    var button = this._button;
+    if (!button) return;
+    if (button.attachedTool && button.attachedTool.detach) {
+        button.attachedTool.detach();
+    }
+    button.attachedTool = this;
+    button.on('click', this.ev_clickButton);
+};
+
+
+DTGotoTool.prototype.detach = function () {
+    var button = this._button;
+    if (!button) return;
+    button.off('click', this.ev_clickButton);
+};
+
+
+DTGotoTool.prototype.makeDropdown = function () {
+    if (this.$dropdown) this.$dropdown.selfRemove();
+    this.$dropdown = _({
+        tag:'selecttreebox',
+        props:{
+            enableSearch: true,
+            items: this.elt.getHeaderStructSelection(),
+            strictValue: false
+        }
+    });
+    this.$dropdown.addTo(document.body);
+    this.$dropdown.followTarget = this._button;
+    this.$dropdown.on('pressitem', (event) => {
+        this.ev_clickOut({target: document.body});
+        var table = this.elt.table;
+        var elt = table.header.elt.querySelector(`th[data-auto-id="${event.value}"]`);
+        if (!elt) return;
+        var needScroll = (elt.attr('class') ||"").indexOf('as-copy') <= 0;
+        if (!needScroll) return;
+        var fixedXY = table.header._fixedXYElt;
+        var leftPos;
+        var fixedYBound = fixedXY.getBoundingClientRect();
+        if (!fixedYBound.width && !fixedYBound.height) {
+            fixedYBound = table.header.elt.getBoundingClientRect();
+            leftPos = fixedYBound.left;
+        }
+        else {
+            leftPos = fixedYBound.right;
+        }
+        var eltBound = elt.getBoundingClientRect();
+        var scrollOffset = 10;
+        var rightPos = this.elt.$viewport.getBoundingClientRect().right;
+        scrollOffset = (rightPos - leftPos - eltBound.width)/2;
+
+        var delta = eltBound.left - scrollOffset - leftPos;
+        var maxOffset =  this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth;
+        if (maxOffset <= 0) return;
+        var newOffset = this.elt.$hscrollbar.innerOffset + delta;
+        newOffset = Math.max(0, Math.min(maxOffset, newOffset));
+        elt.addClass('as-dt-blink-cell');
+        setTimeout(() => {
+            elt.removeClass('as-dt-blink-cell');
+        }, 1600);
+        if (this.elt.$hscrollbar.innerOffset === newOffset) return;
+        this.elt.$hscrollbar.innerOffset = newOffset;
+        this.elt.$hscrollbar.emit('scroll');
+
+    });
+};
+
+DTGotoTool.prototype.ev_clickButton = function (event) {
+    this._button.off('click', this.ev_clickButton);
+    this.makeDropdown();
+    setTimeout(() => {
+        document.addEventListener('click', this.ev_clickOut);
+    }, 50);
+};
+
+DTGotoTool.prototype.ev_clickOut = function (event) {
+    if (this.$dropdown && this.$dropdown.contains(event.target)) return;
+    document.removeEventListener('click', this.ev_clickOut);
+    setTimeout(() => {
+        if (this.$dropdown) this.$dropdown.remove();
+        if (this._button)
+            this._button.on('click', this.ev_clickButton);
+    }, 10);
+};
+
+
+Object.defineProperty(DTGotoTool.prototype, 'button', {
+    set: function (value) {
+        if (!value || !value.addEventListener) value = null;
+        if (this._button) this.detach();
+        this._button = value;
+        if (this._button) this.attach();
+    },
+    get: function () {
+        return this._button;
+    }
+})

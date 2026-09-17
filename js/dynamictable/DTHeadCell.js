@@ -5,6 +5,7 @@ import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { parseMeasureValue } from "absol/src/JSX/attribute";
 import AElement from "absol/src/HTML5/AElement";
 import { quickAssign } from "absol/src/HTML5/OOP";
+import { randomIdent } from "absol/src/String/stringGenerate";
 
 
 var implicitSortKeyArr = key => {
@@ -27,6 +28,7 @@ var implicitSortKeyArr = key => {
  * @constructor
  */
 function DTHeadCell(row, data) {
+    this.autoId = randomIdent(8);
     this.row = row;
     this._elt = null;
     this._copyElt = null;
@@ -318,6 +320,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
 
         this._elt = _({ tag: 'th', class: 'as-dt-header-cell' })
             .on('pointerdown', onPointerDown);
+        this._elt.attr('data-auto-id', this.autoId);
         if (this.data.attr) {
             this._elt.attr(this.data.attr);
         }

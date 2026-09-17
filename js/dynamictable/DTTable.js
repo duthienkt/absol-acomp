@@ -43,6 +43,10 @@ DTTable.prototype.revokeResource = function () {
     this.body.revokeResource();
 };
 
+DTTable.prototype.getHeaderStructSelection = function () {
+    return this.header.getStructSelection();
+};
+
 Object.defineProperty(DTTable.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
