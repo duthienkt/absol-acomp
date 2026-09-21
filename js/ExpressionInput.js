@@ -2783,7 +2783,6 @@ var EIParser = new EIParserClass(EIGrammar);
 
 function EITokenizerVI() {
     EITokenizer.apply(this, arguments);
-    console.log(this)
 }
 
 mixClass(EITokenizerVI, EITokenizer);
