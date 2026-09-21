@@ -46,7 +46,9 @@ TrackBarInput.render = function () {
 TrackBarInput.prototype.init = function (props) {
     props = props || {};
     props.leftValue = props.leftValue || 0;
-    props.value = props.value || props.leftValue;
+    if (typeof props.value !== 'number') {
+        props.value = props.value || props.leftValue;
+    }
     Object.assign(this, props);
     this.value = props.value;
 };
@@ -109,6 +111,10 @@ TrackBarInput.property.value = {
 TrackBarInput.property.valueFixed = {
     set: function (value) {
         if (value === undefined || value === null) value = undefined;
+        if (value > 0 && value < 1) {
+            // value may be 0.1, 0.01, 0.001, etc. but we only accept integer values for decimal places, so we convert it to the number of decimal places
+            value = Math.ceil(-Math.log10(value));
+        }
         this._valueFixed = value;
         this.$input.value = this.value + '';
         this._calInputTextWidth();
