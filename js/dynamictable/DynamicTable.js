@@ -2228,6 +2228,9 @@ DTGotoTool.prototype.detach = function () {
 
 DTGotoTool.prototype.makeDropdown = function () {
     if (this.$dropdown) this.$dropdown.selfRemove();
+    /**
+     * @type {SelectTreeBox}
+     */
     this.$dropdown = _({
         tag:'selecttreebox',
         props:{
@@ -2238,6 +2241,7 @@ DTGotoTool.prototype.makeDropdown = function () {
     });
     this.$dropdown.addTo(document.body);
     this.$dropdown.followTarget = this._button;
+    this.$dropdown.focus();
     this.$dropdown.on('pressitem', (event) => {
         this.ev_clickOut({target: document.body});
         var table = this.elt.table;
