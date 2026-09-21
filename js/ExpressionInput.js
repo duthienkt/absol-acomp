@@ -25,6 +25,17 @@ import DPTokenizer from "absol/src/Pharse/DPTokenizer";
  * @constructor
  */
 function ExpressionInput() {
+    /***  setup language engine  ***/
+    if ((typeof systemconfig === 'object') && systemconfig && systemconfig.commaSign) {
+        this.lang = systemconfig.commaSign === ',' ?'vi':'en';
+    }
+    else {
+        this.lang = navigator.language==='vi'?'vi':'en';
+    }
+
+    this.parser = this.lang === 'vi'? EIParserVI: EIParser;
+    this.tokenizer = this.parser.tokenizer;
+
     this.domSignal = new DelaySignal();
     this.$textarea = $('.as-expression-input-textarea', this);
     this.$rangeCtn = $('.as-expression-input-range-ctn', this);
@@ -174,6 +185,80 @@ ExpressionInput.property.disabled = {
 
 ExpressionInput.property.value = {
     get: function () {
+        var viewValue = this.viewValue ||"";
+        var value;
+        /**
+         * @type {DPTokenizer}
+         */
+        var tokenizer;
+        var tokens;
+        if (this.lang === 'vi') {
+            tokenizer = this.tokenizer;
+            tokens = tokenizer.tokenize(viewValue);//token was converted to normal syntax at EITokenizerVI.prototype.tokenize, just get content
+            value = tokens.reduce((ac, token)=> {
+                if (ac.offset < token.start) {
+                    ac.text += viewValue.substring(ac.offset, token.start);
+                }
+
+                var st = token.content;
+                if (st === ',') {
+                    st = ',';
+                }
+                else if (token.type === 'number') {
+                    st = token.content;
+                }
+
+                ac.text += st;
+                ac.offset = token.end;
+                return ac;
+            }, {text:'', offset: 0}).text;
+        }
+        else {
+            value = viewValue;
+        }
+
+        return value;
+    },
+    set: function (value) {
+        value = value || '';
+        var viewValue;
+        /**
+         * @type {DPTokenizer}
+         */
+        var tokenizer;
+        var tokens;
+        if (this.lang === 'vi'){
+            tokenizer = EIParser.tokenizer;//use default for tokenize normal syntax
+            tokens = tokenizer.tokenize(value);
+            viewValue = tokens.reduce((ac, token)=>{
+                if (ac.offset < token.start) {
+                    ac.text += value.substring(ac.offset, token.start);
+                }
+
+                var st = token.content;
+                if (st === ',') {
+                    st = ';';
+                }
+                else if (token.type === 'number') {
+                    st = st.replace(/\./g, ',');
+                }
+
+                ac.text += st;
+                ac.offset = token.end;
+                return ac;
+            }, {text:'', offset: 0}).text;
+        }
+        else {
+            viewValue = value;
+        }
+
+
+        this.viewValue = viewValue;
+    }
+};
+
+ExpressionInput.property.viewValue = {
+    get: function () {
         return this.engine.value;
     },
     set: function (value) {
@@ -181,6 +266,8 @@ ExpressionInput.property.value = {
         this.engine.highlightError();
     }
 };
+
+
 
 ExpressionInput.property.icon = {
     /**
@@ -387,6 +474,8 @@ EIUserActionController.prototype.ev_keydown = function (event) {
  */
 function EIEngine(elt) {
     this.elt = elt;
+    this.parser = elt.parser;
+    this.tokenizer = elt.tokenizer;
     this.lastSelectedPosition = { start: 0, end: 0, direction: 'forward' };
     this.$content = elt.$content;
     this.$textarea = elt.$textarea;
@@ -420,7 +509,6 @@ function EIEngine(elt) {
  * @param  {null|number|{start: number, end: number}=}pos
  */
 EIEngine.prototype.selectOffset2DomRange = function (pos) {
-    var value = this.elt.value;
     var start;
     var end;
     if (typeof pos === "number") {
@@ -568,10 +656,11 @@ EIEngine.prototype.requestRedrawTokens = function () {
 }
 
 EIEngine.prototype.highlightError = function () {
+    var parser = this.elt.parser;
     var elt = this.elt;
     var contentElt = this.$content;
-    var value = elt.value.trim();
-    var it = EIParser.parse(value, 'exp_excel');
+    var value = this.value.trim();
+    var it = parser.parse(value, 'exp_excel');
     var i, notSkipCount = 0;
     var tokenErrorIdx = -1;
     if (value && it.error) {
@@ -605,7 +694,7 @@ EIEngine.prototype.highlightError = function () {
 EIEngine.prototype.clearErrorHighlight = function () {
     var contentElt = this.$content;
     var tokenChain = this.getTokenChain();
-    for (var i = 0; i < contentElt.length; ++i) {
+    for (var i = 0; i < tokenChain.length; ++i) {
         if (tokenChain[i].classList.contains('as-token') && tokenChain[i].getAttribute('data-type') !== 'skip') {
             tokenChain[i].classList.remove('as-unexpected-token');
         }
@@ -992,7 +1081,8 @@ EIEngine.prototype.findPrefixWordTokenOf = function (token) {
  * @param {string} value
  */
 EIEngine.prototype.viewText = function (value) {
-    var tokens = EIParser.tokenizer.tokenize(value || '');
+    var tokens = this.tokenizer.tokenize(value || '');
+    console.log(tokens);
     this.$content.clearChild();
     var lineElt = _('.as-ei-line').addTo(this.$content);
     var i, token;
@@ -1520,7 +1610,7 @@ EIAutoCompleteController.prototype.applySuggestion = function (suggestion) {
         && (engine.isWordToken(endToken) || engine.stringOf(endToken) === '->')) {
         startPos = this.elt.engine.getPosition(startToken, 0);
         endPos = this.elt.engine.getPosition(endToken, engine.stringOf(endToken).length);
-        oldValue = this.elt.value;
+        oldValue = this.elt.engine.value;
         newValue = oldValue.substring(0, startPos) + key + oldValue.substring(endPos);
         this.elt.$textarea.value = newValue;
         this.elt.engine.redrawTokens();
@@ -1531,7 +1621,7 @@ EIAutoCompleteController.prototype.applySuggestion = function (suggestion) {
         }, 100);
     }
     else {
-        oldValue = this.elt.value;
+        oldValue = this.elt.engine.value;
         selected = engine.getSelectPosition();
         newValue = oldValue.substring(0, selected.start) + key + oldValue.substring(selected.end);
         this.elt.engine.value = newValue;
@@ -2641,6 +2731,10 @@ var elementRegexes = [
 ];
 
 
+var elementRegexesVI = elementRegexes.slice();
+elementRegexesVI[1] = ['number', /(\d+([,]\d*)?([eE][+-]?\d+)?|[,]\d+([eE][+-]?\d+)?)/];
+
+
 var EIGrammar = {
     elementRegexes: elementRegexes,
     operatorOrder: SCGrammar.operatorOrder,
@@ -2676,7 +2770,8 @@ function EIParserClass(opt) {
         this.rules = opt.rules;
     }
     this.targets = {};
-    this.tokenizer = new EITokenizer(opt);
+    var EITokenizerClass = opt.tokenizerClass || EITokenizer;
+    this.tokenizer = new EITokenizerClass(opt);
     this.computeTarget();
 }
 
@@ -2684,6 +2779,37 @@ mixClass(EIParserClass, DPParser);
 
 
 var EIParser = new EIParserClass(EIGrammar);
+
+
+function EITokenizerVI() {
+    EITokenizer.apply(this, arguments);
+    console.log(this)
+}
+
+mixClass(EITokenizerVI, EITokenizer);
+
+EITokenizerVI.prototype.tokenize = function () {
+    var res = EITokenizer.prototype.tokenize.apply(this, arguments);
+    //convert to use same rules
+    res.forEach(token => {
+        if (token.type === 'number') {
+            token.originalContent = token.content;
+            token.content = token.originalContent.replace(/,/g, '.');
+        }
+        else if (token.content === ';') {
+            token.originalContent = token.content;
+            token.content = ',';
+        }
+    });
+    return res;
+};
+
+var EIGrammarVI = Object.assign({}, EIGrammar, {
+    elementRegexes: elementRegexesVI,
+    tokenizerClass: EITokenizerVI
+});
+
+var EIParserVI = new EIParserClass(EIGrammarVI);
 
 
 /**
@@ -2725,7 +2851,7 @@ EICallValidator.prototype.validate = function () {
     var tokenChain = this.elt.engine.getTokenChain();
     var tokens = tokenChain.map((tke, i) => Object.assign(tke.tokenData, { index: i }));
     if (tokens.length <= 0) return;
-    var it = EIParser.parse(tokens, 'exp_excel');
+    var it = this.elt.parser.parse(tokens, 'exp_excel');
     this.parsed = it;
     if (!it.ast) return;//verify again
     this.tokenChain = tokenChain;
