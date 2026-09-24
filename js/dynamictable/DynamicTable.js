@@ -2237,6 +2237,16 @@ DTGotoTool.prototype.makeDropdown = function () {
             enableSearch: true,
             items: this.elt.getHeaderStructSelection(),
             strictValue: false
+        },
+
+        on:{
+            preupdateposition: ()=>{
+                var buttonBound = this._button.getBoundingClientRect();
+                var screenSize = getScreenSize();
+                var availableHeight = Math.max(buttonBound.top - 10, screenSize.height - buttonBound.bottom - 10);
+                var maxHeight = Math.max(availableHeight, 100);
+                this.$dropdown.addStyle('--max-height', maxHeight + 'px');
+            }
         }
     });
     this.$dropdown.addTo(document.body);
@@ -2292,7 +2302,10 @@ DTGotoTool.prototype.ev_clickOut = function (event) {
     if (this.$dropdown && this.$dropdown.contains(event.target)) return;
     document.removeEventListener('click', this.ev_clickOut);
     setTimeout(() => {
-        if (this.$dropdown) this.$dropdown.remove();
+        if (this.$dropdown) {
+            this.$dropdown.remove();
+            revokeResource(this.$dropdown);
+        }
         if (this._button)
             this._button.on('click', this.ev_clickButton);
     }, 10);
