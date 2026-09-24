@@ -2446,6 +2446,11 @@ AbsolFileSystem.prototype.clearCache = function () {
     this.cache = { readDir: {}, stats: {} };
 };
 
+AbsolFileSystem.prototype.filePath2Url = function (path) {
+    if (path.startsWith('/html')) return path.replace('/html', this.API_PREFIX || location.origin);
+    else if (path.startsWith('/Documents')) return path.replace('/Documents', this.API_PREFIX || location.origin);
+}
+
 AbsolFileSystem.prototype.readDir = function (path) {
     this.sync = this.sync.then(() => {
         if (this.cache.readDir[path || '..']) return this.cache.readDir[path || '..'];
@@ -2459,10 +2464,10 @@ AbsolFileSystem.prototype.readDir = function (path) {
                 path: path
             })
         }).then(res => res.json()).then(res => {
-            res = res.filter(c => c.path.startsWith('/html'));
+            res = res.filter(c => c.path.startsWith('/html') || c.path.startsWith('/Documents'));
             res.forEach(c => {
                 c.name = c.path.split('/').pop();
-                c.url = c.path.replace('/html', this.API_PREFIX || location.origin)
+                c.url = this.filePath2Url(c.path);
             });
             this.cache.readDir[path || '..'] = res.map(c => c.name);
             res.forEach(c => {
