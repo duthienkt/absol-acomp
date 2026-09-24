@@ -9,7 +9,7 @@ import Hanger from "../Hanger";
 import Rectangle from "absol/src/Math/Rectangle";
 import Vec2 from "absol/src/Math/Vec2";
 import { AbstractInput, AbstractStyleExtended } from "../Abstraction";
-import { mixClass } from "absol/src/HTML5/OOP";
+import { drillProperty, mixClass } from "absol/src/HTML5/OOP";
 
 var _ = ACore._;
 var $ = ACore.$;
@@ -67,6 +67,7 @@ function NumberInput() {
     this.obs.observe(this);
 
     this.valueCtrl = new NIValueController(this);
+    drillProperty(this, this.valueCtrl, 'isVI');//use , for float format
     this.dragCtrl = new NIDragController(this);
     this.textCtrl.flushValueToText();
     AbstractInput.call(this);
@@ -196,7 +197,9 @@ NumberInput.prototype.styleHandlers.textAlign = {
     }
 };
 
-
+/**
+ * @deprecated
+ */
 NumberInput.prototype._makeDefaultFormat = function () {
     var res = {
         locales: 'en-US',
@@ -493,6 +496,7 @@ function NIValueController(elt) {
     this.elt = elt;
     this._min = -Infinity;
     this._max = Infinity;
+    this.initLang();
     this._format = this.makeDefaultFormat();
 }
 
@@ -512,7 +516,7 @@ NIValueController.prototype.locales2Format = {
     }
 };
 
-NIValueController.prototype.makeDefaultFormat = function () {
+NIValueController.prototype.initLang = function () {
     var defaultLocale = navigator.language === 'vi' ? 'vi-VN' : 'en-US';
     if (window.systemconfig) {
         if (window.systemconfig.commaSign === ',') {
@@ -522,12 +526,18 @@ NIValueController.prototype.makeDefaultFormat = function () {
             defaultLocale = 'en-US';
         }
     }
+    this.defaultLocale = defaultLocale;
+};
+
+
+
+NIValueController.prototype.makeDefaultFormat = function () {
     return Object.assign({
-        locales: defaultLocale,
+        locales: this.defaultLocale,
         maximumFractionDigits: 20,
         minimumFractionDigits: 0,
         pow10: null//only apply if maximumFractionDigits === 0
-    }, this.locales2Format[defaultLocale]);
+    }, this.locales2Format[this.defaultLocale]);
 };
 
 NIValueController.prototype.formatNumber = function (value, format) {
@@ -666,6 +676,14 @@ Object.defineProperty(NIValueController.prototype, 'format', {
     },
     get: function () {
         return this._format;
+    }
+});
+
+
+Object.defineProperty(NIValueController.prototype, 'isVI', {
+    get: function () {
+        var format = this.format;
+        return format.locales === 'vi-VN' || (format.decimalSeparator === ',');
     }
 });
 
