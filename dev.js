@@ -43,6 +43,7 @@ import { openFaceIdEnrollmentDialog } from "./js/FaceIdEnrollment";
 import { openFaceIdAuthenticationDialog } from "./js/FaceAuthentication";
 import { teiDataToExcelData } from "./js/TableOfTextInput";
 import { MCTMDCorrectingValues } from "./js/MultiCheckTreeMenu";
+import { getCKAnchorsInHTML } from "./js/ckeditor/DynamicLinkExtension";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -196,7 +197,15 @@ if (location.href.indexOf('localhost') >= 0) {
     // Dom.documentReady.then(testFont);
 }
 
-absol.faceid = {
-    openFaceIdEnrollmentDialog,
-    openFaceIdAuthenticationDialog
-};
+absol.faceid = (function (){
+    return {
+        openFaceIdEnrollmentDialog,
+        openFaceIdAuthenticationDialog
+    };
+})();
+
+absol.ckeditor = (function (){
+    return {
+        getCKAnchorsInHTML: getCKAnchorsInHTML
+    };
+})();
