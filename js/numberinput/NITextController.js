@@ -56,7 +56,8 @@ NITextController.prototype.flushTextToValue = function () {
     var text = this.$input.value;
 
     text = text.replace(/[^0-9\-+.,()%*\/]/g, '');
-    var value = execute(text, this.elt.valueCtrl.isVI);
+    var errorCtx = {};
+    var value = execute(text, this.elt.valueCtrl.isVI, errorCtx);
     if (isRealNumber(value)) {
         this.elt.valueCtrl.value = value;
     }
@@ -69,6 +70,10 @@ NITextController.prototype.flushValueToText = function () {
     text = this.elt.valueCtrl.formatedValueText;
     this.elt.$text.firstChild.firstChild.data = text;
     this.estimateWidthBy(text);
+};
+
+NITextController.prototype.showError = function (errorMessage) {
+
 };
 
 
@@ -437,12 +442,33 @@ function accept(nd) {
     }
 }
 
-var execute = function (text, isVI) {
+var execute = function (text, isVI, ctx) {
     var parser = isVI ? NIParserVI : NIParser;
     var t = parser.parse(text, 'exp');
     if (t.ast) {
         return accept(t.ast);
     }
-    else return NaN;
+    else {
+        if (ctx) {
+            ctx.error = t.error;
+            ctx.tokens = t.tokens;
+        }
+        return NaN;
+    }
 };
 
+
+export function parseLocalFloat(text) {
+    var isVI = false;
+    if ((typeof systemconfig === 'object') && systemconfig && systemconfig.commaSign) {
+        isVI = systemconfig.commaSign === ',';
+    }
+    else {
+        isVI = navigator.language==='vi';
+    }
+    return execute(text, isVI);
+}
+
+var makeErrorMessage = function (ctx) {
+    //todo
+};
