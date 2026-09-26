@@ -739,6 +739,7 @@ function DTBody(table, data) {
         return row;
     });
 
+    this.reIndexColumns();
 
     this.modes = {
         normal: new NormalMode(this),
@@ -773,8 +774,9 @@ DTBody.prototype.revokeResource = function () {
     this.modes.searching.revoke();
     this.rows = [];
     this.data = null;
-
 };
+
+
 
 DTBody.prototype.requireRows = function (start, end) {
     if (typeof start !== "number") start = 0;
@@ -794,7 +796,31 @@ DTBody.prototype.reindexRows = function (start, end) {
             this.rows[i].nextRow = this.rows[i + 1] || null;
         }
     }
+    this.reIndexColumns();
+};
 
+
+DTBody.prototype.reIndexColumns = function () {
+    if (this.rows.length === 0) return;
+    var colCount = this.rows[0].colCount;
+    var heights = Array(colCount).fill(0);
+    var colspan, rowspan, i, j, k,row, cell, colIdx;
+    var rC = this.rows.length;
+    for (i = 0; i < rC; ++i) {
+        row = this.rows[i];
+        colIdx = 0;
+        for (j = 0; j < row.cells.length; ++j) {
+            cell = row.cells[j];
+            while (heights[colIdx] > i) colIdx++;
+            cell.idx = colIdx;
+            colspan = cell.colspan;
+            rowspan = cell.rowspan;
+            for (k = 0; k < colspan; ++k) {
+                heights[colIdx + k] = i + rowspan;
+            }
+            colIdx += colspan;
+        }
+    }
 };
 
 DTBody.prototype.onRowSplice = function (idx) {

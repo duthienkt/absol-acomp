@@ -315,31 +315,11 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXRightElt', {
         if (this._fixedXRightElt) return this._fixedXRightElt;
         var fixedColRight = this.adapter.fixedColRight || 0;
         var tableColCount = this.body.rows[0].colCount;
-        var startRowIdx = this.idx;
-        var endRowIdx = this.idx;
-        var row = this;
-        while (startRowIdx > 0 && row && row.colCount < tableColCount) {
-            --startRowIdx;
-            row = this.body.rows[startRowIdx];
-        }
-        var heights = Array(tableColCount).fill(startRowIdx);
-        var i, j, k, cell, colspan, rowspan, colIdx;
-        for (i = startRowIdx; i < endRowIdx; ++i) {
-            row = this.body.rows[i];
-            colIdx = 0;
-            for (j = 0; j < row.cells.length; j++) {
-                cell = row.cells[j];
-                colspan = cell.colspan;
-                for (k = 0; k < colspan; ++k) {
-                    heights[colIdx] = Math.max(heights[colIdx], i) + cell.rowspan;
-                    colIdx++;
-                }
-            }
-        }
+
         var needCloneCell = 0;
 
-        for (i = 0; i < fixedColRight; i++) {
-            if (heights[tableColCount - 1 - i] <= endRowIdx) {
+        for (i = this.cells.length - 1; i >=0; --i) {
+            if (this.cells[i].idx >= tableColCount - fixedColRight) {
                 needCloneCell++;
             }
         }
@@ -347,7 +327,7 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXRightElt', {
         this._fixedXRightElt = _({
             elt: this.elt.cloneNode(false),
             class: 'as-dt-fixed-x-right',
-            child: this.cells.slice(row.cells.length - needCloneCell, row.cells.length).map(cell => cell.elt),
+            child: this.cells.slice(this.cells.length - needCloneCell, this.cells.length).map(cell => cell.elt),
             on: {
                 mouseenter: () => {
                     this._elt.classList.add('as-hover');
