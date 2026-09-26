@@ -168,6 +168,9 @@ Object.defineProperty(DTBodyCell.prototype, 'idx', {
         this._idx = value;
         if (this._elt)
             this._elt.attr('data-col-idx', value + '');
+        if (this._copyElt) {
+            this._copyElt.attr('data-col-idx', value + '');
+        }
     },
     get: function () {
         return this._idx;
