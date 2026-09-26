@@ -44,6 +44,7 @@ import { openFaceIdAuthenticationDialog } from "./js/FaceAuthentication";
 import { teiDataToExcelData } from "./js/TableOfTextInput";
 import { MCTMDCorrectingValues } from "./js/MultiCheckTreeMenu";
 import { getCKAnchorsInHTML } from "./js/ckeditor/DynamicLinkExtension";
+import TextMeasureData from "./js/TextMeasureData";
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
@@ -70,6 +71,8 @@ absol.FinderFileSystem = FinderFileSystem;
 
 window.AComp = absol.AComp;
 absol.TextMeasure = TextMeasure;
+
+absol.TextMeasureData = TextMeasureData;
 
 absol.printer.silentDownloadAsPdf = silentDownloadAsPdf;
 absol.ListSearchMaster = ListSearchMaster;
@@ -126,6 +129,7 @@ Dom.documentReady.then(function () {
 
 
 });
+
 
 Object.assign(absol.$, utils);
 
