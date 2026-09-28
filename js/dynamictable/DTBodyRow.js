@@ -68,7 +68,7 @@ DTBodyRow.prototype.revoke = function () {
     this.body = null;
     if (this._elt) this._elt.dtBodyRow = null;
     this._elt = null;
-    this.$id = null;
+    this.$idx = null;
     this.draggable = null;
 };
 
@@ -272,7 +272,7 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXElt', {
             row = this.body.rows[startRowIdx];
         }
         var heights = Array(tableColCount).fill(startRowIdx);
-        var i, j, k, cell, colspan, rowspan, colIdx;
+        var i, j, k, cell, colspan, colIdx;
         for (i = startRowIdx; i < endRowIdx; ++i) {
             row = this.body.rows[i];
             colIdx = 0;
@@ -317,6 +317,7 @@ Object.defineProperty(DTBodyRow.prototype, 'fixedXRightElt', {
         var tableColCount = this.body.rows[0].colCount;
 
         var needCloneCell = 0;
+        var i;
 
         for (i = this.cells.length - 1; i >=0; --i) {
             if (this.cells[i].idx >= tableColCount - fixedColRight) {
