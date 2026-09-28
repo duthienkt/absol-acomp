@@ -1265,12 +1265,15 @@ export function isInteger(value) {
  * @param {{locales?:string}|string =} opt
  */
 export function parseLocalFloat(text, opt) {
-    if (typeof opt === "string") opt = { locales: opt };
-    var locales = (opt && opt.locales) || (window.systemconfig && window.systemconfig.numberFormatLocales);
-    var sample = locales ? (new Intl.NumberFormat(locales).format(123456.78)) : (123456.78.toLocaleString());
-    // decimal-separator, thousand-separator.
-    var thousandSeparator = sample.match(/3(.?)4/)[1] || '';
-    var decimalSeparator = sample.match(/6(.?)7/)[1];
+    var isVI = false;
+    if ((typeof systemconfig === 'object') && systemconfig && systemconfig.commaSign) {
+        isVI = systemconfig.commaSign === ',';
+    }
+    else {
+        isVI = navigator.language==='vi';
+    }
+    var thousandSeparator = isVI ? '.' : ',';
+    var decimalSeparator = isVI ? ',' : '.';
     text = text.replace(new RegExp('[' + thousandSeparator + ']', 'g'), '')
         .replace(new RegExp('[' + decimalSeparator + ']', 'g'), '.');
     return parseFloat(text);
