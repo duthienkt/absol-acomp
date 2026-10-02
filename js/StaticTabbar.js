@@ -161,8 +161,10 @@ StaticTabbar.prototype.activeTab = function (ident) {
         var buttonBound = button.getBoundingClientRect();
         var dx = buttonBound.left - bound.left;
         var fontSize = this.getFontSize();
+        var dy = buttonBound.top - bound.top;
         this.$activeBox.addStyle({
             left: dx / fontSize + 'em',
+            top: dy / fontSize + 'em',
             width: buttonBound.width / fontSize + 'em'
         });
     }

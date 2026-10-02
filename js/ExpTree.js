@@ -792,8 +792,15 @@ ExpSearcher.prototype.query = function (text) {
     this.elt.addClass('as-searching');
 };
 
+
+ExpSearcher.prototype.queryFromInput = function () {
+    if (this.inputElt)
+        this.query(this.inputElt.value);
+
+}
+
 ExpSearcher.prototype.ev_stopTyping = function () {
-    this.query(this.inputElt.value);
+    this.queryFromInput();
 };
 
 ExpSearcher.prototype.destroy = function () {
