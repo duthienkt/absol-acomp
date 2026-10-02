@@ -54,10 +54,10 @@
 
 .absol-static-tabbar-active-box {
     position: absolute;
-    bottom: 0;
     top: 0;
     left: 0;
     width: 0;
+    height: 2em;
     transition: left 0.15s, width 0.15s;
     padding-left: 0.5em;
     padding-right: 0.5em;
