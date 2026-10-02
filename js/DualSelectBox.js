@@ -112,6 +112,7 @@ DualSelectBox.prototype._implicit = function (value) {
     if (value instanceof Array) {
         if (value.length > 2) value = value.slice(0, 2);
         else {
+            value = value.slice();
             value.push.apply(value, Array(2 - value.length).fill(null));
         }
     }
@@ -153,6 +154,7 @@ DualSelectBox.prototype._notifyIfChange = function (event) {
     var value = this._explicit(this._value);
     if (value === this._emittedValue) return;
     if (!value !== !this._emittedValue || (value[0] !== this._emittedValue[0] || value[1] !== this._emittedValue[1])) {
+        this._emittedValue = value || [null, null];
         this.emit('change', { type: 'change', target: this, originalEvent: event }, this);
     }
 };
