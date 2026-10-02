@@ -313,7 +313,6 @@ DualSelectBox.property.strictValue = {
             this.cView.updateViewByValue();
             this.cView.toRightList();
         }
-        this.scrollIntoSelected();
     },
     get: function () {
         return this.hasClass('as-strict-value');
@@ -331,7 +330,6 @@ DualSelectBox.property.value = {
             this.cView.updateViewByValue();
             this.cView.toRightList();
         }
-        this.scrollIntoSelected();
     },
     get: function () {
         return this._explicit(this._value);
