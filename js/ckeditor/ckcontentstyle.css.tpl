@@ -126,6 +126,12 @@
     background-size: 16px;
 }
 
+.cke_button_icon.cke_button__copy-full-html_icon {
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHRpdGxlPmZpbGUtd29yZC1vdXRsaW5lPC90aXRsZT48cGF0aCBkPSJNMTQgMkg2QzQuODkgMiA0IDIuOSA0IDRWMjBDNCAyMS4xMSA0Ljg5IDIyIDYgMjJIMThDMTkuMTEgMjIgMjAgMjEuMTEgMjAgMjBWOEwxNCAyTTE4IDIwSDZWNEgxM1Y5SDE4VjIwTTE3LjM1IDEwTDE1LjI1IDE5SDEzLjg1TDEyLjA1IDEyLjIxTDEwLjI1IDE5SDguODVMNi42NSAxMEg4LjE1TDkuNTUgMTYuODFMMTEuMzUgMTBIMTIuNjVMMTQuNDUgMTYuODFMMTUuODUgMTBIMTcuMzVaIiAvPjwvc3ZnPg==");
+    background-position: 0 0px;
+    background-size: 16px;
+}
+
 
 
 .as-ck-widget-expression {

@@ -13,11 +13,12 @@ import CopyCellContentExtension from "./CopyCellContentExtension";
 import DynamicCSS from "absol/src/HTML5/DynamicCSS";
 import CopyTablesExtension from "./CopyTablesExtension";
 import CopyTableExtension from "./CopyTableExtension";
+import CopyFullHtmlExtension from "./CopyFullHtmlExtension";
 
 var ckContentStyleUrl;
 var ckPluginInitialized = false;
 
-export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension, VideoExtension, MDIExtension, CopyCellContentExtension,CopyTableExtension, CopyTablesExtension];
+export var CKExtensions = [ExpressionExtension, SimpleTextExtension, VariableExtension, DynamicLinkExtension, ImageFileExtension, VideoExtension, MDIExtension, CopyCellContentExtension,CopyTableExtension, CopyTablesExtension, CopyFullHtmlExtension];
 
 export var CKExtensionDict = CKExtensions.reduce(function (ac, cr) {
     ac[cr.name] = cr;
@@ -112,6 +113,7 @@ export function ckMakeDefaultConfig(config, extensions, holderElt) {
     if (extensions) extensions.push(CopyCellContentExtension.name);
     if (extensions) extensions.push(CopyTableExtension.name);
     if (extensions) extensions.push(CopyTablesExtension.name);
+    if (extensions) extensions.push(CopyFullHtmlExtension.name);
 
     if (extensions && extensions.indexOf(VariableExtension.name) >= 0) {
         config.title = false;
