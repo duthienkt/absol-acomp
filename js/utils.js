@@ -149,6 +149,20 @@ export function contenteditableTextOnly(element, processText) {
     });
 }
 
+export function isEmptyHTML(text) {
+    if (typeof text !== "string") return true;
+    text = text.trim();
+    if (text.length === 0) return true;
+    var div = document.createElement("div");
+    div.innerHTML = text;
+    text = div.textContent;
+    text = text.trim();
+    text = text.replace(/&nbsp;/g, '').replace(/[\s\u00A0\uFEFF\u200B-\u200D\u2060]/g, '');
+    return text.length === 0;
+}
+
+
+
 /**
  * @param {ClipboardEvent=} e
  * @returns {string}
