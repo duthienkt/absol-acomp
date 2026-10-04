@@ -311,7 +311,7 @@ export function teiDataToExcelData(data, rowOffset, colOffset) {
                 text: cell.value + '',
                 ignoreWidth: true,
                 font: {
-                    name: 'Calibri'
+                    // name: 'Calibri'
                 }
             };
 
@@ -512,7 +512,9 @@ Object.defineProperties(TEITable.prototype, {
                     };
                     if (excelData.text.trim().length === 0) return;
 
-                    excelData.font = { 'name': 'Calibri' };
+                    excelData.font = {
+                        // 'name': 'Calibri'
+                    };
                     if (style.color) {
                         excelData.font.color = { argb: 'ff' + Color.parse(style.color).toString('hex6').substring(1).toLowerCase() };
                     }
@@ -560,7 +562,9 @@ Object.defineProperties(TEITable.prototype, {
                 if (marginTextL > 0) {
                     ac.richTextRows[ac.richTextRows.length - 1].push({
                         text: ' '.repeat(marginTextL),
-                        font: { 'name': 'Calibri' },
+                        font: {
+                            // 'name': 'Calibri'
+                        },
                     });
                 }
 
