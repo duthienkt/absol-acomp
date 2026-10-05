@@ -189,7 +189,7 @@ var rules = [];
 
 var elementRegexes = [
     ['string', /("(?:[^"\\\n]|\\.)*?")|('(?:[^'\\\n]|\\.)*?')/],
-    ['number', /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/],
+    ['number', /(\d[\d, ]*([.][\d, ]*)?([eE][+-]?\d[\d, ]*)?|[.][, ]*\d[\d, ]*([eE][+-]?\d[\d, ]*)?)/],
     ['word', /[_a-zA-Z][_a-zA-Z0-9]*/],
     ['skip', /([\s\r\n])|(\/\/[^\n]*)|(\/\*([^*]|[\r\n]|(\*+([^*\/]|[\r\n])))*\*+\/)/],
     ['dsymbol', /\+\+|--|==|!=|<=|>=|<>|\|\||&&|->/],
@@ -198,7 +198,7 @@ var elementRegexes = [
 ];
 
 var elementRegexesVI = elementRegexes.slice();
-elementRegexesVI[1] = ['number', /(\d+([,]\d*)?([eE][+-]?\d+)?|[,]\d+([eE][+-]?\d+)?)/];
+elementRegexesVI[1] = ['number', /(\d[\d. ]*([,][\d. ]*)?([eE][+-]?\d[\d. ]*)?|[,][. ]*\d[\d. ]*([eE][+-]?\d[\d. ]*)?)/];
 
 
 var operatorOrder = {
@@ -217,7 +217,7 @@ rules.push({
     toAST: function (parsedNode) {
         return {
             type: 'NumericLiteral',
-            value: parseFloat(parsedNode.children[0].content)
+            value: parseFloat(parsedNode.children[0].content.replace(/[, ]/g, ''))
         }
     }
 });
@@ -361,7 +361,7 @@ NITokenizerVI.prototype.tokenize = function () {
     res.forEach(token => {
         if (token.type === 'number') {
             token.originalContent = token.content;
-            token.content = token.originalContent.replace(/,/g, '.');
+            token.content = token.originalContent.replace(/[. ]/g, '').replace(/,/g, '.');
         }
     });
     return res;
