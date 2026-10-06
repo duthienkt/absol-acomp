@@ -230,6 +230,7 @@ export default RibbonTextInput;
  */
 export function ExcelWidthInput() {
     RibbonTextInput.apply(this, arguments);
+    this.computeAutoFormat();
     this.prevValue = 'auto';
     this.emitedValue = this.prevValue;
     this.savedNumber = 0;
@@ -253,6 +254,12 @@ export function ExcelWidthInput() {
      * @name value
      * @memberOf ExcelWidthInput#
      */
+    /**
+     * @type {"auto"|string}
+     * @name textValue
+     * @memberOf ExcelWidthInput#
+     */
+
 }
 
 mixClass(ExcelWidthInput, RibbonTextInput);
@@ -260,6 +267,50 @@ mixClass(ExcelWidthInput, RibbonTextInput);
 ExcelWidthInput.tag = 'ExcelWidthInput'.toLowerCase();
 
 ExcelWidthInput.prototype.redirectedEvents = ['focus', 'blur', 'input', 'keydown', 'keyup'];
+
+ExcelWidthInput.prototype.computeAutoFormat = function () {
+    var defaultLocale = navigator.language === 'vi' ? 'vi-VN' : 'en-US';
+    if (window.systemconfig) {
+        if (window.systemconfig.commaSign === ',') {
+            defaultLocale = 'vi-VN';
+        }
+        else {
+            defaultLocale = 'en-US';
+        }
+    }
+    this.attr('data-locale', defaultLocale);
+    this.locale = defaultLocale;
+};
+
+ExcelWidthInput.property.textValue = {
+    set: function (value) {
+        this.$input.value = this.publicStringToLocaleString(value);
+    },
+    get: function () {
+        return this.localeStringToPublicString(this.$input.value);
+    }
+};
+
+ExcelWidthInput.prototype.localeStringToPublicString = function (text) {
+    var decimalSeparator = this.locale === 'vi-VN' ? ',' : '.';
+    var thousandSeparator = decimalSeparator === '.' ? ',' : '.';
+    var parts = text.split(decimalSeparator)
+        .map(part=>{
+            return part.split(thousandSeparator).join('');
+        });
+    return parts.join(".");
+};
+
+ExcelWidthInput.prototype.publicStringToLocaleString = function (text) {
+    var decimalSeparator = this.locale === 'vi-VN' ? ',' : '.';
+    var thousandSeparator = decimalSeparator === '.' ? ',' : '.';
+    var parts = text.split(".")
+        .map(part=>{
+            return part.split(",").join(thousandSeparator);
+        });
+    return parts.join(decimalSeparator);
+};
+
 
 ExcelWidthInput.prototype.notifyIfChange = function () {
     var value = this.value;
@@ -276,19 +327,19 @@ ExcelWidthInput.property.value = {
         var numberValue = parseExtFloat(value + '');
         if (value === 'auto' || !isRealNumber(numberValue)) {
             this.prevValue = 'auto';
-            this.$input.value = 'auto';
+            this.textValue = 'auto';
         }
         else {
             this.prevValue = numberValue + 'ch';
-            this.$input.value = value + '';
+            this.textValue = value;
         }
         this.saveNumberIfCan();
     },
     get: function () {
-        var valueText = this.$input.value.trim();
+        var valueText = this.textValue.trim();
         if (valueText === 'auto' || !valueText) return 'auto';
 
-        var valueNumber = parseExtFloat(this.$input.value);
+        var valueNumber = parseExtFloat(this.textValue);
         if (isRealNumber(valueNumber)) {
             this.prevValue = valueNumber +'ch';
         }
@@ -297,7 +348,7 @@ ExcelWidthInput.property.value = {
 };
 
 ExcelWidthInput.prototype.saveNumberIfCan = function () {
-    var valueText = this.$input.value.trim();
+    var valueText = this.textValue.trim();
     if (valueText === 'auto' || !valueText) {
     }
     else {
@@ -315,7 +366,7 @@ ExcelWidthInput.eventHandler = ExcelWidthInput.eventHandler || {};
  * @param event
  */
 ExcelWidthInput.eventHandler.inputChange = function (event) {
-    var text = this.$input.value.trim();
+    var text = this.textValue.trim();
     var prevValue = this.prevValue;
     var newValue;
     var numberValue;
@@ -331,7 +382,7 @@ ExcelWidthInput.eventHandler.inputChange = function (event) {
             newValue = prevValue;
         }
     }
-    this.$input.value = newValue.replace('ch', '');
+    this.textValue = newValue.replace('ch', '');
     this.prevValue = newValue;
     this.notifyIfChange();
 };
@@ -342,7 +393,7 @@ ExcelWidthInput.eventHandler.inputChange = function (event) {
  */
 ExcelWidthInput.eventHandler.inputInput = function () {
     var numberValue;
-    var text = this.$input.value.trim();
+    var text = this.textValue.trim();
     if (text === 'auto' || !text) {
         this.prevValue = 'auto';
     }
@@ -361,12 +412,12 @@ ExcelWidthInput.eventHandler.inputInput = function () {
 ExcelWidthInput.eventHandler.select = function (event) {
     var item = event.item;
     if (item.value === 'auto' && this.value !== 'auto') {
-        this.$input.value = 'auto';
+        this.textValue = 'auto';
         this.notifyIfChange();
         this.emit('change', { target: this, type: 'change', value: 'auto' }, this);
     }
     else if (item.value === 'ch' || this.value === 'auto') {
-        this.$input.value = this.savedNumber + '';
+        this.textValue = this.savedNumber + '';
         this.$input.select();
         this.$input.focus();
         this.notifyIfChange();
