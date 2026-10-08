@@ -142,6 +142,7 @@ SearchingMaster.prototype.destroy = function () {
     delete this.share.instances[this.id];
     this.outputCache = {};
     this.body = null;
+    this.removeWorkerIfNeed();
 };
 
 SearchingMaster.prototype.transferFrom = function (offset) {
@@ -262,6 +263,15 @@ SearchingMaster.prototype.initWorker = function () {
         }.bind(this));
     }
 };
+
+
+SearchingMaster.prototype.removeWorkerIfNeed = function () {
+    if (Object.keys(this.share.instances).length === 0) {
+        this.share.thread && this.share.thread.destroy();
+        this.share.thread = null;
+    }
+};
+
 
 /***
  *
@@ -664,6 +674,7 @@ NormalMode.prototype.updateRowsIfNeed = function () {
     var counter = 1;
     var fx = () => {
         if (counter > 20) return;
+        if (!this.body || !this.body.elt) return;
         if (this.body.elt.isDescendantOf(document.body)) {
             var bounds = this.getBoundOfRows();
             if (bounds) {

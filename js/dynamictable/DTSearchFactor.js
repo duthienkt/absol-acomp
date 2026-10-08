@@ -593,6 +593,7 @@ function DTSearchFactor(global) {
     SearchingSlave.prototype.destroy = function () {
         this.items = null;
         delete slaves[this.id];
+        console.log('SearchingSlave destroy', this.id);
     };
 
 

@@ -219,80 +219,8 @@ function DynamicTable() {
     this.floatScrollbarCtrl = new FloatScrollbarController(this);
 
     var attached = false;
-    var fistView = () => {
-        var bound = this.$sizeDetector.getBoundingClientRect();
-        if (bound.width <= 0 && bound.height <= 0 && !bound.top && !bound.left) return;
 
-        if (attached) {
-            this.requestUpdateSize();
-            return;
-        }
-
-
-        attached = true;
-        delete pendingTables[this._pendingId];
-
-        ResizeSystem.add(this.$attachhook);
-        manager.add(this);
-        this.layoutCtrl.onAttached();
-        this.colSizeCtrl.onAttached();
-        this.floatScrollbarCtrl.start();
-
-        setTimeout(() => {
-            this.requestUpdateSize();
-            if (this.onReady) {
-                this.onReady();
-                this.onReady = null;
-            }
-        }, 10);
-
-
-    };
-
-    this.$attachhook.once('attached', () => {
-        fistView();
-        ResizeSystem.add(this.$attachhook);
-        this.displayObs = null;
-        var t = this.parentElement;
-
-        while (t && t !== document.body) {
-            if (t.style.display === 'none') {
-                break;
-            }
-            t = t.parentElement;
-        }
-        if (t && t !== document.body) {
-            this.displayObs = new MutationObserver(() => {
-                fistView();
-            });
-            this.displayObs.observe(t, { attributes: true, attributeFilter: ['style'] });
-        }
-
-
-        var obs = new IntersectionObserver(entries => {
-            if (this.isDescendantOf(document.body)) {
-                fistView();
-
-            }
-            else if (attached) {
-                this.floatScrollbarCtrl.stop();
-                if (obs) {
-                    obs.disconnect();
-                    obs = null;
-                    this.obs = null;
-                    this.revokeResource();
-                }
-                if (this.displayObs) {
-                    this.displayObs.disconnect();
-                    this.displayObs = null;
-                }
-            }
-        }, { root: document.body, trackVisibility: true, delay: 100 });
-        obs.observe(this.$sizeDetector);
-        this.obs = obs;
-
-
-    });
+    this.lifeCycleCtrl = new DTLifecycleController(this);
 
     /***
      *
@@ -517,6 +445,7 @@ DynamicTable.prototype.addClass = function (className) {
 
 DynamicTable.prototype.requestUpdateSize = function () {
     if (!this.isDescendantOf(document.body)) return;
+    if (!this.table) return;
     this.resized = true;
     clearTimeout(this.resizedTO);
     var bound = this.$sizeDetector.getBoundingClientRect();
@@ -529,11 +458,14 @@ DynamicTable.prototype.requestUpdateSize = function () {
 };
 
 DynamicTable.prototype.revokeResource = function () {
+    if (this.table) this.table.revokeResource();
+    this.table = null;
     this.$attachhook.cancelWaiting();
     delete pendingTables[this._pendingId];
-    this.css.stop();
+    this.css.destroy();
     this.css = null;
     this.revokeResource = noop;
+    this.requestUpdateSize = noop;
 };
 
 DynamicTable.prototype.getSavedState = function () {
@@ -805,6 +737,7 @@ DynamicTable.property.adapter = {
      */
     set: function (data) {
         if (!data) return;
+        if (this.table) this.table.revokeResource();
         this._adapterData = data;
         this._adapter = new DTDataAdapter(this, data);
         this.layoutCtrl.onAdapter();
@@ -2232,15 +2165,15 @@ DTGotoTool.prototype.makeDropdown = function () {
      * @type {SelectTreeBox}
      */
     this.$dropdown = _({
-        tag:'selecttreebox',
-        props:{
+        tag: 'selecttreebox',
+        props: {
             enableSearch: true,
             items: this.elt.getHeaderStructSelection(),
             strictValue: false
         },
 
-        on:{
-            preupdateposition: ()=>{
+        on: {
+            preupdateposition: () => {
                 var buttonBound = this._button.getBoundingClientRect();
                 var screenSize = getScreenSize();
                 var availableHeight = Math.max(buttonBound.top - 10, screenSize.height - buttonBound.bottom - 10);
@@ -2253,11 +2186,11 @@ DTGotoTool.prototype.makeDropdown = function () {
     this.$dropdown.followTarget = this._button;
     this.$dropdown.focus();
     this.$dropdown.on('pressitem', (event) => {
-        this.ev_clickOut({target: document.body});
+        this.ev_clickOut({ target: document.body });
         var table = this.elt.table;
         var elt = table.header.elt.querySelector(`th[data-auto-id="${event.value}"]`);
         if (!elt) return;
-        var needScroll = (elt.attr('class') ||"").indexOf('as-copy') <= 0;
+        var needScroll = (elt.attr('class') || "").indexOf('as-copy') <= 0;
         if (!needScroll) return;
         var fixedXY = table.header._fixedXYElt;
         var leftPos;
@@ -2272,10 +2205,10 @@ DTGotoTool.prototype.makeDropdown = function () {
         var eltBound = elt.getBoundingClientRect();
         var scrollOffset = 10;
         var rightPos = this.elt.$viewport.getBoundingClientRect().right;
-        scrollOffset = (rightPos - leftPos - eltBound.width)/2;
+        scrollOffset = (rightPos - leftPos - eltBound.width) / 2;
 
         var delta = eltBound.left - scrollOffset - leftPos;
-        var maxOffset =  this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth;
+        var maxOffset = this.elt.$hscrollbar.innerWidth - this.elt.$hscrollbar.outerWidth;
         if (maxOffset <= 0) return;
         var newOffset = this.elt.$hscrollbar.innerOffset + delta;
         newOffset = Math.max(0, Math.min(maxOffset, newOffset));
@@ -2322,4 +2255,117 @@ Object.defineProperty(DTGotoTool.prototype, 'button', {
     get: function () {
         return this._button;
     }
-})
+});
+
+/**
+ *
+ * @param {DynamicTable} elt
+ * @constructor
+ */
+function DTLifecycleController(elt) {
+    this.elt = elt;
+    /**
+     *
+     * @type {"standby"|"attached"|"running"|"hidden"|"stopped"}
+     */
+    this.state = "standby";//not display
+    for (var key in this) {
+        if (key.startsWith("ev_")) {
+            this[key] = this[key].bind(this);
+        }
+    }
+    this.elt.$attachhook.once('attached', this.ev_attached);
+}
+
+DTLifecycleController.prototype.onFirstView = function () {
+    document.addEventListener("click", this.ev_click);
+    delete pendingTables[this.elt._pendingId];
+    ResizeSystem.add(this.elt.$attachhook);
+    manager.add(this.elt);
+
+    this.elt.layoutCtrl.onAttached();
+    this.elt.colSizeCtrl.onAttached();
+    this.elt.floatScrollbarCtrl.start();
+
+    setTimeout(() => {
+        if (this.state === "running") {
+            this.elt.requestUpdateSize();
+            if (this.elt.onReady) {
+                this.elt.onReady();
+                this.elt.onReady = null;
+            }
+        }
+    });
+};
+
+DTLifecycleController.prototype.onHidden = function () {//only fire after onFirstView
+};
+
+DTLifecycleController.prototype.onShow = function () {//fired after hidden
+    this.elt.requestUpdateSize();
+};
+
+
+DTLifecycleController.prototype.onStopView = function () {
+    document.removeEventListener("click", this.ev_click);
+    if (this.displayObs) {
+        this.displayObs.disconnect();
+        this.displayObs = null;
+    }
+    this.elt.revokeResource();
+};
+
+
+DTLifecycleController.prototype.isVisibilityOnScreen = function () {
+    var bound = this.elt.$sizeDetector.getBoundingClientRect();
+    return bound.width > 0 && bound.height > 0;
+};
+
+DTLifecycleController.prototype.ev_click = function (event) {
+    setTimeout(() => {
+        if (this.state === "running" && !this.elt.isDescendantOf(document.body)) {
+            this.state = "stopped";
+            this.onStopView();
+        }
+    }, 100)
+};
+
+DTLifecycleController.prototype.ev_attached = function () {
+    if (this.state === "standby") {
+        this.state = "attached";
+    }
+    var t;
+    if (this.state === "attached") {
+        if (this.isVisibilityOnScreen()) {
+            this.state = "running";
+            this.onFirstView();
+        }
+        else {
+            this.displayObs = new MutationObserver(() => {
+                var isVis = this.isVisibilityOnScreen();
+                var attached = this.elt.isDescendantOf(document.body);
+                if (this.state === 'attached' && isVis) {
+                    this.state = "running";
+                    this.onFirstView();
+                }
+                else if (this.state === 'running' && !isVis && attached) {
+                    this.state = "hidden";
+                    this.onHidden();
+                }
+                else if (this.state === 'hidden' && isVis && attached) {
+                    this.state = "running";
+                    this.onShow();
+                }
+                else if (this.state !== 'stopped' && !attached) {
+                    this.state = "stopped";
+                    this.onStopView();
+                }
+            });
+            t = this.elt;
+            while (t && t !== document.body) {
+                this.displayObs.observe(t, { attributes: true, attributeFilter: ['style', 'class'] });
+                t = t.parentElement;
+            }
+        }
+    }
+};
