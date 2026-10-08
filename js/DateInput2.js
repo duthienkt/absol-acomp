@@ -61,6 +61,7 @@ var $ = ACore.$;
  * @constructor
  */
 function DateInput2() {
+    this.createdTime = beginOfDay(new Date());
     this._lastValue = null;
     this._value = null;
     this._format = 'dd/MM/yyyy';
@@ -447,7 +448,7 @@ DateInput2.prototype._loadValueFromInput = function () {
 DateInput2.prototype._explicit = function (value) {
     value = value || null;
     if (this.notNull) {
-        value = value || new Date();
+        value = value || this.createdTime || new Date();
     }
     else if (!value) return null;
     var time = value.getTime();
