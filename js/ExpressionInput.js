@@ -1706,6 +1706,9 @@ function EICommandTool(elt) {
         }
     }
     this.isOpen = false;
+    /**
+     * @type {Follower}
+     */
     this.$ctn = _({
         tag: Follower,
         class: 'as-ei-command-tool',
@@ -1729,6 +1732,7 @@ function EICommandTool(elt) {
             }
         ]
     });
+    this.$ctn.cancelWaiting();
 }
 
 EICommandTool.prototype.open = function () {
