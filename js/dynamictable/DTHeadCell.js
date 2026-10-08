@@ -6,6 +6,7 @@ import { parseMeasureValue } from "absol/src/JSX/attribute";
 import AElement from "absol/src/HTML5/AElement";
 import { quickAssign } from "absol/src/HTML5/OOP";
 import { randomIdent } from "absol/src/String/stringGenerate";
+import noop from "absol/src/Code/noop";
 
 
 var implicitSortKeyArr = key => {
@@ -299,6 +300,26 @@ DTHeadCell.prototype.setStyleTo = function (elt) {
     }
 };
 
+DTHeadCell.prototype.revokeResource = function () {
+    this.requestUpdateContent = noop;
+    if (this._elt) {
+        if (this._elt.listenDomContentChange) {
+            this._elt.removeListenContentChange();
+        }
+        Array.prototype.forEach.call(this._elt.querySelectorAll("*"), elt=>{
+            if (elt.offAll){
+                elt.offAll();
+            }
+            if (elt.remove) elt.remove();
+        });
+    }
+    this.row = null;
+    this._copyElt = null;
+    this._copyElt1 = null;
+    this._copyElt2 = null;
+
+};
+
 Object.defineProperty(DTHeadCell.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;
@@ -362,22 +383,7 @@ Object.defineProperty(DTHeadCell.prototype, 'elt', {
 
         this._elt.addChild(this.$sortBtn);
         this._elt.addChild(this.$resizer);
-        var ctrl = this;
-        // setTimeout(() => {
-        //     var addChild = this._elt.addChild;
-        //     var clearChild = this._elt.clearChild;
-        //     this._elt.addChild = function () {
-        //         ctrl.requestUpdateContent();
-        //         addChild.apply(this, arguments);
-        //     };
-        //     this._elt.clearChild = function () {
-        //         ctrl.requestUpdateContent();
-        //         clearChild.apply(this, arguments);
-        //     };
-        // }, 10);
-        // listenDomContentChange(this._elt, (event) => {
-        //     this.requestUpdateContent();
-        // });
+
         setTimeout(() => {
             listenDomContentChange(this._elt, (event) => {
                 this.requestUpdateContent();

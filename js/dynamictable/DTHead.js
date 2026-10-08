@@ -141,6 +141,19 @@ DTHead.prototype.updateCopyEltSize = function () {
     this.rows.forEach(r => r.updateCopyEltSize());
 };
 
+DTHead.prototype.revokeResource = function () {
+    if (this.rows) {
+        this.rows.forEach(r => r.revokeResource());
+    }
+    if (this._copyElt) {
+        this._copyElt.clearChild();
+    }
+    if (this._elt) {
+        this._elt.clearChild();
+    }
+
+};
+
 Object.defineProperty(DTHead.prototype, 'elt', {
     get: function () {
         if (this._elt) return this._elt;

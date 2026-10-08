@@ -458,14 +458,56 @@ DynamicTable.prototype.requestUpdateSize = function () {
 };
 
 DynamicTable.prototype.revokeResource = function () {
+    try {
+
+    this.filterInputs = null;
     if (this.table) this.table.revokeResource();
     this.table = null;
     this.$attachhook.cancelWaiting();
+
     delete pendingTables[this._pendingId];
+    if (this._adapter) this._adapter.revoke();
     this.css.destroy();
     this.css = null;
     this.revokeResource = noop;
     this.requestUpdateSize = noop;
+    Object.keys(this).forEach((key) => {
+        if (key.startsWith('$') && this[key]) {
+            if (this[key].revokeResource) {
+                this[key].revokeResource();
+            }
+            else if (this[key].revoke) {
+                this[key].revoke();
+            }
+            if (this[key].offAll) {
+                this[key].offAll();
+            }
+            if (this[key].clearChild) {
+                this[key].clearChild();
+            }
+            this[key] = null;
+        }
+        else if (key.indexOf('Ctrl') >=0) {
+            if (this[key]) {
+                if (this[key].revokeResource) {
+                    this[key].revokeResource();
+                }
+                else if (this[key].revoke) {
+                    this[key].revoke();
+                }
+                this[key] = null;
+            }
+        }
+        else if (key.match(/(add|remove).*Row]/)) {
+            if (typeof this[key] === 'function') {
+                this[key] = noop;
+            }
+        }
+    });
+    }
+    catch (e){
+        //silent error
+    }
 };
 
 DynamicTable.prototype.getSavedState = function () {
@@ -2296,6 +2338,14 @@ DTLifecycleController.prototype.onFirstView = function () {
             }
         }
     });
+};
+
+DTLifecycleController.prototype.revokeResource = function () {
+    if (this.displayObs) {
+        this.displayObs.disconnect();
+        this.displayObs = null;
+    }
+    document.removeEventListener("click", this.ev_click);
 };
 
 DTLifecycleController.prototype.onHidden = function () {//only fire after onFirstView

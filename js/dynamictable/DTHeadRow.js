@@ -40,6 +40,22 @@ DTHeadRow.prototype.updateCopyEltSize = function () {
     this.cells.forEach(c => c.updateCopyEltSize());
 };
 
+DTHeadRow.prototype.revokeResource = function () {
+    this.cells.forEach(c => c.revokeResource());
+    this.cells = null;
+    if (this._copyElt) {
+        this._copyElt.clearChild();
+    }
+    if (this._elt) {
+        this._elt.clearChild();
+    }
+    this.head = null;
+    this._elt = null;
+    this._copyElt = null;
+    this._fixedXYElt = null;
+    this._fixedXElt = null;
+    this._fixedXRightElt = null;
+}
 
 Object.defineProperty(DTHeadRow.prototype, 'elt', {
     get: function () {

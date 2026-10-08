@@ -36,11 +36,17 @@ DTTable.prototype.updateCopyEltSize = function () {
 
 
 DTTable.prototype.revokeResource = function () {
+    this.body.revokeResource();
+    this.header.revokeResource();
     this.wrapper = null;
+    if (this._elt) {
+        this._elt.clearChild();
+    }
+
     this._elt = null;
     this.adapter = null;
     this.data = null;
-    this.body.revokeResource();
+
 };
 
 DTTable.prototype.getHeaderStructSelection = function () {
