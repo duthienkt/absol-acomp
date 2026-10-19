@@ -16,8 +16,10 @@ import AElement from "absol/src/HTML5/AElement";
 import ResizeSystem from "absol/src/HTML5/ResizeSystem";
 import { arrayUnique } from "absol/src/DataStructure/Array";
 import { AbstractInput } from "./Abstraction";
-import { mixClass } from "absol/src/HTML5/OOP";
+import { mixClass, quickAssign } from "absol/src/HTML5/OOP";
 import DPTokenizer from "absol/src/Pharse/DPTokenizer";
+import SCCodeGenerator from "absol/src/SCLang/SCCodeGenerator";
+import { isNaturalNumber } from "absol/src/Converter/DataTypes";
 
 
 /***
@@ -27,13 +29,13 @@ import DPTokenizer from "absol/src/Pharse/DPTokenizer";
 function ExpressionInput() {
     /***  setup language engine  ***/
     if ((typeof systemconfig === 'object') && systemconfig && systemconfig.commaSign) {
-        this.lang = systemconfig.commaSign === ',' ?'vi':'en';
+        this.lang = systemconfig.commaSign === ',' ? 'vi' : 'en';
     }
     else {
-        this.lang = navigator.language==='vi'?'vi':'en';
+        this.lang = navigator.language === 'vi' ? 'vi' : 'en';
     }
 
-    this.parser = this.lang === 'vi'? EIParserVI: EIParser;
+    this.parser = this.lang === 'vi' ? EIParserVI : EIParser;
     this.tokenizer = this.parser.tokenizer;
 
     this.domSignal = new DelaySignal();
@@ -185,7 +187,7 @@ ExpressionInput.property.disabled = {
 
 ExpressionInput.property.value = {
     get: function () {
-        var viewValue = this.viewValue ||"";
+        var viewValue = this.viewValue || "";
         var value;
         /**
          * @type {DPTokenizer}
@@ -195,7 +197,7 @@ ExpressionInput.property.value = {
         if (this.lang === 'vi') {
             tokenizer = this.tokenizer;
             tokens = tokenizer.tokenize(viewValue);//token was converted to normal syntax at EITokenizerVI.prototype.tokenize, just get content
-            value = tokens.reduce((ac, token)=> {
+            value = tokens.reduce((ac, token) => {
                 if (ac.offset < token.start) {
                     ac.text += viewValue.substring(ac.offset, token.start);
                 }
@@ -211,7 +213,7 @@ ExpressionInput.property.value = {
                 ac.text += st;
                 ac.offset = token.end;
                 return ac;
-            }, {text:'', offset: 0}).text;
+            }, { text: '', offset: 0 }).text;
         }
         else {
             value = viewValue;
@@ -227,10 +229,10 @@ ExpressionInput.property.value = {
          */
         var tokenizer;
         var tokens;
-        if (this.lang === 'vi'){
+        if (this.lang === 'vi') {
             tokenizer = EIParser.tokenizer;//use default for tokenize normal syntax
             tokens = tokenizer.tokenize(value);
-            viewValue = tokens.reduce((ac, token)=>{
+            viewValue = tokens.reduce((ac, token) => {
                 if (ac.offset < token.start) {
                     ac.text += value.substring(ac.offset, token.start);
                 }
@@ -246,7 +248,7 @@ ExpressionInput.property.value = {
                 ac.text += st;
                 ac.offset = token.end;
                 return ac;
-            }, {text:'', offset: 0}).text;
+            }, { text: '', offset: 0 }).text;
         }
         else {
             viewValue = value;
@@ -266,7 +268,6 @@ ExpressionInput.property.viewValue = {
         this.engine.highlightError();
     }
 };
-
 
 
 ExpressionInput.property.icon = {
@@ -1082,7 +1083,6 @@ EIEngine.prototype.findPrefixWordTokenOf = function (token) {
  */
 EIEngine.prototype.viewText = function (value) {
     var tokens = this.tokenizer.tokenize(value || '');
-    console.log(tokens);
     this.$content.clearChild();
     var lineElt = _('.as-ei-line').addTo(this.$content);
     var i, token;
@@ -2136,6 +2136,7 @@ rules.push({
         return {
             type: 'Identifier',
             name: parsedNode.children[0].content,
+            originalName: parsedNode.children[0].originalContent || parsedNode.children[0].content,
             nd: parsedNode
         }
     }
@@ -2957,4 +2958,358 @@ EICallValidator.prototype.accept = function (nd) {
     var type = nd.type;
     var handler = this.visitors[type] || this.visitors['*'];
     return handler.call(this, nd);
+};
+
+
+function EICodeGenerator() {
+    SCCodeGenerator.apply(this, arguments);
+}
+
+mixClass(EICodeGenerator, SCCodeGenerator);
+console.log(SCCodeGenerator.prototype.visitors)
+EICodeGenerator.prototype.visitors = Object.keys(SCCodeGenerator.prototype.visitors).reduce((ac, cr) => {
+    ac[cr] = SCCodeGenerator.prototype.visitors[cr];
+
+    return ac;
+}, {});
+
+EICodeGenerator.prototype.visitors.Identifier = function (nd) {
+    return nd.originalName;
+};
+
+/**
+ * add default
+ * @param exp
+ * @param {"add"| "remove"| "replace"} cmd
+ * @param arg
+ */
+export function modifyConditionVariables(exp, cmd, arg) {
+    exp = exp || '';
+    var res = exp;
+    var it = EIParser.parse(exp, 'exp');
+
+    function token2Type(token) {
+        switch (token && token.type) {
+            case 'word':
+                if (['and', 'or'].indexOf(token.content) > -1) {
+                    return 'bin_op';
+                }
+                else if (token.content === 'not') {
+                    return 'un_op';
+                }
+                else return 'var';
+            case 'dsymbol':
+                return 'bin_op';
+            case 'symbol':
+                if (['(', ')'].indexOf(token.content) > -1) {
+                    return 'group';
+                }
+                return 'un_op';
+            default:
+                return 'skip';
+        }
+    }
+
+    function cleanErrorTokens(tokens) {
+        var stack = [{ open: null, items: [] }];
+
+        function skipToken(token) {
+            token.type = 'skip';
+            token.content = '';
+            token.originalContent = '';
+        }
+
+        function cleanGroup(group) {
+            var hasOperand = false;
+            var pendingBinary = null;
+            var pendingUnary = [];
+            group.items.forEach(item => {
+                if (item.type === 'var') {
+                    hasOperand = true;
+                    pendingBinary = null;
+                    pendingUnary = [];
+                }
+                else if (item.type === 'un_op') {
+                    pendingUnary.push(item.token);
+                }
+                else if (item.type === 'bin_op') {
+                    // A unary operator cannot take an operand across a binary operator.
+                    pendingUnary.forEach(skipToken);
+                    pendingUnary = [];
+                    if (pendingBinary) skipToken(pendingBinary);
+                    pendingBinary = null;
+                    if (hasOperand) pendingBinary = item.token;
+                    else skipToken(item.token);
+                }
+            });
+            if (pendingBinary) skipToken(pendingBinary);
+            pendingUnary.forEach(skipToken);
+            return hasOperand;
+        }
+
+        function closeGroup(close) {
+            var group = stack.pop();
+            if (cleanGroup(group)) {
+                stack[stack.length - 1].items.push({ type: 'var' });
+            }
+            else {
+                skipToken(group.open);
+                if (close) skipToken(close);
+            }
+        }
+
+        tokens.forEach(token => {
+            var type = token2Type(token);
+            if (type === 'group' && token.content === '(') {
+                stack.push({ open: token, items: [] });
+            }
+            else if (type === 'group' && token.content === ')' && stack.length > 1) {
+                closeGroup(token);
+            }
+            else if (type !== 'skip') {
+                stack[stack.length - 1].items.push({ type: type, token: token });
+            }
+            else if (token.type === 'number' || token.type === 'string') {
+                stack[stack.length - 1].items.push({ type: 'var', token: token });
+            }
+        });
+        // Also clean incomplete groups while the expression is being edited.
+        while (stack.length > 1) closeGroup(null);
+        cleanGroup(stack[0]);
+        return tokens;
+    }
+
+
+    function genFromAST(ast) {
+        var gen = new EICodeGenerator();
+        return gen.generate(ast);
+    }
+
+    function genFromTokens(tokens) {
+        var spaceStart;
+        var spaceEnd;
+        var token;
+        var res = '';
+        for (var i = 0; i < tokens.length; ++i) {
+            token = tokens[i];
+            spaceEnd = tokens[i].start;
+            if (isNaturalNumber(spaceStart) && isNaturalNumber(spaceEnd)) {
+                res += exp.substring(spaceStart, spaceEnd);
+            }
+            res += token.originalContent || token.content;
+            spaceStart = token.end;
+        }
+        return res;
+    }
+
+    function addToAST(ast) {
+        return {
+            type: 'BinaryExpression',
+            operator: {
+                type: "BinaryOperator",
+                content: "&&"
+            },
+            left: ast,
+            right: {
+                type: 'Identifier',
+                name: arg,
+                originalName: arg
+            },
+        }
+    }
+
+    function addToTokens(tokens) {
+        var last = tokens[tokens.length - 1];
+        tokens = tokens.slice();
+        if (!last) {
+            tokens.push({
+                type: 'skip',
+                content: ' '
+            }, {
+                type: 'word',
+                content: arg
+            });
+        }
+        else if (last.type === 'word') {
+            if (['and', 'or', 'not'].indexOf(last.content) < 0) {
+                tokens.push({
+                    type: 'skip',
+                    content: ' '
+                }, {
+                    type: 'dsymbol',
+                    content: "&&"
+                });
+            }
+            tokens.push({
+                type: 'skip',
+                content: ' '
+            }, {
+                type: 'word',
+                content: arg
+            });
+        }
+        else {
+            if (['(', ')'].indexOf(last.content) >= 0) {
+                tokens.push({
+                    type: 'dsymbol',
+                    content: "&&"
+                });
+            }
+            tokens.push({
+                type: 'word',
+                content: arg
+            });
+        }
+        return tokens;
+    }
+
+    function removeInAst(ast) {
+        var res = Object.assign({}, ast);
+        switch (ast.type) {
+            case 'BinaryExpression':
+                res.left = removeInAst(ast.left);
+                res.right = removeInAst(ast.right);
+                if (!res.left || !res.right)
+                    res = res.left || res.right;
+                break;
+            case 'UnaryExpression':
+                res.argument = removeInAst(res.argument);
+                if (!res.argument)
+                    res = null;
+                break;
+            case 'Identifier':
+                if (res.name.toLowerCase() === arg.toLowerCase()) {
+                    res = null;
+                }
+                break;
+            default:
+                break;
+        }
+        return res;
+    }
+
+    function removeInTokens(tokens) {
+        tokens = tokens.map(token => {
+            token = Object.assign({}, token)
+            if (token.content.toLowerCase() === arg.toLowerCase()) {
+                token.originalContent = '';
+                token.content = '';
+                token.type = 'skip';
+            }
+            else {
+                token = Object.assign({}, token)
+            }
+            return token;
+        });
+        return cleanErrorTokens(tokens);
+    }
+
+
+    function replaceInAst(ast) {
+        var res = Object.assign({}, ast);
+        var name;
+        if (ast.type === 'Identifier') {
+            name = ast.name.toLowerCase();
+            if (arg[name]) {
+                res.name = arg[name];
+                res.originalName = arg[name];
+            }
+        }
+        else {
+            Object.keys(res).forEach(function (key) {
+                if (res[key] && res[key].type)
+                    res[key] = replaceInAst(res[key]);
+            });
+        }
+
+        return res;
+    }
+
+    function replaceInTokens(tokens) {
+        return tokens.map(token => {
+            var res = Object.assign({}, token);
+            var name = token.content.toLowerCase();
+            if (token2Type(token) === 'var' && Object.prototype.hasOwnProperty.call(arg, name) && arg[name]) {
+                res.content = arg[name];
+                res.originalContent = arg[name];
+            }
+            return res;
+        });
+    }
+
+    function addCMD() {
+        var ast = it.ast;
+        var newAst, newTokens;
+        if (ast) {
+            newAst = addToAST(ast);
+            res = newAst ? genFromAST(newAst) : '';
+        }
+        else {
+            newTokens = addToTokens(it.tokens);
+            res = genFromTokens(newTokens);
+        }
+    }
+
+    function removeCMD() {
+        var ast = it.ast;
+        var newAst, newTokens;
+        if (ast) {
+            newAst = removeInAst(ast);
+            res = newAst ? genFromAST(newAst) : '';
+        }
+        else {
+            newTokens = removeInTokens(it.tokens);
+            res = genFromTokens(newTokens);
+        }
+    }
+
+    function replaceCMD() {
+        arg = quickAssign({}, arg);
+        Object.keys(arg).forEach(key => {
+            arg[key.toLowerCase()] = arg[key];
+        });
+        var ast = it.ast;
+        var newAst, newTokens;
+        if (ast) {
+            newAst = replaceInAst(ast);
+            res = newAst ? genFromAST(newAst) : '';
+        }
+        else {
+            newTokens = replaceInTokens(it.tokens);
+            res = genFromTokens(newTokens);
+        }
+    }
+
+    switch (cmd) {
+        case "add":
+            addCMD();
+            break;
+        case "remove":
+            removeCMD();
+            break;
+        case "replace":
+            replaceCMD();
+            break;
+        default:
+            res = exp;
+            break;
+    }
+
+
+    return res;
+}
+
+
+var exp = 'A && (B ||| C) && !D  && ((K&& M) && N)';
+var exp2 = modifyConditionVariables(exp, 'add', 'X');
+var exp3 = modifyConditionVariables(exp2, 'remove', 'D');
+var exp4 = modifyConditionVariables(exp2, 'replace', { A: 'B', B: 'C', C: 'A' });
+console.log(exp);
+
+console.log(exp2);
+console.log(exp3);
+console.log(exp4);
+
+
+console.log = function () {
 };
