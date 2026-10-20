@@ -28,6 +28,9 @@ function MultiCheckTreeLeafMenu() {
             initOpened: (isNaturalNumber(this.renderProps.initOpened) || this.renderProps.initOpened) ? this.renderProps.initOpened : 3
         }
     });
+    if (this.$selectBox.cancelWaiting) {
+        this.$selectBox.cancelWaiting();
+    }
 
     this.fallbackExt = new MCTLFallbackExt(this);
     this.$selectlistBox = this.$selectBox;

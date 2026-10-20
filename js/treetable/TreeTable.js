@@ -106,6 +106,7 @@ var loadCss = () => {
  */
 function TreeTable() {
     loadCss();
+    this.trace = new Error();
     this._hiddenColumns = [];
     this.$head = $('thead', this);
     this.$body = $('tbody', this);
@@ -290,11 +291,23 @@ TreeTable.prototype.attachSearchInput = function (input) {
 };
 
 
+TreeTable.prototype.revokeResource = function () {
+    if (this.$attachhook) {
+        this.$attachhook.cancelWaiting();
+        this.$attachhook = null;
+    }
+    this.queryCtrl.revokeResource();
+};
+
 TreeTable.property = {};
 
 
 TreeTable.property.adapter = {
     set: function (adapter) {
+        if (this.$attachhook) {
+            this.$attachhook.cancelWaiting();
+            this.$attachhook.offAll();
+        }
         if (adapter.type === 'struct') {
             adapter = ttStructAdapter2TTDAdapter(adapter);
         }
@@ -318,8 +331,9 @@ TreeTable.property.adapter = {
         ResizeSystem.requestUpdateSignal();
         var td = $('td', this);
         if (td) {
-            var attachhook = _('attachhook').once('attached', () => {
-                attachhook.remove();
+            this.$attachhook = _('attachhook').once('attached', () => {
+                this.$attachhook.remove();
+                this.$attachhook = null;
                 ResizeSystem.requestUpdateSignal();
             }).addTo(td);
         }

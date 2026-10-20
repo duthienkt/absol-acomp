@@ -20,10 +20,10 @@ function TableVScroller() {
     };
 
     this.sync = new Promise(function (rs) {
-        thisTS.$attachHook.on('attached', rs)
+        thisTS.$attachHook.once('attached', rs)
     });
     this.$viewport = $('.absol-table-vscroller-viewport', this);
-    this.$attachHook.on('attached', function () {
+    this.$attachHook.once('attached', function () {
         Dom.addToResizeSystem(thisTS.$attachHook);
         this.updateSize();
     });

@@ -27,6 +27,9 @@ function SelectTreeLeafMenu() {
         }
     });
     this.$selectBox.sponsorElement = this;
+    if (this.$selectBox.cancelWaiting) {
+        this.$selectBox.cancelWaiting();
+    }
 
     OOP.drillProperty(this, this.$selectBox, ['enableSearch', 'selectedItem', 'initOpened']);
     this.$holderItem = $('selectlistitem', this);

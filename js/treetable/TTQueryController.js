@@ -18,7 +18,7 @@ function TTQueryController(elt) {
 }
 
 TTQueryController.prototype._waitDestroy = function (){
-    setTimeout(()=>{
+    this._destroyTO = setTimeout(()=>{
         if (this.elt.isDescendantOf(document.body)) {
             this._waitDestroy();
         }
@@ -26,6 +26,11 @@ TTQueryController.prototype._waitDestroy = function (){
             this.searchMaster.destroy();
         }
     }, 10000);
+};
+
+TTQueryController.prototype.revokeResource = function () {
+    clearTimeout(this._destroyTO);
+    this.searchMaster.destroy();
 };
 
 TTQueryController.prototype.attachFilterInput = function (input) {
