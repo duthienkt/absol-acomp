@@ -33,7 +33,7 @@ function SinglePage() {
     var scrollerObs = null;
 
     this.$attachhook = $('attachhook', this)
-        .on('attached', function () {
+        .once('attached', function () {
             this.updateSize();
             setTimeout(this.updateSize, 20);
             Dom.addToResizeSystem(this);
