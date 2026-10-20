@@ -1963,6 +1963,26 @@ export function legacyKeyStringOf(o) {
     }
 }
 
+export function numberToExcelColumn(index) {
+    var label = '';
+    index = Number(index);
+    while (index >= 0) {
+        label = String.fromCharCode(index % 26 + 65) + label;
+        index = Math.floor(index / 26) - 1;
+    }
+    return label;
+}
+
+export function excelColumnToNumber(label) {
+    label = String(label).toUpperCase();
+    if (!/^[A-Z]+$/.test(label)) return NaN;
+    var index = 0;
+    for (var i = 0; i < label.length; ++i) {
+        index = index * 26 + label.charCodeAt(i) - 64;
+    }
+    return index - 1;
+}
+
 export function keyStringOf(o) {
     var type = typeof o;
     var keys;
@@ -2262,6 +2282,10 @@ export function listenDomContentChange(elt, callback) {
     }
 
     addHook(elt);
+    elt.removeListenContentChange = function () {
+        removeHook(this);
+        delete elt.removeListenContentChange;
+    }
 }
 
 var mdiLoadSync;
