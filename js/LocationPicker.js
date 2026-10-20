@@ -16,14 +16,16 @@ export function getGoogleMapLib() {
     var jsElt;
     if (!googleMapLibs) {
         if (window.google && window.google.maps) {
-            return Promise.resolve(window.google.maps);
+            googleMapLibs =  Promise.resolve(window.google.maps);
         }
         else {
             jsElt = Array.prototype.find.call(document.head.childNodes, elt => {
-                if ((typeof elt.src === "string") && elt.src.startsWith('https://maps.googleapis.com/maps/api/js')) return jsElt;
+                if ((typeof elt.src === "string") && elt.src.startsWith('https://maps.googleapis.com/maps/api/js')) {
+                    return jsElt;
+                }
             });
             if (jsElt) {
-                return new Promise((resolve, reject) => {
+                googleMapLibs =  new Promise((resolve, reject) => {
                     if (jsElt.readyState) {  //IE
                         jsElt.onreadystatechange = function () {
                             if (jsElt.readyState === "loaded" ||
@@ -83,7 +85,7 @@ export function getGooglePlacesLib() {
                     });
                 }
             });
-    return googleMarkerLibSync;
+    return googlePlacesLibSync;
 }
 
 
