@@ -94,6 +94,13 @@ DynamicTableManager.prototype.add = function (table) {
     this.tables.push(table);
 };
 
+DynamicTableManager.prototype.remove = function (table) {
+    var idx = this.tables.findIndex(t => t === table);
+    if (idx >= 0) {
+        this.tables.splice(idx, 1);
+    }
+};
+
 DynamicTableManager.prototype.removeTrash = function () {
     this.tables = this.tables.filter(table => table.isDescendantOf(document.body));
 };
@@ -458,54 +465,30 @@ DynamicTable.prototype.requestUpdateSize = function () {
 };
 
 DynamicTable.prototype.revokeResource = function () {
+    // console.trace('TODO: revokeResource of table', this);
+
+    // return;
     try {
+        ResizeSystem.removeTrash();
+        this.manager.remove(this);
+        this.filterInputs = null;
+        if (this.table) this.table.revokeResource();
+        this.table = null;
+        this.$attachhook.cancelWaiting();
+        this.$attachhook.offAll();
+        this.$attachhook.requestUpdateSize = null;
 
-    this.filterInputs = null;
-    if (this.table) this.table.revokeResource();
-    this.table = null;
-    this.$attachhook.cancelWaiting();
-
-    delete pendingTables[this._pendingId];
-    if (this._adapter) this._adapter.revoke();
-    this.css.destroy();
-    this.css = null;
-    this.revokeResource = noop;
-    this.requestUpdateSize = noop;
-    Object.keys(this).forEach((key) => {
-        if (key.startsWith('$') && this[key]) {
-            if (this[key].revokeResource) {
-                this[key].revokeResource();
-            }
-            else if (this[key].revoke) {
-                this[key].revoke();
-            }
-            if (this[key].offAll) {
-                this[key].offAll();
-            }
-            if (this[key].clearChild) {
-                this[key].clearChild();
-            }
-            this[key] = null;
-        }
-        else if (key.indexOf('Ctrl') >=0) {
-            if (this[key]) {
-                if (this[key].revokeResource) {
-                    this[key].revokeResource();
-                }
-                else if (this[key].revoke) {
-                    this[key].revoke();
-                }
-                this[key] = null;
-            }
-        }
-        else if (key.match(/(add|remove).*Row]/)) {
-            if (typeof this[key] === 'function') {
-                this[key] = noop;
-            }
-        }
-    });
-    }
-    catch (e){
+        delete pendingTables[this._pendingId];
+        if (this._adapter) this._adapter.revoke();
+        this._adapter = null;
+        this._adapterData = null;
+        this.css.destroy();
+        this.floatScrollbarCtrl.revokeResource();
+        this.css = null;
+        this.revokeResource = noop;
+        this.requestUpdateSize = noop;
+    } catch (e) {
+        console.error(e);
         //silent error
     }
 };
@@ -535,16 +518,22 @@ DynamicTable.prototype.setSavedState = function (state) {
 
 
 DynamicTable.prototype.addRowBefore = function (rowData, bf) {
+    if (!this.table || !this.table.body)
+        return null;
     return this.table.body.addRowBefore(rowData, bf);
 };
 
 
 DynamicTable.prototype.addRowsBefore = function (rowData, bf) {
+    if (!this.table || !this.table.body)
+        return null;
     return this.table.body.addRowsBefore(rowData, bf);
 };
 
 
 DynamicTable.prototype.addRowAfter = function (rowData, at) {
+    if (!this.table || !this.table.body)
+        return null;
     return this.table.body.addRowAfter(rowData, at);
 };
 
@@ -558,22 +547,32 @@ DynamicTable.prototype.replaceRow = function (rowData, rp) {
 
 
 DynamicTable.prototype.addRow = function (rowData, idx) {
+    if (!this.table || !this.table.body)
+        return null;
     return this.table.body.addRow(rowData, idx);
 };
 
 DynamicTable.prototype.addRows = function (rowsData, idx) {
+    if (!this.table || !this.table.body)
+        return null;
     return this.table.body.addRows(rowsData, idx);
 };
 
 DynamicTable.prototype.removeRow = function (row) {
+    if (!this.table || !this.table.body)
+        return null;
     return this.table.body.removeRow(row);
 };
 
 DynamicTable.prototype.rowAt = function (idx) {
+    if (!this.table || !this.table.body)
+        return null;
     return this.table.body.rowAt(idx);
 };
 
 DynamicTable.prototype.rowOf = function (o) {
+    if (!this.table || !this.table.body)
+        return null;
     return this.table.body.rowOf(o);
 };
 
@@ -2168,6 +2167,11 @@ FloatScrollbarController.prototype.update = function () {
     this.$hscrollbar.addStyle('left', testingBound.left + 'px');
     this.$hscrollbar.addStyle('height', 'calc(var(--dt-scroll-bar-width) + 1px)');
     this.$hscrollbar.addStyle('border-top', '1px solid var(--border-color,#ccc)');
+};
+
+FloatScrollbarController.prototype.revokeResource = function () {
+    this.stop();
+    this.$hscrollbar = null;
 };
 
 /**

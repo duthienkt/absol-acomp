@@ -40,6 +40,7 @@ DTTable.prototype.revokeResource = function () {
     this.header.revokeResource();
     this.wrapper = null;
     if (this._elt) {
+        this._elt.offAll();
         this._elt.clearChild();
     }
 

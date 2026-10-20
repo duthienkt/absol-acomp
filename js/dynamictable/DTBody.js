@@ -785,6 +785,10 @@ DTBody.prototype.revokeResource = function () {
     this.modes.searching.revoke();
     this.rows = [];
     this.data = null;
+    if (this._elt) {
+        this._elt.offAll();
+    }
+    this._elt = null;
 };
 
 
