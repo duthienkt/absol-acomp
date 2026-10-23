@@ -247,6 +247,7 @@ Follower.property.followTarget = {
 
         if (Dom.isDomNode(elt)) {
             this.$followTarget = elt;
+            this.removeClass('as-anchor-' + this._lastAnchor);
             this._lastAnchor = undefined;
             this.refollow();
         }

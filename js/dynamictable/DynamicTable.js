@@ -611,6 +611,23 @@ DynamicTable.prototype.getFirstRow = function () {
     return rows[0];
 };
 
+DynamicTable.prototype.getRows = function () {
+    if (!this.table) return [];
+    return this.table.body.rows.slice();
+};
+
+
+DynamicTable.prototype.getVisibleRows = function () {
+    if (!this.table) return [];
+    var mode = this.table.body.curentMode;
+    if (mode.name === 'normal') {
+        return this.getRows();
+    }
+    else {
+        return  (mode.viewedRows &&  mode.viewedRows.slice()) || [];
+    }
+};
+
 DynamicTable.prototype.viewIntoRow = function (row) {
     var counter = 300;
     var wait = () => {
