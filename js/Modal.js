@@ -164,6 +164,7 @@ ASModalAdapter.prototype.open = function () {
     if (!this.$modal) {
         this.$modal = _({
             tag: 'modal',
+            class:'as-kv-modal-like',
             props: {
                 contentAlign: ['top', 'center'],
             },
