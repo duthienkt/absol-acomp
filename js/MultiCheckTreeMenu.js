@@ -439,7 +439,7 @@ MultiCheckTreeMenu.property.values = {
      * @this MultiCheckTreeMenu
      */
     get: function () {
-        if (this.isFocus) return this._values.slice();
+        if (this.isFocus) return this.autoCorrector.correctingValues(this._values.slice());
         var values = this.$checkTreeBox.values.slice();
         return this.autoCorrector.correctingValues(values);
     }
@@ -556,6 +556,7 @@ MultiCheckTreeMenu.eventHandler.boxCancel = function (event) {
  * @param event
  */
 MultiCheckTreeMenu.eventHandler.pressCloseToken = function (tokenElt, event) {
+    this.isFocus = false;
     var value = tokenElt.value;
     var holders = this.$checkTreeBox.findItemHoldersByValue(value);
     holders.forEach(function (holder) {
