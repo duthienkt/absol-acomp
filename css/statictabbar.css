@@ -18,7 +18,7 @@
 
 
 .absol-static-tabbar[data-size="regular"][data-variant="secondary"] .absol-static-tabbar-hline {
-    height: 80%;
+    height: 100%;
 }
 
 .absol-static-tabbar-button {
