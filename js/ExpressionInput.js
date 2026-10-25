@@ -3049,6 +3049,8 @@ EIExpTreeGenerator.prototype.genExp2 = function (lProps, sProp, child, curOpen) 
         needOpen = needOpen || child.some(c => c.needOpen);
     }
 
+    delete lProps.icon;
+    delete sProp.icon;
 
     var lText = lProps.name;
     var curStatus = (curOpen || needOpen) ? 'close' : 'none';
@@ -3062,7 +3064,7 @@ EIExpTreeGenerator.prototype.genExp2 = function (lProps, sProp, child, curOpen) 
 
     var curProps = curStatus === 'open' ? Object.assign({
         status: curStatus,
-        icon: 'span.mdi'
+        // icon: 'span.mdi'
     }, lProps, sProp) : Object.assign({ status: curStatus }, sProp, lProps);
     return {
         tag: 'exptree',
@@ -3112,7 +3114,7 @@ EIExpTreeGenerator.prototype.visitors = {
         }
     },
     CallExpression: function (nd) {
-        var sName = this.genText(nd.callee);
+        var sName = this.genText(nd.callee).toUpperCase();
         var lName = this.genText(nd);
         var child = nd.arguments.map(arg => this.accept(arg));
         return this.genExp2({ icon: 'span.mdi.mdi-function', name: lName }, { name: sName }, child, true);
@@ -3123,7 +3125,7 @@ EIExpTreeGenerator.prototype.visitors = {
         var icon = null;
 
         var sText = (nd.operator.content);
-        var s2icon = {
+        var s2icon = {} ||{
             '<=': 'span.mdi.mdi-less-than-or-equal',
             '>=': 'span.mdi.mdi-greater-than-or-equal',
             '=': 'span.mdi.mdi-equal',
@@ -3145,7 +3147,9 @@ EIExpTreeGenerator.prototype.visitors = {
             this.accept(nd.left),
             this.accept(nd.right)
         ];
-        return this.genExp2({ icon: "span.mdi", name: lText }, { name: sText, icon }, child);
+        return this.genExp2({
+            // icon: "span.mdi",
+            name: lText }, { name: sText, icon }, child);
     },
     Error: function (nd) {
         var message = nd.message || '';
