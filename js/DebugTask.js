@@ -106,6 +106,8 @@ DebugTask.start = function () {
     if (!DebugTask.$view) {
         DebugTask.$view = _('debugtask');
     }
+    window['timeoutDict'] = timeoutDict;
+
 
     var times = [];
     originSetInterval(function(){
@@ -156,7 +158,7 @@ DebugTask.start = function () {
         }
         var timeoutId = originSetTimeout.apply(global, args)
         pendingTimeout++;
-        timeoutDict[timeoutId] = true;
+        timeoutDict[timeoutId] = originCallback;
 
         DebugTask.$view.timeout = pendingTimeout;
 

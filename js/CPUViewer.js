@@ -187,7 +187,7 @@ function startCPUViewerIfNeed() {
     var originSIV = window.setInterval;
     window.CPUViewer = CPUViewer;
     FlagManager.add('CPU_VIEWER', false);
-    if (location.href.indexOf('localhost:8080')>=0 || window.CPU_VIEWER) {
+    if (window.CPU_VIEWER) {
         CPUViewer.start();
         window.cpuRisedHanders = [];
         window.setTimeout = function (handler) {
