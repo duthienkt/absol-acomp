@@ -20,6 +20,7 @@ import { mixClass, quickAssign } from "absol/src/HTML5/OOP";
 import DPTokenizer from "absol/src/Pharse/DPTokenizer";
 import SCCodeGenerator from "absol/src/SCLang/SCCodeGenerator";
 import { isNaturalNumber } from "absol/src/Converter/DataTypes";
+import { ModalWindow } from "./Modal";
 
 
 /***
@@ -1706,9 +1707,17 @@ function EICommandTool(elt) {
         }
     }
     this.isOpen = false;
+
+    this.elt.$textarea.on('focus', this.ev_focus);
     /**
      * @type {Follower}
      */
+
+}
+
+
+EICommandTool.prototype.prepare = function () {
+    if (this.$ctn) return;
     this.$ctn = _({
         tag: Follower,
         class: 'as-ei-command-tool',
@@ -1719,28 +1728,42 @@ function EICommandTool(elt) {
             {
                 tag: 'button',
                 class: 'as-transparent-button',
-                child: 'span.mdi.mdi-magnify',
-                attr: {
-                    title: 'Hint [Ctrl + Space]'
-                },
+                child: 'span.mdi.mdi-file-tree-outline',
                 on: {
                     click: () => {
-                        this.elt.autoCompleteCtrl.openDropdown();
-                        this.elt.engine.setSelectedPosition(this.elt.engine.lastSelectedPosition);
+                        this.openTreeExplore();
                     }
                 }
             }
+            // ,
+            // {
+            //     tag: 'button',
+            //     class: 'as-transparent-button',
+            //     child: 'span.mdi.mdi-magnify',
+            //     attr: {
+            //         title: 'Hint [Ctrl + Space]'
+            //     },
+            //     on: {
+            //         click: () => {
+            //             this.elt.autoCompleteCtrl.openDropdown();
+            //             this.elt.engine.setSelectedPosition(this.elt.engine.lastSelectedPosition);
+            //         }
+            //     }
+            // }
         ]
     });
     this.$ctn.cancelWaiting();
-}
+};
+
 
 EICommandTool.prototype.open = function () {
     if (this.isOpen) return;
     this.elt.emit('focus', { type: 'focus', originalEvent: event, target: this.elt }, this.elt);
-    if (this.elt.autoCompleteCtrl.getSuggestionList().length === 0) return;
+    // if (this.elt.autoCompleteCtrl.getSuggestionList().length === 0) return;
+    this.prepare();
     this.isOpen = true;
     this.$ctn.addTo(this.elt);
+
     this.$ctn.followTarget = this.elt;
     var zIndex = findMaxZIndex(this.elt) + 1;
     this.$ctn.addStyle('z-index', zIndex);
@@ -1768,8 +1791,42 @@ EICommandTool.prototype.ev_clickOut = function (ev) {
 
 
 EICommandTool.prototype.revokeResource = function () {
-    this.elt.$content.on('focus', this.ev_focus);
+    this.elt.$textarea.off('focus', this.ev_focus);
     this.close();
+};
+
+
+EICommandTool.prototype.openTreeExplore = function () {
+    var gen = new EIExpTreeGenerator();
+    if (!this.elt.validator.parsed) return;
+    var exp = gen.fromParsed(this.elt.validator.parsed);
+    var content = _({
+        class: 'ei-tree-explore',
+        style: {
+            // maxHeight: 'calc(100vh - 300px - 100px)',
+            // maxWidth: 'calc(90vw - 200px)',
+            // overflow: 'auto'
+        },
+        child: [
+            exp
+        ]
+    });
+    var mdw = new ModalWindow({
+        title: 'Tree Explorer',
+        content: content,
+        actions: [{
+            text: "OK",
+            name: 'ok'
+        }],
+        onAction: act => {
+            mdw.close();
+            revokeResource(content);
+        }
+    });
+    mdw.open();
+    var contentBound = content.getBoundingClientRect();
+    content.addStyle('min-width', contentBound.width + 'px');
+
 };
 
 /**
@@ -2961,12 +3018,180 @@ EICallValidator.prototype.accept = function (nd) {
 };
 
 
+export function EIExpTreeGenerator() {
+    if ((typeof systemconfig === 'object') && systemconfig && systemconfig.commaSign) {
+        this.lang = systemconfig.commaSign === ',' ? 'vi' : 'en';
+    }
+    else {
+        this.lang = navigator.language === 'vi' ? 'vi' : 'en';
+    }
+
+    this.gen = new EICodeGenerator();
+}
+
+EIExpTreeGenerator.prototype.maxLength = 50;
+
+EIExpTreeGenerator.prototype.accept = function (nd) {
+    var type = nd.type;
+    var handler = this.visitors[type] || this.visitors['*'];
+    return handler.call(this, nd);
+};
+
+
+EIExpTreeGenerator.prototype.genText = function (ast) {
+    return this.gen.generate(ast);
+};
+
+
+EIExpTreeGenerator.prototype.genExp2 = function (lProps, sProp, child, curOpen) {
+    var needOpen;
+    if (child && child.length > 0) {
+        needOpen = needOpen || child.some(c => c.needOpen);
+    }
+
+
+    var lText = lProps.name;
+    var curStatus = (curOpen || needOpen) ? 'close' : 'none';
+    if (curStatus === 'none') child = [];
+
+    if (curStatus === 'close' && lText.length >= this.maxLength) {
+        curStatus = 'open';
+    }
+    if (!child || child.length === 0) curStatus = 'none';
+
+
+    var curProps = curStatus === 'open' ? Object.assign({
+        status: curStatus,
+        icon: 'span.mdi'
+    }, lProps, sProp) : Object.assign({ status: curStatus }, sProp, lProps);
+    return {
+        tag: 'exptree',
+        props: curProps,
+        on: {
+            statuschange: function () {
+                if (this.status === 'open') {
+                    quickAssign(this, sProp);
+                }
+                else {
+                    quickAssign(this, lProps);
+                }
+            }
+        },
+        child: child || [],
+        needOpen: needOpen || curOpen
+    }
+};
+
+
+/**
+ * @callback EIETGVisitor
+ * @this {EIExpTreeGenerator}
+ * @param {Object} nd - Node AST cần xử lý
+ * @returns {*}
+ */
+
+/**
+ *
+ * @type {Object<string, EIETGVisitor>}
+ */
+EIExpTreeGenerator.prototype.visitors = {
+    "*": function (nd) {
+        return {
+            tag: 'exptree',
+            props: {
+                name: this.genText(nd)
+            }
+        }
+    },
+    Identifier: function (nd) {
+        return {
+            tag: 'exptree',
+            props: {
+                name: nd.name
+            }
+        }
+    },
+    CallExpression: function (nd) {
+        var sName = this.genText(nd.callee);
+        var lName = this.genText(nd);
+        var child = nd.arguments.map(arg => this.accept(arg));
+        return this.genExp2({ icon: 'span.mdi.mdi-function', name: lName }, { name: sName }, child, true);
+
+    },
+    BinaryExpression: function (nd) {
+        var lText = this.genText(nd);
+        var icon = null;
+
+        var sText = (nd.operator.content);
+        var s2icon = {
+            '<=': 'span.mdi.mdi-less-than-or-equal',
+            '>=': 'span.mdi.mdi-greater-than-or-equal',
+            '=': 'span.mdi.mdi-equal',
+            '<': 'span.mdi.mdi-less-than',
+            '>': 'span.mdi.mdi-greater-than',
+            '&&': 'span.mdi.mdi-ampersand',
+            '||': 'span.mdi.mdi-math-norm',
+            '+': 'span.mdi.mdi-plus',
+            '-': 'span.mdi.mdi-minus',
+            '*': 'span.mdi.mdi-close',
+            '/': 'span.mdi.mdi-division'
+        };
+
+        if (s2icon[sText]) {
+            icon = s2icon[sText];
+            sText = '';
+        }
+        var child = [
+            this.accept(nd.left),
+            this.accept(nd.right)
+        ];
+        return this.genExp2({ icon: "span.mdi", name: lText }, { name: sText, icon }, child);
+    },
+    Error: function (nd) {
+        var message = nd.message || '';
+        if (Array.isArray(nd.expectedToken)) {
+            message += nd.expectedToken.join(", ") || "[]"
+            message += nd.expectedToken.join(", ") || "[]"
+        }
+        return {
+            tag: 'exptree',
+            style: {
+                color: 'red'
+            },
+            props: {
+                icon: 'span.mdi.mdi-alert-circle-outline',
+                name: message
+            }
+        }
+    }
+};
+EIExpTreeGenerator.prototype.fromParsed = function (it) {
+    if (it.ast) {
+        return this.fromAst(it.ast);
+    }
+    else if (it.error) {
+        return this.accept(Object.assign({}, it.error, {
+            type: 'Error', errorType: it.error.type
+        }));
+    }
+};
+
+
+EIExpTreeGenerator.prototype.fromCode = function (code) {
+    var it = EIParser.parse(code, 'exp');
+    return this.fromParsed(it);
+};
+
+EIExpTreeGenerator.prototype.fromAst = function (ast) {
+    return this.accept(ast);
+};
+
+
 function EICodeGenerator() {
     SCCodeGenerator.apply(this, arguments);
 }
 
 mixClass(EICodeGenerator, SCCodeGenerator);
-console.log(SCCodeGenerator.prototype.visitors)
 EICodeGenerator.prototype.visitors = Object.keys(SCCodeGenerator.prototype.visitors).reduce((ac, cr) => {
     ac[cr] = SCCodeGenerator.prototype.visitors[cr];
 
@@ -2980,7 +3205,7 @@ EICodeGenerator.prototype.visitors.Identifier = function (nd) {
 /**
  * add default
  * @param exp
- * @param {"add"| "remove"| "replace"} cmd
+ * @param {"add"| "add_or" |"remove"| "replace"} cmd
  * @param arg
  */
 export function modifyConditionVariables(exp, cmd, arg) {
@@ -3102,12 +3327,12 @@ export function modifyConditionVariables(exp, cmd, arg) {
         return res;
     }
 
-    function addToAST(ast) {
+    function addToAST(ast, operator) {
         return {
             type: 'BinaryExpression',
             operator: {
                 type: "BinaryOperator",
-                content: "&&"
+                content: operator || "&&"
             },
             left: ast,
             right: {
@@ -3118,7 +3343,8 @@ export function modifyConditionVariables(exp, cmd, arg) {
         }
     }
 
-    function addToTokens(tokens) {
+
+    function addToTokens(tokens, operator) {
         var last = tokens[tokens.length - 1];
         tokens = tokens.slice();
         if (!last) {
@@ -3137,7 +3363,7 @@ export function modifyConditionVariables(exp, cmd, arg) {
                     content: ' '
                 }, {
                     type: 'dsymbol',
-                    content: "&&"
+                    content: operator || "&&"
                 });
             }
             tokens.push({
@@ -3152,7 +3378,7 @@ export function modifyConditionVariables(exp, cmd, arg) {
             if (['(', ')'].indexOf(last.content) >= 0) {
                 tokens.push({
                     type: 'dsymbol',
-                    content: "&&"
+                    content: operator || "&&"
                 });
             }
             tokens.push({
@@ -3237,15 +3463,15 @@ export function modifyConditionVariables(exp, cmd, arg) {
         });
     }
 
-    function addCMD() {
+    function addCMD(operator) {
         var ast = it.ast;
         var newAst, newTokens;
         if (ast) {
-            newAst = addToAST(ast);
+            newAst = addToAST(ast, operator);
             res = newAst ? genFromAST(newAst) : '';
         }
         else {
-            newTokens = addToTokens(it.tokens);
+            newTokens = addToTokens(it.tokens, operator);
             res = genFromTokens(newTokens);
         }
     }
@@ -3281,6 +3507,9 @@ export function modifyConditionVariables(exp, cmd, arg) {
     }
 
     switch (cmd) {
+        case 'add_or':
+            addCMD('||');
+            break;
         case "add":
             addCMD();
             break;
@@ -3298,18 +3527,3 @@ export function modifyConditionVariables(exp, cmd, arg) {
 
     return res;
 }
-
-
-var exp = 'A && (B ||| C) && !D  && ((K&& M) && N)';
-var exp2 = modifyConditionVariables(exp, 'add', 'X');
-var exp3 = modifyConditionVariables(exp2, 'remove', 'D');
-var exp4 = modifyConditionVariables(exp2, 'replace', { A: 'B', B: 'C', C: 'A' });
-console.log(exp);
-
-console.log(exp2);
-console.log(exp3);
-console.log(exp4);
-
-
-console.log = function () {
-};

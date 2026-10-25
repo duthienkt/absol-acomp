@@ -385,6 +385,10 @@
     margin-right: 3px;
 }
 
+/*.ei-tree-explore .toggler-ico {*/
+/*    opacity: 0;*/
+/*}*/
+
 @keyframes error_blink {
     0% {
         background-color: red
