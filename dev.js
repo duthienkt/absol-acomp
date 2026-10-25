@@ -45,11 +45,14 @@ import { teiDataToExcelData } from "./js/TableOfTextInput";
 import { MCTMDCorrectingValues } from "./js/MultiCheckTreeMenu";
 import { getCKAnchorsInHTML } from "./js/ckeditor/DynamicLinkExtension";
 import TextMeasureData from "./js/TextMeasureData";
+import ExpressionInput, { modifyConditionVariables } from "./js/ExpressionInput";
+import *  as ei from "./js/ExpressionInput";
+
+
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;
 absol.vScrollIntoView = vScrollIntoView;
-
 //for export to window
 absol.Tooltip = ToolTip;
 absol.QuickMenu = QuickMenu;
@@ -77,6 +80,12 @@ absol.TextMeasureData = TextMeasureData;
 absol.printer.silentDownloadAsPdf = silentDownloadAsPdf;
 absol.ListSearchMaster = ListSearchMaster;
 absol.openDebugDeviceInfo = openDebugDeviceInfo;
+
+absol.ei = (function (){
+    var res =  Object.assign({ExpressionInput}, ei);
+    delete res.default;
+    return res;
+})();
 
 Dom.documentReady.then(function () {
     var mdiLink = absol.$('link', document.head, function (e) {
