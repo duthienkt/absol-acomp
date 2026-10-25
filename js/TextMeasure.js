@@ -242,7 +242,6 @@ TextMeasure.prototype.measureWrappedText = function (text, limitWidth, fontSize,
             c = line[i];
             lineWidth += spacing[prevC + c] || 0;
             lineWidth += width[c] || 0;
-            prevC = c;
             if (lineWidth * fontSize / 20 > limitWidth) {
                 lineWidth -= spacing[prevC + c] || 0;
                 lineWidth -= width[c] || 0;
@@ -253,7 +252,7 @@ TextMeasure.prototype.measureWrappedText = function (text, limitWidth, fontSize,
                 lineCount++;
                 lineWidth = width[c] || 0;
             }
-
+            prevC = c;
         }
         maxWidth = Math.max(maxWidth, lineWidth);
         lineCount++;
