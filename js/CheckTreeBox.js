@@ -456,6 +456,7 @@ TreeRootHolder.prototype.setValues = function (values) {
         return ac;
     }, values.slice());
     this.child.forEach(c => c.setValues(values));
+    this.updateFromChild();//quick-fix
 };
 
 TreeRootHolder.prototype.calcEstimateSize = function () {
@@ -1266,6 +1267,7 @@ CTBItemListController.prototype.ev_checkAllChange = function (event) {
             this.rootHolder.selectAll();
             break;
     }
+    this.rootHolder.updateFromChild();//quick-fix
     if (this.rootViewHolder !== this.rootHolder) {
         this.rootViewHolder.updateSelectedFromRef();
     }
