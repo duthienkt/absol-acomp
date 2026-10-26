@@ -146,9 +146,9 @@ ExpNode.property.level = {
         value = value || 0;
         if (value !== this.level) {
             this._level = value || 0;
-
             this.$level.innerHTML = '&nbsp;'.repeat(this._level * 6);
         }
+        this.addStyle('--level', this._level + '');
     },
     get: function () {
         return this._level || 0;
@@ -461,7 +461,7 @@ ExpTree.property.level = {
                 e.level = value + 1;
             })
         }
-
+        this.addStyle('--level', value + '');
     },
     get: function () {
         return this.$node.level;
