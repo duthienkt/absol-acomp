@@ -175,6 +175,9 @@ img.absol-exp-node-ext-icon[src] {
     display: inline-block;
 }
 
+.absol-exp-tree {
+    --level: 0;
+}
 
 .absol-exp-tree>.absol-exp-node {
     width: 100%;
