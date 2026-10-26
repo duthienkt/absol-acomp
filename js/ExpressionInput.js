@@ -663,11 +663,17 @@ EIEngine.prototype.highlightError = function () {
     var contentElt = this.$content;
     var value = this.value.trim();
     var it = parser.parse(value, 'exp_excel');
+    this.parsed = it;
     var i, notSkipCount = 0;
     var tokenErrorIdx = -1;
+    var errorMessage;
     if (value && it.error) {
         elt.addClass('as-error');
-        elt.attr('title', it.error.message);
+        errorMessage = it.error.message;
+        if (!it.error.expectedToken || !it.error.expectedToken.length) {
+            errorMessage = "Incomplete expression";
+        }
+        elt.attr('title', errorMessage);
         tokenErrorIdx = it.error.tokenIdx;
     }
     else {
@@ -1798,8 +1804,9 @@ EICommandTool.prototype.revokeResource = function () {
 
 EICommandTool.prototype.openTreeExplore = function () {
     var gen = new EIExpTreeGenerator();
-    if (!this.elt.validator.parsed) return;
-    var exp = gen.fromParsed(this.elt.validator.parsed);
+    var parsed = this.elt.engine.parsed || this.elt.validator.parsed;
+    if (!parsed) return;
+    var exp = _(gen.fromParsed(parsed));
     var content = _({
         class: 'ei-tree-explore',
         style: {
@@ -1811,6 +1818,7 @@ EICommandTool.prototype.openTreeExplore = function () {
             exp
         ]
     });
+
     var mdw = new ModalWindow({
         title: 'Tree Explorer',
         content: content,
@@ -1826,7 +1834,7 @@ EICommandTool.prototype.openTreeExplore = function () {
     mdw.open();
     var contentBound = content.getBoundingClientRect();
     content.addStyle('min-width', contentBound.width + 'px');
-
+    updateHeight(exp);
 };
 
 /**
@@ -3043,6 +3051,30 @@ EIExpTreeGenerator.prototype.genText = function (ast) {
 };
 
 
+function findExpRoot(nd) {
+    var res = nd;
+    var t = nd.getParent();
+    while (t) {
+        res = t;
+        t = t.getParent();
+    }
+    return res;
+}
+
+function updateHeight(nd) {
+    var children = nd.getChildren && nd.getChildren();
+    if (children && children.length > 0) {
+        children.forEach(c => updateHeight(c));
+    }
+    nd.treeHeight = 1;
+    if (nd.status === 'open' && children && children.length > 0) {
+        nd.treeHeight += children.reduce((acc, c) => acc + c.treeHeight, 0);
+        nd.addStyle('--last-s-tree-height', children[children.length - 1].treeHeight);
+
+    }
+    nd.addStyle('--tree-height', nd.treeHeight);
+}
+
 EIExpTreeGenerator.prototype.genExp2 = function (lProps, sProp, child, curOpen) {
     var needOpen;
     if (child && child.length > 0) {
@@ -3064,6 +3096,9 @@ EIExpTreeGenerator.prototype.genExp2 = function (lProps, sProp, child, curOpen) 
 
     var curProps = curStatus === 'open' ? Object.assign({
         status: curStatus,
+        updateHeight: function () {
+            updateHeight(this);
+        }
         // icon: 'span.mdi'
     }, lProps, sProp) : Object.assign({ status: curStatus }, sProp, lProps);
     return {
@@ -3077,6 +3112,9 @@ EIExpTreeGenerator.prototype.genExp2 = function (lProps, sProp, child, curOpen) 
                 else {
                     quickAssign(this, lProps);
                 }
+                var root = findExpRoot(this);
+                updateHeight(root);
+                // root.update();
             }
         },
         child: child || [],
@@ -3101,7 +3139,10 @@ EIExpTreeGenerator.prototype.visitors = {
         return {
             tag: 'exptree',
             props: {
-                name: this.genText(nd)
+                name: this.genText(nd),
+                updateHeight: function () {
+                    updateHeight(this);
+                }
             }
         }
     },
@@ -3109,7 +3150,10 @@ EIExpTreeGenerator.prototype.visitors = {
         return {
             tag: 'exptree',
             props: {
-                name: nd.name
+                name: nd.name,
+                updateHeight: function () {
+                    updateHeight(this);
+                }
             }
         }
     },
@@ -3125,7 +3169,7 @@ EIExpTreeGenerator.prototype.visitors = {
         var icon = null;
 
         var sText = (nd.operator.content);
-        var s2icon = {} ||{
+        var s2icon = {} || {
             '<=': 'span.mdi.mdi-less-than-or-equal',
             '>=': 'span.mdi.mdi-greater-than-or-equal',
             '=': 'span.mdi.mdi-equal',
@@ -3149,13 +3193,20 @@ EIExpTreeGenerator.prototype.visitors = {
         ];
         return this.genExp2({
             // icon: "span.mdi",
-            name: lText }, { name: sText, icon }, child);
+            name: lText
+        }, { name: sText, icon }, child);
     },
     Error: function (nd) {
         var message = nd.message || '';
         if (Array.isArray(nd.expectedToken)) {
-            message += nd.expectedToken.join(", ") || "[]"
-            message += nd.expectedToken.join(", ") || "[]"
+            if (!nd.expectedToken || !nd.expectedToken.length) {
+                message = "Incomplete expression";
+            }
+            else {
+                message += nd.expectedToken.join(", ") || "[]"
+                message += nd.expectedToken.join(", ") || "[]"
+            }
+
         }
         return {
             tag: 'exptree',
@@ -3164,7 +3215,10 @@ EIExpTreeGenerator.prototype.visitors = {
             },
             props: {
                 icon: 'span.mdi.mdi-alert-circle-outline',
-                name: message
+                name: message,
+                updateHeight: function () {
+                    updateHeight(this);
+                }
             }
         }
     }

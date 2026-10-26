@@ -385,9 +385,49 @@
     margin-right: 3px;
 }
 
-/*.ei-tree-explore .toggler-ico {*/
-/*    opacity: 0;*/
-/*}*/
+.ei-tree-explore .absol-exp-items {
+    position: relative;
+}
+
+.ei-tree-explore .absol-exp-items::before{
+    display: block;
+    position: absolute;
+    content: "";
+    border-left: 1px dashed black;
+    left: calc(23.34em / 14 * var(--level) + 1.8em) ;
+    top: 0px;
+    bottom: calc(2em * var(--last-s-tree-height, 0) - 1em);
+    z-index: 0;
+}
+
+.ei-tree-explore .absol-exp-items:empty{
+    display: none;
+}
+
+.ei-tree-explore .absol-exp-node::after{
+    display: block;
+    position: absolute;
+    content: "";
+    border-top: 1px dashed black;
+    width: calc(23.34em / 14 - 2px);
+    left: calc(23.34em / 14 * var(--level) + 1.8em - 23.34em / 14) ;
+    top: 50%;
+}
+
+.ei-tree-explore .absol-exp-node.status-open::after,
+.ei-tree-explore .absol-exp-node.status-close::after{
+   width: 5px;
+}
+
+.ei-tree-explore>.absol-exp-tree>.absol-exp-node::before,
+.ei-tree-explore>.absol-exp-tree>.absol-exp-node::after {
+    display: none;
+}
+
+.ei-tree-explore .absol-exp-items>.absol-exp-node::after {
+
+}
+
 
 @keyframes error_blink {
     0% {
