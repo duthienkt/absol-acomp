@@ -47,8 +47,17 @@ import { getCKAnchorsInHTML } from "./js/ckeditor/DynamicLinkExtension";
 import TextMeasureData from "./js/TextMeasureData";
 import ExpressionInput, { modifyConditionVariables } from "./js/ExpressionInput";
 import *  as ei from "./js/ExpressionInput";
+import * as colorUtil from "./js/colorpicker/SelectColorSchemeMenu";
+//
+var colorUtil2 = Object.assign({}, colorUtil);
+delete colorUtil2.default;
 
-
+if (absol.color) {
+    Object.assign(absol.color, colorUtil2);
+}
+else {
+    absol.color = colorUtil2;
+}
 
 absol.VariantColors = VariantColors;
 absol.parseMessage = parseMessage;

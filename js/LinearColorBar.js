@@ -285,3 +285,40 @@ LinearColorBar.property.colorMapping = {
 
 ACore.install(LinearColorBar);
 export default LinearColorBar;
+
+
+export function SimpleColorBar(){
+
+}
+
+SimpleColorBar.render = function () {
+    return _({
+        class: 'as-simple-color-bar'
+    });
+}
+
+SimpleColorBar.property = {};
+
+
+SimpleColorBar.property.value = {
+    set: function (value) {
+        this.addStyle('--value', value);
+        this._value = value;
+    },
+    get: function () {
+        return this._value;
+    }
+};
+
+SimpleColorBar.property.color = {
+    set: function (value) {
+        this.addStyle('background-color', value +'');
+        this._color = value;
+    },
+    get: function () {
+        return this._color;
+    }
+};
+
+
+

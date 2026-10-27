@@ -123,3 +123,11 @@
     position: relative;
     z-index: 1;
 }
+
+.as-simple-color-bar {
+    height: 10px;
+    --width-1: 140px;
+    --value: 0;
+    width: calc(var(--width-1) * var(--value));
+}
+

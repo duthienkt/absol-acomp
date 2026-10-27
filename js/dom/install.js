@@ -33,7 +33,7 @@ import HexaSectionLabel from "../HexaSectionLabel";
 import VRuler from "../VRuler";
 import HRuler from "../HRuler";
 import IconSprite from "../IconSprite";
-import LinearColorBar from "../LinearColorBar";
+import LinearColorBar, { SimpleColorBar } from "../LinearColorBar";
 import MediaInput from "../MediaInput";
 import MessageInput, { MessageQuote } from "../messageinput/MessageInput";
 import NumberInput from "../numberinput/NumberInput";
@@ -303,6 +303,7 @@ export var publicCreators = [
     HRuler,
     IconSprite,
     LinearColorBar,
+    SimpleColorBar,
     LinearBackground,
     LinearColorTinyBar,
     MediaInput,
